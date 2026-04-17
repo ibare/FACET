@@ -8,6 +8,18 @@ importers:
 
   .:
     devDependencies:
+      '@facet/algorithm-bubblesort':
+        specifier: workspace:*
+        version: link:packages/algorithm-bubblesort
+      '@facet/container-loop':
+        specifier: workspace:*
+        version: link:packages/container-loop
+      '@facet/core':
+        specifier: workspace:*
+        version: link:packages/core
+      '@facet/transpilers-mainstream':
+        specifier: workspace:*
+        version: link:packages/transpilers-mainstream
       '@types/node':
         specifier: ^22.9.0
         version: 22.19.17
@@ -17,6 +29,26 @@ importers:
       vitest:
         specifier: ^2.1.5
         version: 2.1.9(@types/node@22.19.17)
+
+  packages/algorithm-bubblesort:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../core
+
+  packages/container-loop:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../core
+
+  packages/core: {}
+
+  packages/transpilers-mainstream:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../core
 
 packages:
 

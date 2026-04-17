@@ -23,6 +23,17 @@ export type LensFactory = (params: LensMountParams) => LensInstance;
 
 const globalLensRegistry = new Map<string, LensFactory>();
 
+export function resolveBody(catalog: Catalog, name: string) {
+  const direct = catalog.bodies.get(name);
+  if (direct) return direct;
+  if (catalog.algorithms.has(name)) {
+    for (const body of catalog.bodies.values()) {
+      if (body.algorithm === name) return body;
+    }
+  }
+  return null;
+}
+
 export function registerLens(id: string, factory: LensFactory): void {
   globalLensRegistry.set(id, factory);
 }
@@ -58,9 +69,10 @@ export function createInstance(params: InstanceParams): FacetInstance {
   if (expr.bodies.length !== 1) {
     throw new Error('v1 requires exactly one body identifier');
   }
-  const bodyDef = catalog.bodies.get(expr.bodies[0].name);
+  const requested = expr.bodies[0].name;
+  const bodyDef = resolveBody(catalog, requested);
   if (!bodyDef) {
-    throw new Error(`Unknown body: facet:${expr.bodies[0].name}`);
+    throw new Error(`Unknown body: facet:${requested}`);
   }
 
   const containerInstance = containerDef.init();

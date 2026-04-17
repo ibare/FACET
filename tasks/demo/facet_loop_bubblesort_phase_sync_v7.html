@@ -1,0 +1,608 @@
+<h2 class="sr-only">FACET v7: body emits phase events that synchronize code highlighting across two paradigms simultaneously, allowing learners to see the same algorithmic step in imperative and functional code at once.</h2>
+
+<div style="padding: 1rem 0 1.5rem;">
+  <div style="display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px;">
+    <span style="font-size: 11px; font-weight: 500; letter-spacing: 0.05em; color: var(--color-text-tertiary); text-transform: uppercase;">FACET · v7</span>
+    <span style="font-size: 11px; color: var(--color-text-tertiary);">phase events · multi-paradigm sync</span>
+  </div>
+  <h1 style="font-size: 22px; font-weight: 500; margin: 0 0 6px;">하나의 동작이 두 패러다임에서</h1>
+  <p style="font-size: 14px; color: var(--color-text-secondary); margin: 0; line-height: 1.6;">본체가 phase 이름만 알립니다. 시각화와 두 패러다임 코드가 같은 phase 어휘를 공유하므로, 한 동작이 일어날 때 모든 렌즈가 동시에 그 위치를 비춥니다.</p>
+</div>
+
+<div style="background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1rem;">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+    <span style="font-size: 11px; font-weight: 500; letter-spacing: 0.05em; color: var(--color-text-tertiary); text-transform: uppercase;">DSL</span>
+  </div>
+  <pre style="margin: 0; font-family: var(--font-mono); font-size: 13.5px; line-height: 1.7; color: var(--color-text-primary); white-space: pre-wrap;">{<span style="color: #534AB7; font-weight: 500;">facet:</span><span style="color: #185FA5; font-weight: 500;">loop</span> <span style="color: #534AB7; font-weight: 500;">facet:</span><span style="color: #185FA5; font-weight: 500;">bubbleSort</span>}</pre>
+</div>
+
+<div style="background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 1rem; margin-bottom: 1rem;">
+  <svg id="circuit" width="100%" viewBox="0 0 760 380" preserveAspectRatio="xMidYMid meet" style="display: block;"></svg>
+</div>
+
+<div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; align-items: center;">
+  <button id="play" style="height: 36px; padding: 0 16px; font-size: 13px; display: inline-flex; align-items: center; gap: 8px;">
+    <svg width="11" height="13" viewBox="0 0 12 14" fill="none"><path d="M1 1L11 7L1 13V1Z" fill="currentColor"/></svg>
+    <span id="play-label">시작</span>
+  </button>
+  <button id="step" style="height: 36px; padding: 0 14px; font-size: 13px;">한 펄스</button>
+  <button id="reset" style="height: 36px; padding: 0 14px; font-size: 13px;">처음부터</button>
+
+  <div style="display: flex; align-items: center; gap: 6px; margin-left: 8px; padding-left: 12px; border-left: 0.5px solid var(--color-border-tertiary);">
+    <label style="font-size: 12px; color: var(--color-text-secondary);">속도</label>
+    <div style="display: flex; gap: 4px;">
+      <button class="speed-btn" data-speed="0.4" style="height: 26px; padding: 0 10px; font-size: 11px;">빠르게</button>
+      <button class="speed-btn speed-active" data-speed="1.4" style="height: 26px; padding: 0 10px; font-size: 11px;">보통</button>
+      <button class="speed-btn" data-speed="2.2" style="height: 26px; padding: 0 10px; font-size: 11px;">느리게</button>
+    </div>
+  </div>
+
+  <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
+    <label style="font-size: 12px; color: var(--color-text-secondary);">분포</label>
+    <div style="display: flex; gap: 4px;">
+      <button class="dist-btn" data-dist="random" style="height: 26px; padding: 0 10px; font-size: 11px;">랜덤</button>
+      <button class="dist-btn dist-active" data-dist="reversed" style="height: 26px; padding: 0 10px; font-size: 11px;">역순</button>
+      <button class="dist-btn" data-dist="nearly" style="height: 26px; padding: 0 10px; font-size: 11px;">거의 정렬</button>
+    </div>
+    <label style="font-size: 12px; color: var(--color-text-secondary); margin-left: 8px;">개수</label>
+    <input type="range" id="size" min="4" max="7" value="5" step="1" style="width: 80px;" />
+    <span id="size-out" style="font-size: 12px; font-weight: 500; min-width: 14px;">5</span>
+  </div>
+</div>
+
+<div style="background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1rem;">
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 12px;">
+    <div>
+      <div style="font-size: 11px; font-weight: 500; letter-spacing: 0.05em; color: var(--color-text-tertiary); text-transform: uppercase;">코드 렌즈 · 두 패러다임 동시 비교</div>
+      <div style="font-size: 11px; color: var(--color-text-tertiary); margin-top: 2px;" id="phase-info">대기 중</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 6px;">
+      <label style="font-size: 11px; color: var(--color-text-secondary);">언어</label>
+      <div id="lang-tabs" style="display: inline-flex; gap: 4px;"></div>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px;">
+    <div>
+      <div style="font-size: 10px; font-weight: 500; color: #185FA5; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 6px;">명령형</div>
+      <div id="code-imperative" style="margin: 0; padding: 10px 0; background: var(--color-background-primary); border-radius: var(--border-radius-md); font-family: var(--font-mono); font-size: 12px; line-height: 1.7; min-height: 220px; overflow-x: auto;"></div>
+    </div>
+    <div>
+      <div style="font-size: 10px; font-weight: 500; color: #534AB7; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 6px;">함수형</div>
+      <div id="code-functional" style="margin: 0; padding: 10px 0; background: var(--color-background-primary); border-radius: var(--border-radius-md); font-family: var(--font-mono); font-size: 12px; line-height: 1.7; min-height: 220px; overflow-x: auto;"></div>
+    </div>
+  </div>
+</div>
+
+<details style="background: var(--color-background-secondary); border-radius: var(--border-radius-lg); padding: 12px 16px; font-size: 12px;">
+  <summary style="cursor: pointer; font-weight: 500; color: var(--color-text-secondary); list-style: none; display: flex; align-items: center; gap: 6px;">
+    <span style="display: inline-block; width: 8px; height: 8px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); transition: transform 0.2s;" id="meta-arrow"></span>
+    phase 사전과 source_map (검증용)
+  </summary>
+  <div style="margin-top: 10px; font-family: var(--font-mono); font-size: 11px; line-height: 1.6; color: var(--color-text-secondary); white-space: pre-wrap;" id="meta-dump"></div>
+</details>
+
+<style>
+  .dist-active, .speed-active, .tab-active { background: var(--color-background-primary) !important; border-color: var(--color-border-secondary) !important; font-weight: 500; }
+  details[open] #meta-arrow { transform: rotate(45deg) !important; }
+  .code-line { padding: 0 14px; transition: background 0.15s; border-left: 3px solid transparent; }
+  .code-line.hl-comparing { background: #FAEEDA; border-left-color: #BA7517; }
+  .code-line.hl-swapping { background: #FAECE7; border-left-color: #D85A30; }
+  .code-line.hl-pass_complete { background: #EAF3DE; border-left-color: #639922; }
+  .code-line.hl-outer_loop { background: #E6F1FB; border-left-color: #378ADD; }
+  @media (prefers-color-scheme: dark) {
+    .code-line.hl-comparing { background: #412402; border-left-color: #FAC775; }
+    .code-line.hl-swapping { background: #4A1B0C; border-left-color: #F0997B; }
+    .code-line.hl-pass_complete { background: #173404; border-left-color: #97C459; }
+    .code-line.hl-outer_loop { background: #042C53; border-left-color: #85B7EB; }
+  }
+</style>
+
+<script>
+(function(){
+
+  // ──────────────────────────────────────────────────────────────────
+  // 알고리즘 카탈로그 — phase 어휘 보유
+  // ──────────────────────────────────────────────────────────────────
+
+  const algorithm = {
+    id: 'bubbleSort',
+    phases: ['outer_loop', 'comparing', 'swapping', 'pass_complete']
+  };
+
+  const phaseLabels = {
+    outer_loop: '바깥 패스 시작',
+    comparing: '두 원소 비교',
+    swapping: '두 원소 교환',
+    pass_complete: '한 패스 완료'
+  };
+
+  const phaseColors = {
+    comparing: '#BA7517',
+    swapping: '#D85A30',
+    pass_complete: '#639922',
+    outer_loop: '#378ADD'
+  };
+
+  // ──────────────────────────────────────────────────────────────────
+  // IR + 변환기 결과 (각 라인에 phase 태그 부착)
+  // 변환기가 진짜로 IR을 펼치는 건 아니고, 결과물 + source_map 직접 작성
+  // ──────────────────────────────────────────────────────────────────
+
+  const codeMaps = {
+    'imperative-python': [
+      { line: 'def bubble_sort(arr):',                                phase: null },
+      { line: '    n = len(arr)',                                     phase: null },
+      { line: '    for i in range(n):',                               phase: 'outer_loop' },
+      { line: '        for j in range(n - i - 1):',                   phase: null },
+      { line: '            if arr[j] > arr[j + 1]:',                  phase: 'comparing' },
+      { line: '                arr[j], arr[j+1] = arr[j+1], arr[j]',  phase: 'swapping' },
+      { line: '    return arr',                                       phase: 'pass_complete' }
+    ],
+    'imperative-javascript': [
+      { line: 'function bubbleSort(arr) {',                                  phase: null },
+      { line: '    const n = arr.length;',                                   phase: null },
+      { line: '    for (let i = 0; i < n; i++) {',                           phase: 'outer_loop' },
+      { line: '        for (let j = 0; j < n - i - 1; j++) {',               phase: null },
+      { line: '            if (arr[j] > arr[j + 1]) {',                      phase: 'comparing' },
+      { line: '                [arr[j], arr[j+1]] = [arr[j+1], arr[j]];',    phase: 'swapping' },
+      { line: '            }',                                               phase: null },
+      { line: '        }',                                                   phase: null },
+      { line: '    }',                                                       phase: null },
+      { line: '    return arr;',                                             phase: 'pass_complete' },
+      { line: '}',                                                           phase: null }
+    ],
+    'functional-python': [
+      { line: 'def bubble_pass(xs):',                                  phase: 'outer_loop' },
+      { line: '    if len(xs) < 2: return xs',                         phase: null },
+      { line: '    if xs[0] > xs[1]:',                                 phase: 'comparing' },
+      { line: '        return [xs[1]] + bubble_pass([xs[0]] + xs[2:])',phase: 'swapping' },
+      { line: '    return [xs[0]] + bubble_pass(xs[1:])',              phase: null },
+      { line: '',                                                      phase: null },
+      { line: 'def bubble_sort(xs):',                                  phase: null },
+      { line: '    if len(xs) < 2: return xs',                         phase: null },
+      { line: '    passed = bubble_pass(xs)',                          phase: null },
+      { line: '    return bubble_sort(passed[:-1]) + [passed[-1]]',    phase: 'pass_complete' }
+    ],
+    'functional-javascript': [
+      { line: 'const bubblePass = (xs) => {',                          phase: 'outer_loop' },
+      { line: '    if (xs.length < 2) return xs;',                     phase: null },
+      { line: '    return xs[0] > xs[1]',                              phase: 'comparing' },
+      { line: '        ? [xs[1], ...bubblePass([xs[0], ...xs.slice(2)])]', phase: 'swapping' },
+      { line: '        : [xs[0], ...bubblePass(xs.slice(1))];',        phase: null },
+      { line: '};',                                                    phase: null },
+      { line: '',                                                      phase: null },
+      { line: 'const bubbleSort = (xs) => {',                          phase: null },
+      { line: '    if (xs.length < 2) return xs;',                     phase: null },
+      { line: '    const passed = bubblePass(xs);',                    phase: null },
+      { line: '    return [...bubbleSort(passed.slice(0,-1)), passed.at(-1)];', phase: 'pass_complete' }
+    ]
+  };
+
+  // ──────────────────────────────────────────────────────────────────
+  // UI 상태
+  // ──────────────────────────────────────────────────────────────────
+
+  let activeTarget = 'python';
+  let currentPhase = null;
+
+  const langTabsEl = document.getElementById('lang-tabs');
+  const codeImpEl = document.getElementById('code-imperative');
+  const codeFunEl = document.getElementById('code-functional');
+  const phaseInfoEl = document.getElementById('phase-info');
+  const metaDumpEl = document.getElementById('meta-dump');
+
+  function buildLangTabs(){
+    langTabsEl.innerHTML = '';
+    ['python', 'javascript'].forEach(t => {
+      const btn = document.createElement('button');
+      btn.className = 'tab-btn' + (t === activeTarget ? ' tab-active' : '');
+      btn.style.cssText = 'height: 26px; padding: 0 10px; font-size: 11px;';
+      btn.textContent = t === 'python' ? 'Python' : 'JavaScript';
+      btn.addEventListener('click', () => {
+        activeTarget = t;
+        buildLangTabs();
+        renderCode();
+      });
+      langTabsEl.appendChild(btn);
+    });
+  }
+
+  function escape(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function renderCodeBlock(el, mapId){
+    const map = codeMaps[mapId];
+    let html = '';
+    map.forEach(({line, phase}) => {
+      const cls = (phase && phase === currentPhase) ? `code-line hl-${phase}` : 'code-line';
+      html += `<div class="${cls}">${escape(line) || '&nbsp;'}</div>`;
+    });
+    el.innerHTML = html;
+  }
+
+  function renderCode(){
+    renderCodeBlock(codeImpEl, `imperative-${activeTarget}`);
+    renderCodeBlock(codeFunEl, `functional-${activeTarget}`);
+    if (currentPhase){
+      phaseInfoEl.innerHTML = `현재 phase: <span style="font-family: var(--font-mono); color: ${phaseColors[currentPhase]}; font-weight: 500;">${currentPhase}</span> · ${phaseLabels[currentPhase] || ''}`;
+    } else {
+      phaseInfoEl.textContent = '대기 중 — 본체가 아직 phase를 발생시키지 않음';
+    }
+  }
+
+  function dumpMeta(){
+    let s = '// 알고리즘 카탈로그의 phase 사전\n';
+    s += JSON.stringify(algorithm, null, 2);
+    s += '\n\n// source_map 예시 (imperative-python)\n';
+    s += JSON.stringify(codeMaps['imperative-python'].map((c,i) => ({line: i+1, phase: c.phase, code: c.line.trim()})), null, 2);
+    metaDumpEl.textContent = s;
+  }
+
+  buildLangTabs();
+  renderCode();
+  dumpMeta();
+
+  // ──────────────────────────────────────────────────────────────────
+  // 회로 시각화 + 본체 (phase emit 추가)
+  // ──────────────────────────────────────────────────────────────────
+
+  const svg = document.getElementById('circuit');
+  const playBtn = document.getElementById('play');
+  const playLabel = document.getElementById('play-label');
+  const stepBtn = document.getElementById('step');
+  const resetBtn = document.getElementById('reset');
+  const sizeInput = document.getElementById('size');
+  const sizeOut = document.getElementById('size-out');
+  const distBtns = document.querySelectorAll('.dist-btn');
+  const speedBtns = document.querySelectorAll('.speed-btn');
+
+  const W = 760, H = 380;
+  let size = 5;
+  let dist = 'reversed';
+  let speedMul = 1.4;
+  let arr = [];
+  let i = 0, pass = 0, swappedThisPass = false;
+  let comparisons = 0, swaps = 0, tickCount = 0;
+  let lastComp = null, lastSwap = null;
+  let bodyState = 'ready';
+  let phase = 'idle';
+  let phaseStart = 0;
+  let playing = false;
+
+  // 본체의 phase 머신
+  // 한 tick = 한 비교(+필요시 교환). emit 순서: comparing → (swapping)
+  // 패스 종료 직전에 outer_loop, 종료 시 pass_complete
+  let bodyMicroPhase = null;        // 'comparing' | 'swapping' | null
+  let bodyMicroPhaseStart = 0;
+  let pendingSwap = false;
+
+  const BASE = { pulse: 600, body: 400, complete: 700, idle: 200 };
+  function durs(){
+    return { pulse: BASE.pulse * speedMul, body: BASE.body * speedMul, complete: BASE.complete * speedMul, idle: BASE.idle * speedMul };
+  }
+
+  function emitPhase(p){
+    currentPhase = p;
+    renderCode();
+  }
+
+  function clearPhase(){
+    if (currentPhase !== null){
+      currentPhase = null;
+      renderCode();
+    }
+  }
+
+  function genArray(){
+    arr = [];
+    if (dist === 'random'){
+      const pool = Array.from({length: size}, (_,k) => k+1);
+      for (let k = pool.length - 1; k > 0; k--){
+        const j = Math.floor(Math.random() * (k+1));
+        [pool[k], pool[j]] = [pool[j], pool[k]];
+      }
+      arr = pool;
+    } else if (dist === 'reversed'){
+      arr = Array.from({length: size}, (_,k) => size - k);
+    } else {
+      arr = Array.from({length: size}, (_,k) => k+1);
+      const swapsToDo = Math.max(1, Math.floor(size * 0.2));
+      for (let s = 0; s < swapsToDo; s++){
+        const a = Math.floor(Math.random() * (size-1));
+        [arr[a], arr[a+1]] = [arr[a+1], arr[a]];
+      }
+    }
+  }
+
+  function fullReset(){
+    i = 0; pass = 0; swappedThisPass = false;
+    comparisons = 0; swaps = 0; tickCount = 0;
+    lastComp = null; lastSwap = null;
+    bodyState = 'ready';
+    phase = 'idle';
+    phaseStart = performance.now();
+    bodyMicroPhase = null;
+    pendingSwap = false;
+    clearPhase();
+    genArray();
+  }
+
+  function bodyAdvanceLogic(){
+    if (bodyState === 'complete') return;
+    bodyState = 'running';
+    const limit = size - pass - 1;
+    if (i >= limit){
+      pass++;
+      if (!swappedThisPass){
+        bodyState = 'complete';
+        lastComp = null; lastSwap = null;
+        emitPhase('pass_complete');
+        return;
+      }
+      swappedThisPass = false;
+      i = 0;
+      const newLimit = size - pass - 1;
+      if (newLimit <= 0){
+        bodyState = 'complete';
+        lastComp = null; lastSwap = null;
+        emitPhase('pass_complete');
+        return;
+      }
+      // 새 패스 시작
+      emitPhase('outer_loop');
+      bodyMicroPhase = 'outer_loop_announce';
+      bodyMicroPhaseStart = performance.now();
+      return;
+    }
+    // 비교 시작
+    comparisons++;
+    lastComp = [i, i+1];
+    if (arr[i] > arr[i+1]){
+      pendingSwap = true;
+    } else {
+      pendingSwap = false;
+      lastSwap = null;
+    }
+    emitPhase('comparing');
+    bodyMicroPhase = 'comparing';
+    bodyMicroPhaseStart = performance.now();
+  }
+
+  function bodyMicroPhaseStep(now){
+    if (!bodyMicroPhase) return;
+    const elapsed = now - bodyMicroPhaseStart;
+    const microDur = durs().body * 0.5;
+
+    if (bodyMicroPhase === 'outer_loop_announce'){
+      if (elapsed >= microDur){
+        // 새 패스의 첫 비교로
+        comparisons++;
+        lastComp = [i, i+1];
+        pendingSwap = arr[i] > arr[i+1];
+        if (!pendingSwap) lastSwap = null;
+        emitPhase('comparing');
+        bodyMicroPhase = 'comparing';
+        bodyMicroPhaseStart = now;
+      }
+    } else if (bodyMicroPhase === 'comparing'){
+      if (elapsed >= microDur){
+        if (pendingSwap){
+          [arr[i], arr[i+1]] = [arr[i+1], arr[i]];
+          swaps++;
+          swappedThisPass = true;
+          lastSwap = [i, i+1];
+          emitPhase('swapping');
+          bodyMicroPhase = 'swapping';
+          bodyMicroPhaseStart = now;
+        } else {
+          bodyMicroPhase = 'done';
+          i++;
+        }
+      }
+    } else if (bodyMicroPhase === 'swapping'){
+      if (elapsed >= microDur){
+        bodyMicroPhase = 'done';
+        i++;
+      }
+    }
+  }
+
+  function tickStart(){
+    if (bodyState === 'complete'){ stopPlay(); return; }
+    tickCount++;
+    phase = 'pulse';
+    phaseStart = performance.now();
+  }
+
+  function loop(now){
+    const elapsed = now - phaseStart;
+    const d = durs();
+    if (phase === 'pulse'){
+      if (elapsed >= d.pulse){
+        bodyAdvanceLogic();
+        phase = 'body';
+        phaseStart = now;
+      }
+    } else if (phase === 'body'){
+      bodyMicroPhaseStep(now);
+      if (bodyMicroPhase === 'done' || bodyState === 'complete'){
+        if (elapsed >= d.body){
+          if (bodyState === 'complete'){
+            phase = 'complete';
+            phaseStart = now;
+          } else {
+            phase = 'idle';
+            phaseStart = now;
+            bodyMicroPhase = null;
+            clearPhase();
+          }
+        }
+      }
+    } else if (phase === 'complete'){
+      if (elapsed >= d.complete){
+        phase = 'done';
+        phaseStart = now;
+        stopPlay();
+      }
+    } else if (phase === 'idle'){
+      if (playing && elapsed >= d.idle){ tickStart(); }
+    }
+    render(now);
+    requestAnimationFrame(loop);
+  }
+
+  function render(now){
+    const elapsed = now - phaseStart;
+    const d = durs();
+    const containerCx = 90, containerCy = 190;
+    const bodyX = 220, bodyY = 50, bodyW = 510, bodyH = 280;
+    const wireY = 190;
+    const wireStartX = containerCx + 38;
+    const wireEndX = bodyX;
+
+    let s = '';
+    s += `<rect x="${bodyX}" y="${bodyY}" width="${bodyW}" height="${bodyH}" rx="10" fill="var(--color-background-primary)" stroke="${bodyState === 'complete' ? '#0F6E56' : '#185FA5'}" stroke-width="${bodyState === 'complete' ? 1.5 : 1}"/>`;
+    s += `<text x="${bodyX + 12}" y="${bodyY + 18}" font-family="var(--font-sans)" font-size="10" font-weight="500" letter-spacing="0.05em" fill="#185FA5">facet:bubbleSort-bars</text>`;
+
+    const distLabel = dist === 'random' ? '랜덤' : dist === 'reversed' ? '역순' : '거의 정렬';
+    s += `<text x="${bodyX + bodyW - 12}" y="${bodyY + 18}" font-family="var(--font-sans)" font-size="10" text-anchor="end" fill="var(--color-text-tertiary)">${distLabel} · ${size}개</text>`;
+
+    if (currentPhase){
+      const phaseColor = phaseColors[currentPhase];
+      s += `<rect x="${bodyX + 8}" y="${bodyY + 28}" width="${bodyW - 16}" height="3" rx="1.5" fill="${phaseColor}" opacity="0.8"/>`;
+      s += `<text x="${bodyX + bodyW/2}" y="${bodyY + 26}" font-family="var(--font-mono)" font-size="9" text-anchor="middle" font-weight="500" fill="${phaseColor}">phase: ${currentPhase}</text>`;
+    }
+
+    const barAreaX = bodyX + 20, barAreaY = bodyY + 50, barAreaW = bodyW - 40, barAreaH = 140;
+    const barW = Math.min(60, (barAreaW - (size-1)*10) / size);
+    const totalBarsW = barW * size + 10 * (size-1);
+    const barStartX = barAreaX + (barAreaW - totalBarsW) / 2;
+    const maxVal = Math.max(...arr);
+    const sortedFrom = size - pass;
+
+    for (let k = 0; k < size; k++){
+      const x = barStartX + k * (barW + 10);
+      const h = (arr[k] / maxVal) * barAreaH;
+      const y = barAreaY + barAreaH - h;
+      const isComp = lastComp && (k === lastComp[0] || k === lastComp[1]);
+      const isSwap = lastSwap && (k === lastSwap[0] || k === lastSwap[1]);
+      const isSorted = k >= sortedFrom;
+
+      let fill, stroke;
+      if (isSwap && currentPhase === 'swapping'){ fill = '#D85A30'; stroke = '#712B13'; }
+      else if (isComp && currentPhase === 'comparing'){ fill = '#FAC775'; stroke = '#854F0B'; }
+      else if (isSorted){ fill = '#9FE1CB'; stroke = '#0F6E56'; }
+      else { fill = '#B5D4F4'; stroke = '#185FA5'; }
+      s += `<rect x="${x}" y="${y}" width="${barW}" height="${h}" fill="${fill}" stroke="${stroke}" stroke-width="1" rx="2"/>`;
+      s += `<text x="${x + barW/2}" y="${barAreaY + barAreaH + 12}" font-family="var(--font-mono)" font-size="9" text-anchor="middle" fill="var(--color-text-tertiary)">${arr[k]}</text>`;
+    }
+
+    const metricsY = bodyY + bodyH - 40;
+    s += `<line x1="${bodyX + 20}" y1="${metricsY - 10}" x2="${bodyX + bodyW - 20}" y2="${metricsY - 10}" stroke="var(--color-border-tertiary)" stroke-width="0.5"/>`;
+    const metrics = [
+      { label: '패스', val: pass },
+      { label: '비교', val: comparisons },
+      { label: '교환', val: swaps },
+      { label: '상태', val: bodyState === 'ready' ? '준비' : bodyState === 'running' ? '진행' : '완료' }
+    ];
+    const metricSpan = (bodyW - 40) / metrics.length;
+    metrics.forEach((m, idx) => {
+      const mx = bodyX + 20 + metricSpan * idx + metricSpan/2;
+      s += `<text x="${mx}" y="${metricsY + 6}" font-family="var(--font-sans)" font-size="9" text-anchor="middle" fill="var(--color-text-tertiary)" letter-spacing="0.05em">${m.label.toUpperCase()}</text>`;
+      s += `<text x="${mx}" y="${metricsY + 24}" font-family="var(--font-mono)" font-size="13" font-weight="500" text-anchor="middle" fill="${m.label === '상태' && bodyState === 'complete' ? '#0F6E56' : 'var(--color-text-primary)'}">${m.val}</text>`;
+    });
+
+    let wireColor, wireWidth;
+    if (phase === 'pulse') { wireColor = '#FAC775'; wireWidth = 2; }
+    else if (phase === 'complete') { wireColor = '#9FE1CB'; wireWidth = 2; }
+    else { wireColor = 'var(--color-border-secondary)'; wireWidth = 1.5; }
+    s += `<line x1="${wireStartX}" y1="${wireY}" x2="${wireEndX}" y2="${wireY}" stroke="${wireColor}" stroke-width="${wireWidth}"/>`;
+    s += `<circle cx="${wireStartX}" cy="${wireY}" r="3" fill="${wireColor}"/>`;
+    s += `<circle cx="${wireEndX}" cy="${wireY}" r="3" fill="${wireColor}"/>`;
+
+    if (phase === 'pulse'){
+      const t = Math.min(elapsed / d.pulse, 1);
+      const px = wireStartX + (wireEndX - wireStartX) * t;
+      const fade = 1 - Math.pow(t, 3);
+      s += `<circle cx="${px}" cy="${wireY}" r="9" fill="#FAC775" opacity="${0.25 * fade}"/>`;
+      s += `<circle cx="${px}" cy="${wireY}" r="6" fill="#FAC775"/>`;
+      s += `<circle cx="${px}" cy="${wireY}" r="3" fill="#FFFFFF" opacity="0.9"/>`;
+    } else if (phase === 'complete'){
+      const t = Math.min(elapsed / d.complete, 1);
+      const px = wireEndX + (wireStartX - wireEndX) * t;
+      const fade = 1 - Math.pow(t, 3);
+      s += `<circle cx="${px}" cy="${wireY}" r="9" fill="#9FE1CB" opacity="${0.25 * fade}"/>`;
+      s += `<circle cx="${px}" cy="${wireY}" r="6" fill="#1D9E75"/>`;
+      s += `<text x="${px}" y="${wireY - 14}" font-family="var(--font-mono)" font-size="10" text-anchor="middle" fill="#0F6E56">complete</text>`;
+    }
+
+    const containerActive = phase === 'pulse' && elapsed < d.pulse * 0.3;
+    const containerColor = bodyState === 'complete' ? '#9FE1CB' : containerActive ? '#FAC775' : '#FAEEDA';
+    const containerStroke = bodyState === 'complete' ? '#0F6E56' : '#854F0B';
+    s += `<circle cx="${containerCx}" cy="${containerCy}" r="38" fill="${containerColor}" stroke="${containerStroke}" stroke-width="1.5"/>`;
+    s += `<circle cx="${containerCx}" cy="${containerCy}" r="32" fill="none" stroke="${containerStroke}" stroke-width="0.5" opacity="0.5"/>`;
+    if (containerActive){
+      const pulseR = 38 + elapsed * 0.08 / speedMul;
+      const pulseFade = 1 - elapsed / (d.pulse * 0.3);
+      s += `<circle cx="${containerCx}" cy="${containerCy}" r="${pulseR}" fill="none" stroke="#FAC775" stroke-width="2" opacity="${pulseFade * 0.6}"/>`;
+    }
+    s += `<text x="${containerCx}" y="${containerCy - 4}" font-family="var(--font-sans)" font-size="10" font-weight="500" text-anchor="middle" fill="#854F0B">loop</text>`;
+    s += `<text x="${containerCx}" y="${containerCy + 10}" font-family="var(--font-mono)" font-size="14" font-weight="500" text-anchor="middle" fill="#412402">${tickCount}</text>`;
+    s += `<text x="${containerCx}" y="${containerCy + 22}" font-family="var(--font-sans)" font-size="8" text-anchor="middle" fill="#854F0B" letter-spacing="0.05em">TICKS</text>`;
+    s += `<text x="${containerCx}" y="${containerCy + 60}" font-family="var(--font-sans)" font-size="9" text-anchor="middle" fill="var(--color-text-tertiary)">facet:loop</text>`;
+
+    let phaseLabel;
+    if (phase === 'idle' && tickCount === 0) phaseLabel = '대기 — 시작 버튼을 누르세요';
+    else if (phase === 'idle') phaseLabel = '다음 tick 준비 중';
+    else if (phase === 'pulse') phaseLabel = 'tick 시그널이 본체로 전달 중';
+    else if (phase === 'body') phaseLabel = currentPhase ? `본체가 phase "${currentPhase}" 발생 중` : '본체가 한 단계 수행 중';
+    else if (phase === 'complete') phaseLabel = '본체가 complete 시그널을 컨테이너로 반환';
+    else if (phase === 'done') phaseLabel = '✓ 완료';
+    s += `<text x="${W/2}" y="${H - 8}" font-family="var(--font-sans)" font-size="11" text-anchor="middle" fill="var(--color-text-secondary)">${phaseLabel}</text>`;
+
+    svg.innerHTML = s;
+  }
+
+  function stopPlay(){
+    playing = false;
+    playLabel.textContent = '시작';
+    playBtn.querySelector('svg').innerHTML = '<path d="M1 1L11 7L1 13V1Z" fill="currentColor"/>';
+  }
+  function startPlay(){
+    if (bodyState === 'complete'){ doReset(); }
+    playing = true;
+    playLabel.textContent = '정지';
+    playBtn.querySelector('svg').innerHTML = '<rect x="1" y="1" width="3" height="12" fill="currentColor"/><rect x="8" y="1" width="3" height="12" fill="currentColor"/>';
+    if (phase === 'idle' || phase === 'done'){ tickStart(); }
+  }
+  function singleStep(){
+    if (playing) stopPlay();
+    if (bodyState === 'complete' || phase === 'done'){ doReset(); return; }
+    if (phase === 'idle' || phase === 'done'){ tickStart(); }
+  }
+  function doReset(){ stopPlay(); fullReset(); }
+
+  distBtns.forEach(btn => btn.addEventListener('click', () => {
+    distBtns.forEach(b => b.classList.remove('dist-active'));
+    btn.classList.add('dist-active');
+    dist = btn.dataset.dist;
+    doReset();
+  }));
+  speedBtns.forEach(btn => btn.addEventListener('click', () => {
+    speedBtns.forEach(b => b.classList.remove('speed-active'));
+    btn.classList.add('speed-active');
+    speedMul = parseFloat(btn.dataset.speed);
+  }));
+  sizeInput.addEventListener('input', (e) => {
+    size = parseInt(e.target.value, 10);
+    sizeOut.textContent = size;
+    doReset();
+  });
+  playBtn.addEventListener('click', () => { if (playing) stopPlay(); else startPlay(); });
+  stepBtn.addEventListener('click', singleStep);
+  resetBtn.addEventListener('click', doReset);
+
+  fullReset();
+  requestAnimationFrame(loop);
+})();
+</script>
