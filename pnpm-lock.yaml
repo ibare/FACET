@@ -50,6 +50,12 @@ importers:
         specifier: workspace:*
         version: link:../core
 
+  packages/lens-code:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../core
+
   packages/transpilers-mainstream:
     dependencies:
       '@facet/core':
