@@ -17,6 +17,7 @@
     "@facet/core": "workspace:*",
     "@facet/container-loop": "workspace:*",
     "@facet/algorithm-bubblesort": "workspace:*",
-    "@facet/transpilers-mainstream": "workspace:*"
+    "@facet/transpilers-mainstream": "workspace:*",
+    "@facet/host-tiptap": "workspace:*"
   }
 }
