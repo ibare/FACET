@@ -1,0 +1,18 @@
+{
+  "name": "facet",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Framework for Abstraction and Concept Exploration through Translation",
+  "packageManager": "pnpm@10.27.0",
+  "scripts": {
+    "build": "pnpm -r run build",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "pnpm -r run typecheck"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.5",
+    "@types/node": "^22.9.0"
+  }
+}
