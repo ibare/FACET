@@ -44,6 +44,12 @@ importers:
 
   packages/core: {}
 
+  packages/lens-circuit:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../core
+
   packages/transpilers-mainstream:
     dependencies:
       '@facet/core':
