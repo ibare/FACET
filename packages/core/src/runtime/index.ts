@@ -20,5 +20,10 @@ export {
   getView,
   listViews,
   clearViewCatalog,
+  registerBuiltinViews,
+  titleBlockView,
+  textDisplayView,
+  controlBarView,
 } from '../views/index.js';
+export { colors, fonts, fontSizes, radii, space } from '../views/design-tokens.js';
 export type { View, ViewInstance, ViewMountParams } from '../views/types.js';

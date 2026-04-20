@@ -1,9 +1,12 @@
 /**
  * View Catalog — 이름→View 생성자 맵.
- * 단계 1에서는 등록 API 만, 실제 뷰 구현은 단계 2/3.
+ * @facet/core 에 내장된 표준 뷰들을 자동 등록.
  */
 
 import type { View, ViewInstance, ViewMountParams } from './types.js';
+import { titleBlockView } from './title-block.js';
+import { textDisplayView } from './text-display.js';
+import { controlBarView } from './control-bar.js';
 
 const globalViewCatalog = new Map<string, View>();
 
@@ -27,4 +30,14 @@ export function clearViewCatalog(): void {
   globalViewCatalog.clear();
 }
 
+export function registerBuiltinViews(): void {
+  registerView('title-block', titleBlockView);
+  registerView('text-display', textDisplayView);
+  registerView('control-bar', controlBarView);
+}
+
+// 기본 뷰는 import 시 자동 등록
+registerBuiltinViews();
+
 export type { View, ViewInstance, ViewMountParams };
+export { titleBlockView, textDisplayView, controlBarView };

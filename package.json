@@ -13,13 +13,14 @@
     "typecheck": "pnpm -r run typecheck"
   },
   "devDependencies": {
-    "typescript": "^5.6.3",
-    "vitest": "^2.1.5",
-    "@types/node": "^22.9.0",
-    "@facet/core": "workspace:*",
-    "@facet/container-loop": "workspace:*",
     "@facet/algorithm-bubblesort": "workspace:*",
+    "@facet/container-loop": "workspace:*",
+    "@facet/core": "workspace:*",
+    "@facet/host-tiptap": "workspace:*",
     "@facet/transpilers-mainstream": "workspace:*",
-    "@facet/host-tiptap": "workspace:*"
+    "@types/node": "^22.9.0",
+    "happy-dom": "^20.9.0",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.5"
   }
 }
