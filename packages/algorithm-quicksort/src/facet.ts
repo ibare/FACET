@@ -38,7 +38,7 @@ export const quicksortFacet: FacetJson = {
       type: 'code-view',
       label: { en: 'Python · imperative', ko: 'Python · 명령형' },
       ir: 'ir:quicksort-imperative',
-      transpiler: 'transpiler:quicksort-python-imperative',
+      transpiler: 'transpiler:python',
     },
     controls: {
       type: 'control-bar',

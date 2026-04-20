@@ -114,19 +114,34 @@ export function runFacet(
   mountEl.textContent = '';
   mountEl.appendChild(built.root);
 
-  // 3. code-view IR/Transpiler 사전 처리
+  // 3. code-view IR/Transpiler 사전 처리.
+  //    누락/조회 실패/paradigm 불일치는 모두 throw — 작성자 실수를 즉시 노출.
   for (const [ref, spec] of Object.entries(enrichedBlocks)) {
-    if (spec.type === 'code-view') {
-      const cv = spec as { ir?: string; transpiler?: string };
-      if (cv.ir && cv.transpiler) {
-        const ir = getIR(stripPrefix(cv.ir, 'ir'));
-        const transpiler = getTranspiler(stripPrefix(cv.transpiler, 'transpiler'));
-        if (ir && transpiler) {
-          const result = transpiler.transpile(ir);
-          enrichedBlocks[ref] = { ...spec, _transpiledLines: result.lines };
-        }
-      }
+    if (spec.type !== 'code-view') continue;
+    const cv = spec as { ir?: string; transpiler?: string };
+    const hasIR = cv.ir !== undefined;
+    const hasTrans = cv.transpiler !== undefined;
+    if (!hasIR && !hasTrans) continue; // 코드 패널을 의도적으로 비워둔 경우
+    if (hasIR !== hasTrans) {
+      throw new Error(
+        `code-view "${ref}": ir / transpiler 는 짝으로 지정해야 한다 (현재 ir=${cv.ir}, transpiler=${cv.transpiler})`,
+      );
     }
+    const irName = stripPrefix(cv.ir!, 'ir');
+    const transName = stripPrefix(cv.transpiler!, 'transpiler');
+    const ir = getIR(irName);
+    if (!ir) throw new Error(`code-view "${ref}": IR 미등록 — "${irName}"`);
+    const transpiler = getTranspiler(transName);
+    if (!transpiler) {
+      throw new Error(`code-view "${ref}": Transpiler 미등록 — "${transName}"`);
+    }
+    if (!transpiler.supports.includes(ir.paradigm)) {
+      throw new Error(
+        `code-view "${ref}": Transpiler "${transName}" 가 paradigm "${ir.paradigm}" 를 지원하지 않음 (지원: ${transpiler.supports.join(',')})`,
+      );
+    }
+    const result = transpiler.transpile(ir);
+    enrichedBlocks[ref] = { ...spec, _transpiledLines: result.lines };
   }
 
   const views = mountBlocks({

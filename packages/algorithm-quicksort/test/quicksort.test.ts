@@ -5,6 +5,7 @@ import {
   clearRegistry,
 } from '@facet/core/runtime';
 import { quicksort, registerQuicksort, quicksortFacet } from '../src/index.js';
+import { registerPythonTranspiler } from '@facet/transpiler-python';
 
 function delay(ms: number): Promise<void> {
   return new Promise((res) => setTimeout(res, ms));
@@ -50,6 +51,7 @@ describe('QuickSort 알고리즘 자체', () => {
 describe('QuickSort facet — 4-layer 통합', () => {
   beforeEach(() => {
     clearRegistry();
+    registerPythonTranspiler();
     registerQuicksort();
   });
 

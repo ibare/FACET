@@ -1,0 +1,220 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Transpiler 스냅샷 > bubblesort → cpp 1`] = `
+"·              | void bubblesort(std::vector<int>& arr) {
+·              |     int n = arr.size();
+·              |     for (int p = 0; p < n - 1; ++p) {
+·              |         bool swapped = false;
+·              |         for (int j = 0; j < (n - 1) - p; ++j) {
+compare        |             if (arr[j] > arr[j + 1]) {
+swap           |                 std::swap(arr[j], arr[j + 1]);
+·              |                 swapped = true;
+·              |             }
+·              |         }
+pass-end       |         if (!swapped) {
+·              |             break;
+·              |         }
+·              |     }
+·              | }"
+`;
+
+exports[`Transpiler 스냅샷 > bubblesort → csharp 1`] = `
+"·              | static void bubblesort(int[] arr) {
+·              |     int n = arr.Length;
+·              |     for (int p = 0; p < n - 1; p++) {
+·              |         bool swapped = false;
+·              |         for (int j = 0; j < (n - 1) - p; j++) {
+compare        |             if (arr[j] > arr[j + 1]) {
+swap           |                 (arr[j], arr[j + 1]) = (arr[j + 1], arr[j]);
+·              |                 swapped = true;
+·              |             }
+·              |         }
+pass-end       |         if (!swapped) {
+·              |             break;
+·              |         }
+·              |     }
+·              | }"
+`;
+
+exports[`Transpiler 스냅샷 > bubblesort → java 1`] = `
+"·              | static void bubblesort(int[] arr) {
+·              |     int n = arr.length;
+·              |     for (int p = 0; p < n - 1; p++) {
+·              |         boolean swapped = false;
+·              |         for (int j = 0; j < (n - 1) - p; j++) {
+compare        |             if (arr[j] > arr[j + 1]) {
+swap           |                 int tmp1 = arr[j];
+swap           |                 arr[j] = arr[j + 1];
+swap           |                 arr[j + 1] = tmp1;
+·              |                 swapped = true;
+·              |             }
+·              |         }
+pass-end       |         if (!swapped) {
+·              |             break;
+·              |         }
+·              |     }
+·              | }"
+`;
+
+exports[`Transpiler 스냅샷 > bubblesort → javascript 1`] = `
+"·              | function bubblesort(arr) {
+·              |   let n = arr.length;
+·              |   for (let p = 0; p < n - 1; p++) {
+·              |     let swapped = false;
+·              |     for (let j = 0; j < (n - 1) - p; j++) {
+compare        |       if (arr[j] > arr[j + 1]) {
+swap           |         [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+·              |         swapped = true;
+·              |       }
+·              |     }
+pass-end       |     if (!swapped) {
+·              |       break;
+·              |     }
+·              |   }
+·              | }"
+`;
+
+exports[`Transpiler 스냅샷 > bubblesort → python 1`] = `
+"·              | def bubblesort(arr):
+·              |     n = len(arr)
+·              |     for p in range(n - 1):
+·              |         swapped = False
+·              |         for j in range((n - 1) - p):
+compare        |             if arr[j] > arr[j + 1]:
+swap           |                 arr[j], arr[j + 1] = arr[j + 1], arr[j]
+·              |                 swapped = True
+pass-end       |         if not swapped:
+·              |             break"
+`;
+
+exports[`Transpiler 스냅샷 > bubblesort → typescript 1`] = `
+"·              | function bubblesort(arr: number[]): void {
+·              |   let n = arr.length;
+·              |   for (let p = 0; p < n - 1; p++) {
+·              |     let swapped = false;
+·              |     for (let j = 0; j < (n - 1) - p; j++) {
+compare        |       if (arr[j] > arr[j + 1]) {
+swap           |         [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+·              |         swapped = true;
+·              |       }
+·              |     }
+pass-end       |     if (!swapped) {
+·              |       break;
+·              |     }
+·              |   }
+·              | }"
+`;
+
+exports[`Transpiler 스냅샷 > quicksort → cpp 1`] = `
+"·              | void quicksort(std::vector<int>& arr, int lo, int hi) {
+·              |     if (lo >= hi) {
+·              |         return;
+·              |     }
+pivot-select   |     int pivot = arr[hi];
+·              |     int i = lo - 1;
+·              |     for (int j = lo; j < hi; ++j) {
+compare        |         if (arr[j] < pivot) {
+·              |             i = i + 1;
+swap           |             std::swap(arr[i], arr[j]);
+·              |         }
+·              |     }
+partition      |     std::swap(arr[i + 1], arr[hi]);
+recurse        |     quicksort(arr, lo, i);
+recurse        |     quicksort(arr, i + 2, hi);
+·              | }"
+`;
+
+exports[`Transpiler 스냅샷 > quicksort → csharp 1`] = `
+"·              | static void quicksort(int[] arr, int lo, int hi) {
+·              |     if (lo >= hi) {
+·              |         return;
+·              |     }
+pivot-select   |     int pivot = arr[hi];
+·              |     int i = lo - 1;
+·              |     for (int j = lo; j < hi; j++) {
+compare        |         if (arr[j] < pivot) {
+·              |             i = i + 1;
+swap           |             (arr[i], arr[j]) = (arr[j], arr[i]);
+·              |         }
+·              |     }
+partition      |     (arr[i + 1], arr[hi]) = (arr[hi], arr[i + 1]);
+recurse        |     quicksort(arr, lo, i);
+recurse        |     quicksort(arr, i + 2, hi);
+·              | }"
+`;
+
+exports[`Transpiler 스냅샷 > quicksort → java 1`] = `
+"·              | static void quicksort(int[] arr, int lo, int hi) {
+·              |     if (lo >= hi) {
+·              |         return;
+·              |     }
+pivot-select   |     int pivot = arr[hi];
+·              |     int i = lo - 1;
+·              |     for (int j = lo; j < hi; j++) {
+compare        |         if (arr[j] < pivot) {
+·              |             i = i + 1;
+swap           |             int tmp1 = arr[i];
+swap           |             arr[i] = arr[j];
+swap           |             arr[j] = tmp1;
+·              |         }
+·              |     }
+partition      |     int tmp2 = arr[i + 1];
+partition      |     arr[i + 1] = arr[hi];
+partition      |     arr[hi] = tmp2;
+recurse        |     quicksort(arr, lo, i);
+recurse        |     quicksort(arr, i + 2, hi);
+·              | }"
+`;
+
+exports[`Transpiler 스냅샷 > quicksort → javascript 1`] = `
+"·              | function quicksort(arr, lo, hi) {
+·              |   if (lo >= hi) {
+·              |     return;
+·              |   }
+pivot-select   |   let pivot = arr[hi];
+·              |   let i = lo - 1;
+·              |   for (let j = lo; j < hi; j++) {
+compare        |     if (arr[j] < pivot) {
+·              |       i = i + 1;
+swap           |       [arr[i], arr[j]] = [arr[j], arr[i]];
+·              |     }
+·              |   }
+partition      |   [arr[i + 1], arr[hi]] = [arr[hi], arr[i + 1]];
+recurse        |   quicksort(arr, lo, i);
+recurse        |   quicksort(arr, i + 2, hi);
+·              | }"
+`;
+
+exports[`Transpiler 스냅샷 > quicksort → python 1`] = `
+"·              | def quicksort(arr, lo, hi):
+·              |     if lo >= hi:
+·              |         return
+pivot-select   |     pivot = arr[hi]
+·              |     i = lo - 1
+·              |     for j in range(lo, hi):
+compare        |         if arr[j] < pivot:
+·              |             i = i + 1
+swap           |             arr[i], arr[j] = arr[j], arr[i]
+partition      |     arr[i + 1], arr[hi] = arr[hi], arr[i + 1]
+recurse        |     quicksort(arr, lo, i)
+recurse        |     quicksort(arr, i + 2, hi)"
+`;
+
+exports[`Transpiler 스냅샷 > quicksort → typescript 1`] = `
+"·              | function quicksort(arr: number[], lo: number, hi: number): void {
+·              |   if (lo >= hi) {
+·              |     return;
+·              |   }
+pivot-select   |   let pivot = arr[hi];
+·              |   let i = lo - 1;
+·              |   for (let j = lo; j < hi; j++) {
+compare        |     if (arr[j] < pivot) {
+·              |       i = i + 1;
+swap           |       [arr[i], arr[j]] = [arr[j], arr[i]];
+·              |     }
+·              |   }
+partition      |   [arr[i + 1], arr[hi]] = [arr[hi], arr[i + 1]];
+recurse        |   quicksort(arr, lo, i);
+recurse        |   quicksort(arr, i + 2, hi);
+·              | }"
+`;

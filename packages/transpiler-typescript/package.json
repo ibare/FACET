@@ -1,5 +1,5 @@
 {
-  "name": "@facet/algorithm-quicksort",
+  "name": "@facet/transpiler-typescript",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -13,8 +13,5 @@
   },
   "dependencies": {
     "@facet/core": "workspace:*"
-  },
-  "devDependencies": {
-    "@facet/transpiler-python": "workspace:*"
   }
 }

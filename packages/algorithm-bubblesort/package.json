@@ -13,5 +13,8 @@
   },
   "dependencies": {
     "@facet/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@facet/transpiler-python": "workspace:*"
   }
 }

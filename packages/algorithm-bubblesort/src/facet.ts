@@ -38,7 +38,7 @@ export const bubblesortFacet: FacetJson = {
       type: 'code-view',
       label: { en: 'Python · imperative', ko: 'Python · 명령형' },
       ir: 'ir:bubblesort-imperative',
-      transpiler: 'transpiler:bubblesort-python-imperative',
+      transpiler: 'transpiler:python',
     },
     controls: {
       type: 'control-bar',

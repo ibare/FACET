@@ -1,16 +1,13 @@
 /**
- * @facet/algorithm-quicksort — 4-layer 구조의 첫 실 알고리즘 모듈.
+ * @facet/algorithm-quicksort — 4-layer 알고리즘 모듈.
+ *
+ * 코드 패널 라인은 IR + 언어별 transpiler (별도 패키지) 로 생성되므로
+ * 이 패키지는 transpiler 를 등록하지 않는다.
  */
 
 export { quicksort, type QuickSortData } from './algorithm.js';
 export { quicksortProjector } from './projector.js';
-export { quicksortIRs } from './irs.js';
-export {
-  quicksortTranspilers,
-  quicksortPythonImperative,
-  quicksortPythonFunctional,
-  quicksortJavascriptImperative,
-} from './transpilers.js';
+export { quicksortImperativeIR, quicksortIRs } from './irs.js';
 export { quicksortFacet } from './facet.js';
 
 import {
@@ -18,19 +15,16 @@ import {
   registerProjector,
   registerFacets,
   registerIR,
-  registerTranspiler,
 } from '@facet/core/runtime';
 import { quicksort } from './algorithm.js';
 import { quicksortProjector } from './projector.js';
 import { quicksortIRs } from './irs.js';
-import { quicksortTranspilers } from './transpilers.js';
 import { quicksortFacet } from './facet.js';
 
-/** 한 번에 모두 등록하는 헬퍼 */
+/** algorithm/projector/IR/facet 등록 헬퍼 (transpiler 는 호스트가 별도 등록). */
 export function registerQuicksort(): void {
   registerAlgorithm('quicksort', quicksort);
   registerProjector('quicksortProjector', quicksortProjector);
   for (const ir of quicksortIRs) registerIR(ir.id, ir);
-  for (const t of quicksortTranspilers) registerTranspiler(t.id, t);
   registerFacets([quicksortFacet]);
 }

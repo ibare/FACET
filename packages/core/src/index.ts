@@ -5,5 +5,5 @@
  * 함께 재공개한다.
  */
 
-export * from './types.js';
+export * from './types/ir.js';
 export * from './runtime/index.js';

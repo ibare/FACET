@@ -20,6 +20,24 @@ importers:
       '@facet/host-tiptap':
         specifier: workspace:*
         version: link:packages/host-tiptap
+      '@facet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:packages/transpiler-cpp
+      '@facet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:packages/transpiler-csharp
+      '@facet/transpiler-java':
+        specifier: workspace:*
+        version: link:packages/transpiler-java
+      '@facet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:packages/transpiler-javascript
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:packages/transpiler-python
+      '@facet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:packages/transpiler-typescript
       '@types/node':
         specifier: ^22.9.0
         version: 22.19.17
@@ -47,6 +65,24 @@ importers:
       '@facet/host-tiptap':
         specifier: workspace:*
         version: link:../../packages/host-tiptap
+      '@facet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../packages/transpiler-cpp
+      '@facet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../packages/transpiler-csharp
+      '@facet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../packages/transpiler-java
+      '@facet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../packages/transpiler-javascript
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../packages/transpiler-python
+      '@facet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../packages/transpiler-typescript
       '@phosphor-icons/react':
         specifier: ^2.1.7
         version: 2.1.10(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -102,12 +138,20 @@ importers:
       '@facet/core':
         specifier: workspace:*
         version: link:../core
+    devDependencies:
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../transpiler-python
 
   packages/algorithm-quicksort:
     dependencies:
       '@facet/core':
         specifier: workspace:*
         version: link:../core
+    devDependencies:
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../transpiler-python
 
   packages/core: {}
 
@@ -120,6 +164,9 @@ importers:
       '@facet/algorithm-quicksort':
         specifier: workspace:*
         version: link:../algorithm-quicksort
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../transpiler-python
       '@tiptap/core':
         specifier: ^3.22.3
         version: 3.22.3(@tiptap/pm@3.22.3)
@@ -129,6 +176,42 @@ importers:
       '@tiptap/starter-kit':
         specifier: ^3.22.3
         version: 3.22.3
+
+  packages/transpiler-cpp:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../core
+
+  packages/transpiler-csharp:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../core
+
+  packages/transpiler-java:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../core
+
+  packages/transpiler-javascript:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../core
+
+  packages/transpiler-python:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../core
+
+  packages/transpiler-typescript:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../core
 
 packages:
 

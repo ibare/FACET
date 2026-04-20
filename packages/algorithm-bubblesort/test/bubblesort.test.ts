@@ -2,6 +2,7 @@
 import { describe, expect, it, beforeEach } from 'vitest';
 import { runFacet, clearRegistry } from '@facet/core/runtime';
 import { bubblesort, registerBubblesort, bubblesortFacet } from '../src/index.js';
+import { registerPythonTranspiler } from '@facet/transpiler-python';
 
 function delay(ms: number): Promise<void> {
   return new Promise((res) => setTimeout(res, ms));
@@ -50,6 +51,7 @@ describe('BubbleSort 알고리즘 자체', () => {
 describe('BubbleSort facet — 4-layer 통합', () => {
   beforeEach(() => {
     clearRegistry();
+    registerPythonTranspiler();
     registerBubblesort();
   });
 

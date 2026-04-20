@@ -12,8 +12,7 @@ const algorithms = new Map<string, AlgorithmFn>();
 const projectors = new Map<string, ProjectorFactory>();
 const facets = new Map<string, FacetJson>();
 
-// IR / Transpiler 는 기존 시스템 타입을 재사용 (4-layer 와 직교한 모듈로 보존).
-import type { IR, Transpiler } from '../types.js';
+import type { IR, Transpiler } from '../types/ir.js';
 
 const irs = new Map<string, IR>();
 const transpilers = new Map<string, Transpiler>();
