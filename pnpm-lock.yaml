@@ -97,6 +97,12 @@ importers:
         specifier: workspace:*
         version: link:../core
 
+  packages/algorithm-quicksort:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../core
+
   packages/container-loop:
     dependencies:
       '@facet/core':

@@ -121,6 +121,7 @@ export function runFacet(
   let activePromise: Promise<void> | null = null;
   let stepResolve: (() => void) | null = null;
   let pendingTimer: ReturnType<typeof setTimeout> | null = null;
+  let pendingTimerResolve: (() => void) | null = null;
 
   if (controlBar) {
     callMethod(controlBar, 'onSpeedChange', (mul: number) => {
@@ -133,6 +134,11 @@ export function runFacet(
     if (pendingTimer !== null) {
       clearTimeout(pendingTimer);
       pendingTimer = null;
+    }
+    if (pendingTimerResolve) {
+      const r = pendingTimerResolve;
+      pendingTimerResolve = null;
+      r();
     }
   }
 
@@ -174,8 +180,10 @@ export function runFacet(
       }
       // playing — 속도 비례 지연
       await new Promise<void>((res) => {
+        pendingTimerResolve = res;
         pendingTimer = setTimeout(() => {
           pendingTimer = null;
+          pendingTimerResolve = null;
           res();
         }, Math.max(10, BASE_DELAY_MS / Math.max(0.01, speedMul)));
       });
