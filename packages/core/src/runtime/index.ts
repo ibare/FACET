@@ -24,6 +24,18 @@ export {
   titleBlockView,
   textDisplayView,
   controlBarView,
+  barChartView,
+  graphLayoutView,
+  treeLayoutView,
+  linkedListChainView,
+  queueDisplayView,
+  orderedListView,
+  codeViewView,
 } from '../views/index.js';
 export { colors, fonts, fontSizes, radii, space } from '../views/design-tokens.js';
 export type { View, ViewInstance, ViewMountParams } from '../views/types.js';
+export type { BarItemState } from '../views/bar-chart.js';
+export type { GraphData, GraphPositions, GraphNodeState, GraphEdgeState } from '../views/graph-layout.js';
+export type { TreeNode, TreeNodeState, TreeEdgeState } from '../views/tree-layout.js';
+export type { LinkedListItemState } from '../views/linked-list-chain.js';
+export type { CodeLine } from '../views/code-view.js';
