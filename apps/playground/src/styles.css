@@ -1,102 +1,54 @@
-:root {
-  --bg: #f3f4f8;
-  --panel: #ffffff;
-  --border: #d5d8e3;
-  --text: #2b2f44;
-  --text-secondary: #6b6f80;
-  --accent: #534ab7;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  color: var(--text);
-  background: var(--bg);
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Pretendard', sans-serif;
+  --font-mono: ui-monospace, Menlo, Monaco, 'JetBrains Mono', monospace;
 }
 
-* {
-  box-sizing: border-box;
+html,
+body,
+#root {
+  height: 100%;
 }
 
 body {
   margin: 0;
-  min-height: 100vh;
+  background:
+    radial-gradient(1200px 600px at 0% -10%, rgba(99, 102, 241, 0.18), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(236, 72, 153, 0.12), transparent 60%),
+    #0b0d12;
+  color: #e7e9f0;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.playground {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 32px 24px 64px;
-}
-
-.playground__header {
-  margin-bottom: 20px;
-}
-
-.playground__brand {
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-  font-weight: 600;
-}
-
-.playground__sub {
-  font-size: 22px;
-  font-weight: 500;
-  margin-top: 4px;
-}
-
-.playground__editor {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 28px 36px;
-  min-height: 420px;
-}
-
-.playground__editor .tiptap {
-  outline: none;
-  min-height: 380px;
-  font-size: 15px;
-  line-height: 1.7;
-  color: var(--text);
-}
-
-.playground__editor .tiptap h1 {
-  font-size: 22px;
-  font-weight: 500;
-  margin: 0 0 12px;
-}
-
-.playground__editor .tiptap p {
-  margin: 0 0 10px;
-}
-
-.playground__editor .tiptap code {
-  background: #eceffb;
-  color: var(--accent);
-  padding: 1px 6px;
-  border-radius: 4px;
-  font-size: 13px;
-  font-family: ui-monospace, Menlo, Monaco, monospace;
-}
-
-.playground__editor .facet-node {
+/* facet 마운트 컨테이너 — 페이지 전체에서 사용 */
+.facet-mount {
   display: block;
-  margin: 14px 0;
+  width: 100%;
+  height: 100%;
 }
 
-.playground__editor .facet-mount {
-  display: block;
+/* Radix Accordion 애니메이션 */
+@keyframes facet-accordion-down {
+  from { height: 0; opacity: 0; }
+  to { height: var(--radix-accordion-content-height); opacity: 1; }
+}
+@keyframes facet-accordion-up {
+  from { height: var(--radix-accordion-content-height); opacity: 1; }
+  to { height: 0; opacity: 0; }
 }
 
-.playground__footer {
-  margin-top: 14px;
-  font-size: 12px;
-  color: var(--text-secondary);
+[data-radix-accordion-content][data-state='open'] {
+  animation: facet-accordion-down 200ms ease-out;
+}
+[data-radix-accordion-content][data-state='closed'] {
+  animation: facet-accordion-up 160ms ease-in;
 }
 
-.playground__footer code {
-  background: #eceffb;
-  color: var(--accent);
-  padding: 1px 6px;
-  border-radius: 4px;
-  font-family: ui-monospace, Menlo, Monaco, monospace;
-}
+/* 스크롤바 — 어두운 테마에 맞춰 슬림하게 */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.08); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.16); }

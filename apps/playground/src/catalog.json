@@ -1,0 +1,816 @@
+{
+  "$schema": "Domain[] — 3-level catalog. domain → subdomain → topic. topic.facetId 가 있으면 클릭 시 해당 facet 으로 라우팅.",
+  "domains": [
+    {
+      "id": "cs-fundamentals",
+      "name": "컴퓨터 과학 기초",
+      "tagline": "자료구조와 알고리즘의 본체",
+      "icon": "Cpu",
+      "accent": "amber",
+      "subdomains": [
+        {
+          "id": "data-structures",
+          "name": "자료구조",
+          "topics": [
+            { "id": "array", "name": "배열" },
+            { "id": "linked-list", "name": "연결 리스트" },
+            { "id": "stack", "name": "스택" },
+            { "id": "queue", "name": "큐" },
+            { "id": "deque", "name": "덱" },
+            { "id": "hash-table", "name": "해시 테이블" },
+            { "id": "binary-tree", "name": "이진 트리" },
+            { "id": "bst", "name": "이진 탐색 트리" },
+            { "id": "avl-tree", "name": "AVL 트리" },
+            { "id": "red-black-tree", "name": "Red-Black 트리" },
+            { "id": "b-tree", "name": "B-Tree" },
+            { "id": "trie", "name": "Trie" },
+            { "id": "heap", "name": "힙" },
+            { "id": "graph", "name": "그래프" },
+            { "id": "union-find", "name": "유니온-파인드" }
+          ]
+        },
+        {
+          "id": "algorithms",
+          "name": "알고리즘",
+          "topics": [
+            { "id": "bubble-sort", "name": "버블 정렬", "facetId": "facet:bubbleSort" },
+            { "id": "selection-sort", "name": "선택 정렬" },
+            { "id": "insertion-sort", "name": "삽입 정렬" },
+            { "id": "merge-sort", "name": "머지 정렬" },
+            { "id": "quick-sort", "name": "퀵 정렬", "facetId": "facet:quickSort" },
+            { "id": "heap-sort", "name": "힙 정렬" },
+            { "id": "counting-sort", "name": "카운팅 정렬" },
+            { "id": "radix-sort", "name": "기수 정렬" },
+            { "id": "shell-sort", "name": "셸 정렬" },
+            { "id": "linear-search", "name": "선형 탐색" },
+            { "id": "binary-search", "name": "이진 탐색" },
+            { "id": "interpolation-search", "name": "보간 탐색" },
+            { "id": "recursion", "name": "재귀" },
+            { "id": "divide-and-conquer", "name": "분할 정복" },
+            { "id": "dynamic-programming", "name": "동적 계획법" },
+            { "id": "greedy", "name": "그리디" },
+            { "id": "backtracking", "name": "백트래킹" },
+            { "id": "branch-and-bound", "name": "분기 한정" }
+          ]
+        },
+        {
+          "id": "graph-algorithms",
+          "name": "그래프 알고리즘",
+          "topics": [
+            { "id": "bfs", "name": "BFS" },
+            { "id": "dfs", "name": "DFS" },
+            { "id": "dijkstra", "name": "Dijkstra" },
+            { "id": "bellman-ford", "name": "Bellman-Ford" },
+            { "id": "floyd-warshall", "name": "Floyd-Warshall" },
+            { "id": "a-star", "name": "A*" },
+            { "id": "prim-mst", "name": "Prim MST" },
+            { "id": "kruskal-mst", "name": "Kruskal MST" },
+            { "id": "topological-sort", "name": "위상 정렬" },
+            { "id": "scc", "name": "SCC" },
+            { "id": "max-flow", "name": "최대 유량" }
+          ]
+        },
+        {
+          "id": "string-algorithms",
+          "name": "문자열 알고리즘",
+          "topics": [
+            { "id": "kmp", "name": "KMP" },
+            { "id": "boyer-moore", "name": "Boyer-Moore" },
+            { "id": "rabin-karp", "name": "Rabin-Karp" },
+            { "id": "suffix-array", "name": "접미사 배열" },
+            { "id": "z-algorithm", "name": "Z-알고리즘" },
+            { "id": "aho-corasick", "name": "Aho-Corasick" },
+            { "id": "edit-distance", "name": "편집 거리" }
+          ]
+        },
+        {
+          "id": "numerical-algorithms",
+          "name": "수치 알고리즘",
+          "topics": [
+            { "id": "euclidean", "name": "유클리드 호제법" },
+            { "id": "fast-power", "name": "빠른 거듭제곱" },
+            { "id": "sieve", "name": "에라토스테네스의 체" },
+            { "id": "primality", "name": "소수 판정" },
+            { "id": "matrix-mul", "name": "행렬 곱셈" }
+          ]
+        },
+        {
+          "id": "complexity",
+          "name": "계산 복잡도",
+          "topics": [
+            { "id": "big-o", "name": "Big-O 표기" },
+            { "id": "asymptotic", "name": "점근 분석" },
+            { "id": "p-np", "name": "P/NP 분류" },
+            { "id": "reduction", "name": "환원" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "programming-fundamentals",
+      "name": "프로그래밍 기초",
+      "tagline": "언어 수준 메커니즘",
+      "icon": "Code",
+      "accent": "cyan",
+      "subdomains": [
+        {
+          "id": "control-flow",
+          "name": "제어 흐름",
+          "topics": [
+            { "id": "conditional", "name": "조건문" },
+            { "id": "loop", "name": "반복문" },
+            { "id": "branching", "name": "분기" },
+            { "id": "recursive-call", "name": "재귀 호출" },
+            { "id": "exception", "name": "예외 처리" }
+          ]
+        },
+        {
+          "id": "variables-types",
+          "name": "변수와 타입",
+          "topics": [
+            { "id": "primitive", "name": "원시 타입" },
+            { "id": "reference-type", "name": "참조 타입" },
+            { "id": "type-coercion", "name": "타입 변환" },
+            { "id": "scope", "name": "스코프" },
+            { "id": "lifetime", "name": "라이프타임" }
+          ]
+        },
+        {
+          "id": "functions",
+          "name": "함수",
+          "topics": [
+            { "id": "argument-passing", "name": "인자 전달" },
+            { "id": "return-value", "name": "반환" },
+            { "id": "closure", "name": "클로저" },
+            { "id": "higher-order", "name": "고차 함수" },
+            { "id": "currying", "name": "커링" }
+          ]
+        },
+        {
+          "id": "oop",
+          "name": "객체 지향",
+          "topics": [
+            { "id": "class", "name": "클래스" },
+            { "id": "inheritance", "name": "상속" },
+            { "id": "polymorphism", "name": "다형성" },
+            { "id": "interface", "name": "인터페이스" },
+            { "id": "abstraction", "name": "추상화" },
+            { "id": "encapsulation", "name": "캡슐화" }
+          ]
+        },
+        {
+          "id": "fp",
+          "name": "함수형 프로그래밍",
+          "topics": [
+            { "id": "pure-function", "name": "순수 함수" },
+            { "id": "immutability", "name": "불변성" },
+            { "id": "map-filter-reduce", "name": "map/filter/reduce" },
+            { "id": "monad-basics", "name": "모나드 기초" }
+          ]
+        },
+        {
+          "id": "memory-model",
+          "name": "메모리 모델",
+          "topics": [
+            { "id": "stack-heap", "name": "스택과 힙" },
+            { "id": "pointer", "name": "포인터" },
+            { "id": "reference", "name": "참조" },
+            { "id": "gc", "name": "가비지 컬렉션" },
+            { "id": "manual-memory", "name": "수동 메모리 관리" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "operating-systems",
+      "name": "운영체제",
+      "tagline": "프로세스 · 메모리 · 입출력",
+      "icon": "Stack",
+      "accent": "violet",
+      "subdomains": [
+        {
+          "id": "process-thread",
+          "name": "프로세스와 스레드",
+          "topics": [
+            { "id": "process-state", "name": "프로세스 상태" },
+            { "id": "context-switch", "name": "컨텍스트 스위칭" },
+            { "id": "pcb", "name": "PCB" }
+          ]
+        },
+        {
+          "id": "scheduling",
+          "name": "스케줄링",
+          "topics": [
+            { "id": "fcfs", "name": "FCFS" },
+            { "id": "sjf", "name": "SJF" },
+            { "id": "round-robin", "name": "Round Robin" },
+            { "id": "priority", "name": "Priority" },
+            { "id": "mlfq", "name": "MLFQ" },
+            { "id": "cfs", "name": "CFS" }
+          ]
+        },
+        {
+          "id": "synchronization",
+          "name": "동기화",
+          "topics": [
+            { "id": "mutex", "name": "뮤텍스" },
+            { "id": "semaphore", "name": "세마포어" },
+            { "id": "monitor", "name": "모니터" },
+            { "id": "deadlock", "name": "데드락" },
+            { "id": "producer-consumer", "name": "생산자-소비자" }
+          ]
+        },
+        {
+          "id": "memory-management",
+          "name": "메모리 관리",
+          "topics": [
+            { "id": "paging", "name": "페이징" },
+            { "id": "segmentation", "name": "세그멘테이션" },
+            { "id": "virtual-memory", "name": "가상 메모리" },
+            { "id": "lru", "name": "LRU 페이지 교체" },
+            { "id": "fifo-page", "name": "FIFO 페이지 교체" },
+            { "id": "clock-algorithm", "name": "Clock 알고리즘" }
+          ]
+        },
+        {
+          "id": "file-system",
+          "name": "파일 시스템",
+          "topics": [
+            { "id": "inode", "name": "inode" },
+            { "id": "fat", "name": "FAT" },
+            { "id": "journaling", "name": "저널링" },
+            { "id": "directory-structure", "name": "디렉토리 구조" }
+          ]
+        },
+        {
+          "id": "io",
+          "name": "입출력",
+          "topics": [
+            { "id": "dma", "name": "DMA" },
+            { "id": "interrupt", "name": "인터럽트" },
+            { "id": "disk-scheduling", "name": "디스크 스케줄링" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "networks",
+      "name": "컴퓨터 네트워크",
+      "tagline": "프로토콜 스택과 흐름 제어",
+      "icon": "Network",
+      "accent": "sky",
+      "subdomains": [
+        {
+          "id": "osi-tcp",
+          "name": "OSI / TCP-IP 계층",
+          "topics": [
+            { "id": "physical-layer", "name": "물리 계층" },
+            { "id": "datalink-layer", "name": "데이터 링크 계층" },
+            { "id": "network-layer", "name": "네트워크 계층" },
+            { "id": "transport-layer", "name": "전송 계층" },
+            { "id": "application-layer", "name": "응용 계층" }
+          ]
+        },
+        {
+          "id": "data-link",
+          "name": "데이터 링크",
+          "topics": [
+            { "id": "ethernet", "name": "이더넷 프레이밍" },
+            { "id": "mac", "name": "MAC 주소" },
+            { "id": "arp", "name": "ARP 프로토콜" }
+          ]
+        },
+        {
+          "id": "network-routing",
+          "name": "네트워크 계층",
+          "topics": [
+            { "id": "ip-routing", "name": "IP 라우팅" },
+            { "id": "rip", "name": "RIP" },
+            { "id": "ospf", "name": "OSPF" },
+            { "id": "bgp", "name": "BGP" },
+            { "id": "nat", "name": "NAT" },
+            { "id": "icmp", "name": "ICMP" }
+          ]
+        },
+        {
+          "id": "transport",
+          "name": "전송 계층",
+          "topics": [
+            { "id": "tcp-handshake", "name": "TCP 핸드셰이크" },
+            { "id": "flow-control", "name": "흐름 제어" },
+            { "id": "congestion-control", "name": "혼잡 제어" },
+            { "id": "udp", "name": "UDP" }
+          ]
+        },
+        {
+          "id": "application",
+          "name": "응용 계층",
+          "topics": [
+            { "id": "http", "name": "HTTP / HTTPS" },
+            { "id": "dns", "name": "DNS" },
+            { "id": "smtp", "name": "SMTP" },
+            { "id": "ftp", "name": "FTP" },
+            { "id": "websocket", "name": "WebSocket" }
+          ]
+        },
+        {
+          "id": "network-security",
+          "name": "보안",
+          "topics": [
+            { "id": "tls-handshake", "name": "TLS 핸드셰이크" },
+            { "id": "auth", "name": "인증" },
+            { "id": "firewall", "name": "방화벽" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "databases",
+      "name": "데이터베이스",
+      "tagline": "관계 모델 · 트랜잭션 · 분산",
+      "icon": "Database",
+      "accent": "emerald",
+      "subdomains": [
+        {
+          "id": "relational",
+          "name": "관계 모델",
+          "topics": [
+            { "id": "table-key", "name": "테이블과 키" },
+            { "id": "relation", "name": "관계" },
+            { "id": "1nf", "name": "1NF" },
+            { "id": "2nf", "name": "2NF" },
+            { "id": "3nf", "name": "3NF" },
+            { "id": "bcnf", "name": "BCNF" }
+          ]
+        },
+        {
+          "id": "sql",
+          "name": "SQL",
+          "topics": [
+            { "id": "dml", "name": "DML" },
+            { "id": "ddl", "name": "DDL" },
+            { "id": "inner-join", "name": "INNER JOIN" },
+            { "id": "outer-join", "name": "OUTER JOIN" },
+            { "id": "cross-join", "name": "CROSS JOIN" },
+            { "id": "subquery", "name": "서브쿼리" },
+            { "id": "window-function", "name": "윈도우 함수" }
+          ]
+        },
+        {
+          "id": "indexes",
+          "name": "인덱스",
+          "topics": [
+            { "id": "b-plus-tree", "name": "B+ Tree 인덱스" },
+            { "id": "hash-index", "name": "Hash Index" },
+            { "id": "bitmap-index", "name": "Bitmap Index" },
+            { "id": "composite-index", "name": "복합 인덱스" }
+          ]
+        },
+        {
+          "id": "query-processing",
+          "name": "쿼리 처리",
+          "topics": [
+            { "id": "parsing", "name": "파싱" },
+            { "id": "optimizer", "name": "옵티마이저" },
+            { "id": "execution-plan", "name": "실행 계획" },
+            { "id": "cost-model", "name": "비용 모델" }
+          ]
+        },
+        {
+          "id": "transaction",
+          "name": "트랜잭션",
+          "topics": [
+            { "id": "acid", "name": "ACID" },
+            { "id": "isolation-level", "name": "격리 수준" },
+            { "id": "lock", "name": "락" },
+            { "id": "mvcc", "name": "MVCC" },
+            { "id": "two-pl", "name": "2PL" }
+          ]
+        },
+        {
+          "id": "distributed-db",
+          "name": "분산 DB",
+          "topics": [
+            { "id": "sharding", "name": "샤딩" },
+            { "id": "replication", "name": "복제" },
+            { "id": "cap", "name": "CAP 정리" },
+            { "id": "raft", "name": "Raft" },
+            { "id": "paxos", "name": "Paxos" }
+          ]
+        },
+        {
+          "id": "nosql",
+          "name": "NoSQL",
+          "topics": [
+            { "id": "document-db", "name": "문서 DB" },
+            { "id": "kv-db", "name": "키-값 DB" },
+            { "id": "column-family", "name": "컬럼 패밀리" },
+            { "id": "graph-db", "name": "그래프 DB" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "compilers",
+      "name": "컴파일러와 언어",
+      "tagline": "토큰에서 기계어까지",
+      "icon": "Translate",
+      "accent": "rose",
+      "subdomains": [
+        {
+          "id": "lexical",
+          "name": "어휘 분석",
+          "topics": [
+            { "id": "tokenization", "name": "토큰화" },
+            { "id": "regex", "name": "정규 표현식" },
+            { "id": "fa", "name": "유한 오토마타" }
+          ]
+        },
+        {
+          "id": "parsing",
+          "name": "구문 분석",
+          "topics": [
+            { "id": "cfg", "name": "CFG" },
+            { "id": "recursive-descent", "name": "재귀 하강" },
+            { "id": "lr-lalr", "name": "LR / LALR" },
+            { "id": "ast", "name": "AST 생성" }
+          ]
+        },
+        {
+          "id": "semantic",
+          "name": "의미 분석",
+          "topics": [
+            { "id": "type-check", "name": "타입 검사" },
+            { "id": "scope-resolve", "name": "스코프 해석" },
+            { "id": "symbol-table", "name": "심볼 테이블" }
+          ]
+        },
+        {
+          "id": "ir",
+          "name": "중간 표현",
+          "topics": [
+            { "id": "ir-design", "name": "IR 설계" },
+            { "id": "ssa", "name": "SSA 형식" },
+            { "id": "cfg-ir", "name": "CFG" },
+            { "id": "dfg", "name": "DFG" }
+          ]
+        },
+        {
+          "id": "optimization",
+          "name": "최적화",
+          "topics": [
+            { "id": "constant-folding", "name": "상수 폴딩" },
+            { "id": "dce", "name": "죽은 코드 제거" },
+            { "id": "loop-opt", "name": "루프 최적화" },
+            { "id": "inlining", "name": "인라이닝" }
+          ]
+        },
+        {
+          "id": "codegen",
+          "name": "코드 생성",
+          "topics": [
+            { "id": "register-alloc", "name": "레지스터 할당" },
+            { "id": "instr-select", "name": "명령어 선택" },
+            { "id": "linking", "name": "링킹" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ml-foundations",
+      "name": "머신러닝 기초",
+      "tagline": "지도 · 비지도 · 학습 메커니즘",
+      "icon": "Brain",
+      "accent": "fuchsia",
+      "subdomains": [
+        {
+          "id": "supervised",
+          "name": "지도 학습",
+          "topics": [
+            { "id": "linear-regression", "name": "선형 회귀" },
+            { "id": "logistic-regression", "name": "로지스틱 회귀" },
+            { "id": "knn", "name": "k-NN" },
+            { "id": "decision-tree", "name": "의사결정 트리" },
+            { "id": "random-forest", "name": "랜덤 포레스트" },
+            { "id": "svm", "name": "SVM" }
+          ]
+        },
+        {
+          "id": "unsupervised",
+          "name": "비지도 학습",
+          "topics": [
+            { "id": "kmeans", "name": "k-평균" },
+            { "id": "hierarchical", "name": "계층 클러스터링" },
+            { "id": "dbscan", "name": "DBSCAN" },
+            { "id": "pca", "name": "PCA" },
+            { "id": "tsne", "name": "t-SNE" },
+            { "id": "umap", "name": "UMAP" }
+          ]
+        },
+        {
+          "id": "neural-basics",
+          "name": "신경망 기초",
+          "topics": [
+            { "id": "perceptron", "name": "퍼셉트론" },
+            { "id": "mlp", "name": "MLP" },
+            { "id": "activation", "name": "활성화 함수" },
+            { "id": "loss", "name": "손실 함수" }
+          ]
+        },
+        {
+          "id": "learning-mechanism",
+          "name": "학습 메커니즘",
+          "topics": [
+            { "id": "gradient-descent", "name": "경사 하강법" },
+            { "id": "sgd", "name": "SGD" },
+            { "id": "momentum", "name": "Momentum" },
+            { "id": "adam", "name": "Adam" },
+            { "id": "backprop", "name": "역전파" }
+          ]
+        },
+        {
+          "id": "regularization",
+          "name": "정규화",
+          "topics": [
+            { "id": "l1", "name": "L1 정규화" },
+            { "id": "l2", "name": "L2 정규화" },
+            { "id": "dropout", "name": "Dropout" },
+            { "id": "batchnorm", "name": "배치 정규화" },
+            { "id": "early-stopping", "name": "조기 종료" }
+          ]
+        },
+        {
+          "id": "evaluation",
+          "name": "평가",
+          "topics": [
+            { "id": "train-val-split", "name": "훈련/검증 분할" },
+            { "id": "cross-validation", "name": "교차 검증" },
+            { "id": "roc", "name": "ROC 곡선" },
+            { "id": "confusion-matrix", "name": "혼동 행렬" },
+            { "id": "overfitting", "name": "오버피팅 진단" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "deep-learning",
+      "name": "딥러닝",
+      "tagline": "CNN · RNN · 트랜스포머",
+      "icon": "Lightning",
+      "accent": "yellow",
+      "subdomains": [
+        {
+          "id": "cnn",
+          "name": "CNN",
+          "topics": [
+            { "id": "convolution", "name": "합성곱 연산" },
+            { "id": "pooling", "name": "풀링" },
+            { "id": "filter-viz", "name": "필터 시각화" },
+            { "id": "receptive-field", "name": "수용장" }
+          ]
+        },
+        {
+          "id": "rnn",
+          "name": "RNN",
+          "topics": [
+            { "id": "sequence-process", "name": "시퀀스 처리" },
+            { "id": "lstm", "name": "LSTM" },
+            { "id": "gru", "name": "GRU" },
+            { "id": "bptt", "name": "BPTT" }
+          ]
+        },
+        {
+          "id": "transformer",
+          "name": "어텐션과 트랜스포머",
+          "topics": [
+            { "id": "self-attention", "name": "Self-attention" },
+            { "id": "multi-head", "name": "Multi-head" },
+            { "id": "positional-encoding", "name": "위치 인코딩" }
+          ]
+        },
+        {
+          "id": "generative",
+          "name": "생성 모델",
+          "topics": [
+            { "id": "vae", "name": "VAE" },
+            { "id": "gan", "name": "GAN" },
+            { "id": "diffusion", "name": "Diffusion 기초" }
+          ]
+        },
+        {
+          "id": "rl",
+          "name": "강화 학습",
+          "topics": [
+            { "id": "q-learning", "name": "Q-learning" },
+            { "id": "policy-gradient", "name": "Policy Gradient" },
+            { "id": "mdp", "name": "MDP" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "system-design",
+      "name": "시스템 설계",
+      "tagline": "확장성 · 일관성 · 가용성",
+      "icon": "Buildings",
+      "accent": "indigo",
+      "subdomains": [
+        {
+          "id": "caching",
+          "name": "캐싱",
+          "topics": [
+            { "id": "lru-cache", "name": "LRU 캐시" },
+            { "id": "lfu-cache", "name": "LFU 캐시" },
+            { "id": "cache-coherence", "name": "캐시 일관성" },
+            { "id": "cdn", "name": "CDN" }
+          ]
+        },
+        {
+          "id": "messaging",
+          "name": "메시지 큐",
+          "topics": [
+            { "id": "pubsub", "name": "Pub/Sub" },
+            { "id": "kafka-pattern", "name": "Kafka 패턴" }
+          ]
+        },
+        {
+          "id": "load-balancing",
+          "name": "로드 밸런싱",
+          "topics": [
+            { "id": "round-robin-lb", "name": "Round Robin" },
+            { "id": "least-connection", "name": "Least Connection" },
+            { "id": "consistent-hashing", "name": "일관된 해싱" }
+          ]
+        },
+        {
+          "id": "distributed",
+          "name": "분산 시스템",
+          "topics": [
+            { "id": "consistency-model", "name": "일관성 모델" },
+            { "id": "consensus", "name": "합의 알고리즘" },
+            { "id": "clock-sync", "name": "시계 동기화" }
+          ]
+        },
+        {
+          "id": "microservices",
+          "name": "마이크로서비스",
+          "topics": [
+            { "id": "service-discovery", "name": "서비스 디스커버리" },
+            { "id": "api-gateway", "name": "API 게이트웨이" },
+            { "id": "circuit-breaker", "name": "서킷 브레이커" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "security",
+      "name": "보안과 암호",
+      "tagline": "비밀과 신뢰의 메커니즘",
+      "icon": "ShieldCheck",
+      "accent": "red",
+      "subdomains": [
+        {
+          "id": "symmetric",
+          "name": "대칭 암호",
+          "topics": [
+            { "id": "aes-round", "name": "AES 라운드" },
+            { "id": "block-cipher", "name": "블록 암호" },
+            { "id": "stream-cipher", "name": "스트림 암호" }
+          ]
+        },
+        {
+          "id": "asymmetric",
+          "name": "비대칭 암호",
+          "topics": [
+            { "id": "rsa", "name": "RSA" },
+            { "id": "diffie-hellman", "name": "Diffie-Hellman" },
+            { "id": "ecc", "name": "타원 곡선" }
+          ]
+        },
+        {
+          "id": "hash",
+          "name": "해시",
+          "topics": [
+            { "id": "sha", "name": "SHA" },
+            { "id": "collision", "name": "충돌" },
+            { "id": "mac", "name": "MAC" },
+            { "id": "hmac", "name": "HMAC" }
+          ]
+        },
+        {
+          "id": "signature",
+          "name": "디지털 서명",
+          "topics": [
+            { "id": "certificate", "name": "인증서" },
+            { "id": "pki", "name": "PKI" },
+            { "id": "auth-chain", "name": "인증 체인" }
+          ]
+        },
+        {
+          "id": "attack-defense",
+          "name": "공격과 방어",
+          "topics": [
+            { "id": "sql-injection", "name": "SQL 인젝션" },
+            { "id": "xss", "name": "XSS" },
+            { "id": "csrf", "name": "CSRF" },
+            { "id": "buffer-overflow", "name": "버퍼 오버플로우" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "graphics",
+      "name": "컴퓨터 그래픽스",
+      "tagline": "렌더링 파이프라인",
+      "icon": "PaintBrush",
+      "accent": "pink",
+      "subdomains": [
+        {
+          "id": "transform-2d",
+          "name": "2D 변환",
+          "topics": [
+            { "id": "matrix-transform", "name": "행렬 변환" },
+            { "id": "scale-rotate-translate", "name": "스케일 · 회전 · 이동" },
+            { "id": "homogeneous", "name": "동차좌표" }
+          ]
+        },
+        {
+          "id": "rendering-3d",
+          "name": "3D 렌더링",
+          "topics": [
+            { "id": "camera-model", "name": "카메라 모델" },
+            { "id": "projection", "name": "투영" },
+            { "id": "clipping", "name": "클리핑" },
+            { "id": "rasterization", "name": "래스터화" }
+          ]
+        },
+        {
+          "id": "shading",
+          "name": "셰이딩",
+          "topics": [
+            { "id": "phong", "name": "Phong 셰이딩" },
+            { "id": "pbr", "name": "PBR" },
+            { "id": "brdf", "name": "BRDF" }
+          ]
+        },
+        {
+          "id": "ray-tracing",
+          "name": "광선 추적",
+          "topics": [
+            { "id": "ray-casting", "name": "Ray casting" },
+            { "id": "ray-tracing-base", "name": "Ray tracing" },
+            { "id": "global-illumination", "name": "글로벌 일루미네이션" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "math-foundations",
+      "name": "수학 기초",
+      "tagline": "CS 인접 수학",
+      "icon": "MathOperations",
+      "accent": "teal",
+      "subdomains": [
+        {
+          "id": "linear-algebra",
+          "name": "선형대수",
+          "topics": [
+            { "id": "vector-ops", "name": "벡터 연산" },
+            { "id": "matrix-ops", "name": "행렬 연산" },
+            { "id": "eigen", "name": "고유값" },
+            { "id": "svd", "name": "SVD" }
+          ]
+        },
+        {
+          "id": "probability-stats",
+          "name": "확률과 통계",
+          "topics": [
+            { "id": "distribution", "name": "확률 분포" },
+            { "id": "bayes", "name": "베이즈 정리" },
+            { "id": "clt", "name": "중심 극한 정리" }
+          ]
+        },
+        {
+          "id": "calculus",
+          "name": "미적분",
+          "topics": [
+            { "id": "derivative", "name": "미분" },
+            { "id": "integral", "name": "적분" },
+            { "id": "partial-derivative", "name": "편미분" },
+            { "id": "gradient", "name": "그래디언트" }
+          ]
+        },
+        {
+          "id": "discrete-math",
+          "name": "이산수학",
+          "topics": [
+            { "id": "set", "name": "집합" },
+            { "id": "graph-theory", "name": "그래프 이론" },
+            { "id": "combinatorics", "name": "조합론" },
+            { "id": "number-theory", "name": "정수론" }
+          ]
+        }
+      ]
+    }
+  ]
+}
