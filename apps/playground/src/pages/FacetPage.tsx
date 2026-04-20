@@ -1,47 +1,87 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Warning } from '@phosphor-icons/react';
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import { FacetExtension, renderFacetMarkdown } from '@facet/host-tiptap';
 import {
-  getFacetById,
+  getDescription,
+  hasFacetLoader,
+  loadFacet,
   resolveLocale,
-  runFacet,
-  type FacetRunHandle,
+  type FacetJson,
 } from '@facet/core/runtime';
 import { findTopicByFacetId } from '../catalog.js';
 import { usePreferences } from '../preferences.js';
 import { PreferencesToolbar } from '../components/PreferencesToolbar.js';
 
+type LoadState =
+  | { kind: 'loading' }
+  | { kind: 'ready'; facet: FacetJson; html: string }
+  | { kind: 'error'; message: string };
+
 export function FacetPage() {
   const { id } = useParams<{ id: string }>();
   const facetId = id ? decodeURIComponent(id) : '';
-  const { locale, theme } = usePreferences();
-  const mountRef = useRef<HTMLDivElement>(null);
-  const handleRef = useRef<FacetRunHandle | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  const facetJson = facetId ? getFacetById(facetId) : undefined;
+  const { locale } = usePreferences();
   const location = facetId ? findTopicByFacetId(facetId) : null;
 
-  // locale/theme 변경 시 재마운트 (A안).
-  useEffect(() => {
-    setError(null);
-    if (!mountRef.current || !facetJson) return;
+  const [state, setState] = useState<LoadState>({ kind: 'loading' });
 
-    try {
-      const handle = runFacet(facetJson, mountRef.current, { locale, theme });
-      handleRef.current = handle;
-    } catch (e) {
-      setError(e instanceof Error ? e.message : String(e));
+  useEffect(() => {
+    if (!facetId) {
+      setState({ kind: 'error', message: 'facet id 가 비었다' });
+      return;
+    }
+    let cancelled = false;
+    setState({ kind: 'loading' });
+
+    if (!hasFacetLoader(facetId)) {
+      setState({
+        kind: 'error',
+        message: `등록되지 않은 facet: "${facetId}". registerFacetLoader 누락.`,
+      });
+      return;
     }
 
-    return () => {
-      handleRef.current?.destroy();
-      handleRef.current = null;
-    };
-  }, [facetJson, locale, theme]);
+    void loadFacet(facetId).then(
+      (facet) => {
+        if (cancelled) return;
+        if (!facet) {
+          setState({ kind: 'error', message: `facet 로드 실패: ${facetId}` });
+          return;
+        }
+        const md = getDescription(facetId);
+        const body = md ?? `*(설명 없음)*\n\n{${facetId.replace(':', ':')}}`;
+        const html = renderFacetMarkdown(body);
+        setState({ kind: 'ready', facet, html });
+      },
+      (err: unknown) => {
+        if (cancelled) return;
+        const msg = err instanceof Error ? err.message : String(err);
+        setState({ kind: 'error', message: msg });
+      },
+    );
 
-  const title = facetJson ? resolveLocale(facetJson.title, locale) : '';
-  const description = facetJson ? resolveLocale(facetJson.description, locale) : '';
+    return () => {
+      cancelled = true;
+    };
+  }, [facetId]);
+
+  const html = state.kind === 'ready' ? state.html : '';
+  const editor = useEditor(
+    {
+      editable: false,
+      extensions: [StarterKit, FacetExtension],
+      content: html,
+    },
+    [html],
+  );
+
+  const title = useMemo(() => {
+    if (state.kind !== 'ready') return '';
+    return resolveLocale(state.facet.title, locale);
+  }, [state, locale]);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -72,32 +112,24 @@ export function FacetPage() {
             )}
           </div>
 
-          {description && (
-            <p className="hidden max-w-md truncate text-sm text-fg-muted lg:block">
-              {description}
-            </p>
-          )}
-
           <PreferencesToolbar />
         </div>
       </header>
 
       <main className="flex-1 px-6 py-8">
-        <div className="mx-auto max-w-7xl">
-          {!facetJson && (
-            <ErrorBox
-              title="등록되지 않은 facet"
-              detail={`facet id "${facetId}" 가 레지스트리에 없다. registerXxx() 호출이 부트스트랩에 빠지지 않았는지 확인.`}
-            />
-          )}
-          {error && <ErrorBox title="실행 오류" detail={error} />}
-          {facetJson && !error && (
-            <div className="rounded-2xl bg-surface-raised p-4 ring-1 ring-border sm:p-6">
-              <div
-                ref={mountRef}
-                className="facet-mount min-h-[480px] rounded-xl bg-surface p-4 text-fg ring-1 ring-border"
-              />
+        <div className="mx-auto max-w-4xl">
+          {state.kind === 'loading' && (
+            <div className="rounded-2xl bg-surface-raised p-8 text-center text-sm text-fg-muted ring-1 ring-border">
+              로딩…
             </div>
+          )}
+          {state.kind === 'error' && (
+            <ErrorBox title="시각화 로드 실패" detail={state.message} />
+          )}
+          {state.kind === 'ready' && (
+            <article className="facet-doc rounded-2xl bg-surface-raised p-6 ring-1 ring-border sm:p-10">
+              <EditorContent editor={editor} />
+            </article>
           )}
         </div>
       </main>

@@ -1,13 +1,20 @@
 /**
- * Playground 시작 시 4-layer 러너용 모듈/IR/Transpiler/JSON 을 일괄 등록.
+ * Playground 부트스트랩.
  *
- * Transpiler 는 언어별 패키지로 분리되어 있어 호스트(playground)가 등록 책임을 진다.
+ * 정적 등록(즉시 필요한 것):
+ *  - View Catalog (built-in + code-view)
+ *  - Transpiler 6종 (code-view 가 paradigm 호환 transpiler 목록을 보여주려면 모두 등록 필요)
+ *
+ * 동적 등록(lazy):
+ *  - algorithm 패키지(@facet/algorithm-*) 는 registerFacetLoader 로만 매핑.
+ *    NodeView/페이지가 facet 마운트 시점에 동적 import 하면 Vite 가 별도 chunk 로 분리.
  */
 
-import { registerBuiltinViews, listFacets } from '@facet/core/runtime';
+import {
+  registerBuiltinViews,
+  registerFacetLoader,
+} from '@facet/core/runtime';
 import { registerCodeView } from '@facet/view-code';
-import { registerQuicksort } from '@facet/algorithm-quicksort';
-import { registerBubblesort } from '@facet/algorithm-bubblesort';
 import { registerPythonTranspiler } from '@facet/transpiler-python';
 import { registerJavascriptTranspiler } from '@facet/transpiler-javascript';
 import { registerTypescriptTranspiler } from '@facet/transpiler-typescript';
@@ -31,13 +38,11 @@ export function bootstrapFacet(): void {
   registerCppTranspiler();
   registerCsharpTranspiler();
 
-  registerQuicksort();
-  registerBubblesort();
-
-  const ids = listFacets();
-  if (ids.length === 0) {
-    console.warn('[facet] no facets registered');
-  } else {
-    console.info('[facet] facets:', ids);
-  }
+  // facet → 동적 import. 동일 chunk 안에 algorithm/projector/IR/facet/description 이 함께 묶임.
+  registerFacetLoader('facet:bubbleSort', () =>
+    import('@facet/algorithm-bubblesort').then((m) => m.registerBubblesort()),
+  );
+  registerFacetLoader('facet:quickSort', () =>
+    import('@facet/algorithm-quicksort').then((m) => m.registerQuicksort()),
+  );
 }

@@ -91,3 +91,4 @@ export const FacetExtension = Node.create({
 });
 
 export { createFacetNodeView } from './node-view.js';
+export { renderFacetMarkdown } from './markdown.js';

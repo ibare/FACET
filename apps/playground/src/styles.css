@@ -63,6 +63,59 @@ body {
   height: 100%;
 }
 
+/* facet 설명 문서 — Tiptap 본문 read-only typography */
+.facet-doc .ProseMirror {
+  outline: none;
+  color: var(--color-fg);
+  font-size: 15px;
+  line-height: 1.7;
+}
+.facet-doc .ProseMirror > * + * { margin-top: 0.9em; }
+.facet-doc .ProseMirror h1 { font-size: 1.6em; font-weight: 700; line-height: 1.25; margin-top: 0; }
+.facet-doc .ProseMirror h2 { font-size: 1.3em; font-weight: 700; line-height: 1.3; margin-top: 1.6em; }
+.facet-doc .ProseMirror h3 { font-size: 1.1em; font-weight: 600; line-height: 1.4; margin-top: 1.4em; }
+.facet-doc .ProseMirror p { color: var(--color-fg); }
+.facet-doc .ProseMirror strong { color: var(--color-fg); font-weight: 600; }
+.facet-doc .ProseMirror em { font-style: italic; }
+.facet-doc .ProseMirror code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+  background: var(--color-surface-raised-hover);
+}
+.facet-doc .ProseMirror pre {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  padding: 0.9em 1em;
+  border-radius: 8px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  overflow-x: auto;
+}
+.facet-doc .ProseMirror pre code { background: transparent; padding: 0; }
+.facet-doc .ProseMirror ul,
+.facet-doc .ProseMirror ol { padding-left: 1.4em; }
+.facet-doc .ProseMirror ul { list-style: disc; }
+.facet-doc .ProseMirror ol { list-style: decimal; }
+.facet-doc .ProseMirror li { margin: 0.25em 0; }
+.facet-doc .ProseMirror blockquote {
+  border-left: 3px solid var(--color-border-strong);
+  padding-left: 1em;
+  color: var(--color-fg-muted);
+}
+/* 본문 안에 인라인으로 등장한 facet 노드는 블록처럼 보여야 함 */
+.facet-doc .facet-node {
+  display: block;
+  margin: 1.4em 0;
+}
+.facet-doc .facet-node .facet-mount {
+  border-radius: 12px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: 16px;
+}
+
 /* Radix Accordion 애니메이션 */
 @keyframes facet-accordion-down {
   from { height: 0; opacity: 0; }
