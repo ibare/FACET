@@ -1,5 +1,5 @@
 /**
- * 더미 facet 모음 + 등록 helper.
+ * 최소 예제 facet (counter) — 러너/View Catalog 통합 검증용.
  */
 
 export { counter } from './algorithms/counter.js';
@@ -16,7 +16,7 @@ import {
   registerFacets,
 } from '../runtime/registry.js';
 
-export function registerDummyFacets(): void {
+export function registerCounterExample(): void {
   registerAlgorithm('counter', counter);
   registerProjector('counterProjector', counterProjector);
   registerFacets([counterFacet]);

@@ -4,6 +4,7 @@
 
 import { registerBuiltinViews, listFacets } from '@facet/core/runtime';
 import { registerQuicksort } from '@facet/algorithm-quicksort';
+import { registerBubblesort } from '@facet/algorithm-bubblesort';
 
 let initialized = false;
 
@@ -13,6 +14,7 @@ export function bootstrapFacet(): void {
 
   registerBuiltinViews();
   registerQuicksort();
+  registerBubblesort();
 
   const ids = listFacets();
   if (ids.length === 0) {

@@ -15,10 +15,8 @@
   "devDependencies": {
     "@facet/algorithm-bubblesort": "workspace:*",
     "@facet/algorithm-quicksort": "workspace:*",
-    "@facet/container-loop": "workspace:*",
     "@facet/core": "workspace:*",
     "@facet/host-tiptap": "workspace:*",
-    "@facet/transpilers-mainstream": "workspace:*",
     "@types/node": "^22.9.0",
     "happy-dom": "^20.9.0",
     "typescript": "^5.6.3",

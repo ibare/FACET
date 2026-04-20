@@ -12,7 +12,7 @@ import {
   counter,
   counterProjector,
   counterFacet,
-} from '../src/dummy/index.js';
+} from '../src/examples/index.js';
 
 function flushMicrotasks(times = 5): Promise<void> {
   let p = Promise.resolve();

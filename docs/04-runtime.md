@@ -1,158 +1,81 @@
-# 04. Runtime
+# 04 · 런타임
 
-런타임은 호스트 어댑터로부터 (컨테이너 식별자, 본체 식별자) 쌍을 받아, 카탈로그를 조회하고, 인터랙티브 영역을 DOM에 그린다. 코어는 호스트 독립적이다.
+런타임은 호스트 어댑터로부터 `FacetJson` 과 mount 엘리먼트를 받아 인터랙티브 영역을 DOM 에 그린다. 코어는 호스트 독립적이다.
 
-## 패키지 구조
+## 진입점
 
-```
-@facet/core            — 런타임 코어, 타입 정의, 카탈로그, 파서
-@facet/lens-circuit    — 회로 시각화 렌즈 (컨테이너 발진기 + 본체 박스 + 펄스 와이어)
-@facet/lens-code       — 코드 렌즈 (패러다임 토글, 언어 탭, 동기 하이라이트)
+```ts
+import { runFacet, type FacetRunHandle } from '@facet/core/runtime';
 
-@facet/container-loop  — loop 컨테이너 구현
-@facet/algorithm-bubblesort  — bubbleSort 알고리즘 + 본체(bars) + IR(imperative, functional)
-@facet/transpilers-mainstream  — Python, JavaScript 변환기들
-
-@facet/host-tiptap     — Tiptap 호스트 어댑터 (첫 번째)
+const handle: FacetRunHandle = runFacet(facetJson, mountEl, { autoStart: false });
+// handle.start(); handle.step(); handle.stop(); handle.reset(); handle.setSpeed(2); handle.destroy();
 ```
 
-각 패키지는 독립적으로 배포 가능. 호스트는 필요한 패키지만 가져와 카탈로그에 등록.
+## 실행 흐름
 
-## 코어 인스턴스
+`runFacet` 는 다음을 순서대로 수행한다.
 
-호스트가 FACET 표현식을 발견하면 코어를 호출해 인스턴스를 만든다.
+1. **모듈 조회** — `json.algorithm`, `json.projector` 를 `getAlgorithm` / `getProjector` 로 조회. 미등록이면 throw.
+2. **title-block 자동 채움** — `blocks` 의 `title-block` 에 title/description 이 비어 있으면 `json.title` / `json.description` 을 주입.
+3. **Layout 빌드** — `buildLayout(layout, blocks)` 가 `row` / `column` / `ref` 트리를 flex DOM 으로 변환하고 ref 마다 마운트 슬롯을 만든다.
+4. **code-view 사전 transpile** — `code-view` 블록이 `ir` + `transpiler` 를 가지면 `transpiler.transpile(ir)` 를 호출해 `_transpiledLines` 를 spec 에 첨부. 마운트 시 code-view 가 자동으로 적용한다.
+5. **블록 마운트** — `mountBlocks` 가 ref 마다 `View.mount(slot, params)` 를 호출, 결과 ViewInstance 를 `views` 맵에 저장.
+6. **Projector 인스턴스화** — `projectorFactory(views)` 호출 → `projector.onInit(initialData)`.
+7. **컨트롤 wire-up** — `views` 안에 `onPlay` / `onPause` 메서드를 가진 view 가 있으면 control-bar 로 식별, 핸들 함수를 바인딩.
+8. **알고리즘 코루틴** — `algorithmFn(ctx)` 를 비동기로 실행. `ctx.emit` 안에서 mode 에 따라 일시정지/스텝/속도 처리.
 
-```typescript
-import { createInstance } from '@facet/core';
+## emit 의 lifecycle
 
-const instance = createInstance({
-  expr: { container: 'loop', bodies: ['bubbleSort'] },
-  catalog: globalCatalog,
-  lenses: ['circuit', 'code'],  // 어떤 렌즈를 띄울지
-  mountPoint: domElement,        // 렌더링할 DOM 노드
-});
+```ts
+async emit(event) {
+  if (cancelled) return;
 
-instance.start();
-instance.stop();
-instance.destroy();
+  // 1) paused/idle 이면 다음 신호까지 대기 (렌더링 전에 멈춤)
+  while (mode === 'paused' || mode === 'idle') {
+    await new Promise<void>((res) => { stepResolve = res; });
+    if (cancelled) return;
+  }
+
+  // 2) projector 갱신
+  await projector.onEvent(event);
+  if (cancelled) return;
+
+  // 3) 후처리: stepping 이면 다음 emit 전에 paused 로
+  if (mode === 'stepping') { setMode('paused'); return; }
+
+  // playing — 속도 비례 setTimeout
+  await new Promise<void>((res) => {
+    pendingTimerResolve = res;
+    pendingTimer = setTimeout(() => res(), Math.max(10, BASE_DELAY_MS / speedMul));
+  });
+}
 ```
 
-코어가 하는 일:
-1. 표현식 검증 (카탈로그 매칭)
-2. 컨테이너 인스턴스, 본체 인스턴스 생성
-3. 컨테이너 ↔ 본체 프로토콜 결선 (tick, complete)
-4. 활성 렌즈들을 mountPoint에 마운트
-5. 본체의 phase emit을 모든 렌즈에 브로드캐스트
-6. UI 컨트롤(시작/정지/속도/본체 컨트롤) 결선
+이 구조 덕분에 알고리즘 코드는 동기 루프처럼 보이고, 일시정지/스텝/속도 제어는 러너의 책임으로만 남는다.
 
-## 이벤트 모델
+## reset 시 race 처리
 
-코어 안에 단일 이벤트 버스. 컨테이너, 본체, 렌즈가 모두 이 버스로 통신.
+`reset()` 은 cancelled 플래그를 세우고 — 알고리즘이 await 중인 모든 Promise 를 명시적으로 해소한다.
 
-이벤트 종류:
+- `stepResolve` 가 살아 있으면 호출 → emit 의 `while` 루프 빠져나감 → cancelled 체크 후 return.
+- `pendingTimerResolve` 가 살아 있으면 호출 + clearTimeout → playing 모드의 setTimeout 대기에서 해방.
+- 알고리즘 Promise 가 종료되면 `initialData` 를 deep clone 해 `ctx.data` 에 다시 채움 → metric 초기화 → projector.onReset() → mode='idle'.
 
-```typescript
-type FacetEvent =
-  | { type: 'container:tick'; tickCount: number }
-  | { type: 'container:complete' }
-  | { type: 'body:phase'; phase: string }
-  | { type: 'body:state-changed'; state: object }
-  | { type: 'ui:speed-changed'; multiplier: number }
-  | { type: 'ui:control-changed'; bodyId: string; controlId: string; value: unknown }
-  | { type: 'ui:reset' }
-  | { type: 'ui:start' }
-  | { type: 'ui:stop' };
-```
+## ProjectorViews
 
-구독 규칙:
-- 컨테이너는 `ui:start`, `ui:stop`, `ui:reset`, `body:complete`(자기 본체로부터) 구독
-- 본체는 `container:tick`, `ui:control-changed`(자기 컨트롤만), `ui:reset` 구독
-- 렌즈는 자기에게 필요한 이벤트 구독 (`circuit`은 `container:tick`, `body:phase` 등; `code`는 `body:phase`만)
+`ProjectorViews` 는 `Record<string, ViewInstance>`. 키는 `blocks` 의 ref 그대로 (`stage`, `codePanel`, `controls`, `header`, ...). Projector 는 ref 이름으로 view 를 꺼내 메서드를 호출한다 — 옛 시스템처럼 "어떤 lens 를 쓸지" 같은 동적 선택이 없다. JSON 작성자가 ref 이름으로 의도를 고정한다.
 
-이벤트 버스가 카탈로그 항목들의 직접 참조를 끊는다. 본체가 컨테이너 인스턴스를 모르고, 렌즈가 본체 객체를 모른다 — 모두 이벤트로만 안다.
+## View Catalog 와 design-tokens
 
-## 렌즈 인터페이스
+내장 View 는 모두 `colors` / `radii` / `space` / `fonts` 디자인 토큰을 사용한다 (`packages/core/src/views/design-tokens.ts`). 색상 토큰: `itemDefault`, `itemComparing`, `itemSwapping`, `itemSorted`, `itemPivot`, `itemActive`. 새 View 는 같은 토큰을 따르면 시각 일관성이 자동으로 유지된다.
 
-렌즈는 카탈로그 항목이 아니라 **렌더링 모듈**이다. 코어가 어떤 렌즈를 띄울지 호스트가 결정.
+## destroy 의 책임
 
-```typescript
-type Lens = {
-  id: string;                                   // 'circuit' | 'code'
-  
-  mount(params: {
-    container: HTMLElement;                     // 렌즈가 그릴 DOM 영역
-    eventBus: EventBus;                         // 구독·발행
-    catalog: Catalog;                           // 메타데이터 조회
-    expr: FacetExpr;                            // 어떤 (컨테이너, 본체) 쌍인지
-  }): LensInstance;
-};
+`handle.destroy()` 는:
 
-type LensInstance = {
-  destroy(): void;
-};
-```
+- `cancelled = true` + 모든 pending Promise 해소.
+- `projector.onDestroy?.()` 호출.
+- 모든 View 인스턴스의 `destroy?.()` 호출.
+- 빌드된 root DOM 제거.
 
-렌즈가 하는 일:
-1. mount 시 자기 DOM 구조 생성
-2. eventBus 구독 시작 (필요한 이벤트만)
-3. 카탈로그에서 자기에게 필요한 정보 조회 (예: 코드 렌즈는 패러다임/언어/source_map)
-4. 이벤트 받으면 자기 DOM 갱신
-5. UI 액션이 발생하면 eventBus로 발행
-
-### 회로 렌즈 (`@facet/lens-circuit`)
-
-- DOM: SVG 캔버스, 컨테이너 노드(원), 본체 박스, 와이어
-- 본체 박스 내부 렌더링은 본체 인스턴스의 `render()` 호출 (본체가 자기 그림 책임)
-- 펄스 애니메이션, 와이어 색 변화, complete 신호 역방향 펄스
-- 본체 컨트롤 UI (본체의 `controls` 스키마에서 자동 생성)
-- 시작/정지/스텝/속도 버튼
-
-### 코드 렌즈 (`@facet/lens-code`)
-
-- DOM: 패러다임 토글, 언어 탭, 코드 표시 영역(들)
-- 카탈로그에서 본체의 패러다임 옵션과 호환 변환기 조회 → UI 자동 생성
-- 변환기 호출하여 코드 + source_map 획득
-- `body:phase` 이벤트 받으면 같은 phase 태그가 있는 라인 하이라이트
-
-코드 렌즈의 표시 모드:
-- **단일 모드**: 한 패러다임 + 한 언어 = 한 코드 블록
-- **이중 모드**: 두 패러다임 동시 비교 (v7 데모 형태) — 한 언어 안에서 명령형/함수형 좌우 배치
-
-v1에서는 이중 모드를 디폴트로 (학습 메시지 강조).
-
-## 속도 제어
-
-속도는 시각화 레이어의 속성. 컨테이너의 tick 발생 주기와 본체 동작 시간이 모두 영향받음. 코어가 단일 배율로 관리.
-
-```typescript
-eventBus.emit({ type: 'ui:speed-changed', multiplier: 1.4 });
-```
-
-컨테이너와 본체가 각자 자기 시간 계산에 이 배율 적용. 렌즈도 애니메이션 시간에 적용.
-
-## 호스트 독립성
-
-코어는 다음에 의존하지 않는다:
-- 특정 마크다운 파서 (호스트가 이미 자기 것 가짐)
-- 특정 프레임워크 (React, Vue, Svelte 등)
-- 특정 빌드 도구
-
-코어는 순수 TypeScript + DOM API만 사용. 호스트 어댑터가 호스트 환경에 통합.
-
-## 라이프사이클
-
-```
-호스트가 마크다운에서 {facet:loop facet:bubbleSort} 발견
-  ↓
-호스트가 그 자리에 div 삽입 + createInstance 호출
-  ↓
-코어가 카탈로그 조회, 인스턴스 생성, 렌즈 마운트
-  ↓
-사용자 인터랙션 (시작 버튼)
-  ↓
-이벤트 버스를 통한 컨테이너↔본체↔렌즈 협업
-  ↓
-호스트가 그 div 제거 (편집기에서 표현식 삭제 등)
-  ↓
-instance.destroy() 호출 → 렌즈 해제 → 이벤트 구독 해제
-```
+호스트 어댑터는 노드 destroy 시점(예: Tiptap NodeView 의 `destroy`)에 반드시 이 핸들을 호출해야 한다 — 메모리 누수 방지의 유일한 보장점.

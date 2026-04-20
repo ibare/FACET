@@ -11,12 +11,8 @@
   },
   "dependencies": {
     "@facet/core": "workspace:*",
-    "@facet/container-loop": "workspace:*",
     "@facet/algorithm-bubblesort": "workspace:*",
     "@facet/algorithm-quicksort": "workspace:*",
-    "@facet/transpilers-mainstream": "workspace:*",
-    "@facet/lens-circuit": "workspace:*",
-    "@facet/lens-code": "workspace:*",
     "@facet/host-tiptap": "workspace:*",
     "@tiptap/core": "^3.22.3",
     "@tiptap/pm": "^3.22.3",
