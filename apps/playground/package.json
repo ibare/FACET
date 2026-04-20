@@ -13,6 +13,7 @@
     "@facet/core": "workspace:*",
     "@facet/container-loop": "workspace:*",
     "@facet/algorithm-bubblesort": "workspace:*",
+    "@facet/algorithm-quicksort": "workspace:*",
     "@facet/transpilers-mainstream": "workspace:*",
     "@facet/lens-circuit": "workspace:*",
     "@facet/lens-code": "workspace:*",

@@ -1,18 +1,23 @@
+/**
+ * @facet/host-tiptap — 4-layer 러너용 Tiptap 어댑터.
+ *
+ * DSL: {facet:<id>} 단일 식별자.
+ * id 는 새 러너의 facets 레지스트리(getFacetById) 에서 조회된다.
+ */
+
 import { Node, mergeAttributes, InputRule, PasteRule } from '@tiptap/core';
-import type { Catalog, LensFactory } from '@facet/core';
-import { parseFacetExpr } from '@facet/core';
 import { createFacetNodeView } from './node-view.js';
 
-export type FacetExtensionOptions = {
-  catalog: Catalog | null;
-  lenses: string[];
-  lensRegistry?: Map<string, LensFactory>;
-};
+const FACET_PATTERN_INPUT = /\{(facet:[a-zA-Z][a-zA-Z0-9-]*)\}$/;
+const FACET_PATTERN_GLOBAL = /\{(facet:[a-zA-Z][a-zA-Z0-9-]*)\}/g;
 
-const FACET_PATTERN_INPUT = /\{facet:[^{}]+\}$/;
-const FACET_PATTERN_GLOBAL = /\{facet:[^{}]+\}/g;
+/** `{facet:foo}` 표현에서 전체 id(`facet:foo`) 추출. 형식이 맞지 않으면 null. */
+export function parseFacetRaw(raw: string): string | null {
+  const m = /^\{(facet:[a-zA-Z][a-zA-Z0-9-]*)\}$/.exec(raw.trim());
+  return m ? m[1] : null;
+}
 
-export const FacetExtension = Node.create<FacetExtensionOptions>({
+export const FacetExtension = Node.create({
   name: 'facet',
   group: 'inline',
   inline: true,
@@ -20,22 +25,14 @@ export const FacetExtension = Node.create<FacetExtensionOptions>({
   selectable: true,
   draggable: false,
 
-  addOptions() {
-    return {
-      catalog: null,
-      lenses: ['circuit', 'code'],
-      lensRegistry: undefined,
-    };
-  },
-
   addAttributes() {
     return {
-      raw: {
+      id: {
         default: '',
-        parseHTML: (element) => element.getAttribute('data-raw') ?? '',
+        parseHTML: (element) => element.getAttribute('data-facet-id') ?? '',
         renderHTML: (attrs) => {
-          const raw = typeof attrs.raw === 'string' ? attrs.raw : '';
-          return raw ? { 'data-raw': raw } : {};
+          const id = typeof attrs.id === 'string' ? attrs.id : '';
+          return id ? { 'data-facet-id': id } : {};
         },
       },
     };
@@ -47,9 +44,8 @@ export const FacetExtension = Node.create<FacetExtensionOptions>({
         tag: 'span[data-facet]',
         getAttrs: (node) => {
           if (!(node instanceof HTMLElement)) return false;
-          const raw = node.getAttribute('data-raw') ?? '';
-          if (!parseFacetExpr(raw)) return false;
-          return { raw };
+          const id = node.getAttribute('data-facet-id') ?? '';
+          return id ? { id } : false;
         },
       },
     ];
@@ -60,21 +56,7 @@ export const FacetExtension = Node.create<FacetExtensionOptions>({
   },
 
   addNodeView() {
-    return (props) => {
-      const opts = this.options;
-      if (!opts.catalog) {
-        const dom = document.createElement('span');
-        dom.setAttribute('data-facet', 'true');
-        dom.textContent = '[facet] catalog not configured';
-        return { dom };
-      }
-      const factory = createFacetNodeView({
-        catalog: opts.catalog,
-        lenses: opts.lenses,
-        lensRegistry: opts.lensRegistry,
-      });
-      return factory(props);
-    };
+    return createFacetNodeView();
   },
 
   addInputRules() {
@@ -83,9 +65,9 @@ export const FacetExtension = Node.create<FacetExtensionOptions>({
       new InputRule({
         find: FACET_PATTERN_INPUT,
         handler: ({ state, range, match }) => {
-          const raw = match[0];
-          if (!parseFacetExpr(raw)) return null;
-          state.tr.replaceRangeWith(range.from, range.to, type.create({ raw }));
+          const id = match[1];
+          if (!id) return null;
+          state.tr.replaceRangeWith(range.from, range.to, type.create({ id }));
           return;
         },
       }),
@@ -98,9 +80,9 @@ export const FacetExtension = Node.create<FacetExtensionOptions>({
       new PasteRule({
         find: FACET_PATTERN_GLOBAL,
         handler: ({ state, range, match }) => {
-          const raw = match[0];
-          if (!parseFacetExpr(raw)) return null;
-          state.tr.replaceRangeWith(range.from, range.to, type.create({ raw }));
+          const id = match[1];
+          if (!id) return null;
+          state.tr.replaceRangeWith(range.from, range.to, type.create({ id }));
           return;
         },
       }),
@@ -109,4 +91,3 @@ export const FacetExtension = Node.create<FacetExtensionOptions>({
 });
 
 export { createFacetNodeView } from './node-view.js';
-export type { FacetNodeViewOptions } from './node-view.js';

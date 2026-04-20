@@ -14,6 +14,7 @@
   },
   "devDependencies": {
     "@facet/algorithm-bubblesort": "workspace:*",
+    "@facet/algorithm-quicksort": "workspace:*",
     "@facet/container-loop": "workspace:*",
     "@facet/core": "workspace:*",
     "@facet/host-tiptap": "workspace:*",

@@ -11,6 +11,9 @@ importers:
       '@facet/algorithm-bubblesort':
         specifier: workspace:*
         version: link:packages/algorithm-bubblesort
+      '@facet/algorithm-quicksort':
+        specifier: workspace:*
+        version: link:packages/algorithm-quicksort
       '@facet/container-loop':
         specifier: workspace:*
         version: link:packages/container-loop
@@ -41,6 +44,9 @@ importers:
       '@facet/algorithm-bubblesort':
         specifier: workspace:*
         version: link:../../packages/algorithm-bubblesort
+      '@facet/algorithm-quicksort':
+        specifier: workspace:*
+        version: link:../../packages/algorithm-quicksort
       '@facet/container-loop':
         specifier: workspace:*
         version: link:../../packages/container-loop
@@ -117,10 +123,16 @@ importers:
         specifier: workspace:*
         version: link:../core
     devDependencies:
+      '@facet/algorithm-quicksort':
+        specifier: workspace:*
+        version: link:../algorithm-quicksort
       '@tiptap/core':
         specifier: ^3.22.3
         version: 3.22.3(@tiptap/pm@3.22.3)
       '@tiptap/pm':
+        specifier: ^3.22.3
+        version: 3.22.3
+      '@tiptap/starter-kit':
         specifier: ^3.22.3
         version: 3.22.3
 

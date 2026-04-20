@@ -1,14 +1,9 @@
-import {
-  getCatalog,
-  registerCatalog,
-  registerLens,
-  validateCatalog,
-} from '@facet/core';
-import { loopContainer } from '@facet/container-loop';
-import { bubbleSortBundle } from '@facet/algorithm-bubblesort';
-import { mainstreamTranspilers } from '@facet/transpilers-mainstream';
-import { circuitLens } from '@facet/lens-circuit';
-import { codeLens } from '@facet/lens-code';
+/**
+ * Playground 시작 시 4-layer 러너용 모듈/IR/Transpiler/JSON 을 일괄 등록.
+ */
+
+import { registerBuiltinViews, listFacets } from '@facet/core/runtime';
+import { registerQuicksort } from '@facet/algorithm-quicksort';
 
 let initialized = false;
 
@@ -16,19 +11,13 @@ export function bootstrapFacet(): void {
   if (initialized) return;
   initialized = true;
 
-  registerCatalog({
-    containers: [loopContainer],
-    algorithms: [bubbleSortBundle.algorithm],
-    bodies: [bubbleSortBundle.body],
-    irs: bubbleSortBundle.irs,
-    transpilers: mainstreamTranspilers,
-  });
+  registerBuiltinViews();
+  registerQuicksort();
 
-  registerLens('circuit', circuitLens);
-  registerLens('code', codeLens);
-
-  const warnings = validateCatalog(getCatalog());
-  if (warnings.length > 0) {
-    console.warn('[facet] catalog validation warnings:', warnings);
+  const ids = listFacets();
+  if (ids.length === 0) {
+    console.warn('[facet] no facets registered');
+  } else {
+    console.info('[facet] facets:', ids);
   }
 }
