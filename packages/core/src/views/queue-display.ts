@@ -12,12 +12,25 @@
 
 import type { View, ViewInstance, ViewMountParams } from './types.js';
 import { getColors, fonts, fontSizes, radii, space } from './design-tokens.js';
+import { resolveLocale, type LocaleStr } from '../types/locale.js';
+
+const QUEUE_LABELS_BY_LOCALE: Record<string, { empty: string; head: string; tail: string }> = {
+  en: { empty: '(empty)', head: 'head →', tail: '← tail' },
+  ko: { empty: '(비어 있음)', head: '맨앞 →', tail: '← 맨뒤' },
+};
+
+function pickQueueLabels(locale: string | undefined) {
+  if (locale && QUEUE_LABELS_BY_LOCALE[locale]) return QUEUE_LABELS_BY_LOCALE[locale];
+  return QUEUE_LABELS_BY_LOCALE.en;
+}
 
 export const queueDisplayView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
     container.textContent = '';
     const colors = getColors(params.theme);
-    const cfg = params.config as { label?: string };
+    const cfg = params.config as { label?: LocaleStr };
+    const labels = pickQueueLabels(params.locale);
+    const userLabel = resolveLocale(cfg.label, params.locale);
 
     const root = document.createElement('div');
     root.className = 'facet-queue-display';
@@ -30,11 +43,11 @@ export const queueDisplayView: View = {
     root.style.flexDirection = 'column';
     root.style.gap = space.xs;
 
-    if (cfg.label) {
+    if (userLabel) {
       const lbl = document.createElement('div');
       lbl.style.fontSize = fontSizes.xs;
       lbl.style.color = colors.textMuted;
-      lbl.textContent = cfg.label;
+      lbl.textContent = userLabel;
       root.appendChild(lbl);
     }
 
@@ -54,12 +67,12 @@ export const queueDisplayView: View = {
         const empty = document.createElement('span');
         empty.style.color = colors.textMuted;
         empty.style.fontSize = fontSizes.sm;
-        empty.textContent = '(비어 있음)';
+        empty.textContent = labels.empty;
         queue.appendChild(empty);
         return;
       }
       const head = document.createElement('span');
-      head.textContent = 'head →';
+      head.textContent = labels.head;
       head.style.color = colors.textMuted;
       head.style.fontSize = fontSizes.xs;
       queue.appendChild(head);
@@ -75,7 +88,7 @@ export const queueDisplayView: View = {
         queue.appendChild(box);
       }
       const tail = document.createElement('span');
-      tail.textContent = '← tail';
+      tail.textContent = labels.tail;
       tail.style.color = colors.textMuted;
       tail.style.fontSize = fontSizes.xs;
       queue.appendChild(tail);

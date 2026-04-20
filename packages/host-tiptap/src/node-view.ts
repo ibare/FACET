@@ -14,7 +14,17 @@ import {
   type FacetRunHandle,
 } from '@facet/core/runtime';
 
-function renderError(mount: HTMLElement, message: string): void {
+const STATUS_BY_LOCALE: Record<string, { loading: string; errorPrefix: string }> = {
+  en: { loading: '[facet] loading…', errorPrefix: '[facet]' },
+  ko: { loading: '[facet] 로딩…', errorPrefix: '[facet]' },
+};
+
+function pickStatus(locale: string | undefined) {
+  if (locale && STATUS_BY_LOCALE[locale]) return STATUS_BY_LOCALE[locale];
+  return STATUS_BY_LOCALE.en;
+}
+
+function renderError(mount: HTMLElement, message: string, locale?: string): void {
   mount.textContent = '';
   const box = document.createElement('span');
   box.className = 'facet-node__error';
@@ -24,13 +34,15 @@ function renderError(mount: HTMLElement, message: string): void {
   box.style.background = '#FAECE7';
   box.style.color = '#A8331C';
   box.style.fontSize = '12px';
-  box.textContent = `[facet] ${message}`;
+  box.textContent = `${pickStatus(locale).errorPrefix} ${message}`;
   mount.appendChild(box);
 }
 
 export function createFacetNodeView(): NodeViewRenderer {
   return (props: NodeViewRendererProps) => {
-    const { node } = props;
+    const { node, extension } = props;
+    const opts = (extension.options ?? {}) as { locale?: string; theme?: 'light' | 'dark' };
+    const runOptions = { locale: opts.locale, theme: opts.theme };
 
     const dom = document.createElement('span');
     dom.className = 'facet-node';
@@ -56,7 +68,7 @@ export function createFacetNodeView(): NodeViewRenderer {
       box.style.padding = '2px 8px';
       box.style.fontSize = '12px';
       box.style.color = '#888';
-      box.textContent = '[facet] 로딩…';
+      box.textContent = pickStatus(opts.locale).loading;
       mount.appendChild(box);
     };
 
@@ -67,7 +79,7 @@ export function createFacetNodeView(): NodeViewRenderer {
       mount.textContent = '';
 
       if (!id) {
-        renderError(mount, 'missing id');
+        renderError(mount, 'missing id', opts.locale);
         return;
       }
 
@@ -75,16 +87,16 @@ export function createFacetNodeView(): NodeViewRenderer {
       const cached = getFacetById(id);
       if (cached) {
         try {
-          handle = runFacet(cached, mount);
+          handle = runFacet(cached, mount, runOptions);
         } catch (err) {
-          renderError(mount, err instanceof Error ? err.message : String(err));
+          renderError(mount, err instanceof Error ? err.message : String(err), opts.locale);
         }
         return;
       }
 
       // 2. 비동기 경로: loader 가 등록되어 있으면 lazy-load 후 마운트
       if (!hasFacetLoader(id)) {
-        renderError(mount, `unknown facet: ${id}`);
+        renderError(mount, `unknown facet: ${id}`, opts.locale);
         return;
       }
 
@@ -94,19 +106,19 @@ export function createFacetNodeView(): NodeViewRenderer {
           // 마운트 토큰이 바뀌었으면 (id 변경/destroy) 결과 무시
           if (token !== mountToken) return;
           if (!json) {
-            renderError(mount, `unknown facet: ${id}`);
+            renderError(mount, `unknown facet: ${id}`, opts.locale);
             return;
           }
           mount.textContent = '';
           try {
-            handle = runFacet(json, mount);
+            handle = runFacet(json, mount, runOptions);
           } catch (err) {
-            renderError(mount, err instanceof Error ? err.message : String(err));
+            renderError(mount, err instanceof Error ? err.message : String(err), opts.locale);
           }
         },
         (err: unknown) => {
           if (token !== mountToken) return;
-          renderError(mount, err instanceof Error ? err.message : String(err));
+          renderError(mount, err instanceof Error ? err.message : String(err), opts.locale);
         },
       );
     };

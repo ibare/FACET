@@ -32,11 +32,14 @@ export {
   linkedListChainView,
   queueDisplayView,
   orderedListView,
+  goalPreviewView,
+  passTrackerView,
+  snapshotStripView,
 } from '../views/index.js';
 export { colors, lightColors, darkColors, getColors, fonts, fontSizes, radii, space } from '../views/design-tokens.js';
 export type { Theme, Palette } from '../views/design-tokens.js';
 export type { View, ViewInstance, ViewMountParams } from '../views/types.js';
-export type { BarItemState } from '../views/bar-chart.js';
+export type { BarItemState, BarChartFeature } from '../views/bar-chart.js';
 export type { GraphData, GraphPositions, GraphNodeState, GraphEdgeState } from '../views/graph-layout.js';
 export type { TreeNode, TreeNodeState, TreeEdgeState } from '../views/tree-layout.js';
 export type { LinkedListItemState } from '../views/linked-list-chain.js';

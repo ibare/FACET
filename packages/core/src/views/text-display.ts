@@ -6,6 +6,7 @@
 
 import type { View, ViewInstance, ViewMountParams } from './types.js';
 import { getColors, fontSizes, fonts, radii, space } from './design-tokens.js';
+import { resolveLocale, type LocaleStr } from '../types/locale.js';
 
 export const textDisplayView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
@@ -25,13 +26,14 @@ export const textDisplayView: View = {
     root.style.borderRadius = radii.md;
     root.style.fontFamily = fonts.body;
 
-    const cfg = params.config as { label?: string };
-    if (cfg.label) {
+    const cfg = params.config as { label?: LocaleStr };
+    const labelText = resolveLocale(cfg.label, params.locale);
+    if (labelText) {
       const label = document.createElement('div');
       label.className = 'facet-text-display__label';
       label.style.fontSize = fontSizes.sm;
       label.style.color = colors.textMuted;
-      label.textContent = cfg.label;
+      label.textContent = labelText;
       root.appendChild(label);
     }
 

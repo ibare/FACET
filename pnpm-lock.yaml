@@ -56,12 +56,60 @@ importers:
 
   apps/playground:
     dependencies:
+      '@facet/algorithm-arraymax':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/arraymax
+      '@facet/algorithm-binarysearch':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/binarysearch
       '@facet/algorithm-bubblesort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bubblesort
+      '@facet/algorithm-coinchange':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/coinchange
+      '@facet/algorithm-countingsort':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/countingsort
+      '@facet/algorithm-factorial':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/factorial
+      '@facet/algorithm-fibonaccimemo':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/fibonaccimemo
+      '@facet/algorithm-heapsort':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/heapsort
+      '@facet/algorithm-insertionsort':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/insertionsort
+      '@facet/algorithm-interpolationsearch':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/interpolationsearch
+      '@facet/algorithm-knapsack':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/knapsack
+      '@facet/algorithm-linearsearch':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/linearsearch
+      '@facet/algorithm-mergesort':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/mergesort
       '@facet/algorithm-quicksort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/quicksort
+      '@facet/algorithm-radixsort':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/radixsort
+      '@facet/algorithm-selectionsort':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/selectionsort
+      '@facet/algorithm-shellsort':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/shellsort
+      '@facet/algorithm-subsetsum':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/subsetsum
       '@facet/core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -139,6 +187,32 @@ importers:
         specifier: ^5.4.11
         version: 5.4.21(@types/node@22.19.17)(lightningcss@1.32.0)
 
+  facets/cs-fundamentals/arraymax:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@facet/view-code':
+        specifier: workspace:*
+        version: link:../../../packages/view-code
+
+  facets/cs-fundamentals/binarysearch:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@facet/view-code':
+        specifier: workspace:*
+        version: link:../../../packages/view-code
+
   facets/cs-fundamentals/bubblesort:
     dependencies:
       '@facet/core':
@@ -152,7 +226,189 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/view-code
 
+  facets/cs-fundamentals/coinchange:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@facet/view-code':
+        specifier: workspace:*
+        version: link:../../../packages/view-code
+
+  facets/cs-fundamentals/countingsort:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@facet/view-code':
+        specifier: workspace:*
+        version: link:../../../packages/view-code
+
+  facets/cs-fundamentals/factorial:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@facet/view-code':
+        specifier: workspace:*
+        version: link:../../../packages/view-code
+
+  facets/cs-fundamentals/fibonaccimemo:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@facet/view-code':
+        specifier: workspace:*
+        version: link:../../../packages/view-code
+
+  facets/cs-fundamentals/heapsort:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@facet/view-code':
+        specifier: workspace:*
+        version: link:../../../packages/view-code
+
+  facets/cs-fundamentals/insertionsort:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@facet/view-code':
+        specifier: workspace:*
+        version: link:../../../packages/view-code
+
+  facets/cs-fundamentals/interpolationsearch:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@facet/view-code':
+        specifier: workspace:*
+        version: link:../../../packages/view-code
+
+  facets/cs-fundamentals/knapsack:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@facet/view-code':
+        specifier: workspace:*
+        version: link:../../../packages/view-code
+
+  facets/cs-fundamentals/linearsearch:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@facet/view-code':
+        specifier: workspace:*
+        version: link:../../../packages/view-code
+
+  facets/cs-fundamentals/mergesort:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@facet/view-code':
+        specifier: workspace:*
+        version: link:../../../packages/view-code
+
   facets/cs-fundamentals/quicksort:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@facet/view-code':
+        specifier: workspace:*
+        version: link:../../../packages/view-code
+
+  facets/cs-fundamentals/radixsort:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@facet/view-code':
+        specifier: workspace:*
+        version: link:../../../packages/view-code
+
+  facets/cs-fundamentals/selectionsort:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@facet/view-code':
+        specifier: workspace:*
+        version: link:../../../packages/view-code
+
+  facets/cs-fundamentals/shellsort:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@facet/view-code':
+        specifier: workspace:*
+        version: link:../../../packages/view-code
+
+  facets/cs-fundamentals/subsetsum:
     dependencies:
       '@facet/core':
         specifier: workspace:*

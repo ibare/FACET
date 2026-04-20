@@ -89,8 +89,9 @@ describe('runFacet — counter 더미', () => {
     await flushMicrotasks(20);
     handle.reset();
     await delay(20);
+    // reset 후 runner 가 onInit 을 다시 호출 → counter projector 의 초기 텍스트('대기 중') 가 다시 표시됨
     const value = mount.querySelector('.facet-text-display__value')?.textContent;
-    expect(value).toBe('—');
+    expect(value).toBe('대기 중');
     const metric = mount.querySelector('.facet-control-bar__metric--count span:last-child')?.textContent;
     expect(metric).toBe('0');
     handle.step();

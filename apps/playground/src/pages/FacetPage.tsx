@@ -23,7 +23,7 @@ type LoadState =
 export function FacetPage() {
   const { id } = useParams<{ id: string }>();
   const facetId = id ? decodeURIComponent(id) : '';
-  const { locale } = usePreferences();
+  const { locale, theme } = usePreferences();
   const location = facetId ? findTopicByFacetId(facetId) : null;
 
   const [state, setState] = useState<LoadState>({ kind: 'loading' });
@@ -69,13 +69,15 @@ export function FacetPage() {
   }, [facetId]);
 
   const html = state.kind === 'ready' ? state.html : '';
+  // locale/theme 가 바뀌면 facet NodeView 가 새 옵션으로 다시 마운트되도록
+  // editor 자체를 재생성한다(deps 에 포함). FacetExtension.configure 로 옵션 주입.
   const editor = useEditor(
     {
       editable: false,
-      extensions: [StarterKit, FacetExtension],
+      extensions: [StarterKit, FacetExtension.configure({ locale, theme })],
       content: html,
     },
-    [html],
+    [html, locale, theme],
   );
 
   const title = useMemo(() => {

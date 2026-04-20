@@ -13,7 +13,7 @@ import type { FacetContext, MetricDelta } from './context.js';
 import type { FacetRuntimeEvent } from '../types/event.js';
 import type { ProjectorViews } from './projector.js';
 import { buildLayout, mountBlocks } from './layout-builder.js';
-import { getAlgorithm, getProjector, getIR, listTranspilers, stripPrefix } from './registry.js';
+import { getAlgorithm, getAlgorithmComputeResult, getProjector, getIR, listTranspilers, stripPrefix } from './registry.js';
 
 const BASE_DELAY_MS = 400;
 
@@ -133,7 +133,31 @@ export function runFacet(
     mountParams: { initialData: initialDataClone, locale, theme },
   });
 
-  // 4. Projector 인스턴스화 + 초기화
+  // 4. goal-preview(computeFrom: 'sorted') 블록에 알고리즘의 computeResult 결과 주입
+  const computeResult = getAlgorithmComputeResult(algorithmName);
+  if (computeResult) {
+    let computed: unknown | undefined;
+    for (const [ref, spec] of Object.entries(enrichedBlocks)) {
+      if (spec.type !== 'goal-preview') continue;
+      const gp = spec as { computeFrom?: string };
+      if (gp.computeFrom !== 'sorted') continue;
+      if (computed === undefined) {
+        try {
+          computed = computeResult(deepClone(json.initialData));
+        } catch (err) {
+          console.error('[facet] computeResult error:', err);
+          break;
+        }
+      }
+      const inst = views[ref] as { setData?: (v: number[]) => void } | undefined;
+      const data = computed as { values?: number[] } | undefined;
+      if (inst && typeof inst.setData === 'function' && Array.isArray(data?.values)) {
+        inst.setData(data.values);
+      }
+    }
+  }
+
+  // 5. Projector 인스턴스화 + 초기화
   const projector = projectorFactory(views);
   projector.onInit?.(initialDataClone);
 
@@ -308,6 +332,10 @@ export function runFacet(
       callMethod(controlBar, 'setRunning', false);
     }
     projector.onReset?.();
+    // 데이터 복원 후 projector 도 초기 상태로 다시 세팅한다.
+    // 그렇지 않으면 stage 등의 뷰가 마지막 실행 결과 상태로 남아 reset 후 재생 시
+    // 잘못된 출발점에서 동작한다.
+    projector.onInit?.(context.data);
     setMode('idle');
   }
 

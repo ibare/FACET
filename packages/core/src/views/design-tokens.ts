@@ -28,50 +28,72 @@ export type Palette = {
   itemSorted: string;
   itemPivot: string;
   itemActive: string;
+
+  /** wave-trail: 비교 위치가 지나간 직후의 잔상 색 (반투명) */
+  waveTrail: string;
+  /** rising-marker: 패스 동안 "떠오르는 값"을 표시하는 강조색 */
+  risingMarker: string;
+  /** sorted-tail: 정렬된 꼬리 영역 배경 tint */
+  sortedTailBg: string;
+  /** sorted-tail: 정렬 영역 경계선 색 */
+  sortedTailBorder: string;
 };
 
+// 흑백 + 노란 악센트 (호스트 서비스 Ceres 108 톤과 동기화).
+// 기본 시각 언어는 near-black 채움과 light-gray 보더. 사용자의 시선이
+// 향해야 할 순간(비교/교환/pivot) 에만 노란색(#facc15 = "108" 배지 톤) 을 쓴다.
 export const lightColors: Palette = {
   bg: '#ffffff',
-  bgSubtle: '#f7f8fb',
-  border: '#e1e4ec',
-  text: '#1f2330',
-  textMuted: '#6b6f80',
+  bgSubtle: '#fafafa',
+  border: '#e5e5e5',
+  text: '#171717',
+  textMuted: '#737373',
   textInverse: '#ffffff',
 
-  primary: '#3a5cc7',
-  primaryHover: '#2e4ba5',
-  accent: '#f1c232',
-  danger: '#c84a3a',
-  success: '#3aaa6a',
+  primary: '#171717',
+  primaryHover: '#000000',
+  accent: '#facc15',
+  danger: '#171717',
+  success: '#171717',
 
-  itemDefault: '#8fa0c4',
-  itemComparing: '#f1c232',
-  itemSwapping: '#e06666',
-  itemSorted: '#6aa84f',
-  itemPivot: '#9b59b6',
-  itemActive: '#3a5cc7',
+  itemDefault: '#ffffff',
+  itemComparing: '#facc15',
+  itemSwapping: '#facc15',
+  itemSorted: '#171717',
+  itemPivot: '#facc15',
+  itemActive: '#171717',
+
+  waveTrail: 'rgba(23, 23, 23, 0.14)',
+  risingMarker: '#171717',
+  sortedTailBg: 'rgba(23, 23, 23, 0.03)',
+  sortedTailBorder: '#171717',
 };
 
 export const darkColors: Palette = {
-  bg: '#16181f',
-  bgSubtle: '#1d1f27',
-  border: 'rgba(255, 255, 255, 0.10)',
-  text: '#e7e9f0',
-  textMuted: '#9aa0b5',
-  textInverse: '#0b0d12',
+  bg: '#0a0a0a',
+  bgSubtle: '#171717',
+  border: '#262626',
+  text: '#fafafa',
+  textMuted: '#a3a3a3',
+  textInverse: '#0a0a0a',
 
-  primary: '#7c8ee6',
-  primaryHover: '#94a3ee',
-  accent: '#f5cf3f',
-  danger: '#ec7464',
-  success: '#66c486',
+  primary: '#fafafa',
+  primaryHover: '#ffffff',
+  accent: '#facc15',
+  danger: '#fafafa',
+  success: '#fafafa',
 
-  itemDefault: '#5b6b8c',
-  itemComparing: '#f5cf3f',
-  itemSwapping: '#ec7464',
-  itemSorted: '#66c486',
-  itemPivot: '#b06fc7',
-  itemActive: '#6b8be0',
+  itemDefault: '#0a0a0a',
+  itemComparing: '#facc15',
+  itemSwapping: '#facc15',
+  itemSorted: '#fafafa',
+  itemPivot: '#facc15',
+  itemActive: '#fafafa',
+
+  waveTrail: 'rgba(250, 250, 250, 0.14)',
+  risingMarker: '#fafafa',
+  sortedTailBg: 'rgba(250, 250, 250, 0.04)',
+  sortedTailBorder: '#fafafa',
 };
 
 export function getColors(theme: Theme | undefined): Palette {

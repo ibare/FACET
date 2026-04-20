@@ -17,13 +17,24 @@ export function parseFacetRaw(raw: string): string | null {
   return m ? m[1] : null;
 }
 
-export const FacetExtension = Node.create({
+export type FacetExtensionOptions = {
+  /** runFacet 에 전달할 locale. 변경 시 호스트가 editor 를 재생성해야 반영된다. */
+  locale?: string;
+  /** runFacet 에 전달할 theme. */
+  theme?: 'light' | 'dark';
+};
+
+export const FacetExtension = Node.create<FacetExtensionOptions>({
   name: 'facet',
   group: 'inline',
   inline: true,
   atom: true,
   selectable: true,
   draggable: false,
+
+  addOptions() {
+    return { locale: undefined, theme: undefined };
+  },
 
   addAttributes() {
     return {

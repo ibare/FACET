@@ -123,7 +123,7 @@ describe('code-view', () => {
     expect(container.querySelectorAll('.facet-code-view__panel').length).toBe(2);
     const btn = container.querySelector('.facet-code-view__add') as HTMLButtonElement;
     expect(btn.disabled).toBe(true);
-    expect(btn.textContent).toContain('최대');
+    expect(btn.textContent).toContain('Max');
 
     instance.destroy();
   });

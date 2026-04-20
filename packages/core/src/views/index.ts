@@ -13,6 +13,9 @@ import { treeLayoutView } from './tree-layout.js';
 import { linkedListChainView } from './linked-list-chain.js';
 import { queueDisplayView } from './queue-display.js';
 import { orderedListView } from './ordered-list.js';
+import { goalPreviewView } from './goal-preview.js';
+import { passTrackerView } from './pass-tracker.js';
+import { snapshotStripView } from './snapshot-strip.js';
 
 const globalViewCatalog = new Map<string, View>();
 
@@ -46,6 +49,9 @@ export function registerBuiltinViews(): void {
   registerView('linked-list-chain', linkedListChainView);
   registerView('queue-display', queueDisplayView);
   registerView('ordered-list', orderedListView);
+  registerView('goal-preview', goalPreviewView);
+  registerView('pass-tracker', passTrackerView);
+  registerView('snapshot-strip', snapshotStripView);
 }
 
 // 기본 뷰는 import 시 자동 등록
@@ -62,4 +68,7 @@ export {
   linkedListChainView,
   queueDisplayView,
   orderedListView,
+  goalPreviewView,
+  passTrackerView,
+  snapshotStripView,
 };

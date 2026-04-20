@@ -31,6 +31,38 @@ const MAX_PANELS = 2;
 const HL_BG_LIGHT = 'rgba(241, 194, 50, 0.35)';
 const HL_BG_DARK = 'rgba(245, 207, 63, 0.22)';
 
+const CODE_VIEW_LABELS_BY_LOCALE: Record<
+  string,
+  {
+    addLanguage: string;
+    atMax: string;
+    emptyWithIR: string;
+    emptyNoIR: string;
+    noMoreLanguages: string;
+    loading: string;
+    errorPrefix: string;
+  }
+> = {
+  en: {
+    addLanguage: '+ Add language',
+    atMax: 'Max 2',
+    emptyWithIR: 'Add a language to view code.',
+    emptyNoIR: 'No IR specified.',
+    noMoreLanguages: 'No additional languages available.',
+    loading: 'Loading…',
+    errorPrefix: 'Error',
+  },
+  ko: {
+    addLanguage: '+ 언어 추가',
+    atMax: '최대 2개',
+    emptyWithIR: '언어를 추가해 코드를 확인하세요.',
+    emptyNoIR: 'IR 이 지정되지 않았습니다.',
+    noMoreLanguages: '추가 가능한 언어가 없습니다.',
+    loading: '로딩…',
+    errorPrefix: '오류',
+  },
+};
+
 type PanelState = {
   transpilerId: string;
   language: string;
@@ -45,6 +77,7 @@ export const codeView: View = {
     const HL_BG = params.theme === 'dark' ? HL_BG_DARK : HL_BG_LIGHT;
     const SHIKI_THEME = params.theme === 'dark' ? 'github-dark' : 'github-light';
     const locale = params.locale;
+    const labels = CODE_VIEW_LABELS_BY_LOCALE[locale ?? 'en'] ?? CODE_VIEW_LABELS_BY_LOCALE.en;
 
     const cfg = params.config as {
       label?: string;
@@ -84,7 +117,7 @@ export const codeView: View = {
     const addBtn = document.createElement('button');
     addBtn.type = 'button';
     addBtn.className = 'facet-code-view__add';
-    addBtn.textContent = '+ 언어 추가';
+    addBtn.textContent = labels.addLanguage;
     addBtn.style.fontSize = fontSizes.xs;
     addBtn.style.padding = `${space.xs} ${space.sm}`;
     addBtn.style.borderRadius = radii.sm;
@@ -113,9 +146,7 @@ export const codeView: View = {
     emptyEl.style.background = colors.bgSubtle;
     emptyEl.style.borderRadius = radii.sm;
     emptyEl.style.border = `1px dashed ${colors.border}`;
-    emptyEl.textContent = ir
-      ? '언어를 추가해 코드를 확인하세요.'
-      : 'IR 이 지정되지 않았습니다.';
+    emptyEl.textContent = ir ? labels.emptyWithIR : labels.emptyNoIR;
     root.appendChild(emptyEl);
 
     // ── 드롭다운 ────────────────────────
@@ -143,7 +174,7 @@ export const codeView: View = {
       addBtn.disabled = noIR || atMax || available.length === 0;
       addBtn.style.opacity = addBtn.disabled ? '0.5' : '1';
       addBtn.style.cursor = addBtn.disabled ? 'not-allowed' : 'pointer';
-      addBtn.textContent = atMax ? '최대 2개' : '+ 언어 추가';
+      addBtn.textContent = atMax ? labels.atMax : labels.addLanguage;
 
       panelsWrap.style.gridTemplateColumns =
         panels.length === 0 ? '1fr' : `repeat(${panels.length}, minmax(0, 1fr))`;
@@ -164,7 +195,7 @@ export const codeView: View = {
         empty.style.padding = `${space.xs} ${space.sm}`;
         empty.style.fontSize = fontSizes.xs;
         empty.style.color = colors.textMuted;
-        empty.textContent = '추가 가능한 언어가 없습니다.';
+        empty.textContent = labels.noMoreLanguages;
         dropdown.appendChild(empty);
       } else {
         for (const t of available) {
@@ -256,7 +287,7 @@ export const codeView: View = {
       codeMount.style.fontSize = fontSizes.sm;
       codeMount.style.lineHeight = '1.55';
       codeMount.style.padding = `${space.sm} ${space.md}`;
-      codeMount.textContent = '로딩…';
+      codeMount.textContent = labels.loading;
       section.appendChild(codeMount);
 
       return { transpilerId: t.id, language: t.language, section, codeMount };
@@ -302,7 +333,7 @@ export const codeView: View = {
         // 현재 활성 phase 가 있으면 즉시 반영
         if (currentPhase) applyHighlight(panel, currentPhase);
       } catch (err) {
-        panel.codeMount.textContent = `오류: ${(err as Error).message}`;
+        panel.codeMount.textContent = `${labels.errorPrefix}: ${(err as Error).message}`;
       }
     }
 
