@@ -17,10 +17,12 @@ export type TranspileResult = {
   lines: TranspileLine[];
 };
 
+import type { LocaleStr } from './types/locale.js';
+
 export type Transpiler = {
   id: string;
   paradigm: string;
   target: string;
-  targetLabel: string;
+  targetLabel: LocaleStr;
   transpile(ir: IR): TranspileResult;
 };

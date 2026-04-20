@@ -105,6 +105,7 @@ export function mountBlocks(params: MountBlocksParams): MountedBlocks {
     const mountParams: ViewMountParams = {
       config: spec as Record<string, unknown>,
       initialData: params.mountParams?.initialData,
+      locale: params.mountParams?.locale,
     };
     result[ref] = view.mount(mount, mountParams);
   }

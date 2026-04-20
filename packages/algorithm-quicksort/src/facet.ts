@@ -6,8 +6,11 @@ import type { FacetJson } from '@facet/core/runtime';
 
 export const quicksortFacet: FacetJson = {
   id: 'facet:quickSort',
-  title: '퀵 정렬',
-  description: 'pivot 기준 분할 정복 — 평균 O(n log n)',
+  title: { en: 'Quick Sort', ko: '퀵 정렬' },
+  description: {
+    en: 'Divide and conquer by pivot — average O(n log n)',
+    ko: 'pivot 기준 분할 정복 — 평균 O(n log n)',
+  },
   algorithm: 'module:quicksort',
   projector: 'module:quicksortProjector',
   initialData: { type: 'array', values: [5, 2, 8, 1, 9, 3, 7, 4] },
@@ -33,7 +36,7 @@ export const quicksortFacet: FacetJson = {
     stage: { type: 'bar-chart', height: 220 },
     codePanel: {
       type: 'code-view',
-      label: 'Python · 명령형',
+      label: { en: 'Python · imperative', ko: 'Python · 명령형' },
       ir: 'ir:quicksort-imperative',
       transpiler: 'transpiler:quicksort-python-imperative',
     },
@@ -41,8 +44,8 @@ export const quicksortFacet: FacetJson = {
       type: 'control-bar',
       controls: ['play', 'step', 'pause', 'reset', { type: 'speed-slider', default: 1 }],
       metrics: [
-        { name: 'compare-count', label: '비교', initial: 0 },
-        { name: 'swap-count', label: '교환', initial: 0 },
+        { name: 'compare-count', label: { en: 'Compare', ko: '비교' }, initial: 0 },
+        { name: 'swap-count', label: { en: 'Swap', ko: '교환' }, initial: 0 },
       ],
     },
   },

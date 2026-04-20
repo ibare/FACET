@@ -9,6 +9,8 @@ export type ViewMountParams = {
   config: Record<string, unknown>;
   /** 알고리즘 초기 데이터 (필요시 참조) */
   initialData?: Record<string, unknown>;
+  /** 현재 locale (View 내부 하드코딩 라벨 다국어화용). undefined 면 DEFAULT_LOCALE. */
+  locale?: string;
 };
 
 export type ViewInstance = {

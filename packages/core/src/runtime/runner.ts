@@ -6,6 +6,8 @@
  */
 
 import type { FacetJson } from '../types/facet-json.js';
+import type { LocaleStr } from '../types/locale.js';
+import { resolveLocale } from '../types/locale.js';
 import type { FacetContext, MetricDelta } from './context.js';
 import type { FacetRuntimeEvent } from '../types/event.js';
 import type { ProjectorViews } from './projector.js';
@@ -27,6 +29,8 @@ export type FacetRunHandle = {
 
 export type RunFacetOptions = {
   autoStart?: boolean;
+  /** facet 의 LocaleStr 텍스트와 View 내부 라벨을 해석할 언어. 기본 'en'. */
+  locale?: string;
 };
 
 function deepClone<T>(value: T): T {
@@ -65,17 +69,38 @@ export function runFacet(
   const algorithmFn = algorithmFnRaw;
 
   // 2. Layout / blocks 마운트
+  const locale = options?.locale;
   const blocks = json.blocks;
 
-  // title-block 자동 채움 — blocks 의 title-block 에 title/description 미지정 시 JSON 의 값 주입
+  // 사용자 노출 텍스트(LocaleStr) 를 현재 locale 로 해석.
+  // - title-block 자동 채움 (blocks 미지정 시 facet.title/description 주입)
+  // - control-bar metrics[].label
+  // - code-view label
   const enrichedBlocks: typeof blocks = { ...blocks };
   for (const [k, v] of Object.entries(enrichedBlocks)) {
     if (v.type === 'title-block') {
+      const tb = v as { title?: LocaleStr; description?: LocaleStr };
       enrichedBlocks[k] = {
         ...v,
-        title: (v as { title?: string }).title ?? json.title,
-        description: (v as { description?: string }).description ?? json.description,
+        title: resolveLocale(tb.title ?? json.title, locale),
+        description: resolveLocale(tb.description ?? json.description, locale),
       };
+    } else if (v.type === 'control-bar') {
+      const cb = v as { metrics?: { name: string; label: LocaleStr; initial?: number }[] };
+      if (cb.metrics) {
+        enrichedBlocks[k] = {
+          ...v,
+          metrics: cb.metrics.map((m) => ({
+            ...m,
+            label: resolveLocale(m.label, locale),
+          })),
+        };
+      }
+    } else if (v.type === 'code-view') {
+      const cv = v as { label?: LocaleStr };
+      if (cv.label !== undefined) {
+        enrichedBlocks[k] = { ...v, label: resolveLocale(cv.label, locale) };
+      }
     }
   }
 
@@ -103,7 +128,7 @@ export function runFacet(
   const views = mountBlocks({
     blocks: enrichedBlocks,
     blockMounts: built.blockMounts,
-    mountParams: { initialData: initialDataClone },
+    mountParams: { initialData: initialDataClone, locale },
   });
 
   // 4. Projector 인스턴스화 + 초기화

@@ -1,8 +1,35 @@
 @import 'tailwindcss';
 
+/* class-based dark mode — <html class="dark"> 토글로 활성화 */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Pretendard', sans-serif;
   --font-mono: ui-monospace, Menlo, Monaco, 'JetBrains Mono', monospace;
+
+  /* semantic color tokens — light theme 기본값 */
+  --color-fg: oklch(0.22 0.01 270);
+  --color-fg-muted: oklch(0.50 0.01 270);
+  --color-fg-subtle: oklch(0.62 0.01 270);
+  --color-surface: oklch(0.99 0 0);
+  --color-surface-raised: oklch(0.96 0.005 270);
+  --color-surface-raised-hover: oklch(0.93 0.005 270);
+  --color-border: oklch(0.90 0.005 270);
+  --color-border-strong: oklch(0.82 0.005 270);
+  --color-bg-page: oklch(0.97 0.005 270);
+}
+
+/* dark theme — variable 재정의로 모든 utility 자동 반전 */
+.dark {
+  --color-fg: #e7e9f0;
+  --color-fg-muted: oklch(0.65 0.01 270);
+  --color-fg-subtle: oklch(0.50 0.01 270);
+  --color-surface: #0b0d12;
+  --color-surface-raised: rgba(255, 255, 255, 0.04);
+  --color-surface-raised-hover: rgba(255, 255, 255, 0.08);
+  --color-border: rgba(255, 255, 255, 0.10);
+  --color-border-strong: rgba(255, 255, 255, 0.18);
+  --color-bg-page: #0b0d12;
 }
 
 html,
@@ -13,17 +40,23 @@ body,
 
 body {
   margin: 0;
-  background:
-    radial-gradient(1200px 600px at 0% -10%, rgba(99, 102, 241, 0.18), transparent 60%),
-    radial-gradient(900px 500px at 100% 0%, rgba(236, 72, 153, 0.12), transparent 60%),
-    #0b0d12;
-  color: #e7e9f0;
+  background: var(--color-bg-page);
+  color: var(--color-fg);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 220ms ease, color 220ms ease;
 }
 
-/* facet 마운트 컨테이너 — 페이지 전체에서 사용 */
+/* 다크 테마에서만 그라디언트 글로우 — 라이트는 단색 표면 유지 */
+.dark body {
+  background:
+    radial-gradient(1200px 600px at 0% -10%, rgba(99, 102, 241, 0.18), transparent 60%),
+    radial-gradient(900px 500px at 100% 0%, rgba(236, 72, 153, 0.12), transparent 60%),
+    var(--color-bg-page);
+}
+
+/* facet 마운트 컨테이너 — 비주얼라이저 자체는 phase 3(코어 themable) 까지 항상 라이트 */
 .facet-mount {
   display: block;
   width: 100%;
@@ -39,16 +72,11 @@ body {
   from { height: var(--radix-accordion-content-height); opacity: 1; }
   to { height: 0; opacity: 0; }
 }
+[data-radix-accordion-content][data-state='open'] { animation: facet-accordion-down 200ms ease-out; }
+[data-radix-accordion-content][data-state='closed'] { animation: facet-accordion-up 160ms ease-in; }
 
-[data-radix-accordion-content][data-state='open'] {
-  animation: facet-accordion-down 200ms ease-out;
-}
-[data-radix-accordion-content][data-state='closed'] {
-  animation: facet-accordion-up 160ms ease-in;
-}
-
-/* 스크롤바 — 어두운 테마에 맞춰 슬림하게 */
+/* 슬림 스크롤바 — 두 테마 모두 자연스럽게 */
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.08); border-radius: 8px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.16); }
+::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-fg-muted); }

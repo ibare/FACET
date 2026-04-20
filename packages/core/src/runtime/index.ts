@@ -7,6 +7,7 @@
 
 export * from '../types/event.js';
 export * from '../types/facet-json.js';
+export * from '../types/locale.js';
 export * from './context.js';
 export * from './projector.js';
 export * from './event-bus.js';

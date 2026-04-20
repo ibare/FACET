@@ -5,6 +5,8 @@
  * 로직은 한 줄도 없으며 모듈 참조는 `module:이름` 형식.
  */
 
+import type { LocaleStr } from './locale.js';
+
 export type ModuleRef = `module:${string}`;
 export type IRRef = `ir:${string}`;
 export type TranspilerRef = `transpiler:${string}`;
@@ -36,7 +38,7 @@ export type ControlSpec =
 
 export type MetricSpec = {
   name: string;
-  label: string;
+  label: LocaleStr;
   initial?: number;
 };
 
@@ -60,8 +62,8 @@ export type InitialData = {
 export type FacetJson = {
   /** facet 식별자 (예: facet:bubbleSort) */
   id: string;
-  title: string;
-  description?: string;
+  title: LocaleStr;
+  description?: LocaleStr;
   algorithm: ModuleRef;
   projector: ModuleRef;
   initialData: InitialData;

@@ -18,6 +18,7 @@
 
 import type { View, ViewInstance, ViewMountParams } from './types.js';
 import type { ControlSpec, MetricSpec } from '../types/facet-json.js';
+import { resolveLocale } from '../types/locale.js';
 import { colors, fontSizes, fonts, radii, space } from './design-tokens.js';
 
 type ButtonId = 'play' | 'step' | 'pause' | 'reset';
@@ -45,12 +46,20 @@ function makeButton(id: ButtonId, label: string): HTMLButtonElement {
   return btn;
 }
 
-const BTN_LABEL: Record<ButtonId, string> = {
-  play: '▶ 재생',
-  step: '⏭ 단계',
-  pause: '⏸ 정지',
-  reset: '↺ 리셋',
+const BTN_LABEL_BY_LOCALE: Record<string, Record<ButtonId, string>> = {
+  en: { play: '▶ Play', step: '⏭ Step', pause: '⏸ Pause', reset: '↺ Reset' },
+  ko: { play: '▶ 재생', step: '⏭ 단계', pause: '⏸ 정지', reset: '↺ 리셋' },
 };
+
+const SPEED_LABEL_BY_LOCALE: Record<string, string> = {
+  en: 'Speed',
+  ko: '속도',
+};
+
+function pickLocaleMap<T>(map: Record<string, T>, locale: string | undefined): T {
+  if (locale && map[locale] !== undefined) return map[locale];
+  return map.en;
+}
 
 export const controlBarView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
@@ -60,6 +69,8 @@ export const controlBarView: View = {
       controls?: ControlSpec[];
       metrics?: MetricSpec[];
     };
+    const btnLabels = pickLocaleMap(BTN_LABEL_BY_LOCALE, params.locale);
+    const speedText = pickLocaleMap(SPEED_LABEL_BY_LOCALE, params.locale);
 
     const root = document.createElement('div');
     root.className = 'facet-control-bar';
@@ -93,7 +104,7 @@ export const controlBarView: View = {
     for (const c of controls) {
       if (typeof c === 'string') {
         if (c === 'play' || c === 'step' || c === 'pause' || c === 'reset') {
-          const btn = makeButton(c, BTN_LABEL[c]);
+          const btn = makeButton(c, btnLabels[c]);
           btn.addEventListener('click', () => {
             for (const h of handlers[c]) h();
           });
@@ -110,7 +121,7 @@ export const controlBarView: View = {
         wrap.style.gap = space.xs;
         wrap.style.fontSize = fontSizes.xs;
         wrap.style.color = colors.textMuted;
-        wrap.textContent = '속도';
+        wrap.textContent = speedText;
         speedInput = document.createElement('input');
         speedInput.type = 'range';
         speedInput.min = String(speedState.min);
@@ -156,7 +167,7 @@ export const controlBarView: View = {
       badge.style.fontSize = fontSizes.sm;
       const labelEl = document.createElement('span');
       labelEl.style.color = colors.textMuted;
-      labelEl.textContent = m.label;
+      labelEl.textContent = resolveLocale(m.label, params.locale);
       const valueEl = document.createElement('span');
       valueEl.style.fontWeight = '600';
       valueEl.style.color = colors.text;
