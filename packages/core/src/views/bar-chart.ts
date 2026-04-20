@@ -12,7 +12,7 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from './types.js';
-import { colors, fonts, radii, space } from './design-tokens.js';
+import { getColors, type Palette, fonts, radii, space } from './design-tokens.js';
 
 export type BarItemState =
   | 'default'
@@ -24,19 +24,23 @@ export type BarItemState =
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
-const STATE_COLOR: Record<BarItemState, string> = {
-  default: colors.itemDefault,
-  comparing: colors.itemComparing,
-  swapping: colors.itemSwapping,
-  sorted: colors.itemSorted,
-  pivot: colors.itemPivot,
-  active: colors.itemActive,
-};
+function makeStateColor(colors: Palette): Record<BarItemState, string> {
+  return {
+    default: colors.itemDefault,
+    comparing: colors.itemComparing,
+    swapping: colors.itemSwapping,
+    sorted: colors.itemSorted,
+    pivot: colors.itemPivot,
+    active: colors.itemActive,
+  };
+}
 
 export const barChartView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
     container.textContent = '';
 
+    const colors = getColors(params.theme);
+    const STATE_COLOR = makeStateColor(colors);
     const cfg = params.config as { height?: number };
     const height = cfg.height ?? 200;
 

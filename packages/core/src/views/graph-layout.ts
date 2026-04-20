@@ -11,7 +11,7 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from './types.js';
-import { colors, fonts, radii, space } from './design-tokens.js';
+import { getColors, type Palette, fonts, radii, space } from './design-tokens.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -25,23 +25,30 @@ export type GraphData = {
 
 export type GraphPositions = Record<string, { x: number; y: number }>;
 
-const NODE_COLOR: Record<GraphNodeState, string> = {
-  default: colors.itemDefault,
-  visited: colors.itemSorted,
-  active: colors.itemActive,
-  goal: colors.itemPivot,
-};
+function makeNodeColor(colors: Palette): Record<GraphNodeState, string> {
+  return {
+    default: colors.itemDefault,
+    visited: colors.itemSorted,
+    active: colors.itemActive,
+    goal: colors.itemPivot,
+  };
+}
 
-const EDGE_COLOR: Record<GraphEdgeState, string> = {
-  default: colors.border,
-  active: colors.itemActive,
-  traversed: colors.itemSorted,
-};
+function makeEdgeColor(colors: Palette): Record<GraphEdgeState, string> {
+  return {
+    default: colors.border,
+    active: colors.itemActive,
+    traversed: colors.itemSorted,
+  };
+}
 
 export const graphLayoutView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
     container.textContent = '';
 
+    const colors = getColors(params.theme);
+    const NODE_COLOR = makeNodeColor(colors);
+    const EDGE_COLOR = makeEdgeColor(colors);
     const cfg = params.config as { width?: number; height?: number };
     const W = cfg.width ?? 480;
     const H = cfg.height ?? 280;

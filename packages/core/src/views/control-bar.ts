@@ -19,11 +19,11 @@
 import type { View, ViewInstance, ViewMountParams } from './types.js';
 import type { ControlSpec, MetricSpec } from '../types/facet-json.js';
 import { resolveLocale } from '../types/locale.js';
-import { colors, fontSizes, fonts, radii, space } from './design-tokens.js';
+import { getColors, type Palette, fontSizes, fonts, radii, space } from './design-tokens.js';
 
 type ButtonId = 'play' | 'step' | 'pause' | 'reset';
 
-function makeButton(id: ButtonId, label: string): HTMLButtonElement {
+function makeButton(id: ButtonId, label: string, colors: Palette): HTMLButtonElement {
   const btn = document.createElement('button');
   btn.type = 'button';
   btn.className = `facet-control-bar__btn facet-control-bar__btn--${id}`;
@@ -37,11 +37,13 @@ function makeButton(id: ButtonId, label: string): HTMLButtonElement {
   btn.style.border = `1px solid ${colors.border}`;
   btn.style.borderRadius = radii.sm;
   btn.style.cursor = 'pointer';
+  const baseBg = colors.bg;
+  const hoverBg = colors.bgSubtle;
   btn.addEventListener('mouseenter', () => {
-    if (!btn.disabled) btn.style.background = colors.bgSubtle;
+    if (!btn.disabled) btn.style.background = hoverBg;
   });
   btn.addEventListener('mouseleave', () => {
-    btn.style.background = colors.bg;
+    btn.style.background = baseBg;
   });
   return btn;
 }
@@ -69,6 +71,7 @@ export const controlBarView: View = {
       controls?: ControlSpec[];
       metrics?: MetricSpec[];
     };
+    const colors = getColors(params.theme);
     const btnLabels = pickLocaleMap(BTN_LABEL_BY_LOCALE, params.locale);
     const speedText = pickLocaleMap(SPEED_LABEL_BY_LOCALE, params.locale);
 
@@ -104,7 +107,7 @@ export const controlBarView: View = {
     for (const c of controls) {
       if (typeof c === 'string') {
         if (c === 'play' || c === 'step' || c === 'pause' || c === 'reset') {
-          const btn = makeButton(c, btnLabels[c]);
+          const btn = makeButton(c, btnLabels[c], colors);
           btn.addEventListener('click', () => {
             for (const h of handlers[c]) h();
           });

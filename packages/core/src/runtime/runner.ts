@@ -8,6 +8,7 @@
 import type { FacetJson } from '../types/facet-json.js';
 import type { LocaleStr } from '../types/locale.js';
 import { resolveLocale } from '../types/locale.js';
+import type { Theme } from '../views/design-tokens.js';
 import type { FacetContext, MetricDelta } from './context.js';
 import type { FacetRuntimeEvent } from '../types/event.js';
 import type { ProjectorViews } from './projector.js';
@@ -31,6 +32,8 @@ export type RunFacetOptions = {
   autoStart?: boolean;
   /** facet 의 LocaleStr 텍스트와 View 내부 라벨을 해석할 언어. 기본 'en'. */
   locale?: string;
+  /** View 가 사용할 색상 팔레트. 기본 'light'. 변경 시 호출자가 재마운트해야 함. */
+  theme?: Theme;
 };
 
 function deepClone<T>(value: T): T {
@@ -70,6 +73,7 @@ export function runFacet(
 
   // 2. Layout / blocks 마운트
   const locale = options?.locale;
+  const theme: Theme = options?.theme ?? 'light';
   const blocks = json.blocks;
 
   // 사용자 노출 텍스트(LocaleStr) 를 현재 locale 로 해석.
@@ -128,7 +132,7 @@ export function runFacet(
   const views = mountBlocks({
     blocks: enrichedBlocks,
     blockMounts: built.blockMounts,
-    mountParams: { initialData: initialDataClone, locale },
+    mountParams: { initialData: initialDataClone, locale, theme },
   });
 
   // 4. Projector 인스턴스화 + 초기화

@@ -12,20 +12,24 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from './types.js';
-import { colors, fonts, fontSizes, radii, space } from './design-tokens.js';
+import { getColors, type Palette, fonts, fontSizes, radii, space } from './design-tokens.js';
 
 export type LinkedListItemState = 'default' | 'active' | 'highlighted' | 'inserted';
 
-const STATE_COLOR: Record<LinkedListItemState, string> = {
-  default: colors.itemDefault,
-  active: colors.itemActive,
-  highlighted: colors.itemComparing,
-  inserted: colors.itemSorted,
-};
+function makeStateColor(colors: Palette): Record<LinkedListItemState, string> {
+  return {
+    default: colors.itemDefault,
+    active: colors.itemActive,
+    highlighted: colors.itemComparing,
+    inserted: colors.itemSorted,
+  };
+}
 
 export const linkedListChainView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
     container.textContent = '';
+    const colors = getColors(params.theme);
+    const STATE_COLOR = makeStateColor(colors);
     const cfg = params.config as { height?: number };
     const height = cfg.height ?? 80;
 

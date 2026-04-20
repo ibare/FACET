@@ -12,7 +12,7 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from './types.js';
-import { colors, fonts, radii, space } from './design-tokens.js';
+import { getColors, type Palette, fonts, radii, space } from './design-tokens.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -25,17 +25,21 @@ export type TreeNode = {
   children?: TreeNode[];
 };
 
-const NODE_COLOR: Record<TreeNodeState, string> = {
-  default: colors.itemDefault,
-  visited: colors.itemSorted,
-  active: colors.itemActive,
-  matched: colors.itemPivot,
-};
-const EDGE_COLOR: Record<TreeEdgeState, string> = {
-  default: colors.border,
-  active: colors.itemActive,
-  traversed: colors.itemSorted,
-};
+function makeNodeColor(colors: Palette): Record<TreeNodeState, string> {
+  return {
+    default: colors.itemDefault,
+    visited: colors.itemSorted,
+    active: colors.itemActive,
+    matched: colors.itemPivot,
+  };
+}
+function makeEdgeColor(colors: Palette): Record<TreeEdgeState, string> {
+  return {
+    default: colors.border,
+    active: colors.itemActive,
+    traversed: colors.itemSorted,
+  };
+}
 
 type Positioned = { id: string; label: string; x: number; y: number; children: Positioned[] };
 
@@ -77,6 +81,9 @@ export const treeLayoutView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
     container.textContent = '';
 
+    const colors = getColors(params.theme);
+    const NODE_COLOR = makeNodeColor(colors);
+    const EDGE_COLOR = makeEdgeColor(colors);
     const cfg = params.config as { width?: number; height?: number };
     const W = cfg.width ?? 480;
     const H = cfg.height ?? 280;

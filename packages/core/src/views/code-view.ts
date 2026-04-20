@@ -20,15 +20,18 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from './types.js';
-import { colors, fonts, fontSizes, radii, space } from './design-tokens.js';
+import { getColors, fonts, fontSizes, radii, space } from './design-tokens.js';
 
 export type CodeLine = { code: string; phase: string | null };
 
-const HL_BG = 'rgba(241, 194, 50, 0.25)'; // amber accent overlay
+const HL_BG_LIGHT = 'rgba(241, 194, 50, 0.25)';
+const HL_BG_DARK = 'rgba(245, 207, 63, 0.18)';
 
 export const codeViewView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
     container.textContent = '';
+    const colors = getColors(params.theme);
+    const HL_BG = params.theme === 'dark' ? HL_BG_DARK : HL_BG_LIGHT;
     const cfg = params.config as {
       label?: string;
       _transpiledLines?: CodeLine[];

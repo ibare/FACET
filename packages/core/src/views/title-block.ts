@@ -6,11 +6,12 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from './types.js';
-import { colors, fontSizes, fonts, space } from './design-tokens.js';
+import { getColors, fontSizes, fonts, space } from './design-tokens.js';
 
 export const titleBlockView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
     container.textContent = '';
+    const colors = getColors(params.theme);
 
     const root = document.createElement('div');
     root.className = 'facet-title-block';

@@ -9,11 +9,12 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from './types.js';
-import { colors, fonts, fontSizes, radii, space } from './design-tokens.js';
+import { getColors, fonts, fontSizes, radii, space } from './design-tokens.js';
 
 export const orderedListView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
     container.textContent = '';
+    const colors = getColors(params.theme);
     const cfg = params.config as { label?: string };
 
     const root = document.createElement('div');

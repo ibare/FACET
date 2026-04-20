@@ -14,7 +14,7 @@ import { PreferencesToolbar } from '../components/PreferencesToolbar.js';
 export function FacetPage() {
   const { id } = useParams<{ id: string }>();
   const facetId = id ? decodeURIComponent(id) : '';
-  const { locale } = usePreferences();
+  const { locale, theme } = usePreferences();
   const mountRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<FacetRunHandle | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -22,13 +22,13 @@ export function FacetPage() {
   const facetJson = facetId ? getFacetById(facetId) : undefined;
   const location = facetId ? findTopicByFacetId(facetId) : null;
 
-  // locale 변경 시 재마운트 (A안). useEffect 의존성에 locale 포함.
+  // locale/theme 변경 시 재마운트 (A안).
   useEffect(() => {
     setError(null);
     if (!mountRef.current || !facetJson) return;
 
     try {
-      const handle = runFacet(facetJson, mountRef.current, { locale });
+      const handle = runFacet(facetJson, mountRef.current, { locale, theme });
       handleRef.current = handle;
     } catch (e) {
       setError(e instanceof Error ? e.message : String(e));
@@ -38,7 +38,7 @@ export function FacetPage() {
       handleRef.current?.destroy();
       handleRef.current = null;
     };
-  }, [facetJson, locale]);
+  }, [facetJson, locale, theme]);
 
   const title = facetJson ? resolveLocale(facetJson.title, locale) : '';
   const description = facetJson ? resolveLocale(facetJson.description, locale) : '';
@@ -93,10 +93,9 @@ export function FacetPage() {
           {error && <ErrorBox title="실행 오류" detail={error} />}
           {facetJson && !error && (
             <div className="rounded-2xl bg-surface-raised p-4 ring-1 ring-border sm:p-6">
-              {/* facet 내부는 phase 3(코어 themable) 까지 항상 라이트 캔버스 유지 */}
               <div
                 ref={mountRef}
-                className="facet-mount min-h-[480px] rounded-xl bg-white p-4 text-[#2b2f44]"
+                className="facet-mount min-h-[480px] rounded-xl bg-surface p-4 text-fg ring-1 ring-border"
               />
             </div>
           )}

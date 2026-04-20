@@ -5,11 +5,12 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from './types.js';
-import { colors, fontSizes, fonts, radii, space } from './design-tokens.js';
+import { getColors, fontSizes, fonts, radii, space } from './design-tokens.js';
 
 export const textDisplayView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
     container.textContent = '';
+    const colors = getColors(params.theme);
 
     const root = document.createElement('div');
     root.className = 'facet-text-display';
