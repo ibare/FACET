@@ -17,6 +17,7 @@
     "@facet/algorithm-quicksort": "workspace:*",
     "@facet/core": "workspace:*",
     "@facet/host-tiptap": "workspace:*",
+    "@facet/ir-interpreter": "workspace:*",
     "@facet/transpiler-cpp": "workspace:*",
     "@facet/transpiler-csharp": "workspace:*",
     "@facet/transpiler-java": "workspace:*",
