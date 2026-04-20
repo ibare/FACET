@@ -5,6 +5,7 @@
  */
 
 import { registerBuiltinViews, listFacets } from '@facet/core/runtime';
+import { registerCodeView } from '@facet/view-code';
 import { registerQuicksort } from '@facet/algorithm-quicksort';
 import { registerBubblesort } from '@facet/algorithm-bubblesort';
 import { registerPythonTranspiler } from '@facet/transpiler-python';
@@ -21,6 +22,7 @@ export function bootstrapFacet(): void {
   initialized = true;
 
   registerBuiltinViews();
+  registerCodeView();
 
   registerPythonTranspiler();
   registerJavascriptTranspiler();

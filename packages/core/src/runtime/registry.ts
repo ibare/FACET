@@ -61,6 +61,10 @@ export function getTranspiler(id: string): Transpiler | undefined {
   return transpilers.get(id);
 }
 
+export function listTranspilers(): Transpiler[] {
+  return [...transpilers.values()];
+}
+
 export function clearRegistry(): void {
   algorithms.clear();
   projectors.clear();

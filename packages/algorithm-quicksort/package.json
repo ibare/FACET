@@ -15,6 +15,7 @@
     "@facet/core": "workspace:*"
   },
   "devDependencies": {
-    "@facet/transpiler-python": "workspace:*"
+    "@facet/transpiler-python": "workspace:*",
+    "@facet/view-code": "workspace:*"
   }
 }

@@ -7,7 +7,6 @@ import {
   linkedListChainView,
   queueDisplayView,
   orderedListView,
-  codeViewView,
 } from '../src/views/index.js';
 import type { ViewInstance } from '../src/views/types.js';
 
@@ -103,31 +102,3 @@ describe('ordered-list', () => {
   });
 });
 
-describe('code-view', () => {
-  it('소스 + phase 하이라이트', () => {
-    const { container, instance } = mountView(codeViewView, { type: 'code-view' });
-    (instance.setSource as (lines: { code: string; phase: string | null }[]) => void)([
-      { code: 'def foo():', phase: null },
-      { code: '  return 1', phase: 'return' },
-    ]);
-    const lines = container.querySelectorAll('.facet-code-view__line');
-    expect(lines.length).toBe(2);
-    (instance.highlightPhase as (p: string | null) => void)('return');
-    expect((lines[1] as HTMLElement).style.backgroundColor).not.toBe('');
-    (instance.clearHighlight as () => void)();
-    expect((lines[1] as HTMLElement).style.backgroundColor).toBe('');
-    instance.destroy();
-  });
-
-  it('_transpiledLines 자동 적용', () => {
-    const { container, instance } = mountView(codeViewView, {
-      type: 'code-view',
-      _transpiledLines: [
-        { code: 'a = 1', phase: 'init' },
-        { code: 'a += 1', phase: 'step' },
-      ],
-    });
-    expect(container.querySelectorAll('.facet-code-view__line').length).toBe(2);
-    instance.destroy();
-  });
-});

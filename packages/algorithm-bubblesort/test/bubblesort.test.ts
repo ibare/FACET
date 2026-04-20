@@ -3,6 +3,7 @@ import { describe, expect, it, beforeEach } from 'vitest';
 import { runFacet, clearRegistry } from '@facet/core/runtime';
 import { bubblesort, registerBubblesort, bubblesortFacet } from '../src/index.js';
 import { registerPythonTranspiler } from '@facet/transpiler-python';
+import { registerCodeView } from '@facet/view-code';
 
 function delay(ms: number): Promise<void> {
   return new Promise((res) => setTimeout(res, ms));
@@ -51,6 +52,7 @@ describe('BubbleSort 알고리즘 자체', () => {
 describe('BubbleSort facet — 4-layer 통합', () => {
   beforeEach(() => {
     clearRegistry();
+    registerCodeView();
     registerPythonTranspiler();
     registerBubblesort();
   });
@@ -61,7 +63,9 @@ describe('BubbleSort facet — 4-layer 통합', () => {
     const handle = runFacet(bubblesortFacet, mount);
     expect(mount.querySelector('.facet-bar-chart')).toBeTruthy();
     expect(mount.querySelectorAll('.facet-bar-chart rect').length).toBe(8);
-    expect(mount.querySelector('.facet-code-view')?.textContent).toContain('bubblesort');
+    // code-view 는 빈 상태로 마운트 (사용자가 언어 추가 전)
+    expect(mount.querySelector('.facet-code-view')).toBeTruthy();
+    expect(mount.querySelector('.facet-code-view__empty')).toBeTruthy();
     handle.destroy();
   });
 

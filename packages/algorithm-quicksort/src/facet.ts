@@ -19,16 +19,9 @@ export const quicksortFacet: FacetJson = {
     gap: 8,
     children: [
       { ref: 'header' },
-      {
-        type: 'row',
-        gap: 12,
-        grow: 1,
-        children: [
-          { ref: 'stage', grow: 1 },
-          { ref: 'codePanel', grow: 1 },
-        ],
-      },
+      { ref: 'stage' },
       { ref: 'controls' },
+      { ref: 'codePanel' },
     ],
   },
   blocks: {
@@ -36,9 +29,8 @@ export const quicksortFacet: FacetJson = {
     stage: { type: 'bar-chart', height: 220 },
     codePanel: {
       type: 'code-view',
-      label: { en: 'Python · imperative', ko: 'Python · 명령형' },
+      label: { en: 'Code', ko: '코드' },
       ir: 'ir:quicksort-imperative',
-      transpiler: 'transpiler:python',
     },
     controls: {
       type: 'control-bar',

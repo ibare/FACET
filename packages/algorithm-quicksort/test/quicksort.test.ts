@@ -6,6 +6,7 @@ import {
 } from '@facet/core/runtime';
 import { quicksort, registerQuicksort, quicksortFacet } from '../src/index.js';
 import { registerPythonTranspiler } from '@facet/transpiler-python';
+import { registerCodeView } from '@facet/view-code';
 
 function delay(ms: number): Promise<void> {
   return new Promise((res) => setTimeout(res, ms));
@@ -51,6 +52,7 @@ describe('QuickSort 알고리즘 자체', () => {
 describe('QuickSort facet — 4-layer 통합', () => {
   beforeEach(() => {
     clearRegistry();
+    registerCodeView();
     registerPythonTranspiler();
     registerQuicksort();
   });
@@ -73,13 +75,15 @@ describe('QuickSort facet — 4-layer 통합', () => {
     handle.destroy();
   });
 
-  it('IR/Transpiler 사전 처리로 코드 라인 채워짐', () => {
+  it('code-view 는 빈 상태로 시작 + 추가 버튼 노출', () => {
     const mount = document.createElement('div');
     document.body.appendChild(mount);
     const handle = runFacet(quicksortFacet, mount);
-    const lines = mount.querySelectorAll('.facet-code-view__line');
-    expect(lines.length).toBeGreaterThan(5);
-    expect(mount.querySelector('.facet-code-view')?.textContent).toContain('quicksort');
+    expect(mount.querySelector('.facet-code-view__empty')).toBeTruthy();
+    const addBtn = mount.querySelector('.facet-code-view__add') as HTMLButtonElement | null;
+    expect(addBtn).toBeTruthy();
+    expect(addBtn?.disabled).toBe(false);
+    expect(mount.querySelectorAll('.facet-code-view__panel').length).toBe(0);
     handle.destroy();
   });
 

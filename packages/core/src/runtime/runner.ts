@@ -13,7 +13,7 @@ import type { FacetContext, MetricDelta } from './context.js';
 import type { FacetRuntimeEvent } from '../types/event.js';
 import type { ProjectorViews } from './projector.js';
 import { buildLayout, mountBlocks } from './layout-builder.js';
-import { getAlgorithm, getProjector, getIR, getTranspiler, stripPrefix } from './registry.js';
+import { getAlgorithm, getProjector, getIR, listTranspilers, stripPrefix } from './registry.js';
 
 const BASE_DELAY_MS = 400;
 
@@ -114,34 +114,17 @@ export function runFacet(
   mountEl.textContent = '';
   mountEl.appendChild(built.root);
 
-  // 3. code-view IR/Transpiler 사전 처리.
-  //    누락/조회 실패/paradigm 불일치는 모두 throw — 작성자 실수를 즉시 노출.
+  // 3. code-view: IR 검증 후 IR 객체와 호환 transpiler 목록을 view 에 주입.
+  //    실제 transpile 은 사용자가 언어를 추가하는 시점에 view 가 호출.
   for (const [ref, spec] of Object.entries(enrichedBlocks)) {
     if (spec.type !== 'code-view') continue;
-    const cv = spec as { ir?: string; transpiler?: string };
-    const hasIR = cv.ir !== undefined;
-    const hasTrans = cv.transpiler !== undefined;
-    if (!hasIR && !hasTrans) continue; // 코드 패널을 의도적으로 비워둔 경우
-    if (hasIR !== hasTrans) {
-      throw new Error(
-        `code-view "${ref}": ir / transpiler 는 짝으로 지정해야 한다 (현재 ir=${cv.ir}, transpiler=${cv.transpiler})`,
-      );
-    }
-    const irName = stripPrefix(cv.ir!, 'ir');
-    const transName = stripPrefix(cv.transpiler!, 'transpiler');
+    const cv = spec as { ir?: string };
+    if (cv.ir === undefined) continue; // IR 미지정 → 빈 패널 (의도적 허용)
+    const irName = stripPrefix(cv.ir, 'ir');
     const ir = getIR(irName);
     if (!ir) throw new Error(`code-view "${ref}": IR 미등록 — "${irName}"`);
-    const transpiler = getTranspiler(transName);
-    if (!transpiler) {
-      throw new Error(`code-view "${ref}": Transpiler 미등록 — "${transName}"`);
-    }
-    if (!transpiler.supports.includes(ir.paradigm)) {
-      throw new Error(
-        `code-view "${ref}": Transpiler "${transName}" 가 paradigm "${ir.paradigm}" 를 지원하지 않음 (지원: ${transpiler.supports.join(',')})`,
-      );
-    }
-    const result = transpiler.transpile(ir);
-    enrichedBlocks[ref] = { ...spec, _transpiledLines: result.lines };
+    const compatible = listTranspilers().filter((t) => t.supports.includes(ir.paradigm));
+    enrichedBlocks[ref] = { ...spec, _ir: ir, _transpilers: compatible };
   }
 
   const views = mountBlocks({

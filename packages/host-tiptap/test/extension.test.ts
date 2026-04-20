@@ -10,6 +10,7 @@ import {
 } from '@facet/core/runtime';
 import { registerQuicksort, quicksortFacet } from '@facet/algorithm-quicksort';
 import { registerPythonTranspiler } from '@facet/transpiler-python';
+import { registerCodeView } from '@facet/view-code';
 
 describe('FacetExtension — 기본 설정', () => {
   it('name 이 "facet"', () => {
@@ -45,6 +46,7 @@ describe('parseFacetRaw — DSL 파서', () => {
 describe('FacetExtension — Tiptap 통합', () => {
   beforeEach(() => {
     clearRegistry();
+    registerCodeView();
     registerPythonTranspiler();
     registerQuicksort();
   });

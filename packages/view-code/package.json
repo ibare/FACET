@@ -1,5 +1,5 @@
 {
-  "name": "@facet/algorithm-bubblesort",
+  "name": "@facet/view-code",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -12,10 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@facet/core": "workspace:*"
-  },
-  "devDependencies": {
-    "@facet/transpiler-python": "workspace:*",
-    "@facet/view-code": "workspace:*"
+    "@facet/core": "workspace:*",
+    "shiki": "^1.24.0"
   }
 }

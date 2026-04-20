@@ -13,7 +13,6 @@ import { treeLayoutView } from './tree-layout.js';
 import { linkedListChainView } from './linked-list-chain.js';
 import { queueDisplayView } from './queue-display.js';
 import { orderedListView } from './ordered-list.js';
-import { codeViewView } from './code-view.js';
 
 const globalViewCatalog = new Map<string, View>();
 
@@ -47,7 +46,6 @@ export function registerBuiltinViews(): void {
   registerView('linked-list-chain', linkedListChainView);
   registerView('queue-display', queueDisplayView);
   registerView('ordered-list', orderedListView);
-  registerView('code-view', codeViewView);
 }
 
 // 기본 뷰는 import 시 자동 등록
@@ -64,5 +62,4 @@ export {
   linkedListChainView,
   queueDisplayView,
   orderedListView,
-  codeViewView,
 };

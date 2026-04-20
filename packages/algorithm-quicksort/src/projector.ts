@@ -7,7 +7,7 @@
  */
 
 import type { ProjectorFactory } from '@facet/core/runtime';
-import type { BarItemState, CodeLine } from '@facet/core/runtime';
+import type { BarItemState } from '@facet/core/runtime';
 
 type BarChart = {
   setData(values: number[]): void;
@@ -18,7 +18,6 @@ type BarChart = {
   reset(): void;
 };
 type CodePanel = {
-  setSource(lines: CodeLine[]): void;
   highlightPhase(phase: string | null): void;
   clearHighlight(): void;
 };
