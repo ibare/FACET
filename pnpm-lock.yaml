@@ -10,10 +10,10 @@ importers:
     devDependencies:
       '@facet/algorithm-bubblesort':
         specifier: workspace:*
-        version: link:packages/algorithm-bubblesort
+        version: link:facets/cs-fundamentals/bubblesort
       '@facet/algorithm-quicksort':
         specifier: workspace:*
-        version: link:packages/algorithm-quicksort
+        version: link:facets/cs-fundamentals/quicksort
       '@facet/core':
         specifier: workspace:*
         version: link:packages/core
@@ -58,10 +58,10 @@ importers:
     dependencies:
       '@facet/algorithm-bubblesort':
         specifier: workspace:*
-        version: link:../../packages/algorithm-bubblesort
+        version: link:../../facets/cs-fundamentals/bubblesort
       '@facet/algorithm-quicksort':
         specifier: workspace:*
-        version: link:../../packages/algorithm-quicksort
+        version: link:../../facets/cs-fundamentals/quicksort
       '@facet/core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -139,31 +139,31 @@ importers:
         specifier: ^5.4.11
         version: 5.4.21(@types/node@22.19.17)(lightningcss@1.32.0)
 
-  packages/algorithm-bubblesort:
+  facets/cs-fundamentals/bubblesort:
     dependencies:
       '@facet/core':
         specifier: workspace:*
-        version: link:../core
+        version: link:../../../packages/core
     devDependencies:
       '@facet/transpiler-python':
         specifier: workspace:*
-        version: link:../transpiler-python
+        version: link:../../../packages/transpiler-python
       '@facet/view-code':
         specifier: workspace:*
-        version: link:../view-code
+        version: link:../../../packages/view-code
 
-  packages/algorithm-quicksort:
+  facets/cs-fundamentals/quicksort:
     dependencies:
       '@facet/core':
         specifier: workspace:*
-        version: link:../core
+        version: link:../../../packages/core
     devDependencies:
       '@facet/transpiler-python':
         specifier: workspace:*
-        version: link:../transpiler-python
+        version: link:../../../packages/transpiler-python
       '@facet/view-code':
         specifier: workspace:*
-        version: link:../view-code
+        version: link:../../../packages/view-code
 
   packages/core: {}
 
@@ -178,7 +178,7 @@ importers:
     devDependencies:
       '@facet/algorithm-quicksort':
         specifier: workspace:*
-        version: link:../algorithm-quicksort
+        version: link:../../facets/cs-fundamentals/quicksort
       '@facet/transpiler-python':
         specifier: workspace:*
         version: link:../transpiler-python
@@ -203,10 +203,10 @@ importers:
     devDependencies:
       '@facet/algorithm-bubblesort':
         specifier: workspace:*
-        version: link:../algorithm-bubblesort
+        version: link:../../facets/cs-fundamentals/bubblesort
       '@facet/algorithm-quicksort':
         specifier: workspace:*
-        version: link:../algorithm-quicksort
+        version: link:../../facets/cs-fundamentals/quicksort
       '@facet/transpiler-cpp':
         specifier: workspace:*
         version: link:../transpiler-cpp
