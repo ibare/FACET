@@ -24,7 +24,8 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from './types.js';
-import { getColors, type Palette, fonts, radii, space } from './design-tokens.js';
+import { getColors, fonts, radii, space } from './design-tokens.js';
+import { createIsoBar, type IsoBarHandle } from './iso-bar.js';
 
 const SORTED_BOUNDARY_LABEL_BY_LOCALE: Record<string, string> = {
   en: 'SORTED',
@@ -50,23 +51,11 @@ export type BarChartFeature = 'wave-trail' | 'rising-marker' | 'sorted-boundary'
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
-function makeStateColor(colors: Palette): Record<BarItemState, string> {
-  return {
-    default: colors.itemDefault,
-    comparing: colors.itemComparing,
-    swapping: colors.itemSwapping,
-    sorted: colors.itemSorted,
-    pivot: colors.itemPivot,
-    active: colors.itemActive,
-  };
-}
-
 export const barChartView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
     container.textContent = '';
 
     const colors = getColors(params.theme);
-    const STATE_COLOR = makeStateColor(colors);
     const cfg = params.config as { height?: number; features?: BarChartFeature[] };
     const initialHeight = cfg.height ?? 200;
     const sortedLabelText = pickSortedLabel(params.locale);
@@ -120,31 +109,65 @@ export const barChartView: View = {
     /** 위치별 시각 오프셋(애니메이션 중 사용). 키: 인덱스 → {dx, dy} */
     const overlay = new Map<number, { dx: number; dy: number }>();
 
-    let waveCurrent: number | null = null;
     let waveTrail: number[] = [];
     let risingMarker: number | null = null;
     let sortedBoundary: number | null = null;
 
     const PAD_X = 8;
-    const LABEL_H = 18;
+    const LABEL_H = 22;
+    /** isometric base 마름모 세로반경 상한 (= slot/4 의 cap). viewBox 여유에도 반영된다. */
+    const ISO_DEPTH_MAX = 12;
+    /** isometric cap 의 두께 (옐로우 강조 면 두께). */
+    const ISO_CAP_H = 8;
+    /** 면 stroke 색 — design tokens 의 text 색을 사용 (light=검정, dark=거의 흰색). */
+    const ISO_STROKE = colors.text;
+    /** 본체 색은 상태와 무관하게 고정 — left/top = 흰, right = 옅은 크림(또는 dark 알파). */
+    const ISO_BODY_MAIN = params.theme === 'dark' ? colors.bg : '#ffffff';
+    const ISO_BODY_SIDE = params.theme === 'dark'
+      ? 'rgba(255,255,255,0.10)'
+      : '#fff9e5';
+    /**
+     * 상태별 cap 색 — top 면 1색, left/right 측면 1색.
+     * 본체는 그대로 두고 cap 으로만 상태를 표현한다.
+     */
+    const CAP_COLORS_BY_STATE: Record<BarItemState, { top: string; side: string }> = {
+      default:   { top: '#fff700', side: '#fff700' },
+      comparing: { top: '#ED7055', side: '#D95535' },
+      swapping:  { top: '#ED7055', side: '#D95535' },
+      pivot:     { top: '#ED7055', side: '#D95535' },
+      active:    { top: '#ED7055', side: '#D95535' },
+      sorted:    { top: '#444444', side: '#212121' },
+    };
     /** 동적 viewBox 폭. ResizeObserver 가 실제 SVG 픽셀 폭으로 업데이트한다. */
     let viewW = 600;
 
+    type BarItem = {
+      iso: IsoBarHandle;
+      placeholder: SVGRectElement;
+      label: SVGTextElement;
+    };
+    const items: BarItem[] = [];
+
     function ensureBars(n: number) {
-      while (barsG.childNodes.length < n) {
-        const g = document.createElementNS(SVG_NS, 'g');
-        const rect = document.createElementNS(SVG_NS, 'rect');
+      while (items.length < n) {
+        const iso = createIsoBar(barsG, { classPrefix: 'facet-bar-chart__cube' });
+        // placeholder rect — 테스트가 .facet-bar-chart rect 로 막대 카운트하므로 유지.
+        const placeholder = document.createElementNS(SVG_NS, 'rect');
+        placeholder.setAttribute('fill', 'none');
+        placeholder.setAttribute('stroke', 'none');
+        placeholder.setAttribute('pointer-events', 'none');
+        iso.group.insertBefore(placeholder, iso.group.firstChild);
         const label = document.createElementNS(SVG_NS, 'text');
         label.setAttribute('text-anchor', 'middle');
         label.setAttribute('font-family', fonts.mono);
         label.setAttribute('font-size', '11');
         label.setAttribute('fill', colors.text);
-        g.appendChild(rect);
-        g.appendChild(label);
-        barsG.appendChild(g);
+        iso.group.appendChild(label);
+        items.push({ iso, placeholder, label });
       }
-      while (barsG.childNodes.length > n) {
-        barsG.removeChild(barsG.lastChild!);
+      while (items.length > n) {
+        const item = items.pop()!;
+        item.iso.group.remove();
       }
     }
 
@@ -153,10 +176,14 @@ export const barChartView: View = {
       const usableW = viewW - PAD_X * 2;
       const gap = 4;
       const slot = n > 0 ? (usableW - gap * (n - 1)) / n : 0;
-      const baseY = height - LABEL_H;
-      const maxH = baseY - 8;
+      // base 마름모 세로반경 = slot/4 (SVG 샘플 비율: 가로반경 2 : 세로반경 1)
+      const depth = Math.min(slot / 4, ISO_DEPTH_MAX);
+      // baseY: 막대 base 마름모의 중심 y. 라벨 영역 위로 (마름모 아래 반경 + 여유) 만큼 올려둔다.
+      const baseY = height - LABEL_H - depth;
+      // 위쪽 여유 = top 마름모 반경 + cap 두께 + 8
+      const maxH = baseY - depth - ISO_CAP_H - 8;
       const maxVal = Math.max(1, ...values);
-      return { n, gap, slot, baseY, maxH, maxVal };
+      return { n, gap, slot, baseY, maxH, maxVal, depth };
     }
 
     function barX(i: number, slot: number, gap: number): number {
@@ -203,28 +230,43 @@ export const barChartView: View = {
         boundaryG.appendChild(label);
       }
 
-      // bars
+      // bars — iso-bar 헬퍼로 본체 3면 + cap 3면 + placeholder rect + label 을 그린다.
       for (let i = 0; i < n; i++) {
-        const g = barsG.childNodes[i] as SVGGElement;
-        const rect = g.childNodes[0] as SVGRectElement;
-        const label = g.childNodes[1] as SVGTextElement;
+        const item = items[i];
         const v = values[i];
         const h = Math.max(4, (v / maxVal) * maxH);
         const ofs = overlay.get(i) ?? { dx: 0, dy: 0 };
         const x = barX(i, slot, gap) + ofs.dx;
-        const y = baseY - h + ofs.dy;
-        rect.setAttribute('x', String(x));
-        rect.setAttribute('y', String(y));
-        rect.setAttribute('width', String(slot));
-        rect.setAttribute('height', String(h));
-        rect.setAttribute('rx', '2');
-        rect.setAttribute('fill', STATE_COLOR[states[i] ?? 'default']);
-        rect.setAttribute('stroke', colors.text);
-        rect.setAttribute('stroke-width', '1.25');
-        label.setAttribute('x', String(x + slot / 2));
-        label.setAttribute('y', String(baseY + 13));
-        label.setAttribute('font-size', String(Math.min(13, slot * 0.6)));
-        label.textContent = String(v);
+        const cx = x + slot / 2;
+        const bY = baseY + ofs.dy;
+        const tY = bY - h;
+        // 막대 폭만 슬롯의 70% 로 축소 (높이는 그대로). depth 도 폭에 비례하므로 재계산.
+        const barW = slot * 0.7;
+        const halfW = barW / 2;
+        const barDepth = Math.min(barW / 4, ISO_DEPTH_MAX);
+        const state = states[i] ?? 'default';
+        const cap = CAP_COLORS_BY_STATE[state];
+
+        item.placeholder.setAttribute('x', String(cx - halfW));
+        item.placeholder.setAttribute('y', String(tY));
+        item.placeholder.setAttribute('width', String(barW));
+        item.placeholder.setAttribute('height', String(h));
+
+        item.iso.update(
+          { cx, baseY: bY, height: h, barW, depth: barDepth, capH: ISO_CAP_H },
+          {
+            bodyMain: ISO_BODY_MAIN,
+            bodySide: ISO_BODY_SIDE,
+            capMain: cap.top,
+            capSide: cap.side,
+            stroke: ISO_STROKE,
+          },
+        );
+
+        item.label.setAttribute('x', String(cx));
+        item.label.setAttribute('y', String(bY + barDepth + 13));
+        item.label.setAttribute('font-size', String(Math.min(13, barW * 0.6)));
+        item.label.textContent = String(v);
       }
 
       // wave-trail overlay (지나온 위치 잔상)
@@ -247,21 +289,6 @@ export const barChartView: View = {
           r.setAttribute('rx', '4');
           r.setAttribute('fill', colors.waveTrail);
           r.setAttribute('opacity', String(opacity * 0.8));
-          trailG.appendChild(r);
-        }
-        if (waveCurrent !== null && waveCurrent >= 0 && waveCurrent + 1 < n) {
-          // 현재 비교 두 칸을 감싸는 강조 박스
-          const x0 = barX(waveCurrent, slot, gap) - 2;
-          const x1 = barX(waveCurrent + 1, slot, gap) + slot + 2;
-          const r = document.createElementNS(SVG_NS, 'rect');
-          r.setAttribute('x', String(x0));
-          r.setAttribute('y', '0');
-          r.setAttribute('width', String(x1 - x0));
-          r.setAttribute('height', String(baseY));
-          r.setAttribute('rx', '4');
-          r.setAttribute('fill', 'none');
-          r.setAttribute('stroke', colors.itemComparing);
-          r.setAttribute('stroke-width', '2');
           trailG.appendChild(r);
         }
       }
@@ -296,7 +323,6 @@ export const barChartView: View = {
       values = [...arr];
       states = values.map(() => 'default');
       overlay.clear();
-      waveCurrent = null;
       waveTrail = [];
       risingMarker = null;
       sortedBoundary = null;
@@ -367,16 +393,14 @@ export const barChartView: View = {
       });
     }
 
-    function setWaveTrail(currentIdx: number, trailIndices: number[]): void {
+    function setWaveTrail(_currentIdx: number, trailIndices: number[]): void {
       if (!features.has('wave-trail')) return;
-      waveCurrent = currentIdx;
       waveTrail = [...trailIndices];
       render();
     }
 
     function clearWaveTrail(): void {
       if (!features.has('wave-trail')) return;
-      waveCurrent = null;
       waveTrail = [];
       render();
     }
@@ -409,11 +433,11 @@ export const barChartView: View = {
       values = [];
       states = [];
       overlay.clear();
-      waveCurrent = null;
       waveTrail = [];
       risingMarker = null;
       sortedBoundary = null;
       barsG.textContent = '';
+      items.length = 0;
       boundaryG.textContent = '';
       trailG.textContent = '';
       markerG.textContent = '';

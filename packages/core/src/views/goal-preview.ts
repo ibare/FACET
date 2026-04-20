@@ -20,6 +20,7 @@
 import type { View, ViewInstance, ViewMountParams } from './types.js';
 import { getColors, fonts, fontSizes, radii, space } from './design-tokens.js';
 import { resolveLocale, type LocaleStr } from '../types/locale.js';
+import { createIsoBar } from './iso-bar.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -75,6 +76,12 @@ export const goalPreviewView: View = {
 
     let values: number[] = [];
 
+    const ISO_BODY_MAIN = params.theme === 'dark' ? colors.bg : '#ffffff';
+    const ISO_BODY_SIDE = params.theme === 'dark'
+      ? 'rgba(255,255,255,0.10)'
+      : '#fff9e5';
+    const ISO_DEPTH_MAX = 8;
+
     function render() {
       svg.textContent = '';
       const n = values.length;
@@ -86,25 +93,44 @@ export const goalPreviewView: View = {
       const gap = 2;
       const usableW = VIEW_W - padX * 2;
       const slot = (usableW - gap * (n - 1)) / n;
-      const baseY = height - 4;
-      const maxH = baseY - 4;
+      const depth = Math.min(slot / 4, ISO_DEPTH_MAX);
+      const baseY = height - 4 - depth;
+      const maxH = baseY - depth - 2;
       const maxVal = Math.max(1, ...values);
 
       for (let i = 0; i < n; i++) {
         const v = values[i];
         const h = Math.max(2, (v / maxVal) * maxH);
         const x = padX + i * (slot + gap);
-        const y = baseY - h;
-        const rect = document.createElementNS(SVG_NS, 'rect');
-        rect.setAttribute('x', String(x));
-        rect.setAttribute('y', String(y));
-        rect.setAttribute('width', String(slot));
-        rect.setAttribute('height', String(h));
-        rect.setAttribute('rx', '1.5');
-        rect.setAttribute('fill', colors.itemDefault);
-        rect.setAttribute('stroke', colors.text);
-        rect.setAttribute('stroke-width', '1');
-        svg.appendChild(rect);
+        const cx = x + slot / 2;
+        const barW = slot * 0.7;
+        const halfW = barW / 2;
+        const barDepth = Math.min(barW / 4, ISO_DEPTH_MAX);
+
+        const iso = createIsoBar(svg, {
+          strokeWidth: 1,
+          classPrefix: 'facet-goal-preview__cube',
+        });
+        const placeholder = document.createElementNS(SVG_NS, 'rect');
+        placeholder.setAttribute('x', String(cx - halfW));
+        placeholder.setAttribute('y', String(baseY - h));
+        placeholder.setAttribute('width', String(barW));
+        placeholder.setAttribute('height', String(h));
+        placeholder.setAttribute('fill', 'none');
+        placeholder.setAttribute('stroke', 'none');
+        placeholder.setAttribute('pointer-events', 'none');
+        iso.group.insertBefore(placeholder, iso.group.firstChild);
+
+        iso.update(
+          { cx, baseY, height: h, barW, depth: barDepth, capH: 0 },
+          {
+            bodyMain: ISO_BODY_MAIN,
+            bodySide: ISO_BODY_SIDE,
+            capMain: ISO_BODY_MAIN,
+            capSide: ISO_BODY_SIDE,
+            stroke: colors.text,
+          },
+        );
       }
     }
 

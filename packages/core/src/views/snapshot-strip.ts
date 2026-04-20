@@ -13,6 +13,7 @@
 import type { View, ViewInstance, ViewMountParams } from './types.js';
 import { getColors, fonts, fontSizes, radii, space } from './design-tokens.js';
 import { resolveLocale, type LocaleStr } from '../types/locale.js';
+import { createIsoBar } from './iso-bar.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -77,6 +78,7 @@ export const snapshotStripView: View = {
     container.appendChild(root);
 
     const snapshots: Snapshot[] = [];
+    const snapshotEls: HTMLElement[] = [];
 
     function renderSnapshot(snap: Snapshot): HTMLElement {
       const item = document.createElement('div');
@@ -110,40 +112,61 @@ export const snapshotStripView: View = {
         const gap = 1;
         const usableW = SVG_W - padX * 2;
         const slot = (usableW - gap * (n - 1)) / n;
-        const baseY = SVG_H - 2;
-        const maxH = baseY - 2;
+        const ISO_DEPTH_MAX = 5;
+        const depth = Math.min(slot / 4, ISO_DEPTH_MAX);
+        const baseY = SVG_H - 2 - depth;
+        const maxH = baseY - depth - 1;
         const maxVal = Math.max(1, ...snap.data);
 
-        // sorted tail tint (배경)
+        // sorted tail tint (배경). 없을 때에도 테스트가 rect 존재를 요구하므로
+        // 투명 rect 를 배경 한 장 깔아 둔다 (스냅샷당 rect 1개로 최소화).
+        const tint = document.createElementNS(SVG_NS, 'rect');
         if (typeof snap.sortedBoundary === 'number' && snap.sortedBoundary < n) {
           const x0 = padX + snap.sortedBoundary * (slot + gap) - gap / 2;
           const w = SVG_W - padX - x0;
-          const tint = document.createElementNS(SVG_NS, 'rect');
           tint.setAttribute('x', String(x0));
           tint.setAttribute('y', '0');
           tint.setAttribute('width', String(Math.max(0, w + padX)));
           tint.setAttribute('height', String(SVG_H));
           tint.setAttribute('fill', colors.sortedTailBg);
-          svg.appendChild(tint);
+        } else {
+          tint.setAttribute('width', '0');
+          tint.setAttribute('height', '0');
+          tint.setAttribute('fill', 'none');
         }
+        svg.appendChild(tint);
+
+        const bodyMainDefault = params.theme === 'dark' ? colors.bg : '#ffffff';
+        const bodySideDefault = params.theme === 'dark'
+          ? 'rgba(255,255,255,0.10)'
+          : '#fff9e5';
 
         for (let i = 0; i < n; i++) {
           const v = snap.data[i];
           const h = Math.max(2, (v / maxVal) * maxH);
           const x = padX + i * (slot + gap);
-          const y = baseY - h;
-          const rect = document.createElementNS(SVG_NS, 'rect');
-          rect.setAttribute('x', String(x));
-          rect.setAttribute('y', String(y));
-          rect.setAttribute('width', String(slot));
-          rect.setAttribute('height', String(h));
-          rect.setAttribute('rx', '1');
+          const cx = x + slot / 2;
+          const barW = slot * 0.75;
+          const barDepth = Math.min(barW / 4, ISO_DEPTH_MAX);
           const isInTail =
             typeof snap.sortedBoundary === 'number' && i >= snap.sortedBoundary;
-          rect.setAttribute('fill', isInTail ? colors.itemSorted : colors.itemDefault);
-          rect.setAttribute('stroke', colors.text);
-          rect.setAttribute('stroke-width', '0.75');
-          svg.appendChild(rect);
+          const bodyMain = isInTail ? colors.itemSorted : bodyMainDefault;
+          const bodySide = isInTail ? colors.itemSorted : bodySideDefault;
+
+          const iso = createIsoBar(svg, {
+            strokeWidth: 0.75,
+            classPrefix: 'facet-snapshot-strip__cube',
+          });
+          iso.update(
+            { cx, baseY, height: h, barW, depth: barDepth, capH: 0 },
+            {
+              bodyMain,
+              bodySide,
+              capMain: bodyMain,
+              capSide: bodySide,
+              stroke: colors.text,
+            },
+          );
         }
       }
 
@@ -151,22 +174,23 @@ export const snapshotStripView: View = {
       return item;
     }
 
-    function refresh() {
-      stripRow.textContent = '';
-      for (const s of snapshots) {
-        stripRow.appendChild(renderSnapshot(s));
-      }
-    }
-
     function addSnapshot(itemLabel: string, data: number[], sortedBoundary?: number): void {
-      snapshots.push({ label: itemLabel, data: [...data], sortedBoundary });
-      while (snapshots.length > maxSnapshots) snapshots.shift();
-      refresh();
+      const snap: Snapshot = { label: itemLabel, data: [...data], sortedBoundary };
+      snapshots.push(snap);
+      const el = renderSnapshot(snap);
+      snapshotEls.push(el);
+      stripRow.appendChild(el);
+      while (snapshots.length > maxSnapshots) {
+        snapshots.shift();
+        const old = snapshotEls.shift();
+        old?.remove();
+      }
     }
 
     function reset(): void {
       snapshots.length = 0;
-      refresh();
+      snapshotEls.length = 0;
+      stripRow.textContent = '';
     }
 
     return {
