@@ -24,7 +24,7 @@ export async function binarysearch(ctx: FacetContext<BinarySearchData>): Promise
     if (ctx.cancelled) return -1;
     const mid = (lo + hi) >> 1;
 
-    await ctx.emit({ type: 'phase', payload: { phase: 'compare' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'compare' }, silent: true });
     const rangeIds = [];
     for (let k = lo; k <= hi; k++) rangeIds.push(`index:${k}`);
     await ctx.emit({ type: 'highlight', target: rangeIds, payload: { kind: 'range' } });
@@ -32,20 +32,20 @@ export async function binarysearch(ctx: FacetContext<BinarySearchData>): Promise
     ctx.metric('probe-count', 'inc');
 
     if (arr[mid] === target) {
-      await ctx.emit({ type: 'phase', payload: { phase: 'found' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'found' }, silent: true });
       await ctx.emit({ type: 'mark', target: `index:${mid}`, payload: { kind: 'found' } });
       await ctx.emit({ type: 'done' });
       return mid;
     }
 
     if (arr[mid] < target) {
-      await ctx.emit({ type: 'phase', payload: { phase: 'narrow-right' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'narrow-right' }, silent: true });
       const drop = [];
       for (let k = lo; k <= mid; k++) drop.push(`index:${k}`);
       await ctx.emit({ type: 'mark', target: drop, payload: { kind: 'discard' } });
       lo = mid + 1;
     } else {
-      await ctx.emit({ type: 'phase', payload: { phase: 'narrow-left' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'narrow-left' }, silent: true });
       const drop = [];
       for (let k = mid; k <= hi; k++) drop.push(`index:${k}`);
       await ctx.emit({ type: 'mark', target: drop, payload: { kind: 'discard' } });
@@ -53,7 +53,7 @@ export async function binarysearch(ctx: FacetContext<BinarySearchData>): Promise
     }
   }
 
-  await ctx.emit({ type: 'phase', payload: { phase: 'not-found' } });
+  await ctx.emit({ type: 'phase', payload: { phase: 'not-found' }, silent: true });
   await ctx.emit({ type: 'mark', target: 'result', payload: { kind: 'not-found' } });
   await ctx.emit({ type: 'done' });
   return -1;

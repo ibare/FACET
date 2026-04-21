@@ -24,7 +24,7 @@ export type ArrayMaxData = { type: 'array'; values: number[] };
 export async function arraymax(ctx: FacetContext<ArrayMaxData>): Promise<number> {
   const arr = ctx.data.values;
   if (arr.length === 0) {
-    await ctx.emit({ type: 'phase', payload: { phase: 'base' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'base' }, silent: true });
     await ctx.emit({ type: 'done' });
     return -Infinity;
   }
@@ -37,7 +37,7 @@ export async function arraymax(ctx: FacetContext<ArrayMaxData>): Promise<number>
     ctx.metric('call-count', 'inc');
 
     if (lo === hi) {
-      await ctx.emit({ type: 'phase', payload: { phase: 'base' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'base' }, silent: true });
       await ctx.emit({
         type: 'highlight',
         target: `index:${lo}`,
@@ -47,14 +47,14 @@ export async function arraymax(ctx: FacetContext<ArrayMaxData>): Promise<number>
       return arr[lo];
     }
 
-    await ctx.emit({ type: 'phase', payload: { phase: 'split' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'split' }, silent: true });
     const mid = (lo + hi) >> 1;
     const L = await rec(lo, mid);
     if (ctx.cancelled) return 0;
     const R = await rec(mid + 1, hi);
     if (ctx.cancelled) return 0;
 
-    await ctx.emit({ type: 'phase', payload: { phase: 'combine' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'combine' }, silent: true });
     const winner = L >= R ? L : R;
     ctx.metric('compare-count', 'inc');
     await ctx.emit({ type: 'unhighlight', target: ids });

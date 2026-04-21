@@ -43,6 +43,7 @@ async function partitionRecurse(
   await ctx.emit({
     type: 'phase',
     payload: { phase: 'pivot-select' },
+    silent: true,
   });
   await ctx.emit({
     type: 'highlight',
@@ -55,7 +56,7 @@ async function partitionRecurse(
     if (ctx.cancelled) return;
 
     // 2) 비교
-    await ctx.emit({ type: 'phase', payload: { phase: 'compare' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'compare' }, silent: true });
     await ctx.emit({
       type: 'highlight',
       target: `index:${j}`,
@@ -66,7 +67,7 @@ async function partitionRecurse(
     if (arr[j] < arr[hi]) {
       i++;
       // 3) 교환
-      await ctx.emit({ type: 'phase', payload: { phase: 'swap' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'swap' }, silent: true });
       [arr[i], arr[j]] = [arr[j], arr[i]];
       await ctx.emit({
         type: 'state-changed',
@@ -81,7 +82,7 @@ async function partitionRecurse(
   }
 
   // 4) pivot 을 제 자리로
-  await ctx.emit({ type: 'phase', payload: { phase: 'partition' } });
+  await ctx.emit({ type: 'phase', payload: { phase: 'partition' }, silent: true });
   i++;
   [arr[i], arr[hi]] = [arr[hi], arr[i]];
   await ctx.emit({
@@ -95,7 +96,7 @@ async function partitionRecurse(
   await ctx.emit({ type: 'mark', target: `index:${i}`, payload: { kind: 'sorted' } });
 
   // 5) 좌우 재귀
-  await ctx.emit({ type: 'phase', payload: { phase: 'recurse' } });
+  await ctx.emit({ type: 'phase', payload: { phase: 'recurse' }, silent: true });
   await partitionRecurse(arr, lo, i - 1, ctx);
   await partitionRecurse(arr, i + 1, hi, ctx);
 }

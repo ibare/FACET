@@ -31,13 +31,13 @@ export async function coinchange(ctx: FacetContext<CoinChangeData>): Promise<num
 
   for (let i = 0; i < coins.length; i++) {
     if (ctx.cancelled) return 0;
-    await ctx.emit({ type: 'phase', payload: { phase: 'try' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'try' }, silent: true });
     await ctx.emit({ type: 'highlight', target: `index:${i}`, payload: { kind: 'try' } });
     ctx.metric('try-count', 'inc');
 
     while (remaining >= coins[i]) {
       if (ctx.cancelled) return 0;
-      await ctx.emit({ type: 'phase', payload: { phase: 'use' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'use' }, silent: true });
       remaining -= coins[i];
       counts[i]++;
       total++;
@@ -60,10 +60,10 @@ export async function coinchange(ctx: FacetContext<CoinChangeData>): Promise<num
     }
 
     if (remaining === 0) break;
-    await ctx.emit({ type: 'phase', payload: { phase: 'next' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'next' }, silent: true });
   }
 
-  await ctx.emit({ type: 'phase', payload: { phase: 'done' } });
+  await ctx.emit({ type: 'phase', payload: { phase: 'done' }, silent: true });
   await ctx.emit({
     type: 'mark',
     target: 'result',

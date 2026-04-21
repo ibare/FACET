@@ -30,12 +30,12 @@ export async function fibonaccimemo(ctx: FacetContext<FibonacciMemoData>): Promi
 
   async function rec(k: number): Promise<number> {
     if (ctx.cancelled) return 0;
-    await ctx.emit({ type: 'phase', payload: { phase: 'visit' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'visit' }, silent: true });
     await ctx.emit({ type: 'highlight', target: `index:${k}`, payload: { kind: 'visit' } });
     ctx.metric('call-count', 'inc');
 
     if (k <= 1) {
-      await ctx.emit({ type: 'phase', payload: { phase: 'base' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'base' }, silent: true });
       memo[k] = k;
       await ctx.emit({
         type: 'state-changed',
@@ -51,13 +51,13 @@ export async function fibonaccimemo(ctx: FacetContext<FibonacciMemoData>): Promi
     }
 
     if (memo[k] !== UNCOMPUTED) {
-      await ctx.emit({ type: 'phase', payload: { phase: 'hit' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'hit' }, silent: true });
       await ctx.emit({ type: 'highlight', target: `index:${k}`, payload: { kind: 'hit' } });
       ctx.metric('hit-count', 'inc');
       return memo[k];
     }
 
-    await ctx.emit({ type: 'phase', payload: { phase: 'compute' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'compute' }, silent: true });
     const a = await rec(k - 1);
     if (ctx.cancelled) return 0;
     const b = await rec(k - 2);

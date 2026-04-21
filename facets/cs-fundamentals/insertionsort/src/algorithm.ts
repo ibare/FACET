@@ -27,7 +27,7 @@ export async function insertionsort(ctx: FacetContext<InsertionSortData>): Promi
   for (let i = 1; i < n; i++) {
     if (ctx.cancelled) return;
 
-    await ctx.emit({ type: 'phase', payload: { phase: 'pick' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'pick' }, silent: true });
     await ctx.emit({ type: 'highlight', target: `index:${i}`, payload: { kind: 'current' } });
 
     const key = arr[i];
@@ -35,12 +35,12 @@ export async function insertionsort(ctx: FacetContext<InsertionSortData>): Promi
 
     while (j >= 0) {
       if (ctx.cancelled) return;
-      await ctx.emit({ type: 'phase', payload: { phase: 'compare' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'compare' }, silent: true });
       await ctx.emit({ type: 'highlight', target: `index:${j}`, payload: { kind: 'compare' } });
       ctx.metric('compare-count', 'inc');
 
       if (arr[j] > key) {
-        await ctx.emit({ type: 'phase', payload: { phase: 'shift' } });
+        await ctx.emit({ type: 'phase', payload: { phase: 'shift' }, silent: true });
         arr[j + 1] = arr[j];
         await ctx.emit({
           type: 'state-changed',
@@ -56,7 +56,7 @@ export async function insertionsort(ctx: FacetContext<InsertionSortData>): Promi
       }
     }
 
-    await ctx.emit({ type: 'phase', payload: { phase: 'insert' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'insert' }, silent: true });
     arr[j + 1] = key;
     await ctx.emit({
       type: 'state-changed',

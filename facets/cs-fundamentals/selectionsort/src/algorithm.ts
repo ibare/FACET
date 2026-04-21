@@ -24,19 +24,19 @@ export async function selectionsort(ctx: FacetContext<SelectionSortData>): Promi
   for (let i = 0; i < n - 1; i++) {
     if (ctx.cancelled) return;
 
-    await ctx.emit({ type: 'phase', payload: { phase: 'pass-start' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'pass-start' }, silent: true });
 
     let minIdx = i;
     await ctx.emit({ type: 'highlight', target: `index:${minIdx}`, payload: { kind: 'min' } });
 
     for (let j = i + 1; j < n; j++) {
       if (ctx.cancelled) return;
-      await ctx.emit({ type: 'phase', payload: { phase: 'compare' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'compare' }, silent: true });
       await ctx.emit({ type: 'highlight', target: `index:${j}`, payload: { kind: 'compare' } });
       ctx.metric('compare-count', 'inc');
 
       if (arr[j] < arr[minIdx]) {
-        await ctx.emit({ type: 'phase', payload: { phase: 'update-min' } });
+        await ctx.emit({ type: 'phase', payload: { phase: 'update-min' }, silent: true });
         await ctx.emit({ type: 'unhighlight', target: `index:${minIdx}` });
         minIdx = j;
         await ctx.emit({ type: 'highlight', target: `index:${minIdx}`, payload: { kind: 'min' } });
@@ -46,7 +46,7 @@ export async function selectionsort(ctx: FacetContext<SelectionSortData>): Promi
     }
 
     if (minIdx !== i) {
-      await ctx.emit({ type: 'phase', payload: { phase: 'swap' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'swap' }, silent: true });
       [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
       await ctx.emit({
         type: 'state-changed',

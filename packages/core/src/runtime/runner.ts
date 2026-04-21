@@ -233,6 +233,7 @@ export function runFacet(
     async emit(event: FacetRuntimeEvent) {
       if (cancelled) return;
       // 1) paused/idle 이면 다음 신호 대기 (렌더링 전에 멈춤)
+      //    silent 이벤트도 동일하게 멈춤 — paused 는 "아무 것도 진행 안 함" 이므로.
       while (mode === 'paused' || mode === 'idle') {
         await new Promise<void>((res) => {
           stepResolve = res;
@@ -242,7 +243,9 @@ export function runFacet(
       // 2) projector 갱신
       await projector.onEvent(event);
       if (cancelled) return;
-      // 3) 후처리
+      // 3) silent 이벤트는 step boundary 가 아니다 — 후처리 없이 즉시 통과.
+      if (event.silent) return;
+      // 4) 후처리
       if (mode === 'stepping') {
         setMode('paused');
         return;

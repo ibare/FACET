@@ -33,7 +33,7 @@ export async function subsetsum(ctx: FacetContext<SubsetSumData>): Promise<numbe
     ctx.metric('visit-count', 'inc');
 
     if (sum === target) {
-      await ctx.emit({ type: 'phase', payload: { phase: 'hit' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'hit' }, silent: true });
       const ids = chosen.flatMap((b, k) => (b ? [`index:${k}`] : []));
       await ctx.emit({ type: 'mark', target: ids, payload: { kind: 'found', sum } });
       found = chosen.flatMap((b, k) => (b ? [k] : []));
@@ -41,18 +41,18 @@ export async function subsetsum(ctx: FacetContext<SubsetSumData>): Promise<numbe
     }
     if (i === n || sum > target) {
       if (sum > target) {
-        await ctx.emit({ type: 'phase', payload: { phase: 'prune' } });
+        await ctx.emit({ type: 'phase', payload: { phase: 'prune' }, silent: true });
         ctx.metric('prune-count', 'inc');
       }
       return false;
     }
 
-    await ctx.emit({ type: 'phase', payload: { phase: 'visit' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'visit' }, silent: true });
     await ctx.emit({ type: 'highlight', target: `index:${i}`, payload: { kind: 'visit' } });
 
     // include arr[i]
     chosen[i] = true;
-    await ctx.emit({ type: 'phase', payload: { phase: 'include' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'include' }, silent: true });
     await ctx.emit({
       type: 'state-changed',
       target: `index:${i}`,
@@ -63,7 +63,7 @@ export async function subsetsum(ctx: FacetContext<SubsetSumData>): Promise<numbe
 
     // exclude arr[i]
     chosen[i] = false;
-    await ctx.emit({ type: 'phase', payload: { phase: 'exclude' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'exclude' }, silent: true });
     await ctx.emit({
       type: 'state-changed',
       target: `index:${i}`,

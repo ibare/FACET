@@ -24,7 +24,7 @@ export async function countingsort(ctx: FacetContext<CountingSortData>): Promise
     return;
   }
 
-  await ctx.emit({ type: 'phase', payload: { phase: 'find-max' } });
+  await ctx.emit({ type: 'phase', payload: { phase: 'find-max' }, silent: true });
   let max = arr[0];
   for (let i = 1; i < n; i++) {
     if (ctx.cancelled) return;
@@ -33,7 +33,7 @@ export async function countingsort(ctx: FacetContext<CountingSortData>): Promise
 
   const count = new Array<number>(max + 1).fill(0);
 
-  await ctx.emit({ type: 'phase', payload: { phase: 'count' } });
+  await ctx.emit({ type: 'phase', payload: { phase: 'count' }, silent: true });
   for (let i = 0; i < n; i++) {
     if (ctx.cancelled) return;
     await ctx.emit({ type: 'highlight', target: `index:${i}`, payload: { kind: 'scan' } });
@@ -42,7 +42,7 @@ export async function countingsort(ctx: FacetContext<CountingSortData>): Promise
     await ctx.emit({ type: 'unhighlight', target: `index:${i}` });
   }
 
-  await ctx.emit({ type: 'phase', payload: { phase: 'reconstruct' } });
+  await ctx.emit({ type: 'phase', payload: { phase: 'reconstruct' }, silent: true });
   let k = 0;
   for (let value = 0; value <= max; value++) {
     while (count[value] > 0) {

@@ -21,6 +21,14 @@ export type FacetRuntimeEvent<T extends string = string> = {
   type: T;
   target?: FacetEventTarget;
   payload?: unknown;
+  /**
+   * true 면 사용자 step boundary 가 아니다.
+   * - stepping 모드에서 paused 로 전환되지 않고 통과한다.
+   * - playing 모드에서 BASE_DELAY 지연도 적용하지 않는다.
+   * Projector 의 처리 자체는 그대로 호출된다 (코드 패널 phase
+   * 동기화처럼 시각 변화는 없지만 상태 갱신이 필요한 메타 이벤트용).
+   */
+  silent?: boolean;
 };
 
 export type StandardFacetEvent =

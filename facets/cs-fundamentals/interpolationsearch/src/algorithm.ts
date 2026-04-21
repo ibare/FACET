@@ -28,7 +28,7 @@ export async function interpolationsearch(
     }
     if (pos < lo || pos > hi) break;
 
-    await ctx.emit({ type: 'phase', payload: { phase: 'estimate' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'estimate' }, silent: true });
     const rangeIds: string[] = [];
     for (let k = lo; k <= hi; k++) rangeIds.push(`index:${k}`);
     await ctx.emit({ type: 'highlight', target: rangeIds, payload: { kind: 'range' } });
@@ -36,20 +36,20 @@ export async function interpolationsearch(
     ctx.metric('probe-count', 'inc');
 
     if (arr[pos] === target) {
-      await ctx.emit({ type: 'phase', payload: { phase: 'found' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'found' }, silent: true });
       await ctx.emit({ type: 'mark', target: `index:${pos}`, payload: { kind: 'found' } });
       await ctx.emit({ type: 'done' });
       return pos;
     }
 
     if (arr[pos] < target) {
-      await ctx.emit({ type: 'phase', payload: { phase: 'narrow-right' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'narrow-right' }, silent: true });
       const drop: string[] = [];
       for (let k = lo; k <= pos; k++) drop.push(`index:${k}`);
       await ctx.emit({ type: 'mark', target: drop, payload: { kind: 'discard' } });
       lo = pos + 1;
     } else {
-      await ctx.emit({ type: 'phase', payload: { phase: 'narrow-left' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'narrow-left' }, silent: true });
       const drop: string[] = [];
       for (let k = pos; k <= hi; k++) drop.push(`index:${k}`);
       await ctx.emit({ type: 'mark', target: drop, payload: { kind: 'discard' } });
@@ -57,7 +57,7 @@ export async function interpolationsearch(
     }
   }
 
-  await ctx.emit({ type: 'phase', payload: { phase: 'not-found' } });
+  await ctx.emit({ type: 'phase', payload: { phase: 'not-found' }, silent: true });
   await ctx.emit({ type: 'mark', target: 'result', payload: { kind: 'not-found' } });
   await ctx.emit({ type: 'done' });
   return -1;

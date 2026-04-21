@@ -60,17 +60,17 @@ export async function knapsack(ctx: FacetContext<KnapsackData>): Promise<Knapsac
     if (ctx.cancelled) return;
     ctx.metric('visit-count', 'inc');
 
-    await ctx.emit({ type: 'phase', payload: { phase: 'bound' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'bound' }, silent: true });
     const ub = upperBound(i, value, weight);
     if (ub <= bestVal) {
-      await ctx.emit({ type: 'phase', payload: { phase: 'prune' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'prune' }, silent: true });
       ctx.metric('prune-count', 'inc');
       return;
     }
 
     if (i === n) {
       if (value > bestVal) {
-        await ctx.emit({ type: 'phase', payload: { phase: 'update' } });
+        await ctx.emit({ type: 'phase', payload: { phase: 'update' }, silent: true });
         bestVal = value;
         bestPicks = cur.flatMap((b, k) => (b ? [order[k]] : []));
         const ids = cur.flatMap((b, k) => (b ? [`index:${k}`] : []));
@@ -79,12 +79,12 @@ export async function knapsack(ctx: FacetContext<KnapsackData>): Promise<Knapsac
       return;
     }
 
-    await ctx.emit({ type: 'phase', payload: { phase: 'visit' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'visit' }, silent: true });
     await ctx.emit({ type: 'highlight', target: `index:${i}`, payload: { kind: 'visit' } });
 
     if (weight + weights[i] <= cap) {
       cur[i] = true;
-      await ctx.emit({ type: 'phase', payload: { phase: 'include' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'include' }, silent: true });
       await ctx.emit({
         type: 'state-changed',
         target: `index:${i}`,
@@ -95,7 +95,7 @@ export async function knapsack(ctx: FacetContext<KnapsackData>): Promise<Knapsac
     }
 
     cur[i] = false;
-    await ctx.emit({ type: 'phase', payload: { phase: 'exclude' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'exclude' }, silent: true });
     await ctx.emit({
       type: 'state-changed',
       target: `index:${i}`,

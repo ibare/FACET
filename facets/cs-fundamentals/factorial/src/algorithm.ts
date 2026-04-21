@@ -36,7 +36,7 @@ export async function factorial(ctx: FacetContext<FactorialData>): Promise<numbe
     ctx.metric('call-count', 'inc');
 
     if (k <= 1) {
-      await ctx.emit({ type: 'phase', payload: { phase: 'base' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'base' }, silent: true });
       await ctx.emit({ type: 'mark', target: 'partial', payload: { kind: 'partial', value: 1 } });
       stack.pop();
       await ctx.emit({
@@ -47,11 +47,11 @@ export async function factorial(ctx: FacetContext<FactorialData>): Promise<numbe
       return 1;
     }
 
-    await ctx.emit({ type: 'phase', payload: { phase: 'call' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'call' }, silent: true });
     const sub = await rec(k - 1);
 
     if (ctx.cancelled) return 0;
-    await ctx.emit({ type: 'phase', payload: { phase: 'return' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'return' }, silent: true });
     const result = k * sub;
     await ctx.emit({
       type: 'mark',

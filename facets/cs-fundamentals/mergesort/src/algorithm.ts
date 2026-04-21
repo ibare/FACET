@@ -30,7 +30,7 @@ async function msort(arr: number[], lo: number, hi: number, ctx: FacetContext<Me
   if (ctx.cancelled) return;
   if (lo >= hi) return;
   const mid = (lo + hi) >> 1;
-  await ctx.emit({ type: 'phase', payload: { phase: 'divide' } });
+  await ctx.emit({ type: 'phase', payload: { phase: 'divide' }, silent: true });
   await msort(arr, lo, mid, ctx);
   await msort(arr, mid + 1, hi, ctx);
   await merge(arr, lo, mid, hi, ctx);
@@ -51,7 +51,7 @@ async function merge(
 
   while (i < left.length && j < right.length) {
     if (ctx.cancelled) return;
-    await ctx.emit({ type: 'phase', payload: { phase: 'compare' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'compare' }, silent: true });
     await ctx.emit({
       type: 'highlight',
       target: [`index:${lo + i}`, `index:${mid + 1 + j}`],
@@ -61,7 +61,7 @@ async function merge(
 
     if (left[i] <= right[j]) {
       arr[k] = left[i];
-      await ctx.emit({ type: 'phase', payload: { phase: 'place' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'place' }, silent: true });
       await ctx.emit({
         type: 'state-changed',
         target: `index:${k}`,
@@ -71,7 +71,7 @@ async function merge(
       i++;
     } else {
       arr[k] = right[j];
-      await ctx.emit({ type: 'phase', payload: { phase: 'place' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'place' }, silent: true });
       await ctx.emit({
         type: 'state-changed',
         target: `index:${k}`,
@@ -87,7 +87,7 @@ async function merge(
   while (i < left.length) {
     if (ctx.cancelled) return;
     arr[k] = left[i];
-    await ctx.emit({ type: 'phase', payload: { phase: 'place' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'place' }, silent: true });
     await ctx.emit({
       type: 'state-changed',
       target: `index:${k}`,
@@ -101,7 +101,7 @@ async function merge(
   while (j < right.length) {
     if (ctx.cancelled) return;
     arr[k] = right[j];
-    await ctx.emit({ type: 'phase', payload: { phase: 'place' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'place' }, silent: true });
     await ctx.emit({
       type: 'state-changed',
       target: `index:${k}`,
@@ -112,5 +112,5 @@ async function merge(
     k++;
   }
 
-  await ctx.emit({ type: 'phase', payload: { phase: 'merge-end' } });
+  await ctx.emit({ type: 'phase', payload: { phase: 'merge-end' }, silent: true });
 }

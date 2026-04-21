@@ -22,7 +22,7 @@ export async function heapsort(ctx: FacetContext<HeapSortData>): Promise<void> {
   const arr = ctx.data.values;
   const n = arr.length;
 
-  await ctx.emit({ type: 'phase', payload: { phase: 'build-heap' } });
+  await ctx.emit({ type: 'phase', payload: { phase: 'build-heap' }, silent: true });
   for (let i = (n >> 1) - 1; i >= 0; i--) {
     if (ctx.cancelled) return;
     await siftDown(arr, i, n, ctx);
@@ -30,7 +30,7 @@ export async function heapsort(ctx: FacetContext<HeapSortData>): Promise<void> {
 
   for (let end = n - 1; end > 0; end--) {
     if (ctx.cancelled) return;
-    await ctx.emit({ type: 'phase', payload: { phase: 'extract' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'extract' }, silent: true });
     [arr[0], arr[end]] = [arr[end], arr[0]];
     await ctx.emit({
       type: 'state-changed',
@@ -57,7 +57,7 @@ async function siftDown(
   ctx: FacetContext<HeapSortData>,
 ): Promise<void> {
   let root = start;
-  await ctx.emit({ type: 'phase', payload: { phase: 'sift-down' } });
+  await ctx.emit({ type: 'phase', payload: { phase: 'sift-down' }, silent: true });
   await ctx.emit({ type: 'highlight', target: `index:${root}`, payload: { kind: 'root' } });
 
   while (true) {
@@ -68,7 +68,7 @@ async function siftDown(
 
     let larger = left;
     if (right < end) {
-      await ctx.emit({ type: 'phase', payload: { phase: 'compare-children' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'compare-children' }, silent: true });
       await ctx.emit({
         type: 'highlight',
         target: [`index:${left}`, `index:${right}`],

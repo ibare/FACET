@@ -20,7 +20,7 @@ export async function shellsort(ctx: FacetContext<ShellSortData>): Promise<void>
 
   for (let gap = n >> 1; gap > 0; gap >>= 1) {
     if (ctx.cancelled) return;
-    await ctx.emit({ type: 'phase', payload: { phase: 'gap' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'gap' }, silent: true });
 
     for (let i = gap; i < n; i++) {
       if (ctx.cancelled) return;
@@ -28,11 +28,11 @@ export async function shellsort(ctx: FacetContext<ShellSortData>): Promise<void>
       await ctx.emit({ type: 'highlight', target: `index:${i}`, payload: { kind: 'current' } });
       let j = i;
       while (j >= gap) {
-        await ctx.emit({ type: 'phase', payload: { phase: 'compare' } });
+        await ctx.emit({ type: 'phase', payload: { phase: 'compare' }, silent: true });
         await ctx.emit({ type: 'highlight', target: `index:${j - gap}`, payload: { kind: 'compare' } });
         ctx.metric('compare-count', 'inc');
         if (arr[j - gap] > temp) {
-          await ctx.emit({ type: 'phase', payload: { phase: 'shift' } });
+          await ctx.emit({ type: 'phase', payload: { phase: 'shift' }, silent: true });
           arr[j] = arr[j - gap];
           await ctx.emit({
             type: 'state-changed',
@@ -47,7 +47,7 @@ export async function shellsort(ctx: FacetContext<ShellSortData>): Promise<void>
           break;
         }
       }
-      await ctx.emit({ type: 'phase', payload: { phase: 'insert' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'insert' }, silent: true });
       arr[j] = temp;
       await ctx.emit({
         type: 'state-changed',

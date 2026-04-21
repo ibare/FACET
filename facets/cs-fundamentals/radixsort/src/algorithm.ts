@@ -24,7 +24,7 @@ export async function radixsort(ctx: FacetContext<RadixSortData>): Promise<void>
     return;
   }
 
-  await ctx.emit({ type: 'phase', payload: { phase: 'find-max' } });
+  await ctx.emit({ type: 'phase', payload: { phase: 'find-max' }, silent: true });
   let max = arr[0];
   for (let i = 1; i < n; i++) {
     if (ctx.cancelled) return;
@@ -34,7 +34,7 @@ export async function radixsort(ctx: FacetContext<RadixSortData>): Promise<void>
   let exp = 1;
   while (Math.floor(max / exp) > 0) {
     if (ctx.cancelled) return;
-    await ctx.emit({ type: 'phase', payload: { phase: 'digit-pass' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'digit-pass' }, silent: true });
     await countingByDigit(arr, exp, ctx);
     exp *= 10;
   }
@@ -56,7 +56,7 @@ async function countingByDigit(
   const output = new Array<number>(n).fill(0);
   const count = new Array<number>(10).fill(0);
 
-  await ctx.emit({ type: 'phase', payload: { phase: 'count' } });
+  await ctx.emit({ type: 'phase', payload: { phase: 'count' }, silent: true });
   for (let i = 0; i < n; i++) {
     if (ctx.cancelled) return;
     await ctx.emit({ type: 'highlight', target: `index:${i}`, payload: { kind: 'scan' } });
@@ -73,7 +73,7 @@ async function countingByDigit(
     count[d]--;
   }
 
-  await ctx.emit({ type: 'phase', payload: { phase: 'place' } });
+  await ctx.emit({ type: 'phase', payload: { phase: 'place' }, silent: true });
   for (let i = 0; i < n; i++) {
     if (ctx.cancelled) return;
     arr[i] = output[i];

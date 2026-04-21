@@ -43,7 +43,7 @@ export async function bubblesort(ctx: FacetContext<BubbleSortData>): Promise<voi
       if (ctx.cancelled) return;
 
       // 1) 비교
-      await ctx.emit({ type: 'phase', payload: { phase: 'compare' } });
+      await ctx.emit({ type: 'phase', payload: { phase: 'compare' }, silent: true });
       await ctx.emit({
         type: 'highlight',
         target: [`index:${j}`, `index:${j + 1}`],
@@ -59,7 +59,7 @@ export async function bubblesort(ctx: FacetContext<BubbleSortData>): Promise<voi
       let swapped = false;
       if (arr[j] > arr[j + 1]) {
         // 2) 교환
-        await ctx.emit({ type: 'phase', payload: { phase: 'swap' } });
+        await ctx.emit({ type: 'phase', payload: { phase: 'swap' }, silent: true });
         [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
         await ctx.emit({
           type: 'state-changed',
@@ -83,11 +83,12 @@ export async function bubblesort(ctx: FacetContext<BubbleSortData>): Promise<voi
     }
 
     // 패스 끝 — lastUnsorted 인덱스가 정렬 확정
-    await ctx.emit({ type: 'phase', payload: { phase: 'pass-end' } });
+    await ctx.emit({ type: 'phase', payload: { phase: 'pass-end' }, silent: true });
     await ctx.emit({
       type: 'settle',
       target: `index:${lastUnsorted}`,
       payload: { passNumber },
+      silent: true,
     });
     await ctx.emit({
       type: 'mark',
