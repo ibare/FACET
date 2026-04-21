@@ -16,7 +16,7 @@ last_verified: 2026-04-21
 
 ## MUST
 
-- 표준 이벤트 (`highlight`, `unhighlight`, `mark`, `state-changed`, `enqueue`, `dequeue`, `append`, `layer-discovered`, `done`) 의 이름과 의미를 다른 용도로 재해석하지 않는다.
+- 표준 이벤트 (`highlight`, `unhighlight`, `mark`, `state-changed`, `enqueue`, `dequeue`, `append`, `layer-discovered`, `fold`, `unfold`, `done`) 의 이름과 의미를 다른 용도로 재해석하지 않는다.
 - facet 고유 확장 이벤트를 쓰는 경우, 해당 `algorithm.ts` **파일 상단 JSDoc 블록에 이벤트 목록 + payload 스키마 + silent 여부를 명시**한다 (bubblesort/algorithm.ts 의 라인 1-18 과 동일한 형태).
 - 동일 facet 의 `projector.ts` 는 그 algorithm 이 발신하는 **모든** 이벤트를 처리하거나, 의도적으로 무시하는 경우 `switch` 의 `default` 에서 silently drop 임을 주석으로 명시한다.
 - 메타 이벤트 (`phase` 등 시각 변화가 없지만 상태 갱신이 필요한 이벤트) 는 `silent: true` 를 반드시 부여한다.
@@ -41,6 +41,17 @@ BFS 처럼 **같은 거리 / 같은 계층의 여러 노드가 한 프레임에 
 - **target**: 선택적. 사용 시 `['node:<a>', 'node:<b>', ...]` 배열. 대개 `payload.nodes` 가 정규 경로이고 `target` 은 `toIndexArray` 류 공용 헬퍼와 호환하고 싶을 때만.
 - **silent 여부**: 아니다 (시각 변화가 있는 step boundary 이벤트).
 - **확장 주의**: `layer-*` 네이밍은 이 어휘 계열로 예약한다. `layer-settled` / `layer-reset` 등이 필요하면 같은 계열로 추가.
+
+## 폴드 이벤트 어휘 — `fold` / `unfold`
+
+BST 류 정렬형 이진 트리에서 **한 번의 비교가 서브트리 전체를 포기시키는 순간** 의 집합 상태 전이를 단일 이벤트로 표현한다. 노드를 하나씩 돌며 개별 이벤트로 풀면 "비교 1회 = 세계의 절반 포기" 라는 단호함이 시각적으로 무너진다.
+
+- **용도**: BST 의 키 비교 후 반대편 서브트리 포기, AVL / Red-Black 의 회전 전 상태 비교, 세그먼트 트리 범위 질의의 가지치기 등 "이진 트리에서 한쪽 서브트리 전체를 한 번에 접거나 펴는" 장면.
+- **`fold` payload 스키마**: `{ rootId: string; side: 'L' | 'R'; nodes: string[] }` — 비교 기준 노드 id + 포기 방향 + 해당 서브트리에 속한 모든 노드 id.
+- **`unfold` payload 스키마**: `{ rootId: string; side?: 'L' | 'R' }` — `side` 생략 시 해당 루트의 모든 접힘 해제.
+- **target**: 선택적. 사용 시 `target: 'node:<rootId>'`. 정규 경로는 payload.
+- **silent 여부**: 아니다 (시각 변화가 있는 step boundary 이벤트).
+- **확장 주의**: `fold` / `unfold` 는 **이진 트리 서브트리 단위** 에만 사용한다. 같은 어휘를 "하이라이트 on/off" 같은 다른 의미로 재해석하지 않는다 — 혼동 시 `layer-*` 계열 추가와 동일한 원칙으로 새 이름을 짓는다.
 
 ## Exception
 

@@ -99,4 +99,7 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:queue', () =>
     import('@facet/algorithm-queue').then((m) => m.registerQueue()),
   );
+  registerFacetLoader('facet:bst', () =>
+    import('@facet/algorithm-bst').then((m) => m.registerBst()),
+  );
 }

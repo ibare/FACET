@@ -65,6 +65,9 @@ importers:
       '@facet/algorithm-binarysearch':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/binarysearch
+      '@facet/algorithm-bst':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/bst
       '@facet/algorithm-bubblesort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bubblesort
@@ -231,6 +234,12 @@ importers:
       '@facet/view-code':
         specifier: workspace:*
         version: link:../../../packages/view-code
+
+  facets/cs-fundamentals/bst:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
 
   facets/cs-fundamentals/bubblesort:
     dependencies:

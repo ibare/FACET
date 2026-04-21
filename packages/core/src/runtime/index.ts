@@ -42,5 +42,12 @@ export type { View, ViewInstance, ViewMountParams } from '../views/types.js';
 export type { BarItemState, BarChartFeature } from '../views/bar-chart.js';
 export type { GraphData, GraphPositions, GraphNodeState, GraphEdgeState, GraphLayoutFeature } from '../views/graph-layout.js';
 export type { ConveyorQueueFeature, ConveyorQueueItem } from '../views/conveyor-queue.js';
-export type { TreeNode, TreeNodeState, TreeEdgeState } from '../views/tree-layout.js';
+export type {
+  TreeNode,
+  TreeNodeState,
+  TreeEdgeState,
+  TreeLayoutFeature,
+  TreeLayoutMode,
+  FoldSide,
+} from '../views/tree-layout.js';
 export type { LinkedListItemState } from '../views/linked-list-chain.js';

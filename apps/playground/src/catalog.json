@@ -19,7 +19,7 @@
             { "id": "deque", "name": "덱" },
             { "id": "hash-table", "name": "해시 테이블" },
             { "id": "binary-tree", "name": "이진 트리" },
-            { "id": "bst", "name": "이진 탐색 트리" },
+            { "id": "bst", "name": "이진 탐색 트리", "facetId": "facet:bst" },
             { "id": "avl-tree", "name": "AVL 트리" },
             { "id": "red-black-tree", "name": "Red-Black 트리" },
             { "id": "b-tree", "name": "B-Tree" },

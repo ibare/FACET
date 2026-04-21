@@ -14,6 +14,8 @@ export type StandardEventType =
   | 'dequeue'
   | 'append'
   | 'layer-discovered'
+  | 'fold'
+  | 'unfold'
   | 'done';
 
 export type FacetEventTarget = string | string[];
@@ -41,6 +43,8 @@ export type StandardFacetEvent =
   | { type: 'dequeue'; target?: FacetEventTarget; payload?: unknown }
   | { type: 'append'; target?: FacetEventTarget; payload?: unknown }
   | { type: 'layer-discovered'; target?: FacetEventTarget; payload?: unknown }
+  | { type: 'fold'; target?: FacetEventTarget; payload?: unknown }
+  | { type: 'unfold'; target?: FacetEventTarget; payload?: unknown }
   | { type: 'done'; target?: FacetEventTarget; payload?: unknown };
 
 /**

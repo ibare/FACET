@@ -35,6 +35,19 @@ export type Palette = {
   sortedTailBg: string;
   /** sorted-tail: 정렬 영역 경계선 색 */
   sortedTailBorder: string;
+
+  /**
+   * 정렬형 이진 트리 (BST 등) 에서 좌 서브트리 영역 배경 tint.
+   * 기획상 "좌소우대 색지" 의 좌측 반. 흑백+노랑 정체성 준수를 위해
+   * 기획의 한색 대신 옅은 검정 tint 로 대체한다.
+   */
+  subtreeShadeLeft: string;
+  /** 좌소우대 색지의 우측 반 — 옅은 노랑 tint */
+  subtreeShadeRight: string;
+  /** 보조 커서 (후계자 서브루틴 등) 외곽 링 색 — 주 커서 accent 와 대비 */
+  auxCursor: string;
+  /** 유령 probe (miss 시 빈 자식 자리) 의 점선 외곽 색 */
+  ghostOutline: string;
 };
 
 // 흑백 + 노란 악센트 (호스트 서비스 Ceres 108 톤과 동기화).
@@ -64,6 +77,11 @@ export const lightColors: Palette = {
   risingMarker: '#171717',
   sortedTailBg: 'rgba(23, 23, 23, 0.03)',
   sortedTailBorder: '#171717',
+
+  subtreeShadeLeft: 'rgba(23, 23, 23, 0.04)',
+  subtreeShadeRight: 'rgba(250, 204, 21, 0.10)',
+  auxCursor: '#737373',
+  ghostOutline: '#a3a3a3',
 };
 
 export const darkColors: Palette = {
@@ -90,6 +108,11 @@ export const darkColors: Palette = {
   risingMarker: '#fafafa',
   sortedTailBg: 'rgba(250, 250, 250, 0.04)',
   sortedTailBorder: '#fafafa',
+
+  subtreeShadeLeft: 'rgba(250, 250, 250, 0.04)',
+  subtreeShadeRight: 'rgba(250, 204, 21, 0.12)',
+  auxCursor: '#a3a3a3',
+  ghostOutline: '#737373',
 };
 
 export function getColors(theme: Theme | undefined): Palette {
