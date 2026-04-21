@@ -1,5 +1,6 @@
 import type { ProjectorFactory } from '@facet/core/runtime';
 import type { BarItemState } from '@facet/core/runtime';
+import { toIndexArray } from '@facet/core/runtime';
 
 type BarChart = {
   setData(values: number[]): void;
@@ -15,17 +16,6 @@ type CodePanel = {
   highlightPhase(phase: string | null): void;
   clearHighlight(): void;
 };
-
-function toIndex(target: string | string[] | undefined): number[] {
-  if (!target) return [];
-  const arr = Array.isArray(target) ? target : [target];
-  const out: number[] = [];
-  for (const t of arr) {
-    const m = /^index:(\d+)$/.exec(typeof t === 'string' ? t : '');
-    if (m) out.push(Number(m[1]));
-  }
-  return out;
-}
 
 export const coinchangeProjector: ProjectorFactory = (views) => {
   const stage = views.stage as unknown as BarChart | undefined;
@@ -48,12 +38,12 @@ export const coinchangeProjector: ProjectorFactory = (views) => {
       switch (event.type) {
         case 'highlight': {
           if (!stage) break;
-          for (const i of toIndex(event.target)) stage.setItemState(i, 'comparing');
+          for (const i of toIndexArray(event.target)) stage.setItemState(i, 'comparing');
           break;
         }
         case 'unhighlight': {
           if (!stage) break;
-          for (const i of toIndex(event.target)) stage.clearItemState(i);
+          for (const i of toIndexArray(event.target)) stage.clearItemState(i);
           break;
         }
         case 'state-changed': {
@@ -75,7 +65,7 @@ export const coinchangeProjector: ProjectorFactory = (views) => {
         case 'mark': {
           const payload = event.payload as { kind?: string } | undefined;
           if (payload?.kind === 'used') {
-            const ids = toIndex(event.target);
+            const ids = toIndexArray(event.target);
             if (stage) for (const i of ids) stage.setItemState(i, 'sorted');
           } else if (payload?.kind === 'done') {
             const p = payload as { total?: number; remaining?: number };

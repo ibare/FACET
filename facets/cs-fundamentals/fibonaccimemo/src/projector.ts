@@ -1,5 +1,6 @@
 import type { ProjectorFactory } from '@facet/core/runtime';
 import type { BarItemState } from '@facet/core/runtime';
+import { toIndexArray } from '@facet/core/runtime';
 
 type BarChart = {
   setData(values: number[]): void;
@@ -17,17 +18,6 @@ type CodePanel = {
 };
 
 const UNCOMPUTED = -1;
-
-function toIndex(target: string | string[] | undefined): number[] {
-  if (!target) return [];
-  const arr = Array.isArray(target) ? target : [target];
-  const out: number[] = [];
-  for (const t of arr) {
-    const m = /^index:(\d+)$/.exec(typeof t === 'string' ? t : '');
-    if (m) out.push(Number(m[1]));
-  }
-  return out;
-}
 
 export const fibonaccimemoProjector: ProjectorFactory = (views) => {
   const stage = views.stage as unknown as BarChart | undefined;
@@ -68,7 +58,7 @@ export const fibonaccimemoProjector: ProjectorFactory = (views) => {
         case 'highlight': {
           if (!stage) break;
           const kind = (event.payload as { kind?: string } | undefined)?.kind;
-          const ids = toIndex(event.target);
+          const ids = toIndexArray(event.target);
           const state: BarItemState = kind === 'hit' ? 'pivot' : 'comparing';
           for (const i of ids) stage.setItemState(i, state);
           break;

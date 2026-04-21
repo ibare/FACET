@@ -52,3 +52,24 @@ export function parseTarget(t: string): { prefix: TargetPrefix; id: string } | n
   if (idx <= 0) return { prefix: t, id: '' };
   return { prefix: t.slice(0, idx), id: t.slice(idx + 1) };
 }
+
+/**
+ * `index:N` 형식의 target 들만 모아 숫자 인덱스 배열로 변환.
+ * prefix 가 `index` 가 아니거나 N 이 숫자가 아니면 건너뛴다.
+ *
+ * Projector 가 `highlight`/`unhighlight`/`mark` 이벤트의 target 을
+ * 배열 인덱스로 환원할 때 공용으로 사용한다 (C1: Target 문법 일원화).
+ */
+export function toIndexArray(target: FacetEventTarget | undefined): number[] {
+  if (target === undefined) return [];
+  const arr = Array.isArray(target) ? target : [target];
+  const out: number[] = [];
+  for (const t of arr) {
+    if (typeof t !== 'string') continue;
+    const parsed = parseTarget(t);
+    if (parsed?.prefix !== 'index') continue;
+    const n = Number(parsed.id);
+    if (!Number.isNaN(n)) out.push(n);
+  }
+  return out;
+}

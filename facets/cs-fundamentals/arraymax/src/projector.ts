@@ -1,5 +1,6 @@
 import type { ProjectorFactory } from '@facet/core/runtime';
 import type { BarItemState } from '@facet/core/runtime';
+import { toIndexArray } from '@facet/core/runtime';
 
 type BarChart = {
   setData(values: number[]): void;
@@ -15,17 +16,6 @@ type CodePanel = {
   highlightPhase(phase: string | null): void;
   clearHighlight(): void;
 };
-
-function toIndex(target: string | string[] | undefined): number[] {
-  if (!target) return [];
-  const arr = Array.isArray(target) ? target : [target];
-  const out: number[] = [];
-  for (const t of arr) {
-    const m = /^index:(\d+)$/.exec(typeof t === 'string' ? t : '');
-    if (m) out.push(Number(m[1]));
-  }
-  return out;
-}
 
 export const arraymaxProjector: ProjectorFactory = (views) => {
   const stage = views.stage as unknown as BarChart | undefined;
@@ -43,7 +33,7 @@ export const arraymaxProjector: ProjectorFactory = (views) => {
         case 'highlight': {
           if (!stage) break;
           const kind = (event.payload as { kind?: string } | undefined)?.kind;
-          const ids = toIndex(event.target);
+          const ids = toIndexArray(event.target);
           const state: BarItemState =
             kind === 'base' ? 'comparing' : kind === 'winner' ? 'pivot' : 'active';
           for (const i of ids) stage.setItemState(i, state);
@@ -51,13 +41,13 @@ export const arraymaxProjector: ProjectorFactory = (views) => {
         }
         case 'unhighlight': {
           if (!stage) break;
-          for (const i of toIndex(event.target)) stage.clearItemState(i);
+          for (const i of toIndexArray(event.target)) stage.clearItemState(i);
           break;
         }
         case 'mark': {
           const payload = event.payload as { kind?: string; value?: number } | undefined;
           if (payload?.kind === 'result') {
-            const ids = toIndex(event.target);
+            const ids = toIndexArray(event.target);
             if (stage) for (const i of ids) stage.setItemState(i, 'sorted');
             if (resultView && typeof payload.value === 'number') {
               resultView.setText(`max = ${payload.value}`);

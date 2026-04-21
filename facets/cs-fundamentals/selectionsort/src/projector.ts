@@ -4,6 +4,7 @@
 
 import type { ProjectorFactory } from '@facet/core/runtime';
 import type { BarItemState } from '@facet/core/runtime';
+import { toIndexArray } from '@facet/core/runtime';
 
 type BarChart = {
   setData(values: number[]): void;
@@ -16,17 +17,6 @@ type CodePanel = {
   highlightPhase(phase: string | null): void;
   clearHighlight(): void;
 };
-
-function toIndex(target: string | string[] | undefined): number[] {
-  if (!target) return [];
-  const arr = Array.isArray(target) ? target : [target];
-  const out: number[] = [];
-  for (const t of arr) {
-    const m = /^index:(\d+)$/.exec(typeof t === 'string' ? t : '');
-    if (m) out.push(Number(m[1]));
-  }
-  return out;
-}
 
 export const selectionsortProjector: ProjectorFactory = (views) => {
   const stage = views.stage as unknown as BarChart | undefined;
@@ -47,7 +37,7 @@ export const selectionsortProjector: ProjectorFactory = (views) => {
         case 'highlight': {
           if (!stage) break;
           const kind = (event.payload as { kind?: string } | undefined)?.kind;
-          for (const i of toIndex(event.target)) {
+          for (const i of toIndexArray(event.target)) {
             if (sortedIndices.has(i)) continue;
             if (kind === 'min') {
               minIndices.add(i);
@@ -60,7 +50,7 @@ export const selectionsortProjector: ProjectorFactory = (views) => {
         }
         case 'unhighlight': {
           if (!stage) break;
-          for (const i of toIndex(event.target)) {
+          for (const i of toIndexArray(event.target)) {
             if (sortedIndices.has(i)) continue;
             if (minIndices.has(i)) {
               minIndices.delete(i);
@@ -81,7 +71,7 @@ export const selectionsortProjector: ProjectorFactory = (views) => {
           const kind = (event.payload as { kind?: string } | undefined)?.kind;
           if (!stage) break;
           if (kind === 'sorted') {
-            for (const i of toIndex(event.target)) {
+            for (const i of toIndexArray(event.target)) {
               sortedIndices.add(i);
               minIndices.delete(i);
               stage.setItemState(i, 'sorted');

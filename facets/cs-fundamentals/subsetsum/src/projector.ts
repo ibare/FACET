@@ -1,5 +1,6 @@
 import type { ProjectorFactory } from '@facet/core/runtime';
 import type { BarItemState } from '@facet/core/runtime';
+import { toIndexArray } from '@facet/core/runtime';
 
 type BarChart = {
   setData(values: number[]): void;
@@ -15,17 +16,6 @@ type CodePanel = {
   highlightPhase(phase: string | null): void;
   clearHighlight(): void;
 };
-
-function toIndex(target: string | string[] | undefined): number[] {
-  if (!target) return [];
-  const arr = Array.isArray(target) ? target : [target];
-  const out: number[] = [];
-  for (const t of arr) {
-    const m = /^index:(\d+)$/.exec(typeof t === 'string' ? t : '');
-    if (m) out.push(Number(m[1]));
-  }
-  return out;
-}
 
 export const subsetsumProjector: ProjectorFactory = (views) => {
   const stage = views.stage as unknown as BarChart | undefined;
@@ -48,18 +38,18 @@ export const subsetsumProjector: ProjectorFactory = (views) => {
       switch (event.type) {
         case 'highlight': {
           if (!stage) break;
-          for (const i of toIndex(event.target)) stage.setItemState(i, 'comparing');
+          for (const i of toIndexArray(event.target)) stage.setItemState(i, 'comparing');
           break;
         }
         case 'unhighlight': {
           if (!stage) break;
-          for (const i of toIndex(event.target)) stage.clearItemState(i);
+          for (const i of toIndexArray(event.target)) stage.clearItemState(i);
           break;
         }
         case 'state-changed': {
           const payload = event.payload as { kind?: string; sum?: number } | undefined;
           if (!stage) break;
-          for (const i of toIndex(event.target)) {
+          for (const i of toIndexArray(event.target)) {
             if (payload?.kind === 'include') stage.setItemState(i, 'pivot');
             else if (payload?.kind === 'exclude') stage.clearItemState(i);
           }
@@ -71,7 +61,7 @@ export const subsetsumProjector: ProjectorFactory = (views) => {
         case 'mark': {
           const payload = event.payload as { kind?: string; sum?: number } | undefined;
           if (payload?.kind === 'found') {
-            const ids = toIndex(event.target);
+            const ids = toIndexArray(event.target);
             if (stage) for (const i of ids) stage.setItemState(i, 'sorted');
             if (resultView) resultView.setText(`찾음! 인덱스: [${ids.join(', ')}]`);
           } else if (payload?.kind === 'not-found') {

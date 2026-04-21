@@ -1,5 +1,6 @@
 import type { ProjectorFactory } from '@facet/core/runtime';
 import type { BarItemState } from '@facet/core/runtime';
+import { toIndexArray } from '@facet/core/runtime';
 
 type BarChart = {
   setData(values: number[]): void;
@@ -40,8 +41,9 @@ export const factorialProjector: ProjectorFactory = (views) => {
         }
         case 'highlight': {
           if (!stage) break;
-          const m = /^index:(\d+)$/.exec(typeof event.target === 'string' ? event.target : '');
-          if (m) stage.setItemState(Number(m[1]), 'comparing');
+          for (const i of toIndexArray(event.target)) {
+            stage.setItemState(i, 'comparing');
+          }
           break;
         }
         case 'mark': {

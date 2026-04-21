@@ -8,6 +8,7 @@
 
 import type { ProjectorFactory } from '@facet/core/runtime';
 import type { BarItemState } from '@facet/core/runtime';
+import { toIndexArray } from '@facet/core/runtime';
 
 type BarChart = {
   setData(values: number[]): void;
@@ -21,18 +22,6 @@ type CodePanel = {
   highlightPhase(phase: string | null): void;
   clearHighlight(): void;
 };
-
-function toIndex(target: string | string[] | undefined): number[] {
-  if (!target) return [];
-  const arr = Array.isArray(target) ? target : [target];
-  const out: number[] = [];
-  for (const t of arr) {
-    if (typeof t !== 'string') continue;
-    const m = /^index:(\d+)$/.exec(t);
-    if (m) out.push(Number(m[1]));
-  }
-  return out;
-}
 
 export const quicksortProjector: ProjectorFactory = (views) => {
   const stage = views.stage as unknown as BarChart | undefined;
@@ -56,7 +45,7 @@ export const quicksortProjector: ProjectorFactory = (views) => {
       switch (event.type) {
         case 'highlight': {
           const kind = (event.payload as { kind?: string } | undefined)?.kind;
-          const indices = toIndex(event.target);
+          const indices = toIndexArray(event.target);
           if (!stage) break;
           const state: BarItemState =
             kind === 'pivot' ? 'pivot' : kind === 'compare' ? 'comparing' : 'active';
@@ -66,7 +55,7 @@ export const quicksortProjector: ProjectorFactory = (views) => {
           break;
         }
         case 'unhighlight': {
-          const indices = toIndex(event.target);
+          const indices = toIndexArray(event.target);
           if (!stage) break;
           for (const i of indices) {
             if (!sortedIndices.has(i)) stage.clearItemState(i);
@@ -86,7 +75,7 @@ export const quicksortProjector: ProjectorFactory = (views) => {
         }
         case 'mark': {
           const kind = (event.payload as { kind?: string } | undefined)?.kind;
-          const indices = toIndex(event.target);
+          const indices = toIndexArray(event.target);
           if (!stage) break;
           if (kind === 'sorted') {
             for (const i of indices) {
