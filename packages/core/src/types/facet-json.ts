@@ -33,7 +33,7 @@ export type ControlSpec =
   | 'step'
   | 'pause'
   | 'reset'
-  | { type: 'speed-slider'; min?: number; max?: number; default?: number }
+  | { type: 'speed-slider'; default?: number; steps?: number[] }
   | { type: 'button'; id: string; label: string };
 
 export type MetricSpec = {
@@ -67,6 +67,13 @@ export type FacetJson = {
   algorithm: ModuleRef;
   projector: ModuleRef;
   initialData: InitialData;
+  /**
+   * true 면 mount 시점과 reset 시점에 initialData 의 최상위 배열 필드를
+   * Fisher-Yates 로 셔플한다. 정렬 알고리즘처럼 매 실행마다 다른
+   * 시작 배치를 보고 싶을 때 사용. 정렬된 입력을 전제하는 알고리즘
+   * (이진/보간 탐색 등) 에서는 켜지 말 것.
+   */
+  shuffleOnReset?: boolean;
   layout: LayoutNode;
   blocks: Record<string, BlockSpec>;
 };

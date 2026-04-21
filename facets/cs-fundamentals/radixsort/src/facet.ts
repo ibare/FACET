@@ -10,6 +10,7 @@ export const radixsortFacet: FacetJson = {
   algorithm: 'module:radixsort',
   projector: 'module:radixsortProjector',
   initialData: { type: 'array', values: [170, 45, 75, 90, 802, 24, 2, 66] },
+  shuffleOnReset: true,
   layout: {
     type: 'column',
     gap: 8,

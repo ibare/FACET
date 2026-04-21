@@ -92,9 +92,29 @@ export const controlBarView: View = {
     buttonGroup.style.gap = space.xs;
 
     const buttons: Partial<Record<ButtonId, HTMLButtonElement>> = {};
-    const speedState = { min: 0.25, max: 4, current: 1 };
+    const DEFAULT_SPEED_STEPS = [0.25, 0.5, 1, 2, 4, 8];
+    const speedState: { steps: number[]; index: number } = {
+      steps: DEFAULT_SPEED_STEPS,
+      index: DEFAULT_SPEED_STEPS.indexOf(1),
+    };
     let speedInput: HTMLInputElement | null = null;
     let speedLabel: HTMLSpanElement | null = null;
+
+    function nearestSpeedIndex(steps: number[], target: number): number {
+      let bestIdx = 0;
+      let bestDiff = Infinity;
+      for (let i = 0; i < steps.length; i++) {
+        const d = Math.abs(steps[i] - target);
+        if (d < bestDiff) {
+          bestDiff = d;
+          bestIdx = i;
+        }
+      }
+      return bestIdx;
+    }
+    function fmtSpeed(mul: number): string {
+      return Number.isInteger(mul) ? `${mul}x` : `${mul}x`;
+    }
     const speedHandlers: Array<(mul: number) => void> = [];
     const handlers: Record<ButtonId, Array<() => void>> = {
       play: [],
@@ -115,9 +135,13 @@ export const controlBarView: View = {
           buttonGroup.appendChild(btn);
         }
       } else if (c.type === 'speed-slider') {
-        speedState.min = c.min ?? 0.25;
-        speedState.max = c.max ?? 4;
-        speedState.current = c.default ?? 1;
+        const steps =
+          c.steps && c.steps.length > 0
+            ? [...c.steps].sort((a, b) => a - b)
+            : DEFAULT_SPEED_STEPS;
+        speedState.steps = steps;
+        speedState.index = nearestSpeedIndex(steps, c.default ?? 1);
+        const current = steps[speedState.index];
         const wrap = document.createElement('label');
         wrap.style.display = 'flex';
         wrap.style.alignItems = 'center';
@@ -127,20 +151,21 @@ export const controlBarView: View = {
         wrap.textContent = speedText;
         speedInput = document.createElement('input');
         speedInput.type = 'range';
-        speedInput.min = String(speedState.min);
-        speedInput.max = String(speedState.max);
-        speedInput.step = '0.25';
-        speedInput.value = String(speedState.current);
+        speedInput.min = '0';
+        speedInput.max = String(steps.length - 1);
+        speedInput.step = '1';
+        speedInput.value = String(speedState.index);
         speedInput.style.width = '120px';
         speedLabel = document.createElement('span');
-        speedLabel.style.minWidth = '32px';
+        speedLabel.style.minWidth = '40px';
         speedLabel.style.textAlign = 'right';
-        speedLabel.textContent = `${speedState.current}x`;
+        speedLabel.textContent = fmtSpeed(current);
         speedInput.addEventListener('input', () => {
           if (!speedInput || !speedLabel) return;
-          const mul = Number(speedInput.value);
-          speedState.current = mul;
-          speedLabel.textContent = `${mul}x`;
+          const idx = Number(speedInput.value);
+          speedState.index = idx;
+          const mul = speedState.steps[idx];
+          speedLabel.textContent = fmtSpeed(mul);
           for (const h of speedHandlers) h(mul);
         });
         wrap.append(speedInput, speedLabel);
@@ -231,14 +256,15 @@ export const controlBarView: View = {
         speedHandlers.push(cb);
       },
       getSpeed(): number {
-        return speedState.current;
+        return speedState.steps[speedState.index];
       },
       setSpeed(mul: number) {
         if (!speedInput || !speedLabel) return;
-        const clamped = Math.min(speedState.max, Math.max(speedState.min, mul));
-        speedState.current = clamped;
-        speedInput.value = String(clamped);
-        speedLabel.textContent = `${clamped}x`;
+        const idx = nearestSpeedIndex(speedState.steps, mul);
+        speedState.index = idx;
+        const snapped = speedState.steps[idx];
+        speedInput.value = String(idx);
+        speedLabel.textContent = fmtSpeed(snapped);
       },
       updateMetric(name: string, value: number) {
         const m = metricEls.get(name);

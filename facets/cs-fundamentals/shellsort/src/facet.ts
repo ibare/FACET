@@ -10,6 +10,7 @@ export const shellsortFacet: FacetJson = {
   algorithm: 'module:shellsort',
   projector: 'module:shellsortProjector',
   initialData: { type: 'array', values: [5, 2, 8, 1, 9, 3, 7, 4] },
+  shuffleOnReset: true,
   layout: {
     type: 'column',
     gap: 8,

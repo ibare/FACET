@@ -10,6 +10,7 @@ export const insertionsortFacet: FacetJson = {
   algorithm: 'module:insertionsort',
   projector: 'module:insertionsortProjector',
   initialData: { type: 'array', values: [5, 2, 8, 1, 9, 3, 7, 4] },
+  shuffleOnReset: true,
   layout: {
     type: 'column',
     gap: 8,

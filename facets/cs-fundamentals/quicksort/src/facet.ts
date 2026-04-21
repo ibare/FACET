@@ -14,6 +14,7 @@ export const quicksortFacet: FacetJson = {
   algorithm: 'module:quicksort',
   projector: 'module:quicksortProjector',
   initialData: { type: 'array', values: [5, 2, 8, 1, 9, 3, 7, 4] },
+  shuffleOnReset: true,
   layout: {
     type: 'column',
     gap: 8,

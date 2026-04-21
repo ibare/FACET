@@ -15,7 +15,7 @@ import type { ProjectorViews } from './projector.js';
 import { buildLayout, mountBlocks } from './layout-builder.js';
 import { getAlgorithm, getAlgorithmComputeResult, getProjector, getIR, listTranspilers, stripPrefix } from './registry.js';
 
-const BASE_DELAY_MS = 400;
+const BASE_DELAY_MS = 100;
 
 type Mode = 'idle' | 'playing' | 'paused' | 'stepping';
 
@@ -39,6 +39,22 @@ export type RunFacetOptions = {
 function deepClone<T>(value: T): T {
   if (typeof structuredClone === 'function') return structuredClone(value);
   return JSON.parse(JSON.stringify(value)) as T;
+}
+
+/**
+ * initialData 의 최상위 배열 필드를 Fisher-Yates 로 in-place 셔플.
+ * 객체/원시값은 건드리지 않는다. (중첩 배열은 의도적으로 무시 — 깊이가
+ * 있는 자료구조는 셔플 의미가 모호하므로 facet 측에서 직접 처리할 것.)
+ */
+function shuffleArrayFields(obj: Record<string, unknown>): void {
+  for (const v of Object.values(obj)) {
+    if (Array.isArray(v)) {
+      for (let i = v.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [v[i], v[j]] = [v[j], v[i]];
+      }
+    }
+  }
 }
 
 function hasMethod(obj: unknown, name: string): obj is Record<string, (...args: unknown[]) => unknown> {
@@ -109,6 +125,7 @@ export function runFacet(
   }
 
   const initialDataClone = deepClone(json.initialData) as Record<string, unknown>;
+  if (json.shuffleOnReset) shuffleArrayFields(initialDataClone);
   const built = buildLayout({ layout: json.layout, blocks: enrichedBlocks });
 
   mountEl.textContent = '';
@@ -158,7 +175,8 @@ export function runFacet(
   }
 
   // 5. Projector 인스턴스화 + 초기화
-  const projector = projectorFactory(views);
+  // runtime hook: projector 가 현재 재생 속도를 조회해 애니메이션 길이를 맞출 수 있게 한다.
+  const projector = projectorFactory(views, { getSpeed: () => speedMul });
   projector.onInit?.(initialDataClone);
 
   // 5. 컨트롤 wire-up
@@ -320,6 +338,7 @@ export function runFacet(
     Object.assign(context.data as Record<string, unknown>, deepClone(json.initialData) as Record<string, unknown>);
     // initialData 가 배열이면 Object.assign 로 복원 안되므로 키 갱신
     const fresh = deepClone(json.initialData) as Record<string, unknown>;
+    if (json.shuffleOnReset) shuffleArrayFields(fresh);
     for (const k of Object.keys(context.data as Record<string, unknown>)) {
       if (!(k in fresh)) delete (context.data as Record<string, unknown>)[k];
     }

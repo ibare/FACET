@@ -10,6 +10,7 @@ export const countingsortFacet: FacetJson = {
   algorithm: 'module:countingsort',
   projector: 'module:countingsortProjector',
   initialData: { type: 'array', values: [4, 2, 2, 8, 3, 3, 1, 5] },
+  shuffleOnReset: true,
   layout: {
     type: 'column',
     gap: 8,

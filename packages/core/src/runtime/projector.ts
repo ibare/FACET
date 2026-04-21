@@ -16,4 +16,16 @@ export type ProjectorInstance = {
   onDestroy?(): void;
 };
 
-export type ProjectorFactory = (views: ProjectorViews) => ProjectorInstance;
+/**
+ * Projector 가 런타임 상태를 참조해야 할 때 사용하는 훅.
+ * 예: 시각 애니메이션 길이를 현재 재생 속도에 비례시키기 위해 getSpeed() 사용.
+ */
+export type ProjectorRuntime = {
+  /** 현재 재생 속도 배수 (1 = 100ms/스텝). */
+  getSpeed(): number;
+};
+
+export type ProjectorFactory = (
+  views: ProjectorViews,
+  runtime?: ProjectorRuntime,
+) => ProjectorInstance;

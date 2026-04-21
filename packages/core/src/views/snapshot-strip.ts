@@ -72,7 +72,7 @@ export const snapshotStripView: View = {
     stripRow.style.alignItems = 'flex-start';
     stripRow.style.gap = space.sm;
     stripRow.style.overflowX = 'auto';
-    stripRow.style.minHeight = '70px';
+    stripRow.style.minHeight = '38px';
     root.appendChild(stripRow);
 
     container.appendChild(root);
@@ -91,14 +91,14 @@ export const snapshotStripView: View = {
 
       const lbl = document.createElement('div');
       lbl.textContent = snap.label;
-      lbl.style.fontSize = '10px';
+      lbl.style.fontSize = '9px';
       lbl.style.color = colors.textMuted;
       lbl.style.fontFamily = fonts.mono;
       item.appendChild(lbl);
 
       const svg = document.createElementNS(SVG_NS, 'svg') as SVGSVGElement;
-      const SVG_W = 110;
-      const SVG_H = 50;
+      const SVG_W = 56;
+      const SVG_H = 26;
       svg.setAttribute('width', String(SVG_W));
       svg.setAttribute('height', String(SVG_H));
       svg.setAttribute('viewBox', `0 0 ${SVG_W} ${SVG_H}`);
@@ -108,13 +108,13 @@ export const snapshotStripView: View = {
 
       const n = snap.data.length;
       if (n > 0) {
-        const padX = 3;
+        const padX = 2;
         const gap = 1;
         const usableW = SVG_W - padX * 2;
         const slot = (usableW - gap * (n - 1)) / n;
-        const ISO_DEPTH_MAX = 5;
+        const ISO_DEPTH_MAX = 3;
         const depth = Math.min(slot / 4, ISO_DEPTH_MAX);
-        const baseY = SVG_H - 2 - depth;
+        const baseY = SVG_H - 1 - depth;
         const maxH = baseY - depth - 1;
         const maxVal = Math.max(1, ...snap.data);
 

@@ -52,7 +52,7 @@ function toIndex(target: string | string[] | undefined): number[] {
   return out;
 }
 
-export const bubblesortProjector: ProjectorFactory = (views) => {
+export const bubblesortProjector: ProjectorFactory = (views, runtime) => {
   const stage = views.stage as unknown as BarChart | undefined;
   const startPreview = views.startPreview as unknown as GoalPreview | undefined;
   // goalPreview 는 러너가 computeResult 로 직접 setData. projector 는 참조하지 않음.
@@ -124,7 +124,8 @@ export const bubblesortProjector: ProjectorFactory = (views) => {
             if (!sortedIndices.has(j)) stage.setItemState(j, 'swapping');
             // 시각 swap (호 애니메이션). 러너는 onEvent 의 Promise 를 await.
             if (stage.swapItemsAnimated) {
-              await stage.swapItemsAnimated(i, j, 80);
+              const speed = Math.max(0.01, runtime?.getSpeed() ?? 1);
+              await stage.swapItemsAnimated(i, j, 80 / speed);
             } else {
               stage.swapItems(i, j);
             }
