@@ -4,7 +4,8 @@
  * config: { type: 'queue-display', label? }
  *
  * 메서드:
- *   enqueue(value)
+ *   enqueue(value)  — value 가 { label, tint?, tag? } 객체면 박스 배경을 tint 로 칠한다.
+ *                     문자열/숫자/그 외는 String(v) 로 렌더 (기존 동작 유지).
  *   dequeue() : 맨 앞 제거하고 반환
  *   reset()
  *   size: number 속성
@@ -13,6 +14,15 @@
 import type { View, ViewInstance, ViewMountParams } from './types.js';
 import { getColors, fonts, fontSizes, radii, space } from './design-tokens.js';
 import { resolveLocale, type LocaleStr } from '../types/locale.js';
+
+export type QueueDisplayItem =
+  | string
+  | number
+  | { label: string; tint?: string; tag?: string };
+
+function isStyledItem(v: unknown): v is { label: string; tint?: string; tag?: string } {
+  return typeof v === 'object' && v !== null && 'label' in v && typeof (v as { label: unknown }).label === 'string';
+}
 
 const QUEUE_LABELS_BY_LOCALE: Record<string, { empty: string; head: string; tail: string }> = {
   en: { empty: '(empty)', head: 'head →', tail: '← tail' },
@@ -79,12 +89,20 @@ export const queueDisplayView: View = {
       for (const v of items) {
         const box = document.createElement('div');
         box.style.padding = `${space.xs} ${space.sm}`;
-        box.style.background = colors.itemDefault;
-        box.style.color = colors.textInverse;
         box.style.borderRadius = radii.sm;
         box.style.fontSize = fontSizes.sm;
         box.style.fontWeight = '600';
-        box.textContent = String(v);
+        if (isStyledItem(v)) {
+          box.style.background = v.tint ?? colors.itemDefault;
+          // tint 배경에서도 가독성 확보: 배경이 지정된 경우 inverse, 아니면 기본 inverse 유지.
+          box.style.color = colors.textInverse;
+          box.textContent = v.label;
+          if (v.tag) box.dataset.tag = v.tag;
+        } else {
+          box.style.background = colors.itemDefault;
+          box.style.color = colors.textInverse;
+          box.textContent = String(v);
+        }
         queue.appendChild(box);
       }
       const tail = document.createElement('span');
@@ -94,7 +112,7 @@ export const queueDisplayView: View = {
       queue.appendChild(tail);
     }
 
-    function enqueue(value: unknown): void {
+    function enqueue(value: QueueDisplayItem | unknown): void {
       items.push(value);
       render();
     }

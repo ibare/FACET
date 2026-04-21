@@ -93,4 +93,7 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:knapsack', () =>
     import('@facet/algorithm-knapsack').then((m) => m.registerKnapsack()),
   );
+  registerFacetLoader('facet:bfs', () =>
+    import('@facet/algorithm-bfs').then((m) => m.registerBfs()),
+  );
 }

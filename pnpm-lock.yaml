@@ -59,6 +59,9 @@ importers:
       '@facet/algorithm-arraymax':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/arraymax
+      '@facet/algorithm-bfs':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/bfs
       '@facet/algorithm-binarysearch':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/binarysearch
@@ -188,6 +191,19 @@ importers:
         version: 5.4.21(@types/node@22.19.17)(lightningcss@1.32.0)
 
   facets/cs-fundamentals/arraymax:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@facet/view-code':
+        specifier: workspace:*
+        version: link:../../../packages/view-code
+
+  facets/cs-fundamentals/bfs:
     dependencies:
       '@facet/core':
         specifier: workspace:*

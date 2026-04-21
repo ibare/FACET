@@ -57,7 +57,7 @@
           "id": "graph-algorithms",
           "name": "그래프 알고리즘",
           "topics": [
-            { "id": "bfs", "name": "BFS" },
+            { "id": "bfs", "name": "BFS", "facetId": "facet:bfs" },
             { "id": "dfs", "name": "DFS" },
             { "id": "dijkstra", "name": "Dijkstra" },
             { "id": "bellman-ford", "name": "Bellman-Ford" },
