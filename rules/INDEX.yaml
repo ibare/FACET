@@ -16,6 +16,12 @@
 version: 1
 project: FACET
 
+# Baden MCP 연동: 규칙 ID (id:) 는 baden_rule 호출의 ruleId 에 그대로 사용한다.
+# 예) baden_rule(taskId=..., ruleId='C1', severity='critical', target='facets/foo/src/projector.ts:42', action='violation_found')
+baden:
+  projectName: FACET
+  ruleIdField: id
+
 # ─────────────────────────────────────
 # Always loaded (Tier 1 — Principles)
 # ─────────────────────────────────────

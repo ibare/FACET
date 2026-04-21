@@ -72,6 +72,17 @@ FACET 프로젝트에서 `rules/` 아래에 정의된 6 principles + 9 concerns 
 - (수정 방향 제안)
 ```
 
+## Baden 리포팅
+
+Baden MCP (`mcp__baden__*`) 가 활성화되어 있고 호출자가 `taskId` 를 전달한 경우:
+
+- 감사 시작 시 `baden_action(action='scan_rule_compliance', target=<대상 경로>)`.
+- **위반 발견 시마다** `baden_rule(ruleId=<C1 등>, severity=<critical|high|medium|low>, target=<파일:라인>, reason=<한 줄 요약>, action='violation_found')` 호출.
+- **수정이 동반된 경우** `baden_rule(action='fix_applied', ...)` 로 보조 보고.
+- 감사 종료 시 `baden_verify(action='validate_rules', target=<스코프>, result=<Critical N / High M / Pass ... 요약>)`.
+
+`taskId` 가 없으면 위 호출을 생략하고 Markdown 보고서만 반환한다.
+
 ## 엄격 원칙
 
 - **MUST / MUST NOT 만 위반 판정**. PREFER / Exception 은 권고 섹션에만 쓴다.

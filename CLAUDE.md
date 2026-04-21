@@ -50,11 +50,27 @@ rules/
 
 감사 대상은 기본 `git diff --name-only HEAD~1`. 특정 경로나 규칙 ID 를 지정할 수 있다.
 
-## Baden 작업 통제 (Phase 7)
+## Baden 작업 통제
 
-Baden MCP 도구 (`mcp__baden__*`) 가 연결되면 작업 단위로 `baden_start_task` / `baden_complete_task` / `baden_verify` 를 경유한다. 규칙 위반 시 complete 가 차단될 수 있다.
+Baden MCP 도구 (`mcp__baden__*`) 가 활성화되면 다음 순서를 지킨다.
 
-> 현 시점: Baden 프로젝트 등록 이전. Phase 7 완료 시 본 섹션을 실제 설정으로 대체한다.
+### 필수 호출
+
+1. **세션 시작** — 사용자 지시를 받으면 `mcp__baden__baden_start_task` 로 `projectName: "FACET"` 을 넘겨 `taskId` 를 발급받는다. 이후 모든 `baden_*` 호출에 동일 `taskId` 를 사용한다.
+2. **계획 수립** — 비자명한 작업이면 `baden_plan` 으로 설계 결정을 기록한다.
+3. **일반 행동** — 파일 읽기 / 수정 / 생성 전에 `baden_action` 을 호출한다. `action` 은 snake_case 동사로 시작 (`read_*`, `modify_*`, `create_*`, `search_*` 등).
+4. **검증** — `pnpm typecheck` / `pnpm test` / `rule-guard` 실행 결과는 `baden_verify` 로 보고한다.
+5. **규칙 사건** — rule-guard 가 위반을 발견하거나 수정을 적용하면 `baden_rule` 을 호출한다 (`ruleId` = `C1` 등, `severity`, `target`).
+6. **작업 종료** — 최종 결과를 `baden_complete_task` 에 요약해 보고한다. 규칙 위반 미해소 시 complete 가 차단될 수 있다.
+
+### 프로젝트 식별자
+
+- `projectName`: `FACET` (Baden 에 등록된 이름).
+- 규칙 ID 매핑은 `rules/INDEX.yaml` 의 `id:` 필드를 그대로 사용한다 (`C1~C9`, `S-facet`, `S-view`, `S-runtime`, `S-transpiler`, `S-host`).
+
+### rule-guard 와의 관계
+
+`.claude/agents/rule-guard.md` 는 위반 발견 시 보고서에 규칙 ID 를 포함한다. 메인 에이전트는 rule-guard 결과를 받아 각 위반마다 `baden_rule` 호출을 보조해 Baden 에 기록한다 (서브에이전트 자체도 Bash 로 `baden_*` 를 호출할 수 있다).
 
 ## 작업 규범
 
