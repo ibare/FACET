@@ -4,7 +4,8 @@
  *   def factorial(n):
  *       if n <= 1:
  *           return 1                # phase: base
- *       return n * factorial(n - 1) # phase: call / return
+ *       sub = factorial(n - 1)      # phase: call
+ *       return n * sub              # phase: return
  */
 
 import type { IR, IRExpr, IRStmt, IRType } from '@facet/core';
@@ -37,9 +38,16 @@ export const factorialImperativeIR: IR = {
           then: [{ kind: 'return', phase: 'base', expr: lit(1) }],
         },
         {
+          kind: 'var',
+          name: 'sub',
+          type: tInt,
+          phase: 'call',
+          init: call('factorial', [bin('-', v('n'), lit(1))]),
+        },
+        {
           kind: 'return',
           phase: 'return',
-          expr: bin('*', v('n'), call('factorial', [bin('-', v('n'), lit(1))])),
+          expr: bin('*', v('n'), v('sub')),
         },
       ] satisfies IRStmt[],
     },

@@ -63,6 +63,13 @@ export const subsetsumImperativeIR: IR = {
           then: [{ kind: 'return', phase: 'prune', expr: lit(0) }],
         },
         {
+          kind: 'var',
+          name: 'item',
+          type: tInt,
+          phase: 'visit',
+          init: idx(v('arr'), v('i')),
+        },
+        {
           kind: 'if',
           phase: 'include',
           cond: bin(

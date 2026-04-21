@@ -3,10 +3,12 @@
  * (실제 코드는 더 길지만, 학습용으로 핵심 로직만 IR로 표현)
  *
  *   def dfs(values, weights, cap, i, value, weight, best):
+ *       ub = value                                 # phase: bound   (상계 계산 단순화)
+ *       if ub <= best: return best                 # phase: prune
  *       if i == len(values):
- *           if value > best: return value         # phase: update
+ *           if value > best: return value          # phase: update
  *           return best
- *       # bound check 생략 (학습용 단순화)
+ *       item = values[i]                           # phase: visit
  *       if weight + weights[i] <= cap:
  *           best = dfs(values, weights, cap, i+1, value + values[i], weight + weights[i], best)  # phase: include
  *       best = dfs(values, weights, cap, i+1, value, weight, best)                               # phase: exclude
@@ -52,6 +54,19 @@ export const knapsackImperativeIR: IR = {
       returnType: tInt,
       body: [
         {
+          kind: 'var',
+          name: 'ub',
+          type: tInt,
+          phase: 'bound',
+          init: v('value'),
+        },
+        {
+          kind: 'if',
+          phase: 'prune',
+          cond: bin('<=', v('ub'), v('best')),
+          then: [{ kind: 'return', expr: v('best') }],
+        },
+        {
           kind: 'if',
           cond: bin('==', v('i'), len(v('values'))),
           then: [
@@ -62,6 +77,13 @@ export const knapsackImperativeIR: IR = {
             },
             { kind: 'return', expr: v('best') },
           ],
+        },
+        {
+          kind: 'var',
+          name: 'item',
+          type: tInt,
+          phase: 'visit',
+          init: idx(v('values'), v('i')),
         },
         {
           kind: 'if',

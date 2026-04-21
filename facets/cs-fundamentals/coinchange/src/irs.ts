@@ -70,6 +70,7 @@ export const coinchangeImperativeIR: IR = {
               cond: bin('==', v('remaining'), lit(0)),
               then: [{ kind: 'return', expr: v('total') }],
             },
+            { kind: 'continue', phase: 'next' },
           ],
         },
         { kind: 'return', expr: v('total') },

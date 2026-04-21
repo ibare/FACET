@@ -45,6 +45,7 @@ export const fibonaccimemoImperativeIR: IR = {
       body: [
         {
           kind: 'if',
+          phase: 'visit',
           cond: bin('<=', v('k'), lit(1)),
           then: [
             { kind: 'assign', target: idx(v('memo'), v('k')), expr: v('k') },
