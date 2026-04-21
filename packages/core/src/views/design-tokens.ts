@@ -29,8 +29,6 @@ export type Palette = {
   itemPivot: string;
   itemActive: string;
 
-  /** wave-trail: 비교 위치가 지나간 직후의 잔상 색 (반투명) */
-  waveTrail: string;
   /** rising-marker: 패스 동안 "떠오르는 값"을 표시하는 강조색 */
   risingMarker: string;
   /** sorted-tail: 정렬된 꼬리 영역 배경 tint */
@@ -63,7 +61,6 @@ export const lightColors: Palette = {
   itemPivot: '#facc15',
   itemActive: '#171717',
 
-  waveTrail: 'rgba(23, 23, 23, 0.14)',
   risingMarker: '#171717',
   sortedTailBg: 'rgba(23, 23, 23, 0.03)',
   sortedTailBorder: '#171717',
@@ -90,7 +87,6 @@ export const darkColors: Palette = {
   itemPivot: '#facc15',
   itemActive: '#fafafa',
 
-  waveTrail: 'rgba(250, 250, 250, 0.14)',
   risingMarker: '#fafafa',
   sortedTailBg: 'rgba(250, 250, 250, 0.04)',
   sortedTailBorder: '#fafafa',

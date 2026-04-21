@@ -5,7 +5,7 @@
  *   type: 'bar-chart',
  *   height?: number,
  *   palette?: 'default',
- *   features?: ('wave-trail' | 'rising-marker' | 'sorted-boundary')[]
+ *   features?: ('rising-marker' | 'sorted-boundary')[]
  * }
  *
  * 메서드:
@@ -14,8 +14,6 @@
  *   clearItemState(index)
  *   swapItems(i, j)                                  // 즉시 swap
  *   swapItemsAnimated(i, j, duration?: number)       // 호 이동 애니메이션
- *   setWaveTrail(currentIdx: number, trailIndices: number[])  // 'wave-trail' 활성 시
- *   clearWaveTrail()
  *   setRisingMarker(index: number)                   // 'rising-marker' 활성 시
  *   clearRisingMarker()
  *   setSortedBoundary(boundaryIndex: number)         // 'sorted-boundary' 활성 시
@@ -47,7 +45,7 @@ export type BarItemState =
   | 'pivot'
   | 'active';
 
-export type BarChartFeature = 'wave-trail' | 'rising-marker' | 'sorted-boundary';
+export type BarChartFeature = 'rising-marker' | 'sorted-boundary';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -87,18 +85,15 @@ export const barChartView: View = {
     svg.style.height = '100%';
     svg.style.minHeight = `${initialHeight}px`;
 
-    // 레이어: boundary(뒤) → bars → trail(반투명 overlay) → marker(앞)
+    // 레이어: boundary(뒤) → bars → marker(앞)
     const boundaryG = document.createElementNS(SVG_NS, 'g');
     boundaryG.setAttribute('class', 'facet-bar-chart__boundary');
     const barsG = document.createElementNS(SVG_NS, 'g');
     barsG.setAttribute('class', 'facet-bar-chart__bars');
-    const trailG = document.createElementNS(SVG_NS, 'g');
-    trailG.setAttribute('class', 'facet-bar-chart__trail');
     const markerG = document.createElementNS(SVG_NS, 'g');
     markerG.setAttribute('class', 'facet-bar-chart__marker');
     svg.appendChild(boundaryG);
     svg.appendChild(barsG);
-    svg.appendChild(trailG);
     svg.appendChild(markerG);
 
     root.appendChild(svg);
@@ -109,7 +104,6 @@ export const barChartView: View = {
     /** 위치별 시각 오프셋(애니메이션 중 사용). 키: 인덱스 → {dx, dy} */
     const overlay = new Map<number, { dx: number; dy: number }>();
 
-    let waveTrail: number[] = [];
     let risingMarker: number | null = null;
     let sortedBoundary: number | null = null;
 
@@ -133,7 +127,7 @@ export const barChartView: View = {
     const CAP_COLORS_BY_STATE: Record<BarItemState, { top: string; side: string }> = {
       default:   { top: '#fff700', side: '#fff700' },
       comparing: { top: '#ED7055', side: '#D95535' },
-      swapping:  { top: '#ED7055', side: '#D95535' },
+      swapping:  { top: '#E63946', side: '#A41E36' },
       pivot:     { top: '#ED7055', side: '#D95535' },
       active:    { top: '#ED7055', side: '#D95535' },
       sorted:    { top: '#444444', side: '#212121' },
@@ -269,30 +263,6 @@ export const barChartView: View = {
         item.label.textContent = String(v);
       }
 
-      // wave-trail overlay (지나온 위치 잔상)
-      trailG.textContent = '';
-      if (features.has('wave-trail')) {
-        const allTrail = waveTrail.slice(-3); // 최대 3칸 잔상
-        for (let k = 0; k < allTrail.length; k++) {
-          const i = allTrail[k];
-          if (i < 0 || i >= n) continue;
-          const v = values[i];
-          const h = Math.max(4, (v / maxVal) * maxH);
-          const x = barX(i, slot, gap);
-          const y = baseY - h;
-          const opacity = (k + 1) / (allTrail.length + 1); // 오래된 것일수록 흐리게
-          const r = document.createElementNS(SVG_NS, 'rect');
-          r.setAttribute('x', String(x - 1));
-          r.setAttribute('y', String(y - 1));
-          r.setAttribute('width', String(slot + 2));
-          r.setAttribute('height', String(h + 2));
-          r.setAttribute('rx', '4');
-          r.setAttribute('fill', colors.waveTrail);
-          r.setAttribute('opacity', String(opacity * 0.8));
-          trailG.appendChild(r);
-        }
-      }
-
       // rising marker
       markerG.textContent = '';
       if (features.has('rising-marker') && risingMarker !== null && risingMarker >= 0 && risingMarker < n) {
@@ -323,7 +293,6 @@ export const barChartView: View = {
       values = [...arr];
       states = values.map(() => 'default');
       overlay.clear();
-      waveTrail = [];
       risingMarker = null;
       sortedBoundary = null;
       render();
@@ -393,18 +362,6 @@ export const barChartView: View = {
       });
     }
 
-    function setWaveTrail(_currentIdx: number, trailIndices: number[]): void {
-      if (!features.has('wave-trail')) return;
-      waveTrail = [...trailIndices];
-      render();
-    }
-
-    function clearWaveTrail(): void {
-      if (!features.has('wave-trail')) return;
-      waveTrail = [];
-      render();
-    }
-
     function setRisingMarker(index: number): void {
       if (!features.has('rising-marker')) return;
       risingMarker = index;
@@ -433,13 +390,11 @@ export const barChartView: View = {
       values = [];
       states = [];
       overlay.clear();
-      waveTrail = [];
       risingMarker = null;
       sortedBoundary = null;
       barsG.textContent = '';
       items.length = 0;
       boundaryG.textContent = '';
-      trailG.textContent = '';
       markerG.textContent = '';
     }
 
@@ -471,8 +426,6 @@ export const barChartView: View = {
       clearAllStates,
       swapItems,
       swapItemsAnimated,
-      setWaveTrail,
-      clearWaveTrail,
       setRisingMarker,
       clearRisingMarker,
       setSortedBoundary,

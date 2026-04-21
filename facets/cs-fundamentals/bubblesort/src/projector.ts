@@ -2,11 +2,10 @@
  * BubbleSort Projector — 알고리즘 이벤트를 stage(bar-chart) + 보조 뷰들에 매핑.
  *
  * 시각적 정체성:
- *   1. 파도감     — wave-trail (현재 비교 + 잔상)
- *   2. 떠오름     — rising-marker (큰 값의 추적)
- *   3. 정렬된 꼬리 — sorted-boundary (영역 tint + 경계선)
- *   4. 패스 구조   — pass-tracker (현재 패스, 패스별 swap 막대, tail size)
- *   5. 양 끝       — startPreview / goalPreview, snapshot-strip (패스별 누적)
+ *   1. 떠오름     — rising-marker (큰 값의 추적)
+ *   2. 정렬된 꼬리 — sorted-boundary (영역 tint + 경계선)
+ *   3. 패스 구조   — pass-tracker (현재 패스, 패스별 swap 막대, tail size)
+ *   4. 양 끝       — startPreview / goalPreview, snapshot-strip (패스별 누적)
  */
 
 import type { ProjectorFactory } from '@facet/core/runtime';
@@ -18,8 +17,6 @@ type BarChart = {
   clearItemState(i: number): void;
   swapItems(i: number, j: number): void;
   swapItemsAnimated?(i: number, j: number, duration?: number): Promise<void>;
-  setWaveTrail?(currentIdx: number, trail: number[]): void;
-  clearWaveTrail?(): void;
   setRisingMarker?(index: number): void;
   clearRisingMarker?(): void;
   setSortedBoundary?(boundaryIndex: number): void;
@@ -55,8 +52,6 @@ function toIndex(target: string | string[] | undefined): number[] {
   return out;
 }
 
-const TRAIL_MAX = 4;
-
 export const bubblesortProjector: ProjectorFactory = (views) => {
   const stage = views.stage as unknown as BarChart | undefined;
   const startPreview = views.startPreview as unknown as GoalPreview | undefined;
@@ -68,12 +63,10 @@ export const bubblesortProjector: ProjectorFactory = (views) => {
   // 데이터 트래킹 (snapshot-strip 에 정확한 상태를 넘겨주기 위해)
   let currentValues: number[] = [];
   const sortedIndices = new Set<number>();
-  let waveTrail: number[] = [];
 
   function resetState() {
     currentValues = [];
     sortedIndices.clear();
-    waveTrail = [];
   }
 
   return {
@@ -95,22 +88,12 @@ export const bubblesortProjector: ProjectorFactory = (views) => {
           if (typeof p?.passNumber === 'number') {
             passTracker?.setCurrentPass(p.passNumber);
           }
-          waveTrail = [];
-          stage?.clearWaveTrail?.();
           stage?.clearRisingMarker?.();
           break;
         }
 
         case 'highlight': {
           if (!stage) break;
-          const payload = event.payload as { kind?: string; positionInPass?: number } | undefined;
-          if (payload?.kind === 'comparing' && typeof payload.positionInPass === 'number') {
-            const j = payload.positionInPass;
-            // 잔상은 이전까지 지나온 위치들
-            stage.setWaveTrail?.(j, waveTrail.slice(-TRAIL_MAX));
-            waveTrail.push(j);
-            if (waveTrail.length > TRAIL_MAX + 1) waveTrail.shift();
-          }
           for (const i of toIndex(event.target)) {
             if (!sortedIndices.has(i)) stage.setItemState(i, 'comparing');
           }
@@ -136,12 +119,16 @@ export const bubblesortProjector: ProjectorFactory = (views) => {
             // 데이터 트래킹도 swap
             const i = payload.i, j = payload.j;
             [currentValues[i], currentValues[j]] = [currentValues[j], currentValues[i]];
+            // 교환 단계 진입: cap 색을 'swapping' (진한 빨강) 으로 바꿔 비교와 구분.
+            if (!sortedIndices.has(i)) stage.setItemState(i, 'swapping');
+            if (!sortedIndices.has(j)) stage.setItemState(j, 'swapping');
             // 시각 swap (호 애니메이션). 러너는 onEvent 의 Promise 를 await.
             if (stage.swapItemsAnimated) {
               await stage.swapItemsAnimated(i, j, 80);
             } else {
               stage.swapItems(i, j);
             }
+            // 교환 종료: 두 원소는 같은 위치에서 다시 비교 상태로 복귀.
             if (!sortedIndices.has(i)) stage.setItemState(i, 'comparing');
             if (!sortedIndices.has(j)) stage.setItemState(j, 'comparing');
           }
@@ -187,8 +174,6 @@ export const bubblesortProjector: ProjectorFactory = (views) => {
             snapshotStrip?.addSnapshot(`P${p.passNumber}`, currentValues, boundaryIdx);
           }
           stage?.clearRisingMarker?.();
-          stage?.clearWaveTrail?.();
-          waveTrail = [];
           break;
         }
 
@@ -201,7 +186,6 @@ export const bubblesortProjector: ProjectorFactory = (views) => {
         case 'done': {
           codePanel?.clearHighlight();
           stage?.clearRisingMarker?.();
-          stage?.clearWaveTrail?.();
           stage?.setSortedBoundary?.(0); // 전체가 정렬됨
           break;
         }
