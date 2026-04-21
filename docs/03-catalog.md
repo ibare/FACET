@@ -68,7 +68,7 @@ View 도 별도의 레지스트리로 관리된다 — JSON 의 `blocks[ref].typ
 import { registerView, registerBuiltinViews } from '@facet/core/runtime';
 
 registerBuiltinViews();   // bar-chart, graph-layout, tree-layout,
-                          // linked-list-chain, queue-display, ordered-list,
+                          // linked-list-chain, conveyor-queue, ordered-list,
                           // text-display, code-view, control-bar, title-block
 
 // 커스텀 View 추가

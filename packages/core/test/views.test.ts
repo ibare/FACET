@@ -5,7 +5,6 @@ import {
   graphLayoutView,
   treeLayoutView,
   linkedListChainView,
-  queueDisplayView,
   orderedListView,
 } from '../src/views/index.js';
 import type { ViewInstance } from '../src/views/types.js';
@@ -71,21 +70,6 @@ describe('linked-list-chain', () => {
     expect(container.querySelectorAll('.facet-linked-list__node').length).toBe(3);
     (instance.insertAt as (i: number, v: unknown) => void)(1, 99);
     expect(container.querySelectorAll('.facet-linked-list__node').length).toBe(4);
-    instance.destroy();
-  });
-});
-
-describe('queue-display', () => {
-  it('enqueue / dequeue / size', () => {
-    const { container, instance } = mountView(queueDisplayView, { type: 'queue-display' });
-    expect(instance.size).toBe(0);
-    (instance.enqueue as (v: unknown) => void)('A');
-    (instance.enqueue as (v: unknown) => void)('B');
-    expect(instance.size).toBe(2);
-    const removed = (instance.dequeue as () => unknown)();
-    expect(removed).toBe('A');
-    expect(instance.size).toBe(1);
-    expect(container.textContent).toContain('B');
     instance.destroy();
   });
 });
