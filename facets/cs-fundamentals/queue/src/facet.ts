@@ -61,7 +61,7 @@ export const queueFacet: FacetJson = {
       label: { en: 'Queue', ko: '큐' },
       capacity: 10,
       maxTailEntries: 3,
-      features: ['bounded', 'aging-gradient', 'tail-log'],
+      features: ['bounded', 'aging-gradient', 'tail-log', 'scoreboard'],
     },
     controls: {
       type: 'control-bar',
