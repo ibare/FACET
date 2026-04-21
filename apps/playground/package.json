@@ -30,6 +30,7 @@
     "@facet/algorithm-subsetsum": "workspace:*",
     "@facet/algorithm-knapsack": "workspace:*",
     "@facet/algorithm-bfs": "workspace:*",
+    "@facet/algorithm-queue": "workspace:*",
     "@facet/host-tiptap": "workspace:*",
     "@facet/transpiler-python": "workspace:*",
     "@facet/transpiler-javascript": "workspace:*",

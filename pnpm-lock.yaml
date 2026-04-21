@@ -98,6 +98,9 @@ importers:
       '@facet/algorithm-mergesort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/mergesort
+      '@facet/algorithm-queue':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/queue
       '@facet/algorithm-quicksort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/quicksort
@@ -360,6 +363,19 @@ importers:
         version: link:../../../packages/view-code
 
   facets/cs-fundamentals/mergesort:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@facet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@facet/view-code':
+        specifier: workspace:*
+        version: link:../../../packages/view-code
+
+  facets/cs-fundamentals/queue:
     dependencies:
       '@facet/core':
         specifier: workspace:*

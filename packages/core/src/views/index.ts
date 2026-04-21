@@ -12,6 +12,7 @@ import { graphLayoutView } from './graph-layout.js';
 import { treeLayoutView } from './tree-layout.js';
 import { linkedListChainView } from './linked-list-chain.js';
 import { queueDisplayView } from './queue-display.js';
+import { conveyorQueueView } from './conveyor-queue.js';
 import { orderedListView } from './ordered-list.js';
 import { goalPreviewView } from './goal-preview.js';
 import { passTrackerView } from './pass-tracker.js';
@@ -48,6 +49,7 @@ export function registerBuiltinViews(): void {
   registerView('tree-layout', treeLayoutView);
   registerView('linked-list-chain', linkedListChainView);
   registerView('queue-display', queueDisplayView);
+  registerView('conveyor-queue', conveyorQueueView);
   registerView('ordered-list', orderedListView);
   registerView('goal-preview', goalPreviewView);
   registerView('pass-tracker', passTrackerView);
@@ -67,6 +69,7 @@ export {
   treeLayoutView,
   linkedListChainView,
   queueDisplayView,
+  conveyorQueueView,
   orderedListView,
   goalPreviewView,
   passTrackerView,

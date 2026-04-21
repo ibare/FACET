@@ -15,7 +15,7 @@
             { "id": "array", "name": "배열" },
             { "id": "linked-list", "name": "연결 리스트" },
             { "id": "stack", "name": "스택" },
-            { "id": "queue", "name": "큐" },
+            { "id": "queue", "name": "큐", "facetId": "facet:queue" },
             { "id": "deque", "name": "덱" },
             { "id": "hash-table", "name": "해시 테이블" },
             { "id": "binary-tree", "name": "이진 트리" },
