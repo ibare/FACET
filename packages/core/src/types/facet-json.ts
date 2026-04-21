@@ -19,6 +19,12 @@ export type LayoutContainerNode = {
   gap?: number;
   align?: 'start' | 'center' | 'end' | 'stretch';
   justify?: 'start' | 'center' | 'end' | 'between';
+  /**
+   * 컨테이너 DOM 바깥 여백 (CSS padding 값, 예: '12px', '8px 0'). View 는
+   * features 로부터 필수 기하만 파생하므로, facet 고유의 장식적 호흡 공간은
+   * 이 필드로 소비측(facet.ts) 에서 명시한다.
+   */
+  padding?: string;
   children: LayoutNode[];
 };
 
@@ -26,6 +32,12 @@ export type LayoutLeafNode = {
   /** blocks 의 키를 가리키는 참조 */
   ref: string;
   grow?: number;
+  /**
+   * 블록 슬롯의 장식적 호흡 여백 (CSS padding 값). View 자체는 기능 파생
+   * 기하만 가지므로, facet 이 해당 블록 주변에 시각적 숨 쉴 공간을 얹고
+   * 싶으면 이 필드에 선언한다. ex) stage 파이프의 상하 breathing.
+   */
+  padding?: string;
 };
 
 export type ControlSpec =

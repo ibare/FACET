@@ -49,7 +49,9 @@ export const queueFacet: FacetJson = {
     gap: 8,
     children: [
       { ref: 'header' },
-      { ref: 'stage' },
+      // Queue 는 파이프가 주인공 — view 가 주는 기능 최소 pad 위에 facet 고유의
+      // 상하 breathing 을 얹어 "패널 중앙에서 파이프가 숨 쉰다" 는 시각 정체성을 유지.
+      { ref: 'stage', padding: '12px 0' },
       { ref: 'controls' },
       { ref: 'codePanel' },
     ],

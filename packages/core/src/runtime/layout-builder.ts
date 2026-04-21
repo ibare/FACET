@@ -35,6 +35,7 @@ function buildNode(
     slot.style.minWidth = '0';
     slot.style.minHeight = '0';
     if (node.grow !== undefined) slot.style.flexGrow = String(node.grow);
+    if (node.padding !== undefined) slot.style.padding = node.padding;
     blockMounts[node.ref] = slot;
     return slot;
   }
@@ -47,6 +48,7 @@ function buildNode(
   container.style.minWidth = '0';
   container.style.minHeight = '0';
   if (node.grow !== undefined) container.style.flexGrow = String(node.grow);
+  if (node.padding !== undefined) container.style.padding = node.padding;
   if (node.align) {
     const map: Record<string, string> = {
       start: 'flex-start',
