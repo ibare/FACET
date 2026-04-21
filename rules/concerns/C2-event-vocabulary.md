@@ -1,0 +1,37 @@
+---
+name: C2 이벤트 어휘
+description: 이벤트 type 은 StandardEventType 을 기반으로 하고, facet 고유 확장은 algorithm.ts 상단 주석에 문서화한다.
+type: concern
+version: 1
+last_verified: 2026-04-21
+---
+
+# C2. 이벤트 어휘
+
+## When to Apply
+
+- `algorithm.ts` 가 `ctx.emit({ type, ... })` 를 발신할 때
+- `projector.ts` 가 `onEvent(event)` 에서 `switch (event.type)` 를 작성할 때
+- 새 이벤트 타입 / payload 형태를 도입할 때
+
+## MUST
+
+- 표준 이벤트 (`highlight`, `unhighlight`, `mark`, `state-changed`, `enqueue`, `dequeue`, `append`, `done`) 의 이름과 의미를 다른 용도로 재해석하지 않는다.
+- facet 고유 확장 이벤트를 쓰는 경우, 해당 `algorithm.ts` **파일 상단 JSDoc 블록에 이벤트 목록 + payload 스키마 + silent 여부를 명시**한다 (bubblesort/algorithm.ts 의 라인 1-18 과 동일한 형태).
+- 동일 facet 의 `projector.ts` 는 그 algorithm 이 발신하는 **모든** 이벤트를 처리하거나, 의도적으로 무시하는 경우 `switch` 의 `default` 에서 silently drop 임을 주석으로 명시한다.
+- 메타 이벤트 (`phase` 등 시각 변화가 없지만 상태 갱신이 필요한 이벤트) 는 `silent: true` 를 반드시 부여한다.
+
+## MUST NOT
+
+- `ctx.emit` 의 `type` 을 변수에서 동적으로 만들지 않는다 (`ctx.emit({ type: kind, ... })` 금지). 항상 리터럴 문자열이어야 한다.
+- 같은 의미에 두 개 이상의 `type` 이름을 혼용하지 않는다 (예: `'highlight'` 와 `'select'` 를 동일 의미로 섞어 쓰는 것 금지).
+- `silent: true` 를 step boundary 가 되어야 하는 이벤트에 부여하지 않는다. `highlight` / `state-changed` 처럼 시각 갱신이 있는 이벤트는 실버 처리 금지.
+
+## PREFER
+
+- 확장 이벤트 이름은 kebab-case. 두 단어 이상이면 `-` 연결 (`pass-begin`, `rising-move`).
+- payload 는 평탄한 객체. 깊은 중첩 금지.
+
+## Exception
+
+- `packages/core/src/examples/**` 는 러너 샘플/테스트로, 표준 어휘 이외를 쓰지 않는 한 문서화 면제.
