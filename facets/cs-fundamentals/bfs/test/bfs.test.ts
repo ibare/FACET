@@ -173,7 +173,7 @@ describe('BFS facet — 다중 뷰 통합', () => {
     const ringGroups = mount.querySelectorAll('.facet-graph-layout svg g.rings > g');
     expect(ringGroups.length).toBe(4);
 
-    expect(mount.querySelector('.facet-queue-display')).toBeTruthy();
+    expect(mount.querySelector('.facet-conveyor-queue')).toBeTruthy();
     expect(mount.querySelector('.facet-text-display')).toBeTruthy();
     expect(mount.querySelector('.facet-code-view')).toBeTruthy();
 

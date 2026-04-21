@@ -8,8 +8,10 @@
  *   2. 동시 점등 섬광   — layer-discovered 이벤트를 받으면 해당 레이어의 모든 노드를
  *                        한 번의 pulseNodes 호출로 동시에 점등. 링 pulse 도 동시에 묶음.
  *                        순차 트윈 금지.
- *   3. FIFO 큐의 몸통   — enqueue/dequeue 이벤트를 queue-display 에 1:1 매핑.
- *                        블록 tint 는 공통 accent — 동시 입장 리듬으로 묶음 인지.
+ *   3. FIFO 큐의 몸통   — enqueue/dequeue 이벤트를 conveyor-queue 의 IN/OUT 캡 +
+ *                        스탬프 큐브에 1:1 매핑. stamp(#n) 는 projector 가 발급한
+ *                        누적 enqueue 카운터. view 의 시안 기본 팔레트 존중.
+ *                        features:[] 로 나이 그라디언트/꼬리 로그/bounded 는 끔.
  *   4. 확정 거리 라벨   — layer-discovered 시점에 setNodeBadge 로 k 숫자 동시 점등.
  *   5. 비가역 꼬리      — 다음 레이어 발견 시 이전 레이어는 visited 로 식힘.
  *                        pulseEdge 는 안→밖 방향 흐름 입자 (반대 방향 없음).
@@ -21,9 +23,8 @@ import type {
   GraphEdgeState,
   GraphNodeState,
   GraphPositions,
-  QueueDisplayItem,
 } from '@facet/core/runtime';
-import { parseTarget, colors as designColors } from '@facet/core/runtime';
+import { parseTarget } from '@facet/core/runtime';
 import { computeBfsResult, type BfsGraphData } from './algorithm.js';
 
 export const BFS_CANVAS = { width: 520, height: 360 } as const;
@@ -42,9 +43,13 @@ type GraphLayout = {
   clearConcentricRings(): void;
   reset(): void;
 };
-type QueueView = {
-  enqueue(v: QueueDisplayItem): void;
-  dequeue(): unknown;
+// conveyor-queue 의 공개 메서드 shape. BFS 가 직접 쓰는 것만 추린 최소 계약.
+type ConveyorQueue = {
+  enqueue(
+    item: { stamp: number; label: string; tint?: string },
+    opts?: { duration?: number },
+  ): Promise<void>;
+  dequeue(opts?: { duration?: number }): Promise<void>;
   reset(): void;
 };
 type TextDisplay = {
@@ -174,7 +179,7 @@ function extractEdgesFromAdjacency(
 
 export const bfsProjector: ProjectorFactory = (views, runtime) => {
   const stage = views.stage as unknown as GraphLayout | undefined;
-  const queue = views.queue as unknown as QueueView | undefined;
+  const queue = views.queue as unknown as ConveyorQueue | undefined;
   const distanceCounter = views.distanceCounter as unknown as TextDisplay | undefined;
   const codePanel = views.codePanel as unknown as CodePanel | undefined;
 
@@ -184,16 +189,17 @@ export const bfsProjector: ProjectorFactory = (views, runtime) => {
   let sourceId = '';
   let maxLayer = 0;
   let currentK = 0;
+  // conveyor-queue 의 스탬프(#n) 는 누적 enqueue 번호. BFS 는 본래 큐 stamp 개념이
+  // 없으므로 projector 가 발급한다. reset 시 0 으로.
+  let enqueueCount = 0;
 
   function resetState(): void {
     nodeLayer.clear();
     sourceId = '';
     maxLayer = 0;
     currentK = 0;
+    enqueueCount = 0;
   }
-
-  // accent 는 light/dark 공통으로 '#facc15'. 큐 블록 공용 tint.
-  const QUEUE_TINT = designColors.accent;
 
   return {
     onInit(initialData) {
@@ -279,17 +285,15 @@ export const bfsProjector: ProjectorFactory = (views, runtime) => {
           if (!queue) break;
           const p = event.payload as { id?: string; distance?: number; label?: string } | undefined;
           const label = p?.label ?? p?.id ?? '?';
-          // 모든 레이어 공용 accent tint — 블록 입장 리듬으로 묶음 인지를 유도.
-          queue.enqueue({
-            label,
-            tint: QUEUE_TINT,
-            tag: typeof p?.distance === 'number' ? String(p.distance) : undefined,
-          });
+          enqueueCount += 1;
+          // fire-and-forget — BFS 는 다중 view 병렬 진행이 본체 리듬.
+          // conveyor-queue 의 애니메이션이 다른 stage pulse 와 겹쳐도 자연스럽다.
+          void queue.enqueue({ stamp: enqueueCount, label });
           break;
         }
 
         case 'dequeue': {
-          queue?.dequeue();
+          void queue?.dequeue();
           break;
         }
 

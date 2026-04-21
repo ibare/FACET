@@ -4,7 +4,7 @@
  * 시각적 정체성 5종을 한눈에 드러내는 레이아웃:
  *   - stage(graph-layout, concentric-rings feature) — 동심 파면 + 등고선 + 거리 배지.
  *   - distanceCounter(text-display)                  — 현재 k → k+1 미니 표시.
- *   - queue(queue-display)                           — FIFO 블록 리듬.
+ *   - queue(conveyor-queue, features 빈 배열)         — 캡(IN/OUT) + 스탬프 큐브.
  *   - codePanel(code-view)                           — phase 동기 코드 하이라이트.
  *
  * 기획 9 의 "너비가 넓은 그래프" preset 을 단일 initialData 로 수록.
@@ -92,8 +92,12 @@ export const bfsFacet: FacetJson = {
       label: { en: 'Layer', ko: '레이어' },
     },
     queue: {
-      type: 'queue-display',
+      // BFS 의 FIFO frontier 를 conveyor-queue view 로 시각화. 풀 기능 (나이
+      // 그라디언트 / 꼬리 로그 / bounded) 은 이 맥락에서 과잉이라 features 를
+      // 비워 캡(IN/OUT) + 스탬프(#n) + 시안 큐브만 남긴다.
+      type: 'conveyor-queue',
       label: { en: 'FIFO Queue', ko: 'FIFO 큐 (좌: 퇴장, 우: 입장)' },
+      features: [],
     },
     controls: {
       type: 'control-bar',
