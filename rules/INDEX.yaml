@@ -1,0 +1,192 @@
+# FACET Rule Registry
+# -------------------------------------------------------------------
+# 트리거 조건에 따라 로드할 규칙을 결정하는 인덱스.
+#
+# Trigger types:
+#   paths:    파일 경로 glob 패턴
+#   patterns: 코드에서 발견되는 문자열/정규식
+#   imports:  import 문에 포함된 모듈명
+#   events:   작업 유형 (create-file, rename-file, modify-file, ...)
+#
+# 이 프로젝트는 ESLint 를 도입하지 않는다. tsc (strict: true) 로 커버되는
+# 항목은 Rules 에 넣지 않는다. Rules 는 tsc 가 잡을 수 없는 의미/맥락 영역
+# 에만 집중한다. (예: 식별자 문법 일원화, phase 어휘 동기화, 이벤트 어휘,
+# 공개 API 경계, 레지스트리 경유 원칙, 4-layer 방향성)
+
+version: 1
+project: FACET
+
+# ─────────────────────────────────────
+# Always loaded (Tier 1 — Principles)
+# ─────────────────────────────────────
+always:
+  - file: principles.md
+    description: 4-layer 경계 · DSL 최소성 · 레지스트리 경유 · 이벤트 어휘 · Projector 단일 번역기 · View 재사용
+
+# ─────────────────────────────────────
+# Concerns (Tier 2 — Cross-cutting)
+# ─────────────────────────────────────
+concerns:
+  - id: C1
+    file: concerns/C1-target-identifier.md
+    description: 이벤트 target 식별자 문법은 parseTarget 경유로만 파싱한다
+    triggers:
+      paths:
+        - "facets/**/projector.ts"
+        - "packages/core/src/runtime/**"
+      patterns:
+        - "index:"
+        - "node:"
+        - "edge:"
+        - "queue:"
+        - "list:"
+        - "tree:"
+        - "event.target"
+        - "parseTarget"
+
+  - id: C2
+    file: concerns/C2-event-vocabulary.md
+    description: 이벤트 type 어휘는 StandardEventType 을 기반으로 하고, 확장은 facet algorithm.ts 상단 주석에 나열한다
+    triggers:
+      paths:
+        - "facets/**/algorithm.ts"
+        - "facets/**/projector.ts"
+      patterns:
+        - "ctx.emit"
+        - "onEvent"
+        - "FacetRuntimeEvent"
+
+  - id: C3
+    file: concerns/C3-phase-sync.md
+    description: algorithm.ts 의 phase payload 어휘 ↔ irs.ts 의 phase 필드 어휘는 일치해야 한다
+    triggers:
+      paths:
+        - "facets/**/algorithm.ts"
+        - "facets/**/irs.ts"
+      patterns:
+        - "phase:"
+        - "'phase'"
+        - "\"phase\""
+
+  - id: C4
+    file: concerns/C4-module-reference.md
+    description: module:/ir:/transpiler:/facet: 참조 문자열은 실제 레지스트리 이름/ID 와 반드시 일치한다
+    triggers:
+      paths:
+        - "facets/**/facet.ts"
+        - "facets/**/index.ts"
+        - "facets/**/description.ts"
+        - "packages/core/src/runtime/registry.ts"
+      patterns:
+        - "module:"
+        - "'ir:"
+        - "'transpiler:"
+        - "'facet:"
+        - "{facet:"
+        - "registerAlgorithm"
+        - "registerProjector"
+        - "registerIR"
+        - "registerTranspiler"
+
+  - id: C5
+    file: concerns/C5-metric-naming.md
+    description: 메트릭 이름은 kebab-case 이며 facet.ts 의 metrics[].name 에 선언된 것만 ctx.metric 으로 갱신한다
+    triggers:
+      paths:
+        - "facets/**/algorithm.ts"
+        - "facets/**/facet.ts"
+      patterns:
+        - "ctx.metric"
+        - "metrics:"
+
+  - id: C6
+    file: concerns/C6-error-logging.md
+    description: facet 코드는 throw 로 오류를 표현하고 console.* 는 쓰지 않는다. 러너만 console.error 를 쓸 수 있다
+    triggers:
+      paths:
+        - "facets/**"
+        - "packages/**"
+      patterns:
+        - "console."
+        - "throw new"
+        - "try {"
+        - "catch"
+
+  - id: C7
+    file: concerns/C7-public-api.md
+    description: 패키지 간 import 는 해당 패키지의 src/index.ts (또는 지정된 subpath) 만 사용한다. 내부 파일 직접 import 금지
+    triggers:
+      paths:
+        - "**/*.ts"
+      patterns:
+        - "from '@facet/"
+        - "from \"@facet/"
+      events:
+        - create-file
+
+  - id: C8
+    file: concerns/C8-async-emit.md
+    description: ctx.emit 은 반드시 await 하고, 루프 내부에서 ctx.cancelled 를 주기적으로 검사해 조기 종료한다
+    triggers:
+      paths:
+        - "facets/**/algorithm.ts"
+        - "packages/core/src/examples/algorithms/**"
+      patterns:
+        - "ctx.emit"
+        - "ctx.cancelled"
+
+  - id: C9
+    file: concerns/C9-type-boundary.md
+    description: View / BlockSpec 처럼 구조적 열린 타입을 소비할 때만 as unknown as 캐스팅을 허용한다. 러너 내부 데이터/설정 전달에서는 제네릭/정식 타입으로 좁힌다
+    triggers:
+      paths:
+        - "**/*.ts"
+      patterns:
+        - "as unknown as"
+        - "as Record<"
+        - "as any"
+
+# ─────────────────────────────────────
+# Specifics (Tier 3 — Domain-specific)
+# ─────────────────────────────────────
+specifics:
+  - id: S-facet
+    file: specifics/S-facet.md
+    description: facets/cs-fundamentals/* 내부 6파일 구성 (algorithm / projector / irs / facet / description / index) 과 각 파일의 책임 분리
+    triggers:
+      paths:
+        - "facets/**/*.ts"
+      events:
+        - create-file
+        - rename-file
+
+  - id: S-view
+    file: specifics/S-view.md
+    description: View 인터페이스 계약 (mount/destroy), design-tokens 경유 색상, theme/locale 파라미터 준수
+    triggers:
+      paths:
+        - "packages/core/src/views/**"
+        - "packages/view-code/**"
+
+  - id: S-runtime
+    file: specifics/S-runtime.md
+    description: runner / event-bus / registry / layout-builder / context / projector 의 내부 규율 (Mode 전이, silent 이벤트, BASE_DELAY_MS, cancelled flag)
+    triggers:
+      paths:
+        - "packages/core/src/runtime/**"
+        - "packages/core/src/types/**"
+
+  - id: S-transpiler
+    file: specifics/S-transpiler.md
+    description: IR → 언어별 소스 변환기의 입출력 계약 · supports 배열 정합성 · phase 어휘 존중
+    triggers:
+      paths:
+        - "packages/transpiler-*/**"
+        - "packages/ir-interpreter/**"
+
+  - id: S-host
+    file: specifics/S-host.md
+    description: 호스트 어댑터 (Tiptap NodeView) 의 DSL 파서 격리 · facet lazy load · 코어 비침투
+    triggers:
+      paths:
+        - "packages/host-tiptap/**"
