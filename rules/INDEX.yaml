@@ -76,7 +76,7 @@ concerns:
 
   - id: C4
     file: concerns/C4-module-reference.md
-    description: module:/ir:/transpiler:/facet: 참조 문자열은 실제 레지스트리 이름/ID 와 반드시 일치한다
+    description: "module:/ir:/transpiler:/facet: 참조 문자열은 실제 레지스트리 이름/ID 와 반드시 일치한다"
     triggers:
       paths:
         - "facets/**/facet.ts"
