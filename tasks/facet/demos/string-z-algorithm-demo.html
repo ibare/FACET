@@ -1,0 +1,843 @@
+<!--
+  기획 문서: tasks/facet/string-z-algorithm.md
+  시각 방향: A타입 (공통 강화)
+  임베드 폭 가정: 720px (시각화 자체는 약 660~680px 안에서 작동)
+
+  구현한 시각 요소:
+    5.1 Z-box 사각형 (반투명 면적, 좌측 굵은 막대 / 우측 화살촉)
+    5.2 거울 호 (mirror arc, 베지어 곡선 + dasharray 애니메이션 + 잔상)
+    5.3 비교 상태 색 분리 (회색 unknown / 빨강 comparing / 연두 skipped / 짙은 녹 matched)
+    5.4 Z 배열 동행 막대 + 카운트업
+    5.5 r-단조 트레일 점선 + 누적 비교 카운터 (Naive 예상 병기)
+    상단 캡션, 단계 컨트롤 (재생/리셋/이전/다음/속도)
+    의사코드 라인 하이라이트 (간략)
+
+  생략한 것:
+    - "패턴 매칭 모드" 토글 (P + $ + T 결합)
+    - 입력 문자열 편집 UI (셀 클릭 편집)
+    - 부등호 비교 위젯 (Z[k] vs r-i+1 그래픽 — 캡션 텍스트로 대체)
+    - 색약 접근성 패턴 채움
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>Z-알고리즘 데모 (FACET 기획 시각 방향 검증)</title>
+<style>
+  body {
+    margin: 0;
+    background: #efefef;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    color: #222;
+    line-height: 1.55;
+  }
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 28px 24px 48px;
+    background: #ffffff;
+    box-shadow: 0 0 0 1px #e3e3e3;
+  }
+  .body-text { color: #9a9a9a; font-size: 14px; }
+  .reference-panel {
+    border: 1px solid #d8d8d8;
+    border-left: 4px solid #6aa06f;
+    background: #fafafa;
+    padding: 14px 16px;
+    margin: 22px 0;
+    font-size: 13px;
+  }
+  .reference-panel h4 {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    color: #555;
+    letter-spacing: 0.05em;
+  }
+  .reference-panel ul { margin: 0; padding-left: 18px; }
+  .reference-panel li { margin-bottom: 4px; }
+  .reference-panel a { color: #2a6f3b; text-decoration: none; border-bottom: 1px dotted #6aa06f; }
+  .concept-intro {
+    margin: 22px 0;
+    padding: 14px 16px;
+    background: #f4f8f5;
+    border-radius: 6px;
+    font-size: 14.5px;
+  }
+  .concept-intro strong { color: #2a6f3b; }
+
+  /* === 시각화 본체 === */
+  .facet-visual {
+    margin: 24px 0;
+    border: 1px solid #d8d8d8;
+    border-radius: 8px;
+    background: #ffffff;
+    padding: 14px 14px 12px;
+    box-sizing: border-box;
+  }
+  .facet-visual .caption {
+    font-size: 13px;
+    color: #333;
+    min-height: 36px;
+    padding: 6px 8px;
+    background: #fbfbe8;
+    border-left: 3px solid #d4c84a;
+    border-radius: 3px;
+  }
+  .facet-visual .top-row {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0 8px;
+    align-items: stretch;
+  }
+  .concept-card {
+    flex: 1;
+    background: #f0f4f0;
+    border: 1px solid #cfd8cf;
+    border-radius: 5px;
+    padding: 8px 10px;
+    font-size: 12px;
+    color: #2c3a2c;
+  }
+  .concept-card b { color: #2a6f3b; }
+  .counter-chip {
+    flex-basis: 200px;
+    background: #fff;
+    border: 1px solid #cfd8cf;
+    border-radius: 5px;
+    padding: 8px 10px;
+    font-size: 12px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .counter-chip .real { font-size: 18px; color: #c2362f; font-weight: 600; }
+  .counter-chip .naive { color: #888; }
+
+  svg.track-svg { display: block; width: 100%; }
+  .pseudo {
+    margin-top: 8px;
+    background: #1f2326;
+    color: #c8d3c8;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-family: "SF Mono", Menlo, Consolas, monospace;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+  .pseudo .line { padding: 0 4px; border-radius: 2px; }
+  .pseudo .line.active { background: #4d6b3f; color: #fff; }
+
+  .controls {
+    margin-top: 10px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 13px;
+  }
+  .controls button {
+    border: 1px solid #b6c2b6;
+    background: #f3f7f3;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .controls button:hover { background: #e1ecdf; }
+  .controls button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .controls .spacer { flex: 1; }
+  .controls label { color: #555; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- 1. 본문 placeholder (위) -->
+  <p class="body-text">…앞 본문 텍스트가 여기 흐른다고 가정합니다. KMP 의 실패 함수가 점프 테이블로 비교를 절약했다면, Z-알고리즘은 같은 절약을 거울 비추기로 해냅니다…</p>
+  <p class="body-text">…한 번의 좌→우 스캔으로 각 위치에서 처음과 얼마나 겹치는지를 모두 구하는 알고리즘은, 머릿속에서만 따라가기엔 박스 갱신과 거울 위치 빌리기가 동시에 움직여 따라잡기 까다롭습니다. 아래 시각화에서 박스가 어떻게 굴러가는지 직접 보세요…</p>
+
+  <!-- 2. 레퍼런스 패널 -->
+  <div class="reference-panel">
+    <h4>영감을 준 레퍼런스 (A타입 — 공통 강화)</h4>
+    <ul>
+      <li>
+        <a href="https://www.cs.cmu.edu/~ckingsf/bioinfo-lectures/zalg.pdf" target="_blank">R2. CMU/Gusfield 강의노트</a>
+        — 곡선 호로 prefix ↔ Z-box 동일성을 보여주는 정식 도식. 거울 위치 k 라벨링.
+      </li>
+      <li>
+        <a href="https://github.com/asherLZR/z-algorithm-visualised" target="_blank">R3. asherLZR 인터랙티브 시각화</a>
+        — Z-box 박스 테두리, 케이스별 색 분기, 의사코드 라인 동기화.
+      </li>
+      <li>
+        <a href="https://ialy1595.github.io/post/string-match/" target="_blank">R6. ialy 한국어 블로그</a>
+        — `i &gt; r` (재출발) vs `i ≤ r` (재활용) 두 케이스를 같은 색 매핑으로 깔끔히 분리.
+      </li>
+    </ul>
+  </div>
+
+  <!-- 3. 대상 개념 설명 -->
+  <div class="concept-intro">
+    <strong>Z-알고리즘이란?</strong>
+    문자열의 각 위치 i 에서 “처음과 얼마나 겹치는지” Z[i] 를 한 번의 좌→우 스캔으로 모두 구합니다.
+    지금까지 발견한 가장 오른쪽 매치 구간 [l, r] 을 박스로 기억하고, 새 위치 i 가 박스 안이면
+    거울 위치 <code>k = i - l</code> 의 답을 빌려 비교를 건너뜁니다. r 이 절대 줄지 않아 전체가 O(n) 입니다.
+    이 Z 배열로 패턴 P 를 텍스트 T 에서 찾을 때는 <code>P + 구분자 + T</code> 의 Z 배열에서 |P| 와 같은 값이 나오는 위치를 보면 됩니다.
+  </div>
+
+  <!-- 4. 시각화 데모 -->
+  <div class="facet-visual" id="facet">
+    <div class="caption" id="caption">시작 — ▶ 버튼을 눌러 진행하세요.</div>
+
+    <div class="top-row">
+      <div class="concept-card">
+        <b>읽는 법</b><br/>
+        세로 막대 = 확정된 Z[i]. 박스 안 영역과 좌측 prefix 영역은 같은 색이며, 박스 안에 i 가 들어오면 거울 호가 떠올라 k = i − l 의 답을 빌려옵니다.
+      </div>
+      <div class="counter-chip">
+        실제 비교 <span class="real" id="cmpReal">0</span><br/>
+        <span class="naive">Naive 예상 ≈ <span id="cmpNaive">0</span></span>
+      </div>
+    </div>
+
+    <svg class="track-svg" id="trackSvg" viewBox="0 0 660 230" preserveAspectRatio="xMidYMid meet"></svg>
+
+    <div class="pseudo" id="pseudo">
+      <div class="line" data-line="0">l ← 0,  r ← 0</div>
+      <div class="line" data-line="1">for i ← 1 .. n−1:</div>
+      <div class="line" data-line="2">&nbsp;&nbsp;if i &lt; r:  Z[i] ← min(r − i, Z[i − l])   ← 거울 빌리기</div>
+      <div class="line" data-line="3">&nbsp;&nbsp;while i + Z[i] &lt; n and S[Z[i]] = S[i + Z[i]]:</div>
+      <div class="line" data-line="4">&nbsp;&nbsp;&nbsp;&nbsp;Z[i] ← Z[i] + 1                              ← 실제 비교</div>
+      <div class="line" data-line="5">&nbsp;&nbsp;if i + Z[i] &gt; r:  l ← i,  r ← i + Z[i]      ← 박스 우측 확장</div>
+    </div>
+
+    <div class="controls">
+      <button id="btnReset" title="처음으로">⏮</button>
+      <button id="btnPrev" title="이전 step">◀</button>
+      <button id="btnNext" title="다음 step">▶</button>
+      <button id="btnPlay" title="자동 재생">▶ 자동</button>
+      <span class="spacer"></span>
+      <label>속도
+        <select id="speed">
+          <option value="1200">0.5x</option>
+          <option value="700" selected>1x</option>
+          <option value="400">2x</option>
+          <option value="220">4x</option>
+        </select>
+      </label>
+    </div>
+  </div>
+
+  <p class="body-text" style="font-size:13px; color:#666;">
+    핵심 관찰: ① 박스 안에서 떠오르는 거울 호와 ② 호가 도착하는 순간 i 위치가 한 번에 연두로 칠해지는 면적, 그리고 ③ 우상단 누적 카운터가 Naive 예상치보다 한참 적게 자라는 모습입니다.
+  </p>
+
+  <!-- 6. 본문 placeholder (아래) -->
+  <p class="body-text">…뒷 본문 텍스트가 이어집니다. 거울 비추기는 Manacher 의 회문 알고리즘에서도 동일한 골격으로 등장하는데, “r 의 단조 증가” 라는 공통 패턴이 두 알고리즘을 묶어줍니다…</p>
+  <p class="body-text">…다음 절에서는 이 Z 배열을 그대로 패턴 매칭에 응용해 봅니다…</p>
+</div>
+
+<script>
+/* ============================================================
+   Z-알고리즘 데모 — 단일 파일 (외부 라이브러리 없음)
+   ============================================================ */
+
+const STR = "aabaabxaab";  // 기본 데모 문자열 (기획 §9)
+const N = STR.length;
+const CELL_W = 38;
+const CELL_H = 36;
+const TRACK_X0 = 30;
+const TRACK_Y = 70;       // 셀 트랙 y
+const BAR_Y = TRACK_Y + CELL_H + 8;  // Z 막대 영역 시작
+const BAR_MAX_H = 40;
+const ARC_LIFT = 30;
+const SVG_NS = "http://www.w3.org/2000/svg";
+
+// 3색 시스템
+const COLOR = {
+  unknown: "#dcdcdc",
+  comparing: "#e25555",
+  skipped: "#a8d8a8",         // 연두 (이미 안다)
+  matched: "#3f8a4f",         // 짙은 녹 (확정/잠금)
+  boxFill: "rgba(120,200,140,0.28)",
+  prefixFill: "rgba(120,200,140,0.28)",
+  boxStrokeL: "#2a6f3b",
+  boxStrokeR: "#2a6f3b",
+  trail: "rgba(120,160,130,0.45)",
+  arc: "#2a6f3b",
+};
+
+/* === 1) Z 알고리즘 미리 실행해 step 시퀀스 만들기 === */
+/*
+   각 step 의 형태:
+   {
+     i, l, r, k,           // 상태
+     case: 'init' | 'outside' | 'inside-skip' | 'inside-extend',
+     skippedLen,           // inside 인 경우 빌려온 길이
+     compares,             // 이 step 에서 추가된 실제 비교 횟수
+     zVal,                 // 이 step 에서 확정된 Z[i]
+     newL, newR,           // step 끝의 박스 (변경됐으면 갱신)
+     codeLine,             // 의사코드 하이라이트 라인
+     captionHTML,
+   }
+*/
+function buildSteps() {
+  const Z = new Array(N).fill(0);
+  Z[0] = N;
+  let l = 0, r = 0;
+  let totalCmp = 0;
+  const steps = [];
+
+  // 초기 step
+  steps.push({
+    i: 0, l, r, k: -1,
+    phase: "init",
+    skippedLen: 0,
+    compares: 0,
+    zVal: N,
+    newL: l, newR: r,
+    codeLine: 0,
+    Zsnap: [...Z],
+    totalCmp,
+    captionHTML: "초기 상태. Z[0] = n 은 정의로 잠그고 i = 1 부터 시작합니다.",
+  });
+
+  for (let i = 1; i < N; i++) {
+    let stepCompares = 0;
+    let phase, skippedLen = 0, kPos = -1;
+    let captionHTML;
+
+    if (i > r) {
+      phase = "outside";
+      // 직접 비교
+      Z[i] = 0;
+      while (i + Z[i] < N && STR[Z[i]] === STR[i + Z[i]]) {
+        Z[i]++;
+        stepCompares++;
+      }
+      // 끝의 미스매치(혹은 끝)도 1회 비교로 셀 수 있으나 단순화
+      if (i + Z[i] < N) stepCompares++;
+      if (Z[i] > 0) { l = i; r = i + Z[i] - 1; }
+      captionHTML = `i=${i}: 박스 바깥 (i&gt;r). 처음부터 직접 비교 → Z[${i}]=${Z[i]}.`;
+    } else {
+      const k = i - l;
+      kPos = k;
+      const remain = r - i + 1;
+      if (Z[k] < remain) {
+        phase = "inside-skip";
+        Z[i] = Z[k];
+        skippedLen = Z[k];
+        captionHTML = `i=${i}: 박스 안. 거울 위치 k=${k}, Z[${k}]=${Z[k]} &lt; r−i+1=${remain} → 그대로 빌립니다. Z[${i}]=${Z[i]}.`;
+      } else if (Z[k] > remain) {
+        phase = "inside-skip";
+        Z[i] = remain;
+        skippedLen = remain;
+        captionHTML = `i=${i}: 박스 안. Z[${k}]=${Z[k]} &gt; r−i+1=${remain} → 박스 끝까지만. Z[${i}]=${Z[i]}.`;
+      } else {
+        phase = "inside-extend";
+        skippedLen = remain;
+        Z[i] = remain;
+        // r 너머로 실제 비교 시도
+        while (i + Z[i] < N && STR[Z[i]] === STR[i + Z[i]]) {
+          Z[i]++;
+          stepCompares++;
+        }
+        if (i + Z[i] < N) stepCompares++;
+        if (i + Z[i] - 1 > r) { l = i; r = i + Z[i] - 1; }
+        captionHTML = `i=${i}: 거울 길이 = 박스 끝. r 너머로 실제 비교 → Z[${i}]=${Z[i]}, 박스 우측 확장.`;
+      }
+    }
+    totalCmp += stepCompares;
+    steps.push({
+      i, l, r, k: kPos,
+      phase,
+      skippedLen,
+      compares: stepCompares,
+      zVal: Z[i],
+      newL: l, newR: r,
+      codeLine: phase === "outside" ? 4 : (phase === "inside-skip" ? 2 : 4),
+      Zsnap: [...Z],
+      totalCmp,
+      captionHTML,
+    });
+  }
+  return { steps, finalZ: Z };
+}
+
+const { steps, finalZ } = buildSteps();
+
+/* === 2) SVG 렌더 골격 === */
+const svg = document.getElementById("trackSvg");
+const captionEl = document.getElementById("caption");
+const cmpRealEl = document.getElementById("cmpReal");
+const cmpNaiveEl = document.getElementById("cmpNaive");
+const pseudoLines = [...document.querySelectorAll(".pseudo .line")];
+
+function el(tag, attrs = {}, children = []) {
+  const e = document.createElementNS(SVG_NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  for (const c of children) e.appendChild(c);
+  return e;
+}
+
+// 셀 layer + Z 막대 layer + 박스 + 호 + 트레일 + 라벨
+const layerTrail = el("g", { id: "layerTrail" });
+const layerBox = el("g", { id: "layerBox" });
+const layerCells = el("g", { id: "layerCells" });
+const layerArc = el("g", { id: "layerArc" });
+const layerLabels = el("g", { id: "layerLabels" });
+const layerBars = el("g", { id: "layerBars" });
+svg.appendChild(layerTrail);
+svg.appendChild(layerBox);
+svg.appendChild(layerCells);
+svg.appendChild(layerArc);
+svg.appendChild(layerLabels);
+svg.appendChild(layerBars);
+
+// 셀 + 글자 + 인덱스
+const cellRects = [];
+const cellTexts = [];
+for (let i = 0; i < N; i++) {
+  const x = TRACK_X0 + i * CELL_W;
+  const idx = el("text", {
+    x: x + CELL_W / 2, y: TRACK_Y - 8,
+    "text-anchor": "middle",
+    "font-size": "10",
+    fill: "#888",
+    "font-family": "monospace",
+  });
+  idx.textContent = i;
+  layerLabels.appendChild(idx);
+
+  const rect = el("rect", {
+    x, y: TRACK_Y, width: CELL_W - 2, height: CELL_H,
+    rx: 3, ry: 3,
+    fill: COLOR.unknown,
+    stroke: "#bbb",
+    "stroke-width": "1",
+    "data-i": i,
+  });
+  layerCells.appendChild(rect);
+  cellRects.push(rect);
+
+  const t = el("text", {
+    x: x + (CELL_W - 2) / 2,
+    y: TRACK_Y + CELL_H / 2 + 5,
+    "text-anchor": "middle",
+    "font-size": "16",
+    "font-family": "monospace",
+    "font-weight": "600",
+    fill: "#222",
+  });
+  t.textContent = STR[i];
+  layerCells.appendChild(t);
+  cellTexts.push(t);
+}
+
+// Z 배열 막대 (셀 폭에 정렬)
+const bars = [];
+const barLabels = [];
+for (let i = 0; i < N; i++) {
+  const x = TRACK_X0 + i * CELL_W;
+  // 베이스 선
+  layerBars.appendChild(el("line", {
+    x1: x, y1: BAR_Y + BAR_MAX_H,
+    x2: x + CELL_W - 2, y2: BAR_Y + BAR_MAX_H,
+    stroke: "#ccc", "stroke-width": "1",
+  }));
+  const bar = el("rect", {
+    x: x + 3, y: BAR_Y + BAR_MAX_H,
+    width: CELL_W - 8, height: 0,
+    fill: "#cfd8cf",
+    stroke: "#a3b3a3",
+    "stroke-width": "1",
+  });
+  layerBars.appendChild(bar);
+  bars.push(bar);
+
+  const lbl = el("text", {
+    x: x + CELL_W / 2,
+    y: BAR_Y + BAR_MAX_H + 14,
+    "text-anchor": "middle",
+    "font-size": "11",
+    fill: "#444",
+    "font-family": "monospace",
+  });
+  lbl.textContent = "0";
+  layerBars.appendChild(lbl);
+  barLabels.push(lbl);
+}
+
+// Z[0] 은 정의로 N 이지만 막대로 그리면 너무 큼 → 'n' 라벨로만
+barLabels[0].textContent = "n";
+barLabels[0].setAttribute("fill", "#3f8a4f");
+
+// Z-box 사각형 요소
+const boxRect = el("rect", {
+  x: TRACK_X0, y: TRACK_Y - 4,
+  width: 0, height: CELL_H + 8,
+  fill: COLOR.boxFill,
+  stroke: "none",
+  opacity: "0",
+});
+layerBox.appendChild(boxRect);
+
+const boxLeft = el("line", {
+  x1: 0, y1: TRACK_Y - 6, x2: 0, y2: TRACK_Y + CELL_H + 6,
+  stroke: COLOR.boxStrokeL, "stroke-width": "4",
+  "stroke-linecap": "round",
+  opacity: "0",
+});
+layerBox.appendChild(boxLeft);
+
+const boxRight = el("line", {
+  x1: 0, y1: TRACK_Y - 6, x2: 0, y2: TRACK_Y + CELL_H + 6,
+  stroke: COLOR.boxStrokeR, "stroke-width": "2",
+  opacity: "0",
+});
+layerBox.appendChild(boxRight);
+
+// 화살촉 (r)
+const arrowDef = el("polygon", {
+  points: "0,0 8,5 0,10",
+  fill: COLOR.boxStrokeR,
+  opacity: "0",
+});
+layerBox.appendChild(arrowDef);
+
+// prefix 영역 채색 (트랙 좌측 0..r-l)
+const prefixRect = el("rect", {
+  x: TRACK_X0, y: TRACK_Y, width: 0, height: CELL_H,
+  fill: COLOR.prefixFill,
+  opacity: "0",
+});
+layerBox.appendChild(prefixRect);
+
+// 포인터 라벨 (i, l, r, k)
+function makePointer(label, color) {
+  const g = el("g", { opacity: "0" });
+  const tri = el("polygon", {
+    points: "0,0 -5,-7 5,-7",
+    fill: color,
+  });
+  const t = el("text", {
+    x: 0, y: -10, "text-anchor": "middle",
+    "font-size": "11", "font-weight": "700",
+    fill: color, "font-family": "monospace",
+  });
+  t.textContent = label;
+  g.appendChild(tri);
+  g.appendChild(t);
+  layerLabels.appendChild(g);
+  return g;
+}
+const ptrI = makePointer("i", "#c2362f");
+const ptrL = makePointer("l", "#2a6f3b");
+const ptrR = makePointer("r", "#2a6f3b");
+const ptrK = makePointer("k", "#7a4fa0");
+
+// r 트레일 누적
+const trailEls = [];
+let lastTrailR = -1;
+
+// 거울 호 path
+const arcPath = el("path", {
+  d: "", stroke: COLOR.arc, "stroke-width": "2",
+  fill: "none", opacity: "0",
+  "stroke-linecap": "round",
+});
+layerArc.appendChild(arcPath);
+const arcArrow = el("polygon", {
+  points: "0,0 -7,-3 -7,3", fill: COLOR.arc, opacity: "0",
+});
+layerArc.appendChild(arcArrow);
+
+/* === 3) 상태 → SVG 반영 === */
+const naiveEstimate = N * N; // 단순 비교용 상한
+
+function setCellState(idx, state) {
+  const r = cellRects[idx];
+  switch (state) {
+    case "unknown": r.setAttribute("fill", COLOR.unknown); break;
+    case "skipped": r.setAttribute("fill", COLOR.skipped); break;
+    case "comparing": r.setAttribute("fill", COLOR.comparing); break;
+    case "matched": r.setAttribute("fill", COLOR.matched); cellTexts[idx].setAttribute("fill", "#fff"); break;
+    case "prefix": r.setAttribute("fill", COLOR.skipped); break;
+  }
+}
+
+function clearAllCells() {
+  for (let i = 0; i < N; i++) {
+    cellRects[i].setAttribute("fill", COLOR.unknown);
+    cellTexts[i].setAttribute("fill", "#222");
+  }
+}
+
+function placePointer(g, idx, yOffset = 0) {
+  const x = TRACK_X0 + idx * CELL_W + (CELL_W - 2) / 2;
+  const y = TRACK_Y - 14 + yOffset;
+  g.setAttribute("transform", `translate(${x}, ${y})`);
+  g.setAttribute("opacity", "1");
+}
+function hidePointer(g) { g.setAttribute("opacity", "0"); }
+
+function applyBox(l, r) {
+  if (r < l || r === 0 && l === 0) {
+    boxRect.setAttribute("opacity", "0");
+    boxLeft.setAttribute("opacity", "0");
+    boxRight.setAttribute("opacity", "0");
+    arrowDef.setAttribute("opacity", "0");
+    prefixRect.setAttribute("opacity", "0");
+    return;
+  }
+  const x = TRACK_X0 + l * CELL_W;
+  const w = (r - l + 1) * CELL_W - 2;
+  boxRect.setAttribute("x", x);
+  boxRect.setAttribute("width", w);
+  boxRect.setAttribute("opacity", "1");
+
+  boxLeft.setAttribute("x1", x);
+  boxLeft.setAttribute("x2", x);
+  boxLeft.setAttribute("opacity", "1");
+
+  const xR = x + w;
+  boxRight.setAttribute("x1", xR);
+  boxRight.setAttribute("x2", xR);
+  boxRight.setAttribute("opacity", "1");
+
+  arrowDef.setAttribute("transform", `translate(${xR - 4}, ${TRACK_Y - 6}) rotate(0)`);
+  arrowDef.setAttribute("opacity", "1");
+
+  // prefix 영역 (0..r-l)
+  const pw = (r - l + 1) * CELL_W - 2;
+  prefixRect.setAttribute("x", TRACK_X0);
+  prefixRect.setAttribute("width", pw);
+  prefixRect.setAttribute("opacity", "1");
+}
+
+function addTrailIfNeeded(r) {
+  if (r <= lastTrailR) return;
+  if (lastTrailR < 0) { lastTrailR = r; return; }
+  const x = TRACK_X0 + (lastTrailR + 1) * CELL_W;
+  const t = el("line", {
+    x1: x, y1: TRACK_Y - 6, x2: x, y2: TRACK_Y + CELL_H + 6,
+    stroke: COLOR.trail,
+    "stroke-width": "1.5",
+    "stroke-dasharray": "3 3",
+  });
+  layerTrail.appendChild(t);
+  trailEls.push(t);
+  lastTrailR = r;
+}
+
+function clearTrails() {
+  trailEls.forEach(t => t.remove());
+  trailEls.length = 0;
+  lastTrailR = -1;
+}
+
+function showArc(i, l) {
+  const k = i - l;
+  const xi = TRACK_X0 + i * CELL_W + (CELL_W - 2) / 2;
+  const xk = TRACK_X0 + k * CELL_W + (CELL_W - 2) / 2;
+  const y0 = TRACK_Y - 4;
+  const cx = (xi + xk) / 2;
+  const cy = y0 - ARC_LIFT - Math.abs(xi - xk) * 0.18;
+  const d = `M ${xi} ${y0} Q ${cx} ${cy} ${xk} ${y0}`;
+  arcPath.setAttribute("d", d);
+  arcPath.setAttribute("opacity", "1");
+  // dasharray "draw" 효과
+  const len = arcPath.getTotalLength();
+  arcPath.setAttribute("stroke-dasharray", `${len}`);
+  arcPath.setAttribute("stroke-dashoffset", `${len}`);
+  arcPath.style.transition = "stroke-dashoffset 350ms ease-out, opacity 200ms";
+  // force reflow
+  arcPath.getBoundingClientRect();
+  arcPath.setAttribute("stroke-dashoffset", "0");
+
+  // 화살표
+  arcArrow.setAttribute("opacity", "1");
+  arcArrow.setAttribute("transform", `translate(${xk}, ${y0}) rotate(${xk < xi ? 200 : -20})`);
+
+  // 잔상 후 사라짐
+  setTimeout(() => {
+    arcPath.style.transition = "opacity 250ms";
+    arcPath.setAttribute("opacity", "0");
+    arcArrow.setAttribute("opacity", "0");
+  }, 700);
+}
+
+function setBar(i, value) {
+  const ratio = Math.min(1, value / Math.max(1, N - 1));
+  const h = ratio * BAR_MAX_H;
+  bars[i].setAttribute("y", BAR_Y + BAR_MAX_H - h);
+  bars[i].setAttribute("height", h);
+  bars[i].setAttribute("fill", value > 0 ? COLOR.matched : "#cfd8cf");
+  if (i > 0) barLabels[i].textContent = String(value);
+}
+
+function setPseudoLine(line) {
+  pseudoLines.forEach(l => l.classList.remove("active"));
+  if (line >= 0 && pseudoLines[line]) pseudoLines[line].classList.add("active");
+}
+
+/* === 4) step 적용 === */
+let currentStep = -1;
+
+function renderStep(idx) {
+  const s = steps[idx];
+  // 셀 색 초기화 후 다시 바르기
+  clearAllCells();
+  // Z[0] 셀 잠금색 (matched)
+  setCellState(0, "matched");
+
+  // 박스 적용 (현재 step 의 newL,newR — step 끝 상태)
+  applyBox(s.newL, s.newR);
+
+  // 박스 안 채색 (확정된 박스 영역을 옅은 연두로 — invariant 표현)
+  if (s.newR > s.newL) {
+    for (let j = s.newL; j <= s.newR; j++) {
+      if (j === 0) continue;
+      cellRects[j].setAttribute("fill", COLOR.skipped);
+    }
+    // prefix 영역 (0..r-l) 도 동일 색
+    const pl = s.newR - s.newL;
+    for (let j = 1; j <= pl && j < N; j++) {
+      cellRects[j].setAttribute("fill", COLOR.skipped);
+    }
+  }
+
+  // 거울 호: inside 케이스에서만, 살짝 지연해 잔상감
+  if ((s.phase === "inside-skip" || s.phase === "inside-extend") && s.k >= 0) {
+    showArc(s.i, s.l);
+    // 거울 영역 일괄 연두 강조 (i .. i+skippedLen-1)
+    for (let j = s.i; j < s.i + s.skippedLen && j < N; j++) {
+      cellRects[j].setAttribute("fill", COLOR.skipped);
+    }
+    // 호의 끝 k 위치 강조
+    cellRects[s.k].setAttribute("stroke", "#7a4fa0");
+    cellRects[s.k].setAttribute("stroke-width", "2");
+  }
+
+  // 비교 깜빡임: 마지막 비교 위치를 한 번 빨강 표시
+  if (s.compares > 0) {
+    const cmpStart = s.i + s.skippedLen;
+    const cmpEnd = s.i + s.zVal; // 미스매치 위치(혹은 끝)
+    for (let j = cmpStart; j <= cmpEnd && j < N; j++) {
+      cellRects[j].setAttribute("fill", j < cmpEnd ? COLOR.skipped : COLOR.comparing);
+    }
+  }
+
+  // 포인터 배치
+  if (s.i > 0) placePointer(ptrI, s.i, 0);
+  else hidePointer(ptrI);
+
+  if (s.newR > s.newL) {
+    placePointer(ptrL, s.newL, 16);
+    placePointer(ptrR, s.newR, 16);
+  } else {
+    hidePointer(ptrL);
+    hidePointer(ptrR);
+  }
+  if (s.k >= 0) placePointer(ptrK, s.k, 32);
+  else hidePointer(ptrK);
+
+  // r 트레일 (newR 기준)
+  if (s.newR > 0) addTrailIfNeeded(s.newR);
+
+  // Z 막대 갱신 (snapshot 적용)
+  for (let j = 1; j < N; j++) {
+    setBar(j, s.Zsnap[j] || 0);
+  }
+
+  // 카운터
+  cmpRealEl.textContent = s.totalCmp;
+  // Naive 예상치는 i 까지 진행한 만큼 누적 표기 (간단 추정: i*평균비교, 여기선 i*N/2)
+  cmpNaiveEl.textContent = Math.max(0, Math.floor((s.i || 0) * N / 2));
+
+  // 캡션 + 의사코드
+  captionEl.innerHTML = s.captionHTML;
+  setPseudoLine(s.codeLine);
+
+  // i 셀 외곽선 강조 (현재 작업 중)
+  if (s.i > 0) {
+    cellRects[s.i].setAttribute("stroke", "#c2362f");
+    cellRects[s.i].setAttribute("stroke-width", "2");
+  }
+
+  currentStep = idx;
+}
+
+function resetView() {
+  clearAllCells();
+  setCellState(0, "matched");
+  for (let j = 0; j < N; j++) {
+    cellRects[j].setAttribute("stroke", "#bbb");
+    cellRects[j].setAttribute("stroke-width", "1");
+    setBar(j, 0);
+  }
+  barLabels[0].textContent = "n";
+  hidePointer(ptrI); hidePointer(ptrL); hidePointer(ptrR); hidePointer(ptrK);
+  applyBox(0, 0);
+  arcPath.setAttribute("opacity", "0");
+  arcArrow.setAttribute("opacity", "0");
+  clearTrails();
+  cmpRealEl.textContent = "0";
+  cmpNaiveEl.textContent = "0";
+  captionEl.innerHTML = "시작 — ▶ 버튼을 눌러 진행하세요.";
+  setPseudoLine(0);
+  currentStep = -1;
+}
+
+resetView();
+
+/* === 5) 컨트롤 === */
+const btnReset = document.getElementById("btnReset");
+const btnPrev = document.getElementById("btnPrev");
+const btnNext = document.getElementById("btnNext");
+const btnPlay = document.getElementById("btnPlay");
+const speedSel = document.getElementById("speed");
+let playing = false;
+let timer = null;
+
+function goNext() {
+  if (currentStep < steps.length - 1) {
+    renderStep(currentStep + 1);
+  } else if (playing) {
+    stopPlay();
+  }
+}
+function goPrev() {
+  if (currentStep > 0) {
+    renderStep(currentStep - 1);
+  } else {
+    resetView();
+  }
+}
+function startPlay() {
+  if (playing) return;
+  playing = true;
+  btnPlay.textContent = "⏸ 정지";
+  if (currentStep >= steps.length - 1) {
+    resetView();
+  }
+  const tick = () => {
+    if (!playing) return;
+    if (currentStep >= steps.length - 1) { stopPlay(); return; }
+    goNext();
+    timer = setTimeout(tick, parseInt(speedSel.value, 10));
+  };
+  tick();
+}
+function stopPlay() {
+  playing = false;
+  btnPlay.textContent = "▶ 자동";
+  if (timer) { clearTimeout(timer); timer = null; }
+}
+
+btnReset.addEventListener("click", () => { stopPlay(); resetView(); });
+btnPrev.addEventListener("click", () => { stopPlay(); goPrev(); });
+btnNext.addEventListener("click", () => { stopPlay(); goNext(); });
+btnPlay.addEventListener("click", () => { playing ? stopPlay() : startPlay(); });
+
+</script>
+</body>
+</html>
