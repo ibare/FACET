@@ -1,7 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './App.js';
-import { bootstrapFacet } from './facet-bootstrap.js';
+import { bootstrapFacet } from '@facet/bootstrap';
 import './styles.css';
 
 bootstrapFacet();

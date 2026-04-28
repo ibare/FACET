@@ -1,13 +1,17 @@
 /**
- * Playground 부트스트랩.
+ * @facet/bootstrap — facet 카탈로그 단일 출처.
  *
- * 정적 등록(즉시 필요한 것):
+ * 정적 등록 (즉시 필요):
  *  - View Catalog (built-in + code-view)
- *  - Transpiler 6종 (code-view 가 paradigm 호환 transpiler 목록을 보여주려면 모두 등록 필요)
+ *  - Transpiler 6종
  *
- * 동적 등록(lazy):
+ * 동적 등록 (lazy):
  *  - algorithm 패키지(@facet/algorithm-*) 는 registerFacetLoader 로만 매핑.
- *    NodeView/페이지가 facet 마운트 시점에 동적 import 하면 Vite 가 별도 chunk 로 분리.
+ *    각 import() 가 번들러의 dynamic import 경계로 인식되어 facet 별 chunk 로 분리된다.
+ *
+ * 소비자:
+ *  - apps/playground (dev/build) — main.tsx 에서 bootstrapFacet() 호출
+ *  - @facet/host-tiptap-bundle (외부 호스트 tarball) — re-export
  */
 
 import {
@@ -38,7 +42,6 @@ export function bootstrapFacet(): void {
   registerCppTranspiler();
   registerCsharpTranspiler();
 
-  // facet → 동적 import. 동일 chunk 안에 algorithm/projector/IR/facet/description 이 함께 묶임.
   registerFacetLoader('facet:bubbleSort', () =>
     import('@facet/algorithm-bubblesort').then((m) => m.registerBubblesort()),
   );
