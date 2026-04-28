@@ -1,0 +1,68 @@
+{
+  "name": "@facet/host-tiptap-bundle",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Self-contained ESM bundle of @facet/host-tiptap + 21 facets + transpilers + view-code. methii 등 외부 호스트 앱에서 단일 의존으로 소비.",
+  "main": "./dist/host-tiptap-bundle.js",
+  "types": "./dist/host-tiptap-bundle.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/host-tiptap-bundle.d.ts",
+      "import": "./dist/host-tiptap-bundle.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rollup -c rollup.config.mjs",
+    "build:analyze": "VISUALIZE=1 rollup -c rollup.config.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@tiptap/core": "^3.0.0",
+    "@tiptap/pm": "^3.0.0"
+  },
+  "devDependencies": {
+    "@facet/algorithm-arraymax": "workspace:*",
+    "@facet/algorithm-bfs": "workspace:*",
+    "@facet/algorithm-binarysearch": "workspace:*",
+    "@facet/algorithm-bst": "workspace:*",
+    "@facet/algorithm-bubblesort": "workspace:*",
+    "@facet/algorithm-coinchange": "workspace:*",
+    "@facet/algorithm-countingsort": "workspace:*",
+    "@facet/algorithm-factorial": "workspace:*",
+    "@facet/algorithm-fibonaccimemo": "workspace:*",
+    "@facet/algorithm-heapsort": "workspace:*",
+    "@facet/algorithm-insertionsort": "workspace:*",
+    "@facet/algorithm-interpolationsearch": "workspace:*",
+    "@facet/algorithm-knapsack": "workspace:*",
+    "@facet/algorithm-linearsearch": "workspace:*",
+    "@facet/algorithm-mergesort": "workspace:*",
+    "@facet/algorithm-queue": "workspace:*",
+    "@facet/algorithm-quicksort": "workspace:*",
+    "@facet/algorithm-radixsort": "workspace:*",
+    "@facet/algorithm-selectionsort": "workspace:*",
+    "@facet/algorithm-shellsort": "workspace:*",
+    "@facet/algorithm-subsetsum": "workspace:*",
+    "@facet/core": "workspace:*",
+    "@facet/host-tiptap": "workspace:*",
+    "@facet/ir-interpreter": "workspace:*",
+    "@facet/transpiler-cpp": "workspace:*",
+    "@facet/transpiler-csharp": "workspace:*",
+    "@facet/transpiler-java": "workspace:*",
+    "@facet/transpiler-javascript": "workspace:*",
+    "@facet/transpiler-python": "workspace:*",
+    "@facet/transpiler-typescript": "workspace:*",
+    "@facet/view-code": "workspace:*",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "@tiptap/core": "^3.22.3",
+    "@tiptap/pm": "^3.22.3",
+    "rollup": "^4.28.0",
+    "rollup-plugin-dts": "^6.1.1",
+    "rollup-plugin-esbuild": "^6.1.1",
+    "rollup-plugin-visualizer": "^5.12.0",
+    "typescript": "^5.6.3"
+  }
+}

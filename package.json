@@ -7,6 +7,8 @@
   "scripts": {
     "dev": "pnpm --filter @facet/playground dev",
     "build": "pnpm --filter @facet/playground build",
+    "build:bundle": "pnpm --filter @facet/host-tiptap-bundle build",
+    "build:bundle:analyze": "pnpm --filter @facet/host-tiptap-bundle build:analyze",
     "preview": "pnpm --filter @facet/playground preview",
     "test": "vitest run",
     "test:watch": "vitest",
