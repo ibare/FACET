@@ -192,7 +192,9 @@ specifics:
 
   - id: S-host
     file: specifics/S-host.md
-    description: 호스트 어댑터 (Tiptap NodeView) 의 DSL 파서 격리 · facet lazy load · 코어 비침투
+    description: 호스트 어댑터 (Tiptap NodeView) 의 DSL 파서 격리 · facet lazy load · 코어 비침투 · 카탈로그 단일출처 · 외부 배포 번들 얇은 포장
     triggers:
       paths:
         - "packages/host-tiptap/**"
+        - "packages/host-tiptap-bundle/**"
+        - "packages/bootstrap/**"
