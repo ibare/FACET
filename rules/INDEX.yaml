@@ -168,19 +168,31 @@ specifics:
 
   - id: S-view
     file: specifics/S-view.md
-    description: View 인터페이스 계약 (mount/destroy), design-tokens 경유 색상, theme/locale 파라미터 준수
+    description: View 인터페이스 계약 (mount/destroy), design-tokens 경유 색상, theme/locale 파라미터 준수, dispatch 채널을 통한 사용자 입력 발신
     triggers:
       paths:
         - "packages/core/src/views/**"
         - "packages/view-code/**"
+      patterns:
+        - "ViewMountParams"
+        - "params.dispatch"
+        - "dispatch?"
 
   - id: S-runtime
     file: specifics/S-runtime.md
-    description: runner / event-bus / registry / layout-builder / context / projector 의 내부 규율 (Mode 전이, silent 이벤트, BASE_DELAY_MS, cancelled flag)
+    description: runner / mechanism / event-bus / registry / layout-builder / context / projector 의 내부 규율 (Mechanism 추상화, supportedControls 호환성 검증, dispatch 채널 직교 분리, Mode 전이, silent 이벤트, BASE_DELAY_MS, cancelled flag)
     triggers:
       paths:
         - "packages/core/src/runtime/**"
         - "packages/core/src/types/**"
+      patterns:
+        - "Mechanism"
+        - "MechanismKind"
+        - "MechanismHooks"
+        - "CoroutineMechanism"
+        - "supportedControls"
+        - "mechanism.dispatch"
+        - "mechanism.onControl"
 
   - id: S-transpiler
     file: specifics/S-transpiler.md

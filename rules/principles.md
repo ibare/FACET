@@ -1,6 +1,6 @@
 ---
-version: 1
-last_verified: 2026-04-21
+version: 2
+last_verified: 2026-04-29
 ---
 
 # FACET Principles (Tier 1)
@@ -14,6 +14,7 @@ last_verified: 2026-04-21
 - 특히 **Algorithm 은 View 를 직접 참조하지 않는다**. 둘의 접점은 `FacetRuntimeEvent` 어휘 + 식별자 문법뿐이다.
 - **View 는 Algorithm 을 참조하지 않는다**. View 는 데이터와 자체 메서드만 안다.
 - **Projector 만 양쪽을 안다** — 이벤트를 View 메서드 호출로 번역하는 것이 유일한 책임.
+- Runner 와 Algorithm 사이의 진행 동력 (mode / cancelled / timer / ctx 등) 은 **`Mechanism` 추상에 캡슐화**된다. runner 는 mechanism 을 외부 인터페이스 (control-bar / View) 와 연결하는 어댑터 역할만 한다. ctx 는 mechanism 외부에 노출되지 않는다.
 
 ## 2. DSL 최소성
 
@@ -37,6 +38,7 @@ last_verified: 2026-04-21
 - 알고리즘 이벤트 → View 메서드 호출의 매핑은 Projector 안에서만 수행한다.
 - View 가 이벤트를 해석하지 않는다. 러너가 View 를 직접 조작하지 않는다. (러너는 `onInit` / `onEvent` / `onReset` 로 Projector 만 호출.)
 - Projector 는 시각 상태를 독자적으로 관리해도 되지만, **데이터 원본은 알고리즘의 `ctx.data`** 이며 Projector 는 필요한 만큼만 shadow-copy 해 추적한다.
+- 짝 원칙: View → Algorithm/Mechanism 의 사용자 입력 채널은 **`mechanism.dispatch` 단일 경로**다. control-bar 클릭은 `mechanism.onControl` 로, View 위젯 입력은 `mechanism.dispatch` 로 직교 분리되며, 두 경로 외의 우회 경로 (View 가 algorithm/mechanism 을 직접 참조 등) 를 만들지 않는다.
 
 ## 6. View Catalog 재사용 우선
 

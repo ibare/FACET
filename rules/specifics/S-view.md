@@ -2,8 +2,8 @@
 name: S-view
 description: View Catalog 의 인터페이스 계약, design-tokens 경유 색상, theme/locale 파라미터 존중.
 type: specific
-version: 1
-last_verified: 2026-04-21
+version: 2
+last_verified: 2026-04-29
 ---
 
 # S-view. View Catalog 규율
@@ -22,11 +22,14 @@ last_verified: 2026-04-21
 - `params.locale` 이 있으면 View 내부 라벨을 해당 로캘로 해석한다. `packages/core/src/types/locale.ts` 의 `resolveLocale` 사용.
 - `params.theme` 이 'dark' 일 때는 반드시 어두운 팔레트로 렌더한다. `light` 를 기본값으로 가정해도, theme 이 전달되면 즉시 반영.
 - View 메서드 (Projector 가 호출하는 `setData` / `setItemState` 등) 는 동기로 즉시 반영하되, **애니메이션이 있는 메서드는 `Promise<void>` 반환** (runner 가 `await` 가능하도록).
+- `params.dispatch` 가 주입되면 View 의 사용자 입력은 이 콜백으로만 발신한다. 페이로드는 `{ type: string; payload?: unknown }` 자유 구조이며, 해당 mechanism 이 정의한 입력 어휘에 맞춰야 한다. 미주입 시 View 는 정적 표시 모드로 동작 (사용자 입력 없는 경로).
+- control-bar 의 외부 메서드 계약 (`onPlay` / `onStep` / `onPause` / `onReset` / `onSpeedChange` / `setRunning` / `setComplete` / `updateMetric` / `resetMetrics` / `getSpeed` / `setSpeed`) 은 runner 의 wire-up 과 mechanism hooks 가 의존하는 표면이다. 임의 제거 / 시그니처 변경 금지.
 
 ## MUST NOT
 
 - View 가 다른 View 를 import 하지 않는다 — View 조합은 layout-builder + mountBlocks 의 책임.
-- View 가 `FacetJson` / `FacetRuntimeEvent` / `FacetContext` 를 import 하지 않는다. View 는 알고리즘 레이어의 존재를 몰라야 한다.
+- View 가 `FacetJson` / `FacetRuntimeEvent` / `FacetContext` / `Mechanism` 을 import 하지 않는다. View 는 알고리즘/메커니즘 레이어의 존재를 몰라야 한다.
+- View 가 mechanism 인스턴스를 직접 참조하지 않는다 — 사용자 입력은 `params.dispatch` 콜백으로만 발신.
 - View 가 전역 window / document 의 상태를 장기 구독하지 않는다. `ResizeObserver` 등을 쓰면 `destroy()` 에서 반드시 해제.
 - 색상 / 폰트 / 간격을 리터럴로 하드코딩하지 않는다 (`'#ff0000'`, `'12px'` 등).
 

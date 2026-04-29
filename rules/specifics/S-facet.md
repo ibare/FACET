@@ -2,8 +2,8 @@
 name: S-facet
 description: facets/cs-fundamentals/* 내부의 6파일 구성과 각 파일의 책임. 18개 facet 에서 예외 없이 유지되어 온 프로젝트의 가장 강한 구조 패턴.
 type: specific
-version: 1
-last_verified: 2026-04-21
+version: 2
+last_verified: 2026-04-29
 ---
 
 # S-facet. Facet 패키지 구조
@@ -37,6 +37,7 @@ last_verified: 2026-04-21
 - `algorithm.ts` 의 `TData` 제네릭 타입 (예: `BubbleSortData`) 은 `{ type: string; ... }` 형태이며 `index.ts` 와 facet 외부로 export 한다 (테스트가 사용).
 - `facet.ts` 는 로직을 담지 않는다 — `FacetJson` 객체 리터럴만.
 - `description.ts` 에 등장하는 `{facet:<id>}` 토큰은 같은 패키지 `facet.ts::id` 와 일치해야 한다 (C4 참조).
+- `facet.ts` 의 control-bar 블록 `controls[]` 항목은 `{ widget, action, label? }` 객체 형식만 사용한다. `widget` 은 control-bar 가 해석할 위젯 어휘 (`'button'` / `'speed-slider'`), `action` 은 mechanism `supportedControls` 와 매칭되는 어휘 (`'play' | 'step' | 'pause' | 'reset' | 'speed'`). 문자열 리터럴 / 구식 `{ type: 'speed-slider' }` 형태 금지.
 
 ## MUST NOT
 
