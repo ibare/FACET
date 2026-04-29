@@ -68,4 +68,7 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:bst', () =>
     import('@facet/algorithm-bst').then((m) => m.registerBst()),
   );
+  registerFacetLoader('facet:lruCache', () =>
+    import('@facet/algorithm-lru-cache').then((m) => m.registerLruCache()),
+  );
 }

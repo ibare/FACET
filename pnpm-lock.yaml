@@ -162,6 +162,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/lru-cache:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/queue:
     dependencies:
       '@facet/core':
@@ -201,6 +207,9 @@ importers:
       '@facet/algorithm-linked-list':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/linked-list
+      '@facet/algorithm-lru-cache':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/lru-cache
       '@facet/algorithm-queue':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/queue
