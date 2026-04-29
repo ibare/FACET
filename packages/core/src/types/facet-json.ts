@@ -40,13 +40,26 @@ export type LayoutLeafNode = {
   padding?: string;
 };
 
-export type ControlSpec =
-  | 'play'
-  | 'step'
-  | 'pause'
-  | 'reset'
-  | { type: 'speed-slider'; default?: number; steps?: number[] }
-  | { type: 'button'; id: string; label: string };
+/**
+ * 컨트롤바 항목 — 단일 객체 형태로 통일.
+ * - widget: 어떤 UI 위젯을 그릴지 (control-bar 가 해석).
+ * - action: 메커니즘이 받는 컨트롤 액션 어휘 (Mechanism.supportedControls 와 매칭).
+ * - label:  표시 라벨. 누락 시 control-bar 가 locale 별 기본 라벨 사용.
+ *
+ * 현재 사용 어휘:
+ *   widget: 'button' | 'speed-slider'
+ *   action: 'play' | 'step' | 'pause' | 'reset' | 'speed'
+ *
+ * 미래 위젯 어휘 후보 — slider / toggle / select / text-input.
+ * 새 메커니즘 type 이 들어올 때 그 요구사항에 맞춰 widget 어휘를 확장하고
+ * control-bar 의 렌더 분기를 추가한다.
+ */
+export type ControlSpec = {
+  widget: string;
+  action: string;
+  label?: LocaleStr;
+  [key: string]: unknown;
+};
 
 export type MetricSpec = {
   name: string;

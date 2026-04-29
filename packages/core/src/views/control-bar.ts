@@ -4,9 +4,13 @@
  * config:
  *   {
  *     type: 'control-bar',
- *     controls: ('play'|'step'|'pause'|'reset' | { type: 'speed-slider', ... })[],
+ *     controls: { widget, action, label?, ... }[],
  *     metrics?: { name, label, initial? }[],
  *   }
+ *
+ * 현재 어휘:
+ *   widget='button', action='play'|'step'|'pause'|'reset'
+ *   widget='speed-slider', action='speed', default?=number, steps?=number[]
  *
  * 외부 메서드:
  *   onPlay/onStep/onPause/onReset(cb)  — 핸들러 등록 (러너가 wire-up)
@@ -123,24 +127,33 @@ export const controlBarView: View = {
       reset: [],
     };
 
-    const controls = cfg.controls ?? ['play', 'step', 'pause', 'reset'];
+    const controls: ControlSpec[] = cfg.controls ?? [
+      { widget: 'button', action: 'play' },
+      { widget: 'button', action: 'step' },
+      { widget: 'button', action: 'pause' },
+      { widget: 'button', action: 'reset' },
+    ];
     for (const c of controls) {
-      if (typeof c === 'string') {
-        if (c === 'play' || c === 'step' || c === 'pause' || c === 'reset') {
-          const btn = makeButton(c, btnLabels[c], colors);
+      if (c.widget === 'button') {
+        const action = c.action;
+        if (action === 'play' || action === 'step' || action === 'pause' || action === 'reset') {
+          const label = c.label !== undefined ? resolveLocale(c.label, params.locale) : btnLabels[action];
+          const btn = makeButton(action, label, colors);
           btn.addEventListener('click', () => {
-            for (const h of handlers[c]) h();
+            for (const h of handlers[action]) h();
           });
-          buttons[c] = btn;
+          buttons[action] = btn;
           buttonGroup.appendChild(btn);
         }
-      } else if (c.type === 'speed-slider') {
+      } else if (c.widget === 'speed-slider' && c.action === 'speed') {
+        const customSteps = Array.isArray(c.steps) ? (c.steps as number[]) : null;
+        const def = typeof c.default === 'number' ? c.default : 1;
         const steps =
-          c.steps && c.steps.length > 0
-            ? [...c.steps].sort((a, b) => a - b)
+          customSteps && customSteps.length > 0
+            ? [...customSteps].sort((a, b) => a - b)
             : DEFAULT_SPEED_STEPS;
         speedState.steps = steps;
-        speedState.index = nearestSpeedIndex(steps, c.default ?? 1);
+        speedState.index = nearestSpeedIndex(steps, def);
         const current = steps[speedState.index];
         const wrap = document.createElement('label');
         wrap.style.display = 'flex';
