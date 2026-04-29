@@ -168,15 +168,22 @@ specifics:
 
   - id: S-view
     file: specifics/S-view.md
-    description: View 인터페이스 계약 (mount/destroy), design-tokens 경유 색상, theme/locale 파라미터 준수, dispatch 채널을 통한 사용자 입력 발신
+    description: View 인터페이스 계약 (mount/destroy), design-tokens 경유 색상, theme/locale 파라미터 준수, dispatch 채널을 통한 사용자 입력 발신, 색 토큰 결정 트리 (state/severity/categorical/LED/iso-body/region)
     triggers:
       paths:
         - "packages/core/src/views/**"
         - "packages/view-code/**"
+        - "facets/**/projector.ts"
       patterns:
         - "ViewMountParams"
         - "params.dispatch"
         - "dispatch?"
+        - "design-tokens"
+        - "getColors"
+        - "categorical("
+        - "ledTokens"
+        - "shiftLightness"
+        - "depthVeil"
 
   - id: S-runtime
     file: specifics/S-runtime.md

@@ -76,10 +76,8 @@ export const goalPreviewView: View = {
 
     let values: number[] = [];
 
-    const ISO_BODY_MAIN = params.theme === 'dark' ? colors.bg : '#ffffff';
-    const ISO_BODY_SIDE = params.theme === 'dark'
-      ? 'rgba(255,255,255,0.10)'
-      : '#fff9e5';
+    const ISO_BODY_MAIN = colors.isoBodyMain;
+    const ISO_BODY_SIDE = colors.isoBodySide;
     const ISO_DEPTH_MAX = 8;
 
     function render() {

@@ -38,6 +38,7 @@ last_verified: 2026-04-29
 - `facet.ts` 는 로직을 담지 않는다 — `FacetJson` 객체 리터럴만.
 - `description.ts` 에 등장하는 `{facet:<id>}` 토큰은 같은 패키지 `facet.ts::id` 와 일치해야 한다 (C4 참조).
 - `facet.ts` 의 control-bar 블록 `controls[]` 항목은 `{ widget, action, label? }` 객체 형식만 사용한다. `widget` 은 control-bar 가 해석할 위젯 어휘 (`'button'` / `'speed-slider'`), `action` 은 mechanism `supportedControls` 와 매칭되는 어휘 (`'play' | 'step' | 'pause' | 'reset' | 'speed'`). 문자열 리터럴 / 구식 `{ type: 'speed-slider' }` 형태 금지.
+- **facet 영역 내 색 hex/rgba 리터럴 0건** (algorithm / projector / facet / description / irs / index 모두). Projector 는 view 메서드 호출만 하고 색은 view 가 토큰에서 받는다. 색 결정 트리는 S-view "색 토큰 결정 트리" 절을 따른다.
 
 ## MUST NOT
 

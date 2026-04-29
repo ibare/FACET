@@ -136,10 +136,8 @@ export const snapshotStripView: View = {
         }
         svg.appendChild(tint);
 
-        const bodyMainDefault = params.theme === 'dark' ? colors.bg : '#ffffff';
-        const bodySideDefault = params.theme === 'dark'
-          ? 'rgba(255,255,255,0.10)'
-          : '#fff9e5';
+        const bodyMainDefault = colors.isoBodyMain;
+        const bodySideDefault = colors.isoBodySide;
 
         for (let i = 0; i < n; i++) {
           const v = snap.data[i];

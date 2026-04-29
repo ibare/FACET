@@ -22,7 +22,7 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from './types.js';
-import { getColors, fonts, radii, space } from './design-tokens.js';
+import { getColors, shiftLightness, fonts, radii, space } from './design-tokens.js';
 import { createIsoBar, type IsoBarHandle } from './iso-bar.js';
 
 const SORTED_BOUNDARY_LABEL_BY_LOCALE: Record<string, string> = {
@@ -115,22 +115,23 @@ export const barChartView: View = {
     const ISO_CAP_H = 8;
     /** 면 stroke 색 — design tokens 의 text 색을 사용 (light=검정, dark=거의 흰색). */
     const ISO_STROKE = colors.text;
-    /** 본체 색은 상태와 무관하게 고정 — left/top = 흰, right = 옅은 크림(또는 dark 알파). */
-    const ISO_BODY_MAIN = params.theme === 'dark' ? colors.bg : '#ffffff';
-    const ISO_BODY_SIDE = params.theme === 'dark'
-      ? 'rgba(255,255,255,0.10)'
-      : '#fff9e5';
+    /** 본체 색은 상태와 무관하게 고정. 상태는 cap 으로 표현하고 본체는 정보
+     *  hierarchy 를 깨지 않게 옅은 중성을 유지한다 (design-tokens.isoBody*). */
+    const ISO_BODY_MAIN = colors.isoBodyMain;
+    const ISO_BODY_SIDE = colors.isoBodySide;
     /**
-     * 상태별 cap 색 — top 면 1색, left/right 측면 1색.
-     * 본체는 그대로 두고 cap 으로만 상태를 표현한다.
+     * 상태별 cap 색 — top 은 디자인 토큰, side 는 top 의 OKLCH lightness 를
+     * 한 단계 낮춘 자동 도출 색. 본체는 그대로 두고 cap 으로 상태를 표현한다.
      */
+    const SIDE_DELTA = -0.1;
+    const cap = (top: string) => ({ top, side: shiftLightness(top, SIDE_DELTA) });
     const CAP_COLORS_BY_STATE: Record<BarItemState, { top: string; side: string }> = {
-      default:   { top: '#fff700', side: '#fff700' },
-      comparing: { top: '#ED7055', side: '#D95535' },
-      swapping:  { top: '#E63946', side: '#A41E36' },
-      pivot:     { top: '#ED7055', side: '#D95535' },
-      active:    { top: '#ED7055', side: '#D95535' },
-      sorted:    { top: '#444444', side: '#212121' },
+      default:   { top: colors.itemDefault, side: colors.itemDefault },
+      comparing: cap(colors.itemComparing),
+      swapping:  cap(colors.itemSwapping),
+      pivot:     cap(colors.itemPivot),
+      active:    cap(colors.itemActive),
+      sorted:    cap(colors.itemSorted),
     };
     /** 동적 viewBox 폭. ResizeObserver 가 실제 SVG 픽셀 폭으로 업데이트한다. */
     let viewW = 600;

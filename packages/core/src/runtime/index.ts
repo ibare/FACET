@@ -37,8 +37,24 @@ export {
   passTrackerView,
   snapshotStripView,
 } from '../views/index.js';
-export { colors, lightColors, darkColors, getColors, fonts, fontSizes, radii, space } from '../views/design-tokens.js';
-export type { Theme, Palette } from '../views/design-tokens.js';
+export {
+  colors,
+  lightColors,
+  darkColors,
+  getColors,
+  categorical,
+  depthVeil,
+  shiftLightness,
+  ledTokens,
+  CATEGORICAL_QUEUE_BLOCK,
+  CATEGORICAL_QUEUE_IN,
+  CATEGORICAL_QUEUE_OUT,
+  fonts,
+  fontSizes,
+  radii,
+  space,
+} from '../views/design-tokens.js';
+export type { Theme, Palette, CategoricalTone } from '../views/design-tokens.js';
 export type { View, ViewInstance, ViewMountParams } from '../views/types.js';
 export type { BarItemState, BarChartFeature } from '../views/bar-chart.js';
 export type { GraphData, GraphPositions, GraphNodeState, GraphEdgeState, GraphLayoutFeature } from '../views/graph-layout.js';

@@ -39,7 +39,19 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from './types.js';
-import { getColors, fonts, fontSizes, radii, space } from './design-tokens.js';
+import {
+  getColors,
+  categorical,
+  shiftLightness,
+  ledTokens,
+  CATEGORICAL_QUEUE_BLOCK,
+  CATEGORICAL_QUEUE_IN,
+  CATEGORICAL_QUEUE_OUT,
+  fonts,
+  fontSizes,
+  radii,
+  space,
+} from './design-tokens.js';
 import { resolveLocale, type LocaleStr } from '../types/locale.js';
 import { createCubeBlock, type CubeBlockHandle } from './cube-block.js';
 
@@ -162,37 +174,39 @@ const ENQUEUE_START_X = 260;
 /**
  * View-local 색 토큰.
  *
- * 팔레트는 납작한 3D 외관을 위해 고유 큐 미학(시안 블록 / 빨강 OUT / 보라 IN)
- * 을 고정 사용한다. design-tokens 는 흑백 + 악센트 노랑 체계라 3 면 shading
- * 이 표현되지 않으므로 이 view 에만 한정된 상수로 둔다 (S-view 예외 범위 내).
+ * 블록/캡 main 색은 코어 `categorical(6, 'vivid')` 시드의 의미별 인덱스
+ * (CATEGORICAL_QUEUE_BLOCK / IN / OUT) 로 흡수해 다른 큐형 view 와 hue 를
+ * 공유한다. 3D shading 의 left/top 면은 main 의 OKLCH lightness 를 단계별로
+ * +0.10 / +0.20 올려 자동 도출 — categorical 시드 hue 와 정합.
  *
- * 예외 범위:
- *   - 블록/캡 shading (3D 입체 표현).
- *   - 섬광/에러 keyframe 용 rgba (CSS 변수로 root 에 주입).
- *   - 전광판(scoreboard) 패널 팔레트 — LED 메타포용 고정 흑/회/적 계열.
+ * 에러 색은 design-tokens 의 `danger` (mount 시점에 합성).
+ * LED 메타포 (캡 라벨 / 블록 stamp / 파이프 stroke / 전광판 팔레트) 는
+ * design-tokens 의 `ledTokens` 를 단일출처로 받는다.
  */
+const QUEUE_PALETTE = categorical(6, 'vivid');
+const Q_BLOCK_MAIN = QUEUE_PALETTE[CATEGORICAL_QUEUE_BLOCK]!;
+const Q_IN_MAIN = QUEUE_PALETTE[CATEGORICAL_QUEUE_IN]!;
+const Q_OUT_MAIN = QUEUE_PALETTE[CATEGORICAL_QUEUE_OUT]!;
+const Q_FACE_LEFT_DELTA = 0.10;
+const Q_FACE_TOP_DELTA = 0.20;
+
 const CQ_TOKENS = {
-  blockFront: '#00BED7',
-  blockLeft: '#16D6EF',
-  blockTop: '#76EFFF',
-  outFront: '#CC1010',
-  outTop: '#FF6161',
-  inFront: '#5302EB',
-  inTop: '#A97BFF',
-  capText: '#ffffff',
-  blockLabel: '#ffffff',
-  blockStamp: '#444444',
-  pipeStroke: '#000000',
-  errorCapFront: '#dc2626',
-  errorGlow: 'rgba(220, 38, 38, 0.65)',
-  errorGlow0: 'rgba(220, 38, 38, 0)',
-  // 전광판 팔레트.
-  scoreboardBg: '#171717',
-  scoreboardBorder: '#2a2a2a',
-  scoreboardIdleText: '#2f2f2f',
-  scoreboardOnText: '#e5e5e5',
-  scoreboardErrorText: '#f87171',
-  scoreboardConnector: '#525252',
+  blockFront: Q_BLOCK_MAIN,
+  blockLeft: shiftLightness(Q_BLOCK_MAIN, Q_FACE_LEFT_DELTA),
+  blockTop: shiftLightness(Q_BLOCK_MAIN, Q_FACE_TOP_DELTA),
+  outFront: Q_OUT_MAIN,
+  outTop: shiftLightness(Q_OUT_MAIN, Q_FACE_TOP_DELTA),
+  inFront: Q_IN_MAIN,
+  inTop: shiftLightness(Q_IN_MAIN, Q_FACE_TOP_DELTA),
+  capText: ledTokens.glyph,
+  blockLabel: ledTokens.glyph,
+  blockStamp: ledTokens.stamp,
+  pipeStroke: ledTokens.stroke,
+  scoreboardBg: ledTokens.bg,
+  scoreboardBorder: ledTokens.border,
+  scoreboardIdleText: ledTokens.idleText,
+  scoreboardOnText: ledTokens.onText,
+  scoreboardConnector: ledTokens.connector,
 } as const;
 
 /**
@@ -205,19 +219,26 @@ type ScoreboardOp = 'push' | 'pop' | 'peek' | 'overflow' | 'underflow';
 type ScoreboardSide = 'in' | 'out';
 
 /**
- * 연산별 텍스트 색 맵.
- *
- * 현재는 단색(일반 연산은 scoreboardOnText, 에러는 scoreboardErrorText) 이지만,
- * 추후 연산별로 분리된 색(예: push=초록, pop=주황) 을 지정할 수 있도록
- * 명시적 맵 구조로 둔다. 호출부 수정 없이 이 맵의 값만 바꾸면 된다.
+ * 연산별 텍스트 색을 mount 시점에 합성. 일반 연산은 LED on 색, 에러는
+ * design-tokens 의 `danger` 색을 그대로 쓴다.
  */
-const SCOREBOARD_OP_COLORS: Record<ScoreboardOp, string> = {
-  push: CQ_TOKENS.scoreboardOnText,
-  pop: CQ_TOKENS.scoreboardOnText,
-  peek: CQ_TOKENS.scoreboardOnText,
-  overflow: CQ_TOKENS.scoreboardErrorText,
-  underflow: CQ_TOKENS.scoreboardErrorText,
-};
+function buildScoreboardOpColors(dangerColor: string): Record<ScoreboardOp, string> {
+  return {
+    push: CQ_TOKENS.scoreboardOnText,
+    pop: CQ_TOKENS.scoreboardOnText,
+    peek: CQ_TOKENS.scoreboardOnText,
+    overflow: dangerColor,
+    underflow: dangerColor,
+  };
+}
+
+/** `#rrggbb` 를 rgba(r,g,b,a) 문자열로. CSS keyframe 에 alpha 가 필요할 때만 사용. */
+function hexToRgba(hex: string, alpha: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
 
 /**
  * 전광판 라벨은 **로캘 무관 고정 영문 글리프** 다. LED 메타포의 일관성을
@@ -302,7 +323,14 @@ export const conveyorQueueView: View = {
     // ──────────────────────────────────────────────────────
     const root = document.createElement('div');
     root.className = 'facet-conveyor-queue';
-    for (const [key, value] of Object.entries(CQ_TOKENS)) {
+    const SCOREBOARD_OP_COLORS = buildScoreboardOpColors(colors.danger);
+    const cssVars: Record<string, string> = {
+      ...CQ_TOKENS,
+      errorCapFront: colors.danger,
+      errorGlow: hexToRgba(colors.danger, 0.65),
+      errorGlow0: hexToRgba(colors.danger, 0),
+    };
+    for (const [key, value] of Object.entries(cssVars)) {
       root.style.setProperty(`--facet-cq-${key}`, value);
     }
     root.style.padding = space.md;
