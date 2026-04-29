@@ -187,6 +187,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/system-design/messaging-pubsub:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   packages/bootstrap:
     dependencies:
       '@facet/algorithm-array':
@@ -210,6 +216,9 @@ importers:
       '@facet/algorithm-lru-cache':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/lru-cache
+      '@facet/algorithm-messaging-pubsub':
+        specifier: workspace:*
+        version: link:../../facets/system-design/messaging-pubsub
       '@facet/algorithm-queue':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/queue

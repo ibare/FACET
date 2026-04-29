@@ -629,7 +629,7 @@
           "id": "messaging",
           "name": "메시지 큐",
           "topics": [
-            { "id": "pubsub", "name": "Pub/Sub" },
+            { "id": "pubsub", "name": "Pub/Sub", "facetId": "facet:messagingPubsub" },
             { "id": "kafka-pattern", "name": "Kafka 패턴" }
           ]
         },
