@@ -8,8 +8,8 @@
  * 동적 등록 (lazy):
  *  - algorithm 패키지(@facet/algorithm-*) 는 registerFacetLoader 로만 매핑.
  *    각 import() 가 번들러의 dynamic import 경계로 인식되어 facet 별 chunk 로 분리된다.
- *  - 현재 등록 facet 10종: bubbleSort (모범 사례) + 자료구조 array / stack / queue / linkedList / hashTable / bst /
- *    lruCache + 그래프 bfs + 시스템 행동 messagingPubsub.
+ *  - 현재 등록 facet 11종: bubbleSort (모범 사례) + 자료구조 array / stack / queue / linkedList / hashTable / bst /
+ *    lruCache + 그래프 bfs + 시스템 행동 messagingPubsub + 시스템 캐싱 cachingCdn.
  *    그 외 cs-fundamentals/algorithms 토픽들은 카탈로그에 슬롯만 남고 facetId 미지정.
  *
  * 소비자:
@@ -74,5 +74,8 @@ export function bootstrapFacet(): void {
   );
   registerFacetLoader('facet:messagingPubsub', () =>
     import('@facet/algorithm-messaging-pubsub').then((m) => m.registerMessagingPubsub()),
+  );
+  registerFacetLoader('facet:cachingCdn', () =>
+    import('@facet/algorithm-caching-cdn').then((m) => m.registerCachingCdn()),
   );
 }

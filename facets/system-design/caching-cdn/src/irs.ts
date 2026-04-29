@@ -1,0 +1,12 @@
+/**
+ * CachingCdn 학습용 IR — 1차 구현은 코드 패널 미포함.
+ *
+ * 시스템 행동 시각이라 "언어별 코드 매핑" 의 학습 가치가 작아 IR 을 정의하지 않는다.
+ * 표준 6파일 일관성을 위해 빈 배열로 자리만 보존한다. 향후 엣지 라우팅 의사 코드
+ * 패널이 추가되면 caching-cdn-imperative IR 을 정의하고 algorithm.ts 의 phase 어휘
+ * (auto-demo / idle / request) 와 동기화한다.
+ */
+
+import type { IR } from '@facet/core';
+
+export const cachingCdnIRs: IR[] = [];

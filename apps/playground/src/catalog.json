@@ -622,7 +622,7 @@
             { "id": "lru-cache", "name": "LRU 캐시", "facetId": "facet:lruCache" },
             { "id": "lfu-cache", "name": "LFU 캐시" },
             { "id": "cache-coherence", "name": "캐시 일관성" },
-            { "id": "cdn", "name": "CDN" }
+            { "id": "cdn", "name": "CDN", "facetId": "facet:cachingCdn" }
           ]
         },
         {

@@ -187,6 +187,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/system-design/caching-cdn:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/system-design/messaging-pubsub:
     dependencies:
       '@facet/core':
@@ -207,6 +213,9 @@ importers:
       '@facet/algorithm-bubblesort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bubblesort
+      '@facet/algorithm-caching-cdn':
+        specifier: workspace:*
+        version: link:../../facets/system-design/caching-cdn
       '@facet/algorithm-hash-table':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/hash-table
