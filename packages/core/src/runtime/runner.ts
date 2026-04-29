@@ -1,23 +1,22 @@
 /**
  * runFacet — 4-layer 아키텍처의 진입점 (4번 layer).
  *
- * JSON 을 해석해 layout/blocks 구성, 알고리즘 코루틴 실행,
- * 이벤트를 Projector 로 라우팅, 컨트롤(재생/단계/정지/리셋/속도) 처리.
+ * JSON 을 해석해 layout/blocks 구성, projector 인스턴스화, 메커니즘 래핑,
+ * 컨트롤바 ↔ 메커니즘 wire-up, View 입력 → mechanism.dispatch 라우팅을 담당.
+ *
+ * 알고리즘 진행 동력 (mode/cancelled/runId/timer/ctx) 은 모두 메커니즘 안에
+ * 캡슐화되어 있다. 러너는 메커니즘을 외부 인터페이스(controlBar, View) 와
+ * 연결하는 어댑터일 뿐이다.
  */
 
-import type { FacetJson } from '../types/facet-json.js';
+import type { FacetJson, BlockSpec, ControlSpec } from '../types/facet-json.js';
 import type { LocaleStr } from '../types/locale.js';
 import { resolveLocale } from '../types/locale.js';
 import type { Theme } from '../views/design-tokens.js';
-import type { FacetContext, MetricDelta } from './context.js';
-import type { FacetRuntimeEvent } from '../types/event.js';
 import type { ProjectorViews } from './projector.js';
+import { CoroutineMechanism, type Mechanism, type MechanismHooks } from './mechanism.js';
 import { buildLayout, mountBlocks } from './layout-builder.js';
 import { getAlgorithm, getAlgorithmComputeResult, getProjector, getIR, listTranspilers, stripPrefix } from './registry.js';
-
-const BASE_DELAY_MS = 100;
-
-type Mode = 'idle' | 'playing' | 'paused' | 'stepping';
 
 export type FacetRunHandle = {
   start(): void;
@@ -41,22 +40,6 @@ function deepClone<T>(value: T): T {
   return JSON.parse(JSON.stringify(value)) as T;
 }
 
-/**
- * initialData 의 최상위 배열 필드를 Fisher-Yates 로 in-place 셔플.
- * 객체/원시값은 건드리지 않는다. (중첩 배열은 의도적으로 무시 — 깊이가
- * 있는 자료구조는 셔플 의미가 모호하므로 facet 측에서 직접 처리할 것.)
- */
-function shuffleArrayFields(obj: Record<string, unknown>): void {
-  for (const v of Object.values(obj)) {
-    if (Array.isArray(v)) {
-      for (let i = v.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [v[i], v[j]] = [v[j], v[i]];
-      }
-    }
-  }
-}
-
 function hasMethod(obj: unknown, name: string): obj is Record<string, (...args: unknown[]) => unknown> {
   return !!obj && typeof (obj as Record<string, unknown>)[name] === 'function';
 }
@@ -73,6 +56,30 @@ function findControlBar(views: ProjectorViews): ProjectorViews[string] | null {
   return null;
 }
 
+/**
+ * blocks 에서 control-bar 블록을 찾아 그 controls 배열을 반환. 없으면 null.
+ * supportedControls 호환성 검증의 입력이 된다.
+ */
+function findControlBarSpec(blocks: Record<string, BlockSpec>): ControlSpec[] | null {
+  for (const v of Object.values(blocks)) {
+    if (v.type === 'control-bar') {
+      const cb = v as { controls?: ControlSpec[] };
+      return cb.controls ?? [];
+    }
+  }
+  return null;
+}
+
+function assertControlsSupported(controls: ControlSpec[], mechanism: Mechanism): void {
+  for (const c of controls) {
+    if (!mechanism.supportedControls.includes(c.action)) {
+      throw new Error(
+        `컨트롤 미지원: action="${c.action}" 은 메커니즘 "${mechanism.kind}" 의 supportedControls 에 없음`,
+      );
+    }
+  }
+}
+
 export function runFacet(
   json: FacetJson,
   mountEl: HTMLElement,
@@ -87,15 +94,15 @@ export function runFacet(
   if (!projectorFactory) throw new Error(`Projector 모듈 미등록: ${projectorName}`);
   const algorithmFn = algorithmFnRaw;
 
-  // 2. Layout / blocks 마운트
+  // 2. 메커니즘 인스턴스화 (현재는 코루틴 한 종류).
+  //    init 은 projector / view mount 가 끝난 뒤에 호출.
+  const mechanism: Mechanism = new CoroutineMechanism(algorithmFn);
+
+  // 3. Layout / blocks 처리 + locale 해석
   const locale = options?.locale;
   const theme: Theme = options?.theme ?? 'light';
   const blocks = json.blocks;
 
-  // 사용자 노출 텍스트(LocaleStr) 를 현재 locale 로 해석.
-  // - title-block 자동 채움 (blocks 미지정 시 facet.title/description 주입)
-  // - control-bar metrics[].label
-  // - code-view label
   const enrichedBlocks: typeof blocks = { ...blocks };
   for (const [k, v] of Object.entries(enrichedBlocks)) {
     if (v.type === 'title-block') {
@@ -124,19 +131,22 @@ export function runFacet(
     }
   }
 
+  // 4. 컨트롤 호환성 검증 (mount 전에 빨리 실패).
+  const controlBarSpec = findControlBarSpec(enrichedBlocks);
+  if (controlBarSpec) assertControlsSupported(controlBarSpec, mechanism);
+
+  // 5. 초기 데이터 준비 — view 와 mechanism 이 동일 객체를 공유.
   const initialDataClone = deepClone(json.initialData) as Record<string, unknown>;
-  if (json.shuffleOnReset) shuffleArrayFields(initialDataClone);
   const built = buildLayout({ layout: json.layout, blocks: enrichedBlocks });
 
   mountEl.textContent = '';
   mountEl.appendChild(built.root);
 
-  // 3. code-view: IR 검증 후 IR 객체와 호환 transpiler 목록을 view 에 주입.
-  //    실제 transpile 은 사용자가 언어를 추가하는 시점에 view 가 호출.
+  // 6. code-view: IR 검증 후 IR 객체와 호환 transpiler 목록을 view 에 주입.
   for (const [ref, spec] of Object.entries(enrichedBlocks)) {
     if (spec.type !== 'code-view') continue;
     const cv = spec as { ir?: string };
-    if (cv.ir === undefined) continue; // IR 미지정 → 빈 패널 (의도적 허용)
+    if (cv.ir === undefined) continue;
     const irName = stripPrefix(cv.ir, 'ir');
     const ir = getIR(irName);
     if (!ir) throw new Error(`code-view "${ref}": IR 미등록 — "${irName}"`);
@@ -144,13 +154,15 @@ export function runFacet(
     enrichedBlocks[ref] = { ...spec, _ir: ir, _transpilers: compatible };
   }
 
+  // 7. View mount — dispatch 콜백 주입으로 View 입력 → mechanism.dispatch 경로 확보.
+  const dispatchToMechanism = (event: { type: string; payload?: unknown }) => mechanism.dispatch(event);
   const views = mountBlocks({
     blocks: enrichedBlocks,
     blockMounts: built.blockMounts,
-    mountParams: { initialData: initialDataClone, locale, theme },
+    mountParams: { initialData: initialDataClone, locale, theme, dispatch: dispatchToMechanism },
   });
 
-  // 4. goal-preview(computeFrom: 'sorted') 블록에 알고리즘의 computeResult 결과 주입
+  // 8. goal-preview(computeFrom: 'sorted') 블록에 알고리즘의 computeResult 결과 주입
   const computeResult = getAlgorithmComputeResult(algorithmName);
   if (computeResult) {
     let computed: unknown | undefined;
@@ -174,202 +186,49 @@ export function runFacet(
     }
   }
 
-  // 5. Projector 인스턴스화 + 초기화
-  // runtime hook: projector 가 현재 재생 속도를 조회해 애니메이션 길이를 맞출 수 있게 한다.
-  const projector = projectorFactory(views, { getSpeed: () => speedMul });
-  projector.onInit?.(initialDataClone);
+  // 9. Projector 인스턴스화 — getSpeed 는 mechanism 위임.
+  const projector = projectorFactory(views, { getSpeed: () => mechanism.getSpeed() });
 
-  // 5. 컨트롤 wire-up
+  // 10. control-bar wire-up + hooks 정의.
   const controlBar = findControlBar(views);
 
-  // 6. 실행 상태
-  let mode: Mode = 'idle';
-  let speedMul = 1;
-  let cancelled = false;
-  let runId = 0;
-  let activePromise: Promise<void> | null = null;
-  let stepResolve: (() => void) | null = null;
-  let pendingTimer: ReturnType<typeof setTimeout> | null = null;
-  let pendingTimerResolve: (() => void) | null = null;
-
-  if (controlBar) {
-    callMethod(controlBar, 'onSpeedChange', (mul: number) => {
-      speedMul = mul;
-    });
-    speedMul = (callMethod(controlBar, 'getSpeed') as number | undefined) ?? 1;
-  }
-
-  function clearPendingTimer() {
-    if (pendingTimer !== null) {
-      clearTimeout(pendingTimer);
-      pendingTimer = null;
-    }
-    if (pendingTimerResolve) {
-      const r = pendingTimerResolve;
-      pendingTimerResolve = null;
-      r();
-    }
-  }
-
-  function flushStepResolve() {
-    if (stepResolve) {
-      const r = stepResolve;
-      stepResolve = null;
-      r();
-    }
-  }
-
-  function setMode(next: Mode) {
-    mode = next;
-    if (controlBar) {
-      callMethod(controlBar, 'setRunning', next === 'playing' || next === 'stepping');
-    }
-  }
-
-  // FacetContext 생성
-  const context: FacetContext = {
-    data: initialDataClone,
-    cancelled: false,
-    async emit(event: FacetRuntimeEvent) {
-      if (cancelled) return;
-      // 1) paused/idle 이면 다음 신호 대기 (렌더링 전에 멈춤)
-      //    silent 이벤트도 동일하게 멈춤 — paused 는 "아무 것도 진행 안 함" 이므로.
-      while (mode === 'paused' || mode === 'idle') {
-        await new Promise<void>((res) => {
-          stepResolve = res;
-        });
-        if (cancelled) return;
-      }
-      // 2) projector 갱신
-      await projector.onEvent(event);
-      if (cancelled) return;
-      // 3) silent 이벤트는 step boundary 가 아니다 — 후처리 없이 즉시 통과.
-      if (event.silent) return;
-      // 4) 후처리
-      if (mode === 'stepping') {
-        setMode('paused');
-        return;
-      }
-      // playing — 속도 비례 지연
-      await new Promise<void>((res) => {
-        pendingTimerResolve = res;
-        pendingTimer = setTimeout(() => {
-          pendingTimer = null;
-          pendingTimerResolve = null;
-          res();
-        }, Math.max(10, BASE_DELAY_MS / Math.max(0.01, speedMul)));
-      });
+  const hooks: MechanismHooks = {
+    onRunningChange(running) {
+      if (controlBar) callMethod(controlBar, 'setRunning', running);
     },
-    metric(name: string, delta: MetricDelta) {
-      if (!controlBar) return;
-      const cb = controlBar as Record<string, unknown>;
-      const cur = (metricsState.get(name) ?? 0) + (delta === 'inc' ? 1 : delta);
-      metricsState.set(name, cur);
-      if (typeof cb.updateMetric === 'function') {
-        (cb.updateMetric as (n: string, v: number) => void)(name, cur);
-      }
+    onComplete(complete) {
+      if (controlBar) callMethod(controlBar, 'setComplete', complete);
+    },
+    onMetric(name, value) {
+      if (controlBar) callMethod(controlBar, 'updateMetric', name, value);
+    },
+    onMetricsReset() {
+      if (controlBar) callMethod(controlBar, 'resetMetrics');
     },
   };
 
-  const metricsState = new Map<string, number>();
+  // 11. 메커니즘 초기화 — projector.onInit 도 mechanism 안에서 호출됨.
+  mechanism.init(projector, initialDataClone, { shuffleOnReset: json.shuffleOnReset, hooks });
 
-  // cancelled 는 read-only (인터페이스). getter 로 동적 반영.
-  Object.defineProperty(context, 'cancelled', {
-    get: () => cancelled,
-  });
-
-  // 7. 실행 lifecycle
-  async function runAlgorithm() {
-    const myRun = ++runId;
-    try {
-      await algorithmFn(context);
-    } catch (err) {
-      if (!cancelled) {
-        console.error('[facet] algorithm error:', err);
-      }
-    }
-    if (myRun !== runId) return;
-    if (controlBar) callMethod(controlBar, 'setComplete', !cancelled);
-    setMode('idle');
+  // 12. control-bar 핸들러 등록.
+  if (controlBar) {
+    callMethod(controlBar, 'onPlay', () => mechanism.onControl('play'));
+    callMethod(controlBar, 'onStep', () => mechanism.onControl('step'));
+    callMethod(controlBar, 'onPause', () => mechanism.onControl('pause'));
+    callMethod(controlBar, 'onReset', () => mechanism.onControl('reset'));
+    callMethod(controlBar, 'onSpeedChange', (mul: number) => mechanism.onControl('speed', mul));
+    const initSpeed = (callMethod(controlBar, 'getSpeed') as number | undefined) ?? 1;
+    mechanism.setSpeed(initSpeed);
   }
 
-  function ensureStarted() {
-    if (activePromise) return;
-    cancelled = false;
-    activePromise = runAlgorithm().finally(() => {
-      activePromise = null;
-    });
-  }
-
-  function start() {
-    if (mode === 'playing') return;
-    setMode('playing');
-    ensureStarted();
-    flushStepResolve();
-  }
-
-  function stop() {
-    if (mode === 'idle') return;
-    setMode('paused');
-    clearPendingTimer();
-    // emit 의 paused 분기에서 다음 이벤트 시 멈춤
-  }
-
-  function step() {
-    if (!activePromise) {
-      setMode('stepping');
-      ensureStarted();
-      return;
-    }
-    setMode('stepping');
-    flushStepResolve();
-  }
-
-  async function reset() {
-    cancelled = true;
-    clearPendingTimer();
-    flushStepResolve();
-    if (activePromise) {
-      try {
-        await activePromise;
-      } catch {
-        // ignore
-      }
-    }
-    cancelled = false;
-    // 데이터 복원
-    Object.assign(context.data as Record<string, unknown>, deepClone(json.initialData) as Record<string, unknown>);
-    // initialData 가 배열이면 Object.assign 로 복원 안되므로 키 갱신
-    const fresh = deepClone(json.initialData) as Record<string, unknown>;
-    if (json.shuffleOnReset) shuffleArrayFields(fresh);
-    for (const k of Object.keys(context.data as Record<string, unknown>)) {
-      if (!(k in fresh)) delete (context.data as Record<string, unknown>)[k];
-    }
-    Object.assign(context.data as Record<string, unknown>, fresh);
-    // metric 초기화
-    metricsState.clear();
-    if (controlBar) {
-      callMethod(controlBar, 'resetMetrics');
-      callMethod(controlBar, 'setComplete', false);
-      callMethod(controlBar, 'setRunning', false);
-    }
-    projector.onReset?.();
-    // 데이터 복원 후 projector 도 초기 상태로 다시 세팅한다.
-    // 그렇지 않으면 stage 등의 뷰가 마지막 실행 결과 상태로 남아 reset 후 재생 시
-    // 잘못된 출발점에서 동작한다.
-    projector.onInit?.(context.data);
-    setMode('idle');
-  }
-
+  // 13. RunHandle — 외부 setSpeed 는 mechanism + control-bar 슬라이더 양쪽 동기화.
   function setSpeed(mul: number) {
-    speedMul = mul;
+    mechanism.setSpeed(mul);
     if (controlBar) callMethod(controlBar, 'setSpeed', mul);
   }
 
   function destroy() {
-    cancelled = true;
-    clearPendingTimer();
-    flushStepResolve();
+    mechanism.destroy();
     projector.onDestroy?.();
     for (const v of Object.values(views)) {
       if (hasMethod(v, 'destroy')) {
@@ -383,23 +242,14 @@ export function runFacet(
     if (built.root.parentElement) built.root.remove();
   }
 
-  if (controlBar) {
-    callMethod(controlBar, 'onPlay', start);
-    callMethod(controlBar, 'onStep', step);
-    callMethod(controlBar, 'onPause', stop);
-    callMethod(controlBar, 'onReset', () => {
-      void reset();
-    });
-  }
-
-  if (options?.autoStart) start();
+  if (options?.autoStart) mechanism.start();
 
   return {
-    start,
-    stop,
-    step,
+    start: () => mechanism.start(),
+    stop: () => mechanism.stop(),
+    step: () => mechanism.step(),
     reset: () => {
-      void reset();
+      void mechanism.reset();
     },
     setSpeed,
     destroy,

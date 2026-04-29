@@ -15,6 +15,12 @@ export type ViewMountParams = {
   locale?: string;
   /** 현재 테마. 색상 팔레트는 getColors(theme) 로 캡쳐. undefined 면 'light'. */
   theme?: Theme;
+  /**
+   * View 사용자 입력을 메커니즘에 전달. control-bar 클릭과 직교한 채널이며
+   * View 측 위젯이 이 콜백으로 발신 → 러너가 mechanism.dispatch 로 라우팅.
+   * 미주입 시 View 는 사용자 입력을 받지 않는 정적 표시 모드로 작동.
+   */
+  dispatch?: (event: { type: string; payload?: unknown }) => void;
 };
 
 export type ViewInstance = {

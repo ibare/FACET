@@ -11,6 +11,7 @@ export * from '../types/locale.js';
 export * from '../types/ir.js';
 export * from './context.js';
 export * from './projector.js';
+export * from './mechanism.js';
 export * from './event-bus.js';
 export * from './layout-builder.js';
 export * from './registry.js';

@@ -109,6 +109,7 @@ export function mountBlocks(params: MountBlocksParams): MountedBlocks {
       initialData: params.mountParams?.initialData,
       locale: params.mountParams?.locale,
       theme: params.mountParams?.theme,
+      dispatch: params.mountParams?.dispatch,
     };
     result[ref] = view.mount(mount, mountParams);
   }
