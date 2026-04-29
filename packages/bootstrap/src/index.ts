@@ -8,7 +8,7 @@
  * 동적 등록 (lazy):
  *  - algorithm 패키지(@facet/algorithm-*) 는 registerFacetLoader 로만 매핑.
  *    각 import() 가 번들러의 dynamic import 경계로 인식되어 facet 별 chunk 로 분리된다.
- *  - 현재 등록 facet 4종: bubbleSort (모범 사례) + 자료구조 queue / bst + 그래프 bfs.
+ *  - 현재 등록 facet 5종: bubbleSort (모범 사례) + 자료구조 stack / queue / bst + 그래프 bfs.
  *    그 외 cs-fundamentals/algorithms 토픽들은 카탈로그에 슬롯만 남고 facetId 미지정.
  *
  * 소비자:
@@ -52,6 +52,9 @@ export function bootstrapFacet(): void {
   );
   registerFacetLoader('facet:queue', () =>
     import('@facet/algorithm-queue').then((m) => m.registerQueue()),
+  );
+  registerFacetLoader('facet:stack', () =>
+    import('@facet/algorithm-stack').then((m) => m.registerStack()),
   );
   registerFacetLoader('facet:bst', () =>
     import('@facet/algorithm-bst').then((m) => m.registerBst()),

@@ -1,5 +1,6 @@
 /**
- * control-bar — 재생/단계/정지/리셋 + 속도 슬라이더 + 메트릭 배지.
+ * control-bar — 재생/단계/정지/리셋 + 속도 슬라이더 + 메트릭 배지 + facet 고유
+ * 버튼·값 입력 (reactive 메커니즘용).
  *
  * config:
  *   {
@@ -8,12 +9,21 @@
  *     metrics?: { name, label, initial? }[],
  *   }
  *
- * 현재 어휘:
- *   widget='button', action='play'|'step'|'pause'|'reset'
+ * 어휘:
+ *   widget='button', action='play'|'step'|'pause'|'reset'  — 표준 컨트롤. 내부 핸들러 라우팅.
+ *   widget='button', action=<facet 고유>                   — onAction(action, payload) 로 통과.
+ *                                                            payload 는 같은 control-bar 안의
+ *                                                            value-input 들의 현재 값 모음
+ *                                                            ({ [name]: value }).
  *   widget='speed-slider', action='speed', default?=number, steps?=number[]
+ *   widget='value-input', name=<key>, action='input', label?, placeholder?, default?=string
+ *                                                          — 텍스트 입력 박스. 입력 변경 시
+ *                                                            params.dispatch({ type: 'input',
+ *                                                            payload: { name, value } }) 발신.
  *
  * 외부 메서드:
- *   onPlay/onStep/onPause/onReset(cb)  — 핸들러 등록 (러너가 wire-up)
+ *   onPlay/onStep/onPause/onReset(cb)  — 표준 핸들러 등록 (러너가 wire-up)
+ *   onAction(cb: (action, payload) => void) — facet 고유 button 통과 채널.
  *   onSpeedChange(cb)
  *   updateMetric(name, value)
  *   setRunning(bool), setComplete(bool)
@@ -27,7 +37,7 @@ import { getColors, type Palette, fontSizes, fonts, radii, space } from './desig
 
 type ButtonId = 'play' | 'step' | 'pause' | 'reset';
 
-function makeButton(id: ButtonId, label: string, colors: Palette): HTMLButtonElement {
+function makeButton(id: string, label: string, colors: Palette): HTMLButtonElement {
   const btn = document.createElement('button');
   btn.type = 'button';
   btn.className = `facet-control-bar__btn facet-control-bar__btn--${id}`;
@@ -126,6 +136,10 @@ export const controlBarView: View = {
       pause: [],
       reset: [],
     };
+    const actionHandlers: Array<(action: string, payload?: unknown) => void> = [];
+    /** value-input 위젯들의 현재 값 — facet 고유 button 클릭 시 payload 로 첨부. */
+    const inputState: Record<string, string> = {};
+    const customButtons: Record<string, HTMLButtonElement> = {};
 
     const controls: ControlSpec[] = cfg.controls ?? [
       { widget: 'button', action: 'play' },
@@ -144,7 +158,48 @@ export const controlBarView: View = {
           });
           buttons[action] = btn;
           buttonGroup.appendChild(btn);
+        } else {
+          // facet 고유 button — onAction 채널로 통과. label 누락 시 action 명을 그대로 표시.
+          const label = c.label !== undefined ? resolveLocale(c.label, params.locale) : action;
+          const btn = makeButton(action, label, colors);
+          btn.addEventListener('click', () => {
+            const payload = { ...inputState };
+            for (const h of actionHandlers) h(action, payload);
+          });
+          customButtons[action] = btn;
+          buttonGroup.appendChild(btn);
         }
+      } else if (c.widget === 'value-input') {
+        const name = typeof c.name === 'string' ? c.name : c.action;
+        const placeholder = typeof c.placeholder === 'string' ? c.placeholder : '';
+        const def = typeof c.default === 'string' ? c.default : '';
+        inputState[name] = def;
+        const wrap = document.createElement('label');
+        wrap.style.display = 'flex';
+        wrap.style.alignItems = 'center';
+        wrap.style.gap = space.xs;
+        wrap.style.fontSize = fontSizes.xs;
+        wrap.style.color = colors.textMuted;
+        if (c.label !== undefined) wrap.textContent = resolveLocale(c.label, params.locale);
+        const inputEl = document.createElement('input');
+        inputEl.type = 'text';
+        inputEl.value = def;
+        inputEl.placeholder = placeholder;
+        inputEl.style.padding = `${space.xs} ${space.sm}`;
+        inputEl.style.fontSize = fontSizes.sm;
+        inputEl.style.fontFamily = fonts.mono;
+        inputEl.style.background = colors.bg;
+        inputEl.style.color = colors.text;
+        inputEl.style.border = `1px solid ${colors.border}`;
+        inputEl.style.borderRadius = radii.sm;
+        inputEl.style.width = '72px';
+        inputEl.dataset.inputName = name;
+        inputEl.addEventListener('input', () => {
+          inputState[name] = inputEl.value;
+          params.dispatch?.({ type: 'input', payload: { name, value: inputEl.value } });
+        });
+        wrap.appendChild(inputEl);
+        buttonGroup.appendChild(wrap);
       } else if (c.widget === 'speed-slider' && c.action === 'speed') {
         const customSteps = Array.isArray(c.steps) ? (c.steps as number[]) : null;
         const def = typeof c.default === 'number' ? c.default : 1;
@@ -264,6 +319,9 @@ export const controlBarView: View = {
       },
       onReset(cb: () => void) {
         handlers.reset.push(cb);
+      },
+      onAction(cb: (action: string, payload?: unknown) => void) {
+        actionHandlers.push(cb);
       },
       onSpeedChange(cb: (mul: number) => void) {
         speedHandlers.push(cb);

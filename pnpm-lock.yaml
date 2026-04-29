@@ -157,6 +157,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/view-code
 
+  facets/cs-fundamentals/stack:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   packages/bootstrap:
     dependencies:
       '@facet/algorithm-bfs':
@@ -171,6 +177,9 @@ importers:
       '@facet/algorithm-queue':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/queue
+      '@facet/algorithm-stack':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/stack
       '@facet/core':
         specifier: workspace:*
         version: link:../core

@@ -23,11 +23,11 @@
  */
 
 import type { ProjectorInstance } from './projector.js';
-import type { FacetContext, MetricDelta } from './context.js';
+import type { FacetContext, MetricDelta, ReactiveContext, ReactiveInputEvent } from './context.js';
 import type { FacetRuntimeEvent } from '../types/event.js';
 
 /** 메커니즘 식별 — 새 메커니즘 추가 시 union 에 등록. */
-export type MechanismKind = 'coroutine';
+export type MechanismKind = 'coroutine' | 'reactive';
 
 /** 메커니즘이 외부(러너)로 발행하는 신호. */
 export type MechanismHooks = {
@@ -322,4 +322,205 @@ export class CoroutineMechanism implements Mechanism {
   setSpeed(mul: number): void {
     this.speedMul = mul;
   }
+}
+
+/**
+ * 입력 반응형 메커니즘 — 사용자가 누르는 한 번의 컨트롤 입력 (push/pop/peek 등) 이
+ * algorithm 의 다음 단계로 1:1 매핑된다. 동시에 algorithm 은 자율 시간 흐름
+ * (`ctx.sleep(ms)`) 으로 자동 시연 시퀀스도 진행할 수 있다.
+ *
+ * 진행 모델:
+ *   - mount 직후 algorithm 즉시 시작 (start/stop/step 은 no-op).
+ *   - algorithm 은 `await ctx.waitForInput()` 으로 dispatch 신호 대기.
+ *   - mechanism 은 `dispatch({type, payload})` 로 큐 또는 대기 중 algorithm 깨움.
+ *   - control-bar 의 facet 고유 button 은 onControl(action) 으로 들어와
+ *     mechanism 이 dispatch 채널로 라우팅 (지정된 builtin action 'reset'/'speed' 외).
+ *   - reset 은 진행 중 algorithm 을 cancel + 재시작.
+ *
+ * supportedControls = ['reset', 'speed', '*'] — 와일드카드는
+ * `assertControlsSupported` 가 별도로 통과시킨다 (facet 고유 어휘 자유).
+ */
+export class ReactiveMechanism implements Mechanism {
+  readonly kind = 'reactive' as const;
+  readonly supportedControls = ['reset', 'speed', '*'] as const;
+
+  private projector: ProjectorInstance | null = null;
+  private hooks: MechanismHooks = {};
+  private originalInitial: unknown = undefined;
+  private dataRef: Record<string, unknown> = {};
+  private ctx: ReactiveContext | null = null;
+
+  private speedMul = 1;
+  private cancelled = false;
+  private runId = 0;
+  private activePromise: Promise<void> | null = null;
+  private metricsState = new Map<string, number>();
+
+  // 사용자 입력 채널.
+  private inputQueue: ReactiveInputEvent[] = [];
+  private inputResolver: ((event: ReactiveInputEvent) => void) | null = null;
+  private inputRejector: ((reason: unknown) => void) | null = null;
+
+  // 자율 시간 흐름 (sleep) 채널.
+  private pendingSleepResolve: ((ok: boolean) => void) | null = null;
+  private pendingSleepTimer: ReturnType<typeof setTimeout> | null = null;
+
+  constructor(private readonly algorithmFn: (ctx: ReactiveContext) => Promise<void>) {}
+
+  init(projector: ProjectorInstance, initialData: unknown, opts?: MechanismInitOptions): void {
+    this.projector = projector;
+    this.hooks = opts?.hooks ?? {};
+    const data = initialData as Record<string, unknown>;
+    this.originalInitial = deepClone(data);
+    this.dataRef = data;
+    this.ctx = this.createContext();
+    this.projector.onInit?.(this.dataRef);
+    this.ensureStarted();
+  }
+
+  private createContext(): ReactiveContext {
+    const self = this;
+    const ctx = {
+      data: self.dataRef,
+      cancelled: false,
+      async emit(event: FacetRuntimeEvent) {
+        if (self.cancelled) return;
+        await self.projector?.onEvent(event);
+      },
+      metric(name: string, delta: MetricDelta) {
+        const cur = (self.metricsState.get(name) ?? 0) + (delta === 'inc' ? 1 : delta);
+        self.metricsState.set(name, cur);
+        self.hooks.onMetric?.(name, cur);
+      },
+      async waitForInput<T extends ReactiveInputEvent = ReactiveInputEvent>(): Promise<T> {
+        if (self.cancelled) throw new Error('cancelled');
+        const queued = self.inputQueue.shift();
+        if (queued) return queued as T;
+        return new Promise<T>((resolve, reject) => {
+          self.inputResolver = (e) => resolve(e as T);
+          self.inputRejector = reject;
+        });
+      },
+      async sleep(ms: number): Promise<boolean> {
+        if (self.cancelled) return false;
+        const adjusted = Math.max(10, ms / Math.max(0.01, self.speedMul));
+        return new Promise<boolean>((resolve) => {
+          self.pendingSleepResolve = resolve;
+          self.pendingSleepTimer = setTimeout(() => {
+            self.pendingSleepTimer = null;
+            self.pendingSleepResolve = null;
+            resolve(true);
+          }, adjusted);
+        });
+      },
+    } as ReactiveContext;
+    Object.defineProperty(ctx, 'cancelled', { get: () => self.cancelled });
+    return ctx;
+  }
+
+  private clearPendingSleep(): void {
+    if (this.pendingSleepTimer !== null) {
+      clearTimeout(this.pendingSleepTimer);
+      this.pendingSleepTimer = null;
+    }
+    if (this.pendingSleepResolve) {
+      const r = this.pendingSleepResolve;
+      this.pendingSleepResolve = null;
+      r(false);
+    }
+  }
+
+  private flushInputRejector(): void {
+    if (this.inputRejector) {
+      const r = this.inputRejector;
+      this.inputRejector = null;
+      this.inputResolver = null;
+      r(new Error('cancelled'));
+    }
+  }
+
+  private async runAlgorithm(): Promise<void> {
+    if (!this.ctx) return;
+    const myRun = ++this.runId;
+    try {
+      await this.algorithmFn(this.ctx);
+    } catch (err) {
+      if (!this.cancelled && (err as Error)?.message !== 'cancelled') {
+        console.error('[facet] reactive algorithm error:', err);
+      }
+    }
+    if (myRun !== this.runId) return;
+    this.hooks.onComplete?.(!this.cancelled);
+  }
+
+  private ensureStarted(): void {
+    if (this.activePromise) return;
+    this.cancelled = false;
+    this.hooks.onRunningChange?.(true);
+    this.activePromise = this.runAlgorithm().finally(() => {
+      this.activePromise = null;
+      if (!this.cancelled) this.hooks.onRunningChange?.(false);
+    });
+  }
+
+  /** reactive 에서는 mount 즉시 시작이므로 외부 start/stop/step 은 no-op. */
+  start(): void { /* no-op */ }
+  stop(): void { /* no-op */ }
+  step(): void { /* no-op */ }
+
+  async reset(): Promise<void> {
+    this.cancelled = true;
+    this.clearPendingSleep();
+    this.flushInputRejector();
+    if (this.activePromise) {
+      try { await this.activePromise; } catch { /* ignore */ }
+    }
+    this.cancelled = false;
+    this.inputQueue.length = 0;
+    const fresh = deepClone(this.originalInitial) as Record<string, unknown>;
+    for (const k of Object.keys(this.dataRef)) {
+      if (!(k in fresh)) delete this.dataRef[k];
+    }
+    Object.assign(this.dataRef, fresh);
+    this.metricsState.clear();
+    this.hooks.onMetricsReset?.();
+    this.hooks.onComplete?.(false);
+    this.projector?.onReset?.();
+    this.projector?.onInit?.(this.dataRef);
+    this.ensureStarted();
+  }
+
+  destroy(): void {
+    this.cancelled = true;
+    this.clearPendingSleep();
+    this.flushInputRejector();
+  }
+
+  onControl(action: string, payload?: unknown): void {
+    if (action === 'reset') {
+      void this.reset();
+      return;
+    }
+    if (action === 'speed') {
+      this.setSpeed(typeof payload === 'number' ? payload : 1);
+      return;
+    }
+    // facet 고유 button — dispatch 채널로 라우팅.
+    this.dispatch({ type: action, payload });
+  }
+
+  dispatch(event: MechanismDispatchEvent): void {
+    if (this.cancelled) return;
+    if (this.inputResolver) {
+      const r = this.inputResolver;
+      this.inputResolver = null;
+      this.inputRejector = null;
+      r(event);
+      return;
+    }
+    this.inputQueue.push(event);
+  }
+
+  getSpeed(): number { return this.speedMul; }
+  setSpeed(mul: number): void { this.speedMul = mul; }
 }

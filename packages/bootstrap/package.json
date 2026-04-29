@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "facet 카탈로그 단일 출처. bubbleSort/bfs/queue/bst lazy loader + view + transpiler 등록.",
+  "description": "facet 카탈로그 단일 출처. bubbleSort/bfs/queue/stack/bst lazy loader + view + transpiler 등록.",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
@@ -17,6 +17,7 @@
     "@facet/algorithm-bst": "workspace:*",
     "@facet/algorithm-bubblesort": "workspace:*",
     "@facet/algorithm-queue": "workspace:*",
+    "@facet/algorithm-stack": "workspace:*",
     "@facet/core": "workspace:*",
     "@facet/transpiler-cpp": "workspace:*",
     "@facet/transpiler-csharp": "workspace:*",

@@ -7,11 +7,14 @@
 import type { AlgorithmFn } from './context.js';
 import type { FacetJson } from '../types/facet-json.js';
 import type { ProjectorFactory } from './projector.js';
+import type { MechanismKind } from './mechanism.js';
 
 type AlgorithmEntry = {
   fn: AlgorithmFn;
   /** 알고리즘 실행과 별개로 "정렬된/완료된 최종 상태" 를 미리 계산. goal-preview(computeFrom: 'sorted') 가 사용. */
   computeResult?: (initialData: unknown) => unknown;
+  /** 이 알고리즘이 어떤 메커니즘으로 실행되는지. 미지정 시 'coroutine'. */
+  mechanismKind?: MechanismKind;
 };
 
 const algorithms = new Map<string, AlgorithmEntry>();
@@ -31,6 +34,8 @@ const descriptions = new Map<string, string>();
 export type RegisterAlgorithmOptions<TData = unknown> = {
   /** 알고리즘 실행과 별개로 최종 결과 상태를 즉시 계산하는 순수 함수. */
   computeResult?: (initialData: TData) => TData;
+  /** 이 알고리즘을 어떤 메커니즘으로 실행할지. 기본 'coroutine'. */
+  mechanismKind?: MechanismKind;
 };
 
 export function registerAlgorithm<TData = unknown>(
@@ -41,6 +46,7 @@ export function registerAlgorithm<TData = unknown>(
   algorithms.set(name, {
     fn: fn as AlgorithmFn,
     computeResult: options?.computeResult as ((d: unknown) => unknown) | undefined,
+    mechanismKind: options?.mechanismKind,
   });
 }
 
@@ -50,6 +56,10 @@ export function getAlgorithm(name: string): AlgorithmFn | undefined {
 
 export function getAlgorithmComputeResult(name: string): ((initialData: unknown) => unknown) | undefined {
   return algorithms.get(name)?.computeResult;
+}
+
+export function getAlgorithmMechanismKind(name: string): MechanismKind | undefined {
+  return algorithms.get(name)?.mechanismKind;
 }
 
 export function registerProjector(name: string, factory: ProjectorFactory): void {

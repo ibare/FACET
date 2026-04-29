@@ -14,9 +14,18 @@ import type { LocaleStr } from '../types/locale.js';
 import { resolveLocale } from '../types/locale.js';
 import type { Theme } from '../views/design-tokens.js';
 import type { ProjectorViews } from './projector.js';
-import { CoroutineMechanism, type Mechanism, type MechanismHooks } from './mechanism.js';
+import { CoroutineMechanism, ReactiveMechanism, type Mechanism, type MechanismHooks } from './mechanism.js';
+import type { ReactiveContext } from './context.js';
 import { buildLayout, mountBlocks } from './layout-builder.js';
-import { getAlgorithm, getAlgorithmComputeResult, getProjector, getIR, listTranspilers, stripPrefix } from './registry.js';
+import {
+  getAlgorithm,
+  getAlgorithmComputeResult,
+  getAlgorithmMechanismKind,
+  getProjector,
+  getIR,
+  listTranspilers,
+  stripPrefix,
+} from './registry.js';
 
 export type FacetRunHandle = {
   start(): void;
@@ -71,8 +80,12 @@ function findControlBarSpec(blocks: Record<string, BlockSpec>): ControlSpec[] | 
 }
 
 function assertControlsSupported(controls: ControlSpec[], mechanism: Mechanism): void {
+  // 메커니즘이 '*' 와일드카드를 supportedControls 에 두면 facet 고유 어휘를 자유 허용.
+  const supported = new Set<string>(mechanism.supportedControls);
+  const allowAny = supported.has('*');
   for (const c of controls) {
-    if (!mechanism.supportedControls.includes(c.action)) {
+    if (allowAny) continue;
+    if (!supported.has(c.action)) {
       throw new Error(
         `컨트롤 미지원: action="${c.action}" 은 메커니즘 "${mechanism.kind}" 의 supportedControls 에 없음`,
       );
@@ -94,9 +107,13 @@ export function runFacet(
   if (!projectorFactory) throw new Error(`Projector 모듈 미등록: ${projectorName}`);
   const algorithmFn = algorithmFnRaw;
 
-  // 2. 메커니즘 인스턴스화 (현재는 코루틴 한 종류).
+  // 2. 메커니즘 인스턴스화 — algorithm 등록 시 지정된 mechanismKind 로 분기.
   //    init 은 projector / view mount 가 끝난 뒤에 호출.
-  const mechanism: Mechanism = new CoroutineMechanism(algorithmFn);
+  const kind = getAlgorithmMechanismKind(algorithmName) ?? 'coroutine';
+  const mechanism: Mechanism =
+    kind === 'reactive'
+      ? new ReactiveMechanism(algorithmFn as unknown as (ctx: ReactiveContext) => Promise<void>)
+      : new CoroutineMechanism(algorithmFn);
 
   // 3. Layout / blocks 처리 + locale 해석
   const locale = options?.locale;
@@ -217,6 +234,10 @@ export function runFacet(
     callMethod(controlBar, 'onPause', () => mechanism.onControl('pause'));
     callMethod(controlBar, 'onReset', () => mechanism.onControl('reset'));
     callMethod(controlBar, 'onSpeedChange', (mul: number) => mechanism.onControl('speed', mul));
+    // facet 고유 button (push/pop/peek 등) 통과 채널.
+    callMethod(controlBar, 'onAction', (action: string, payload?: unknown) =>
+      mechanism.onControl(action, payload),
+    );
     const initSpeed = (callMethod(controlBar, 'getSpeed') as number | undefined) ?? 1;
     mechanism.setSpeed(initSpeed);
   }
