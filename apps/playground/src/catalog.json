@@ -13,7 +13,7 @@
           "name": "자료구조",
           "topics": [
             { "id": "array", "name": "배열", "facetId": "facet:array" },
-            { "id": "linked-list", "name": "연결 리스트" },
+            { "id": "linked-list", "name": "연결 리스트", "facetId": "facet:linkedList" },
             { "id": "stack", "name": "스택", "facetId": "facet:stack" },
             { "id": "queue", "name": "큐", "facetId": "facet:queue" },
             { "id": "deque", "name": "덱" },

@@ -17,6 +17,7 @@
     "@facet/algorithm-bfs": "workspace:*",
     "@facet/algorithm-bst": "workspace:*",
     "@facet/algorithm-bubblesort": "workspace:*",
+    "@facet/algorithm-linked-list": "workspace:*",
     "@facet/algorithm-queue": "workspace:*",
     "@facet/algorithm-stack": "workspace:*",
     "@facet/core": "workspace:*",

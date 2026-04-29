@@ -150,6 +150,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/view-code
 
+  facets/cs-fundamentals/linked-list:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/queue:
     dependencies:
       '@facet/core':
@@ -183,6 +189,9 @@ importers:
       '@facet/algorithm-bubblesort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bubblesort
+      '@facet/algorithm-linked-list':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/linked-list
       '@facet/algorithm-queue':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/queue
