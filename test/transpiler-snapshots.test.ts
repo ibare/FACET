@@ -1,5 +1,5 @@
 /**
- * Transpiler 출력 스냅샷 — 2 IR × 6 언어 = 12 스냅샷.
+ * Transpiler 출력 스냅샷 — 1 IR × 6 언어 = 6 스냅샷.
  *
  * 코드/phase 출력의 의도치 않은 변경을 잡는다. 스냅샷이 의도적으로 바뀌면
  * `pnpm test -u` 로 갱신.
@@ -7,7 +7,6 @@
 
 import { describe, expect, it } from 'vitest';
 import { bubblesortImperativeIR } from '@facet/algorithm-bubblesort';
-import { quicksortImperativeIR } from '@facet/algorithm-quicksort';
 import { pythonTranspiler } from '@facet/transpiler-python';
 import { javascriptTranspiler } from '@facet/transpiler-javascript';
 import { typescriptTranspiler } from '@facet/transpiler-typescript';
@@ -18,7 +17,6 @@ import type { IR, Transpiler } from '@facet/core';
 
 const IRS: { name: string; ir: IR }[] = [
   { name: 'bubblesort', ir: bubblesortImperativeIR },
-  { name: 'quicksort', ir: quicksortImperativeIR },
 ];
 
 const TRANSPILERS: Transpiler[] = [

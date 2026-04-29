@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import type { IR } from '@facet/core';
 import { runIR } from '../src/index.js';
 import { bubblesortImperativeIR } from '@facet/algorithm-bubblesort';
-import { quicksortImperativeIR } from '@facet/algorithm-quicksort';
 import { javascriptTranspiler } from '@facet/transpiler-javascript';
 
 const SEEDS: number[][] = [
@@ -46,20 +45,4 @@ describe('IR ↔ JS emit 라운드트립', () => {
     }
   });
 
-  describe('quicksort', () => {
-    const fn = jsRunner(quicksortImperativeIR, 'quicksort');
-    for (const seed of SEEDS) {
-      it(`[${seed.join(',')}]`, () => {
-        const expected = sorted(seed);
-
-        const a1 = [...seed];
-        runIR(quicksortImperativeIR, 'quicksort', [a1, 0, a1.length - 1]);
-        expect(a1).toEqual(expected);
-
-        const a2 = [...seed];
-        fn(a2, 0, a2.length - 1);
-        expect(a2).toEqual(expected);
-      });
-    }
-  });
 });

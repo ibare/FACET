@@ -1,7 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import type { IR, IRStmt, Transpiler } from '@facet/core';
 import { bubblesortImperativeIR } from '@facet/algorithm-bubblesort';
-import { quicksortImperativeIR } from '@facet/algorithm-quicksort';
 import { pythonTranspiler } from '@facet/transpiler-python';
 import { javascriptTranspiler } from '@facet/transpiler-javascript';
 import { typescriptTranspiler } from '@facet/transpiler-typescript';
@@ -18,7 +17,7 @@ const TRANSPILERS: Transpiler[] = [
   csharpTranspiler,
 ];
 
-const IRS: IR[] = [bubblesortImperativeIR, quicksortImperativeIR];
+const IRS: IR[] = [bubblesortImperativeIR];
 
 function collectIRPhases(ir: IR): Map<string, number> {
   const counts = new Map<string, number>();

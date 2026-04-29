@@ -8,7 +8,7 @@ import {
   registerFacets,
   type FacetJson,
 } from '@facet/core/runtime';
-import { registerQuicksort, quicksortFacet } from '@facet/algorithm-quicksort';
+import { registerBubblesort, bubblesortFacet } from '@facet/algorithm-bubblesort';
 import { registerPythonTranspiler } from '@facet/transpiler-python';
 import { registerCodeView } from '@facet/view-code';
 
@@ -27,7 +27,7 @@ describe('FacetExtension — 기본 설정', () => {
 
 describe('parseFacetRaw — DSL 파서', () => {
   it('유효한 단일 식별자 표현 — 전체 id 반환', () => {
-    expect(parseFacetRaw('{facet:quickSort}')).toBe('facet:quickSort');
+    expect(parseFacetRaw('{facet:bubbleSort}')).toBe('facet:bubbleSort');
     expect(parseFacetRaw('{facet:bubble-sort}')).toBe('facet:bubble-sort');
   });
 
@@ -37,7 +37,7 @@ describe('parseFacetRaw — DSL 파서', () => {
 
   it('잘못된 표현 → null', () => {
     expect(parseFacetRaw('{facet:}')).toBeNull();
-    expect(parseFacetRaw('{facet:loop facet:bubbleSort}')).toBeNull();
+    expect(parseFacetRaw('{facet:loop facet:other}')).toBeNull();
     expect(parseFacetRaw('{foo:bar}')).toBeNull();
     expect(parseFacetRaw('')).toBeNull();
   });
@@ -48,7 +48,7 @@ describe('FacetExtension — Tiptap 통합', () => {
     clearRegistry();
     registerCodeView();
     registerPythonTranspiler();
-    registerQuicksort();
+    registerBubblesort();
   });
 
   it('등록된 facet id 로 NodeView 가 마운트되어 runFacet 결과가 렌더됨', () => {
@@ -58,7 +58,7 @@ describe('FacetExtension — Tiptap 통합', () => {
     const editor = new Editor({
       element: host,
       extensions: [StarterKit, FacetExtension],
-      content: `<p><span data-facet="true" data-facet-id="facet:quickSort"></span></p>`,
+      content: `<p><span data-facet="true" data-facet-id="facet:bubbleSort"></span></p>`,
     });
 
     const mount = host.querySelector('.facet-mount');
@@ -90,7 +90,7 @@ describe('FacetExtension — Tiptap 통합', () => {
   it('facet id 변경 시 이전 인스턴스 destroy 후 재마운트', () => {
     // 두 번째 facet 등록
     const altFacet: FacetJson = {
-      ...quicksortFacet,
+      ...bubblesortFacet,
       id: 'facet:altSort',
       initialData: { type: 'array', values: [1, 2, 3] },
     };
@@ -102,7 +102,7 @@ describe('FacetExtension — Tiptap 통합', () => {
     const editor = new Editor({
       element: host,
       extensions: [StarterKit, FacetExtension],
-      content: `<p><span data-facet="true" data-facet-id="facet:quickSort"></span></p>`,
+      content: `<p><span data-facet="true" data-facet-id="facet:bubbleSort"></span></p>`,
     });
 
     expect(host.querySelectorAll('.facet-bar-chart rect').length).toBe(8);

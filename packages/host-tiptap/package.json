@@ -20,7 +20,7 @@
     "@tiptap/pm": "^3.0.0"
   },
   "devDependencies": {
-    "@facet/algorithm-quicksort": "workspace:*",
+    "@facet/algorithm-bubblesort": "workspace:*",
     "@facet/transpiler-python": "workspace:*",
     "@facet/view-code": "workspace:*",
     "@tiptap/core": "^3.22.3",
