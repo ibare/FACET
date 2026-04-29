@@ -112,6 +112,12 @@ importers:
         specifier: ^5.4.11
         version: 5.4.21(@types/node@22.19.17)(lightningcss@1.32.0)
 
+  facets/cs-fundamentals/array:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/bfs:
     dependencies:
       '@facet/core':
@@ -165,6 +171,9 @@ importers:
 
   packages/bootstrap:
     dependencies:
+      '@facet/algorithm-array':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/array
       '@facet/algorithm-bfs':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bfs
