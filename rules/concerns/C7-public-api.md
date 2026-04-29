@@ -35,5 +35,5 @@ last_verified: 2026-04-21
 
 ## Exception
 
-- `test/**/*.test.ts` 는 테스트 편의상 다른 facet 패키지의 심볼을 직접 import 할 수 있다 (예: `host-tiptap/test/extension.test.ts::@facet/algorithm-quicksort`). 테스트 dependencies 가 devDependencies 에 선언되어 있다면 허용.
+- `test/**/*.test.ts` 는 테스트 편의상 다른 facet 패키지의 심볼을 직접 import 할 수 있다 (예: `host-tiptap/test/extension.test.ts::@facet/algorithm-bubblesort`). 테스트 dependencies 가 devDependencies 에 선언되어 있다면 허용.
 - `apps/playground` 는 호스트 앱이므로 모든 `@facet/*` 패키지의 공개 API 를 자유롭게 import 할 수 있다.

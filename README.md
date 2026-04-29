@@ -24,7 +24,6 @@
 호스트(에디터)에 임베드되는 단일 식별자 표기.
 
 ```
-{facet:quickSort}
 {facet:bubbleSort}
 ```
 
@@ -44,14 +43,13 @@ packages/
       views/                  # bar-chart, graph-layout, tree-layout, code-view, ... + design-tokens
       examples/               # counter (러너 검증용 최소 예제)
       types.ts                # IR/Transpiler 타입
-  algorithm-quicksort/        # quicksort: algorithm + projector + irs + transpilers + facet JSON
-  algorithm-bubblesort/       # bubblesort: 같은 4-layer 구조, 같은 bar-chart View 재사용
+  algorithm-bubblesort/       # bubblesort: algorithm + projector + irs + transpilers + facet JSON (모범 사례)
   host-tiptap/                # Tiptap NodeView — getFacetById + runFacet
 apps/
   playground/                 # Vite + React 데모 — bootstrapFacet() 으로 모듈 일괄 등록
 docs/
   01-architecture.md, 02-dsl.md, 03-catalog.md, 04-runtime.md,
-  05-host-plugin.md, 06-first-plugin-quicksort.md
+  05-host-plugin.md, 06-first-plugin-quicksort.md (stale: quicksort 시각화는 제거됨)
 ```
 
 ## 새 시각화 추가하는 방법
@@ -75,7 +73,7 @@ docs/
    - `registerAlgorithm` + `registerProjector` + `registerIR/Transpiler` + `registerFacets`
    - 호스트 앱은 한 번만 호출
 
-새 시각화 종류(예: `bar-chart` 가 아닌 `heatmap`)가 필요하면 `packages/core/src/views/` 에 View 모듈을 추가하고 `registerView` 한다. 한번 등록된 View 는 모든 알고리즘 패키지에서 재사용 가능 — `bar-chart` 를 quicksort/bubblesort 가 공유하듯.
+새 시각화 종류(예: `bar-chart` 가 아닌 `heatmap`)가 필요하면 `packages/core/src/views/` 에 View 모듈을 추가하고 `registerView` 한다. 한번 등록된 View 는 모든 알고리즘 패키지에서 재사용 가능 — `bar-chart` 를 정렬 계열 알고리즘이 공유하듯.
 
 ## 실행
 
