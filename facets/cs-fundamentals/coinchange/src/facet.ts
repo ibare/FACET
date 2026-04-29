@@ -34,7 +34,7 @@ export const coinchangeFacet: FacetJson = {
     },
     controls: {
       type: 'control-bar',
-      controls: ['play', 'step', 'pause', 'reset', { type: 'speed-slider', default: 1 }],
+      controls: [{ widget: 'button', action: 'play' }, { widget: 'button', action: 'step' }, { widget: 'button', action: 'pause' }, { widget: 'button', action: 'reset' }, { widget: 'speed-slider', action: 'speed', default: 1 }],
       metrics: [
         { name: 'try-count', label: { en: 'Try', ko: '시도' }, initial: 0 },
         { name: 'coin-count', label: { en: 'Coins', ko: '동전' }, initial: 0 },

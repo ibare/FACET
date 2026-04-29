@@ -34,7 +34,7 @@ export const fibonaccimemoFacet: FacetJson = {
     },
     controls: {
       type: 'control-bar',
-      controls: ['play', 'step', 'pause', 'reset', { type: 'speed-slider', default: 1 }],
+      controls: [{ widget: 'button', action: 'play' }, { widget: 'button', action: 'step' }, { widget: 'button', action: 'pause' }, { widget: 'button', action: 'reset' }, { widget: 'speed-slider', action: 'speed', default: 1 }],
       metrics: [
         { name: 'call-count', label: { en: 'Calls', ko: '호출' }, initial: 0 },
         { name: 'hit-count', label: { en: 'Hits', ko: '캐시' }, initial: 0 },

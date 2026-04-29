@@ -93,7 +93,7 @@ export const bstFacet: FacetJson = {
     },
     controls: {
       type: 'control-bar',
-      controls: ['play', 'step', 'pause', 'reset', { type: 'speed-slider', default: 1 }],
+      controls: [{ widget: 'button', action: 'play' }, { widget: 'button', action: 'step' }, { widget: 'button', action: 'pause' }, { widget: 'button', action: 'reset' }, { widget: 'speed-slider', action: 'speed', default: 1 }],
       metrics: [
         { name: 'compare-count', label: { en: 'Compares', ko: '비교' }, initial: 0 },
         { name: 'insert-count', label: { en: 'Inserts', ko: '삽입' }, initial: 0 },

@@ -36,7 +36,7 @@ export const subsetsumFacet: FacetJson = {
     },
     controls: {
       type: 'control-bar',
-      controls: ['play', 'step', 'pause', 'reset', { type: 'speed-slider', default: 1 }],
+      controls: [{ widget: 'button', action: 'play' }, { widget: 'button', action: 'step' }, { widget: 'button', action: 'pause' }, { widget: 'button', action: 'reset' }, { widget: 'speed-slider', action: 'speed', default: 1 }],
       metrics: [
         { name: 'visit-count', label: { en: 'Visit', ko: '방문' }, initial: 0 },
         { name: 'prune-count', label: { en: 'Prune', ko: '가지치기' }, initial: 0 },

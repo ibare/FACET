@@ -31,7 +31,7 @@ export const countingsortFacet: FacetJson = {
     },
     controls: {
       type: 'control-bar',
-      controls: ['play', 'step', 'pause', 'reset', { type: 'speed-slider', default: 1 }],
+      controls: [{ widget: 'button', action: 'play' }, { widget: 'button', action: 'step' }, { widget: 'button', action: 'pause' }, { widget: 'button', action: 'reset' }, { widget: 'speed-slider', action: 'speed', default: 1 }],
       metrics: [
         { name: 'read-count', label: { en: 'Read', ko: '읽기' }, initial: 0 },
         { name: 'write-count', label: { en: 'Write', ko: '쓰기' }, initial: 0 },

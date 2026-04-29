@@ -31,7 +31,7 @@ export const shellsortFacet: FacetJson = {
     },
     controls: {
       type: 'control-bar',
-      controls: ['play', 'step', 'pause', 'reset', { type: 'speed-slider', default: 1 }],
+      controls: [{ widget: 'button', action: 'play' }, { widget: 'button', action: 'step' }, { widget: 'button', action: 'pause' }, { widget: 'button', action: 'reset' }, { widget: 'speed-slider', action: 'speed', default: 1 }],
       metrics: [
         { name: 'compare-count', label: { en: 'Compare', ko: '비교' }, initial: 0 },
         { name: 'shift-count', label: { en: 'Shift', ko: '이동' }, initial: 0 },
