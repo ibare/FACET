@@ -1,0 +1,563 @@
+<!--
+  데모: 컴파일러 유한오토마타 — 새로운 방식 (2B)
+
+  따른 기획 문서: tasks/facet/compiler-finite-automata-2b-novel.md
+  레퍼런스 보고서: tasks/facet/compiler-finite-automata-references.md
+
+  시각 방향 한 줄:
+    "한 입력은 한 곡 — 보표의 가로줄이 상태, 박자 칸의 음표가 살아 있는 상태,
+     NFA 합창이 부풀고 죽는 모양으로 비결정성을 시간 자체의 모양으로 본다."
+
+  구현한 요소:
+    - 세로 보이스 라인 = 상태 (의미 라벨 좌측 표기)
+    - 박자 칸의 음표 = 살아 있는 상태 (한 박자 안에 동시 다중 음표 = 합창)
+    - 음표를 잇는 슬러 = 전이 (수평 = 자기 루프, 사선 = 다른 줄로 이동)
+    - 분기 부풀음 / 분기 죽음(쉼표 기호) / 마지막 박자의 별표 점등 / 트랩 회색 잔상
+    - DFA-축약 띠 (NFA 합창의 활성 집합 = DFA 한 음표)
+    - 박자 헤더에 입력 글자, 종지선
+    - 컨트롤: 재생/정지/리셋, 박자 슬라이더(스크럽), 한 박자 진행
+    - 새 메타포 안내문, 짧은 설명 박스, 레퍼런스 패널 (영감 + 회피 표준)
+
+  생략한 것:
+    - ε-전이 점선 잇기는 시각 효과만 (예제 NFA 는 ε 미사용)
+    - 토큰 경계(마디줄) / max-munch 시연
+    - 호버 시 prefix 예시, NFA↔DFA 모드 토글
+    - 음표 머리 충돌 회피용 좌/우 분산은 단순 세로 정렬만 (예제는 동시 음표 2~3 개로 충돌 적음)
+
+  임베드 폭 720px 컨테이너 안에서 동작한다고 가정.
+-->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>유한오토마타 — 합창의 곡 (2B 데모)</title>
+<script src="https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js"></script>
+<style>
+  body {
+    margin: 0;
+    background: #f0f0f0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+    color: #222;
+    line-height: 1.6;
+  }
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px;
+    background: white;
+    box-sizing: border-box;
+  }
+  .body-stub {
+    color: #999;
+    font-size: 14px;
+    margin: 16px 0;
+  }
+  .reference-panel {
+    border: 1px solid #e2e2e2;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin: 20px 0;
+    background: #fafafa;
+    font-size: 13px;
+  }
+  .reference-panel h4 {
+    margin: 4px 0 8px 0;
+    font-size: 13px;
+    color: #555;
+  }
+  .reference-panel ul {
+    margin: 0 0 8px 18px;
+    padding: 0;
+  }
+  .reference-panel .avoided li {
+    color: #a04040;
+  }
+  .concept-intro {
+    border-left: 3px solid #555;
+    padding: 4px 14px;
+    margin: 20px 0;
+    color: #333;
+    font-size: 14px;
+  }
+  .facet-visual {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 14px;
+    margin: 20px 0;
+    background: #fffdf6;
+  }
+  .metaphor-line {
+    font-size: 13px;
+    color: #6a4a1a;
+    font-style: italic;
+    margin: 0 0 10px 0;
+    padding: 6px 10px;
+    background: #fff5d6;
+    border-radius: 4px;
+  }
+  .song-title {
+    font-size: 13px;
+    color: #444;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #444;
+  }
+  .controls button {
+    border: 1px solid #aaa;
+    background: white;
+    padding: 4px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+  .controls button:hover { background: #f0f0f0; }
+  .controls input[type="range"] { flex: 1; }
+  .legend {
+    margin-top: 10px;
+    padding: 8px 10px;
+    background: #f8f5ec;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #444;
+  }
+  .legend b { color: #222; }
+  svg { display: block; }
+  /* 보표 스타일 */
+  .voice-line { stroke: #b9b0a3; stroke-width: 1; }
+  .voice-line.accept { stroke: #c98a18; stroke-width: 2; }
+  .voice-line.trap { stroke: #aaa; stroke-dasharray: 3 3; }
+  .voice-label { font-size: 10px; fill: #555; font-style: italic; }
+  .voice-label.accept { fill: #b07000; font-weight: bold; }
+  .voice-label.trap { fill: #999; }
+  .beat-grid { stroke: #efe7d4; stroke-width: 1; }
+  .beat-head { font-size: 13px; fill: #333; font-weight: 600; text-anchor: middle; font-family: ui-monospace, monospace; }
+  .barline { stroke: #555; stroke-width: 1; }
+  .endline { stroke: #333; stroke-width: 2; }
+  .note { fill: #1c1c1c; }
+  .note.faded { fill: #c9c9c9; }
+  .note.dying { fill: #c25555; opacity: 0.55; }
+  .note.accept-final { fill: #d8a31a; stroke: #b07000; stroke-width: 1; }
+  .note.trap { fill: #999; }
+  .slur { fill: none; stroke: #333; stroke-width: 1.2; }
+  .slur.faded { stroke: #c9c9c9; }
+  .slur.trap { stroke: #aaa; }
+  .rest-symbol { font-size: 14px; fill: #b04040; text-anchor: middle; font-family: serif; }
+  .star { font-size: 18px; fill: #d8a31a; text-anchor: middle; }
+  .dfa-label { font-size: 9px; fill: #555; text-anchor: middle; font-family: ui-monospace, monospace; }
+  .section-divider { stroke: #ddd; stroke-width: 1; stroke-dasharray: 2 3; }
+  .section-title { font-size: 10px; fill: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="body-stub">…여기까지 NFA 의 정의를 살펴봤다. 정의만 봐서는 "동시에 여러 상태에 살아 있다" 는 말이 잘 와닿지 않는다. 다음 시각화는 NFA 를 합창단의 곡으로 부르며 그 동시성을 들리게 한다.…</p>
+
+  <!-- (1) 레퍼런스 패널 -->
+  <div class="reference-panel">
+    <h4>이 시각화의 영감</h4>
+    <ul>
+      <li><b>Russ Cox — Thompson NFA</b>: "병렬 부대(parallel troops)" 비유. 글로만 있던 동시성을 시각 언어로.</li>
+      <li><b>Stanford CS103 Subset Construction Guide</b>: "한 페이지가 한 단계" 의 종이 만화 흐름 — 곡 전체를 한 컷에.</li>
+      <li><b>regex101</b>: 시간 가역성 / 스크럽 감각 — 입력 위치를 자유롭게 점프.</li>
+    </ul>
+    <h4>의식적으로 회피한 표준 레퍼런스</h4>
+    <ul class="avoided">
+      <li><b>JFLAP / Automata Tutor / AutomataVerse / jFAST</b>: 원-화살표-이중원 그래프 컨벤션을 메인 시각으로 두지 않음.</li>
+      <li><b>Debuggex / Regexper</b>: 좌→우 노드 그래프 / 철도 다이어그램의 "노선" 메타포를 차용하지 않음.</li>
+      <li><b>일반적인 Step 버튼 패러다임</b>: "현재만 점등" 이 아니라 곡 전체를 한 컷에 보이고 슬라이더로 시야만 이동.</li>
+    </ul>
+  </div>
+
+  <!-- (2) 대상 개념 설명 -->
+  <div class="concept-intro">
+    <b>유한오토마타란.</b> 입력 글자를 한 개씩 읽으면서 유한 개의 상태 사이를 옮겨 다니다가, 입력이 끝났을 때 어디에 있는지로 받아들일지 거절할지를 결정하는 단순한 인식기다. 갈 길이 항상 한 곳뿐이면 결정적(DFA), 같은 글자에 갈 곳이 여러 곳일 수 있으면 비결정적(NFA). 두 모델은 같은 부류(정규언어)를 인식하지만, NFA 는 동시에 여러 상태에 살아 있을 수 있다. 컴파일러의 렉서/스캐너가 소스 코드 글자 스트림을 토큰으로 잘라내는 그 메커니즘이다.
+  </div>
+
+  <!-- (3) 시각화 데모 -->
+  <div class="facet-visual">
+    <p class="metaphor-line">"오토마타의 한 입력은 한 곡이다. 갈래가 늘어나는 비결정성은 합창의 화음이 부푸는 것."</p>
+
+    <div class="song-title">
+      <span><b>곡:</b> 정규식 <code>(a|b)*abb</code> 의 NFA 가 입력 <code>aabb</code> 를 부른다</span>
+      <span id="status">박자 0 / 4</span>
+    </div>
+
+    <svg id="score" width="690" height="420"></svg>
+
+    <div class="controls">
+      <button id="reset">⟲ 리셋</button>
+      <button id="step">▶| 한 박자</button>
+      <button id="play">▶ 자동 재생</button>
+      <input type="range" id="scrub" min="0" max="4" value="0" step="1" />
+      <span id="scrub-label">0</span>
+    </div>
+
+    <div class="legend">
+      <b>보이스(가로줄)</b> = 상태(지금까지의 기억). &nbsp;
+      <b>박자 안의 음표</b> = 그 시각에 살아 있는 상태 — NFA 는 한 박자에 여러 음이 동시에 울리는 합창. &nbsp;
+      <b>슬러(잇는 곡선)</b> = 전이. &nbsp;
+      <b>마지막 박자의 ★ 보이스</b>에 음표가 살아 있어야 수락. 막다른 분기는 <span style="color:#b04040;">𝄽 쉼표</span>로 침묵.
+    </div>
+  </div>
+
+  <p>곡 아래 좁은 한 줄이 <b>DFA 축약 보표</b>다. 매 박자에 단성 음표 하나가 떠 있고, 그 라벨이 위쪽 NFA 합창의 그 박자에 살아 있는 보이스 집합과 일치한다. 이 시각적 일치가 곧 부분집합 구성의 의미다.</p>
+
+  <p class="body-stub">…다음 절에서 이 변환을 정식으로 살펴본다.…</p>
+</div>
+
+<script>
+/* ---------------- 데이터 모델 ----------------
+   정규식 (a|b)*abb 의 표준 NFA (상태 4 개, ε 없는 단순화 버전):
+     q0: 시작 — "아무것도 못 본 상태 / 또는 헛친 상태"
+     q1: "방금 a 를 본 상태"
+     q2: "ab 를 본 상태"
+     q3: "abb 를 본 상태" (수락)
+
+   전이 (NFA — 비결정적):
+     q0 --a--> {q0, q1}    (a 를 보면 머무를 수도, q1 으로 갈 수도)
+     q0 --b--> {q0}
+     q1 --b--> {q2}
+     q2 --b--> {q3}
+     (q1 --a--> {} : 죽음 / q3 는 흡수)
+
+   입력: "aabb"
+   각 박자의 활성 상태 집합 (lockstep simulation):
+     박자0 (입력 시작): {q0}
+     박자1 (a 소비 후): {q0, q1}
+     박자2 (a 소비 후): {q0, q1}        ← q1 에서 'a' 갈 곳 없음 = 분기 죽음
+     박자3 (b 소비 후): {q0, q2}
+     박자4 (b 소비 후, 종지): {q0, q3}  ← q3 = 수락 → 받아들임
+*/
+
+const states = [
+  { id: 'q3', label: 'abb 본 상태 (수락)', y: 60,  accept: true },
+  { id: 'q2', label: 'ab 본 상태',         y: 110, accept: false },
+  { id: 'q1', label: 'a 본 상태',          y: 160, accept: false },
+  { id: 'q0', label: '시작 / 다른 상태',    y: 210, accept: false, start: true },
+];
+const stateIndex = Object.fromEntries(states.map(s => [s.id, s]));
+
+const beats = [
+  { i: 0, char: '·',   active: ['q0'],          dfa: '{q0}' },
+  { i: 1, char: 'a',   active: ['q0','q1'],     dfa: '{q0,q1}' },
+  { i: 2, char: 'a',   active: ['q0','q1'],     dfa: '{q0,q1}', dying: ['q1'] /* 박자1의 q1 은 q2 갈 길 있고, 새 q1 만 살아남음 — 시각 단순화: 박자1→박자2 에서 q1 은 q1로만 다시 (a로 q0->q1) */ },
+  { i: 3, char: 'b',   active: ['q0','q2'],     dfa: '{q0,q2}' },
+  { i: 4, char: 'b',   active: ['q0','q3'],     dfa: '{q0,q3★}' },
+];
+
+// 전이 (이전 박자 상태 -> 다음 박자 상태). 시각용 슬러 데이터.
+// 박자 i-1 에서 활성이었던 상태들이 박자 i 에서 어디로 가는지.
+const transitions = [
+  // 박자 0 -> 1 (a 소비)
+  { from: 0, src: 'q0', dst: 'q0' },
+  { from: 0, src: 'q0', dst: 'q1' },
+  // 박자 1 -> 2 (a 소비)
+  { from: 1, src: 'q0', dst: 'q0' },
+  { from: 1, src: 'q0', dst: 'q1' },
+  { from: 1, src: 'q1', dst: null /* 죽음 */ },
+  // 박자 2 -> 3 (b 소비)
+  { from: 2, src: 'q0', dst: 'q0' },
+  { from: 2, src: 'q1', dst: 'q2' },
+  // 박자 3 -> 4 (b 소비)
+  { from: 3, src: 'q0', dst: 'q0' },
+  { from: 3, src: 'q2', dst: 'q3' },
+];
+
+/* ---------------- 레이아웃 상수 ---------------- */
+const W = 690;
+const H = 420;
+const labelW = 130;     // 좌측 라벨 폭
+const beatW = 90;       // 박자 한 칸 폭
+const beatStartX = labelW + 20;
+const headerY = 36;
+const lineYOffset = 10; // 보표 영역 시작 보정
+const dfaY = 280;       // DFA 띠 시작
+const dfaLineY = 310;
+const explainY = 350;
+
+const totalBeats = beats.length;
+
+/* ---------------- SVG 셋업 ---------------- */
+const svg = d3.select('#score');
+const root = svg.append('g');
+
+// 박자 헤더 (입력 글자)
+const headerG = root.append('g').attr('class', 'beat-header');
+beats.forEach((b, i) => {
+  const x = beatStartX + i * beatW;
+  // 박자 위치 표시 + 글자
+  headerG.append('text')
+    .attr('class', 'beat-head')
+    .attr('x', x)
+    .attr('y', headerY)
+    .text(i === 0 ? '시작' : ('"' + b.char + '"'));
+  // 박자 번호 작게
+  headerG.append('text')
+    .attr('x', x)
+    .attr('y', headerY + 14)
+    .attr('text-anchor', 'middle')
+    .attr('font-size', 9)
+    .attr('fill', '#888')
+    .text('박자 ' + i);
+});
+
+// 종지선
+root.append('line')
+  .attr('class', 'endline')
+  .attr('x1', beatStartX + (totalBeats - 1) * beatW + beatW * 0.5)
+  .attr('x2', beatStartX + (totalBeats - 1) * beatW + beatW * 0.5)
+  .attr('y1', headerY + 20)
+  .attr('y2', dfaLineY + 20);
+
+// 보이스 라인 (가로줄 = 상태)
+const linesG = root.append('g');
+states.forEach(s => {
+  // 라벨
+  linesG.append('text')
+    .attr('class', 'voice-label' + (s.accept ? ' accept' : ''))
+    .attr('x', labelW + 12)
+    .attr('y', s.y + 4)
+    .attr('text-anchor', 'end')
+    .text((s.accept ? '★ ' : (s.start ? '▷ ' : '  ')) + s.id + ' · ' + s.label);
+
+  // 가로줄
+  linesG.append('line')
+    .attr('class', 'voice-line' + (s.accept ? ' accept' : ''))
+    .attr('x1', beatStartX - 10)
+    .attr('x2', beatStartX + (totalBeats - 1) * beatW + 30)
+    .attr('y1', s.y)
+    .attr('y2', s.y);
+});
+
+// 박자 세로 그리드 (옅게)
+const gridG = root.append('g');
+beats.forEach((b, i) => {
+  const x = beatStartX + i * beatW;
+  gridG.append('line')
+    .attr('class', 'beat-grid')
+    .attr('x1', x).attr('x2', x)
+    .attr('y1', states[0].y - 18)
+    .attr('y2', states[states.length - 1].y + 18);
+});
+
+// DFA 띠 라벨 + 라인
+root.append('line')
+  .attr('class', 'section-divider')
+  .attr('x1', beatStartX - 20).attr('x2', beatStartX + (totalBeats - 1) * beatW + 30)
+  .attr('y1', dfaY - 8).attr('y2', dfaY - 8);
+
+root.append('text')
+  .attr('class', 'section-title')
+  .attr('x', labelW + 12).attr('y', dfaY + 8)
+  .attr('text-anchor', 'end')
+  .text('DFA 축약 보표');
+
+root.append('line')
+  .attr('class', 'voice-line')
+  .attr('x1', beatStartX - 10)
+  .attr('x2', beatStartX + (totalBeats - 1) * beatW + 30)
+  .attr('y1', dfaLineY).attr('y2', dfaLineY);
+
+// 동적 레이어 (음표 / 슬러 / 상태별)
+const slurLayer = root.append('g');
+const noteLayer = root.append('g');
+const dfaLayer = root.append('g');
+const restLayer = root.append('g');
+const starLayer = root.append('g');
+
+/* ---------------- 렌더링 ---------------- */
+let currentBeat = 0;
+
+function beatX(i) { return beatStartX + i * beatW; }
+function noteOpacity(beatI, currentI) {
+  if (beatI > currentI) return 0;            // 아직 안 옴 - 안 보임
+  if (beatI === currentI) return 1;          // 현재 박자 - 진하게
+  // 잔상: 멀어질수록 흐려짐
+  const diff = currentI - beatI;
+  return Math.max(0.18, 0.55 - diff * 0.08);
+}
+
+function render(curr) {
+  currentBeat = curr;
+  d3.select('#status').text(`박자 ${curr} / ${totalBeats - 1}`);
+  d3.select('#scrub-label').text(curr);
+  d3.select('#scrub').property('value', curr);
+
+  // 슬러 (전이)
+  const slurs = slurLayer.selectAll('path.slur').data(transitions, (d, i) => i);
+  slurs.exit().remove();
+  slurs.enter().append('path')
+    .attr('class', 'slur')
+    .merge(slurs)
+    .attr('d', d => {
+      const x1 = beatX(d.from);
+      const x2 = beatX(d.from + 1);
+      const y1 = stateIndex[d.src].y;
+      const y2 = d.dst ? stateIndex[d.dst].y : y1; // 죽음은 안 그림
+      const mx = (x1 + x2) / 2;
+      const my = (y1 + y2) / 2 - 6;
+      return `M${x1},${y1} Q${mx},${my} ${x2},${y2}`;
+    })
+    .attr('display', d => {
+      if (!d.dst) return 'none';
+      // 슬러는 도착 박자가 현재 박자 이하면 보이게
+      return (d.from + 1) <= currentBeat ? null : 'none';
+    })
+    .attr('opacity', d => {
+      const arriveBeat = d.from + 1;
+      if (arriveBeat === currentBeat) return 0.95;
+      const diff = currentBeat - arriveBeat;
+      return Math.max(0.15, 0.6 - diff * 0.1);
+    })
+    .classed('faded', d => (d.from + 1) < currentBeat);
+
+  // 죽은 분기의 쉼표 (q1 박자2 에서 갈 곳 없음 등)
+  const restData = [];
+  transitions.forEach(t => {
+    if (t.dst === null && (t.from + 1) <= currentBeat) {
+      restData.push({
+        x: beatX(t.from + 1),
+        y: stateIndex[t.src].y,
+        beat: t.from + 1,
+      });
+    }
+  });
+  const rests = restLayer.selectAll('text.rest-symbol').data(restData, d => d.beat + ':' + d.y);
+  rests.exit().remove();
+  rests.enter().append('text')
+    .attr('class', 'rest-symbol')
+    .merge(rests)
+    .attr('x', d => d.x)
+    .attr('y', d => d.y + 4)
+    .attr('opacity', d => Math.max(0.4, 0.9 - (currentBeat - d.beat) * 0.15))
+    .text('𝄽');
+
+  // 음표 (활성 상태)
+  const noteData = [];
+  beats.forEach(b => {
+    if (b.i > currentBeat) return;
+    b.active.forEach(sid => {
+      const s = stateIndex[sid];
+      const isFinalAccept = (b.i === totalBeats - 1) && s.accept;
+      noteData.push({
+        x: beatX(b.i),
+        y: s.y,
+        beat: b.i,
+        sid,
+        accept: s.accept,
+        isFinalAccept,
+      });
+    });
+  });
+  const notes = noteLayer.selectAll('ellipse.note').data(noteData, d => d.beat + ':' + d.sid);
+  notes.exit().remove();
+  notes.enter().append('ellipse')
+    .attr('class', 'note')
+    .attr('rx', 7).attr('ry', 5)
+    .attr('transform', d => `rotate(-18 ${d.x} ${d.y})`)
+    .merge(notes)
+    .attr('cx', d => d.x)
+    .attr('cy', d => d.y)
+    .attr('class', d => {
+      if (d.isFinalAccept && currentBeat === totalBeats - 1) return 'note accept-final';
+      if (d.beat < currentBeat) return 'note faded';
+      return 'note';
+    })
+    .attr('opacity', d => noteOpacity(d.beat, currentBeat));
+
+  // 별 (마지막 박자 수락 표시)
+  const starData = [];
+  if (currentBeat === totalBeats - 1) {
+    const lastBeat = beats[totalBeats - 1];
+    lastBeat.active.forEach(sid => {
+      if (stateIndex[sid].accept) {
+        starData.push({
+          x: beatX(lastBeat.i),
+          y: stateIndex[sid].y - 14,
+        });
+      }
+    });
+  }
+  const stars = starLayer.selectAll('text.star').data(starData);
+  stars.exit().remove();
+  stars.enter().append('text')
+    .attr('class', 'star')
+    .merge(stars)
+    .attr('x', d => d.x)
+    .attr('y', d => d.y)
+    .text('★');
+
+  // DFA 띠 — 매 박자에 음표 한 개 + 라벨
+  const dfaNotes = beats.filter(b => b.i <= currentBeat);
+  const dnotes = dfaLayer.selectAll('g.dfa-note').data(dfaNotes, d => d.i);
+  dnotes.exit().remove();
+  const dnotesEnter = dnotes.enter().append('g').attr('class', 'dfa-note');
+  dnotesEnter.append('ellipse')
+    .attr('rx', 6).attr('ry', 4);
+  dnotesEnter.append('text')
+    .attr('class', 'dfa-label')
+    .attr('y', 18);
+  const dnotesM = dnotesEnter.merge(dnotes);
+  dnotesM.attr('transform', d => `translate(${beatX(d.i)},${dfaLineY})`);
+  dnotesM.select('ellipse')
+    .attr('class', d => d.i < currentBeat ? 'note faded' : 'note')
+    .attr('opacity', d => noteOpacity(d.i, currentBeat))
+    .attr('transform', d => `rotate(-18)`);
+  dnotesM.select('text')
+    .text(d => d.dfa)
+    .attr('opacity', d => noteOpacity(d.i, currentBeat) * 0.95);
+
+  // 종지 도달시 결과 텍스트
+  if (currentBeat === totalBeats - 1) {
+    const accepted = beats[totalBeats - 1].active.some(sid => stateIndex[sid].accept);
+    d3.select('#status').text(`박자 ${currentBeat} / ${totalBeats - 1} — ${accepted ? '★ 수락 (Accept)' : '× 거부 (Reject)'}`);
+  }
+}
+
+/* ---------------- 컨트롤 ---------------- */
+let timer = null;
+
+function stopPlay() {
+  if (timer) { clearInterval(timer); timer = null; }
+  d3.select('#play').text('▶ 자동 재생');
+}
+
+d3.select('#reset').on('click', () => {
+  stopPlay();
+  render(0);
+});
+
+d3.select('#step').on('click', () => {
+  stopPlay();
+  if (currentBeat < totalBeats - 1) render(currentBeat + 1);
+});
+
+d3.select('#play').on('click', () => {
+  if (timer) { stopPlay(); return; }
+  d3.select('#play').text('⏸ 정지');
+  if (currentBeat >= totalBeats - 1) render(0);
+  timer = setInterval(() => {
+    if (currentBeat >= totalBeats - 1) { stopPlay(); return; }
+    render(currentBeat + 1);
+  }, 700);
+});
+
+d3.select('#scrub').on('input', function() {
+  stopPlay();
+  render(+this.value);
+});
+
+// 초기 렌더 — 곡 전체 슬러 윤곽이 보이도록 마지막 박자에서 시작 후 0 으로 리셋
+render(0);
+
+</script>
+</body>
+</html>

@@ -1,0 +1,983 @@
+<!--
+  FACET 데모 — 유한오토마타 (DFA) 시각화 2A: 공통 강화
+
+  따른 기획 문서:
+    /tasks/facet/compiler-finite-automata-2a-common.md
+  레퍼런스 보고서:
+    /tasks/facet/compiler-finite-automata-references.md
+
+  시각 방향 한 줄:
+    "라벨된 도시 지도 위를 달리는 발광 토큰 + 전이표 동기 + 경로 잔상."
+
+  구현한 요소:
+    - 원형 노드 + 라벨된 화살표 + 이중원 (수락 상태)
+    - 입력 테이프 + 헤드 (▼) + 글자가 그래프 안으로 빨려들어가는 모션
+    - 활성 토큰 (발광점) + 박자 단위 점프
+    - 경로 잔상 (지나간 화살표 stroke-opacity 누적)
+    - δ 전이표 동기 점등 (그래프 화살표와 같은 색)
+    - 결과 패널 (READY / ACCEPT / REJECT)
+    - 컨트롤: ▶ ⏸ ⏮ ⏭ + 속도 + 스크럽 슬라이더 + 의미 라벨 토글
+    - 기본 예제: 부동소수 리터럴 인식 DFA, 입력 "3.14e5"
+    - 막힘(trap) 시 토큰 사라짐 + 입력 글자 빨갛게 잠김
+
+  의도적으로 생략한 것:
+    - NFA 모드 / 분기 트리 (요소 4) — 데모는 DFA 한 컷에 집중
+    - 입력 문자열 직접 편집 — 드롭다운으로 예시 전환만
+    - 그래프 morph 애니메이션 (DFA↔NFA 토글)
+    - trail decay (잔상 감쇠)
+
+  임베드 폭 720px 가정. 컨테이너 안에서만 동작.
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>유한오토마타 — 공통 강화 데모</title>
+<style>
+  body {
+    margin: 0;
+    background: #ececec;
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+      "Segoe UI", "Noto Sans KR", sans-serif;
+    color: #222;
+    line-height: 1.55;
+  }
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px;
+    background: white;
+    box-shadow: 0 0 0 1px #ddd;
+  }
+  .placeholder {
+    color: #b8b8b8;
+    font-size: 13px;
+    margin: 8px 0;
+  }
+  .reference-panel {
+    border: 1px solid #e2e2e2;
+    border-left: 3px solid #888;
+    padding: 12px 14px;
+    background: #fafafa;
+    font-size: 12.5px;
+    margin: 18px 0;
+  }
+  .reference-panel h4 {
+    margin: 0 0 8px 0;
+    font-size: 12px;
+    color: #555;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .reference-panel ul { margin: 0; padding-left: 18px; }
+  .reference-panel li { margin: 4px 0; }
+  .reference-panel a { color: #4060b0; text-decoration: none; }
+  .reference-panel a:hover { text-decoration: underline; }
+  .reference-panel .ident { color: #666; font-style: italic; }
+
+  .concept-intro {
+    margin: 18px 0;
+    padding: 14px 16px;
+    background: #f5f6fa;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  .concept-intro h3 {
+    margin: 0 0 8px 0;
+    font-size: 13px;
+    color: #4a4f6a;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .catchphrase {
+    font-style: italic;
+    color: #4a4f6a;
+    margin-top: 8px;
+    font-size: 13.5px;
+  }
+
+  /* === Facet Visual === */
+  .facet-visual {
+    border: 1px solid #d6d6d6;
+    border-radius: 6px;
+    padding: 14px;
+    background: white;
+    margin: 18px 0;
+    user-select: none;
+  }
+  .fv-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: #666;
+  }
+  .fv-result {
+    font-weight: bold;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 11.5px;
+    background: #eee;
+    color: #555;
+  }
+  .fv-result.accept { background: #d8efd8; color: #1e6a1e; }
+  .fv-result.reject { background: #f5d8d8; color: #a02020; }
+
+  /* 입력 테이프 */
+  .tape {
+    display: flex;
+    gap: 4px;
+    align-items: flex-start;
+    height: 48px;
+    margin-bottom: 6px;
+    position: relative;
+    padding-top: 14px;
+  }
+  .tape-cell {
+    width: 30px;
+    height: 30px;
+    border: 1.5px solid #bbb;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 16px;
+    font-weight: 500;
+    background: white;
+    color: #333;
+    transition: all 180ms ease;
+    position: relative;
+  }
+  .tape-cell.consumed { background: #f0f0f0; color: #aaa; border-color: #ddd; }
+  .tape-cell.blocked { background: #ffe0e0; color: #b03030; border-color: #d05050; }
+  .tape-cell.head-here { box-shadow: 0 0 0 2px #4868c8; border-color: #4868c8; }
+  .tape-head {
+    position: absolute;
+    top: -2px;
+    width: 30px;
+    text-align: center;
+    color: #4868c8;
+    font-size: 14px;
+    pointer-events: none;
+    transition: left 220ms cubic-bezier(0.5, 0, 0.3, 1);
+  }
+
+  /* 그래프 + 표 양분 */
+  .fv-body {
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    gap: 8px;
+    align-items: stretch;
+  }
+  .fv-graph {
+    background: #fafbfc;
+    border-radius: 4px;
+    border: 1px solid #ececec;
+    position: relative;
+    height: 280px;
+  }
+  .fv-graph svg { width: 100%; height: 100%; display: block; }
+
+  .fv-table {
+    background: #fafbfc;
+    border-radius: 4px;
+    border: 1px solid #ececec;
+    padding: 8px;
+    font-size: 11px;
+    font-family: "SF Mono", "Menlo", monospace;
+  }
+  .fv-table h5 {
+    margin: 0 0 6px 0;
+    font-size: 10.5px;
+    color: #777;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    font-family: -apple-system, sans-serif;
+  }
+  .fv-table table { border-collapse: collapse; width: 100%; }
+  .fv-table th, .fv-table td {
+    border: 1px solid #e0e0e0;
+    padding: 3px 0;
+    text-align: center;
+    background: white;
+    color: #555;
+    font-size: 11px;
+    transition: all 200ms ease;
+  }
+  .fv-table th { background: #f0f0f0; color: #666; font-weight: 600; }
+  .fv-table td.cell-active {
+    background: #4868c8;
+    color: white;
+    font-weight: bold;
+    transform: scale(1.05);
+  }
+  .fv-table td.cell-trap { color: #ccc; }
+
+  /* 컨트롤 */
+  .fv-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 8px;
+    background: #f7f7f9;
+    border-radius: 4px;
+    flex-wrap: wrap;
+    font-size: 12px;
+  }
+  .fv-controls button {
+    border: 1px solid #ccc;
+    background: white;
+    border-radius: 3px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-size: 13px;
+    color: #333;
+  }
+  .fv-controls button:hover { background: #eee; }
+  .fv-controls button.primary {
+    background: #4868c8;
+    color: white;
+    border-color: #4868c8;
+  }
+  .fv-controls button.primary:hover { background: #3858b8; }
+  .fv-controls select {
+    border: 1px solid #ccc;
+    border-radius: 3px;
+    padding: 3px 4px;
+    font-size: 12px;
+    background: white;
+  }
+  .fv-controls input[type="range"] { flex: 1; min-width: 100px; }
+  .fv-controls label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #555;
+    cursor: pointer;
+  }
+  .fv-controls .group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .fv-help {
+    margin-top: 10px;
+    font-size: 12.5px;
+    color: #555;
+    background: #fdfcf5;
+    border-left: 3px solid #d4cb89;
+    padding: 8px 12px;
+    border-radius: 0 4px 4px 0;
+  }
+  .fv-help div { margin: 3px 0; }
+  .fv-help b { color: #2e3050; }
+
+  /* SVG 노드 / 엣지 */
+  .node circle {
+    fill: white;
+    stroke: #555;
+    stroke-width: 2;
+    transition: all 220ms ease;
+  }
+  .node.accept circle.outer {
+    fill: none;
+    stroke: #555;
+    stroke-width: 1.5;
+  }
+  .node.start-marker { stroke: #888; }
+  .node text {
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 12px;
+    text-anchor: middle;
+    dominant-baseline: central;
+    fill: #333;
+    pointer-events: none;
+  }
+  .node.semantic text {
+    font-family: -apple-system, sans-serif;
+    font-size: 9.5px;
+  }
+  .node.active circle { fill: #4868c8; stroke: #2848a8; }
+  .node.active text { fill: white; }
+  .node.active circle.outer { stroke: #2848a8; }
+  .node.accepting circle { fill: #5cbf5c; stroke: #2e8a2e; }
+  .node.accepting text { fill: white; }
+  .node.accepting circle.outer { stroke: #2e8a2e; }
+  .node.rejecting circle { fill: white; stroke: #c84848; stroke-width: 3; }
+  .node.rejecting text { fill: #c84848; }
+
+  .edge {
+    fill: none;
+    stroke: #aaa;
+    stroke-width: 1.6;
+    transition: stroke 200ms ease, stroke-width 200ms ease;
+  }
+  .edge-trail {
+    fill: none;
+    stroke: #4868c8;
+    stroke-width: 3;
+    stroke-opacity: 0;
+    transition: stroke-opacity 280ms ease;
+    pointer-events: none;
+  }
+  .edge.firing { stroke: #4868c8; stroke-width: 3.2; }
+  .edge-label {
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 11px;
+    fill: #666;
+    text-anchor: middle;
+    pointer-events: none;
+  }
+  .edge-label.firing { fill: #2848a8; font-weight: bold; }
+
+  .token {
+    fill: #4868c8;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .token.flying { opacity: 1; }
+
+  .letter-fly {
+    font-family: "SF Mono", "Menlo", monospace;
+    font-size: 14px;
+    font-weight: bold;
+    fill: #4868c8;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  /* 호흡 펄스 (대기 상태) */
+  @keyframes idle-pulse {
+    0%, 100% { stroke-width: 2; }
+    50% { stroke-width: 3.5; }
+  }
+  .node.idle circle { animation: idle-pulse 2s ease-in-out infinite; stroke: #4868c8; }
+</style>
+</head>
+<body>
+<div class="page">
+  <p class="placeholder">…앞 본문 placeholder: 컴파일러의 첫 단계인 렉서/스캐너가 소스 코드 글자 스트림을 토큰으로 잘라낼 때, 그 안에서 실제로 도는 메커니즘이 바로 유한오토마타다. 그래프 위의 한 점이 글자를 먹으며 옮겨 다닌다…</p>
+
+  <div class="reference-panel">
+    <h4>레퍼런스</h4>
+    <ul>
+      <li>
+        <a href="https://www.jflap.org/" target="_blank">JFLAP</a>
+        <span class="ident">— 원/화살표/이중원 + Step 컨트롤 + NFA 분기 트리. 시각 언어의 표준 골격.</span>
+      </li>
+      <li>
+        <a href="https://ivanzuzak.info/noam/webapps/fsm_simulator/" target="_blank">ivanzuzak FSM Simulator</a>
+        <span class="ident">— Graphviz 기반 정적 도식 + 디버거식 step-into. 깔끔한 베이스라인.</span>
+      </li>
+      <li>
+        <a href="https://www.cs.mcgill.ca/~cs520/2023/slides/4-lexer-auto.pdf" target="_blank">McGill CS520 Lecture 4</a>
+        <span class="ident">— δ 전이표와 그래프의 이중 표상. "그래프 + 표 동기" 의 출발.</span>
+      </li>
+      <li>
+        <a href="https://www.debuggex.com/" target="_blank">Debuggex</a>
+        <span class="ident">— 한 입력 = 그래프 위의 경로. 트레이스/잔상 발상의 기원.</span>
+      </li>
+    </ul>
+  </div>
+
+  <div class="concept-intro">
+    <h3>대상 개념 — 유한오토마타</h3>
+    유한오토마타는 입력 문자열을 <b>한 글자씩</b> 읽으면서 <b>유한 개의 상태</b> 사이를 옮겨 다니다가, 입력이 끝났을 때 어디에 있는지로 <b>받아들일지 거절할지</b>를 결정하는 단순한 인식기다. 갈 길이 항상 한 곳뿐이면 결정적(DFA), 같은 글자에 갈 곳이 여러 곳일 수 있으면 비결정적(NFA)이다. 컴파일러의 렉서는 이 메커니즘으로 소스 코드 글자 스트림에서 식별자/숫자/키워드 같은 토큰을 잘라낸다.
+    <div class="catchphrase">"한 글자씩 먹으며 상태 사이를 옮겨 다니다, 다 먹었을 때 받아들일지 거절할지를 결정하는 작은 기계."</div>
+  </div>
+
+  <div class="facet-visual">
+    <div class="fv-header">
+      <span>부동소수 리터럴 인식 DFA</span>
+      <span class="fv-result" id="result">READY</span>
+    </div>
+
+    <!-- 입력 테이프 -->
+    <div class="tape" id="tape"></div>
+
+    <!-- 그래프 + 표 -->
+    <div class="fv-body">
+      <div class="fv-graph">
+        <svg id="graph" viewBox="0 0 460 280" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#888" />
+            </marker>
+            <marker id="arrow-fire" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#4868c8" />
+            </marker>
+          </defs>
+          <g id="edges-trails"></g>
+          <g id="edges"></g>
+          <g id="edge-labels"></g>
+          <g id="nodes"></g>
+          <g id="moving"></g>
+        </svg>
+      </div>
+
+      <div class="fv-table">
+        <h5>δ 전이표</h5>
+        <table id="delta-table"></table>
+      </div>
+    </div>
+
+    <!-- 컨트롤 -->
+    <div class="fv-controls">
+      <div class="group">
+        <button id="btn-reset" title="처음으로">⏮</button>
+        <button id="btn-play" class="primary" title="재생/정지">▶</button>
+        <button id="btn-step" title="한 박자 진행">⏭</button>
+      </div>
+      <div class="group">
+        <select id="speed">
+          <option value="1200">0.5x</option>
+          <option value="600" selected>1x</option>
+          <option value="300">2x</option>
+        </select>
+      </div>
+      <input type="range" id="scrub" min="0" max="6" step="1" value="0" />
+      <div class="group">
+        <select id="example">
+          <option value="3.14e5">3.14e5 (수락)</option>
+          <option value="3.14">3.14 (수락)</option>
+          <option value="3..14">3..14 (거부)</option>
+          <option value="e5">e5 (거부)</option>
+        </select>
+      </div>
+      <label>
+        <input type="checkbox" id="semantic" />
+        의미 라벨
+      </label>
+    </div>
+
+    <div class="fv-help">
+      <div><b>노드</b>는 상태 — 지금까지 본 글자들의 요약된 기억.</div>
+      <div><b>화살표</b>는 전이 — 글자 하나를 먹으며 한 상태에서 다른 상태로.</div>
+      <div><b>이중원</b>에 멈춰 끝나면 받아들임, 그 외에는 거절.</div>
+    </div>
+  </div>
+
+  <p style="font-size:13px; color:#555;">
+    잔상이 옅게 누적되며 "어디를 지나왔는지" 한 컷에 보이고, δ 전이표의 셀이 그래프 화살표와 같은 박자에 점등된다. <b>의미 라벨</b> 토글을 켜면 q0/q1 식별자가 "정수부 봤음" 같은 기억의 내용으로 바뀐다.
+  </p>
+
+  <p class="placeholder">…뒷 본문 placeholder: 이 시각화 이후 본문은 부분집합 구성으로 NFA→DFA, 톰슨 구성으로 정규식↔NFA, 렉서의 max-munch 같은 응용으로 자연스럽게 확장된다…</p>
+</div>
+
+<script>
+// ============================================================
+// DFA 정의 — 부동소수 리터럴 인식
+// 알파벳: d (숫자), . , e
+//   q0 = 시작 / 아직 아무것도 못 봤음
+//   q1 = 정수부 봤음
+//   q2 = 소수점 봤음, 소수부 미시작
+//   q3 = 소수부 봤음 (수락)
+//   q4 = 지수부 글자 e 봤음
+//   q5 = 지수부 숫자 봤음 (수락)
+// ============================================================
+
+const states = [
+  { id: "q0", semantic: "시작",          x:  60, y: 140, accept: false, start: true },
+  { id: "q1", semantic: "정수부 봤음",     x: 160, y:  60, accept: false },
+  { id: "q2", semantic: "소수점 봤음",     x: 260, y: 140, accept: false },
+  { id: "q3", semantic: "소수부 봤음",     x: 360, y:  60, accept: true  },
+  { id: "q4", semantic: "e 봤음",         x: 360, y: 220, accept: false },
+  { id: "q5", semantic: "지수부 숫자 봤음", x: 420, y: 140, accept: true  }
+];
+
+// δ: from → symbol → to
+// symbol 'd' = digit, '.' = dot, 'e' = e
+const delta = {
+  q0: { d: "q1" },
+  q1: { d: "q1", ".": "q2", e: "q4" },
+  q2: { d: "q3" },
+  q3: { d: "q3", e: "q4" },
+  q4: { d: "q5" },
+  q5: { d: "q5" }
+};
+
+const alphabet = ["d", ".", "e"];
+
+// 엣지 형상 정의 (시각 leverage 를 위해 수동)
+// 자기 루프 + 일반 화살표 구분
+const edgeDefs = [
+  { id: "q0-d-q1",  from: "q0", to: "q1", sym: "d" },
+  { id: "q1-d-q1",  from: "q1", to: "q1", sym: "d", loop: true },
+  { id: "q1-.-q2",  from: "q1", to: "q2", sym: "." },
+  { id: "q1-e-q4",  from: "q1", to: "q4", sym: "e" },
+  { id: "q2-d-q3",  from: "q2", to: "q3", sym: "d" },
+  { id: "q3-d-q3",  from: "q3", to: "q3", sym: "d", loop: true },
+  { id: "q3-e-q4",  from: "q3", to: "q4", sym: "e" },
+  { id: "q4-d-q5",  from: "q4", to: "q5", sym: "d" },
+  { id: "q5-d-q5",  from: "q5", to: "q5", sym: "d", loop: true }
+];
+
+const NODE_R = 22;
+
+// ----------------------- 입력 분류 -----------------------
+function classify(ch) {
+  if (/[0-9]/.test(ch)) return "d";
+  if (ch === ".") return ".";
+  if (ch === "e" || ch === "E") return "e";
+  return null; // 알파벳에 없음
+}
+
+// ----------------------- 렌더 -----------------------
+const svg = document.getElementById("graph");
+const nodesG = document.getElementById("nodes");
+const edgesG = document.getElementById("edges");
+const trailsG = document.getElementById("edges-trails");
+const labelsG = document.getElementById("edge-labels");
+const movingG = document.getElementById("moving");
+
+function svgEl(tag, attrs = {}) {
+  const e = document.createElementNS("http://www.w3.org/2000/svg", tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+
+// 시작 화살표 (q0 좌측)
+{
+  const s = states.find(s => s.start);
+  const startArrow = svgEl("path", {
+    d: `M ${s.x - 50} ${s.y} L ${s.x - NODE_R - 2} ${s.y}`,
+    stroke: "#888",
+    "stroke-width": 1.6,
+    fill: "none",
+    "marker-end": "url(#arrow)"
+  });
+  edgesG.appendChild(startArrow);
+}
+
+// 엣지 path 계산
+function edgePath(e) {
+  const from = states.find(s => s.id === e.from);
+  const to = states.find(s => s.id === e.to);
+
+  if (e.loop) {
+    // 자기 루프: 노드 위쪽으로 작은 원
+    const cx = from.x;
+    const cy = from.y - NODE_R;
+    return `M ${cx - 8} ${cy} C ${cx - 22} ${cy - 28}, ${cx + 22} ${cy - 28}, ${cx + 8} ${cy}`;
+  }
+
+  // 일반 화살표: 두 노드 중심 잇고 노드 반지름만큼 자름
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const len = Math.hypot(dx, dy);
+  const ux = dx / len;
+  const uy = dy / len;
+
+  const sx = from.x + ux * NODE_R;
+  const sy = from.y + uy * NODE_R;
+  const tx = to.x - ux * (NODE_R + 4);
+  const ty = to.y - uy * (NODE_R + 4);
+
+  return `M ${sx} ${sy} L ${tx} ${ty}`;
+}
+
+function edgeLabelPos(e) {
+  const from = states.find(s => s.id === e.from);
+  const to = states.find(s => s.id === e.to);
+  if (e.loop) {
+    return { x: from.x, y: from.y - NODE_R - 28, anchor: "middle" };
+  }
+  const mx = (from.x + to.x) / 2;
+  const my = (from.y + to.y) / 2;
+  // 화살표가 수평이면 위로, 그 외엔 살짝 옆으로
+  return { x: mx, y: my - 6, anchor: "middle" };
+}
+
+// 엣지 그리기
+const edgeElements = {};
+const trailElements = {};
+const labelElements = {};
+
+edgeDefs.forEach(e => {
+  const d = edgePath(e);
+  // 잔상 (아래 레이어)
+  const trail = svgEl("path", {
+    d, class: "edge-trail", "data-id": e.id
+  });
+  trailsG.appendChild(trail);
+  trailElements[e.id] = trail;
+
+  // 본 엣지
+  const path = svgEl("path", {
+    d, class: "edge", "data-id": e.id, "marker-end": "url(#arrow)"
+  });
+  edgesG.appendChild(path);
+  edgeElements[e.id] = path;
+
+  // 라벨
+  const pos = edgeLabelPos(e);
+  const label = svgEl("text", {
+    x: pos.x, y: pos.y, class: "edge-label", "text-anchor": pos.anchor,
+    "data-id": e.id
+  });
+  label.textContent = e.sym;
+  labelsG.appendChild(label);
+  labelElements[e.id] = label;
+});
+
+// 노드 그리기
+const nodeElements = {};
+states.forEach(s => {
+  const g = svgEl("g", { class: "node" + (s.accept ? " accept" : ""), "data-id": s.id });
+  if (s.accept) {
+    g.appendChild(svgEl("circle", { class: "outer", cx: s.x, cy: s.y, r: NODE_R + 4 }));
+  }
+  g.appendChild(svgEl("circle", { cx: s.x, cy: s.y, r: NODE_R }));
+  const text = svgEl("text", { x: s.x, y: s.y });
+  text.textContent = s.id;
+  g.appendChild(text);
+  nodesG.appendChild(g);
+  nodeElements[s.id] = { g, text };
+});
+
+// 토큰 (현재 위치를 가리키는 발광점)
+const token = svgEl("circle", {
+  class: "token", r: 7, cx: 0, cy: 0
+});
+movingG.appendChild(token);
+
+// 빨려들어가는 글자
+const letterFly = svgEl("text", { class: "letter-fly", x: 0, y: 0 });
+movingG.appendChild(letterFly);
+
+// ----------------------- δ 전이표 -----------------------
+function renderTable() {
+  const t = document.getElementById("delta-table");
+  let html = "<thead><tr><th></th>";
+  alphabet.forEach(a => html += `<th>${a}</th>`);
+  html += "</tr></thead><tbody>";
+  states.forEach(s => {
+    html += `<tr><th>${s.id}</th>`;
+    alphabet.forEach(a => {
+      const next = delta[s.id] && delta[s.id][a];
+      if (next) {
+        html += `<td data-from="${s.id}" data-sym="${a}">${next}</td>`;
+      } else {
+        html += `<td class="cell-trap">·</td>`;
+      }
+    });
+    html += "</tr>";
+  });
+  html += "</tbody>";
+  t.innerHTML = html;
+}
+renderTable();
+
+// ----------------------- 시뮬레이션 모델 -----------------------
+let input = "3.14e5";
+let snapshots = []; // 각 박자의 스냅샷
+let stepIndex = 0; // 0 = 초기, 1..N = 글자 N개 소비 후
+let isPlaying = false;
+let playTimer = null;
+let speedMs = 600;
+
+function simulate(str) {
+  // 초기 스냅샷
+  const snaps = [{
+    state: "q0",
+    consumed: 0,
+    blocked: false,
+    edgeFired: null,
+    visitCounts: {} // edgeId -> count
+  }];
+
+  let cur = "q0";
+  let visit = {};
+  let blocked = false;
+
+  for (let i = 0; i < str.length; i++) {
+    const ch = str[i];
+    const sym = classify(ch);
+    const nextState = sym && delta[cur] ? delta[cur][sym] : null;
+    if (!nextState) {
+      // 막힘
+      snaps.push({
+        state: cur,
+        consumed: i, // 이 글자 못 먹음
+        blocked: true,
+        blockedAt: i,
+        edgeFired: null,
+        visitCounts: { ...visit }
+      });
+      blocked = true;
+      break;
+    }
+    const edgeId = `${cur}-${sym}-${nextState}`;
+    visit = { ...visit, [edgeId]: (visit[edgeId] || 0) + 1 };
+    cur = nextState;
+    snaps.push({
+      state: cur,
+      consumed: i + 1,
+      blocked: false,
+      edgeFired: edgeId,
+      sym,
+      ch,
+      from: snaps[snaps.length - 1].state,
+      visitCounts: { ...visit }
+    });
+  }
+
+  return { snaps, blocked };
+}
+
+// ----------------------- 렌더 헬퍼 -----------------------
+function setNodeClass(stateId, cls) {
+  const el = nodeElements[stateId].g;
+  el.classList.remove("active", "accepting", "rejecting", "idle");
+  if (cls) el.classList.add(cls);
+}
+function clearAllNodeStates() {
+  states.forEach(s => setNodeClass(s.id, null));
+}
+
+function renderTape(snap) {
+  const tape = document.getElementById("tape");
+  tape.innerHTML = "";
+  const headEl = document.createElement("div");
+  headEl.className = "tape-head";
+  headEl.textContent = "▼";
+  headEl.id = "head";
+  tape.appendChild(headEl);
+
+  for (let i = 0; i < input.length; i++) {
+    const cell = document.createElement("div");
+    cell.className = "tape-cell";
+    cell.textContent = input[i];
+    if (i < snap.consumed) cell.classList.add("consumed");
+    if (snap.blocked && snap.blockedAt === i) cell.classList.add("blocked");
+    tape.appendChild(cell);
+  }
+
+  // 헤드 위치
+  const headIdx = Math.min(snap.consumed, input.length);
+  // 셀 폭 30 + gap 4 = 34. 첫 셀 시작 x = 0 (since head 안 채움)
+  const headX = headIdx * 34;
+  headEl.style.left = headX + "px";
+}
+
+function renderTable_active(snap) {
+  // 표 셀 강조
+  document.querySelectorAll("#delta-table td").forEach(td => {
+    td.classList.remove("cell-active");
+  });
+  if (snap.edgeFired) {
+    const cell = document.querySelector(
+      `#delta-table td[data-from="${snap.from}"][data-sym="${snap.sym}"]`
+    );
+    if (cell) cell.classList.add("cell-active");
+  }
+}
+
+function renderTrails(snap) {
+  // 잔상: visitCount 누적량
+  Object.keys(trailElements).forEach(eid => {
+    const count = (snap.visitCounts && snap.visitCounts[eid]) || 0;
+    const opacity = count === 0 ? 0 : Math.min(0.18 + count * 0.18, 0.7);
+    trailElements[eid].setAttribute("stroke-opacity", opacity);
+  });
+}
+
+function renderEdgeFiring(snap) {
+  // 모든 엣지/라벨 기본 상태
+  Object.keys(edgeElements).forEach(eid => {
+    edgeElements[eid].classList.remove("firing");
+    edgeElements[eid].setAttribute("marker-end", "url(#arrow)");
+    labelElements[eid].classList.remove("firing");
+  });
+  if (snap.edgeFired) {
+    const e = edgeElements[snap.edgeFired];
+    e.classList.add("firing");
+    e.setAttribute("marker-end", "url(#arrow-fire)");
+    labelElements[snap.edgeFired].classList.add("firing");
+    // 짧은 펄스 후 해제
+    setTimeout(() => {
+      e.classList.remove("firing");
+      e.setAttribute("marker-end", "url(#arrow)");
+      labelElements[snap.edgeFired]?.classList.remove("firing");
+    }, Math.min(speedMs * 0.7, 500));
+  }
+}
+
+function placeToken(stateId) {
+  const s = states.find(s => s.id === stateId);
+  token.setAttribute("cx", s.x);
+  token.setAttribute("cy", s.y);
+  token.classList.add("flying");
+}
+
+function flyLetter(snap, onDone) {
+  if (!snap.edgeFired) { onDone(); return; }
+  const fromState = states.find(s => s.id === snap.from);
+  const toState = states.find(s => s.id === snap.state);
+
+  // 시작 위치: 입력 테이프의 그 글자 (대략 그래프 우상단 영역에서 출발)
+  // 단순화: 글자가 fromState 위에서 등장 → toState 로 이동
+  letterFly.textContent = snap.ch;
+  letterFly.setAttribute("x", fromState.x);
+  letterFly.setAttribute("y", fromState.y - NODE_R - 16);
+  letterFly.style.transition = "none";
+  letterFly.style.opacity = "0";
+
+  requestAnimationFrame(() => {
+    letterFly.style.transition = `all ${speedMs * 0.5}ms ease-out`;
+    letterFly.style.opacity = "1";
+    requestAnimationFrame(() => {
+      letterFly.setAttribute("x", toState.x);
+      letterFly.setAttribute("y", toState.y);
+      setTimeout(() => {
+        letterFly.style.transition = `opacity ${speedMs * 0.2}ms ease-in`;
+        letterFly.style.opacity = "0";
+        setTimeout(onDone, speedMs * 0.2);
+      }, speedMs * 0.5);
+    });
+  });
+
+  // 토큰 이동
+  token.style.transition = `cx ${speedMs * 0.6}ms cubic-bezier(0.4,0,0.3,1), cy ${speedMs * 0.6}ms cubic-bezier(0.4,0,0.3,1)`;
+  token.setAttribute("cx", toState.x);
+  token.setAttribute("cy", toState.y);
+}
+
+function applySnapshot(idx, animate = false) {
+  const snap = snapshots[idx];
+  if (!snap) return;
+
+  renderTape(snap);
+  renderTrails(snap);
+  renderTable_active(snap);
+  clearAllNodeStates();
+
+  // 결과 패널
+  const result = document.getElementById("result");
+  result.classList.remove("accept", "reject");
+
+  const isLast = idx === snapshots.length - 1;
+  const lastWasBlocked = snap.blocked;
+  const finishedAll = !lastWasBlocked && snap.consumed === input.length && idx > 0;
+  const isAcceptState = states.find(s => s.id === snap.state)?.accept;
+
+  if (idx === 0) {
+    result.textContent = "READY";
+    setNodeClass(snap.state, "idle");
+  } else if (lastWasBlocked) {
+    result.textContent = "REJECT — 막다른 길";
+    result.classList.add("reject");
+    setNodeClass(snap.state, "rejecting");
+  } else if (finishedAll && isAcceptState) {
+    result.textContent = "ACCEPT";
+    result.classList.add("accept");
+    setNodeClass(snap.state, "accepting");
+  } else if (finishedAll && !isAcceptState) {
+    result.textContent = "REJECT — 수락 상태가 아님";
+    result.classList.add("reject");
+    setNodeClass(snap.state, "rejecting");
+  } else {
+    result.textContent = `STEP ${idx} / ${snapshots.length - 1}`;
+    setNodeClass(snap.state, "active");
+  }
+
+  if (animate && snap.edgeFired) {
+    renderEdgeFiring(snap);
+    flyLetter(snap, () => {});
+  } else {
+    placeToken(snap.state);
+  }
+
+  // scrub 슬라이더 동기
+  document.getElementById("scrub").value = idx;
+}
+
+// ----------------------- 컨트롤 -----------------------
+function rebuild() {
+  const sim = simulate(input);
+  snapshots = sim.snaps;
+  const scrub = document.getElementById("scrub");
+  scrub.max = snapshots.length - 1;
+  scrub.value = 0;
+  stepIndex = 0;
+  applySnapshot(0, false);
+}
+
+function step() {
+  if (stepIndex >= snapshots.length - 1) {
+    stop();
+    return;
+  }
+  stepIndex++;
+  applySnapshot(stepIndex, true);
+  if (stepIndex >= snapshots.length - 1) stop();
+}
+
+function play() {
+  if (stepIndex >= snapshots.length - 1) {
+    // 끝났으면 처음부터
+    stepIndex = 0;
+    applySnapshot(0, false);
+  }
+  isPlaying = true;
+  document.getElementById("btn-play").textContent = "⏸";
+  playTimer = setInterval(() => step(), speedMs);
+}
+function stop() {
+  isPlaying = false;
+  document.getElementById("btn-play").textContent = "▶";
+  if (playTimer) clearInterval(playTimer);
+  playTimer = null;
+}
+function reset() {
+  stop();
+  stepIndex = 0;
+  applySnapshot(0, false);
+}
+
+document.getElementById("btn-play").addEventListener("click", () => {
+  if (isPlaying) stop(); else play();
+});
+document.getElementById("btn-step").addEventListener("click", () => {
+  stop();
+  step();
+});
+document.getElementById("btn-reset").addEventListener("click", reset);
+document.getElementById("speed").addEventListener("change", e => {
+  speedMs = parseInt(e.target.value, 10);
+  if (isPlaying) { stop(); play(); }
+});
+document.getElementById("scrub").addEventListener("input", e => {
+  stop();
+  stepIndex = parseInt(e.target.value, 10);
+  applySnapshot(stepIndex, false);
+});
+document.getElementById("example").addEventListener("change", e => {
+  stop();
+  input = e.target.value;
+  rebuild();
+});
+document.getElementById("semantic").addEventListener("change", e => {
+  const on = e.target.checked;
+  states.forEach(s => {
+    const { g, text } = nodeElements[s.id];
+    if (on) {
+      text.textContent = s.semantic;
+      g.classList.add("semantic");
+    } else {
+      text.textContent = s.id;
+      g.classList.remove("semantic");
+    }
+  });
+});
+
+// 초기화
+rebuild();
+</script>
+</body>
+</html>

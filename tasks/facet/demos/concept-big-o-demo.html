@@ -1,0 +1,609 @@
+<!--
+  Big-O 시간복잡도 데모 (B타입)
+
+  기획 문서: /Users/mintae/Documents/Develop/side-projects/FACET/tasks/facet/concept-big-o.md
+  레퍼런스 보고서: /Users/mintae/Documents/Develop/side-projects/FACET/tasks/facet/concept-big-o-references.md
+  시각 방향: B타입 (새로운 방식) - "연료 한 통과 일곱 척의 우주선" 메타포
+  임베드 폭 가정: 720px 컨테이너 안에 시각화가 들어감
+
+  구현한 요소:
+    - 요소 1. 가로 1D 트랙 + 일곱 별 모양 우주선 (클래스별 고정 색)
+    - 요소 2. n 슬라이더 (로그 스케일 2 ~ 10^6) + 도달 거리 변환
+    - 요소 3. 탈락(컷오프) 시각화 (회색 + 흔들림 + 좌측 붉은 영역)
+    - 요소 4. 트랙 위 개념 설명 카드
+    - 요소 5. 상수 포함 / 점근만 토글
+    - 좌측 끝 확대경 인셋 (O(2^n), O(n!) 분리 식별)
+    - 트랙 우측 "더 멀리 -> 더 큰 입력" 단조성 라벨
+    - 별 클릭 시 비용/도달 카드 (인간 시간 단위 환산)
+    - 재생/리셋 버튼 (n 을 자동으로 키워 운명이 펼쳐지는 모습 시연)
+
+  생략한 요소:
+    - 곡선 인셋(보조 토글) — 본 데모는 무대인 트랙에 집중
+    - 정식 FACET 4-layer 아키텍처 (algorithm/projector/IR/Runner)
+    - 모바일 반응형
+-->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>Big-O — 연료 한 통과 일곱 우주선</title>
+<style>
+  body {
+    margin: 0;
+    background: #f0f0f0;
+    font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Apple SD Gothic Neo", sans-serif;
+    color: #1f2937;
+    line-height: 1.6;
+  }
+  .embed-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px;
+    background: white;
+    box-sizing: border-box;
+  }
+  .body-placeholder {
+    color: #9ca3af;
+    font-size: 14px;
+    line-height: 1.7;
+    margin: 16px 0;
+  }
+  .reference-panel {
+    border: 1px solid #e5e7eb;
+    background: #fafafa;
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+  .reference-panel h4 {
+    margin: 0 0 8px 0;
+    font-size: 12px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .reference-panel ul { margin: 0; padding-left: 18px; }
+  .reference-panel li { margin-bottom: 4px; }
+  .reference-panel a { color: #2563eb; text-decoration: none; }
+  .reference-panel a:hover { text-decoration: underline; }
+  .reference-panel .avoided {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #e5e7eb;
+    color: #9ca3af;
+  }
+  .concept-intro {
+    margin: 18px 0;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+  .facet-visual {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background: #0b1020;
+    color: #e5e7eb;
+    padding: 14px 14px 12px;
+    margin: 18px 0 8px;
+    position: relative;
+  }
+  .concept-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 12.5px;
+    line-height: 1.55;
+    color: #cbd5e1;
+    margin-bottom: 10px;
+  }
+  .concept-card strong { color: #f1f5f9; }
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+    font-size: 13px;
+  }
+  .controls input[type=range] { flex: 1; min-width: 180px; }
+  .controls .n-readout {
+    font-variant-numeric: tabular-nums;
+    color: #93c5fd;
+    min-width: 80px;
+    text-align: right;
+  }
+  .controls button {
+    background: #1f2937;
+    color: #e5e7eb;
+    border: 1px solid #374151;
+    border-radius: 4px;
+    padding: 4px 10px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .controls button:hover { background: #374151; }
+  .toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 2px 4px;
+    font-size: 11px;
+  }
+  .toggle button {
+    background: transparent;
+    border: none;
+    color: #9ca3af;
+    padding: 3px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  .toggle button.active { background: #2563eb; color: white; }
+  .toggle-hint { font-size: 11px; color: #6b7280; margin-left: 6px; }
+  .visual-svg { display: block; width: 100%; height: 240px; }
+  .info-card {
+    position: absolute;
+    background: rgba(15,23,42,0.96);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 11.5px;
+    color: #e2e8f0;
+    pointer-events: none;
+    max-width: 240px;
+    z-index: 10;
+    line-height: 1.5;
+  }
+  .info-card strong { color: #f8fafc; }
+  .footnote {
+    font-size: 13px;
+    color: #4b5563;
+    margin-top: 4px;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<div class="embed-wrap">
+
+  <!-- 본문 placeholder (위) -->
+  <p class="body-placeholder">
+    ...앞 본문 텍스트가 여기 있다고 가정한다. 알고리즘을 처음 배울 때 우리는 대개
+    "이게 빨라요? 느려요?" 같은 직관에서 출발하지만, 컴퓨터과학은 이 질문을
+    훨씬 더 차가운 형태로 다시 묻는다. 입력이 두 배가 되었을 때 시간은 몇 배가 되는가...
+  </p>
+
+  <!-- 레퍼런스 패널 -->
+  <div class="reference-panel">
+    <h4>이 시각화에 영감을 준 레퍼런스</h4>
+    <ul>
+      <li>
+        <a href="https://en.wikipedia.org/wiki/Wheat_and_chessboard_problem" target="_blank" rel="noopener">
+          R7. Wheat &amp; Chessboard Problem
+        </a>
+        — 지수 폭발의 정전(canon) 메타포. "후반부에서 상상이 끊어지는" 체감을 차용.
+      </li>
+      <li>
+        <a href="https://xkcd.com/399/" target="_blank" rel="noopener">
+          R5. XKCD #399 "Travelling Salesman"
+        </a>
+        — "복잡도가 인간 시간을 짓누른다" 의 정서. 같은 시간 예산 위에 클래스를 줄 세우는 기조.
+      </li>
+      <li>
+        <a href="https://samwho.dev/big-o/" target="_blank" rel="noopener">
+          R1. samwho.dev "Big O"
+        </a>
+        — "한 단계 = 한 번의 터치" 라는 시간 단위 추상화. 본 데모에서는 "한 단계 = 연료 한 단위" 로 변환.
+      </li>
+    </ul>
+    <div class="avoided">
+      <strong>회피한 표준 레퍼런스:</strong>
+      <a href="https://www.bigocheatsheet.com/" target="_blank" rel="noopener">bigocheatsheet.com</a>
+      (색띠 표 + 겹친 곡선),
+      <a href="https://www.earthinspoon.com/AlgorithmGrowthVisualizerOfTimeComplexity.html" target="_blank" rel="noopener">earthinspoon</a>
+      (슬라이더로 곡선 키우기) — B타입은 표준 곡선 그래프를 무대에서 치운다.
+    </div>
+  </div>
+
+  <!-- 대상 개념 설명 -->
+  <div class="concept-intro">
+    Big-O 표기법은 알고리즘이 입력 크기 n 이 커질 때 실행 시간이나 자원 사용이 어떻게
+    자라는지를 함수의 상한으로 묶어서 부르는 점근 표기법이다. 우리는 1초·1분 같은 절대
+    시간이 아니라, "같은 작업을 두 배 큰 입력에 시켰을 때 몇 배가 더 걸리는가" 의
+    성질만을 본다. O(1) 은 입력이 아무리 커져도 시간이 거의 그대로이고, O(n^2) 부터는
+    입력 두 배에 시간 네 배로 폭발하기 시작하며, O(2^n) 과 O(n!) 은 사실상 풀 수
+    없는 영역으로 들어간다.
+  </div>
+
+  <!-- 시각화 데모 -->
+  <div class="facet-visual" id="facet-root">
+    <div class="concept-card">
+      <strong>Big-O 는 시계가 아니라 운명을 말한다.</strong>
+      같은 연료 한 통을 일곱 척의 우주선에 똑같이 나눠 주었다. 클래스마다 다른 별 -
+      O(1), O(log n), O(n), O(n log n), O(n^2), O(2^n), O(n!). 같은 연료로 어디까지
+      가는지가 그 클래스의 운명이다. n 을 키워 보라 - 어떤 우주선이 먼저 떨어지는가.
+    </div>
+
+    <svg class="visual-svg" id="visual-svg" viewBox="0 0 660 240" preserveAspectRatio="xMidYMid meet">
+      <!-- 정의: 별 모양 path & 그라디언트 -->
+      <defs>
+        <linearGradient id="dangerGradient" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#7f1d1d" stop-opacity="0.55" />
+          <stop offset="100%" stop-color="#7f1d1d" stop-opacity="0" />
+        </linearGradient>
+        <linearGradient id="safeGradient" x1="1" y1="0" x2="0" y2="0">
+          <stop offset="0%" stop-color="#14532d" stop-opacity="0.4" />
+          <stop offset="100%" stop-color="#14532d" stop-opacity="0" />
+        </linearGradient>
+      </defs>
+
+      <!-- 위험/안전 영역 -->
+      <rect id="danger-zone" x="40" y="120" width="80" height="60" fill="url(#dangerGradient)" />
+      <rect id="safe-zone"   x="540" y="120" width="80" height="60" fill="url(#safeGradient)" />
+
+      <!-- 컷오프 점선 -->
+      <line id="cutoff-line" x1="0" y1="120" x2="0" y2="180" stroke="#ef4444" stroke-dasharray="3 3" stroke-opacity="0.6" />
+
+      <!-- 트랙 라인 -->
+      <line id="track-line" x1="40" y1="150" x2="620" y2="150" stroke="#475569" stroke-width="2" />
+      <circle cx="40" cy="150" r="4" fill="#475569" />
+      <circle cx="620" cy="150" r="4" fill="#475569" />
+
+      <!-- 단조성 라벨 -->
+      <text x="40" y="200" fill="#7f1d1d" font-size="10" opacity="0.85">사실상 풀 수 없는 영역</text>
+      <text x="620" y="200" fill="#14532d" font-size="10" opacity="0.85" text-anchor="end">더 멀리 → 더 큰 입력 처리</text>
+
+      <!-- 우주선 그룹 (JS에서 채움) -->
+      <g id="ships-layer"></g>
+
+      <!-- 확대경 인셋: 좌측 끝 확대 -->
+      <g id="loupe">
+        <rect x="40" y="20" width="160" height="62" rx="4" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.18)" />
+        <text x="48" y="34" fill="#94a3b8" font-size="10">좌측 끝 확대 (탈락 우주선)</text>
+        <line x1="50" y1="64" x2="190" y2="64" stroke="#475569" stroke-width="1.5" />
+        <g id="loupe-ships"></g>
+      </g>
+    </svg>
+
+    <div class="controls">
+      <label for="n-slider" style="color:#cbd5e1;">n</label>
+      <input id="n-slider" type="range" min="1" max="600" value="120" />
+      <span class="n-readout" id="n-readout">n = 16</span>
+      <button id="play-btn">재생</button>
+      <button id="reset-btn">리셋</button>
+      <span class="toggle">
+        <button id="mode-asym" class="active">점근만</button>
+        <button id="mode-const">상수 포함</button>
+      </span>
+      <span class="toggle-hint">작은 n 에선 운명이 뒤집힐 수도</span>
+    </div>
+  </div>
+
+  <p class="footnote">
+    트랙 우측 끝에 박힌 별일수록 같은 연료로 더 큰 n 을 처리한다. n 을 키우면
+    좌측에서 별들이 차례로 회색이 되며 떨어져 나간다 - 이것이 점근 클래스의 운명이다.
+    별을 클릭하면 그 클래스가 처리할 수 있는 n 의 한계가 인간 시간 단위로 환산되어 나타난다.
+  </p>
+
+  <!-- 본문 placeholder (아래) -->
+  <p class="body-placeholder">
+    ...뒷 본문 텍스트가 여기 이어진다고 가정한다. 자, 운명을 본 다음에야 정의가 의미가
+    있다. 점근 상한이라는 말의 정확한 정의는 다음과 같이 쓴다...
+  </p>
+
+</div>
+
+<script>
+(function () {
+  // ----- 클래스 정의 -----
+  const CLASSES = [
+    { id: 'o1',     label: 'O(1)',       color: '#22d3ee', fAsym: (n) => 1,
+      fConst: (n) => 50, human: (n) => '입력이 아무리 커도 같은 자리.' },
+    { id: 'olog',   label: 'O(log n)',   color: '#14b8a6', fAsym: (n) => Math.log2(Math.max(2, n)),
+      fConst: (n) => 20 * Math.log2(Math.max(2, n)), human: (n) => '절반 가르기. n 이 두 배가 되어도 한 단계만 더.' },
+    { id: 'on',     label: 'O(n)',       color: '#22c55e', fAsym: (n) => n,
+      fConst: (n) => 5 * n, human: (n) => '입력에 비례.' },
+    { id: 'onlog',  label: 'O(n log n)', color: '#84cc16', fAsym: (n) => n * Math.log2(Math.max(2, n)),
+      fConst: (n) => 100 * n * Math.log2(Math.max(2, n)), human: (n) => '비교 정렬의 한계.' },
+    { id: 'on2',    label: 'O(n²)',      color: '#f97316', fAsym: (n) => n * n,
+      fConst: (n) => 1 * n * n, human: (n) => '모두가 모두를 만나야 한다.' },
+    { id: 'o2n',    label: 'O(2ⁿ)',      color: '#ef4444', fAsym: (n) => Math.pow(2, Math.min(n, 1000)),
+      fConst: (n) => Math.pow(2, Math.min(n, 1000)), human: (n) => '체스판 위 쌀 한 톨이 다음 칸에 두 톨 - 후반에 상상이 끊어진다.' },
+    { id: 'onfact', label: 'O(n!)',      color: '#a855f7', fAsym: (n) => factorialApprox(n),
+      fConst: (n) => factorialApprox(n), human: (n) => '외판원의 절망. 사실상 풀 수 없음.' },
+  ];
+
+  // factorial 근사 (Stirling, log 공간)
+  function logFactorial(n) {
+    n = Math.max(1, n);
+    if (n < 30) {
+      let s = 0;
+      for (let k = 2; k <= n; k++) s += Math.log(k);
+      return s / Math.LN2; // log2
+    }
+    // Stirling
+    return ((n + 0.5) * Math.log(n) - n + 0.5 * Math.log(2 * Math.PI)) / Math.LN2;
+  }
+  function factorialApprox(n) {
+    return Math.pow(2, Math.min(logFactorial(n), 1500));
+  }
+
+  // ----- 트랙 매핑 -----
+  // 비용 c(n). 도달거리 = log2(B / c(n)) = log2(B) - log2(c(n)).
+  // 트랙 정규화: log2(c(n)) 을 [LOG_MIN, LOG_MAX] 범위로 클램프 후 [0, 1] 로.
+  // x = trackLeft + trackWidth * (1 - normalizedCost)
+  const TRACK_LEFT = 50;
+  const TRACK_RIGHT = 615;
+  const TRACK_WIDTH = TRACK_RIGHT - TRACK_LEFT;
+  const TRACK_Y = 150;
+  const LOG_MIN = 0;        // log2(1) - O(1)
+  const LOG_MAX = 80;       // 큰 n 에서의 O(n!) 정도 한계. 80 비트 = 2^80
+  const CUTOFF_FRACTION = 1 / 16; // 트랙폭의 1/16 미만이면 탈락
+
+  function logCostOf(cls, n, mode) {
+    const f = mode === 'const' ? cls.fConst : cls.fAsym;
+    let c;
+    try { c = f(n); } catch (e) { c = Infinity; }
+    if (!isFinite(c) || c <= 0) return LOG_MAX;
+    return Math.log2(c);
+  }
+
+  function xOf(cls, n, mode) {
+    const lc = logCostOf(cls, n, mode);
+    const t = Math.max(0, Math.min(1, (lc - LOG_MIN) / (LOG_MAX - LOG_MIN)));
+    // t=0 -> 우측 끝, t=1 -> 좌측 끝
+    return TRACK_LEFT + TRACK_WIDTH * (1 - t);
+  }
+
+  function isDropped(cls, n, mode) {
+    const x = xOf(cls, n, mode);
+    return (x - TRACK_LEFT) < TRACK_WIDTH * CUTOFF_FRACTION;
+  }
+
+  // ----- SVG 별 모양 path -----
+  function starPath(cx, cy, rOuter, rInner, points) {
+    const step = Math.PI / points;
+    let p = '';
+    for (let i = 0; i < points * 2; i++) {
+      const r = i % 2 === 0 ? rOuter : rInner;
+      const a = -Math.PI / 2 + i * step;
+      const x = cx + Math.cos(a) * r;
+      const y = cy + Math.sin(a) * r;
+      p += (i === 0 ? 'M' : 'L') + x.toFixed(2) + ',' + y.toFixed(2) + ' ';
+    }
+    return p + 'Z';
+  }
+
+  // ----- 슬라이더 매핑 (로그) -----
+  const N_MIN = 2, N_MAX = 1e6;
+  function sliderToN(v) {
+    // v: 1..600 -> log scale
+    const t = (v - 1) / 599;
+    return Math.max(N_MIN, Math.round(Math.exp(Math.log(N_MIN) + t * (Math.log(N_MAX) - Math.log(N_MIN)))));
+  }
+
+  // ----- 인간 시간 환산 -----
+  function humanTime(logCost) {
+    // log2 비용 -> 비용 (1ns 단위 가정), 그러면 초 = 비용 / 1e9
+    // logCost 가 매우 크면 곧장 우주 나이 단위로
+    const log10Sec = (logCost * Math.log10(2)) - 9; // log10 초
+    if (log10Sec < -3) return '눈 깜짝할 사이';
+    if (log10Sec < 0) return '1초 미만 (' + Math.pow(10, log10Sec).toFixed(3) + '초)';
+    if (log10Sec < 2) return Math.pow(10, log10Sec).toFixed(1) + '초';
+    if (log10Sec < 4) return (Math.pow(10, log10Sec) / 60).toFixed(1) + '분';
+    if (log10Sec < 6) return (Math.pow(10, log10Sec) / 3600).toFixed(1) + '시간';
+    if (log10Sec < 8) return (Math.pow(10, log10Sec) / 86400).toFixed(1) + '일';
+    if (log10Sec < 10) return (Math.pow(10, log10Sec) / (86400 * 365)).toFixed(1) + '년';
+    if (log10Sec < 17) return Math.pow(10, log10Sec - 9).toExponential(1) + '년';
+    // 우주 나이 ~= 1.4e10 년 ~= 4.4e17 초 -> log10 sec ~= 17.6
+    return '우주 나이의 ~10^' + Math.floor(log10Sec - 17) + ' 배';
+  }
+
+  // ----- 렌더링 -----
+  const svg = document.getElementById('visual-svg');
+  const shipsLayer = document.getElementById('ships-layer');
+  const loupeLayer = document.getElementById('loupe-ships');
+  const nReadout = document.getElementById('n-readout');
+  const slider = document.getElementById('n-slider');
+  const cutoffLine = document.getElementById('cutoff-line');
+  const root = document.getElementById('facet-root');
+
+  let mode = 'asym';
+  let currentN = 16;
+  let playing = false;
+  let playRaf = null;
+  let infoCard = null;
+
+  // 컷오프 점선 위치
+  cutoffLine.setAttribute('x1', String(TRACK_LEFT + TRACK_WIDTH * CUTOFF_FRACTION));
+  cutoffLine.setAttribute('x2', String(TRACK_LEFT + TRACK_WIDTH * CUTOFF_FRACTION));
+
+  // 별 SVG 노드들 만들기
+  const shipNodes = {};
+  const loupeNodes = {};
+  CLASSES.forEach((cls, i) => {
+    const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttribute('class', 'ship');
+    g.setAttribute('data-id', cls.id);
+    g.style.cursor = 'pointer';
+    g.style.transition = 'transform 0.25s ease';
+
+    const star = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    star.setAttribute('d', starPath(0, 0, 9, 4, 5));
+    star.setAttribute('fill', cls.color);
+    star.setAttribute('stroke', '#0b1020');
+    star.setAttribute('stroke-width', '1');
+    g.appendChild(star);
+
+    // 라벨: 별 위 또는 아래 번갈아
+    const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    label.textContent = cls.label;
+    label.setAttribute('font-size', '9.5');
+    label.setAttribute('text-anchor', 'middle');
+    label.setAttribute('fill', cls.color);
+    label.setAttribute('y', i % 2 === 0 ? '-13' : '20');
+    g.appendChild(label);
+
+    // 탈락 십자가 (숨김 기본)
+    const crossX = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    crossX.setAttribute('d', 'M-5,-5 L5,5 M-5,5 L5,-5');
+    crossX.setAttribute('stroke', '#94a3b8');
+    crossX.setAttribute('stroke-width', '1.4');
+    crossX.setAttribute('opacity', '0');
+    crossX.setAttribute('class', 'cross');
+    g.appendChild(crossX);
+
+    g.addEventListener('click', (ev) => showInfoCard(cls, ev));
+    shipsLayer.appendChild(g);
+    shipNodes[cls.id] = { group: g, star: star, label: label, cross: crossX };
+
+    // 확대경: 좌측 끝 부분만 확대해서 별을 분리 표시
+    // 확대경 좌표: x in [40, 200], y=64. 트랙의 [TRACK_LEFT, TRACK_LEFT + TRACK_WIDTH * 1/8] 을 매핑
+    const lg = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    const ls = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    ls.setAttribute('d', starPath(0, 0, 6, 2.5, 5));
+    ls.setAttribute('fill', cls.color);
+    ls.setAttribute('stroke', '#0b1020');
+    ls.setAttribute('stroke-width', '0.8');
+    lg.appendChild(ls);
+    const ll = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    ll.textContent = cls.label;
+    ll.setAttribute('font-size', '7.5');
+    ll.setAttribute('fill', cls.color);
+    ll.setAttribute('y', '-9');
+    ll.setAttribute('text-anchor', 'middle');
+    lg.appendChild(ll);
+    loupeLayer.appendChild(lg);
+    loupeNodes[cls.id] = { group: lg, star: ls };
+  });
+
+  function render() {
+    nReadout.textContent = 'n = ' + currentN.toLocaleString();
+    CLASSES.forEach((cls) => {
+      const x = xOf(cls, currentN, mode);
+      const dropped = isDropped(cls, currentN, mode);
+      const node = shipNodes[cls.id];
+      // 살짝 흔들림: 탈락 진입 시 transform 의 x 에 작은 offset
+      const wobble = dropped ? (Math.sin(Date.now() / 80 + cls.id.length) * 1.0) : 0;
+      node.group.setAttribute('transform', 'translate(' + (x + wobble).toFixed(2) + ',' + TRACK_Y + ')');
+      node.star.setAttribute('fill', dropped ? '#475569' : cls.color);
+      node.star.setAttribute('opacity', dropped ? '0.55' : '1');
+      node.label.setAttribute('fill', dropped ? '#64748b' : cls.color);
+      node.cross.setAttribute('opacity', dropped ? '0.7' : '0');
+
+      // 확대경 매핑
+      const loupeRange = TRACK_WIDTH * (1/8);
+      const loupeStart = TRACK_LEFT;
+      const loupeWidth = 150; // 확대경 내 트랙 폭
+      const loupeBaseX = 50;
+      let lx = loupeBaseX + ((x - loupeStart) / loupeRange) * loupeWidth;
+      lx = Math.max(loupeBaseX, Math.min(loupeBaseX + loupeWidth, lx));
+      const lnode = loupeNodes[cls.id];
+      // 확대경에는 좌측 끝 1/8 영역 안에 들어온 별만 명확히 보이게, 나머진 우측 끝에 묶기
+      const inLoupe = (x - TRACK_LEFT) <= loupeRange + 5;
+      lnode.group.setAttribute('transform', 'translate(' + lx.toFixed(2) + ',64)');
+      lnode.group.style.opacity = inLoupe ? '1' : '0.25';
+      lnode.star.setAttribute('fill', dropped ? '#475569' : cls.color);
+    });
+  }
+
+  // 흔들림을 위한 지속적 리렌더 (탈락된 별이 있을 때만)
+  function tick() {
+    let anyDropped = CLASSES.some((cls) => isDropped(cls, currentN, mode));
+    if (anyDropped) render();
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  // ----- 인포 카드 -----
+  function showInfoCard(cls, ev) {
+    if (infoCard) { infoCard.remove(); infoCard = null; }
+    const lc = logCostOf(cls, currentN, mode);
+    const card = document.createElement('div');
+    card.className = 'info-card';
+    card.innerHTML =
+      '<strong>' + cls.label + '</strong><br>' +
+      '<span style="color:#94a3b8">현재 n = ' + currentN.toLocaleString() + '</span><br>' +
+      '비용 ≈ 2^' + lc.toFixed(1) + ' 단계<br>' +
+      '예상 시간: <strong>' + humanTime(lc) + '</strong><br>' +
+      '<span style="color:#94a3b8">' + cls.human(currentN) + '</span>';
+    root.appendChild(card);
+    infoCard = card;
+    // 클릭한 별 근처에 위치
+    const rect = root.getBoundingClientRect();
+    card.style.left = Math.max(8, ev.clientX - rect.left - 100) + 'px';
+    card.style.top = Math.max(8, ev.clientY - rect.top - 100) + 'px';
+    setTimeout(() => { if (infoCard === card) { card.remove(); infoCard = null; } }, 4500);
+  }
+
+  // ----- 슬라이더 -----
+  function nToSliderValue(n) {
+    const t = (Math.log(n) - Math.log(N_MIN)) / (Math.log(N_MAX) - Math.log(N_MIN));
+    return Math.round(1 + t * 599);
+  }
+  slider.value = String(nToSliderValue(16));
+
+  slider.addEventListener('input', () => {
+    currentN = sliderToN(parseInt(slider.value, 10));
+    render();
+  });
+
+  // ----- 모드 토글 -----
+  document.getElementById('mode-asym').addEventListener('click', () => {
+    mode = 'asym';
+    document.getElementById('mode-asym').classList.add('active');
+    document.getElementById('mode-const').classList.remove('active');
+    render();
+  });
+  document.getElementById('mode-const').addEventListener('click', () => {
+    mode = 'const';
+    document.getElementById('mode-const').classList.add('active');
+    document.getElementById('mode-asym').classList.remove('active');
+    render();
+  });
+
+  // ----- 재생 / 리셋 -----
+  document.getElementById('play-btn').addEventListener('click', () => {
+    if (playing) {
+      playing = false;
+      cancelAnimationFrame(playRaf);
+      document.getElementById('play-btn').textContent = '재생';
+      return;
+    }
+    playing = true;
+    document.getElementById('play-btn').textContent = '정지';
+    let v = parseInt(slider.value, 10);
+    function step() {
+      if (!playing) return;
+      v += 2;
+      if (v > 600) { v = 600; playing = false; document.getElementById('play-btn').textContent = '재생'; }
+      slider.value = String(v);
+      currentN = sliderToN(v);
+      render();
+      if (playing) playRaf = requestAnimationFrame(step);
+    }
+    step();
+  });
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    playing = false;
+    document.getElementById('play-btn').textContent = '재생';
+    slider.value = String(nToSliderValue(16));
+    currentN = 16;
+    mode = 'asym';
+    document.getElementById('mode-asym').classList.add('active');
+    document.getElementById('mode-const').classList.remove('active');
+    if (infoCard) { infoCard.remove(); infoCard = null; }
+    render();
+  });
+
+  // 초기 렌더
+  render();
+})();
+</script>
+
+</body>
+</html>

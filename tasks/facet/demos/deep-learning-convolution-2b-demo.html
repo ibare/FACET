@@ -1,0 +1,612 @@
+<!--
+  기획 문서: tasks/facet/deep-learning-convolution-2b-novel.md
+  시각 방향: 카리용(carillon) — "한 자루 망치, 도시의 모든 종이 한 박자에 동시 공명"
+  구현 요소:
+    - 종-격자(bell-grid): 각 칸에 종 아이콘 + 자기 패치를 음각으로 표현
+    - 망치(hammer) 패널: 화면 상단의 단독 권위 위치에 3x3 부조
+    - 공명 지도(resonance map): 한 박자에 도시 전체가 동시에 빛, 강도/색조로 활성 표현
+    - 공명 라이트닝: 망치에서 모든 종으로 부챗살 광선
+    - 망치 부조 편집(클릭): 가중치 공유의 라이브 증명 — 한 칸 깎으면 모든 종이 일제히 변함
+    - 합주 도시군(orchestra): 우측 미니패널에 여러 필터 = 평행 도시
+    - 음향 그래프: 호버한 종의 9 단계 곱·합 막대
+    - bias 추, ReLU 수면(활성 토글), 박자 모드 토글, 재생/리셋
+  생략한 요소:
+    - 다중 입력 채널(C_in=3, RGB 종) — 단일 채널만
+    - 미시 박자 슬로우모션(9 단계 누적 애니메이션) — 음향 그래프로만 보여 줌
+    - stride/padding 컨트롤 — 고정 (stride=1, padding=none)
+    - backward 광선 회귀 — forward 만
+    - 실제 사운드, 인트로 애니메이션
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>카리용 — 합성곱 데모</title>
+<style>
+  :root {
+    --bg: #0e0a1a;
+    --bg-soft: #1a1330;
+    --ink: #e8e4f5;
+    --ink-soft: #9990b8;
+    --accent: #ffd166;
+    --plus: #ff8da8;
+    --minus: #66c7ff;
+    --water: rgba(120, 180, 255, 0.12);
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: radial-gradient(ellipse at top, #1a1235 0%, var(--bg) 70%);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    height: 100%;
+    overflow: hidden;
+  }
+  #app {
+    display: grid;
+    grid-template-columns: 220px 1fr 240px;
+    grid-template-rows: 1fr 200px;
+    gap: 12px;
+    padding: 14px;
+    height: 100vh;
+  }
+  .panel {
+    background: var(--bg-soft);
+    border-radius: 12px;
+    padding: 12px;
+    border: 1px solid rgba(255,255,255,0.06);
+    overflow: hidden;
+  }
+  .panel h3 {
+    margin: 0 0 8px 0;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  #stage {
+    grid-column: 2; grid-row: 1 / 3;
+    background: linear-gradient(180deg, #1a1338 0%, #0e0a1a 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.08);
+    position: relative;
+    overflow: hidden;
+  }
+  #orchestra { grid-column: 1; grid-row: 1; }
+  #controls { grid-column: 1; grid-row: 2; }
+  #hammer-panel { grid-column: 3; grid-row: 1; }
+  #sound-panel { grid-column: 3; grid-row: 2; }
+
+  svg { display: block; width: 100%; height: 100%; }
+
+  .ctrl-row { display: flex; align-items: center; justify-content: space-between; margin: 6px 0; font-size: 12px; }
+  .ctrl-row label { color: var(--ink-soft); }
+  button {
+    background: #2c1f55; color: var(--ink);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 6px 12px; border-radius: 6px; cursor: pointer;
+    font-family: inherit; font-size: 12px;
+  }
+  button:hover { background: #3d2d72; }
+  button.primary { background: var(--accent); color: #1a1235; font-weight: 600; }
+  button.primary:hover { background: #ffdc88; }
+  input[type="range"] { width: 90px; }
+
+  .city-mini {
+    display: inline-block;
+    margin: 4px;
+    padding: 4px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.08);
+    cursor: pointer;
+    transition: transform 0.15s, border-color 0.15s;
+  }
+  .city-mini:hover { transform: scale(1.06); }
+  .city-mini.active { border-color: var(--accent); box-shadow: 0 0 8px rgba(255,209,102,0.4); }
+
+  .legend {
+    position: absolute; bottom: 10px; left: 12px;
+    font-size: 11px; color: var(--ink-soft);
+    background: rgba(0,0,0,0.3); padding: 6px 10px; border-radius: 6px;
+    pointer-events: none;
+  }
+
+  .hammer-cell {
+    cursor: pointer;
+    transition: filter 0.15s;
+  }
+  .hammer-cell:hover { filter: brightness(1.4); }
+
+  #beat-indicator {
+    position: absolute; top: 12px; right: 14px;
+    font-size: 11px; color: var(--ink-soft);
+    background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 6px;
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div class="panel" id="orchestra">
+    <h3>합주 도시군 (필터)</h3>
+    <div id="orchestra-list"></div>
+  </div>
+
+  <div class="panel" id="controls">
+    <h3>컨트롤</h3>
+    <div class="ctrl-row">
+      <button class="primary" id="strike-btn">타종 (한 박자)</button>
+    </div>
+    <div class="ctrl-row">
+      <button id="auto-btn">자동 박자</button>
+      <button id="reset-btn">리셋</button>
+    </div>
+    <div class="ctrl-row">
+      <label>bias 추</label>
+      <input type="range" id="bias-slider" min="-2" max="2" step="0.1" value="0" />
+      <span id="bias-val">0.0</span>
+    </div>
+    <div class="ctrl-row">
+      <label>ReLU 수면</label>
+      <input type="checkbox" id="relu-toggle" checked />
+    </div>
+    <div class="ctrl-row" style="font-size:10px;color:var(--ink-soft);">
+      망치 부조를 클릭/우클릭해<br/>가중치를 ±0.5 씩 조정.
+    </div>
+  </div>
+
+  <div id="stage">
+    <div id="beat-indicator">박자 #<span id="beat-num">0</span></div>
+    <svg id="stage-svg" viewBox="0 0 800 800" preserveAspectRatio="xMidYMid meet"></svg>
+    <div class="legend">
+      위 = 망치(권위) · 아래 = 도시(종들) · 광선 = 한 망치에서 모든 종으로
+    </div>
+  </div>
+
+  <div class="panel" id="hammer-panel">
+    <h3>망치 부조 (정면도)</h3>
+    <svg id="hammer-svg" viewBox="0 0 200 200"></svg>
+    <div style="font-size:10px; color: var(--ink-soft); margin-top:8px;">
+      좌클릭 +0.5 / 우클릭 -0.5
+    </div>
+  </div>
+
+  <div class="panel" id="sound-panel">
+    <h3>음향 그래프 (호버한 종의 곱·합)</h3>
+    <svg id="sound-svg" viewBox="0 0 220 140"></svg>
+    <div id="sound-info" style="font-size:10px;color:var(--ink-soft);margin-top:4px;">
+      종을 호버하세요.
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ============== 상태 ==============
+const N = 7;                  // 입력 7x7
+const K = 3;                  // 커널 3x3
+const OUT = N - K + 1;        // 5x5
+const NUM_FILTERS = 4;        // 합주 도시 4 자루
+
+// 입력: 가운데 가로 엣지 패턴
+function makeInput() {
+  const g = [];
+  for (let i = 0; i < N; i++) {
+    const row = [];
+    for (let j = 0; j < N; j++) {
+      row.push(i < 3 ? 0.9 : (i > 3 ? 0.1 : 0.5));
+    }
+    g.push(row);
+  }
+  return g;
+}
+
+// 4 개 초기 커널
+const INITIAL_KERNELS = [
+  // 가로 엣지
+  [[+1,+1,+1],[ 0, 0, 0],[-1,-1,-1]],
+  // 세로 엣지
+  [[+1, 0,-1],[+1, 0,-1],[+1, 0,-1]],
+  // 대각
+  [[+1,+1, 0],[+1, 0,-1],[ 0,-1,-1]],
+  // 가우시안 블러 비슷
+  [[ 0.1, 0.2, 0.1],[ 0.2, 0.4, 0.2],[ 0.1, 0.2, 0.1]],
+];
+
+let state = {
+  input: makeInput(),
+  kernels: INITIAL_KERNELS.map(k => k.map(r => r.slice())),
+  activeFilter: 0,
+  bias: 0,
+  relu: true,
+  output: Array.from({length: OUT}, () => Array(OUT).fill(0)),
+  beat: 0,
+  hovered: null, // {oi, oj}
+  isAnimating: false,
+  autoMode: false,
+};
+
+// ============== 합성곱 셈 ==============
+function computeOutput(input, kernel, bias, relu) {
+  const out = [];
+  for (let oi = 0; oi < OUT; oi++) {
+    const row = [];
+    for (let oj = 0; oj < OUT; oj++) {
+      let s = 0;
+      for (let ki = 0; ki < K; ki++) {
+        for (let kj = 0; kj < K; kj++) {
+          s += input[oi+ki][oj+kj] * kernel[ki][kj];
+        }
+      }
+      s += bias;
+      if (relu && s < 0) s = 0;
+      row.push(s);
+    }
+    out.push(row);
+  }
+  return out;
+}
+
+// ============== 색 ==============
+function activationColor(v, maxAbs) {
+  // v 의 부호 / 강도로 색 결정. + = 따뜻한 노랑, - = 차가운 파랑
+  const t = Math.max(-1, Math.min(1, v / (maxAbs || 1)));
+  if (t > 0) {
+    // yellow
+    const a = t;
+    return `rgba(255, 209, 102, ${0.15 + a*0.85})`;
+  } else {
+    const a = -t;
+    return `rgba(102, 199, 255, ${0.15 + a*0.85})`;
+  }
+}
+
+// ============== 메인 무대 렌더 ==============
+const stageSvg = document.getElementById('stage-svg');
+
+function renderStage() {
+  const W = 800, H = 800;
+  // 망치 위치 (상단 권위)
+  const hammerX = W/2, hammerY = 110;
+  const hammerSize = 90;
+
+  // 도시 격자 위치
+  const cityCx = W/2, cityCy = 500;
+  const cellSize = 60;
+  const gridSize = N * cellSize;
+  const gridX0 = cityCx - gridSize/2;
+  const gridY0 = cityCy - gridSize/2;
+
+  // 출력 격자는 입력 격자 *위에 오버레이* (같은 도시를 위에서 본 것)
+  // 출력은 OUT x OUT, 격자 중앙에 정렬
+  const outGridSize = OUT * cellSize;
+  const outX0 = cityCx - outGridSize/2;
+  const outY0 = cityCy - outGridSize/2 + (gridSize - outGridSize)/2 - (gridSize - outGridSize)/2; // align center
+  // 더 단순히: 출력 셀은 입력 (oi, oj) ~ (oi+K-1, oj+K-1) 의 중심 = (oi+1, oj+1)
+  // 그래서 출력의 중심을 입력 (oi+1, oj+1) 셀 중심에 둔다.
+
+  let svg = '';
+
+  // 배경 — 수면 (ReLU 시)
+  if (state.relu) {
+    svg += `<rect x="0" y="${cityCy - gridSize/2 - 20}" width="${W}" height="${gridSize + 40}" fill="rgba(120,180,255,0.04)" />`;
+    svg += `<line x1="0" y1="${cityCy - gridSize/2 - 20}" x2="${W}" y2="${cityCy - gridSize/2 - 20}" stroke="rgba(120,180,255,0.3)" stroke-width="1" stroke-dasharray="4 4" />`;
+    svg += `<text x="${W - 20}" y="${cityCy - gridSize/2 - 24}" fill="rgba(120,180,255,0.5)" font-size="11" text-anchor="end">수면 (ReLU)</text>`;
+  }
+
+  // 광선 (망치 → 모든 출력 종) — 박자가 있을 때만 보임
+  const maxAbs = Math.max(0.01, ...state.output.flat().map(Math.abs));
+  if (state.beat > 0) {
+    for (let oi = 0; oi < OUT; oi++) {
+      for (let oj = 0; oj < OUT; oj++) {
+        const v = state.output[oi][oj];
+        const cx = gridX0 + (oj + 1) * cellSize + cellSize/2;
+        const cy = gridY0 + (oi + 1) * cellSize + cellSize/2;
+        const intensity = Math.min(1, Math.abs(v) / maxAbs);
+        const opacity = 0.08 + intensity * 0.5;
+        const width = 0.5 + intensity * 2.5;
+        const color = v >= 0 ? '#ffd166' : '#66c7ff';
+        svg += `<line x1="${hammerX}" y1="${hammerY + 30}" x2="${cx}" y2="${cy}" stroke="${color}" stroke-width="${width}" stroke-opacity="${opacity}" />`;
+      }
+    }
+  }
+
+  // 도시 격자 — 종들 (입력)
+  for (let i = 0; i < N; i++) {
+    for (let j = 0; j < N; j++) {
+      const cx = gridX0 + j * cellSize + cellSize/2;
+      const cy = gridY0 + i * cellSize + cellSize/2;
+      const v = state.input[i][j];
+      const shade = Math.round(v * 200 + 30);
+      svg += `<rect x="${cx - cellSize/2 + 2}" y="${cy - cellSize/2 + 2}" width="${cellSize - 4}" height="${cellSize - 4}" fill="rgba(40,30,70,0.5)" stroke="rgba(255,255,255,0.06)" rx="4" />`;
+      // 종 아이콘 (단순 종 모양)
+      svg += `<g transform="translate(${cx},${cy})">`;
+      svg += `<path d="M -14 8 Q -14 -14 0 -14 Q 14 -14 14 8 L 16 12 L -16 12 Z" fill="rgb(${shade},${shade-20},${shade+10})" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>`;
+      svg += `<circle cx="0" cy="14" r="2" fill="rgba(255,255,255,0.3)"/>`;
+      // 입력 값 텍스트
+      svg += `<text x="0" y="3" fill="rgba(255,255,255,0.7)" font-size="9" text-anchor="middle">${v.toFixed(1)}</text>`;
+      svg += `</g>`;
+    }
+  }
+
+  // 출력 공명 지도 — 입력 격자 위 오버레이
+  if (state.beat > 0) {
+    for (let oi = 0; oi < OUT; oi++) {
+      for (let oj = 0; oj < OUT; oj++) {
+        const v = state.output[oi][oj];
+        const cx = gridX0 + (oj + 1) * cellSize + cellSize/2;
+        const cy = gridY0 + (oi + 1) * cellSize + cellSize/2;
+        const intensity = Math.min(1, Math.abs(v) / maxAbs);
+        const r = 6 + intensity * 22;
+        const color = v >= 0 ? '#ffd166' : '#66c7ff';
+        // 빛 헤일로
+        svg += `<circle cx="${cx}" cy="${cy}" r="${r * 1.6}" fill="${color}" opacity="${0.04 + intensity * 0.15}" />`;
+        svg += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${color}" opacity="${0.15 + intensity * 0.55}" />`;
+        // 호버 가능한 투명 원
+        const isHovered = state.hovered && state.hovered.oi === oi && state.hovered.oj === oj;
+        svg += `<circle class="resonance-hit" data-oi="${oi}" data-oj="${oj}" cx="${cx}" cy="${cy}" r="${cellSize/2 - 2}" fill="transparent" style="cursor:pointer" stroke="${isHovered ? '#fff' : 'transparent'}" stroke-width="1.5" stroke-dasharray="3 2" />`;
+        // 출력 값
+        if (intensity > 0.1) {
+          svg += `<text x="${cx}" y="${cy - r - 4}" fill="rgba(255,255,255,0.9)" font-size="9" text-anchor="middle">${v.toFixed(2)}</text>`;
+        }
+      }
+    }
+  }
+
+  // 망치 (상단 권위) — 한 자루
+  svg += `<g transform="translate(${hammerX},${hammerY})">`;
+  // 손잡이
+  svg += `<rect x="-3" y="20" width="6" height="50" fill="#5a4a8a" rx="2"/>`;
+  // 머리 (3x3 부조 격자)
+  const k = state.kernels[state.activeFilter];
+  const cellK = 22;
+  const headW = K * cellK;
+  svg += `<rect x="${-headW/2 - 6}" y="${-headW/2 - 6}" width="${headW + 12}" height="${headW + 12}" fill="#2a2050" stroke="${state.beat > 0 ? '#ffd166' : 'rgba(255,255,255,0.2)'}" stroke-width="2" rx="4"/>`;
+  for (let i = 0; i < K; i++) {
+    for (let j = 0; j < K; j++) {
+      const v = k[i][j];
+      const x = -headW/2 + j * cellK;
+      const y = -headW/2 + i * cellK;
+      const col = v >= 0 ? `rgba(255,209,102,${0.2 + Math.min(1, v) * 0.7})` : `rgba(102,199,255,${0.2 + Math.min(1, -v) * 0.7})`;
+      svg += `<rect x="${x+1}" y="${y+1}" width="${cellK-2}" height="${cellK-2}" fill="${col}" stroke="rgba(255,255,255,0.1)"/>`;
+      svg += `<text x="${x + cellK/2}" y="${y + cellK/2 + 3}" fill="#fff" font-size="9" text-anchor="middle">${v.toFixed(1)}</text>`;
+    }
+  }
+  // bias 추
+  svg += `<circle cx="0" cy="76" r="${4 + Math.abs(state.bias) * 4}" fill="${state.bias >= 0 ? '#ffd166' : '#66c7ff'}" opacity="0.7"/>`;
+  svg += `<text x="0" y="${88 + Math.abs(state.bias) * 4}" fill="rgba(255,255,255,0.5)" font-size="9" text-anchor="middle">bias</text>`;
+  svg += `</g>`;
+
+  // 라벨
+  svg += `<text x="${W/2}" y="40" fill="rgba(255,255,255,0.7)" font-size="14" text-anchor="middle" letter-spacing="0.2em">한 자루의 망치</text>`;
+  svg += `<text x="${W/2}" y="${gridY0 - 18}" fill="rgba(255,255,255,0.5)" font-size="11" text-anchor="middle">도시 — 종들이 매달린 입력 격자 (출력은 한 박자에 동시 발화)</text>`;
+
+  stageSvg.innerHTML = svg;
+
+  // 호버 핸들러
+  stageSvg.querySelectorAll('.resonance-hit').forEach(el => {
+    el.addEventListener('mouseenter', e => {
+      const oi = parseInt(el.dataset.oi);
+      const oj = parseInt(el.dataset.oj);
+      state.hovered = { oi, oj };
+      renderStage();
+      renderSound();
+    });
+    el.addEventListener('mouseleave', e => {
+      state.hovered = null;
+      renderStage();
+      renderSound();
+    });
+  });
+}
+
+// ============== 망치 패널 (큰 부조) ==============
+const hammerSvg = document.getElementById('hammer-svg');
+function renderHammerPanel() {
+  const cellK = 50;
+  const off = (200 - cellK*K) / 2;
+  let svg = '';
+  const k = state.kernels[state.activeFilter];
+  for (let i = 0; i < K; i++) {
+    for (let j = 0; j < K; j++) {
+      const v = k[i][j];
+      const x = off + j * cellK;
+      const y = off + i * cellK;
+      const col = v >= 0 ? `rgba(255,209,102,${0.2 + Math.min(1, Math.abs(v)) * 0.7})` : `rgba(102,199,255,${0.2 + Math.min(1, Math.abs(v)) * 0.7})`;
+      svg += `<rect class="hammer-cell" data-i="${i}" data-j="${j}" x="${x+2}" y="${y+2}" width="${cellK-4}" height="${cellK-4}" fill="${col}" stroke="rgba(255,255,255,0.15)" rx="4"/>`;
+      svg += `<text x="${x + cellK/2}" y="${y + cellK/2 + 5}" fill="#fff" font-size="14" text-anchor="middle" pointer-events="none">${v.toFixed(1)}</text>`;
+    }
+  }
+  hammerSvg.innerHTML = svg;
+  hammerSvg.querySelectorAll('.hammer-cell').forEach(el => {
+    const i = parseInt(el.dataset.i);
+    const j = parseInt(el.dataset.j);
+    el.addEventListener('click', e => {
+      e.preventDefault();
+      state.kernels[state.activeFilter][i][j] += 0.5;
+      onKernelChanged();
+    });
+    el.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      state.kernels[state.activeFilter][i][j] -= 0.5;
+      onKernelChanged();
+    });
+  });
+}
+
+// ============== 합주 도시군 ==============
+function renderOrchestra() {
+  const list = document.getElementById('orchestra-list');
+  list.innerHTML = '';
+  for (let f = 0; f < NUM_FILTERS; f++) {
+    const div = document.createElement('div');
+    div.className = 'city-mini' + (f === state.activeFilter ? ' active' : '');
+    // 미니 도시: 작은 5x5 출력 미리보기 + 망치 부조
+    const out = computeOutput(state.input, state.kernels[f], state.bias, state.relu);
+    const maxAbs = Math.max(0.01, ...out.flat().map(Math.abs));
+    let svg = `<svg width="80" height="100" viewBox="0 0 80 100">`;
+    // 망치 미니
+    const k = state.kernels[f];
+    for (let i = 0; i < K; i++) {
+      for (let j = 0; j < K; j++) {
+        const v = k[i][j];
+        const col = v >= 0 ? `rgba(255,209,102,${0.2 + Math.min(1, Math.abs(v)) * 0.7})` : `rgba(102,199,255,${0.2 + Math.min(1, Math.abs(v)) * 0.7})`;
+        svg += `<rect x="${28 + j*8}" y="${4 + i*8}" width="7" height="7" fill="${col}"/>`;
+      }
+    }
+    svg += `<line x1="40" y1="29" x2="40" y2="40" stroke="#5a4a8a" stroke-width="2"/>`;
+    // 미니 도시 출력
+    for (let oi = 0; oi < OUT; oi++) {
+      for (let oj = 0; oj < OUT; oj++) {
+        const v = out[oi][oj];
+        const intensity = Math.min(1, Math.abs(v) / maxAbs);
+        const col = v >= 0 ? '#ffd166' : '#66c7ff';
+        svg += `<circle cx="${15 + oj*10}" cy="${48 + oi*10}" r="${3 + intensity*2.5}" fill="${col}" opacity="${0.2 + intensity*0.7}"/>`;
+      }
+    }
+    svg += `<text x="40" y="98" fill="rgba(255,255,255,0.5)" font-size="9" text-anchor="middle">필터 ${f+1}</text>`;
+    svg += `</svg>`;
+    div.innerHTML = svg;
+    div.addEventListener('click', () => {
+      state.activeFilter = f;
+      state.beat = 0;
+      state.output = Array.from({length: OUT}, () => Array(OUT).fill(0));
+      renderAll();
+    });
+    list.appendChild(div);
+  }
+}
+
+// ============== 음향 그래프 ==============
+const soundSvg = document.getElementById('sound-svg');
+const soundInfo = document.getElementById('sound-info');
+function renderSound() {
+  if (!state.hovered) {
+    soundSvg.innerHTML = `<text x="110" y="70" fill="rgba(255,255,255,0.3)" font-size="11" text-anchor="middle">종을 호버하면 9 막대 합산</text>`;
+    soundInfo.textContent = '종을 호버하세요.';
+    return;
+  }
+  const { oi, oj } = state.hovered;
+  const k = state.kernels[state.activeFilter];
+  const products = [];
+  let cumSum = 0;
+  for (let ki = 0; ki < K; ki++) {
+    for (let kj = 0; kj < K; kj++) {
+      const p = state.input[oi+ki][oj+kj] * k[ki][kj];
+      products.push(p);
+      cumSum += p;
+    }
+  }
+  const total = cumSum + state.bias;
+  const finalV = state.relu ? Math.max(0, total) : total;
+  const maxAbs = Math.max(0.5, ...products.map(Math.abs));
+  // 9 개 막대
+  let svg = '';
+  const baseY = 100;
+  const barW = 18;
+  const startX = 12;
+  for (let i = 0; i < 9; i++) {
+    const p = products[i];
+    const h = Math.abs(p) / maxAbs * 60;
+    const y = p >= 0 ? baseY - h : baseY;
+    const col = p >= 0 ? '#ffd166' : '#66c7ff';
+    svg += `<rect x="${startX + i*(barW+2)}" y="${y}" width="${barW}" height="${h}" fill="${col}" opacity="0.85"/>`;
+  }
+  // 0 축
+  svg += `<line x1="0" y1="${baseY}" x2="220" y2="${baseY}" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>`;
+  svg += `<text x="6" y="${baseY + 12}" fill="rgba(255,255,255,0.4)" font-size="9">9 곱</text>`;
+  // 합 봉우리
+  const sumH = Math.abs(total) / Math.max(1, maxAbs * 4) * 30;
+  svg += `<text x="200" y="${baseY - sumH - 4}" fill="${total >= 0 ? '#ffd166' : '#66c7ff'}" font-size="11" text-anchor="end">∑ = ${total.toFixed(2)}</text>`;
+  svg += `<text x="200" y="${baseY + 12}" fill="rgba(255,255,255,0.6)" font-size="10" text-anchor="end">출력 ${finalV.toFixed(2)}</text>`;
+  soundSvg.innerHTML = svg;
+  soundInfo.textContent = `종 (${oi},${oj}) — 9 곱의 누적이 한 음의 크기`;
+}
+
+// ============== 이벤트 ==============
+function onKernelChanged() {
+  // 가중치 공유의 라이브 증명: 한 셀 바꾸면 도시 전체가 다음 박자에 다른 응답
+  // 이미 박자 났으면 즉시 갱신 (그 결과를 시각적으로)
+  if (state.beat > 0) {
+    state.output = computeOutput(state.input, state.kernels[state.activeFilter], state.bias, state.relu);
+  }
+  renderAll();
+}
+
+function strike() {
+  state.beat += 1;
+  state.output = computeOutput(state.input, state.kernels[state.activeFilter], state.bias, state.relu);
+  document.getElementById('beat-num').textContent = state.beat;
+  renderAll();
+}
+
+function reset() {
+  state = {
+    input: makeInput(),
+    kernels: INITIAL_KERNELS.map(k => k.map(r => r.slice())),
+    activeFilter: 0,
+    bias: 0,
+    relu: true,
+    output: Array.from({length: OUT}, () => Array(OUT).fill(0)),
+    beat: 0,
+    hovered: null,
+    isAnimating: false,
+    autoMode: false,
+  };
+  document.getElementById('bias-slider').value = 0;
+  document.getElementById('bias-val').textContent = '0.0';
+  document.getElementById('relu-toggle').checked = true;
+  document.getElementById('beat-num').textContent = '0';
+  document.getElementById('auto-btn').textContent = '자동 박자';
+  if (autoTimer) { clearInterval(autoTimer); autoTimer = null; }
+  renderAll();
+}
+
+let autoTimer = null;
+
+document.getElementById('strike-btn').addEventListener('click', strike);
+document.getElementById('reset-btn').addEventListener('click', reset);
+document.getElementById('auto-btn').addEventListener('click', () => {
+  if (autoTimer) {
+    clearInterval(autoTimer);
+    autoTimer = null;
+    document.getElementById('auto-btn').textContent = '자동 박자';
+  } else {
+    document.getElementById('auto-btn').textContent = '정지';
+    autoTimer = setInterval(() => {
+      // 매 박자마다 망치 부조 한 칸 살짝 진동 — 가중치 공유 증명
+      const i = Math.floor(Math.random()*K);
+      const j = Math.floor(Math.random()*K);
+      state.kernels[state.activeFilter][i][j] += (Math.random() - 0.5) * 0.3;
+      strike();
+    }, 800);
+  }
+});
+document.getElementById('bias-slider').addEventListener('input', e => {
+  state.bias = parseFloat(e.target.value);
+  document.getElementById('bias-val').textContent = state.bias.toFixed(1);
+  if (state.beat > 0) {
+    state.output = computeOutput(state.input, state.kernels[state.activeFilter], state.bias, state.relu);
+  }
+  renderAll();
+});
+document.getElementById('relu-toggle').addEventListener('change', e => {
+  state.relu = e.target.checked;
+  if (state.beat > 0) {
+    state.output = computeOutput(state.input, state.kernels[state.activeFilter], state.bias, state.relu);
+  }
+  renderAll();
+});
+
+// ============== 렌더 ==============
+function renderAll() {
+  renderStage();
+  renderHammerPanel();
+  renderOrchestra();
+  renderSound();
+}
+renderAll();
+</script>
+</body>
+</html>

@@ -1,0 +1,840 @@
+<!doctype html>
+<!--
+  데모: 네트워크 계층 IP 라우팅 — 새로운 방식 (등고선 유역 메타포)
+  기획 문서: tasks/facet/network-ip-routing-2b-novel.md
+  레퍼런스 보고서: tasks/facet/network-ip-routing-references.md
+
+  시각 방향: 빗방울이 등고선 지형 위를 흘러내린다 — 봉우리=라우터, 등고선 깊이=prefix 구체성, 빗방울=패킷, 빗방울 부피=TTL.
+
+  구현한 요소:
+    - 등고선 패치 (5 봉우리, 봉우리당 3~4단 등고선)
+    - 빗방울 흐름 (부피=TTL, 곡선 경로, 비선형 부피 감소)
+    - 결정 호흡 (봉우리 위 후보 등고선 동시 펄스 → 가장 깊은 게 이김)
+    - 단면 인셋 (현재 봉우리의 V자 골짜기 비교, prefix 라벨 명기)
+    - 목적지 별 ★
+    - 현재 봉우리만 선명, 나머지 회색조 (hop-by-hop 강제)
+    - 짧은 메타포 안내 텍스트 (상단 1~2줄)
+    - 재생/일시정지/리셋 컨트롤
+    - 도착/TTL 0 폐기 분기
+
+  생략한 것:
+    - 사용자 IP 입력 (목적지 192.168.42.7 고정)
+    - 클릭으로 등고선 메우기(블랙홀 시연)
+    - TTL 슬라이더 (TTL=8 고정)
+    - 880px 확장 모드
+    - 인스펙터(빗방울/봉우리 클릭 정보 패널)
+    - 이산 prefix/연속 등고선 매핑 보정 디테일
+
+  임베드 폭 720px 가정. 시각화 자체는 660×460px 프레임.
+-->
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>등고선 유역 메타포 — IP 라우팅 데모</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #e8e9ec;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Apple SD Gothic Neo", sans-serif;
+      color: #222;
+    }
+    .page-wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 28px 24px 48px;
+      background: #ffffff;
+      box-shadow: 0 0 0 1px #d9dadd;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    .body-text {
+      color: #999;
+      line-height: 1.65;
+      font-size: 14px;
+      margin: 14px 0;
+    }
+    .reference-panel {
+      border: 1px solid #d6d8de;
+      background: #fafbfc;
+      border-radius: 6px;
+      padding: 14px 16px;
+      margin: 18px 0 14px;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .reference-panel h4 {
+      margin: 0 0 8px;
+      font-size: 13px;
+      color: #555;
+      letter-spacing: 0.02em;
+    }
+    .reference-panel ul {
+      margin: 4px 0 8px;
+      padding-left: 18px;
+    }
+    .reference-panel li {
+      margin: 3px 0;
+    }
+    .reference-panel a {
+      color: #2a64c8;
+      text-decoration: none;
+    }
+    .reference-panel a:hover { text-decoration: underline; }
+    .reference-panel .avoided {
+      color: #888;
+    }
+    .reference-panel .avoided strong { color: #aa4040; }
+    .concept-intro {
+      margin: 18px 0;
+      padding: 14px 16px;
+      background: #f4f5f8;
+      border-left: 3px solid #6c7b95;
+      border-radius: 3px;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #2a2a2a;
+    }
+    .concept-intro b { color: #1a3a6c; }
+
+    .facet-visual {
+      width: 660px;
+      max-width: 100%;
+      margin: 18px auto;
+      border: 1px solid #cdd0d6;
+      border-radius: 6px;
+      background: linear-gradient(180deg, #f0f3f7 0%, #e2e7ed 100%);
+      box-shadow: 0 2px 6px rgba(40, 50, 70, 0.06);
+      overflow: hidden;
+    }
+    .metaphor-banner {
+      padding: 8px 14px;
+      font-size: 12px;
+      color: #4a5160;
+      background: #fffceb;
+      border-bottom: 1px solid #e6e0c0;
+      line-height: 1.45;
+    }
+    .metaphor-banner b { color: #3a3322; }
+
+    .terrain-area {
+      position: relative;
+      width: 100%;
+      height: 320px;
+      background: radial-gradient(ellipse at 30% 80%, #d9e2c9 0%, #b8c2a1 55%, #97a079 100%);
+    }
+    .terrain-area svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .cross-section {
+      width: 100%;
+      height: 86px;
+      background: #fffefb;
+      border-top: 1px solid #e0dccc;
+      position: relative;
+    }
+    .cross-section svg {
+      width: 100%;
+      height: 100%;
+    }
+    .cross-section .label {
+      position: absolute;
+      left: 10px;
+      top: 6px;
+      font-size: 11px;
+      color: #7a7a7a;
+      letter-spacing: 0.02em;
+    }
+    .cross-section .hint {
+      position: absolute;
+      right: 10px;
+      bottom: 6px;
+      font-size: 10.5px;
+      color: #888;
+    }
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 14px;
+      background: #f5f6f8;
+      border-top: 1px solid #d6d8dd;
+      font-size: 12px;
+      color: #444;
+    }
+    .controls button {
+      border: 1px solid #b8bcc6;
+      background: #ffffff;
+      color: #222;
+      padding: 4px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .controls button:hover { background: #eef0f5; }
+    .controls .spacer { flex: 1; }
+    .controls .stat { color: #555; }
+    .controls .stat b { color: #1a3a6c; }
+    .ttl-bar {
+      display: inline-block;
+      width: 80px;
+      height: 8px;
+      background: #d8dbe2;
+      border-radius: 4px;
+      vertical-align: middle;
+      overflow: hidden;
+      margin-left: 4px;
+    }
+    .ttl-bar > span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, #4a78c8, #6f9ee0);
+      transition: width 0.4s ease;
+    }
+    .below-note {
+      font-size: 13px;
+      color: #555;
+      line-height: 1.6;
+      margin: 8px 4px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrap">
+
+    <p class="body-text">
+      …앞 본문에서 IP 라우팅의 큰 그림을 짚었다. 패킷은 라우터들 사이를 한 칸씩 던져지며 목적지에 도달하고, 매 라우터는 자기 안의 라우팅 테이블에서 가장 잘 맞는 규칙 하나를 골라 다음 라우터로 보낸다. 이 단락에서는 그 결정 절차의 본질을 풍경으로 다시 만난다…
+    </p>
+
+    <!-- 1. 레퍼런스 패널 -->
+    <div class="reference-panel">
+      <h4>이 시각화가 참고한 레퍼런스</h4>
+      <ul>
+        <li>
+          <a href="https://gaia.cs.umass.edu/kurose_ross/interactive/" target="_blank">Kurose &amp; Ross 동반 애니메이션</a>
+          — 라우팅 테이블 lookup 의 step-by-step 결정 절차를 학습자가 한 번에 인지하는 데 필요한 "결정 호흡" 의 개념적 출발점.
+        </li>
+        <li>
+          <a href="https://www.practicalnetworking.net/" target="_blank">Practical Networking — Subnetting/Routing</a>
+          — prefix 길이 비교의 시각적 처리(비트 자) 에 대한 영감. 본 데모에서는 "자" 대신 "골짜기 깊이" 로 변환해 차원을 비틀었다.
+        </li>
+        <li>
+          국토지리정보원 지형도 / 자연 분수계(watershed)
+          — 빗방울이 한 자리의 경사만으로 다음 골짜기를 찾는 "국소적·즉응적 결정" 의 원형. 이 데모의 핵심 메타포 그 자체.
+        </li>
+        <li>
+          <a href="https://www.opte.org/" target="_blank">Opte Project — Internet Map</a>
+          — 인터넷의 자기조직성을 풍경으로 보는 미적 태도. 풀스크린 우주는 차용하지 않으나, "한 장의 풍경에 결정이 응축된다" 는 자세를 빌렸다.
+        </li>
+      </ul>
+      <div class="avoided">
+        <strong>의도적으로 회피한 표준:</strong>
+        Cisco Packet Tracer 의 장비 룸 + 봉투 메타포, GNS3/NetAnim 의 노드+엣지 그래프, BGPlay 의 AS path 다이어그램, 그리고 "라우팅 테이블 = 옆 표" 의 사이드 패널 규약. 이들은 "그래프 위 경로 탐색" 이라는 학습자 기대를 강화한다 — 본 데모는 그 기대를 한 번 끊고 자연 풍경으로 갈아탄다.
+      </div>
+    </div>
+
+    <!-- 2. 대상 개념 설명 -->
+    <div class="concept-intro">
+      인터넷의 패킷은 한 라우터에서 다음 라우터로 한 칸씩 던져지며 목적지에 도달한다. 각 라우터는 패킷의 목적지 IP 만 보고, 자기 안의 <b>라우팅 테이블</b>에서 가장 잘 맞는 규칙(가장 긴 prefix 가 매치되는 행, <b>Longest Prefix Match</b>) 을 골라 다음 라우터로 보낸다. 출발 라우터는 끝까지의 경로를 알지 못한다 — 매 hop 마다 그 라우터가 자기만의 결정을 새로 내린다(<b>Hop-by-hop forwarding</b>). 패킷 머리에 든 <b>TTL</b> 은 hop 마다 1 씩 줄어들어, 길을 잃은 패킷이 영원히 떠도는 일을 막는다.
+    </div>
+
+    <!-- 3. 시각화 데모 -->
+    <div class="facet-visual" id="facet-visual">
+      <div class="metaphor-banner">
+        <b>빗방울은 자기 발 밑 경사만 본다.</b> 봉우리=라우터, 등고선의 깊이=라우팅 규칙의 구체성(prefix 길이). <b>가장 깊은 골짜기가 이긴다</b> = longest prefix match.
+      </div>
+      <div class="terrain-area">
+        <svg id="terrain" viewBox="0 0 660 320" preserveAspectRatio="none"></svg>
+      </div>
+      <div class="cross-section">
+        <span class="label" id="cs-label">현재 봉우리: —</span>
+        <svg id="cross" viewBox="0 0 660 86" preserveAspectRatio="none"></svg>
+        <span class="hint">↓ 더 깊은 V = 더 구체적인 prefix = 이긴다</span>
+      </div>
+      <div class="controls">
+        <button id="btn-play">▶ 재생</button>
+        <button id="btn-reset">⟲ 리셋</button>
+        <span class="stat">목적지 IP <b>192.168.42.7</b></span>
+        <span class="spacer"></span>
+        <span class="stat">TTL <span class="ttl-bar"><span id="ttl-fill" style="width:100%"></span></span></span>
+      </div>
+    </div>
+
+    <p class="below-note">
+      봉우리 위에 빗방울이 머무는 1.2 초가 라우터의 결정이 일어나는 시간이다 — 후보 등고선 여럿이 동시에 빛나다, 가장 좁고 깊은 하나가 빗방울을 자기 골짜기로 데려간다. 빗방울 부피가 줄어드는 정도가 곧 TTL 이다.
+    </p>
+
+    <p class="body-text">
+      …이어지는 본문에서는 같은 결정이 IPv6 (/48, /64) 에서 어떻게 더 깊은 골짜기로 표현되는지, 그리고 한 봉우리의 가장 깊은 골짜기가 메워지면(=라우팅 테이블 행 삭제) 빗방울이 어디로 빠지는지 — 즉 misconfiguration 과 블랙홀 — 를 살펴본다…
+    </p>
+  </div>
+
+<script>
+//=========================================================
+// 데이터: 5 개 봉우리(라우터)
+//=========================================================
+// 봉우리 위치는 사인 곡선 형태로 좌하 → 우상 (S6 § 7).
+const peaks = [
+  { id: "R1", x:  72, y: 232, label: "R1 (출발)" },
+  { id: "R2", x: 200, y: 168, label: "R2" },
+  { id: "R3", x: 332, y: 220, label: "R3" },
+  { id: "R4", x: 464, y: 132, label: "R4" },
+  { id: "R5", x: 588, y:  82, label: "R5 (도착 인접)" },
+];
+const peakById = Object.fromEntries(peaks.map(p => [p.id, p]));
+
+// 각 봉우리의 라우팅 테이블 = 후보 등고선들.
+// depth: 1=가장 얕은 default, 5=가장 깊은 /32. 깊을수록 구체적.
+// next: 다음 봉우리 ID 또는 "host"(도착).
+const tables = {
+  R1: [
+    { prefix: "0.0.0.0/0",      depth: 1, next: "R2" },
+    { prefix: "192.168.0.0/16", depth: 3, next: "R2" },
+    { prefix: "10.0.0.0/8",     depth: 2, next: "R3" },
+  ],
+  R2: [
+    { prefix: "0.0.0.0/0",       depth: 1, next: "R4" },
+    { prefix: "192.168.0.0/16",  depth: 3, next: "R3" },
+    { prefix: "192.168.42.0/24", depth: 4, next: "R5" },
+  ],
+  R3: [
+    { prefix: "0.0.0.0/0",       depth: 1, next: "R4" },
+    { prefix: "192.168.0.0/16",  depth: 3, next: "R2" }, // 일부러 다시 R2 로 (학습용)
+  ],
+  R4: [
+    { prefix: "0.0.0.0/0",       depth: 1, next: "R5" },
+    { prefix: "192.168.0.0/16",  depth: 3, next: "R5" },
+  ],
+  R5: [
+    { prefix: "192.168.42.0/24", depth: 4, next: "host" },
+    { prefix: "0.0.0.0/0",       depth: 1, next: "R4" },
+  ],
+};
+
+// 목적지 IP = 192.168.42.7 일 때, 각 봉우리에서 매치되는 후보(=깊이 ≤ 실제 매치 prefix).
+// 단순화를 위해 모든 행이 매치되는 것으로 간주하고, 가장 깊은 게 이긴다.
+function decide(routerId) {
+  const cands = tables[routerId];
+  let winner = cands[0];
+  for (const c of cands) if (c.depth > winner.depth) winner = c;
+  return { candidates: cands, winner };
+}
+
+// 시뮬레이션 시퀀스: 고정 경로 R1→R2→R5→host (목적지 192.168.42.7).
+// 각 봉우리에서 LPM 의 winner 에 따라 다음 홉이 결정됨.
+function buildPath() {
+  const path = [];
+  let cur = "R1";
+  let safety = 0;
+  while (cur && cur !== "host" && safety < 12) {
+    const d = decide(cur);
+    path.push({ at: cur, decision: d });
+    cur = d.winner.next;
+    safety++;
+  }
+  if (cur === "host") path.push({ at: "host" });
+  return path;
+}
+const SIM_PATH = buildPath();
+
+//=========================================================
+// 렌더링
+//=========================================================
+const SVG_NS = "http://www.w3.org/2000/svg";
+const terrain = document.getElementById("terrain");
+const cross = document.getElementById("cross");
+const csLabel = document.getElementById("cs-label");
+const ttlFill = document.getElementById("ttl-fill");
+const btnPlay = document.getElementById("btn-play");
+const btnReset = document.getElementById("btn-reset");
+
+const W = 660, H = 320;
+const TTL_MAX = 8;
+
+let state = null;
+function freshState() {
+  return {
+    pathIdx: 0,         // SIM_PATH 인덱스
+    phase: "idle",      // "idle" | "drop" | "breathing" | "flow" | "arrived" | "evaporated"
+    ttl: TTL_MAX,
+    activeRouter: null,
+    raindrop: { x: peaks[0].x, y: peaks[0].y - 8, r: 12 },
+    timer: null,
+    candPulse: 0,       // 0..1
+    winnerHighlight: 0, // 0..1
+    breathingT: 0,
+    flowT: 0,
+    flowFrom: null,
+    flowTo: null,
+  };
+}
+
+function clear(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+function ce(name, attrs = {}) {
+  const e = document.createElementNS(SVG_NS, name);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+
+// 한 봉우리의 등고선들 — 동심원형 곡선. depth 가 클수록 더 작고 깊은 안쪽 곡선.
+function peakContours(peak, opts = {}) {
+  const g = ce("g");
+  const baseR = 58;
+  const cands = tables[peak.id];
+  // 가장 얕은 것부터 가장 깊은 것 순으로 그림 (바깥 → 안쪽)
+  const sorted = [...cands].sort((a, b) => a.depth - b.depth);
+  sorted.forEach((c, i) => {
+    const r = baseR - (c.depth * 8);
+    const ry = r * 0.55;
+    const isWinner = opts.winnerPrefix === c.prefix;
+    const isCand = !!opts.pulseAll;
+    const dimmed = !!opts.dimmed;
+    const baseStroke = dimmed ? "#9aa28b" : "#5a6b3a";
+    const baseAlpha = dimmed ? 0.35 : 0.85;
+
+    // 등고선의 깊이감 채우기
+    const fill = ce("ellipse", {
+      cx: peak.x, cy: peak.y, rx: r, ry: ry,
+      fill: isWinner ? "#3a5a1a" : (dimmed ? "#a3ad8b" : "#7a8c5a"),
+      "fill-opacity": isWinner ? 0.55 : (dimmed ? 0.25 : 0.18),
+    });
+    g.appendChild(fill);
+
+    const stroke = ce("ellipse", {
+      cx: peak.x, cy: peak.y, rx: r, ry: ry,
+      fill: "none",
+      stroke: isWinner ? "#1f3a08" : baseStroke,
+      "stroke-width": isWinner ? 2.4 : 1.1,
+      "stroke-opacity": isCand && !dimmed ? (0.55 + 0.45 * Math.abs(Math.sin(opts.pulsePhase || 0))) : baseAlpha,
+    });
+    g.appendChild(stroke);
+  });
+  return g;
+}
+
+function drawBaseTerrain(activeId) {
+  // 풍경 베이스 — 넓은 경사 음영
+  const bg = ce("rect", { x: 0, y: 0, width: W, height: H, fill: "url(#terrainGrad)" });
+  // gradient defs
+  const defs = ce("defs");
+  defs.innerHTML = `
+    <radialGradient id="terrainGrad" cx="20%" cy="100%" r="120%">
+      <stop offset="0%" stop-color="#c9d3b3"/>
+      <stop offset="60%" stop-color="#a3ae87"/>
+      <stop offset="100%" stop-color="#7e8866"/>
+    </radialGradient>
+    <radialGradient id="starGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff8d0" stop-opacity="1"/>
+      <stop offset="60%" stop-color="#ffe080" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#ffe080" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="raindropShadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.4" />
+    </filter>
+  `;
+  terrain.appendChild(defs);
+  terrain.appendChild(bg);
+
+  // 봉우리 사이 곡선 골짜기 (직선 금지, S7)
+  // 보조선 — 흐릿한 곡선들 (실제 다음 홉 후보 연결, 학습자에게 풍경 인상만 줌)
+  const flows = [
+    ["R1","R2"], ["R1","R3"],
+    ["R2","R3"], ["R2","R5"],
+    ["R3","R4"], ["R4","R5"],
+  ];
+  flows.forEach(([a,b]) => {
+    const A = peakById[a], B = peakById[b];
+    const mx = (A.x + B.x) / 2;
+    const my = (A.y + B.y) / 2 + 28;
+    const path = ce("path", {
+      d: `M ${A.x} ${A.y} Q ${mx} ${my} ${B.x} ${B.y}`,
+      fill: "none",
+      stroke: "#6a7548",
+      "stroke-width": 1,
+      "stroke-opacity": 0.35,
+      "stroke-dasharray": "4 5",
+    });
+    terrain.appendChild(path);
+  });
+
+  // 봉우리들 — 활성/비활성 분리
+  peaks.forEach(p => {
+    const isActive = p.id === activeId;
+    const dimmed = !isActive;
+    const winnerPrefix = (state && state.activeRouter === p.id && state.phase === "breathing")
+      ? (state.breathingT > 0.55 ? decide(p.id).winner.prefix : null)
+      : null;
+    const pulseAll = (state && state.activeRouter === p.id && state.phase === "breathing" && state.breathingT < 0.7);
+    const g = peakContours(p, {
+      dimmed,
+      winnerPrefix,
+      pulseAll,
+      pulsePhase: state ? state.candPulse * Math.PI * 2 : 0,
+    });
+    terrain.appendChild(g);
+
+    // 봉우리 마루 점
+    const crest = ce("circle", {
+      cx: p.x, cy: p.y, r: 3,
+      fill: isActive ? "#2a2a2a" : "#3a3a3a",
+      "fill-opacity": isActive ? 1 : 0.45,
+    });
+    terrain.appendChild(crest);
+
+    // 라벨
+    const txt = ce("text", {
+      x: p.x, y: p.y - 50,
+      "text-anchor": "middle",
+      "font-size": 11,
+      "font-family": "monospace",
+      fill: isActive ? "#1a1a1a" : "#4a4a4a",
+      "fill-opacity": isActive ? 1 : 0.55,
+    });
+    txt.textContent = p.label;
+    terrain.appendChild(txt);
+  });
+
+  // 목적지 별 ★ — R5 위쪽
+  const star = ce("g");
+  const sx = peaks[4].x + 24, sy = peaks[4].y - 38;
+  const haze = ce("circle", { cx: sx, cy: sy, r: 22, fill: "url(#starGrad)" });
+  star.appendChild(haze);
+  const starGlyph = ce("text", {
+    x: sx, y: sy + 5,
+    "text-anchor": "middle",
+    "font-size": 18,
+    fill: "#c89020",
+  });
+  starGlyph.textContent = "★";
+  star.appendChild(starGlyph);
+  const starLabel = ce("text", {
+    x: sx, y: sy - 22,
+    "text-anchor": "middle",
+    "font-size": 10,
+    fill: "#86641a",
+  });
+  starLabel.textContent = "192.168.42.7";
+  star.appendChild(starLabel);
+  terrain.appendChild(star);
+}
+
+function drawRaindrop() {
+  if (!state || !state.raindrop) return;
+  const { x, y, r } = state.raindrop;
+  // 빗방울 잔향(꼬리는 그리지 않는다 — §10 source-routing 회피)
+  const halo = ce("circle", {
+    cx: x, cy: y, r: r * 1.6,
+    fill: "#7baee0",
+    "fill-opacity": 0.18,
+    filter: "url(#raindropShadow)",
+  });
+  terrain.appendChild(halo);
+  const drop = ce("ellipse", {
+    cx: x, cy: y, rx: r, ry: r * 1.15,
+    fill: "#3a78c8",
+    "fill-opacity": 0.85,
+    stroke: "#1a4880",
+    "stroke-width": 1,
+  });
+  terrain.appendChild(drop);
+  // 하이라이트
+  const hl = ce("ellipse", {
+    cx: x - r * 0.3, cy: y - r * 0.45, rx: r * 0.35, ry: r * 0.2,
+    fill: "#bcd9ff",
+    "fill-opacity": 0.85,
+  });
+  terrain.appendChild(hl);
+}
+
+function drawEvaporation(x, y, t) {
+  // t: 0..1 — 작아지다 김으로 흩어진다
+  for (let i = 0; i < 6; i++) {
+    const ang = (i / 6) * Math.PI * 2 + t * Math.PI;
+    const dist = 6 + t * 28;
+    const cx = x + Math.cos(ang) * dist;
+    const cy = y - 4 - t * 18 + Math.sin(ang) * dist * 0.3;
+    const c = ce("circle", {
+      cx, cy, r: 3 * (1 - t),
+      fill: "#9bb5d0",
+      "fill-opacity": (1 - t) * 0.6,
+    });
+    terrain.appendChild(c);
+  }
+}
+
+//---------------------------------------------------------
+// 단면 인셋 — 현재 봉우리의 V자 골짜기 비교
+//---------------------------------------------------------
+function drawCrossSection(routerId, breathingT) {
+  clear(cross);
+  const w = 660, h = 86;
+  // 배경 토지
+  const bg = ce("rect", { x: 0, y: 0, width: w, height: h, fill: "#fffefb" });
+  cross.appendChild(bg);
+  // 지면 베이스라인
+  const baseY = 18;
+  const ground = ce("path", {
+    d: `M 0 ${baseY} L ${w} ${baseY}`,
+    stroke: "#dad5c0",
+    "stroke-width": 1,
+  });
+  cross.appendChild(ground);
+
+  if (!routerId || routerId === "host") {
+    csLabel.textContent = "현재 봉우리: —";
+    return;
+  }
+  csLabel.textContent = `현재 봉우리: ${peakById[routerId].label}`;
+
+  const cands = tables[routerId];
+  const winner = decide(routerId).winner;
+  // 골짜기들을 좌→우로 분포
+  const slotCount = cands.length;
+  const slotW = w / slotCount;
+  cands.forEach((c, i) => {
+    const cx = slotW * (i + 0.5);
+    const dy = c.depth * 12; // /32=60px, /0=12px
+    const halfW = 22 + (5 - c.depth) * 6;
+    const isWinner = c.prefix === winner.prefix;
+    const winnerActive = isWinner && breathingT > 0.55;
+    const candPulse = breathingT > 0 && breathingT < 0.7;
+
+    // V 자 골짜기
+    const path = ce("path", {
+      d: `M ${cx - halfW} ${baseY} L ${cx} ${baseY + dy} L ${cx + halfW} ${baseY}`,
+      fill: "none",
+      stroke: winnerActive ? "#1f3a08" : "#5a6b3a",
+      "stroke-width": winnerActive ? 2.6 : 1.4,
+      "stroke-opacity": candPulse ? 0.6 + 0.4 * Math.abs(Math.sin((breathingT * 6) + i)) : 1,
+    });
+    cross.appendChild(path);
+
+    // V 채움
+    const fillPath = ce("path", {
+      d: `M ${cx - halfW} ${baseY} L ${cx} ${baseY + dy} L ${cx + halfW} ${baseY} Z`,
+      fill: winnerActive ? "#3a5a1a" : "#a3ad8b",
+      "fill-opacity": winnerActive ? 0.45 : 0.18,
+    });
+    cross.appendChild(fillPath);
+
+    // prefix 라벨
+    const lbl = ce("text", {
+      x: cx, y: 12,
+      "text-anchor": "middle",
+      "font-size": 10,
+      "font-family": "monospace",
+      fill: winnerActive ? "#1a1a1a" : "#555",
+      "font-weight": winnerActive ? "bold" : "normal",
+    });
+    lbl.textContent = c.prefix;
+    cross.appendChild(lbl);
+
+    // 깊이 끝 라벨
+    const depthLbl = ce("text", {
+      x: cx, y: baseY + dy + 11,
+      "text-anchor": "middle",
+      "font-size": 9,
+      fill: winnerActive ? "#1a3a08" : "#7a7a7a",
+    });
+    const slashMatch = c.prefix.match(/\/(\d+)/);
+    depthLbl.textContent = `깊이 ${c.depth}  (/${slashMatch ? slashMatch[1] : "?"})`;
+    cross.appendChild(depthLbl);
+  });
+}
+
+//=========================================================
+// 메인 렌더 / 시뮬레이션 루프
+//=========================================================
+function render() {
+  clear(terrain);
+  drawBaseTerrain(state.activeRouter);
+  drawRaindrop();
+
+  if (state.phase === "evaporating") {
+    drawEvaporation(state.raindrop.x, state.raindrop.y, state.evapT || 0);
+  }
+
+  drawCrossSection(state.activeRouter, state.phase === "breathing" ? state.breathingT : 0);
+  ttlFill.style.width = `${Math.max(0, state.ttl) / TTL_MAX * 100}%`;
+}
+
+//---------------------------------------------------------
+// 곡선 보간: 봉우리 사이 흐름은 베지어 곡선
+//---------------------------------------------------------
+function bezier(t, p0, p1, p2) {
+  const u = 1 - t;
+  return {
+    x: u*u*p0.x + 2*u*t*p1.x + t*t*p2.x,
+    y: u*u*p0.y + 2*u*t*p1.y + t*t*p2.y,
+  };
+}
+
+function radiusForTtl(ttl) {
+  // 비선형: 마지막 3 hop 가속
+  const ratio = Math.max(0, ttl) / TTL_MAX;
+  const base = 4;
+  const max = 14;
+  const eased = ratio < 0.4 ? Math.pow(ratio / 0.4, 1.4) * 0.4 : ratio;
+  return base + (max - base) * eased;
+}
+
+//---------------------------------------------------------
+// 시뮬레이션 단계
+//---------------------------------------------------------
+let raf = null;
+let lastTs = 0;
+
+function startBreathing() {
+  const step = SIM_PATH[state.pathIdx];
+  if (!step) return;
+  if (step.at === "host") {
+    state.phase = "arrived";
+    state.activeRouter = null;
+    state.raindrop.x = peaks[4].x + 24;
+    state.raindrop.y = peaks[4].y - 38;
+    return;
+  }
+  state.activeRouter = step.at;
+  state.phase = "breathing";
+  state.breathingT = 0;
+  // 빗방울을 봉우리 마루로 정확히
+  const p = peakById[step.at];
+  state.raindrop.x = p.x;
+  state.raindrop.y = p.y - 8;
+  state.raindrop.r = radiusForTtl(state.ttl);
+}
+
+function startFlow() {
+  const cur = SIM_PATH[state.pathIdx];
+  if (!cur) return;
+  const next = cur.decision.winner.next;
+  state.flowFrom = peakById[cur.at];
+  if (next === "host") {
+    // 별까지 흘러간다
+    state.flowTo = { x: peaks[4].x + 24, y: peaks[4].y - 38 };
+  } else {
+    state.flowTo = peakById[next];
+  }
+  state.flowT = 0;
+  state.phase = "flow";
+}
+
+function tick(ts) {
+  if (!lastTs) lastTs = ts;
+  const dt = Math.min(80, ts - lastTs) / 1000;
+  lastTs = ts;
+
+  state.candPulse = (state.candPulse + dt * 1.4) % 1;
+
+  if (state.phase === "drop") {
+    // 첫 빗방울 떨어짐 — 짧게
+    state.breathingT = (state.breathingT || 0) + dt / 0.4;
+    if (state.breathingT >= 1) {
+      state.breathingT = 0;
+      startBreathing();
+    }
+  } else if (state.phase === "breathing") {
+    state.breathingT += dt / 1.2; // 1.2초
+    if (state.breathingT >= 1) {
+      // 결정 완료 → 흐름
+      startFlow();
+    }
+  } else if (state.phase === "flow") {
+    state.flowT += dt / 0.7; // 0.7초
+    const t = Math.min(1, state.flowT);
+    const A = state.flowFrom, B = state.flowTo;
+    // 골짜기 곡선: 중간 control 점을 아래로
+    const ctrl = { x: (A.x + B.x) / 2, y: (A.y + B.y) / 2 + 36 };
+    const pos = bezier(t, A, ctrl, B);
+    state.raindrop.x = pos.x;
+    state.raindrop.y = pos.y;
+    if (t >= 1) {
+      // 다음 봉우리 도착: TTL 감소
+      state.ttl -= 1;
+      state.raindrop.r = radiusForTtl(state.ttl);
+      state.pathIdx += 1;
+      if (state.ttl <= 0) {
+        // TTL 폐기
+        state.phase = "evaporating";
+        state.evapT = 0;
+        return;
+      }
+      const nextStep = SIM_PATH[state.pathIdx];
+      if (!nextStep || nextStep.at === "host") {
+        // 도착
+        state.phase = "arrived";
+        state.activeRouter = null;
+        return;
+      }
+      startBreathing();
+    }
+  } else if (state.phase === "evaporating") {
+    state.evapT = (state.evapT || 0) + dt / 1.0;
+    state.raindrop.r = Math.max(0, radiusForTtl(0) * (1 - state.evapT));
+    if (state.evapT >= 1) {
+      state.phase = "evaporated";
+    }
+  } else if (state.phase === "arrived") {
+    // 잠깐 별 위에서 반짝
+    state.arrivedT = (state.arrivedT || 0) + dt;
+    state.raindrop.r = 8 + Math.sin(state.arrivedT * 4) * 2;
+  }
+
+  render();
+
+  if (state.phase !== "evaporated" && state.running) {
+    raf = requestAnimationFrame(tick);
+  } else if (state.phase === "evaporated" || state.phase === "arrived") {
+    // 종료 상태에서도 계속 그려서 사용자에게 결과 유지
+    raf = requestAnimationFrame(tick);
+  }
+}
+
+function play() {
+  if (!state) state = freshState();
+  if (state.phase === "idle") {
+    state.phase = "drop";
+    state.activeRouter = "R1";
+    state.breathingT = 0;
+    state.raindrop = { x: peaks[0].x, y: peaks[0].y - 30, r: radiusForTtl(state.ttl) };
+    // drop 끝나면 startBreathing 으로 이어짐
+  } else if (state.phase === "evaporated" || state.phase === "arrived") {
+    reset();
+    play();
+    return;
+  }
+  state.running = true;
+  btnPlay.textContent = "■ 일시정지";
+  lastTs = 0;
+  if (raf) cancelAnimationFrame(raf);
+  raf = requestAnimationFrame(tick);
+}
+
+function pause() {
+  if (state) state.running = false;
+  btnPlay.textContent = "▶ 재생";
+  if (raf) cancelAnimationFrame(raf);
+}
+
+function reset() {
+  if (raf) cancelAnimationFrame(raf);
+  state = freshState();
+  btnPlay.textContent = "▶ 재생";
+  render();
+}
+
+btnPlay.addEventListener("click", () => {
+  if (!state || !state.running) play();
+  else pause();
+});
+btnReset.addEventListener("click", reset);
+
+// 초기 렌더
+reset();
+
+</script>
+</body>
+</html>

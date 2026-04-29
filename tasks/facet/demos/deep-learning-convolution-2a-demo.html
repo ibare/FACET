@@ -1,0 +1,940 @@
+<!--
+  기획 문서: tasks/facet/deep-learning-convolution-2a-common.md (2A — 공통 강화)
+
+  시각 방향 한 줄:
+    "도장 + 형광펜" — 색이 동기화된 작은 사각형이 입력 격자 위를 칸 단위로
+    점프하며, 점프할 때마다 출력 격자에 같은 색의 한 칸이 떠오르고
+    옆 패널에서 곱·합 식이 풀어쓰여 동시에 등장한다.
+
+  구현한 시각 요소
+    - 5.1 색 동기화 트레이스 (양방향). 출력 셀은 영구 고유 hue 보유.
+            출력 호버 → 입력 receptive field + 커널 + 수식 9 항 점등.
+            입력 호버 → 그 입력이 기여한 모든 출력 셀 동시 점등.
+    - 5.2 한 박자 = 9 곱셈의 병렬 점등 + 부분합 누적 + bias + ReLU.
+    - 5.3 다중 채널 (입력 RGB z-stack 시각화 + 출력 N=3 필터 폴리포니).
+    - 5.4 stride / padding / kernel / bias / 박자 속도 슬라이더 + 출력
+            크기 산식 라이브 갱신.
+    - 결정적 순간 (전/중/후) 시각 차이 + 도장 1px 모션.
+
+  의도적으로 생략한 것
+    - dilation 슬라이더 (커널 구멍 격자) — 기획 5.4 일부.
+    - 가중치 공유 라이브 증명 5.5 (커널 셀 편집 인터랙션).
+    - 입력 줌/패닝, 모바일 반응형, 접근성, 키보드 단축키.
+    - 정식 FACET 4-layer 아키텍처 (단일 HTML).
+-->
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>Convolution 2A — 공통 강화 데모</title>
+  <style>
+    :root {
+      --bg: #0e1116;
+      --panel: #161b22;
+      --line: #2a3140;
+      --ink: #e6edf3;
+      --dim: #8b949e;
+      --accent: #58a6ff;
+      --grid-empty: #1c222b;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink);
+      font-family: ui-sans-serif, -apple-system, "SF Pro Text", "Pretendard", system-ui, sans-serif; }
+    .top {
+      display: flex; align-items: center; gap: 16px;
+      padding: 10px 18px; border-bottom: 1px solid var(--line); background: var(--panel);
+    }
+    .top h1 { font-size: 14px; margin: 0; letter-spacing: 0.4px; color: var(--dim); }
+    .top h1 b { color: var(--ink); }
+    .top .ctrl { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+    .top button {
+      background: #21262d; color: var(--ink); border: 1px solid var(--line);
+      padding: 5px 12px; border-radius: 6px; cursor: pointer; font-size: 12px;
+    }
+    .top button:hover { border-color: var(--accent); }
+    .top button.primary { background: var(--accent); color: #0d1117; border-color: var(--accent); }
+
+    .stage {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+      padding: 18px;
+    }
+    .panel {
+      background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+      padding: 14px;
+    }
+    .panel h2 {
+      margin: 0 0 10px 0; font-size: 11px; text-transform: uppercase;
+      letter-spacing: 1.2px; color: var(--dim); font-weight: 600;
+    }
+
+    /* 격자 공통 */
+    .grid { position: relative; display: inline-block; }
+    .grid .cell {
+      position: absolute; border: 1px solid var(--line);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: rgba(230,237,243,0.55);
+      transition: background-color 200ms ease, border-color 200ms ease,
+                  box-shadow 200ms ease, transform 80ms ease;
+      cursor: pointer;
+    }
+    .grid .cell.empty { background: var(--grid-empty); border-style: dashed; }
+    .grid .cell.pulse { box-shadow: 0 0 0 2px rgba(255,255,255,0.85) inset; }
+    .grid .cell.dim { opacity: 0.25; }
+
+    /* 입력 격자 — RGB z-stack */
+    .input-stack { position: relative; width: 380px; height: 380px; margin: 4px auto 0; }
+    .input-stack .layer {
+      position: absolute; top: 0; left: 0; width: 340px; height: 340px;
+      border: 1px solid var(--line); border-radius: 4px;
+      transition: transform 200ms ease;
+    }
+    .input-stack .layer.r { background: rgba(255, 80, 80, 0.06); transform: translate(0, 0); }
+    .input-stack .layer.g { background: rgba(80, 255, 120, 0.06); transform: translate(14px, 14px); }
+    .input-stack .layer.b { background: rgba(80, 140, 255, 0.06); transform: translate(28px, 28px); }
+    .input-stack .layer .label {
+      position: absolute; bottom: -16px; right: 6px; font-size: 9px; color: var(--dim);
+    }
+
+    .input-grid { position: absolute; top: 28px; left: 28px; }
+    .kernel-window {
+      position: absolute; pointer-events: none;
+      border: 2px solid #fff; border-radius: 4px;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.5), 0 6px 24px rgba(0,0,0,0.5);
+      transition: top 120ms ease, left 120ms ease, transform 80ms ease;
+      background: rgba(255,255,255,0.04);
+    }
+    .kernel-window.stamp { transform: translateY(2px) scale(0.97); }
+
+    /* 우측 패널 */
+    .right-col { display: flex; flex-direction: column; gap: 14px; }
+
+    .kernel-board { display: flex; align-items: center; gap: 16px; }
+    .kernel-board .grid { width: 120px; height: 120px; position: relative; }
+    .kernel-legend { font-size: 11px; color: var(--dim); line-height: 1.6; }
+    .kernel-legend b { color: var(--ink); }
+
+    .filter-row { margin-bottom: 14px; }
+    .filter-row .head {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 11px; color: var(--dim); margin-bottom: 6px;
+    }
+    .filter-row .head .name { color: var(--ink); font-weight: 600; }
+    .filter-row .head .swatch {
+      display: inline-block; width: 10px; height: 10px; border-radius: 2px;
+      margin-right: 6px; vertical-align: -1px;
+    }
+    .out-grids { display: flex; flex-direction: column; gap: 10px; }
+    .out-grid-wrap { display: flex; align-items: center; gap: 12px; }
+
+    /* 수식 패널 */
+    .eq-panel { font-family: "JetBrains Mono", "Menlo", "SF Mono", monospace; font-size: 13px; }
+    .eq-panel .eq-line {
+      display: flex; align-items: center; gap: 4px; margin: 4px 0;
+      flex-wrap: wrap; line-height: 1.7;
+    }
+    .eq-panel .term {
+      display: inline-flex; padding: 2px 5px; border-radius: 4px;
+      background: rgba(255,255,255,0.03); border: 1px solid var(--line);
+      transition: background-color 220ms ease, color 220ms ease, transform 100ms ease;
+      color: var(--dim);
+    }
+    .eq-panel .term.lit { color: #0d1117; transform: translateY(-1px); }
+    .eq-panel .label { color: var(--dim); margin-right: 6px; min-width: 80px; }
+    .eq-panel .running { color: var(--accent); font-weight: 600; }
+    .eq-panel .running.flash { color: #ffd24d; }
+    .eq-panel .meta { font-size: 11px; color: var(--dim); margin-top: 6px; }
+
+    /* 파라미터 행 */
+    .params {
+      display: flex; flex-wrap: wrap; gap: 18px; padding: 12px 18px;
+      border-top: 1px solid var(--line); background: var(--panel);
+      font-size: 12px; align-items: center;
+    }
+    .params .group { display: flex; align-items: center; gap: 8px; }
+    .params label { color: var(--dim); }
+    .params input[type=range] { width: 110px; }
+    .params .val { color: var(--ink); min-width: 22px; text-align: right; font-variant-numeric: tabular-nums; }
+    .params .formula {
+      margin-left: auto; font-family: "JetBrains Mono", monospace; font-size: 12px;
+      color: var(--dim);
+    }
+    .params .formula b { color: var(--ink); }
+    .params .formula .glow {
+      animation: glow 600ms ease;
+    }
+    @keyframes glow {
+      0% { color: #ffd24d; text-shadow: 0 0 6px rgba(255,210,77,0.7); }
+      100% { color: var(--ink); text-shadow: none; }
+    }
+
+    .legend {
+      font-size: 11px; color: var(--dim); margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="top">
+  <h1>FACET / <b>Convolution 2A</b> — 공통 강화 데모</h1>
+  <div class="ctrl">
+    <button id="btn-play" class="primary">재생</button>
+    <button id="btn-step">한 박자</button>
+    <button id="btn-reset">리셋</button>
+  </div>
+  <div class="ctrl" style="margin-left:auto;">
+    <label>박자 <span class="val" id="val-tempo">1.0x</span></label>
+    <input id="ipt-tempo" type="range" min="0.25" max="4" step="0.25" value="1" />
+  </div>
+</div>
+
+<div class="stage">
+  <!-- 좌측: 입력 격자 -->
+  <div class="panel">
+    <h2>입력 (RGB 3 채널, z-stack)</h2>
+    <div class="input-stack" id="input-stack">
+      <div class="layer r"><div class="label">R</div></div>
+      <div class="layer g"><div class="label">G</div></div>
+      <div class="layer b"><div class="label">B</div></div>
+      <div class="grid input-grid" id="input-grid"></div>
+      <div class="kernel-window" id="kernel-window"></div>
+    </div>
+    <div class="legend" id="legend">
+      입력 셀 호버 → 그 입력이 기여한 출력 셀이 모두 같은 색으로 점등 (양방향 트레이스).
+    </div>
+  </div>
+
+  <!-- 우측: 커널 보드 + 출력 stack -->
+  <div class="right-col">
+    <div class="panel">
+      <h2>커널 보드 (가중치 공유 — 도장 1 자루)</h2>
+      <div class="kernel-board">
+        <div class="grid" id="kernel-grid"></div>
+        <div class="kernel-legend">
+          <div><b>3 × 3 × 3</b> 학습된 엣지 감지 커널</div>
+          <div>모든 출력 위치에서 <b>같은 9 가중치</b>가 재사용됩니다.</div>
+          <div style="margin-top:6px; color: #ffd24d;">현재 박자의 9 항이 펄스 ↔ 입력 9 칸 ↔ 수식 9 항</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>출력 (N = 3 필터 폴리포니)</h2>
+      <div class="out-grids" id="out-grids"></div>
+    </div>
+
+    <div class="panel eq-panel">
+      <h2>수식 사이드 패널 (현재 박자)</h2>
+      <div id="eq-body"></div>
+      <div class="meta" id="eq-meta">한 박자 · 9 항 병렬 점등 → 채널 합 → +b → ReLU → 결과</div>
+    </div>
+  </div>
+</div>
+
+<div class="params">
+  <div class="group">
+    <label>stride <span class="val" id="val-stride">1</span></label>
+    <input id="ipt-stride" type="range" min="1" max="3" step="1" value="1" />
+  </div>
+  <div class="group">
+    <label>padding <span class="val" id="val-pad">1</span></label>
+    <input id="ipt-pad" type="range" min="0" max="2" step="1" value="1" />
+  </div>
+  <div class="group">
+    <label>kernel <span class="val" id="val-kern">3</span></label>
+    <input id="ipt-kern" type="range" min="3" max="3" step="2" value="3" />
+  </div>
+  <div class="group">
+    <label>bias <span class="val" id="val-bias">0.0</span></label>
+    <input id="ipt-bias" type="range" min="-2" max="2" step="0.1" value="0" />
+  </div>
+  <div class="formula" id="formula">
+    출력 크기 W' = (W − F + 2P)/S + 1 =
+    (<b id="f-W">7</b> − <b id="f-F">3</b> + 2·<b id="f-P">1</b>)/<b id="f-S">1</b> + 1 =
+    <b id="f-Wp">7</b>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+ *  Convolution 2A 데모 — 단일 파일 시각화
+ * ============================================================
+ *  - 입력: 7×7, 3 채널 (RGB 합성 패턴)
+ *  - 커널: 3×3, 3 채널 (수직 엣지 풍 가중치)
+ *  - 출력: stride / padding 에 따라 동적 크기. 필터 N = 3.
+ *  - 한 박자: 9 항 병렬 펄스 → 부분합 누적 → +b → ReLU → 결과
+ * ============================================================ */
+
+const W = 7, Cin = 3, F = 3, Nfilters = 3;
+const CELL = 44;          // 입력 셀 크기 (px)
+const OUT_CELL = 26;      // 출력 셀 크기 (px)
+const KERN_CELL = 36;     // 커널 보드 셀 크기 (px)
+
+/* ---- 입력 데이터: 사선 + 모서리 풍 패턴 (RGB) ---- */
+function makeInput() {
+  const x = [];
+  for (let c = 0; c < Cin; c++) {
+    const ch = [];
+    for (let r = 0; r < W; r++) {
+      const row = [];
+      for (let cc = 0; cc < W; cc++) {
+        // 채널마다 다른 패턴
+        let v;
+        if (c === 0)      v = (cc - r + 7) / 14;            // 대각
+        else if (c === 1) v = Math.abs(cc - 3) < 1.5 ? 0.85 : 0.15; // 수직 띠
+        else              v = r < 3 ? 0.2 : 0.7;            // 수평 분리
+        v = Math.max(0, Math.min(1, v + (Math.random() - 0.5) * 0.06));
+        row.push(v);
+      }
+      ch.push(row);
+    }
+    x.push(ch);
+  }
+  return x;
+}
+
+/* ---- 커널 N 개: 학습된 엣지 풍 ---- */
+function makeKernels() {
+  // 필터 0: 수직 엣지   / 필터 1: 수평 엣지   / 필터 2: 대각
+  const base = [
+    [[ -1, 0, 1], [ -2, 0, 2], [ -1, 0, 1]],
+    [[ -1,-2,-1], [  0, 0, 0], [  1, 2, 1]],
+    [[  2, 1, 0], [  1, 0,-1], [  0,-1,-2]],
+  ];
+  const filters = [];
+  for (let f = 0; f < Nfilters; f++) {
+    const ch = [];
+    for (let c = 0; c < Cin; c++) {
+      // 채널별로 약간 변형
+      const mat = base[f].map(row => row.map(v => +(v * (1 - c * 0.15)).toFixed(2)));
+      ch.push(mat);
+    }
+    filters.push(ch);
+  }
+  return filters;
+}
+
+const input = makeInput();
+const kernels = makeKernels();
+
+/* ============================================================
+ *  파라미터 / 상태
+ * ============================================================ */
+const state = {
+  stride: 1,
+  pad: 1,
+  kern: 3,
+  bias: 0,
+  tempo: 1,
+  outW: 7,
+  output: [],          // [filter][r][c] = activation
+  outputColor: [],     // [filter][r][c] = color string (영구)
+  filled: [],          // [filter][r][c] = boolean
+  step: 0,             // 현재 박자 인덱스
+  playing: false,
+  playTimer: null,
+};
+
+function computeOutW() {
+  return Math.floor((W - state.kern + 2 * state.pad) / state.stride) + 1;
+}
+
+/* 출력 셀 영구 hue 매핑: (r,c) → hue 0..360 */
+function outHue(r, c, oW) {
+  return ((r * oW + c) / Math.max(1, oW * oW)) * 360;
+}
+
+/* 필터별 베이스 hue (폴리포니에서 색을 다르게) */
+function filterBaseHue(f) { return [0, 120, 220][f]; }
+
+/* 필터/위치별 셀 색 (활성에 따라 채도/명도) */
+function cellColor(filter, r, c, act, oW) {
+  const baseHue = filterBaseHue(filter);
+  const localHue = outHue(r, c, oW);
+  const hue = (baseHue + localHue * 0.6) % 360;
+  const norm = Math.tanh(Math.abs(act)) * 0.85 + 0.15;
+  const sat = 60 + norm * 30;
+  const lig = 30 + norm * 35;
+  return `hsl(${hue.toFixed(0)}, ${sat.toFixed(0)}%, ${lig.toFixed(0)}%)`;
+}
+
+/* ============================================================
+ *  격자 DOM 생성
+ * ============================================================ */
+function createInputGrid() {
+  const g = document.getElementById('input-grid');
+  g.innerHTML = '';
+  g.style.width = (W * CELL) + 'px';
+  g.style.height = (W * CELL) + 'px';
+  for (let r = 0; r < W; r++) {
+    for (let c = 0; c < W; c++) {
+      const div = document.createElement('div');
+      div.className = 'cell';
+      div.style.width = (CELL - 2) + 'px';
+      div.style.height = (CELL - 2) + 'px';
+      div.style.top = (r * CELL) + 'px';
+      div.style.left = (c * CELL) + 'px';
+      // RGB 합성 색
+      const R = Math.floor(input[0][r][c] * 255);
+      const G = Math.floor(input[1][r][c] * 255);
+      const B = Math.floor(input[2][r][c] * 255);
+      div.style.background = `rgb(${R},${G},${B})`;
+      div.dataset.r = r;
+      div.dataset.c = c;
+      div.dataset.kind = 'input';
+      div.title = `x[${r},${c}] = (${input[0][r][c].toFixed(2)}, ${input[1][r][c].toFixed(2)}, ${input[2][r][c].toFixed(2)})`;
+      div.addEventListener('mouseenter', () => onHoverInput(r, c));
+      div.addEventListener('mouseleave', clearHover);
+      g.appendChild(div);
+    }
+  }
+}
+
+function createKernelGrid() {
+  const g = document.getElementById('kernel-grid');
+  g.innerHTML = '';
+  g.style.width = (F * KERN_CELL) + 'px';
+  g.style.height = (F * KERN_CELL) + 'px';
+  for (let i = 0; i < F; i++) {
+    for (let j = 0; j < F; j++) {
+      const div = document.createElement('div');
+      div.className = 'cell kernel-cell';
+      div.style.width = (KERN_CELL - 2) + 'px';
+      div.style.height = (KERN_CELL - 2) + 'px';
+      div.style.top = (i * KERN_CELL) + 'px';
+      div.style.left = (j * KERN_CELL) + 'px';
+      div.style.background = '#21262d';
+      div.style.color = '#e6edf3';
+      div.style.fontSize = '11px';
+      div.style.fontFamily = 'JetBrains Mono, monospace';
+      // 채널 평균값 표시 (간략)
+      const avg = (kernels[currentFilter()][0][i][j] + kernels[currentFilter()][1][i][j] + kernels[currentFilter()][2][i][j]) / 3;
+      div.textContent = avg.toFixed(1);
+      div.dataset.i = i; div.dataset.j = j;
+      g.appendChild(div);
+    }
+  }
+}
+
+function currentFilter() {
+  // 현재 박자 진행 시 어떤 필터를 보여줄지 — 첫 필터 기준 표기
+  return 0;
+}
+
+/* 출력 격자 N 개 생성 */
+function createOutGrids() {
+  const root = document.getElementById('out-grids');
+  root.innerHTML = '';
+  const oW = state.outW;
+  for (let f = 0; f < Nfilters; f++) {
+    const wrap = document.createElement('div');
+    wrap.className = 'filter-row';
+    const baseHue = filterBaseHue(f);
+    const swColor = `hsl(${baseHue}, 70%, 55%)`;
+    wrap.innerHTML = `
+      <div class="head">
+        <span class="name"><span class="swatch" style="background:${swColor}"></span>필터 ${f + 1} (${['수직 엣지','수평 엣지','대각'][f]})</span>
+        <span>${oW} × ${oW}</span>
+      </div>
+    `;
+    const wrap2 = document.createElement('div');
+    wrap2.className = 'out-grid-wrap';
+
+    const grid = document.createElement('div');
+    grid.className = 'grid';
+    grid.style.width = (oW * OUT_CELL) + 'px';
+    grid.style.height = (oW * OUT_CELL) + 'px';
+    grid.dataset.filter = f;
+
+    for (let r = 0; r < oW; r++) {
+      for (let c = 0; c < oW; c++) {
+        const div = document.createElement('div');
+        div.className = 'cell empty';
+        div.style.width = (OUT_CELL - 2) + 'px';
+        div.style.height = (OUT_CELL - 2) + 'px';
+        div.style.top = (r * OUT_CELL) + 'px';
+        div.style.left = (c * OUT_CELL) + 'px';
+        div.dataset.r = r;
+        div.dataset.c = c;
+        div.dataset.f = f;
+        div.dataset.kind = 'output';
+        div.addEventListener('mouseenter', () => onHoverOutput(f, r, c));
+        div.addEventListener('mouseleave', clearHover);
+        grid.appendChild(div);
+      }
+    }
+    wrap2.appendChild(grid);
+    wrap.appendChild(wrap2);
+    root.appendChild(wrap);
+  }
+}
+
+/* 커널 윈도우(슬라이딩 사각형) */
+function placeKernelWindow(r, c) {
+  const win = document.getElementById('kernel-window');
+  win.style.width = (state.kern * CELL - 2) + 'px';
+  win.style.height = (state.kern * CELL - 2) + 'px';
+  // padding 을 음수 좌표로 표현 — 입력 격자 내부에 클램프
+  const top = (r * state.stride - state.pad) * CELL + 28; // 28 = grid offset
+  const left = (c * state.stride - state.pad) * CELL + 28;
+  win.style.top = top + 'px';
+  win.style.left = left + 'px';
+  win.style.background = `hsla(${outHue(r, c, state.outW)}, 70%, 60%, 0.18)`;
+  win.style.borderColor = `hsl(${outHue(r, c, state.outW)}, 80%, 75%)`;
+}
+
+/* ============================================================
+ *  Convolution 계산 — 한 박자
+ * ============================================================ */
+function computeOutputCell(filter, oR, oC) {
+  // 9 항 (kxk) × Cin 채널 항목 모음
+  const terms = [];
+  let sum = 0;
+  for (let i = 0; i < state.kern; i++) {
+    for (let j = 0; j < state.kern; j++) {
+      const inR = oR * state.stride + i - state.pad;
+      const inC = oC * state.stride + j - state.pad;
+      let xC = [0, 0, 0];
+      if (inR >= 0 && inR < W && inC >= 0 && inC < W) {
+        xC = [input[0][inR][inC], input[1][inR][inC], input[2][inR][inC]];
+      }
+      // 채널 합산 (한 항으로 묶음)
+      let term = 0;
+      for (let c = 0; c < Cin; c++) {
+        term += xC[c] * kernels[filter][c][i][j];
+      }
+      sum += term;
+      terms.push({ i, j, inR, inC, xC, term });
+    }
+  }
+  sum += state.bias;
+  const relu = Math.max(0, sum);
+  return { terms, sum, relu };
+}
+
+/* receptive field 좌표 */
+function rfCoords(oR, oC) {
+  const list = [];
+  for (let i = 0; i < state.kern; i++) {
+    for (let j = 0; j < state.kern; j++) {
+      const inR = oR * state.stride + i - state.pad;
+      const inC = oC * state.stride + j - state.pad;
+      list.push({ i, j, inR, inC });
+    }
+  }
+  return list;
+}
+
+/* ============================================================
+ *  한 박자 애니메이션
+ * ============================================================ */
+function highlightInputs(rf, hue) {
+  const cells = document.querySelectorAll('.input-grid .cell');
+  cells.forEach(el => el.classList.remove('pulse', 'dim'));
+  cells.forEach(el => {
+    const r = +el.dataset.r, c = +el.dataset.c;
+    const hit = rf.find(p => p.inR === r && p.inC === c);
+    if (hit) {
+      el.classList.add('pulse');
+      el.style.boxShadow = `0 0 0 3px hsla(${hue},90%,70%,0.95) inset, 0 0 12px hsla(${hue},90%,70%,0.6)`;
+    } else {
+      el.style.boxShadow = '';
+      el.classList.add('dim');
+    }
+  });
+}
+function highlightKernel(hue) {
+  const cells = document.querySelectorAll('#kernel-grid .cell');
+  cells.forEach(el => {
+    el.classList.add('pulse');
+    el.style.boxShadow = `0 0 0 2px hsla(${hue},90%,70%,0.95) inset`;
+  });
+}
+function clearHighlights() {
+  document.querySelectorAll('.cell').forEach(el => {
+    el.classList.remove('pulse', 'dim');
+    el.style.boxShadow = '';
+  });
+}
+
+/* 수식 패널 작성 */
+function renderEquation(filter, oR, oC, calc) {
+  const body = document.getElementById('eq-body');
+  const hue = outHue(oR, oC, state.outW);
+  body.innerHTML = '';
+
+  // 1줄: 9 항 곱·합 (채널 합산 표기 단순화)
+  const line1 = document.createElement('div');
+  line1.className = 'eq-line';
+  const lbl = document.createElement('span');
+  lbl.className = 'label';
+  lbl.textContent = `y[${oR},${oC}] =`;
+  line1.appendChild(lbl);
+
+  calc.terms.forEach((t, idx) => {
+    const span = document.createElement('span');
+    span.className = 'term';
+    const xSum = (t.xC[0] + t.xC[1] + t.xC[2]) / 3;
+    span.textContent = `(${xSum.toFixed(2)}·w${t.i}${t.j})`;
+    span.dataset.idx = idx;
+    line1.appendChild(span);
+    if (idx < calc.terms.length - 1) {
+      const plus = document.createElement('span');
+      plus.textContent = '+';
+      plus.style.color = 'var(--dim)';
+      line1.appendChild(plus);
+    }
+  });
+
+  // 2줄: 채널 합 (요약)
+  const line2 = document.createElement('div');
+  line2.className = 'eq-line';
+  line2.innerHTML = `<span class="label">  ⇒ Σc</span>
+    <span class="running" id="eq-partial">0.00</span>`;
+
+  // 3줄: + bias
+  const line3 = document.createElement('div');
+  line3.className = 'eq-line';
+  line3.innerHTML = `<span class="label">  + b</span>
+    <span class="term">${state.bias.toFixed(2)}</span>
+    <span class="running" id="eq-bias">→ 0.00</span>`;
+
+  // 4줄: ReLU
+  const line4 = document.createElement('div');
+  line4.className = 'eq-line';
+  line4.innerHTML = `<span class="label">  ReLU(·)</span>
+    <span class="running" id="eq-relu">→ 0.00</span>`;
+
+  // 5줄: 결과
+  const line5 = document.createElement('div');
+  line5.className = 'eq-line';
+  line5.innerHTML = `<span class="label">  결과</span>
+    <span class="running flash" id="eq-result" style="color:hsl(${hue},80%,65%)">⏳</span>`;
+
+  body.append(line1, line2, line3, line4, line5);
+}
+
+/* 한 박자 실행 (filter f의 (oR, oC) 출력 셀) */
+async function playBeat(f, oR, oC, durBase) {
+  const calc = computeOutputCell(f, oR, oC);
+  const hue = outHue(oR, oC, state.outW);
+  const beatColor = `hsl(${hue}, 80%, 60%)`;
+
+  // 커널 사각형 위치
+  placeKernelWindow(oR, oC);
+
+  // 수식 패널 (현재 첫 필터만 상세 — 폴리포니라도 시각 부담 줄이기)
+  if (f === 0) renderEquation(f, oR, oC, calc);
+
+  const D = durBase / state.tempo;
+
+  // [전 → 중 시작] 9 항 병렬 점등 (0~30%)
+  highlightInputs(rfCoords(oR, oC), hue);
+  highlightKernel(hue);
+  if (f === 0) {
+    document.querySelectorAll('#eq-body .term').forEach((el) => {
+      el.classList.add('lit');
+      el.style.background = `hsla(${hue},90%,70%,0.85)`;
+      el.style.borderColor = `hsl(${hue},90%,75%)`;
+    });
+  }
+  await sleep(D * 0.30);
+
+  // [중] 부분합 누적 좌→우 (30~70%)
+  if (f === 0) {
+    const partial = document.getElementById('eq-partial');
+    let acc = 0;
+    const N = calc.terms.length;
+    for (let i = 0; i < N; i++) {
+      acc += calc.terms[i].term;
+      if (partial) partial.textContent = acc.toFixed(2);
+      await sleep((D * 0.40) / N);
+    }
+    // [중→후] +b, ReLU (70~88%)
+    const eqBias = document.getElementById('eq-bias');
+    if (eqBias) eqBias.textContent = `→ ${calc.sum.toFixed(2)}`;
+    await sleep(D * 0.10);
+    const eqRelu = document.getElementById('eq-relu');
+    if (eqRelu) eqRelu.textContent = `→ ${calc.relu.toFixed(2)}`;
+    await sleep(D * 0.08);
+    const eqRes = document.getElementById('eq-result');
+    if (eqRes) eqRes.textContent = calc.relu.toFixed(2);
+  } else {
+    await sleep(D * 0.58);
+  }
+
+  // [후] 출력 셀 채워짐 + 도장 모션
+  const sel = `.out-grids .grid[data-filter="${f}"] .cell[data-r="${oR}"][data-c="${oC}"]`;
+  const out = document.querySelector(sel);
+  if (out) {
+    out.classList.remove('empty');
+    const color = cellColor(f, oR, oC, calc.relu, state.outW);
+    out.style.background = color;
+    out.style.borderStyle = 'solid';
+    out.style.borderColor = `hsl(${(filterBaseHue(f) + outHue(oR, oC, state.outW) * 0.6) % 360}, 80%, 70%)`;
+    out.title = `y${f+1}[${oR},${oC}] = ${calc.relu.toFixed(2)}`;
+    state.output[f][oR][oC] = calc.relu;
+    state.outputColor[f][oR][oC] = color;
+    state.filled[f][oR][oC] = true;
+  }
+
+  // 도장 모션
+  const win = document.getElementById('kernel-window');
+  if (f === 0) {
+    win.classList.add('stamp');
+    setTimeout(() => win.classList.remove('stamp'), 80);
+  }
+
+  await sleep(D * 0.10);
+}
+
+/* 한 박자 = 모든 필터 동시 (병렬 폴리포니) */
+async function stepOnce() {
+  const oW = state.outW;
+  const total = oW * oW;
+  if (state.step >= total) return false;
+  const oR = Math.floor(state.step / oW);
+  const oC = state.step % oW;
+
+  const D = 700; // ms 기본
+  await Promise.all([
+    playBeat(0, oR, oC, D),
+    playBeat(1, oR, oC, D),
+    playBeat(2, oR, oC, D),
+  ]);
+
+  state.step++;
+  if (state.step >= total) {
+    return false;
+  }
+  return true;
+}
+
+/* ============================================================
+ *  자동 재생
+ * ============================================================ */
+async function play() {
+  if (state.playing) return;
+  state.playing = true;
+  document.getElementById('btn-play').textContent = '일시정지';
+  while (state.playing) {
+    const cont = await stepOnce();
+    if (!cont) {
+      state.playing = false;
+      document.getElementById('btn-play').textContent = '재생';
+      clearHighlights();
+      break;
+    }
+    await sleep(80 / state.tempo);
+  }
+}
+function pause() {
+  state.playing = false;
+  document.getElementById('btn-play').textContent = '재생';
+}
+
+/* ============================================================
+ *  호버 트레이스 — 양방향
+ * ============================================================ */
+function onHoverOutput(f, oR, oC) {
+  if (!state.filled[f][oR][oC]) return;
+  const hue = outHue(oR, oC, state.outW);
+  highlightInputs(rfCoords(oR, oC), hue);
+  highlightKernel(hue);
+  // 출력 셀 자체 강조
+  const sel = `.out-grids .grid[data-filter="${f}"] .cell[data-r="${oR}"][data-c="${oC}"]`;
+  const out = document.querySelector(sel);
+  if (out) out.classList.add('pulse');
+  // 수식 부활 (해당 필터 기준)
+  const calc = computeOutputCell(f, oR, oC);
+  renderEquation(f, oR, oC, calc);
+  document.querySelectorAll('#eq-body .term').forEach((el) => {
+    el.classList.add('lit');
+    el.style.background = `hsla(${hue},90%,70%,0.85)`;
+    el.style.borderColor = `hsl(${hue},90%,75%)`;
+  });
+  const partial = document.getElementById('eq-partial');
+  if (partial) partial.textContent = (calc.sum - state.bias).toFixed(2);
+  const eqBias = document.getElementById('eq-bias');
+  if (eqBias) eqBias.textContent = `→ ${calc.sum.toFixed(2)}`;
+  const eqRelu = document.getElementById('eq-relu');
+  if (eqRelu) eqRelu.textContent = `→ ${calc.relu.toFixed(2)}`;
+  const eqRes = document.getElementById('eq-result');
+  if (eqRes) eqRes.textContent = calc.relu.toFixed(2);
+}
+
+function onHoverInput(r, c) {
+  // 이 입력이 기여한 모든 출력 (f, oR, oC) 찾기
+  const contributions = [];
+  for (let f = 0; f < Nfilters; f++) {
+    for (let oR = 0; oR < state.outW; oR++) {
+      for (let oC = 0; oC < state.outW; oC++) {
+        if (!state.filled[f][oR][oC]) continue;
+        const rf = rfCoords(oR, oC);
+        if (rf.some(p => p.inR === r && p.inC === c)) {
+          contributions.push({ f, oR, oC });
+        }
+      }
+    }
+  }
+  // 기여된 출력 셀들 점등 + 다른 셀 dim
+  document.querySelectorAll('.out-grids .cell').forEach(el => {
+    el.classList.remove('pulse');
+    el.classList.add('dim');
+    el.style.boxShadow = '';
+  });
+  contributions.forEach(({ f, oR, oC }) => {
+    const sel = `.out-grids .grid[data-filter="${f}"] .cell[data-r="${oR}"][data-c="${oC}"]`;
+    const out = document.querySelector(sel);
+    if (out) {
+      out.classList.remove('dim');
+      out.classList.add('pulse');
+      const hue = outHue(oR, oC, state.outW);
+      out.style.boxShadow = `0 0 0 3px hsla(${hue},90%,75%,0.95) inset, 0 0 14px hsla(${hue},90%,70%,0.6)`;
+    }
+  });
+  // 입력 셀 자체 강조
+  document.querySelectorAll('.input-grid .cell').forEach(el => {
+    if (+el.dataset.r === r && +el.dataset.c === c) {
+      el.style.boxShadow = '0 0 0 3px #fff inset';
+    }
+  });
+}
+
+function clearHover() {
+  clearHighlights();
+  document.querySelectorAll('.input-grid .cell').forEach(el => el.style.boxShadow = '');
+  document.querySelectorAll('.out-grids .cell').forEach(el => {
+    el.classList.remove('pulse', 'dim');
+    if (!el.classList.contains('empty')) {
+      // 채워진 셀 색은 유지
+      const f = +el.dataset.f, r = +el.dataset.r, c = +el.dataset.c;
+      if (state.outputColor[f] && state.outputColor[f][r] && state.outputColor[f][r][c]) {
+        el.style.background = state.outputColor[f][r][c];
+        el.style.boxShadow = '';
+      }
+    } else {
+      el.style.boxShadow = '';
+    }
+  });
+}
+
+/* ============================================================
+ *  파라미터 핸들링
+ * ============================================================ */
+function updateFormula(triggered) {
+  const oW = computeOutW();
+  state.outW = oW;
+  document.getElementById('f-W').textContent = W;
+  document.getElementById('f-F').textContent = state.kern;
+  document.getElementById('f-P').textContent = state.pad;
+  document.getElementById('f-S').textContent = state.stride;
+  document.getElementById('f-Wp').textContent = oW;
+  if (triggered) {
+    const el = document.getElementById('f-' + triggered);
+    if (el) {
+      el.classList.remove('glow');
+      void el.offsetWidth;
+      el.classList.add('glow');
+    }
+    const wp = document.getElementById('f-Wp');
+    wp.classList.remove('glow');
+    void wp.offsetWidth;
+    wp.classList.add('glow');
+  }
+}
+
+function reset() {
+  pause();
+  state.step = 0;
+  state.outW = computeOutW();
+  state.output = [];
+  state.outputColor = [];
+  state.filled = [];
+  for (let f = 0; f < Nfilters; f++) {
+    state.output.push([]);
+    state.outputColor.push([]);
+    state.filled.push([]);
+    for (let r = 0; r < state.outW; r++) {
+      state.output[f].push(new Array(state.outW).fill(0));
+      state.outputColor[f].push(new Array(state.outW).fill(null));
+      state.filled[f].push(new Array(state.outW).fill(false));
+    }
+  }
+  createOutGrids();
+  // 커널 윈도우 첫 위치
+  placeKernelWindow(0, 0);
+  // 수식 패널 초기 식 (첫 위치 빈 식)
+  const calc = computeOutputCell(0, 0, 0);
+  renderEquation(0, 0, 0, calc);
+  document.querySelectorAll('#eq-body .term').forEach(el => {
+    el.classList.remove('lit');
+    el.style.background = '';
+    el.style.borderColor = '';
+  });
+  ['eq-partial','eq-bias','eq-relu','eq-result'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = id === 'eq-result' ? '⏳' : '0.00';
+  });
+  clearHighlights();
+}
+
+/* ============================================================
+ *  init + 이벤트 바인딩
+ * ============================================================ */
+function bindEvents() {
+  document.getElementById('btn-play').addEventListener('click', () => {
+    if (state.playing) pause(); else play();
+  });
+  document.getElementById('btn-step').addEventListener('click', async () => {
+    if (state.playing) return;
+    await stepOnce();
+  });
+  document.getElementById('btn-reset').addEventListener('click', reset);
+
+  const stride = document.getElementById('ipt-stride');
+  stride.addEventListener('input', (e) => {
+    state.stride = +e.target.value;
+    document.getElementById('val-stride').textContent = state.stride;
+    updateFormula('S');
+    reset();
+  });
+  const pad = document.getElementById('ipt-pad');
+  pad.addEventListener('input', (e) => {
+    state.pad = +e.target.value;
+    document.getElementById('val-pad').textContent = state.pad;
+    updateFormula('P');
+    reset();
+  });
+  const kern = document.getElementById('ipt-kern');
+  kern.addEventListener('input', (e) => {
+    state.kern = +e.target.value;
+    document.getElementById('val-kern').textContent = state.kern;
+    updateFormula('F');
+    reset();
+  });
+  const bias = document.getElementById('ipt-bias');
+  bias.addEventListener('input', (e) => {
+    state.bias = +e.target.value;
+    document.getElementById('val-bias').textContent = state.bias.toFixed(1);
+  });
+  const tempo = document.getElementById('ipt-tempo');
+  tempo.addEventListener('input', (e) => {
+    state.tempo = +e.target.value;
+    document.getElementById('val-tempo').textContent = state.tempo.toFixed(2) + 'x';
+  });
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function init() {
+  createInputGrid();
+  createKernelGrid();
+  reset();
+  updateFormula();
+  bindEvents();
+}
+init();
+</script>
+
+</body>
+</html>

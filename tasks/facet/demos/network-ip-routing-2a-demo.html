@@ -1,0 +1,1158 @@
+<!--
+  FACET 데모 — 네트워크 계층 IP 라우팅 (2A 공통 강화)
+  기획 문서: tasks/facet/network-ip-routing-2a-common.md
+  레퍼런스 보고서: tasks/facet/network-ip-routing-references.md
+
+  시각 방향(한 줄):
+    "패킷이 라우터에서 잠깐 멈추면, 라우팅 테이블의 모든 prefix 후보가
+     dst IP 와 비트 정렬되어 매치 막대 길이로 경쟁하고, 가장 긴 막대가
+     골드로 변하면 그 행의 출구 색이 패킷에 입혀져 다음 라우터로 떠난다."
+
+  구현한 요소
+    - 토폴로지 그래프 (R1~R6, src, dst, 고정 좌표)
+    - 수명 카드 패킷 (dst IP, TTL 8칸 게이지, 출구 색 테두리)
+    - 활성 라우터 라우팅 테이블 패널 (prefix/next/iface, 비트 정렬, 매치 막대)
+    - 매치 길이 막대 (가장 긴 막대 골드, longest prefix match 시각 정당화)
+    - 헤더 inspect 미니 패널 (패킷 hover 시 부유)
+    - 도착 펄스 → 비트 매칭 펼침 → 출구 색 입힘 → 출발 의 1.1초 박자
+    - 캡션 영역 / 컨트롤 (재생, 일시정지, 리셋, 속도)
+    - dst 프리셋 4종 (longest prefix / default route / 일치 없음 포함)
+
+  의도적으로 생략한 요소
+    - 회고 컷의 "출발 시 본 경로 vs 실제 경로" 정밀 비교 (잔상 곡선까지만)
+    - 표 행 hover 시 가상 next hop 점선 미리보기
+    - hop 슬라이더로 임의 hop 점프 (Step 버튼으로 대체)
+    - TTL 0 폐기 시 ICMP 아이콘 회수 (회색 처리만)
+    - 모바일 적층 레이아웃 (720px 폭 전제)
+
+  임베드 폭 720px 가정. 페이지 자체는 임베드 시뮬레이션 래퍼.
+-->
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<title>FACET demo — IP routing (공통 강화)</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: #ececec;
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+                 "Pretendard", "Noto Sans KR", sans-serif;
+    color: #222;
+    line-height: 1.6;
+  }
+  .page-bg {
+    min-height: 100vh;
+    padding: 40px 0;
+  }
+  .embed-frame {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 28px 24px 36px;
+    background: white;
+    box-shadow: 0 0 0 1px #e2e2e2;
+  }
+  .body-stub {
+    color: #b1b1b1;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .reference-panel {
+    margin: 18px 0 22px;
+    padding: 12px 14px;
+    border-left: 3px solid #cfd8dc;
+    background: #fafbfc;
+    font-size: 13px;
+  }
+  .reference-panel h4 {
+    margin: 0 0 8px;
+    font-size: 12px;
+    color: #607d8b;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .reference-panel ul { margin: 0; padding-left: 18px; }
+  .reference-panel li { margin: 3px 0; color: #455a64; }
+  .reference-panel a { color: #1565c0; text-decoration: none; }
+  .reference-panel a:hover { text-decoration: underline; }
+
+  .concept-intro {
+    margin: 18px 0;
+    padding: 14px 16px;
+    background: #f3f6fa;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #2b3a44;
+  }
+  .concept-intro strong { color: #0d47a1; }
+  .concept-intro .terms {
+    margin-top: 10px;
+    font-size: 12.5px;
+    color: #546e7a;
+    border-top: 1px dashed #cfd8dc;
+    padding-top: 8px;
+  }
+  .concept-intro .terms b { color: #37474f; }
+
+  /* === Facet visual === */
+  .facet-visual {
+    margin: 18px 0 8px;
+    border: 1px solid #d8dde2;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #fcfcfc;
+  }
+  .caption {
+    padding: 10px 14px;
+    background: #fff;
+    border-bottom: 1px solid #e6eaee;
+    font-size: 13px;
+    color: #2b3a44;
+    min-height: 44px;
+  }
+  .caption b { color: #0d47a1; }
+
+  .stage {
+    display: flex;
+    width: 100%;
+  }
+  .topo {
+    width: 380px;
+    height: 320px;
+    position: relative;
+    background:
+      radial-gradient(circle at 50% 50%, #fbfcfd 0%, #f4f6f8 100%);
+    border-right: 1px solid #e6eaee;
+  }
+  .table-pane {
+    flex: 1;
+    height: 320px;
+    padding: 10px 12px;
+    background: #fff;
+    overflow: hidden;
+    font-size: 12px;
+  }
+  .table-pane .pane-title {
+    font-weight: 600;
+    color: #37474f;
+    margin-bottom: 6px;
+    font-size: 12.5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .table-pane .pane-title small {
+    font-weight: 400;
+    color: #90a4ae;
+    font-size: 11px;
+  }
+  .rt-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+  }
+  .rt-table th {
+    text-align: left;
+    color: #78909c;
+    font-weight: 500;
+    padding: 4px 4px;
+    border-bottom: 1px solid #eceff1;
+  }
+  .rt-table td {
+    padding: 5px 4px;
+    border-bottom: 1px solid #f5f5f5;
+    vertical-align: middle;
+  }
+  .rt-row {
+    transition: background 200ms;
+  }
+  .rt-row.win {
+    background: #fff8e1;
+  }
+  .bitstrip {
+    display: inline-flex;
+    gap: 1px;
+    margin-right: 4px;
+  }
+  .bitcell {
+    width: 5px;
+    height: 11px;
+    background: #eceff1;
+    border-radius: 1px;
+  }
+  .bitcell.match { background: #43a047; }
+  .bitcell.miss  { background: #cfd8dc; }
+  .bitcell.boundary { box-shadow: 1px 0 0 0 #e53935; }
+  .bitcell.beyond { background: #f5f5f5; opacity: 0.4; }
+  .matchbar-wrap {
+    display: inline-block;
+    width: 64px;
+    height: 8px;
+    background: #f1f3f5;
+    border-radius: 2px;
+    vertical-align: middle;
+    position: relative;
+    overflow: hidden;
+  }
+  .matchbar {
+    height: 100%;
+    background: #90a4ae;
+    transition: width 350ms ease, background 200ms;
+  }
+  .rt-row.win .matchbar { background: #ffb300; }
+  .iface-chip {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+
+  /* SVG nodes / edges */
+  .link {
+    stroke: #b0bec5;
+    stroke-width: 2;
+    transition: stroke 200ms, stroke-width 200ms;
+  }
+  .link.active {
+    stroke-width: 4;
+  }
+  .link.trail {
+    stroke: #ffb300;
+    stroke-width: 3;
+    opacity: 0.45;
+  }
+  .router-circle {
+    fill: #fff;
+    stroke: #455a64;
+    stroke-width: 2;
+    transition: r 200ms, stroke 200ms, stroke-width 200ms;
+  }
+  .router-circle.active {
+    stroke: #1565c0;
+    stroke-width: 3;
+  }
+  .router-label {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 11px;
+    fill: #263238;
+    text-anchor: middle;
+    pointer-events: none;
+  }
+  .table-shadow {
+    fill: #cfd8dc;
+    opacity: 0.55;
+  }
+  .host-rect {
+    fill: #eceff1;
+    stroke: #607d8b;
+    stroke-width: 1.5;
+  }
+  .host-label {
+    font-size: 10px;
+    fill: #455a64;
+    text-anchor: middle;
+    font-family: ui-monospace, monospace;
+  }
+
+  /* packet card */
+  .packet-card {
+    cursor: pointer;
+  }
+  .packet-card .body {
+    fill: #fff;
+    stroke: #455a64;
+    stroke-width: 2;
+    transition: stroke 250ms;
+  }
+  .packet-card.dropped .body { fill: #eceff1; stroke: #9e9e9e; }
+  .packet-card text { font-family: ui-monospace, monospace; }
+  .ttl-cell {
+    fill: #cfd8dc;
+    stroke: #90a4ae;
+    stroke-width: 0.5;
+  }
+  .ttl-cell.spent { fill: #455a64; }
+
+  .inspect {
+    position: absolute;
+    background: #263238;
+    color: #eceff1;
+    border-radius: 4px;
+    padding: 6px 9px;
+    font-family: ui-monospace, monospace;
+    font-size: 10.5px;
+    pointer-events: none;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+    line-height: 1.45;
+    width: 145px;
+    z-index: 10;
+    transform: translate(-50%, -110%);
+    opacity: 0;
+    transition: opacity 180ms;
+  }
+  .inspect.visible { opacity: 1; }
+  .inspect b { color: #ffd54f; }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #fafafa;
+    border-top: 1px solid #e6eaee;
+    font-size: 12px;
+  }
+  .controls button {
+    border: 1px solid #b0bec5;
+    background: white;
+    padding: 4px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 12px;
+    color: #37474f;
+  }
+  .controls button:hover { background: #eceff1; }
+  .controls button.primary {
+    background: #1565c0;
+    color: white;
+    border-color: #1565c0;
+  }
+  .controls button.primary:hover { background: #0d47a1; }
+  .controls .spacer { flex: 1; }
+  .controls .meta {
+    font-family: ui-monospace, monospace;
+    color: #607d8b;
+  }
+  .controls select {
+    font-size: 12px;
+    padding: 3px 6px;
+  }
+
+  .dst-presets {
+    display: flex;
+    gap: 6px;
+    padding: 6px 12px 10px;
+    background: #fafafa;
+    border-top: 1px dashed #e6eaee;
+    flex-wrap: wrap;
+    font-size: 11.5px;
+  }
+  .dst-presets span { color: #78909c; align-self: center; margin-right: 4px; }
+  .dst-presets button {
+    border: 1px solid #cfd8dc;
+    background: white;
+    border-radius: 3px;
+    padding: 3px 8px;
+    cursor: pointer;
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    color: #37474f;
+  }
+  .dst-presets button.active {
+    background: #1565c0;
+    color: white;
+    border-color: #1565c0;
+  }
+
+  .post-note {
+    margin-top: 14px;
+    font-size: 13px;
+    color: #455a64;
+  }
+</style>
+</head>
+<body>
+<div class="page-bg">
+  <div class="embed-frame">
+
+    <p class="body-stub">
+      ...앞 본문에서 IP 주소, prefix, 라우터 같은 용어가 짧게 소개되었다고
+      가정한다. 이제 첫 번째 본격 데모로, 실제로 패킷이 어떻게 가는지 보자...
+    </p>
+
+    <!-- 1. 레퍼런스 패널 -->
+    <div class="reference-panel">
+      <h4>이 시각화가 참고한 레퍼런스</h4>
+      <ul>
+        <li>
+          <a href="https://gaia.cs.umass.edu/kurose_ross/interactive/" target="_blank">
+            Kurose &amp; Ross 동반 애니메이션</a>
+          — 라우팅 테이블 옆 표 + step 진행의 정석 골격.
+        </li>
+        <li>
+          <a href="https://www.netacad.com/courses/packet-tracer" target="_blank">
+            Cisco Packet Tracer</a>
+          — Simulation Mode 의 hop 단위 멈춤과 incoming/outgoing 색 분리.
+        </li>
+        <li>
+          <a href="https://www.practicalnetworking.net/" target="_blank">
+            Practical Networking — Subnetting/Routing 시리즈</a>
+          — 32 비트 IP 위에 마스크 경계를 빨간 세로선으로 명시하는 비트 단위 정렬.
+        </li>
+      </ul>
+    </div>
+
+    <!-- 2. 대상 개념 설명 -->
+    <div class="concept-intro">
+      인터넷의 패킷은 한 라우터에서 다음 라우터로 한 칸씩 던져지며 목적지에
+      도달한다. 각 라우터는 패킷의 <strong>목적지 IP</strong> 만 보고, 자기
+      안의 <strong>라우팅 테이블</strong>에서 가장 잘 맞는 규칙(가장 긴
+      prefix 가 매치되는 행, <strong>Longest Prefix Match</strong>) 을
+      골라 다음 라우터로 보낸다. 출발 라우터는 끝까지의 경로를 알지 못한다 —
+      매 hop 마다 그 라우터가 자기만의 결정을 새로 내린다
+      (<strong>Hop-by-hop forwarding</strong>). 패킷의
+      <strong>TTL</strong> 은 hop 마다 1 줄어, 길을 잃은 패킷이 영원히
+      떠도는 일을 막는다.
+      <div class="terms">
+        <b>prefix</b> IP 앞부분 �i 비트(우편번호 앞자리) ·
+        <b>next hop</b> 곧바로 넘겨 줄 옆 라우터 ·
+        <b>TTL</b> 패킷 수명, 매 hop -1 ·
+        <b>0.0.0.0/0</b> default route, 다른 행이 다 안 맞을 때 fallback
+      </div>
+    </div>
+
+    <!-- 3. 시각화 데모 -->
+    <div class="facet-visual">
+      <div class="caption" id="caption">
+        패킷은 한 라우터에서 다음 라우터로 한 칸씩 던져진다. ▶ 를 눌러보자.
+      </div>
+
+      <div class="stage">
+        <div class="topo" id="topo">
+          <svg width="380" height="320" id="svg" viewBox="0 0 380 320">
+            <!-- links/nodes/packet rendered by JS -->
+          </svg>
+          <div class="inspect" id="inspect"></div>
+        </div>
+
+        <div class="table-pane">
+          <div class="pane-title">
+            <span id="paneTitle">활성 라우터 — (대기)</span>
+            <small>longest prefix match</small>
+          </div>
+          <table class="rt-table">
+            <thead>
+              <tr>
+                <th style="width:88px">prefix</th>
+                <th>비트 정렬 (dst IP 와 비교)</th>
+                <th style="width:54px">next</th>
+                <th style="width:70px">match</th>
+              </tr>
+            </thead>
+            <tbody id="rtBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="dst-presets">
+        <span>dst 프리셋:</span>
+        <button data-dst="203.0.113.42" class="active">
+          203.0.113.42 <small>(/24 매치)</small>
+        </button>
+        <button data-dst="203.0.42.7">
+          203.0.42.7 <small>(/16 매치)</small>
+        </button>
+        <button data-dst="198.51.100.7">
+          198.51.100.7 <small>(default route)</small>
+        </button>
+        <button data-dst="10.99.99.99">
+          10.99.99.99 <small>(폐기)</small>
+        </button>
+      </div>
+
+      <div class="controls">
+        <button id="btnPlay" class="primary">▶ 재생</button>
+        <button id="btnPause">⏸</button>
+        <button id="btnReset">⟲ 리셋</button>
+        <span class="spacer"></span>
+        <span class="meta">hop <b id="hopCount">0</b>/<span id="hopTotal">?</span></span>
+        <span class="meta">·</span>
+        <span class="meta">TTL <b id="ttlNum">8</b></span>
+        <span class="meta">·</span>
+        <label class="meta">속도
+          <select id="speedSel">
+            <option value="2">×0.5</option>
+            <option value="1" selected>×1</option>
+            <option value="0.5">×2</option>
+            <option value="0.25">×4</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <p class="post-note">
+      매 hop 의 박자에 주목하라. (1) 라우터가 부풀고 표가 swap, (2) 모든
+      행이 dst IP 와 비트 정렬되며 매치 막대가 자란다, (3) 가장 긴 막대가
+      <b style="color:#ffb300">골드</b>로 변하고 그 행의 출구 색이 패킷 카드
+      테두리에 입혀진다, (4) 패킷이 같은 색의 굵어진 링크 위로 떠난다.
+      이 1.1 초 박자가 매 hop 마다 같은 리듬으로 반복된다.
+    </p>
+
+    <p class="body-stub">
+      ...뒷 본문에서 라우팅 테이블이 사실은 표가 아니라 trie 라는 이야기로
+      넘어간다고 가정한다...
+    </p>
+
+  </div>
+</div>
+
+<script>
+/* ============================================================
+ *  데이터: 토폴로지 + 라우터 라우팅 테이블
+ * ============================================================ */
+// 라우터 인터페이스 색 (라우터당 2~3 색)
+const IFACE_COLORS = {
+  // 동일 링크 양 끝의 인터페이스를 같은 hue 로 두면 시각적으로 일관됨.
+  // 여기선 각 라우터의 outgoing 식별 색만 신경.
+  'R1->R3': '#42a5f5',  // 파랑
+  'R1->R4': '#ab47bc',  // 보라
+  'R1->src': '#9e9e9e',
+  'R3->R5': '#26a69a',  // 청록
+  'R3->R2': '#ef5350',  // 빨강
+  'R3->R1': '#42a5f5',
+  'R5->dst': '#66bb6a', // 초록
+  'R5->R6': '#ff7043',  // 주황
+  'R5->R3': '#26a69a',
+  'R4->R6': '#ec407a',  // 핑크
+  'R4->R1': '#ab47bc',
+  'R2->R3': '#ef5350',
+  'R6->R5': '#ff7043',
+  'R6->R4': '#ec407a',
+};
+
+// 노드 좌표 (380x320 안)
+const NODES = {
+  src: { x:  30, y: 160, kind: 'host', label: 'src\n192.0.2.10' },
+  R1:  { x:  90, y: 160, kind: 'router' },
+  R2:  { x: 165, y:  60, kind: 'router' },
+  R3:  { x: 195, y: 160, kind: 'router' },
+  R4:  { x: 165, y: 260, kind: 'router' },
+  R5:  { x: 290, y: 160, kind: 'router' },
+  R6:  { x: 290, y: 260, kind: 'router' },
+  dst: { x: 350, y: 160, kind: 'host', label: 'dst\n203.0.113.42' },
+};
+
+// 링크 (양방향)
+const LINKS = [
+  ['src','R1'], ['R1','R3'], ['R1','R4'],
+  ['R3','R2'], ['R3','R5'],
+  ['R4','R6'],
+  ['R5','R6'], ['R5','dst'],
+];
+
+/* 라우팅 테이블 (라우터마다)
+ * 각 행: prefix(문자열), masklen, nextHop(라우터 id), iface key(라우터의 outgoing iface) */
+const RT = {
+  R1: [
+    { prefix: '203.0.113.0',  mask: 24, next: 'R3', iface: 'R1->R3' },
+    { prefix: '203.0.0.0',    mask: 16, next: 'R3', iface: 'R1->R3' },
+    { prefix: '198.51.100.0', mask: 24, next: 'R4', iface: 'R1->R4' },
+    { prefix: '192.0.2.0',    mask: 24, next: 'src',iface: 'R1->src' },
+    { prefix: '0.0.0.0',      mask:  0, next: 'R4', iface: 'R1->R4' },
+  ],
+  R3: [
+    { prefix: '203.0.113.0',  mask: 24, next: 'R5', iface: 'R3->R5' },
+    { prefix: '203.0.0.0',    mask: 16, next: 'R2', iface: 'R3->R2' },
+    { prefix: '198.51.0.0',   mask: 16, next: 'R5', iface: 'R3->R5' },
+    { prefix: '192.0.2.0',    mask: 24, next: 'R1', iface: 'R3->R1' },
+    { prefix: '0.0.0.0',      mask:  0, next: 'R5', iface: 'R3->R5' },
+  ],
+  R5: [
+    { prefix: '203.0.113.0',  mask: 24, next: 'dst',iface: 'R5->dst' },
+    { prefix: '203.0.0.0',    mask: 16, next: 'R6', iface: 'R5->R6' },
+    { prefix: '198.51.0.0',   mask: 16, next: 'R6', iface: 'R5->R6' },
+    { prefix: '0.0.0.0',      mask:  0, next: 'R3', iface: 'R5->R3' },
+  ],
+  R2: [
+    { prefix: '203.0.0.0',    mask: 16, next: 'R3', iface: 'R2->R3' },
+    { prefix: '0.0.0.0',      mask:  0, next: 'R3', iface: 'R2->R3' },
+  ],
+  R4: [
+    { prefix: '198.51.100.0', mask: 24, next: 'R6', iface: 'R4->R6' },
+    { prefix: '192.0.2.0',    mask: 24, next: 'R1', iface: 'R4->R1' },
+    { prefix: '0.0.0.0',      mask:  0, next: 'R6', iface: 'R4->R6' },
+  ],
+  R6: [
+    { prefix: '198.51.100.0', mask: 24, next: 'R5', iface: 'R6->R5' },
+    { prefix: '0.0.0.0',      mask:  0, next: 'R4', iface: 'R6->R4' },
+  ],
+};
+
+/* ============================================================
+ *  유틸 — IP 비트 변환, longest prefix match
+ * ============================================================ */
+function ipToBits(ip) {
+  return ip.split('.').map(o => {
+    const n = parseInt(o, 10);
+    let s = '';
+    for (let i = 7; i >= 0; i--) s += (n >> i) & 1;
+    return s;
+  }).join('');
+}
+function matchLength(dstBits, prefixBits, masklen) {
+  // 마스크 길이까지만 비교, 모두 일치해야 매치 성립
+  for (let i = 0; i < masklen; i++) {
+    if (dstBits[i] !== prefixBits[i]) return -1;
+  }
+  return masklen; // 매치 길이는 mask 길이 (longest prefix match 의 정의)
+}
+
+function lookup(routerId, dstIp) {
+  const dstBits = ipToBits(dstIp);
+  const rows = RT[routerId];
+  let winnerIdx = -1;
+  let winnerLen = -1;
+  rows.forEach((r, i) => {
+    const pb = ipToBits(r.prefix);
+    const m = matchLength(dstBits, pb, r.mask);
+    if (m > winnerLen) {
+      winnerLen = m;
+      winnerIdx = i;
+    }
+  });
+  return { winnerIdx, winnerLen, rows, dstBits };
+}
+
+/* ============================================================
+ *  렌더 — SVG 토폴로지
+ * ============================================================ */
+const svg = document.getElementById('svg');
+const SVG_NS = 'http://www.w3.org/2000/svg';
+function svgEl(tag, attrs={}) {
+  const el = document.createElementNS(SVG_NS, tag);
+  for (const k in attrs) el.setAttribute(k, attrs[k]);
+  return el;
+}
+
+function renderTopology() {
+  svg.innerHTML = '';
+
+  // links
+  const linkLayer = svgEl('g', { id: 'linkLayer' });
+  svg.appendChild(linkLayer);
+  LINKS.forEach(([a, b]) => {
+    const A = NODES[a], B = NODES[b];
+    const line = svgEl('line', {
+      x1: A.x, y1: A.y, x2: B.x, y2: B.y,
+      class: 'link',
+      'data-edge': a + '|' + b,
+    });
+    linkLayer.appendChild(line);
+  });
+
+  // hosts
+  Object.entries(NODES).forEach(([id, n]) => {
+    if (n.kind !== 'host') return;
+    const rect = svgEl('rect', {
+      x: n.x - 22, y: n.y - 14,
+      width: 44, height: 28, rx: 4, ry: 4,
+      class: 'host-rect',
+    });
+    svg.appendChild(rect);
+    const lines = n.label.split('\n');
+    lines.forEach((ln, i) => {
+      const t = svgEl('text', {
+        x: n.x, y: n.y + (i === 0 ? -1 : 10),
+        class: 'host-label',
+      });
+      t.textContent = ln;
+      svg.appendChild(t);
+    });
+  });
+
+  // routers
+  Object.entries(NODES).forEach(([id, n]) => {
+    if (n.kind !== 'router') return;
+    // 표 그림자 (라우터 옆)
+    const sh = svgEl('rect', {
+      x: n.x + 11, y: n.y - 14,
+      width: 8, height: 11, rx: 1.5,
+      class: 'table-shadow',
+    });
+    svg.appendChild(sh);
+    const sh2 = svgEl('rect', {
+      x: n.x + 13, y: n.y - 11,
+      width: 8, height: 11, rx: 1.5,
+      class: 'table-shadow',
+    });
+    svg.appendChild(sh2);
+
+    const c = svgEl('circle', {
+      cx: n.x, cy: n.y, r: 12,
+      class: 'router-circle',
+      'data-id': id,
+    });
+    svg.appendChild(c);
+    const t = svgEl('text', {
+      x: n.x, y: n.y + 3,
+      class: 'router-label',
+    });
+    t.textContent = id;
+    svg.appendChild(t);
+  });
+
+  // packet card layer
+  const pl = svgEl('g', { id: 'packetLayer' });
+  svg.appendChild(pl);
+}
+
+/* ============================================================
+ *  렌더 — 라우팅 테이블 패널
+ * ============================================================ */
+const rtBody = document.getElementById('rtBody');
+const paneTitle = document.getElementById('paneTitle');
+
+function renderRoutingTable(routerId, dstIp, winnerIdx) {
+  rtBody.innerHTML = '';
+  if (!routerId) {
+    paneTitle.textContent = '활성 라우터 — (대기)';
+    rtBody.innerHTML = '<tr><td colspan="4" style="color:#90a4ae;padding:14px 4px">패킷이 라우터에 도착하면 그 라우터의 표가 여기 펼쳐집니다.</td></tr>';
+    return;
+  }
+  paneTitle.textContent = '활성 라우터 — ' + routerId;
+  const rows = RT[routerId];
+  const dstBits = dstIp ? ipToBits(dstIp) : null;
+
+  rows.forEach((r, i) => {
+    const tr = document.createElement('tr');
+    tr.className = 'rt-row' + (i === winnerIdx ? ' win' : '');
+
+    // prefix
+    const c1 = document.createElement('td');
+    c1.textContent = r.prefix + '/' + r.mask;
+    tr.appendChild(c1);
+
+    // 비트 정렬 영역 (32 셀)
+    const c2 = document.createElement('td');
+    const strip = document.createElement('span');
+    strip.className = 'bitstrip';
+    if (dstBits) {
+      const pb = ipToBits(r.prefix);
+      for (let b = 0; b < 32; b++) {
+        const cell = document.createElement('span');
+        let cls = 'bitcell';
+        if (b >= r.mask) {
+          cls += ' beyond';
+        } else if (dstBits[b] === pb[b]) {
+          cls += ' match';
+        } else {
+          cls += ' miss';
+        }
+        // 옥텟 경계 (8,16,24)
+        if (b === 7 || b === 15 || b === 23) {
+          // 옅은 구분선은 margin 으로 표현 (간단히)
+          cell.style.marginRight = '2px';
+        }
+        // mask 경계 빨간 세로선
+        if (b === r.mask - 1 && r.mask > 0) {
+          cls += ' boundary';
+        }
+        cell.className = cls;
+        strip.appendChild(cell);
+      }
+    } else {
+      strip.textContent = '—';
+      strip.style.color = '#bbb';
+    }
+    c2.appendChild(strip);
+    tr.appendChild(c2);
+
+    // next + iface chip
+    const c3 = document.createElement('td');
+    const chip = document.createElement('span');
+    chip.className = 'iface-chip';
+    chip.style.background = IFACE_COLORS[r.iface] || '#bbb';
+    c3.appendChild(chip);
+    c3.appendChild(document.createTextNode(r.next));
+    tr.appendChild(c3);
+
+    // match bar
+    const c4 = document.createElement('td');
+    const wrap = document.createElement('div');
+    wrap.className = 'matchbar-wrap';
+    const bar = document.createElement('div');
+    bar.className = 'matchbar';
+    // 0~32 → 0~64px. 매치되지 않으면 0.
+    if (dstBits) {
+      const pb = ipToBits(r.prefix);
+      const m = matchLength(dstBits, pb, r.mask);
+      const w = Math.max(0, m) * 2; // px
+      // 살짝 지연된 골드 전환 효과는 css transition 으로 자연 처리
+      setTimeout(() => { bar.style.width = w + 'px'; }, 30);
+    }
+    wrap.appendChild(bar);
+    c4.appendChild(wrap);
+    tr.appendChild(c4);
+
+    rtBody.appendChild(tr);
+  });
+}
+
+/* ============================================================
+ *  애니메이션 시퀀서
+ * ============================================================ */
+let dst = '203.0.113.42';
+let path = [];   // [{router, winnerIdx, nextNode}]
+let hopIndex = 0;
+let playing = false;
+let speedMul = 1;
+let trailEdges = [];
+let dropped = false;
+
+const captionEl = document.getElementById('caption');
+const hopCountEl = document.getElementById('hopCount');
+const hopTotalEl = document.getElementById('hopTotal');
+const ttlNumEl = document.getElementById('ttlNum');
+
+function planRoute(dstIp) {
+  // src→R1 부터 출발. dst 가 R1 의 라우팅으로 결정 가능한지 시뮬레이션.
+  // 각 라우터에서 lookup 후 next 를 따라간다.
+  // 안전장치: 8 hop 제한, 사이클 감지.
+  const route = [];
+  let current = 'R1';
+  const visited = new Set();
+  let ttl = 8;
+  // src->R1 진입 시점은 별도 단계. 여기선 각 라우터에서의 결정 + 다음 노드.
+  while (true) {
+    if (visited.has(current)) break;
+    visited.add(current);
+    const r = lookup(current, dstIp);
+    const winner = r.rows[r.winnerIdx];
+    if (!winner) break;
+    // 매치가 default(0) 인데 nextHop 도 unreachable 한 케이스 — 일단 default 따라감
+    route.push({ router: current, winnerIdx: r.winnerIdx, next: winner.next });
+    if (winner.next === 'dst') break;
+    if (winner.next === 'src') break;
+    if (NODES[winner.next] && NODES[winner.next].kind === 'host') break;
+    current = winner.next;
+    ttl--;
+    if (ttl <= 0) break;
+    if (route.length >= 7) break;
+  }
+  return route;
+}
+
+function classifyTermination(dstIp, route) {
+  // 마지막 hop 이 host(dst) 면 도달, 아니면 폐기/사이클.
+  if (!route.length) return 'unreachable';
+  const last = route[route.length - 1];
+  if (last.next === 'dst') return 'arrived';
+  // dst != 203.0.113.42 인데 마지막 next 가 host 가 아니면 -> 사이클/loop 로 폐기
+  return 'dropped';
+}
+
+function clearActive() {
+  document.querySelectorAll('.router-circle.active').forEach(e =>
+    e.classList.remove('active'));
+  document.querySelectorAll('.link.active').forEach(e => {
+    e.classList.remove('active');
+    e.style.stroke = '';
+  });
+}
+
+function pulseRouter(id) {
+  const c = svg.querySelector(`circle[data-id="${id}"]`);
+  if (!c) return;
+  c.classList.add('active');
+  c.setAttribute('r', 16);
+  setTimeout(() => c.setAttribute('r', 12), 220 / speedMul);
+}
+
+function findEdge(a, b) {
+  return svg.querySelector(`line[data-edge="${a}|${b}"]`) ||
+         svg.querySelector(`line[data-edge="${b}|${a}"]`);
+}
+
+function colorEdge(a, b, color) {
+  const e = findEdge(a, b);
+  if (!e) return;
+  e.classList.add('active');
+  e.style.stroke = color;
+}
+
+function trailEdge(a, b) {
+  const e = findEdge(a, b);
+  if (!e) return;
+  e.classList.add('trail');
+  trailEdges.push(e);
+}
+
+/* 패킷 카드 */
+let packetEl = null;
+let ttl = 8;
+
+function renderPacket(x, y, options={}) {
+  const layer = svg.querySelector('#packetLayer');
+  if (!packetEl) {
+    packetEl = svgEl('g', { class: 'packet-card' });
+    const body = svgEl('rect', {
+      x: -50, y: -22, width: 100, height: 44, rx: 4, ry: 4,
+      class: 'body',
+    });
+    packetEl.appendChild(body);
+    // dst label
+    const dstText = svgEl('text', {
+      x: 0, y: -6, 'text-anchor': 'middle',
+      'font-size': 10, fill: '#263238',
+      'font-weight': 'bold',
+      'data-role': 'dst',
+    });
+    dstText.textContent = dst;
+    packetEl.appendChild(dstText);
+    // ttl cells (8칸)
+    const cellGroup = svgEl('g', { 'data-role': 'ttl' });
+    for (let i = 0; i < 8; i++) {
+      const c = svgEl('rect', {
+        x: -32 + i * 8, y: 6, width: 7, height: 8, rx: 1,
+        class: 'ttl-cell',
+        'data-idx': i,
+      });
+      cellGroup.appendChild(c);
+    }
+    packetEl.appendChild(cellGroup);
+    // ttl label
+    const ttlLab = svgEl('text', {
+      x: 36, y: 13, 'font-size': 8, fill: '#607d8b',
+    });
+    ttlLab.textContent = 'TTL';
+    packetEl.appendChild(ttlLab);
+
+    layer.appendChild(packetEl);
+
+    // hover inspect
+    packetEl.addEventListener('mouseenter', showInspect);
+    packetEl.addEventListener('mouseleave', hideInspect);
+    packetEl.addEventListener('mousemove', moveInspect);
+  }
+  packetEl.setAttribute('transform', `translate(${x}, ${y})`);
+  // dst 갱신
+  const dstText = packetEl.querySelector('text[data-role="dst"]');
+  dstText.textContent = dst;
+  // ttl cells
+  const cells = packetEl.querySelectorAll('rect[data-idx]');
+  cells.forEach(c => {
+    const i = +c.getAttribute('data-idx');
+    if (i >= ttl) c.classList.add('spent'); else c.classList.remove('spent');
+  });
+  // 테두리 색
+  const body = packetEl.querySelector('.body');
+  if (options.borderColor) body.style.stroke = options.borderColor;
+  if (dropped) packetEl.classList.add('dropped');
+  else packetEl.classList.remove('dropped');
+}
+
+const inspect = document.getElementById('inspect');
+const visited = []; // 지나온 라우터 리스트
+function showInspect(e) {
+  inspect.classList.add('visible');
+  refreshInspect();
+}
+function hideInspect() { inspect.classList.remove('visible'); }
+function moveInspect(e) {
+  const rect = document.getElementById('topo').getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  inspect.style.left = x + 'px';
+  inspect.style.top = (y - 6) + 'px';
+}
+function refreshInspect() {
+  inspect.innerHTML =
+    `<b>src</b> 192.0.2.10<br>` +
+    `<b>dst</b> ${dst}<br>` +
+    `<b>TTL</b> ${ttl}<br>` +
+    `<b>지나온</b> ${visited.join(' → ') || '—'}`;
+}
+
+/* 패킷 슬라이드 (a -> b, color) */
+function slideTo(a, b, color, durMs) {
+  return new Promise(resolve => {
+    const A = NODES[a], B = NODES[b];
+    const t0 = performance.now();
+    function step(now) {
+      const t = Math.min(1, (now - t0) / durMs);
+      const x = A.x + (B.x - A.x) * t;
+      const y = A.y + (B.y - A.y) * t;
+      renderPacket(x, y, { borderColor: color });
+      if (t < 1 && playing) requestAnimationFrame(step);
+      else resolve();
+    }
+    requestAnimationFrame(step);
+  });
+}
+
+/* ============================================================
+ *  메인 시퀀스
+ * ============================================================ */
+async function runSequence() {
+  if (playing) return;
+  playing = true;
+  dropped = false;
+  resetVisualState();
+
+  // 경로 산출
+  path = planRoute(dst);
+  hopTotalEl.textContent = path.length || '—';
+  const term = classifyTermination(dst, path);
+
+  ttl = 8;
+  visited.length = 0;
+
+  // 0. 초기: 패킷 src 옆 대기
+  renderPacket(NODES.src.x + 26, NODES.src.y, { borderColor: '#455a64' });
+  setCaption('패킷이 <b>src</b> 에서 출발한다. 첫 라우터 R1 까지는 단순한 슬라이드.');
+  await wait(400 * speedMul);
+  if (!playing) return;
+
+  // 1. src -> R1 슬라이드 (TTL 그대로)
+  await slideTo('src', 'R1', '#455a64', 700 * speedMul);
+  if (!playing) return;
+
+  // 2~. 각 hop 반복
+  for (let i = 0; i < path.length; i++) {
+    const hop = path[i];
+    hopIndex = i + 1;
+    hopCountEl.textContent = hopIndex;
+    visited.push(hop.router);
+    refreshInspect();
+
+    // (a) 도착 펄스 + 표 swap
+    pulseRouter(hop.router);
+    const lk = lookup(hop.router, dst);
+    renderRoutingTable(hop.router, dst, -1); // 비트 정렬은 보이지만 win 강조는 200ms 후
+    setCaption(`<b>${hop.router}</b> 도착 — 자기 라우팅 테이블을 펼친다.`);
+    await wait(220 * speedMul);
+    if (!playing) return;
+
+    // (b) 비트 매칭 펼침 + 매치 막대 그어짐 (CSS transition)
+    setCaption(`<b>${hop.router}</b> — 모든 prefix 행을 dst <b>${dst}</b> 와 비트 정렬. 가장 긴 매치를 찾는다.`);
+    await wait(380 * speedMul);
+    if (!playing) return;
+
+    // (c) winner 선언 (골드)
+    renderRoutingTable(hop.router, dst, lk.winnerIdx);
+    const winRow = lk.rows[lk.winnerIdx];
+    const ifaceColor = IFACE_COLORS[winRow.iface] || '#455a64';
+    setCaption(`<b>${hop.router}</b> 가 <code>${winRow.prefix}/${winRow.mask}</code> 행을 골랐다. 다음 hop = <b>${winRow.next}</b>.`);
+    await wait(220 * speedMul);
+    if (!playing) return;
+
+    // (d) 출구 색 입힘 + 링크 굵게 + 패킷 출발
+    colorEdge(hop.router, winRow.next, ifaceColor);
+    renderPacket(NODES[hop.router].x, NODES[hop.router].y, { borderColor: ifaceColor });
+    await wait(120 * speedMul);
+    if (!playing) return;
+
+    // 떠나는 순간 TTL -1
+    ttl = Math.max(0, ttl - 1);
+    ttlNumEl.textContent = ttl;
+    refreshInspect();
+
+    if (ttl === 0 && i < path.length - 1) {
+      dropped = true;
+      renderPacket(NODES[hop.router].x, NODES[hop.router].y, { borderColor: '#9e9e9e' });
+      setCaption(`TTL = 0. 패킷이 <b>${hop.router}</b> 에서 폐기된다 (ICMP Time Exceeded).`);
+      playing = false;
+      return;
+    }
+
+    // 슬라이드
+    if (NODES[winRow.next]) {
+      await slideTo(hop.router, winRow.next, ifaceColor, 350 * speedMul);
+      trailEdge(hop.router, winRow.next);
+    }
+    clearActive();
+  }
+
+  // 종료 처리
+  if (term === 'arrived') {
+    setCaption(`패킷이 <b>dst</b> 에 도달. 잔상으로 지나온 경로가 골드로 남는다 — 출발 시 <b>R1</b> 만 알았던 길의 실제 모습.`);
+  } else if (term === 'dropped') {
+    dropped = true;
+    renderPacket(NODES[path[path.length-1].router].x, NODES[path[path.length-1].router].y, { borderColor: '#9e9e9e' });
+    setCaption(`경로를 만들 수 없다. 표에 매치되는 행이 없거나 사이클이 발생 — 패킷 폐기.`);
+  } else {
+    setCaption(`라우팅 결과가 도달 가능 호스트가 아니다 — 폐기.`);
+    dropped = true;
+  }
+
+  playing = false;
+}
+
+function wait(ms) {
+  return new Promise(resolve => {
+    const t0 = performance.now();
+    function tick(now) {
+      if (!playing) { resolve(); return; }
+      if (now - t0 >= ms) resolve();
+      else requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+}
+
+function setCaption(html) { captionEl.innerHTML = html; }
+
+function resetVisualState() {
+  hopIndex = 0;
+  hopCountEl.textContent = 0;
+  ttl = 8;
+  ttlNumEl.textContent = 8;
+  trailEdges.forEach(e => e.classList.remove('trail'));
+  trailEdges = [];
+  clearActive();
+  // 패킷 제거
+  if (packetEl) {
+    packetEl.parentNode && packetEl.parentNode.removeChild(packetEl);
+    packetEl = null;
+  }
+  renderRoutingTable(null);
+}
+
+/* ============================================================
+ *  컨트롤 와이어업
+ * ============================================================ */
+document.getElementById('btnPlay').addEventListener('click', () => {
+  if (playing) return;
+  runSequence();
+});
+document.getElementById('btnPause').addEventListener('click', () => {
+  playing = false;
+  setCaption('일시정지. ▶ 를 눌러 이어서 재생하거나 ⟲ 로 처음부터.');
+});
+document.getElementById('btnReset').addEventListener('click', () => {
+  playing = false;
+  setTimeout(() => {
+    resetVisualState();
+    setCaption('패킷은 한 라우터에서 다음 라우터로 한 칸씩 던져진다. ▶ 를 눌러보자.');
+  }, 50);
+});
+document.getElementById('speedSel').addEventListener('change', (e) => {
+  speedMul = parseFloat(e.target.value);
+});
+document.querySelectorAll('.dst-presets button').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.dst-presets button').forEach(x =>
+      x.classList.remove('active'));
+    b.classList.add('active');
+    dst = b.getAttribute('data-dst');
+    playing = false;
+    setTimeout(() => {
+      resetVisualState();
+      setCaption(`dst 를 <b>${dst}</b> 로 변경. ▶ 를 눌러 새 경로를 본다.`);
+    }, 60);
+  });
+});
+
+/* ============================================================
+ *  init
+ * ============================================================ */
+renderTopology();
+renderRoutingTable(null);
+hopTotalEl.textContent = '?';
+</script>
+</body>
+</html>
