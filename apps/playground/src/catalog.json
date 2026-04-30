@@ -682,7 +682,7 @@
           "id": "asymmetric",
           "name": "비대칭 암호",
           "topics": [
-            { "id": "rsa", "name": "RSA" },
+            { "id": "rsa", "name": "RSA", "facetId": "facet:asymmetricRsa" },
             { "id": "diffie-hellman", "name": "Diffie-Hellman" },
             { "id": "ecc", "name": "타원 곡선" }
           ]

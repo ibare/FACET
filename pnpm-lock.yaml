@@ -205,6 +205,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/security/asymmetric-rsa:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/system-design/caching-cdn:
     dependencies:
       '@facet/core':
@@ -222,6 +228,9 @@ importers:
       '@facet/algorithm-array':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/array
+      '@facet/algorithm-asymmetric-rsa':
+        specifier: workspace:*
+        version: link:../../facets/security/asymmetric-rsa
       '@facet/algorithm-bfs':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bfs
