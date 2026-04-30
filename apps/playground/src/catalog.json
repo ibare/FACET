@@ -193,7 +193,7 @@
           "name": "프로세스와 스레드",
           "topics": [
             { "id": "process-state", "name": "프로세스 상태" },
-            { "id": "context-switch", "name": "컨텍스트 스위칭" },
+            { "id": "context-switch", "name": "컨텍스트 스위칭", "facetId": "facet:contextSwitching" },
             { "id": "pcb", "name": "PCB" }
           ]
         },

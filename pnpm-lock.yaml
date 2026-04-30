@@ -205,6 +205,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/os/context-switching:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/programming-fundamentals/conditional-statement:
     dependencies:
       '@facet/core':
@@ -252,6 +258,9 @@ importers:
       '@facet/algorithm-conditional-statement':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/conditional-statement
+      '@facet/algorithm-context-switching':
+        specifier: workspace:*
+        version: link:../../facets/os/context-switching
       '@facet/algorithm-hash-table':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/hash-table
