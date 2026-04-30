@@ -187,6 +187,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/database/relational-tables-and-keys:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/system-design/caching-cdn:
     dependencies:
       '@facet/core':
@@ -231,6 +237,9 @@ importers:
       '@facet/algorithm-queue':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/queue
+      '@facet/algorithm-relational-tables-and-keys':
+        specifier: workspace:*
+        version: link:../../facets/database/relational-tables-and-keys
       '@facet/algorithm-stack':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/stack

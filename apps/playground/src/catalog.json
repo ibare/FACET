@@ -335,7 +335,7 @@
           "id": "relational",
           "name": "관계 모델",
           "topics": [
-            { "id": "table-key", "name": "테이블과 키" },
+            { "id": "table-key", "name": "테이블과 키", "facetId": "facet:relationalTablesAndKeys" },
             { "id": "relation", "name": "관계" },
             { "id": "1nf", "name": "1NF" },
             { "id": "2nf", "name": "2NF" },
