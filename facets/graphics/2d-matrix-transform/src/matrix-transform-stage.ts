@@ -1110,8 +1110,16 @@ export const matrixTransformStageView: View = {
       setEventCaption('처음의 격자로 돌아갔다.', 1200);
     }
 
-    // 외부 노출.
-    Object.assign(svg, {
+    // 첫 렌더 (init 전 폴백).
+    reset();
+
+    const instance: ViewInstance = {
+      destroy(): void {
+        if (captionTimer) clearTimeout(captionTimer);
+        svg.remove();
+      },
+    };
+    Object.assign(instance, {
       reset,
       init,
       applyMatrix,
@@ -1124,16 +1132,6 @@ export const matrixTransformStageView: View = {
       signalDetFlipped,
       signalReset,
     });
-
-    // 첫 렌더 (init 전 폴백).
-    reset();
-
-    return {
-      destroy(): void {
-        if (captionTimer) clearTimeout(captionTimer);
-        svg.remove();
-      },
-      handle: svg as unknown as Record<string, unknown>,
-    };
+    return instance;
   },
 };
