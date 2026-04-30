@@ -158,7 +158,7 @@ concerns:
 specifics:
   - id: S-facet
     file: specifics/S-facet.md
-    description: facets/cs-fundamentals/* 내부 6파일 구성 (algorithm / projector / irs / facet / description / index) 과 각 파일의 책임 분리
+    description: facets/**/<name>/src/ 내부 6파일 구성 (algorithm / projector / irs / facet / description / index) + 빌트인 view 로 표현 불가능할 때만 추가하는 선택적 *-stage.ts 1파일
     triggers:
       paths:
         - "facets/**/*.ts"
