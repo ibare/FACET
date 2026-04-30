@@ -41,6 +41,11 @@ export type ReactiveContext<TData = unknown> = FacetContext<TData> & {
    * @returns 정상 경과 시 true, cancel 로 깨어났으면 false.
    */
   sleep(ms: number): Promise<boolean>;
+  /**
+   * Nonblocking 큐 검사 — 큐 맨 앞 입력이 있으면 즉시 반환, 없으면 null.
+   * 자동 시연 루프 안에서 사용자 인터럽트 (pause / 학습률 변경 등) 를 받기 위함.
+   */
+  pollInput<T extends ReactiveInputEvent = ReactiveInputEvent>(): T | null;
 };
 
 export type AlgorithmFn<TData = unknown> = (ctx: FacetContext<TData>) => Promise<void>;

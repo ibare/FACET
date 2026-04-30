@@ -487,7 +487,7 @@
           "id": "supervised",
           "name": "지도 학습",
           "topics": [
-            { "id": "linear-regression", "name": "선형 회귀" },
+            { "id": "linear-regression", "name": "선형 회귀", "facetId": "facet:linearRegression" },
             { "id": "logistic-regression", "name": "로지스틱 회귀" },
             { "id": "knn", "name": "k-NN" },
             { "id": "decision-tree", "name": "의사결정 트리" },

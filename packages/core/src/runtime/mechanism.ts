@@ -401,6 +401,11 @@ export class ReactiveMechanism implements Mechanism {
           self.inputRejector = reject;
         });
       },
+      pollInput<T extends ReactiveInputEvent = ReactiveInputEvent>(): T | null {
+        if (self.cancelled) return null;
+        const queued = self.inputQueue.shift();
+        return queued ? (queued as T) : null;
+      },
       async sleep(ms: number): Promise<boolean> {
         if (self.cancelled) return false;
         const adjusted = Math.max(10, ms / Math.max(0.01, self.speedMul));

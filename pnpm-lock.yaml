@@ -199,6 +199,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ml-basics/linear-regression:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/programming-fundamentals/conditional-statement:
     dependencies:
       '@facet/core':
@@ -249,6 +255,9 @@ importers:
       '@facet/algorithm-hash-table':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/hash-table
+      '@facet/algorithm-linear-regression':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/linear-regression
       '@facet/algorithm-linked-list':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/linked-list

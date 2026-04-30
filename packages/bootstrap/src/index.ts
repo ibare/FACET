@@ -8,11 +8,11 @@
  * 동적 등록 (lazy):
  *  - algorithm 패키지(@facet/algorithm-*) 는 registerFacetLoader 로만 매핑.
  *    각 import() 가 번들러의 dynamic import 경계로 인식되어 facet 별 chunk 로 분리된다.
- *  - 현재 등록 facet 15종: bubbleSort (모범 사례) + 자료구조 array / stack / queue / linkedList / hashTable / bst /
+ *  - 현재 등록 facet 16종: bubbleSort (모범 사례) + 자료구조 array / stack / queue / linkedList / hashTable / bst /
  *    lruCache + 그래프 bfs + 시스템 행동 messagingPubsub + 시스템 캐싱 cachingCdn + 데이터베이스
  *    relationalTablesAndKeys + 제어 흐름 conditionalStatement + 컴파일러 어휘 분석 tokenization +
- *    비대칭 암호 asymmetricRsa. 그 외 cs-fundamentals/algorithms 토픽들은 카탈로그에 슬롯만
- *    남고 facetId 미지정.
+ *    비대칭 암호 asymmetricRsa + 머신러닝 기초 linearRegression. 그 외 cs-fundamentals/algorithms
+ *    토픽들은 카탈로그에 슬롯만 남고 facetId 미지정.
  *
  * 소비자:
  *  - apps/playground (dev/build) — main.tsx 에서 bootstrapFacet() 호출
@@ -95,5 +95,8 @@ export function bootstrapFacet(): void {
   );
   registerFacetLoader('facet:asymmetricRsa', () =>
     import('@facet/algorithm-asymmetric-rsa').then((m) => m.registerAsymmetricRsa()),
+  );
+  registerFacetLoader('facet:linearRegression', () =>
+    import('@facet/algorithm-linear-regression').then((m) => m.registerLinearRegression()),
   );
 }

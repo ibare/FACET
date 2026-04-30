@@ -47,8 +47,14 @@ export type LayoutLeafNode = {
  * - label:  표시 라벨. 누락 시 control-bar 가 locale 별 기본 라벨 사용.
  *
  * 현재 사용 어휘:
- *   widget: 'button' | 'speed-slider'
- *   action: 'play' | 'step' | 'pause' | 'reset' | 'speed'
+ *   widget: 'button' | 'speed-slider' | 'value-input' | 'segmented-slider'
+ *   action: 'play' | 'step' | 'pause' | 'reset' | 'speed' | 'input' | <facet 고유>
+ *
+ * segmented-slider 추가 필드 (facet 고유 슬라이더, 3구간 이상 이산 선택):
+ *   segments: { value: number; label: LocaleStr; default?: boolean }[]
+ *   name?: string  — payload 키 (생략 시 action 사용)
+ *   클릭/키 입력 시 onAction(action, { value, segmentIndex, ...inputState }) 발신
+ *   동시에 inputState[name] = String(value) 로 다른 facet 고유 button payload 에도 첨부.
  *
  * 미래 위젯 어휘 후보 — slider / toggle / select / text-input.
  * 새 메커니즘 type 이 들어올 때 그 요구사항에 맞춰 widget 어휘를 확장하고

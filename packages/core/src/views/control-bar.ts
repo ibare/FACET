@@ -20,6 +20,15 @@
  *                                                          — 텍스트 입력 박스. 입력 변경 시
  *                                                            params.dispatch({ type: 'input',
  *                                                            payload: { name, value } }) 발신.
+ *   widget='segmented-slider', action=<facet 고유>, name?=<key>, label?,
+ *      segments=[{ value:number, label:LocaleStr, default?:boolean }]
+ *                                                          — 가로 3구간 이상 이산 슬라이더.
+ *                                                            구간 클릭 / ←→ 키로 선택.
+ *                                                            선택 시 onAction(action,
+ *                                                              { value, segmentIndex,
+ *                                                                ...inputState }) 발신.
+ *                                                            inputState[name] = String(value)
+ *                                                            로 다른 button payload 에도 첨부.
  *
  * 외부 메서드:
  *   onPlay/onStep/onPause/onReset(cb)  — 표준 핸들러 등록 (러너가 wire-up)
@@ -200,6 +209,110 @@ export const controlBarView: View = {
         });
         wrap.appendChild(inputEl);
         buttonGroup.appendChild(wrap);
+      } else if (c.widget === 'segmented-slider') {
+        const action = c.action;
+        const name = typeof c.name === 'string' ? c.name : action;
+        const segs = Array.isArray(c.segments)
+          ? (c.segments as Array<{ value: number; label: unknown; default?: boolean }>)
+          : [];
+        if (segs.length >= 2) {
+          let activeIdx = segs.findIndex((s) => s.default === true);
+          if (activeIdx < 0) activeIdx = 0;
+          inputState[name] = String(segs[activeIdx].value);
+
+          const wrap = document.createElement('label');
+          wrap.style.display = 'flex';
+          wrap.style.alignItems = 'center';
+          wrap.style.gap = space.xs;
+          wrap.style.fontSize = fontSizes.xs;
+          wrap.style.color = colors.textMuted;
+          if (c.label !== undefined) {
+            wrap.textContent = resolveLocale(c.label as never, params.locale);
+          }
+
+          const track = document.createElement('div');
+          track.setAttribute('role', 'slider');
+          track.setAttribute('aria-valuemin', '0');
+          track.setAttribute('aria-valuemax', String(segs.length - 1));
+          track.setAttribute('aria-valuenow', String(activeIdx));
+          track.tabIndex = 0;
+          track.style.display = 'flex';
+          track.style.alignItems = 'stretch';
+          track.style.height = '28px';
+          track.style.minWidth = '240px';
+          track.style.border = `1px solid ${colors.border}`;
+          track.style.borderRadius = radii.sm;
+          track.style.overflow = 'hidden';
+          track.style.userSelect = 'none';
+          track.style.outline = 'none';
+          track.style.cursor = 'pointer';
+
+          const segEls: HTMLDivElement[] = [];
+          for (let i = 0; i < segs.length; i++) {
+            const seg = segs[i];
+            const cell = document.createElement('div');
+            cell.style.flex = '1 1 0';
+            cell.style.display = 'flex';
+            cell.style.alignItems = 'center';
+            cell.style.justifyContent = 'center';
+            cell.style.fontSize = fontSizes.xs;
+            cell.style.fontFamily = fonts.body;
+            cell.style.padding = `0 ${space.xs}`;
+            if (i > 0) cell.style.borderLeft = `1px solid ${colors.border}`;
+            cell.textContent = resolveLocale(seg.label as never, params.locale);
+            cell.dataset.segIndex = String(i);
+            cell.addEventListener('click', () => {
+              setActive(i, true);
+            });
+            track.appendChild(cell);
+            segEls.push(cell);
+          }
+
+          function paint(idx: number) {
+            for (let i = 0; i < segEls.length; i++) {
+              const isActive = i === idx;
+              const cell = segEls[i];
+              cell.style.background = isActive ? colors.accent : colors.bgSubtle;
+              cell.style.color = isActive ? colors.bg : colors.textMuted;
+              cell.style.fontWeight = isActive ? '600' : '400';
+            }
+          }
+          function setActive(idx: number, fire: boolean) {
+            if (idx < 0 || idx >= segs.length) return;
+            activeIdx = idx;
+            track.setAttribute('aria-valuenow', String(idx));
+            paint(idx);
+            const seg = segs[idx];
+            inputState[name] = String(seg.value);
+            if (fire) {
+              const payload = {
+                value: seg.value,
+                segmentIndex: idx,
+                ...inputState,
+              };
+              for (const h of actionHandlers) h(action, payload);
+            }
+          }
+          track.addEventListener('keydown', (ev) => {
+            if (ev.key === 'ArrowLeft' || ev.key === 'ArrowDown') {
+              ev.preventDefault();
+              setActive(Math.max(0, activeIdx - 1), true);
+            } else if (ev.key === 'ArrowRight' || ev.key === 'ArrowUp') {
+              ev.preventDefault();
+              setActive(Math.min(segs.length - 1, activeIdx + 1), true);
+            } else if (ev.key === 'Home') {
+              ev.preventDefault();
+              setActive(0, true);
+            } else if (ev.key === 'End') {
+              ev.preventDefault();
+              setActive(segs.length - 1, true);
+            }
+          });
+          paint(activeIdx);
+
+          wrap.appendChild(track);
+          buttonGroup.appendChild(wrap);
+        }
       } else if (c.widget === 'speed-slider' && c.action === 'speed') {
         const customSteps = Array.isArray(c.steps) ? (c.steps as number[]) : null;
         const def = typeof c.default === 'number' ? c.default : 1;
