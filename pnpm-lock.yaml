@@ -112,6 +112,12 @@ importers:
         specifier: ^5.4.11
         version: 5.4.21(@types/node@22.19.17)(lightningcss@1.32.0)
 
+  facets/compilers/tokenization:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/array:
     dependencies:
       '@facet/core':
@@ -252,6 +258,9 @@ importers:
       '@facet/algorithm-stack':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/stack
+      '@facet/algorithm-tokenization':
+        specifier: workspace:*
+        version: link:../../facets/compilers/tokenization
       '@facet/core':
         specifier: workspace:*
         version: link:../core

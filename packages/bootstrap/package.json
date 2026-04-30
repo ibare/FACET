@@ -26,6 +26,7 @@
     "@facet/algorithm-queue": "workspace:*",
     "@facet/algorithm-relational-tables-and-keys": "workspace:*",
     "@facet/algorithm-stack": "workspace:*",
+    "@facet/algorithm-tokenization": "workspace:*",
     "@facet/core": "workspace:*",
     "@facet/transpiler-cpp": "workspace:*",
     "@facet/transpiler-csharp": "workspace:*",

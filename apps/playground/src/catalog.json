@@ -421,7 +421,7 @@
           "id": "lexical",
           "name": "어휘 분석",
           "topics": [
-            { "id": "tokenization", "name": "토큰화" },
+            { "id": "tokenization", "name": "토큰화", "facetId": "facet:tokenization" },
             { "id": "regex", "name": "정규 표현식" },
             { "id": "fa", "name": "유한 오토마타" }
           ]
