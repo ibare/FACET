@@ -284,7 +284,7 @@
           "id": "network-routing",
           "name": "네트워크 계층",
           "topics": [
-            { "id": "ip-routing", "name": "IP 라우팅" },
+            { "id": "ip-routing", "name": "IP 라우팅", "facetId": "facet:ipRouting" },
             { "id": "rip", "name": "RIP" },
             { "id": "ospf", "name": "OSPF" },
             { "id": "bgp", "name": "BGP" },

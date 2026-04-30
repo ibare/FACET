@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "facet 카탈로그 단일 출처. bubbleSort/bfs/queue/stack/array/linkedList/bst/hashTable/lruCache/messagingPubsub/cachingCdn/relationalTablesAndKeys/conditionalStatement/tokenization/asymmetricRsa/linearRegression/contextSwitching/matrixTransform2d lazy loader + view + transpiler 등록.",
+  "description": "facet 카탈로그 단일 출처. bubbleSort/bfs/queue/stack/array/linkedList/bst/hashTable/lruCache/messagingPubsub/cachingCdn/relationalTablesAndKeys/conditionalStatement/tokenization/asymmetricRsa/linearRegression/contextSwitching/matrixTransform2d/ipRouting lazy loader + view + transpiler 등록.",
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
@@ -22,6 +22,7 @@
     "@facet/algorithm-conditional-statement": "workspace:*",
     "@facet/algorithm-context-switching": "workspace:*",
     "@facet/algorithm-hash-table": "workspace:*",
+    "@facet/algorithm-ip-routing": "workspace:*",
     "@facet/algorithm-linear-regression": "workspace:*",
     "@facet/algorithm-2d-matrix-transform": "workspace:*",
     "@facet/algorithm-linked-list": "workspace:*",

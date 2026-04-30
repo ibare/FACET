@@ -211,6 +211,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/network/ip-routing:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/os/context-switching:
     dependencies:
       '@facet/core':
@@ -273,6 +279,9 @@ importers:
       '@facet/algorithm-hash-table':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/hash-table
+      '@facet/algorithm-ip-routing':
+        specifier: workspace:*
+        version: link:../../facets/network/ip-routing
       '@facet/algorithm-linear-regression':
         specifier: workspace:*
         version: link:../../facets/ml-basics/linear-regression
