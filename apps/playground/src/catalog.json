@@ -729,7 +729,7 @@
           "id": "transform-2d",
           "name": "2D 변환",
           "topics": [
-            { "id": "matrix-transform", "name": "행렬 변환" },
+            { "id": "matrix-transform", "name": "행렬 변환", "facetId": "facet:matrixTransform2d" },
             { "id": "scale-rotate-translate", "name": "스케일 · 회전 · 이동" },
             { "id": "homogeneous", "name": "동차좌표" }
           ]

@@ -199,6 +199,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/graphics/2d-matrix-transform:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ml-basics/linear-regression:
     dependencies:
       '@facet/core':
@@ -237,6 +243,9 @@ importers:
 
   packages/bootstrap:
     dependencies:
+      '@facet/algorithm-2d-matrix-transform':
+        specifier: workspace:*
+        version: link:../../facets/graphics/2d-matrix-transform
       '@facet/algorithm-array':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/array
