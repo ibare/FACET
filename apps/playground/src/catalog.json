@@ -117,7 +117,7 @@
           "id": "control-flow",
           "name": "제어 흐름",
           "topics": [
-            { "id": "conditional", "name": "조건문" },
+            { "id": "conditional", "name": "조건문", "facetId": "facet:conditionalStatement" },
             { "id": "loop", "name": "반복문" },
             { "id": "branching", "name": "분기" },
             { "id": "recursive-call", "name": "재귀 호출" },

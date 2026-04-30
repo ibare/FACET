@@ -8,9 +8,10 @@
  * 동적 등록 (lazy):
  *  - algorithm 패키지(@facet/algorithm-*) 는 registerFacetLoader 로만 매핑.
  *    각 import() 가 번들러의 dynamic import 경계로 인식되어 facet 별 chunk 로 분리된다.
- *  - 현재 등록 facet 12종: bubbleSort (모범 사례) + 자료구조 array / stack / queue / linkedList / hashTable / bst /
+ *  - 현재 등록 facet 13종: bubbleSort (모범 사례) + 자료구조 array / stack / queue / linkedList / hashTable / bst /
  *    lruCache + 그래프 bfs + 시스템 행동 messagingPubsub + 시스템 캐싱 cachingCdn + 데이터베이스
- *    relationalTablesAndKeys. 그 외 cs-fundamentals/algorithms 토픽들은 카탈로그에 슬롯만 남고 facetId 미지정.
+ *    relationalTablesAndKeys + 제어 흐름 conditionalStatement. 그 외 cs-fundamentals/algorithms 토픽들은
+ *    카탈로그에 슬롯만 남고 facetId 미지정.
  *
  * 소비자:
  *  - apps/playground (dev/build) — main.tsx 에서 bootstrapFacet() 호출
@@ -81,6 +82,11 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:relationalTablesAndKeys', () =>
     import('@facet/algorithm-relational-tables-and-keys').then((m) =>
       m.registerRelationalTablesAndKeys(),
+    ),
+  );
+  registerFacetLoader('facet:conditionalStatement', () =>
+    import('@facet/algorithm-conditional-statement').then((m) =>
+      m.registerConditionalStatement(),
     ),
   );
 }

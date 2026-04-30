@@ -193,6 +193,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/programming-fundamentals/conditional-statement:
+    dependencies:
+      '@facet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/system-design/caching-cdn:
     dependencies:
       '@facet/core':
@@ -222,6 +228,9 @@ importers:
       '@facet/algorithm-caching-cdn':
         specifier: workspace:*
         version: link:../../facets/system-design/caching-cdn
+      '@facet/algorithm-conditional-statement':
+        specifier: workspace:*
+        version: link:../../facets/programming-fundamentals/conditional-statement
       '@facet/algorithm-hash-table':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/hash-table
