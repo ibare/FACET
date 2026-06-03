@@ -16,7 +16,7 @@
  *
  * 소비자:
  *  - apps/playground (dev/build) — main.tsx 에서 bootstrapFacet() 호출
- *  - @facet/host-tiptap-bundle (외부 호스트 tarball) — re-export
+ *  - @facet/host-tiptap-bundle (외부 호스트 workspace 의존) — re-export
  *
  * 카탈로그 접근:
  *  - getFacetCatalog() — facet 모듈을 로드하지 않고 추가 가능 목록(id/title/description/domain)

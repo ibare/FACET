@@ -2,8 +2,8 @@
 name: S-host
 description: 호스트 어댑터 (Tiptap NodeView) 의 DSL 파서 격리, facet lazy load, 코어 비침투, 카탈로그 단일출처, 외부 배포 번들의 얇은 포장 원칙.
 type: specific
-version: 2
-last_verified: 2026-04-28
+version: 3
+last_verified: 2026-06-03
 ---
 
 # S-host. Host 어댑터 규율
@@ -21,7 +21,7 @@ last_verified: 2026-04-28
 
 - **호스트 어댑터 본체** (`host-tiptap`) — DSL 파싱 + NodeView 정의. 런타임/카탈로그를 모른다.
 - **카탈로그 통합** (`bootstrap`) — `register*` 호출만 모아둔 부팅 진입점. 어떤 facet/view/transpiler 가 시스템에 존재하는지를 단일 출처로 선언.
-- **외부 배포 번들** (`host-tiptap-bundle`) — 외부 호스트 앱이 단일 의존으로 소비하는 ESM tarball. 본체와 bootstrap 을 얇게 re-export 만 한다.
+- **외부 배포 번들** (`host-tiptap-bundle`) — 외부 호스트 앱(methii 등)이 단일 의존으로 소비하는 ESM 번들 패키지. pnpm workspace 의존으로 연동하며, rollup 으로 빌드한 `dist` 를 소비한다 (tarball 배포는 폐기). 본체와 bootstrap 을 얇게 re-export 만 한다.
 
 ## MUST
 
