@@ -1,0 +1,33 @@
+/**
+ * 자동 생성 파일 — 직접 편집하지 말 것.
+ *
+ * 생성: pnpm catalog:gen  (scripts/gen-facet-catalog.mts)
+ * 출처: 각 facet 의 facet.ts(title/description) + facets/<domain>/<name> 디렉터리 구조.
+ *
+ * 이 배열은 순수 데이터라 facet 의 무거운 시각화 chunk 를 참조하지 않는다.
+ * 따라서 호스트는 이 카탈로그를 읽어도 facet 모듈을 로드하지 않는다 (lazy 보존).
+ */
+
+import type { FacetCatalogEntry } from './catalog-types.js';
+
+export const FACET_CATALOG: readonly FacetCatalogEntry[] = [
+  {"id":"facet:tokenization","title":{"en":"Tokenization (Lexical Analysis)","ko":"토큰화 (어휘 분석)"},"description":{"en":"A left-to-right gaze that fuses same-kind characters into a single segment until it cannot extend further, then drops the closed run as a labeled token card onto the output row","ko":"응시가 좌에서 우로 한 글자씩 전진하며 같은 종류 글자들을 한 구간으로 묶다가 더는 못 묶이는 순간 닫고, 그 구간을 종류 라벨과 원문이 함께 새겨진 한 장의 카드로 떨궈 출력열에 붙이는 첫 변환 단계"},"domain":"compilers"},
+  {"id":"facet:array","title":{"en":"Array","ko":"배열"},"description":{"en":"Adjacent cells called by 0-based index — one-step jump, but inserts shift the rest","ko":"옆자리끼리 붙어 있다 — 번호만 알면 한 번에 가지만, 가운데를 건드리면 옆 칸이 줄줄이 밀린다"},"domain":"cs-fundamentals"},
+  {"id":"facet:bfs","title":{"en":"BFS","ko":"BFS (너비 우선 탐색)"},"description":{"en":"Concentric wavefront: same-distance vertices ignite in one flash","ko":"같은 거리 정점들이 한 프레임 섬광으로 동시에 발견되는 동심 파면"},"domain":"cs-fundamentals"},
+  {"id":"facet:bst","title":{"en":"Binary Search Tree","ko":"이진 탐색 트리 (BST)"},"description":{"en":"Fold half the world with every comparison — the decisive cut of BST","ko":"비교 한 번에 세계의 절반을 접어 버리는 정렬형 이진 트리"},"domain":"cs-fundamentals"},
+  {"id":"facet:bubbleSort","title":{"en":"Bubble Sort","ko":"버블 정렬"},"description":{"en":"Adjacent compare/swap waves push the largest value to the end each pass","ko":"인접 비교·교환 파도가 매 패스마다 가장 큰 값을 맨 뒤로 떠올린다"},"domain":"cs-fundamentals"},
+  {"id":"facet:hashTable","title":{"en":"Hash Table","ko":"해시 테이블"},"description":{"en":"Keys land in slots picked by a deterministic function — same-slot collisions grow chains, not chaos","ko":"키는 함수가 정해 준 한 자리로 던져진다 — 같은 자리에 둘이 떨어지면 사슬이 한 칸 자란다"},"domain":"cs-fundamentals"},
+  {"id":"facet:linkedList","title":{"en":"Linked List","ko":"연결 리스트"},"description":{"en":"Each node has a single finger pointing only at its next — insert/remove rewires arrows, not cards","ko":"노드는 자기 다음 한 명만 가리킨다 — 끼우거나 빼는 일은 카드를 옮기는 게 아니라 손가락을 다시 잇는 일이다"},"domain":"cs-fundamentals"},
+  {"id":"facet:lruCache","title":{"en":"LRU Cache","ko":"LRU 캐시"},"description":{"en":"A capacity-bound key-value store that pulls every touched node to the MRU end and drops the LRU end on overflow","ko":"용량이 정해진 키-값 저장소 — 모든 호출이 노드를 MRU 끝으로 끌어올리고 꽉 차면 LRU 끝이 두 영역에서 함께 사라진다"},"domain":"cs-fundamentals"},
+  {"id":"facet:queue","title":{"en":"Queue (FIFO)","ko":"큐 (FIFO)"},"description":{"en":"Conveyor belt: oldest leaves first, newest rides at the back","ko":"컨베이어 벨트 — 가장 오래 기다린 것이 가장 먼저 떠나는 기계"},"domain":"cs-fundamentals"},
+  {"id":"facet:stack","title":{"en":"Stack (LIFO)","ko":"스택 (LIFO)"},"description":{"en":"One spot to add, one spot to remove — last in, first out","ko":"한 자리만 만진다 — 마지막에 들어온 것이 가장 먼저 나온다"},"domain":"cs-fundamentals"},
+  {"id":"facet:relationalTablesAndKeys","title":{"en":"Tables & Keys","ko":"테이블과 키"},"description":{"en":"Two named grids — a primary key locks each row of one table while a foreign key in the other points at that locked value, binding two grids into one consistent structure","ko":"이름 붙은 두 격자 — 한 격자의 기본키가 모든 행의 정체를 잠그고, 다른 격자의 외래키가 그 잠긴 값을 가리켜 두 격자를 일관된 한 구조로 엮는다"},"domain":"database"},
+  {"id":"facet:matrixTransform2d","title":{"en":"2D Matrix Transform — Two Columns, Two Basis Destinations","ko":"2D 행렬 변환 — 두 열은 두 기저의 도착지"},"description":{"en":"A 2×2 matrix is the destinations of i-hat and j-hat — every point on the plane follows the same (u, v) coefficients into the new basis combination, lines stay lines, and the origin stays put","ko":"2×2 행렬은 두 기저 i-hat·j-hat 의 도착지이며, 평면의 모든 점은 같은 (u, v) 계수로 새 기저의 결합을 따라 이동하고, 직선은 직선으로 유지되고 원점은 그 자리에 박힌 채로 평면이 휘어지는 사상"},"domain":"graphics"},
+  {"id":"facet:linearRegression","title":{"en":"Linear Regression — A Line Through the Points","ko":"선형 회귀 — 점들 사이를 가르는 직선"},"description":{"en":"Fit a line by sliding (w, b) downhill — residual squares shrink as a point rolls into the valley","ko":"잔차 정사각형의 면적을 줄이며 매개변수 평면 위 점이 골짜기로 굴러가는 학습 운동"},"domain":"ml-basics"},
+  {"id":"facet:ipRouting","title":{"en":"IP Routing","ko":"IP 라우팅"},"description":{"en":"A packet hops router-by-router; each router consults only its own table and picks the longest-prefix-match next-hop, decrementing TTL on every hop","ko":"한 패킷이 매 라우터에서 자기 표만 보고 가장 긴 일치 prefix 의 next-hop 한 걸음을 정하며 TTL 한 칸씩 깎이는 hop-by-hop 분산 결정"},"domain":"network"},
+  {"id":"facet:contextSwitching","title":{"en":"Context Switching — One Stage, Two Owners","ko":"컨텍스트 스위칭 — 한 무대 위 주인의 교대"},"description":{"en":"A single CPU stage swaps owners — one flow's register bundle is lifted into its holder, the other's is replaced into the same slots, and time resumes exactly where each had stopped","ko":"단 하나의 CPU 무대 위에서 한 흐름의 레지스터 묶음이 자기 보관소로 떠내지고, 다른 흐름의 묶음이 같은 자리에 되돌려져, 두 흐름이 멈춘 지점부터 정확히 이어 실행되는 사건"},"domain":"os"},
+  {"id":"facet:conditionalStatement","title":{"en":"If / Else If / Else","ko":"조건문 (if / else if / else)"},"description":{"en":"A flow that hits a fork, evaluates each condition top-down, lights exactly one branch on the first true, and merges back into a single line","ko":"흐르던 길이 분기점에 도착해 조건의 참/거짓을 위에서부터 평가하다 처음 참이 된 한 가지에서 흐름이 확정되고, 나머지 가지는 어두워진 채 닫힌 뒤 다시 한 줄로 합쳐지는 약속"},"domain":"programming-fundamentals"},
+  {"id":"facet:asymmetricRsa","title":{"en":"RSA — Public-Key Cryptography","ko":"RSA — 공개키 암호"},"description":{"en":"A pair of asymmetric keys born from two primes — one locks, the other unlocks, and the same lock cannot be undone","ko":"두 소수에서 태어난 한 짝의 비대칭 키 — 한쪽으로만 잠기고 다른 쪽으로만 풀리며 잠근 쪽으로는 결코 되돌릴 수 없다"},"domain":"security"},
+  {"id":"facet:cachingCdn","title":{"en":"CDN","ko":"CDN"},"description":{"en":"Globally distributed edge caches receive nearby clients — near-cached answers come back fast, missing answers travel up the hierarchy and refill the edges","ko":"전 세계 도시마다 흩어진 엣지 캐시들이 가까운 클라이언트의 요청을 받아 — 가진 답이면 짧게, 없으면 위 계층까지 다녀와 엣지를 채워 두는 시스템 행위"},"domain":"system-design"},
+  {"id":"facet:messagingPubsub","title":{"en":"Pub/Sub Messaging","ko":"Pub/Sub 메시징"},"description":{"en":"Many-to-many asynchronous messaging where publishers and subscribers know only the broker topic — a single publish fans out to every subscriber as copies","ko":"발행자와 구독자가 서로의 신원 대신 broker 의 토픽 라벨만 매개로 — 한 발행이 모든 구독자에게 사본으로 펼쳐지는 다대다 비동기 메시징"},"domain":"system-design"},
+];

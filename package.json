@@ -12,12 +12,14 @@
     "pack:bundle": "pnpm --filter @facet/host-tiptap-bundle exec pnpm pack",
     "build:pack:bundle": "pnpm build:bundle && pnpm pack:bundle",
     "preview": "pnpm --filter @facet/playground preview",
+    "catalog:gen": "tsx scripts/gen-facet-catalog.mts",
     "test": "vitest run",
     "test:watch": "vitest",
     "typecheck": "pnpm -r run typecheck"
   },
   "devDependencies": {
     "@facet/algorithm-bubblesort": "workspace:*",
+    "@facet/bootstrap": "workspace:*",
     "@facet/core": "workspace:*",
     "@facet/host-tiptap": "workspace:*",
     "@facet/ir-interpreter": "workspace:*",
@@ -29,6 +31,7 @@
     "@facet/transpiler-typescript": "workspace:*",
     "@types/node": "^22.9.0",
     "happy-dom": "^20.9.0",
+    "tsx": "^4.22.4",
     "typescript": "^5.6.3",
     "vitest": "^2.1.5"
   }

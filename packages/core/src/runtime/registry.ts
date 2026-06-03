@@ -116,6 +116,15 @@ export function hasFacetLoader(id: string): boolean {
 }
 
 /**
+ * 등록된 facet loader 의 id 목록.
+ * facet 모듈을 로드하지 않고도 "어떤 facet 이 lazy 로 존재하는지" 만 알고 싶을 때 쓴다.
+ * (이미 등록된 facet JSON 만 반환하는 listFacets 와 달리 loader 만 있는 미로드 facet 도 포함.)
+ */
+export function listFacetLoaderIds(): string[] {
+  return [...facetLoaders.keys()];
+}
+
+/**
  * facet JSON 을 가져온다. 등록되어 있지 않고 loader 가 있으면 loader 를 실행한 뒤 재조회.
  * 동일 id 동시 호출은 동일한 inflight Promise 를 공유한다.
  */

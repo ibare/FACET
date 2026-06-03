@@ -4,6 +4,8 @@
  * 책임 (얇은 포장):
  *  - @facet/host-tiptap 의 공개 표면 재노출 (FacetExtension, parseFacetRaw, createFacetNodeView, renderFacetMarkdown).
  *  - @facet/bootstrap 의 bootstrapFacet 재노출 (카탈로그 단일 출처).
+ *  - @facet/bootstrap 의 getFacetCatalog 재노출 — 호스트가 facet 모듈 로드 없이
+ *    추가 가능 시각화 목록(id/title/description/domain)에 접근하는 경로.
  *
  * 호스트 사용 흐름:
  *   import { FacetExtension, bootstrapFacet } from '@facet/host-tiptap-bundle';
@@ -23,4 +25,4 @@ export {
   type FacetExtensionOptions,
 } from '@facet/host-tiptap';
 
-export { bootstrapFacet } from '@facet/bootstrap';
+export { bootstrapFacet, getFacetCatalog, type FacetCatalogEntry } from '@facet/bootstrap';
