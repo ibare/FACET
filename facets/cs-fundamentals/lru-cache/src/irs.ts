@@ -6,6 +6,6 @@
  * idle / get / put) 와 동기화한다.
  */
 
-import type { IR } from '@facet/core';
+import type { IR } from '@ffacet/core';
 
 export const lruCacheIRs: IR[] = [];

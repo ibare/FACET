@@ -8,9 +8,9 @@
  *   4. 양 끝       — startPreview / goalPreview, snapshot-strip (패스별 누적)
  */
 
-import type { ProjectorFactory } from '@facet/core/runtime';
-import type { BarItemState } from '@facet/core/runtime';
-import { toIndexArray } from '@facet/core/runtime';
+import type { ProjectorFactory } from '@ffacet/core/runtime';
+import type { BarItemState } from '@ffacet/core/runtime';
+import { toIndexArray } from '@ffacet/core/runtime';
 
 type BarChart = {
   setData(values: number[]): void;

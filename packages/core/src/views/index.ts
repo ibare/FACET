@@ -1,6 +1,6 @@
 /**
  * View Catalog — 이름→View 생성자 맵.
- * @facet/core 에 내장된 표준 뷰들을 자동 등록.
+ * @ffacet/core 에 내장된 표준 뷰들을 자동 등록.
  */
 
 import type { View, ViewInstance, ViewMountParams } from './types.js';

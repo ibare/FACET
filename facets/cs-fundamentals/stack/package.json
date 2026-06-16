@@ -1,5 +1,5 @@
 {
-  "name": "@facet/algorithm-stack",
+  "name": "@ffacet/algorithm-stack",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -12,6 +12,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@facet/core": "workspace:*"
+    "@ffacet/core": "workspace:*"
   }
 }

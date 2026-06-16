@@ -29,8 +29,8 @@
  *   - 외부 관찰자 어두운 회색 — palette.textMuted (배경 fill 알파)
  */
 
-import type { View, ViewInstance, ViewMountParams } from '@facet/core/runtime';
-import { getColors, fonts, fontSizes, categorical } from '@facet/core/runtime';
+import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import { getColors, fonts, fontSizes, categorical } from '@ffacet/core/runtime';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 

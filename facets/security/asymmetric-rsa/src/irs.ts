@@ -5,6 +5,6 @@
  * 수 있다. 그 시점에 IR + transpiler step builder 를 추가한다.
  */
 
-import type { IR } from '@facet/core';
+import type { IR } from '@ffacet/core';
 
 export const asymmetricRsaIRs: IR[] = [];

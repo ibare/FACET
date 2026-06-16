@@ -22,8 +22,8 @@
  * 통과시키므로 view 는 dispatch 를 직접 쓰지 않는다 — 메서드 호출만 담당.
  */
 
-import type { View, ViewInstance, ViewMountParams } from '@facet/core/runtime';
-import { getColors, fonts, fontSizes, categorical } from '@facet/core/runtime';
+import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import { getColors, fonts, fontSizes, categorical } from '@ffacet/core/runtime';
 import type {
   KindPalette,
   SwallowKind,

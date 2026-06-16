@@ -13,7 +13,7 @@
  *              `content:<id>` `req:<traceIndex>` 명시 prefix.
  */
 
-import type { FacetJson } from '@facet/core/runtime';
+import type { FacetJson } from '@ffacet/core/runtime';
 
 export const cachingCdnFacet: FacetJson = {
   id: 'facet:cachingCdn',

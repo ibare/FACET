@@ -20,13 +20,13 @@
  * 셀 호버 인터랙션은 view 내부에서 직접 SVG mouseover/mouseout 으로 처리.
  */
 
-import type { View, ViewInstance, ViewMountParams } from '@facet/core/runtime';
+import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
 import {
   getColors,
   fonts,
   fontSizes,
   categorical,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 

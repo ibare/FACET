@@ -17,7 +17,7 @@
  * 메트릭: 'compare-count', 'swap-count', 'pass-count'
  */
 
-import type { FacetContext } from '@facet/core/runtime';
+import type { FacetContext } from '@ffacet/core/runtime';
 
 export type BubbleSortData = { type: 'array'; values: number[] };
 

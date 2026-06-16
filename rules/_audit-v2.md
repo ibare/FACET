@@ -22,7 +22,7 @@
 
 **적용된 수정 (Phase 5 Track A, 커밋 `9d0962b`)**:
 1. `packages/core/src/types/event.ts` 에 `toIndexArray(target)` 헬퍼 추가 — 내부적으로 `parseTarget` 을 호출.
-2. 18개 projector 의 중복 `function toIndex(target)` 제거, `import { toIndexArray } from '@facet/core/runtime'` 로 교체, 호출부 일괄 `toIndexArray(...)` 로 리네임.
+2. 18개 projector 의 중복 `function toIndex(target)` 제거, `import { toIndexArray } from '@ffacet/core/runtime'` 로 교체, 호출부 일괄 `toIndexArray(...)` 로 리네임.
 
 **재검증 grep**:
 - `function toIndex(` in `facets/**/projector.ts` → **0건** ✅

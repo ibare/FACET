@@ -12,7 +12,7 @@
  * 식별자 (C1): 'stack:top' 만 사용.
  */
 
-import type { FacetJson } from '@facet/core/runtime';
+import type { FacetJson } from '@ffacet/core/runtime';
 
 export const stackFacet: FacetJson = {
   id: 'facet:stack',

@@ -1,5 +1,5 @@
 /**
- * @facet/algorithm-linked-list — 4-layer 단일 연결 리스트 (Linked List) facet 번들.
+ * @ffacet/algorithm-linked-list — 4-layer 단일 연결 리스트 (Linked List) facet 번들.
  *
  * 입력 반응형 (ReactiveMechanism). 자동 시연 (insert(2, "25")) 후 사용자
  * 입력 (insert/remove/search/reset) 을 1:1 시각 사건으로 매핑.
@@ -26,7 +26,7 @@ import {
   registerFacets,
   registerDescription,
   registerView,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 import { linkedList, type LinkedListFacetData } from './algorithm.js';
 import { linkedListProjector } from './projector.js';
 import { linkedListIRs } from './irs.js';

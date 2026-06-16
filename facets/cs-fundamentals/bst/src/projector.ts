@@ -21,9 +21,9 @@
  *   algorithm 과 동일한 id 부여 규칙을 공유해 id 가 어긋나지 않는다.
  */
 
-import type { ProjectorFactory } from '@facet/core/runtime';
-import type { TreeNode } from '@facet/core/runtime';
-import { parseTarget } from '@facet/core/runtime';
+import type { ProjectorFactory } from '@ffacet/core/runtime';
+import type { TreeNode } from '@ffacet/core/runtime';
+import { parseTarget } from '@ffacet/core/runtime';
 import { computeInitialBst, type BstInitialData } from './algorithm.js';
 
 export const BST_CANVAS = { width: 560, height: 320, stripH: 44 } as const;

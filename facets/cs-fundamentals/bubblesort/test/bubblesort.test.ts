@@ -1,14 +1,14 @@
 // @vitest-environment happy-dom
 import { describe, expect, it, beforeEach } from 'vitest';
-import { runFacet, clearRegistry } from '@facet/core/runtime';
+import { runFacet, clearRegistry } from '@ffacet/core/runtime';
 import {
   bubblesort,
   computeBubblesortResult,
   registerBubblesort,
   bubblesortFacet,
 } from '../src/index.js';
-import { registerPythonTranspiler } from '@facet/transpiler-python';
-import { registerCodeView } from '@facet/view-code';
+import { registerPythonTranspiler } from '@ffacet/transpiler-python';
+import { registerCodeView } from '@ffacet/view-code';
 
 function delay(ms: number): Promise<void> {
   return new Promise((res) => setTimeout(res, ms));

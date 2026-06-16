@@ -18,14 +18,14 @@
  *   - getStackSize()                                — 디버깅용.
  */
 
-import type { View, ViewInstance, ViewMountParams } from '@facet/core/runtime';
+import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
 import {
   getColors,
   categorical,
   depthVeil,
   fonts,
   fontSizes,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 

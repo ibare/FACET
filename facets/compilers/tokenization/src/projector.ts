@@ -16,7 +16,7 @@
  * runner 가 자동 wire-up 하므로 projector 는 view 메서드 호출만 담당한다.
  */
 
-import type { ProjectorFactory } from '@facet/core/runtime';
+import type { ProjectorFactory } from '@ffacet/core/runtime';
 import type {
   KindPalette,
   SwallowKind,

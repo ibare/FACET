@@ -1,5 +1,5 @@
 /**
- * @facet/view-code — code-view: IR 기반 다중 언어 코드 표시.
+ * @ffacet/view-code — code-view: IR 기반 다중 언어 코드 표시.
  *
  * 사용자가 1~2개 언어를 임의로 추가/제거. phase 동기화 라인 강조 지원.
  * Shiki 로 문법 하이라이팅 (테마: github-light/github-dark).
@@ -12,7 +12,7 @@
  *   clearHighlight()
  */
 
-import type { View, ViewInstance, ViewMountParams } from '@facet/core/runtime';
+import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
 import {
   registerView,
   getColors,
@@ -21,8 +21,8 @@ import {
   radii,
   space,
   resolveLocale,
-} from '@facet/core/runtime';
-import type { IR, Transpiler } from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
+import type { IR, Transpiler } from '@ffacet/core/runtime';
 import { ensureLanguage } from './highlighter.js';
 import type { ShikiTransformer } from 'shiki';
 

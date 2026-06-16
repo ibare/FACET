@@ -61,7 +61,7 @@
  *   - phase          payload: { phase: 'idle' | 'scanning' | 'done' }
  */
 
-import type { FacetContext, ReactiveContext } from '@facet/core/runtime';
+import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
 
 export type TokenKind =
   | 'keyword'

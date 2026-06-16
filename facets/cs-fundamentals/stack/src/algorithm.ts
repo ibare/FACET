@@ -30,7 +30,7 @@
  * 진행 동력은 ReactiveMechanism. registerAlgorithm 시 mechanismKind: 'reactive' 지정.
  */
 
-import type { FacetContext, ReactiveContext } from '@facet/core/runtime';
+import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
 
 export type StackInputEvent =
   | { type: 'push'; payload?: { value?: string } & Record<string, unknown> }

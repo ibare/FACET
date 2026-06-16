@@ -39,7 +39,7 @@
  *   'search-miss-count' | 'delete-count' | 'rejected-duplicate'
  */
 
-import type { FacetContext } from '@facet/core/runtime';
+import type { FacetContext } from '@ffacet/core/runtime';
 
 export type BstOperation =
   | { op: 'search'; value: number }

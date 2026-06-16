@@ -1,5 +1,5 @@
 {
-  "name": "@facet/ir-interpreter",
+  "name": "@ffacet/ir-interpreter",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -12,15 +12,15 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@facet/core": "workspace:*"
+    "@ffacet/core": "workspace:*"
   },
   "devDependencies": {
-    "@facet/algorithm-bubblesort": "workspace:*",
-    "@facet/transpiler-cpp": "workspace:*",
-    "@facet/transpiler-csharp": "workspace:*",
-    "@facet/transpiler-java": "workspace:*",
-    "@facet/transpiler-javascript": "workspace:*",
-    "@facet/transpiler-python": "workspace:*",
-    "@facet/transpiler-typescript": "workspace:*"
+    "@ffacet/algorithm-bubblesort": "workspace:*",
+    "@ffacet/transpiler-cpp": "workspace:*",
+    "@ffacet/transpiler-csharp": "workspace:*",
+    "@ffacet/transpiler-java": "workspace:*",
+    "@ffacet/transpiler-javascript": "workspace:*",
+    "@ffacet/transpiler-python": "workspace:*",
+    "@ffacet/transpiler-typescript": "workspace:*"
   }
 }

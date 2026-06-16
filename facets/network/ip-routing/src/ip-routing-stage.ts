@@ -26,14 +26,14 @@
  * 모든 운동 메서드는 Promise<void> 반환 — projector 가 await 한다.
  */
 
-import type { View, ViewMountParams, ViewInstance } from '@facet/core/runtime';
+import type { View, ViewMountParams, ViewInstance } from '@ffacet/core/runtime';
 import {
   getColors,
   fonts,
   fontSizes,
   categorical,
   type Palette,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 

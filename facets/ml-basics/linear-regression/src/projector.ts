@@ -10,7 +10,7 @@
  *   5. 수렴 깃발 + 손실 곡선 — 운동의 정지에 사건성을 부여.
  */
 
-import type { ProjectorFactory } from '@facet/core/runtime';
+import type { ProjectorFactory } from '@ffacet/core/runtime';
 import type { Point, LrSegment } from './algorithm.js';
 
 type LinRegStage = {

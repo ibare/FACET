@@ -12,7 +12,7 @@
  * 운동 시간 (ms) 은 기획 §3 / §9 기준 + runtime.getSpeed() 로 보정.
  */
 
-import type { ProjectorFactory } from '@facet/core/runtime';
+import type { ProjectorFactory } from '@ffacet/core/runtime';
 
 type LruCacheStage = {
   reset(): void;

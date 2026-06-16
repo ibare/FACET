@@ -1,5 +1,5 @@
 /**
- * @facet/algorithm-hash-table — 4-layer 해시 테이블 (분리 체이닝) facet 번들.
+ * @ffacet/algorithm-hash-table — 4-layer 해시 테이블 (분리 체이닝) facet 번들.
  *
  * 입력 반응형 (ReactiveMechanism). 자동 시연 (키 7개, 충돌 1회 의도) 후 사용자
  * 입력 (insert/search/remove/reset) 을 1:1 시각 사건으로 매핑.
@@ -26,7 +26,7 @@ import {
   registerFacets,
   registerDescription,
   registerView,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 import { hashTable, type HashTableFacetData } from './algorithm.js';
 import { hashTableProjector } from './projector.js';
 import { hashTableIRs } from './irs.js';

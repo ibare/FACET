@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import type { IR } from '@facet/core';
+import type { IR } from '@ffacet/core';
 import { runIR } from '../src/index.js';
-import { bubblesortImperativeIR } from '@facet/algorithm-bubblesort';
-import { javascriptTranspiler } from '@facet/transpiler-javascript';
+import { bubblesortImperativeIR } from '@ffacet/algorithm-bubblesort';
+import { javascriptTranspiler } from '@ffacet/transpiler-javascript';
 
 const SEEDS: number[][] = [
   [5, 2, 8, 1, 9, 3, 7, 4],

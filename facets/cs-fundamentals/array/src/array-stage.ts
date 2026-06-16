@@ -20,8 +20,8 @@
  *   - signalOutOfRange(opts?)                         — 빨간 점선 깜빡.
  */
 
-import type { View, ViewInstance, ViewMountParams } from '@facet/core/runtime';
-import { getColors, fonts, fontSizes } from '@facet/core/runtime';
+import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import { getColors, fonts, fontSizes } from '@ffacet/core/runtime';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 

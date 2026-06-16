@@ -1,5 +1,5 @@
 /**
- * @facet/ir-interpreter — IR 의 의미를 정의하는 단일 진실 원천 (source of truth).
+ * @ffacet/ir-interpreter — IR 의 의미를 정의하는 단일 진실 원천 (source of truth).
  *
  * 어떤 언어 transpiler 의 emit 결과도 동일 IR 을 이 인터프리터로 실행한 결과와
  * 의미적으로 동등해야 한다. 라운드트립 검증의 비교 기준.
@@ -14,7 +14,7 @@
  *  - call: ir.functions 안의 함수만 호출 가능 (외부 함수 없음).
  */
 
-import type { IR, IRExpr, IRFunc, IRStmt } from '@facet/core';
+import type { IR, IRExpr, IRFunc, IRStmt } from '@ffacet/core';
 
 export type Value = number | boolean | string | Value[] | undefined;
 

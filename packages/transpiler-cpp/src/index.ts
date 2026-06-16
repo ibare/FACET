@@ -1,5 +1,5 @@
 /**
- * @facet/transpiler-cpp — IR → C++ 학습 코드 emitter.
+ * @ffacet/transpiler-cpp — IR → C++ 학습 코드 emitter.
  *
  * 디자인 원칙:
  *  - 학습 가독성 우선. 함수 본문만 보여주고 #include / using 은 생략.
@@ -8,7 +8,7 @@
  *  - 들여쓰기 4 spaces.
  */
 
-import { registerTranspiler } from '@facet/core/runtime';
+import { registerTranspiler } from '@ffacet/core/runtime';
 import type {
   IR,
   IRExpr,
@@ -19,7 +19,7 @@ import type {
   TranspileLine,
   TranspileResult,
   Transpiler,
-} from '@facet/core';
+} from '@ffacet/core';
 
 const INDENT = '    ';
 

@@ -15,8 +15,8 @@
  * 운동 시간(ms) 은 기획 §9 기준 + runtime.getSpeed() 로 보정.
  */
 
-import type { ProjectorFactory } from '@facet/core/runtime';
-import { parseTarget } from '@facet/core/runtime';
+import type { ProjectorFactory } from '@ffacet/core/runtime';
+import { parseTarget } from '@ffacet/core/runtime';
 
 type StackStage = {
   reset(): void;

@@ -18,7 +18,7 @@
  * 식별자 (C1): `flow:` `diamond:` `branch:` `block:` `merge:` 명시 prefix.
  */
 
-import type { FacetJson } from '@facet/core/runtime';
+import type { FacetJson } from '@ffacet/core/runtime';
 
 export const conditionalStatementFacet: FacetJson = {
   id: 'facet:conditionalStatement',

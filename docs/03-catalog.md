@@ -2,7 +2,7 @@
 
 옛 시스템의 4-카테고리 카탈로그(Container/Algorithm/Body/IR/Transpiler)는 폐기되었다. 새 시스템에서 호스트 앱은 다섯 종류의 모듈을 **단순히 등록만** 한다 — 자동 매칭이나 호환성 추론은 없다.
 
-## 등록 API (`@facet/core/runtime`)
+## 등록 API (`@ffacet/core/runtime`)
 
 ```ts
 registerAlgorithm(name: string, fn: AlgorithmFn): void;
@@ -51,9 +51,9 @@ export function registerQuicksort(): void {
 호스트 앱(playground)은 다음 형태로 부트스트랩한다.
 
 ```ts
-import { registerBuiltinViews } from '@facet/core/runtime';
-import { registerQuicksort } from '@facet/algorithm-quicksort';
-import { registerBubblesort } from '@facet/algorithm-bubblesort';
+import { registerBuiltinViews } from '@ffacet/core/runtime';
+import { registerQuicksort } from '@ffacet/algorithm-quicksort';
+import { registerBubblesort } from '@ffacet/algorithm-bubblesort';
 
 registerBuiltinViews();   // 표준 View Catalog 10 종 등록
 registerQuicksort();
@@ -65,7 +65,7 @@ registerBubblesort();
 View 도 별도의 레지스트리로 관리된다 — JSON 의 `blocks[ref].type` 이 키.
 
 ```ts
-import { registerView, registerBuiltinViews } from '@facet/core/runtime';
+import { registerView, registerBuiltinViews } from '@ffacet/core/runtime';
 
 registerBuiltinViews();   // bar-chart, graph-layout, tree-layout,
                           // linked-list-chain, conveyor-queue, ordered-list,

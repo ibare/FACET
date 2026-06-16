@@ -1,6 +1,6 @@
 # 06 · 첫 알고리즘 플러그인 — QuickSort
 
-새 4-layer 구조의 첫 실 알고리즘. 이 문서를 따라 패키지를 그대로 만들면 동작하는 facet 이 완성된다. 두 번째 알고리즘(`@facet/algorithm-bubblesort`)도 같은 골격을 따른다.
+새 4-layer 구조의 첫 실 알고리즘. 이 문서를 따라 패키지를 그대로 만들면 동작하는 facet 이 완성된다. 두 번째 알고리즘(`@ffacet/algorithm-bubblesort`)도 같은 골격을 따른다.
 
 ## 결과물
 
@@ -39,7 +39,7 @@ packages/algorithm-quicksort/
 `src/algorithm.ts`
 
 ```ts
-import type { FacetContext } from '@facet/core/runtime';
+import type { FacetContext } from '@ffacet/core/runtime';
 
 export type QuickSortData = { type: 'array'; values: number[] };
 
@@ -232,7 +232,7 @@ export const quicksortPythonImperative: Transpiler = {
 import {
   registerAlgorithm, registerProjector, registerFacets,
   registerIR, registerTranspiler,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 
 export function registerQuicksort(): void {
   registerAlgorithm('quicksort', quicksort);
@@ -249,8 +249,8 @@ export function registerQuicksort(): void {
 
 ```ts
 // 호스트 앱 부트스트랩
-import { registerBuiltinViews } from '@facet/core/runtime';
-import { registerQuicksort } from '@facet/algorithm-quicksort';
+import { registerBuiltinViews } from '@ffacet/core/runtime';
+import { registerQuicksort } from '@ffacet/algorithm-quicksort';
 
 registerBuiltinViews();
 registerQuicksort();
@@ -261,7 +261,7 @@ registerQuicksort();
 
 ## 두 번째 알고리즘이 가져갈 것
 
-`@facet/algorithm-bubblesort` 는 위와 똑같은 5 파일 구조를 갖는다. 차이는:
+`@ffacet/algorithm-bubblesort` 는 위와 똑같은 5 파일 구조를 갖는다. 차이는:
 
 - `algorithm.ts` — 재귀 없이 단순 이중 루프 + early-exit.
 - `projector.ts` — pivot 색상 분기 없음. 나머지 `bar-chart` 호출은 동일.

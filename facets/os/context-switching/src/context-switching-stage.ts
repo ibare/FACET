@@ -24,8 +24,8 @@
  *     하나하나에 차례로 정렬되며 안착한다. 운동선 가늘고 단계적.
  */
 
-import type { View, ViewInstance, ViewMountParams } from '@facet/core/runtime';
-import { getColors, fonts, fontSizes, categorical } from '@facet/core/runtime';
+import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import { getColors, fonts, fontSizes, categorical } from '@ffacet/core/runtime';
 import type { Flow, TriggerKind, Mode } from './algorithm.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';

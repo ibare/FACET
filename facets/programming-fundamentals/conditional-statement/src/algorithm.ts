@@ -41,7 +41,7 @@
  *   - phase                payload: { phase: 'idle' | 'auto-demo' }
  */
 
-import type { FacetContext, ReactiveContext } from '@facet/core/runtime';
+import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
 
 export type ConditionalMode = 'two' | 'three';
 

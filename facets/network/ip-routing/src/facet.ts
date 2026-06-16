@@ -11,7 +11,7 @@
  * 식별자 (C1): `host:` `router:` `link:` `table:` `row:` `packet:` `bit:` `gauge:` `arrow:`.
  */
 
-import type { FacetJson } from '@facet/core/runtime';
+import type { FacetJson } from '@ffacet/core/runtime';
 
 const R1_TABLE = [
   // 짧은 일치 (LPM 으로 패배) — 그러나 표 위에 같이 등장.

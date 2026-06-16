@@ -41,7 +41,7 @@
  * 진행 동력은 ReactiveMechanism. registerAlgorithm 시 mechanismKind: 'reactive'.
  */
 
-import type { FacetContext, ReactiveContext } from '@facet/core/runtime';
+import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
 
 export type EdgeInit = {
   /** edge:<id> 의 id 부분. 짧은 도시 슬러그. */

@@ -8,37 +8,37 @@ importers:
 
   .:
     devDependencies:
-      '@facet/algorithm-bubblesort':
+      '@ffacet/algorithm-bubblesort':
         specifier: workspace:*
         version: link:facets/cs-fundamentals/bubblesort
-      '@facet/bootstrap':
+      '@ffacet/bootstrap':
         specifier: workspace:*
         version: link:packages/bootstrap
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:packages/core
-      '@facet/host-tiptap':
+      '@ffacet/host-tiptap':
         specifier: workspace:*
         version: link:packages/host-tiptap
-      '@facet/ir-interpreter':
+      '@ffacet/ir-interpreter':
         specifier: workspace:*
         version: link:packages/ir-interpreter
-      '@facet/transpiler-cpp':
+      '@ffacet/transpiler-cpp':
         specifier: workspace:*
         version: link:packages/transpiler-cpp
-      '@facet/transpiler-csharp':
+      '@ffacet/transpiler-csharp':
         specifier: workspace:*
         version: link:packages/transpiler-csharp
-      '@facet/transpiler-java':
+      '@ffacet/transpiler-java':
         specifier: workspace:*
         version: link:packages/transpiler-java
-      '@facet/transpiler-javascript':
+      '@ffacet/transpiler-javascript':
         specifier: workspace:*
         version: link:packages/transpiler-javascript
-      '@facet/transpiler-python':
+      '@ffacet/transpiler-python':
         specifier: workspace:*
         version: link:packages/transpiler-python
-      '@facet/transpiler-typescript':
+      '@ffacet/transpiler-typescript':
         specifier: workspace:*
         version: link:packages/transpiler-typescript
       '@types/node':
@@ -59,13 +59,13 @@ importers:
 
   apps/playground:
     dependencies:
-      '@facet/bootstrap':
+      '@ffacet/bootstrap':
         specifier: workspace:*
         version: link:../../packages/bootstrap
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../../packages/core
-      '@facet/host-tiptap':
+      '@ffacet/host-tiptap':
         specifier: workspace:*
         version: link:../../packages/host-tiptap
       '@phosphor-icons/react':
@@ -120,241 +120,272 @@ importers:
 
   facets/compilers/tokenization:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
   facets/cs-fundamentals/array:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
   facets/cs-fundamentals/bfs:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
     devDependencies:
-      '@facet/transpiler-python':
+      '@ffacet/transpiler-python':
         specifier: workspace:*
         version: link:../../../packages/transpiler-python
-      '@facet/view-code':
+      '@ffacet/view-code':
         specifier: workspace:*
         version: link:../../../packages/view-code
 
   facets/cs-fundamentals/bst:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
   facets/cs-fundamentals/bubblesort:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
     devDependencies:
-      '@facet/transpiler-python':
+      '@ffacet/transpiler-python':
         specifier: workspace:*
         version: link:../../../packages/transpiler-python
-      '@facet/view-code':
+      '@ffacet/view-code':
         specifier: workspace:*
         version: link:../../../packages/view-code
 
   facets/cs-fundamentals/hash-table:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
   facets/cs-fundamentals/linked-list:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
   facets/cs-fundamentals/lru-cache:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
   facets/cs-fundamentals/queue:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
     devDependencies:
-      '@facet/transpiler-python':
+      '@ffacet/transpiler-python':
         specifier: workspace:*
         version: link:../../../packages/transpiler-python
-      '@facet/view-code':
+      '@ffacet/view-code':
         specifier: workspace:*
         version: link:../../../packages/view-code
 
   facets/cs-fundamentals/stack:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
   facets/database/relational-tables-and-keys:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
   facets/graphics/2d-matrix-transform:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
   facets/ml-basics/linear-regression:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
   facets/network/ip-routing:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
   facets/os/context-switching:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
   facets/programming-fundamentals/conditional-statement:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
   facets/security/asymmetric-rsa:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
   facets/system-design/caching-cdn:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
   facets/system-design/messaging-pubsub:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
   packages/bootstrap:
-    dependencies:
-      '@facet/algorithm-2d-matrix-transform':
+    devDependencies:
+      '@ffacet/algorithm-2d-matrix-transform':
         specifier: workspace:*
         version: link:../../facets/graphics/2d-matrix-transform
-      '@facet/algorithm-array':
+      '@ffacet/algorithm-array':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/array
-      '@facet/algorithm-asymmetric-rsa':
+      '@ffacet/algorithm-asymmetric-rsa':
         specifier: workspace:*
         version: link:../../facets/security/asymmetric-rsa
-      '@facet/algorithm-bfs':
+      '@ffacet/algorithm-bfs':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bfs
-      '@facet/algorithm-bst':
+      '@ffacet/algorithm-bst':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bst
-      '@facet/algorithm-bubblesort':
+      '@ffacet/algorithm-bubblesort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bubblesort
-      '@facet/algorithm-caching-cdn':
+      '@ffacet/algorithm-caching-cdn':
         specifier: workspace:*
         version: link:../../facets/system-design/caching-cdn
-      '@facet/algorithm-conditional-statement':
+      '@ffacet/algorithm-conditional-statement':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/conditional-statement
-      '@facet/algorithm-context-switching':
+      '@ffacet/algorithm-context-switching':
         specifier: workspace:*
         version: link:../../facets/os/context-switching
-      '@facet/algorithm-hash-table':
+      '@ffacet/algorithm-hash-table':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/hash-table
-      '@facet/algorithm-ip-routing':
+      '@ffacet/algorithm-ip-routing':
         specifier: workspace:*
         version: link:../../facets/network/ip-routing
-      '@facet/algorithm-linear-regression':
+      '@ffacet/algorithm-linear-regression':
         specifier: workspace:*
         version: link:../../facets/ml-basics/linear-regression
-      '@facet/algorithm-linked-list':
+      '@ffacet/algorithm-linked-list':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/linked-list
-      '@facet/algorithm-lru-cache':
+      '@ffacet/algorithm-lru-cache':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/lru-cache
-      '@facet/algorithm-messaging-pubsub':
+      '@ffacet/algorithm-messaging-pubsub':
         specifier: workspace:*
         version: link:../../facets/system-design/messaging-pubsub
-      '@facet/algorithm-queue':
+      '@ffacet/algorithm-queue':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/queue
-      '@facet/algorithm-relational-tables-and-keys':
+      '@ffacet/algorithm-relational-tables-and-keys':
         specifier: workspace:*
         version: link:../../facets/database/relational-tables-and-keys
-      '@facet/algorithm-stack':
+      '@ffacet/algorithm-stack':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/stack
-      '@facet/algorithm-tokenization':
+      '@ffacet/algorithm-tokenization':
         specifier: workspace:*
         version: link:../../facets/compilers/tokenization
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../core
-      '@facet/transpiler-cpp':
+      '@ffacet/transpiler-cpp':
         specifier: workspace:*
         version: link:../transpiler-cpp
-      '@facet/transpiler-csharp':
+      '@ffacet/transpiler-csharp':
         specifier: workspace:*
         version: link:../transpiler-csharp
-      '@facet/transpiler-java':
+      '@ffacet/transpiler-java':
         specifier: workspace:*
         version: link:../transpiler-java
-      '@facet/transpiler-javascript':
+      '@ffacet/transpiler-javascript':
         specifier: workspace:*
         version: link:../transpiler-javascript
-      '@facet/transpiler-python':
+      '@ffacet/transpiler-python':
         specifier: workspace:*
         version: link:../transpiler-python
-      '@facet/transpiler-typescript':
+      '@ffacet/transpiler-typescript':
         specifier: workspace:*
         version: link:../transpiler-typescript
-      '@facet/view-code':
+      '@ffacet/view-code':
         specifier: workspace:*
         version: link:../view-code
+      '@rollup/plugin-node-resolve':
+        specifier: ^15.3.0
+        version: 15.3.1(rollup@4.60.1)
+      rollup:
+        specifier: ^4.28.0
+        version: 4.60.1
+      rollup-plugin-dts:
+        specifier: ^6.1.1
+        version: 6.4.1(rollup@4.60.1)(typescript@5.9.3)
+      rollup-plugin-esbuild:
+        specifier: ^6.1.1
+        version: 6.2.1(esbuild@0.28.0)(rollup@4.60.1)
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
 
-  packages/core: {}
+  packages/core:
+    devDependencies:
+      '@rollup/plugin-node-resolve':
+        specifier: ^15.3.0
+        version: 15.3.1(rollup@4.60.1)
+      rollup:
+        specifier: ^4.28.0
+        version: 4.60.1
+      rollup-plugin-dts:
+        specifier: ^6.1.1
+        version: 6.4.1(rollup@4.60.1)(typescript@5.9.3)
+      rollup-plugin-esbuild:
+        specifier: ^6.1.1
+        version: 6.2.1(esbuild@0.28.0)(rollup@4.60.1)
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
 
   packages/host-tiptap:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../core
       marked:
         specifier: ^14.1.3
         version: 14.1.4
     devDependencies:
-      '@facet/algorithm-bubblesort':
+      '@ffacet/algorithm-bubblesort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bubblesort
-      '@facet/transpiler-python':
+      '@ffacet/transpiler-python':
         specifier: workspace:*
         version: link:../transpiler-python
-      '@facet/view-code':
+      '@ffacet/view-code':
         specifier: workspace:*
         version: link:../view-code
       '@tiptap/core':
@@ -369,10 +400,13 @@ importers:
 
   packages/host-tiptap-bundle:
     devDependencies:
-      '@facet/bootstrap':
+      '@ffacet/bootstrap':
         specifier: workspace:*
         version: link:../bootstrap
-      '@facet/host-tiptap':
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../core
+      '@ffacet/host-tiptap':
         specifier: workspace:*
         version: link:../host-tiptap
       '@rollup/plugin-node-resolve':
@@ -402,71 +436,71 @@ importers:
 
   packages/ir-interpreter:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../core
     devDependencies:
-      '@facet/algorithm-bubblesort':
+      '@ffacet/algorithm-bubblesort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bubblesort
-      '@facet/transpiler-cpp':
+      '@ffacet/transpiler-cpp':
         specifier: workspace:*
         version: link:../transpiler-cpp
-      '@facet/transpiler-csharp':
+      '@ffacet/transpiler-csharp':
         specifier: workspace:*
         version: link:../transpiler-csharp
-      '@facet/transpiler-java':
+      '@ffacet/transpiler-java':
         specifier: workspace:*
         version: link:../transpiler-java
-      '@facet/transpiler-javascript':
+      '@ffacet/transpiler-javascript':
         specifier: workspace:*
         version: link:../transpiler-javascript
-      '@facet/transpiler-python':
+      '@ffacet/transpiler-python':
         specifier: workspace:*
         version: link:../transpiler-python
-      '@facet/transpiler-typescript':
+      '@ffacet/transpiler-typescript':
         specifier: workspace:*
         version: link:../transpiler-typescript
 
   packages/transpiler-cpp:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../core
 
   packages/transpiler-csharp:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../core
 
   packages/transpiler-java:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../core
 
   packages/transpiler-javascript:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../core
 
   packages/transpiler-python:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../core
 
   packages/transpiler-typescript:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../core
 
   packages/view-code:
     dependencies:
-      '@facet/core':
+      '@ffacet/core':
         specifier: workspace:*
         version: link:../core
       shiki:

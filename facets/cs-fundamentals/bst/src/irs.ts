@@ -16,7 +16,7 @@
  * iterative 는 paradigm 토글 도입 시 즉시 쓸 수 있도록 같은 phase 로 미리 저장.
  */
 
-import type { IR, IRExpr, IRStmt, IRType } from '@facet/core';
+import type { IR, IRExpr, IRStmt, IRType } from '@ffacet/core';
 
 const tInt: IRType = { kind: 'int' };
 const tBool: IRType = { kind: 'bool' };

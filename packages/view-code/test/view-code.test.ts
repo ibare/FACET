@@ -6,7 +6,7 @@ import {
   registerTranspiler,
   type IR,
   type Transpiler,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 import { codeView } from '../src/index.js';
 
 const dummyIR: IR = {

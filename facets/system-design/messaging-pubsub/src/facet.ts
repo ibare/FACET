@@ -13,7 +13,7 @@
  * 식별자 (C1): `pub:<id>` `sub:<id>` `topic:<name>` `msg:<traceIndex>` 명시 prefix.
  */
 
-import type { FacetJson } from '@facet/core/runtime';
+import type { FacetJson } from '@ffacet/core/runtime';
 
 export const messagingPubsubFacet: FacetJson = {
   id: 'facet:messagingPubsub',

@@ -16,10 +16,10 @@ last_verified: 2026-04-21
 
 ## MUST
 
-- Projector 는 `event.target` 에서 index 를 꺼낼 때 `parseTarget(t)` 를 사용한다 (`@facet/core/runtime` 에서 export). 결과의 `prefix` 와 `id` 를 타입 분기한다.
+- Projector 는 `event.target` 에서 index 를 꺼낼 때 `parseTarget(t)` 를 사용한다 (`@ffacet/core/runtime` 에서 export). 결과의 `prefix` 와 `id` 를 타입 분기한다.
 - 새 prefix 를 도입하면 `packages/core/src/types/event.ts` 의 `TargetPrefix` 유니온에 추가한다.
 - `target` 이 `string` 또는 `string[]` 어느 쪽이든 처리 가능해야 한다. `FacetEventTarget` 공용 타입을 사용한다.
-- 다중 target 파싱 공용 헬퍼가 필요하면 `@facet/core/runtime` 에 추가하고 그 한 곳에서만 쓴다.
+- 다중 target 파싱 공용 헬퍼가 필요하면 `@ffacet/core/runtime` 에 추가하고 그 한 곳에서만 쓴다.
 
 ## MUST NOT
 

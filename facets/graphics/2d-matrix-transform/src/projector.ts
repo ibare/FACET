@@ -10,7 +10,7 @@
  *   5. 보조 점의 동기 운동.
  */
 
-import type { ProjectorFactory } from '@facet/core/runtime';
+import type { ProjectorFactory } from '@ffacet/core/runtime';
 import type {
   Matrix2x2,
   PresetMode,

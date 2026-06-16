@@ -1,12 +1,12 @@
 /**
- * @facet/bootstrap — facet 카탈로그 단일 출처.
+ * @ffacet/bootstrap — facet 카탈로그 단일 출처.
  *
  * 정적 등록 (즉시 필요):
  *  - View Catalog (built-in + code-view)
  *  - Transpiler 6종
  *
  * 동적 등록 (lazy):
- *  - algorithm 패키지(@facet/algorithm-*) 는 registerFacetLoader 로만 매핑.
+ *  - algorithm 패키지(@ffacet/algorithm-*) 는 registerFacetLoader 로만 매핑.
  *    각 import() 가 번들러의 dynamic import 경계로 인식되어 facet 별 chunk 로 분리된다.
  *  - 현재 등록 facet 19종: bubbleSort (모범 사례) + 자료구조 array / stack / queue / linkedList / hashTable / bst /
  *    lruCache + 그래프 bfs + 시스템 행동 messagingPubsub + 시스템 캐싱 cachingCdn + 데이터베이스
@@ -16,7 +16,7 @@
  *
  * 소비자:
  *  - apps/playground (dev/build) — main.tsx 에서 bootstrapFacet() 호출
- *  - @facet/host-tiptap-bundle (외부 호스트 workspace 의존) — re-export
+ *  - @ffacet/host-tiptap-bundle (외부 호스트 workspace 의존) — re-export
  *
  * 카탈로그 접근:
  *  - getFacetCatalog() — facet 모듈을 로드하지 않고 추가 가능 목록(id/title/description/domain)
@@ -26,14 +26,14 @@
 import {
   registerBuiltinViews,
   registerFacetLoader,
-} from '@facet/core/runtime';
-import { registerCodeView } from '@facet/view-code';
-import { registerPythonTranspiler } from '@facet/transpiler-python';
-import { registerJavascriptTranspiler } from '@facet/transpiler-javascript';
-import { registerTypescriptTranspiler } from '@facet/transpiler-typescript';
-import { registerJavaTranspiler } from '@facet/transpiler-java';
-import { registerCppTranspiler } from '@facet/transpiler-cpp';
-import { registerCsharpTranspiler } from '@facet/transpiler-csharp';
+} from '@ffacet/core/runtime';
+import { registerCodeView } from '@ffacet/view-code';
+import { registerPythonTranspiler } from '@ffacet/transpiler-python';
+import { registerJavascriptTranspiler } from '@ffacet/transpiler-javascript';
+import { registerTypescriptTranspiler } from '@ffacet/transpiler-typescript';
+import { registerJavaTranspiler } from '@ffacet/transpiler-java';
+import { registerCppTranspiler } from '@ffacet/transpiler-cpp';
+import { registerCsharpTranspiler } from '@ffacet/transpiler-csharp';
 
 export { getFacetCatalog } from './catalog.js';
 export type { FacetCatalogEntry } from './catalog-types.js';
@@ -55,64 +55,64 @@ export function bootstrapFacet(): void {
   registerCsharpTranspiler();
 
   registerFacetLoader('facet:bubbleSort', () =>
-    import('@facet/algorithm-bubblesort').then((m) => m.registerBubblesort()),
+    import('@ffacet/algorithm-bubblesort').then((m) => m.registerBubblesort()),
   );
   registerFacetLoader('facet:bfs', () =>
-    import('@facet/algorithm-bfs').then((m) => m.registerBfs()),
+    import('@ffacet/algorithm-bfs').then((m) => m.registerBfs()),
   );
   registerFacetLoader('facet:queue', () =>
-    import('@facet/algorithm-queue').then((m) => m.registerQueue()),
+    import('@ffacet/algorithm-queue').then((m) => m.registerQueue()),
   );
   registerFacetLoader('facet:stack', () =>
-    import('@facet/algorithm-stack').then((m) => m.registerStack()),
+    import('@ffacet/algorithm-stack').then((m) => m.registerStack()),
   );
   registerFacetLoader('facet:array', () =>
-    import('@facet/algorithm-array').then((m) => m.registerArray()),
+    import('@ffacet/algorithm-array').then((m) => m.registerArray()),
   );
   registerFacetLoader('facet:linkedList', () =>
-    import('@facet/algorithm-linked-list').then((m) => m.registerLinkedList()),
+    import('@ffacet/algorithm-linked-list').then((m) => m.registerLinkedList()),
   );
   registerFacetLoader('facet:hashTable', () =>
-    import('@facet/algorithm-hash-table').then((m) => m.registerHashTable()),
+    import('@ffacet/algorithm-hash-table').then((m) => m.registerHashTable()),
   );
   registerFacetLoader('facet:bst', () =>
-    import('@facet/algorithm-bst').then((m) => m.registerBst()),
+    import('@ffacet/algorithm-bst').then((m) => m.registerBst()),
   );
   registerFacetLoader('facet:lruCache', () =>
-    import('@facet/algorithm-lru-cache').then((m) => m.registerLruCache()),
+    import('@ffacet/algorithm-lru-cache').then((m) => m.registerLruCache()),
   );
   registerFacetLoader('facet:messagingPubsub', () =>
-    import('@facet/algorithm-messaging-pubsub').then((m) => m.registerMessagingPubsub()),
+    import('@ffacet/algorithm-messaging-pubsub').then((m) => m.registerMessagingPubsub()),
   );
   registerFacetLoader('facet:cachingCdn', () =>
-    import('@facet/algorithm-caching-cdn').then((m) => m.registerCachingCdn()),
+    import('@ffacet/algorithm-caching-cdn').then((m) => m.registerCachingCdn()),
   );
   registerFacetLoader('facet:relationalTablesAndKeys', () =>
-    import('@facet/algorithm-relational-tables-and-keys').then((m) =>
+    import('@ffacet/algorithm-relational-tables-and-keys').then((m) =>
       m.registerRelationalTablesAndKeys(),
     ),
   );
   registerFacetLoader('facet:conditionalStatement', () =>
-    import('@facet/algorithm-conditional-statement').then((m) =>
+    import('@ffacet/algorithm-conditional-statement').then((m) =>
       m.registerConditionalStatement(),
     ),
   );
   registerFacetLoader('facet:tokenization', () =>
-    import('@facet/algorithm-tokenization').then((m) => m.registerTokenization()),
+    import('@ffacet/algorithm-tokenization').then((m) => m.registerTokenization()),
   );
   registerFacetLoader('facet:asymmetricRsa', () =>
-    import('@facet/algorithm-asymmetric-rsa').then((m) => m.registerAsymmetricRsa()),
+    import('@ffacet/algorithm-asymmetric-rsa').then((m) => m.registerAsymmetricRsa()),
   );
   registerFacetLoader('facet:linearRegression', () =>
-    import('@facet/algorithm-linear-regression').then((m) => m.registerLinearRegression()),
+    import('@ffacet/algorithm-linear-regression').then((m) => m.registerLinearRegression()),
   );
   registerFacetLoader('facet:contextSwitching', () =>
-    import('@facet/algorithm-context-switching').then((m) => m.registerContextSwitching()),
+    import('@ffacet/algorithm-context-switching').then((m) => m.registerContextSwitching()),
   );
   registerFacetLoader('facet:matrixTransform2d', () =>
-    import('@facet/algorithm-2d-matrix-transform').then((m) => m.registerMatrixTransform2d()),
+    import('@ffacet/algorithm-2d-matrix-transform').then((m) => m.registerMatrixTransform2d()),
   );
   registerFacetLoader('facet:ipRouting', () =>
-    import('@facet/algorithm-ip-routing').then((m) => m.registerIpRouting()),
+    import('@ffacet/algorithm-ip-routing').then((m) => m.registerIpRouting()),
   );
 }

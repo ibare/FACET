@@ -34,7 +34,7 @@
  * phase 어휘는 irs.ts 의 phase 필드와 일치 (C3).
  */
 
-import type { FacetContext } from '@facet/core/runtime';
+import type { FacetContext } from '@ffacet/core/runtime';
 
 export type QueueOp =
   | { op: 'enqueue'; value: string }

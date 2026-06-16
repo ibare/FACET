@@ -1,5 +1,5 @@
 {
-  "name": "@facet/algorithm-hash-table",
+  "name": "@ffacet/algorithm-hash-table",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -12,6 +12,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@facet/core": "workspace:*"
+    "@ffacet/core": "workspace:*"
   }
 }

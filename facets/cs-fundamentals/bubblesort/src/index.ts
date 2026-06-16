@@ -1,5 +1,5 @@
 /**
- * @facet/algorithm-bubblesort — 4-layer 알고리즘 모듈.
+ * @ffacet/algorithm-bubblesort — 4-layer 알고리즘 모듈.
  *
  * 시각적 정체성을 드러내는 다중 뷰(stage + startPreview + goalPreview + passTracker + snapshotStrip)
  * 를 조율하는 projector 와 함께 동작.
@@ -17,7 +17,7 @@ import {
   registerFacets,
   registerIR,
   registerDescription,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 import { bubblesort, computeBubblesortResult, type BubbleSortData } from './algorithm.js';
 import { bubblesortProjector } from './projector.js';
 import { bubblesortIRs } from './irs.js';

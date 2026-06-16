@@ -14,7 +14,7 @@ type AlgorithmFn<TData> = (ctx: FacetContext<TData>) => Promise<void>;
 
 알고리즘은 어떤 시각화가 자기를 그릴지 모른다. View 의 존재도, 색상 토큰도, DOM 도 모른다. 오직 `ctx.data` + `ctx.emit` + `ctx.metric` 만 안다.
 
-표준 이벤트 어휘 (`@facet/core/runtime` 의 `FacetRuntimeEvent`):
+표준 이벤트 어휘 (`@ffacet/core/runtime` 의 `FacetRuntimeEvent`):
 
 - `highlight` / `unhighlight` — 항목 강조/해제
 - `mark` — 영구 표시 (예: `payload.kind = 'sorted'`)

@@ -40,7 +40,7 @@
  * 단순).
  */
 
-import type { IR, IRExpr, IRStmt, IRType } from '@facet/core';
+import type { IR, IRExpr, IRStmt, IRType } from '@ffacet/core';
 
 const tInt: IRType = { kind: 'int' };
 const tVoid: IRType = { kind: 'void' };

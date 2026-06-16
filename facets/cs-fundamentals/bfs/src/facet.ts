@@ -10,7 +10,7 @@
  * 기획 9 의 "너비가 넓은 그래프" preset 을 단일 initialData 로 수록.
  */
 
-import type { FacetJson } from '@facet/core/runtime';
+import type { FacetJson } from '@ffacet/core/runtime';
 import { BFS_CANVAS } from './projector.js';
 
 export const bfsFacet: FacetJson = {

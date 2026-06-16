@@ -17,7 +17,7 @@
  *   다음 학습자 시도: put(k4,v4) (꽉 참 진입) → put(k5,v5) (eviction) → get(k3) (promotion).
  */
 
-import type { FacetJson } from '@facet/core/runtime';
+import type { FacetJson } from '@ffacet/core/runtime';
 
 export const lruCacheFacet: FacetJson = {
   id: 'facet:lruCache',

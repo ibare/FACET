@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import type { IR, IRStmt, Transpiler } from '@facet/core';
-import { bubblesortImperativeIR } from '@facet/algorithm-bubblesort';
-import { pythonTranspiler } from '@facet/transpiler-python';
-import { javascriptTranspiler } from '@facet/transpiler-javascript';
-import { typescriptTranspiler } from '@facet/transpiler-typescript';
-import { javaTranspiler } from '@facet/transpiler-java';
-import { cppTranspiler } from '@facet/transpiler-cpp';
-import { csharpTranspiler } from '@facet/transpiler-csharp';
+import type { IR, IRStmt, Transpiler } from '@ffacet/core';
+import { bubblesortImperativeIR } from '@ffacet/algorithm-bubblesort';
+import { pythonTranspiler } from '@ffacet/transpiler-python';
+import { javascriptTranspiler } from '@ffacet/transpiler-javascript';
+import { typescriptTranspiler } from '@ffacet/transpiler-typescript';
+import { javaTranspiler } from '@ffacet/transpiler-java';
+import { cppTranspiler } from '@ffacet/transpiler-cpp';
+import { csharpTranspiler } from '@ffacet/transpiler-csharp';
 
 const TRANSPILERS: Transpiler[] = [
   pythonTranspiler,

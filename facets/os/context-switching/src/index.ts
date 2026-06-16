@@ -1,5 +1,5 @@
 /**
- * @facet/algorithm-context-switching — 4-layer 컨텍스트 스위칭 facet 번들.
+ * @ffacet/algorithm-context-switching — 4-layer 컨텍스트 스위칭 facet 번들.
  *
  * 시간 진행형 (ReactiveMechanism). mount 직후 자동 시연으로 autoSwitches 회의
  * 스위치를 펼치고 idle 로 진입한 뒤, 사용자 입력 (play / pause / step /
@@ -33,7 +33,7 @@ import {
   registerFacets,
   registerDescription,
   registerView,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 import { contextSwitching, type ContextSwitchingData } from './algorithm.js';
 import { contextSwitchingProjector } from './projector.js';
 import { contextSwitchingIRs } from './irs.js';

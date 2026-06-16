@@ -1,5 +1,5 @@
 /**
- * @facet/transpiler-csharp — IR → C# 학습 코드 emitter.
+ * @ffacet/transpiler-csharp — IR → C# 학습 코드 emitter.
  *
  * 디자인 원칙:
  *  - 학습 가독성 우선. 함수만 보여주고 클래스 wrapper / using 은 생략.
@@ -9,7 +9,7 @@
  *  - 메서드명은 IR 의 name 을 그대로 (PascalCase 변환 없음 — 학습 가독성 우선).
  */
 
-import { registerTranspiler } from '@facet/core/runtime';
+import { registerTranspiler } from '@ffacet/core/runtime';
 import type {
   IR,
   IRExpr,
@@ -19,7 +19,7 @@ import type {
   TranspileLine,
   TranspileResult,
   Transpiler,
-} from '@facet/core';
+} from '@ffacet/core';
 
 const INDENT = '    ';
 

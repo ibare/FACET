@@ -1,5 +1,5 @@
 /**
- * @facet/transpiler-python — IR → Python 학습 코드 emitter.
+ * @ffacet/transpiler-python — IR → Python 학습 코드 emitter.
  *
  * 입력 IR 의 paradigm 은 'imperative' 만 지원. 출력은 라인별 { code, phase }.
  * phase 는 IR 의 stmt.phase 를 그대로 전파 (한 stmt 가 여러 라인이면 모두 동일 phase).
@@ -9,7 +9,7 @@
  *  - 타입 어노테이션 생략 (Python 학습 코드 관용).
  */
 
-import { registerTranspiler } from '@facet/core/runtime';
+import { registerTranspiler } from '@ffacet/core/runtime';
 import type {
   IR,
   IRBinOp,
@@ -19,7 +19,7 @@ import type {
   TranspileLine,
   TranspileResult,
   Transpiler,
-} from '@facet/core';
+} from '@ffacet/core';
 
 const INDENT = '    ';
 

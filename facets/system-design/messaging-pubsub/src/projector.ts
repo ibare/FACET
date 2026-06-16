@@ -12,7 +12,7 @@
  * 자체 ms 상수를 갖고 있어, opts.duration 은 보조적으로만 전달).
  */
 
-import type { ProjectorFactory } from '@facet/core/runtime';
+import type { ProjectorFactory } from '@ffacet/core/runtime';
 
 type PubsubStage = {
   reset(): void;

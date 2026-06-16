@@ -6,7 +6,7 @@
  * - facet 영역 (`facets/**`) 색 hex/rgba 리터럴 0건. Projector 는 view
  *   메서드 호출만 하고 색은 view 가 여기서 받는다.
  * - 새 토큰은 이 파일에 추가 → `runtime/index.ts` 에서 re-export → 외부는
- *   `@facet/core/runtime` 으로만 import.
+ *   `@ffacet/core/runtime` 으로만 import.
  *
  * ── 카테고리 어휘 (Palette + 함수형 + 별도 const) ───────────────────────
  *   structural   bg / bgSubtle / border / text / textMuted / textInverse

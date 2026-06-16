@@ -15,7 +15,7 @@
  * 모드 배율 (스레드 1.0× / 프로세스 1.6×), 시간 띠 80 칸.
  */
 
-import type { FacetJson } from '@facet/core/runtime';
+import type { FacetJson } from '@ffacet/core/runtime';
 
 export const contextSwitchingFacet: FacetJson = {
   id: 'facet:contextSwitching',

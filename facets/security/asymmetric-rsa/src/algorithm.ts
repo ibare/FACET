@@ -75,7 +75,7 @@
  *   - phase               payload: { phase: 'sequence' | 'idle' }
  */
 
-import type { FacetContext, ReactiveContext } from '@facet/core/runtime';
+import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
 
 export type RsaPrimeId = 'p' | 'q';
 

@@ -1,5 +1,5 @@
 /**
- * @facet/transpiler-javascript — IR → JavaScript 학습 코드 emitter.
+ * @ffacet/transpiler-javascript — IR → JavaScript 학습 코드 emitter.
  *
  * 디자인 원칙:
  *  - 학습 가독성 우선. JS 관용 표현 (function 선언, let, destructure swap, .length).
@@ -7,7 +7,7 @@
  *  - 타입 정보는 무시 (TS transpiler 별도).
  */
 
-import { registerTranspiler } from '@facet/core/runtime';
+import { registerTranspiler } from '@ffacet/core/runtime';
 import type {
   IR,
   IRExpr,
@@ -16,7 +16,7 @@ import type {
   TranspileLine,
   TranspileResult,
   Transpiler,
-} from '@facet/core';
+} from '@ffacet/core';
 
 const INDENT = '  ';
 

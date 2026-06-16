@@ -1,5 +1,5 @@
 {
-  "name": "@facet/host-tiptap",
+  "name": "@ffacet/host-tiptap",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -12,7 +12,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@facet/core": "workspace:*",
+    "@ffacet/core": "workspace:*",
     "marked": "^14.1.3"
   },
   "peerDependencies": {
@@ -20,9 +20,9 @@
     "@tiptap/pm": "^3.0.0"
   },
   "devDependencies": {
-    "@facet/algorithm-bubblesort": "workspace:*",
-    "@facet/transpiler-python": "workspace:*",
-    "@facet/view-code": "workspace:*",
+    "@ffacet/algorithm-bubblesort": "workspace:*",
+    "@ffacet/transpiler-python": "workspace:*",
+    "@ffacet/view-code": "workspace:*",
     "@tiptap/core": "^3.22.3",
     "@tiptap/pm": "^3.22.3",
     "@tiptap/starter-kit": "^3.22.3"

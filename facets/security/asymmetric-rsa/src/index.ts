@@ -1,5 +1,5 @@
 /**
- * @facet/algorithm-asymmetric-rsa — RSA (비대칭 암호) facet 번들.
+ * @ffacet/algorithm-asymmetric-rsa — RSA (비대칭 암호) facet 번들.
  *
  * 시간 진행형 (ReactiveMechanism + auto-demo loop). mount 직후 (A) 키 생성 →
  * (B) 암호화 → (C) 복호화 한 호흡이 자동 재생된 뒤 waitForInput 으로 사용자
@@ -30,7 +30,7 @@ import {
   registerFacets,
   registerDescription,
   registerView,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 import { asymmetricRsa, type RsaFacetData } from './algorithm.js';
 import { asymmetricRsaProjector } from './projector.js';
 import { asymmetricRsaIRs } from './irs.js';

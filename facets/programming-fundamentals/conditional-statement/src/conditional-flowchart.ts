@@ -21,8 +21,8 @@
  * 채널로 `{ type: 'input', payload: { name: 'value', value: '0..100' } }` 송신.
  */
 
-import type { View, ViewInstance, ViewMountParams } from '@facet/core/runtime';
-import { getColors, fonts, fontSizes, categorical } from '@facet/core/runtime';
+import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import { getColors, fonts, fontSizes, categorical } from '@ffacet/core/runtime';
 import type {
   ConditionalMode,
   ConditionalRuleSet,

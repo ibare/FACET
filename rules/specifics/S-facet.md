@@ -52,7 +52,7 @@ last_verified: 2026-04-30
 
 - 표준 6파일 + 선택적 `*-stage.ts` 외 추가 `.ts` 파일을 `src/` 루트에 두지 않는다. 내부 헬퍼가 필요하면 `algorithm.ts` / `projector.ts` / `*-stage.ts` 내부에 두거나, 두 파일이 공유하는 경우 팀 논의를 거친 뒤 별도 파일을 만든다 (이 경우 index.ts 에서 re-export 금지 — 내부용).
 - stage view 가 빌트인 view 어휘 (bars / array-cells / linked-list / graph-canvas / text-display 등) 로 표현 가능한데도 `*-stage.ts` 를 만들지 않는다. stage 파일은 빌트인 어휘로 표현 불가능한 facet 고유 시각화에 한정한다.
-- facet 패키지가 **다른 facet 패키지를 import 하지 않는다**. 공유 로직은 `@facet/core` 로 올린다.
+- facet 패키지가 **다른 facet 패키지를 import 하지 않는다**. 공유 로직은 `@ffacet/core` 로 올린다.
 - `facet.ts` 에서 알고리즘/Projector 를 함수 참조로 직접 넣지 않는다 — 반드시 `algorithm: 'module:<name>'`, `projector: 'module:<name>'` 문자열 참조.
 - `index.ts` 가 사이드 이펙트로 `register<Name>()` 을 자동 호출하지 않는다. 호출 책임은 호스트 앱 (playground 등) 에 있다.
 

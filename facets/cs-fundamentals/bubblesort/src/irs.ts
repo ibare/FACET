@@ -16,7 +16,7 @@
  * phase 어휘는 algorithm.ts 의 emit('phase', ...) 와 동일해야 한다.
  */
 
-import type { IR, IRExpr, IRStmt, IRType } from '@facet/core';
+import type { IR, IRExpr, IRStmt, IRType } from '@ffacet/core';
 
 const tInt: IRType = { kind: 'int' };
 const tBool: IRType = { kind: 'bool' };

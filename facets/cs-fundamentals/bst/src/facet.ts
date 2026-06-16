@@ -15,7 +15,7 @@
  * (tasks/facet/datastructure-bst-extension-plan.md §4 결정).
  */
 
-import type { FacetJson } from '@facet/core/runtime';
+import type { FacetJson } from '@ffacet/core/runtime';
 import { BST_CANVAS } from './projector.js';
 
 export const bstFacet: FacetJson = {

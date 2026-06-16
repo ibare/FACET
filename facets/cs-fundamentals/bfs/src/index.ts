@@ -1,5 +1,5 @@
 /**
- * @facet/algorithm-bfs — 4-layer 알고리즘 모듈.
+ * @ffacet/algorithm-bfs — 4-layer 알고리즘 모듈.
  *
  * 동심 파면 + FIFO 큐 + 거리 라벨 + 레이어 섬광의 5가지 시각적 정체성을
  * 조율하는 projector 와 함께 동작. 본 모듈은 algorithm / projector / IR /
@@ -18,7 +18,7 @@ import {
   registerFacets,
   registerIR,
   registerDescription,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 import { bfs, type BfsGraphData } from './algorithm.js';
 import { bfsProjector } from './projector.js';
 import { bfsIRs } from './irs.js';

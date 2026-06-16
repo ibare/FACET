@@ -1,5 +1,5 @@
 /**
- * @facet/algorithm-tokenization — 토큰화 (어휘 분석) facet 번들.
+ * @ffacet/algorithm-tokenization — 토큰화 (어휘 분석) facet 번들.
  *
  * 입력 반응형 (ReactiveMechanism). mount 직후 한 박자씩 자동 스캔이 흐르고,
  * 끝나면 waitForInput 으로 다음 사용자 액션을 대기한다. 컨트롤바는 next-example +
@@ -32,7 +32,7 @@ import {
   registerFacets,
   registerDescription,
   registerView,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 import { tokenization, type TokenizationFacetData } from './algorithm.js';
 import { tokenizationProjector } from './projector.js';
 import { tokenizationIRs } from './irs.js';

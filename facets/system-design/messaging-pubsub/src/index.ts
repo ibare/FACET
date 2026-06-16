@@ -1,5 +1,5 @@
 /**
- * @facet/algorithm-messaging-pubsub — 4-layer Pub/Sub 메시징 facet 번들.
+ * @ffacet/algorithm-messaging-pubsub — 4-layer Pub/Sub 메시징 facet 번들.
  *
  * 메시지 시퀀스형 + 입력 반응형 (ReactiveMechanism). 자동 시연 (P1·P2 events →
  * P1 alerts → S5 join+subscribe → P3 events → S3 unsubscribe → P1 events) 후
@@ -27,7 +27,7 @@ import {
   registerFacets,
   registerDescription,
   registerView,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 import { messagingPubsub, type PubSubFacetData } from './algorithm.js';
 import { messagingPubsubProjector } from './projector.js';
 import { messagingPubsubIRs } from './irs.js';

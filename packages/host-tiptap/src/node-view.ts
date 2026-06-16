@@ -12,7 +12,7 @@ import {
   loadFacet,
   runFacet,
   type FacetRunHandle,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 
 const STATUS_BY_LOCALE: Record<string, { loading: string; errorPrefix: string }> = {
   en: { loading: '[facet] loading…', errorPrefix: '[facet]' },

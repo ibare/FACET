@@ -7,7 +7,7 @@
  * 런타임 등록 결과에서 추출해 facet-catalog.generated.ts 로 emit 한다.
  */
 
-import type { LocaleStr } from '@facet/core/runtime';
+import type { LocaleStr } from '@ffacet/core/runtime';
 
 export type FacetCatalogEntry = {
   /** facet 식별자 (예: facet:bubbleSort). 호스트 DSL `{facet:<id>}` 의 id 와 동일. */

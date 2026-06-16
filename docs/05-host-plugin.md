@@ -9,14 +9,14 @@
 
 코어 API 는 `runFacet` + `getFacetById` 두 개로 충분하다. 그 외 모든 차이(파싱 룰, 노드 라이프사이클)는 어댑터가 흡수.
 
-## Tiptap 어댑터 (`@facet/host-tiptap`)
+## Tiptap 어댑터 (`@ffacet/host-tiptap`)
 
 ```ts
 import { Editor } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
-import { FacetExtension } from '@facet/host-tiptap';
-import { registerBuiltinViews } from '@facet/core/runtime';
-import { registerQuicksort } from '@facet/algorithm-quicksort';
+import { FacetExtension } from '@ffacet/host-tiptap';
+import { registerBuiltinViews } from '@ffacet/core/runtime';
+import { registerQuicksort } from '@ffacet/algorithm-quicksort';
 
 registerBuiltinViews();
 registerQuicksort();
@@ -51,7 +51,7 @@ Extension 자체는 옵션이 필요 없다 — facet 의 모든 구체는 레�
 ## 파서 헬퍼
 
 ```ts
-import { parseFacetRaw } from '@facet/host-tiptap';
+import { parseFacetRaw } from '@ffacet/host-tiptap';
 
 parseFacetRaw('{facet:quickSort}');  // → 'facet:quickSort'
 parseFacetRaw('{facet:bubble-sort}'); // → 'facet:bubble-sort'

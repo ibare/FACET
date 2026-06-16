@@ -3,14 +3,14 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Warning } from '@phosphor-icons/react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { FacetExtension, renderFacetMarkdown } from '@facet/host-tiptap';
+import { FacetExtension, renderFacetMarkdown } from '@ffacet/host-tiptap';
 import {
   getDescription,
   hasFacetLoader,
   loadFacet,
   resolveLocale,
   type FacetJson,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 import { findTopicByFacetId } from '../catalog.js';
 import { usePreferences } from '../preferences.js';
 import { PreferencesToolbar } from '../components/PreferencesToolbar.js';

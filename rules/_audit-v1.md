@@ -116,11 +116,11 @@ Phase 5 Track A 로 일괄 수정.
 
 ### B2-2. C7 (공개 API 경계) — 표본 통과, 일부 의심
 
-**grep: `from '@facet/`**:
-- 모든 외부 import 가 `@facet/core` / `@facet/core/runtime` / `@facet/<package>` 형태. ✅
-- 내부 구현 경로 (`@facet/core/src/runtime/registry.js` 같은) 직접 import **0건**. ✅
+**grep: `from '@ffacet/`**:
+- 모든 외부 import 가 `@ffacet/core` / `@ffacet/core/runtime` / `@ffacet/<package>` 형태. ✅
+- 내부 구현 경로 (`@ffacet/core/src/runtime/registry.js` 같은) 직접 import **0건**. ✅
 
-**의심**: `packages/host-tiptap/test/extension.test.ts` 가 `@facet/algorithm-quicksort` / `@facet/algorithm-bubblesort` 를 import. 해당 패키지의 `package.json.name` 이 `@facet/algorithm-<xxx>` 이므로 workspace resolution 에서 정상. C7 Exception 조항 (test 파일의 자유) 에 해당. ✅
+**의심**: `packages/host-tiptap/test/extension.test.ts` 가 `@ffacet/algorithm-quicksort` / `@ffacet/algorithm-bubblesort` 를 import. 해당 패키지의 `package.json.name` 이 `@ffacet/algorithm-<xxx>` 이므로 workspace resolution 에서 정상. C7 Exception 조항 (test 파일의 자유) 에 해당. ✅
 
 준수율 높음.
 
@@ -272,7 +272,7 @@ Critical/High: 0.
 
 ## Phase 5 로 전달할 워크
 
-1. **Track A (기계적 수정, Critical 해소)**: 18개 projector 의 `/^index:(\d+)$/` 정규식을 `parseTarget` 기반 헬퍼로 교체. `@facet/core/runtime` 에 `toIndexArray` 공용 헬퍼를 추가하는 방안 검토.
+1. **Track A (기계적 수정, Critical 해소)**: 18개 projector 의 `/^index:(\d+)$/` 정규식을 `parseTarget` 기반 헬퍼로 교체. `@ffacet/core/runtime` 에 `toIndexArray` 공용 헬퍼를 추가하는 방안 검토.
 2. **Track B (검증 확장)**: OI-1 해소 — 18 facet 의 algorithm/irs phase 어휘 대조 스크립트 또는 테스트 추가 + 발견된 불일치 수정.
 3. **Track C (네이밍 / 메트릭 정합)**: 18 facet 전수 C4 + C5 확인, 필요 시 rename.
 4. **Track D (최종 감사)**: AUDIT-v2 로 Critical 0 / High 0 확인.

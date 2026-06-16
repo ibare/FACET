@@ -13,7 +13,7 @@
  * opts.duration 은 보조적으로 전달.
  */
 
-import type { ProjectorFactory } from '@facet/core/runtime';
+import type { ProjectorFactory } from '@ffacet/core/runtime';
 
 type CdnStage = {
   reset(): void;

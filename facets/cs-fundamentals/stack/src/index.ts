@@ -1,5 +1,5 @@
 /**
- * @facet/algorithm-stack — 4-layer 스택 (LIFO) facet 번들.
+ * @ffacet/algorithm-stack — 4-layer 스택 (LIFO) facet 번들.
  *
  * 입력 반응형 (ReactiveMechanism). 자동 시연 (1·2·3 push) 후 사용자 입력
  * (push/pop/peek/reset) 을 1:1 시각 사건으로 매핑.
@@ -22,7 +22,7 @@ import {
   registerFacets,
   registerDescription,
   registerView,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 import { stack, type StackFacetData } from './algorithm.js';
 import { stackProjector } from './projector.js';
 import { stackIRs } from './irs.js';

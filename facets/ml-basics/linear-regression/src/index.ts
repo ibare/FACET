@@ -1,5 +1,5 @@
 /**
- * @facet/algorithm-linear-regression — 선형 회귀 (linear regression) facet 번들.
+ * @ffacet/algorithm-linear-regression — 선형 회귀 (linear regression) facet 번들.
  *
  * 시간 진행형 (ReactiveMechanism + 자동 시연 + pollInput 인터럽트). mount 직후
  * 한 호흡 자동 시연 (수렴 또는 발산까지) 후 idle. 컨트롤바는 play / pause /
@@ -30,7 +30,7 @@ import {
   registerFacets,
   registerDescription,
   registerView,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 import { linearRegression, type LinearRegressionData } from './algorithm.js';
 import { linearRegressionProjector } from './projector.js';
 import { linearRegressionIRs } from './irs.js';

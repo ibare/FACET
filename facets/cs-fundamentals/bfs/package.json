@@ -1,5 +1,5 @@
 {
-  "name": "@facet/algorithm-bfs",
+  "name": "@ffacet/algorithm-bfs",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -12,10 +12,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@facet/core": "workspace:*"
+    "@ffacet/core": "workspace:*"
   },
   "devDependencies": {
-    "@facet/transpiler-python": "workspace:*",
-    "@facet/view-code": "workspace:*"
+    "@ffacet/transpiler-python": "workspace:*",
+    "@ffacet/view-code": "workspace:*"
   }
 }

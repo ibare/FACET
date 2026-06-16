@@ -5,7 +5,7 @@
 ## 진입점
 
 ```ts
-import { runFacet, type FacetRunHandle } from '@facet/core/runtime';
+import { runFacet, type FacetRunHandle } from '@ffacet/core/runtime';
 
 const handle: FacetRunHandle = runFacet(facetJson, mountEl, { autoStart: false });
 // handle.start(); handle.step(); handle.stop(); handle.reset(); handle.setSpeed(2); handle.destroy();

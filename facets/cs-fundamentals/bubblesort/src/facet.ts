@@ -8,7 +8,7 @@
  *  - snapshotStrip 이 매 패스 결과를 누적 보존
  */
 
-import type { FacetJson } from '@facet/core/runtime';
+import type { FacetJson } from '@ffacet/core/runtime';
 
 export const bubblesortFacet: FacetJson = {
   id: 'facet:bubbleSort',

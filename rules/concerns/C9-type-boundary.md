@@ -30,7 +30,7 @@ last_verified: 2026-04-21
 
 ## PREFER
 
-- 공통 View 구조적 타입 (BarChart, PassTracker, SnapshotStrip 등) 이 여러 Projector 에서 반복된다면 `@facet/core/runtime` 에 View 계약 interface 를 노출하는 것을 검토한다.
+- 공통 View 구조적 타입 (BarChart, PassTracker, SnapshotStrip 등) 이 여러 Projector 에서 반복된다면 `@ffacet/core/runtime` 에 View 계약 interface 를 노출하는 것을 검토한다.
 - payload 검증은 작고 초기에 한다. 내부 로직은 이미 좁혀진 값만 본다.
 
 ## Exception

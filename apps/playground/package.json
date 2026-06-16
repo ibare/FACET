@@ -1,5 +1,5 @@
 {
-  "name": "@facet/playground",
+  "name": "@ffacet/playground",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -10,9 +10,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@facet/core": "workspace:*",
-    "@facet/bootstrap": "workspace:*",
-    "@facet/host-tiptap": "workspace:*",
+    "@ffacet/core": "workspace:*",
+    "@ffacet/bootstrap": "workspace:*",
+    "@ffacet/host-tiptap": "workspace:*",
     "@phosphor-icons/react": "^2.1.7",
     "@radix-ui/react-accordion": "^1.2.1",
     "@radix-ui/react-dropdown-menu": "^2.1.2",

@@ -81,7 +81,7 @@ last_verified: 2026-04-29
 - **facet 영역 색 hex/rgba 0건** — `facets/**/*.ts` (algorithm / projector / facet.json / description / index) 어디에도 색 리터럴 금지. Projector 는 view 메서드 호출만 한다 (색은 view 가 토큰에서 받음).
 - **state 어휘 동기화** — `BarItemState` / 트리·그래프 노드 상태 등 동일 의미 상태는 동일 토큰 키를 쓴다. 같은 의미에 다른 색 분기 금지.
 - **view-local 토큰 객체 (`CQ_TOKENS` 등) 안의 hex 금지** — 모든 값은 `colors.*` / `ledTokens.*` / `categorical(...)` / `shiftLightness(...)` 등 design-tokens 표현식의 결과여야 한다.
-- **새 카테고리·새 토큰은 `design-tokens.ts` 에 추가**한 뒤 `runtime/index.ts` 에서 re-export 한다. 외부 패키지·facet 은 토큰을 `@facet/core/runtime` 으로만 받는다 (C7 정합).
+- **새 카테고리·새 토큰은 `design-tokens.ts` 에 추가**한 뒤 `runtime/index.ts` 에서 re-export 한다. 외부 패키지·facet 은 토큰을 `@ffacet/core/runtime` 으로만 받는다 (C7 정합).
 - **흑백 정체성 폐기** (2026-04 결정) — "구조 = 흑백 + 노랑 단일 강조" 는 더 이상 정체성이 아니다. 새 view 가 무채색에 갇힐 의무 없음. 의미별 분화가 우선.
 
 ### Exception (view-local 허용)

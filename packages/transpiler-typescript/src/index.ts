@@ -1,12 +1,12 @@
 /**
- * @facet/transpiler-typescript — IR → TypeScript 학습 코드 emitter.
+ * @ffacet/transpiler-typescript — IR → TypeScript 학습 코드 emitter.
  *
  * 디자인 원칙:
  *  - JS 와 동일한 본문 구조에 함수 시그니처(매개변수/반환 타입)만 어노테이션.
  *  - 지역 변수는 추론에 맡겨 어노테이션 생략 (학습 가독성 우선).
  */
 
-import { registerTranspiler } from '@facet/core/runtime';
+import { registerTranspiler } from '@ffacet/core/runtime';
 import type {
   IR,
   IRExpr,
@@ -16,7 +16,7 @@ import type {
   TranspileLine,
   TranspileResult,
   Transpiler,
-} from '@facet/core';
+} from '@ffacet/core';
 
 const INDENT = '  ';
 

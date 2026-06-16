@@ -12,7 +12,7 @@
  * 식별자 (C1): `index:<n>` 표준 prefix 만 사용.
  */
 
-import type { FacetJson } from '@facet/core/runtime';
+import type { FacetJson } from '@ffacet/core/runtime';
 
 export const linkedListFacet: FacetJson = {
   id: 'facet:linkedList',

@@ -12,7 +12,7 @@
  * 향후 별도 preset 드롭다운으로 분리.)
  */
 
-import type { FacetJson } from '@facet/core/runtime';
+import type { FacetJson } from '@ffacet/core/runtime';
 
 export const queueFacet: FacetJson = {
   id: 'facet:queue',

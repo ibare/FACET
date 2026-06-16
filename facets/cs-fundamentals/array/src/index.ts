@@ -1,5 +1,5 @@
 /**
- * @facet/algorithm-array — 4-layer 배열 (Array) facet 번들.
+ * @ffacet/algorithm-array — 4-layer 배열 (Array) facet 번들.
  *
  * 입력 반응형 (ReactiveMechanism). 자동 시연 (read(3) → insert(1, "5")) 후 사용자
  * 입력 (read/write/insert/remove/append/search/reset) 을 1:1 시각 사건으로 매핑.
@@ -22,7 +22,7 @@ import {
   registerFacets,
   registerDescription,
   registerView,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 import { array, type ArrayFacetData } from './algorithm.js';
 import { arrayProjector } from './projector.js';
 import { arrayIRs } from './irs.js';

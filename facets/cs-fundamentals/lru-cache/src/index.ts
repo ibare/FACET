@@ -1,5 +1,5 @@
 /**
- * @facet/algorithm-lru-cache — 4-layer LRU 캐시 facet 번들.
+ * @ffacet/algorithm-lru-cache — 4-layer LRU 캐시 facet 번들.
  *
  * 입력 반응형 (ReactiveMechanism). 자동 시연 (put k1·k2·k3 → get k1) 후
  * 사용자 입력 (get/put/reset) 을 1:1 시각 사건으로 매핑.
@@ -26,7 +26,7 @@ import {
   registerFacets,
   registerDescription,
   registerView,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 import { lruCache, type LruCacheFacetData } from './algorithm.js';
 import { lruCacheProjector } from './projector.js';
 import { lruCacheIRs } from './irs.js';

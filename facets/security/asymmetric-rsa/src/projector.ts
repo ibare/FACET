@@ -12,7 +12,7 @@
  * projector 는 init / 시퀀스 사건들 / 상태 변경 사건만 stage 메서드로 번역한다.
  */
 
-import type { ProjectorFactory } from '@facet/core/runtime';
+import type { ProjectorFactory } from '@ffacet/core/runtime';
 
 type RsaStage = {
   reset(): void;

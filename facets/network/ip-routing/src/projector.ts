@@ -12,7 +12,7 @@
  * runtime.getSpeed() 보정 duration 을 전달한다.
  */
 
-import type { ProjectorFactory } from '@facet/core/runtime';
+import type { ProjectorFactory } from '@ffacet/core/runtime';
 
 type TopologyHost = { id: string; ip: string; x: number; y: number };
 type TopologyRouter = {

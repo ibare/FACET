@@ -20,8 +20,8 @@
 import { readdirSync, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { bootstrapFacet, type FacetCatalogEntry } from '@facet/bootstrap';
-import { listFacetLoaderIds, loadFacet, getFacetById } from '@facet/core/runtime';
+import { bootstrapFacet, type FacetCatalogEntry } from '@ffacet/bootstrap';
+import { listFacetLoaderIds, loadFacet, getFacetById } from '@ffacet/core/runtime';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(here, '..');

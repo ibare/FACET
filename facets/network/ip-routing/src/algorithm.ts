@@ -52,7 +52,7 @@
  * phase 어휘: 'demo' (자동 시연) | 'idle' (사용자 입력 대기). irs.ts 빈 배열이라 동기 대상 없음.
  */
 
-import type { FacetContext, ReactiveContext } from '@facet/core/runtime';
+import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
 
 export type IpRoutingInputEvent =
   | { type: 'send'; payload?: { dst?: string; ttl?: number } }

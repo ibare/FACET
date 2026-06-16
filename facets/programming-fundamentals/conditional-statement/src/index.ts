@@ -1,5 +1,5 @@
 /**
- * @facet/algorithm-conditional-statement — 조건문 (if/else if/else) facet 번들.
+ * @ffacet/algorithm-conditional-statement — 조건문 (if/else if/else) facet 번들.
  *
  * 입력 반응형 (ReactiveMechanism). view 인-스테이지 슬라이더 0..100 정수가
  * 평가 마름모의 응결과 활성 가지를 직접 흔든다. 컨트롤바는 갈래 2/3 토글 +
@@ -33,7 +33,7 @@ import {
   registerFacets,
   registerDescription,
   registerView,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 import {
   conditionalStatement,
   type ConditionalFacetData,

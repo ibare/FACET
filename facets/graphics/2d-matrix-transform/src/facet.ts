@@ -16,7 +16,7 @@
  * 보조 점 최대 3 개, 초기 보조 점 (1.5, 0.7).
  */
 
-import type { FacetJson } from '@facet/core/runtime';
+import type { FacetJson } from '@ffacet/core/runtime';
 
 export const matrixTransform2dFacet: FacetJson = {
   id: 'facet:matrixTransform2d',

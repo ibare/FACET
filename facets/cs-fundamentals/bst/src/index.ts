@@ -1,5 +1,5 @@
 /**
- * @facet/algorithm-bst — 4-layer 알고리즘 모듈.
+ * @ffacet/algorithm-bst — 4-layer 알고리즘 모듈.
  *
  * tree-layout 의 첫 소비처로서 좌소우대 색지 + 폴드 + 경로 조명 +
  * inorder 바닥선 + 기울기 게이지 + 보조 커서 + ghost probe 를 한 번에
@@ -25,7 +25,7 @@ import {
   registerFacets,
   registerIR,
   registerDescription,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 import { bst, type BstInitialData } from './algorithm.js';
 import { bstProjector } from './projector.js';
 import { bstIRs } from './irs.js';

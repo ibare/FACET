@@ -14,7 +14,7 @@
  * invalid-input 만 stage 메서드로 번역한다.
  */
 
-import type { ProjectorFactory } from '@facet/core/runtime';
+import type { ProjectorFactory } from '@ffacet/core/runtime';
 
 type ColumnPayload = {
   id: string;

@@ -23,7 +23,7 @@ last_verified: 2026-04-29
 
 ## 3. 레지스트리 경유
 
-- Algorithm / Projector / IR / Transpiler / View / Facet / Description 은 `@facet/core/runtime` 의 `register*` 함수를 통해서만 시스템에 등록된다.
+- Algorithm / Projector / IR / Transpiler / View / Facet / Description 은 `@ffacet/core/runtime` 의 `register*` 함수를 통해서만 시스템에 등록된다.
 - 소비자는 반드시 `get*` 계열로 조회한다. 다른 패키지의 구체 구현 파일을 직접 import 해서 쓰지 않는다.
 - `FacetJson.algorithm` / `projector` 는 `module:<name>` 참조 문자열만 허용한다. 함수 리터럴 금지.
 
@@ -42,6 +42,6 @@ last_verified: 2026-04-29
 
 ## 6. View Catalog 재사용 우선
 
-- 새 facet 을 추가할 때, 기존 View (`packages/core/src/views/*` + `@facet/view-code`) 로 표현 가능하면 **새 View 를 만들지 않는다**.
+- 새 facet 을 추가할 때, 기존 View (`packages/core/src/views/*` + `@ffacet/view-code`) 로 표현 가능하면 **새 View 를 만들지 않는다**.
 - 새 View 는 둘 이상의 facet 이 공유할 수 있을 때만 만든다. 한 facet 전용 시각화는 facet 패키지 안에 두되, 재사용성이 생기면 Catalog 로 승격한다.
 - View 는 색상 / 폰트 / 여백을 `design-tokens` 경유로 획득한다. 하드코딩 금지.

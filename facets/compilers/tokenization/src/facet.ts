@@ -17,7 +17,7 @@
  *   facet.ts 는 의미 라벨만 선언하고 색은 view 결정.
  */
 
-import type { FacetJson } from '@facet/core/runtime';
+import type { FacetJson } from '@ffacet/core/runtime';
 
 export const tokenizationFacet: FacetJson = {
   id: 'facet:tokenization',

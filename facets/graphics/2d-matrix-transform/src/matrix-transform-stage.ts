@@ -18,8 +18,8 @@
  * 식별자 (C1) 명시: `cell:` `arrow:` `grid:` `parallelogram:` `gauge:` `point:` `preset:`.
  */
 
-import type { View, ViewMountParams, ViewInstance } from '@facet/core';
-import { getColors, categorical, fontSizes, type Palette } from '@facet/core/runtime';
+import type { View, ViewMountParams, ViewInstance } from '@ffacet/core';
+import { getColors, categorical, fontSizes, type Palette } from '@ffacet/core/runtime';
 
 // ── 좌표·치수 상수 ───────────────────────────────────────────────────────────
 const W = 720;

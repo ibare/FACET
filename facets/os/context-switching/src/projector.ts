@@ -12,7 +12,7 @@
  *   7. 컨텍스트 양의 차이 — 보관소 부피의 토글.
  */
 
-import type { ProjectorFactory } from '@facet/core/runtime';
+import type { ProjectorFactory } from '@ffacet/core/runtime';
 import type { Flow, TriggerKind, Mode } from './algorithm.js';
 
 type CtxStage = {

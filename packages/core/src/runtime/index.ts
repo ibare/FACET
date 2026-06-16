@@ -1,7 +1,7 @@
 /**
- * @facet/core/runtime — 새 4-layer 아키텍처의 진입점.
+ * @ffacet/core/runtime — 새 4-layer 아키텍처의 진입점.
  *
- * 기존 @facet/core (Container/Body/Lens) 와 분리된 별도 시스템.
+ * 기존 @ffacet/core (Container/Body/Lens) 와 분리된 별도 시스템.
  * 두 시스템은 IR/Transpiler 만 공유.
  */
 

@@ -46,7 +46,7 @@
  * phase 어휘: 'idle' (정지 또는 점유 진행 중) | 'sequence' (한 사건 운동 중).
  */
 
-import type { FacetContext, ReactiveContext } from '@facet/core/runtime';
+import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
 
 export type Flow = 'a' | 'b';
 export type TriggerKind = 'timer' | 'syscall' | 'io' | 'interrupt';

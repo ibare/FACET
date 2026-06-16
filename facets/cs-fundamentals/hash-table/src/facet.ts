@@ -16,7 +16,7 @@
  *   결과: size=7, α=7/11≈0.636 (caution). 학습자가 두 키만 더 넣으면 임계 발화.
  */
 
-import type { FacetJson } from '@facet/core/runtime';
+import type { FacetJson } from '@ffacet/core/runtime';
 
 export const hashTableFacet: FacetJson = {
   id: 'facet:hashTable',

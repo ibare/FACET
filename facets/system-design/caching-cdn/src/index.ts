@@ -1,5 +1,5 @@
 /**
- * @facet/algorithm-caching-cdn — 4-layer CDN 시스템 행동 facet 번들.
+ * @ffacet/algorithm-caching-cdn — 4-layer CDN 시스템 행동 facet 번들.
  *
  * 입력 반응형 (ReactiveMechanism). 자동 시연 (서울·도쿄·프랑크푸르트 미스 →
  * 동일 도시 두 번째 클라이언트 히트 시퀀스) 후 사용자 입력 (request /
@@ -30,7 +30,7 @@ import {
   registerFacets,
   registerDescription,
   registerView,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 import { cachingCdn, type CdnFacetData } from './algorithm.js';
 import { cachingCdnProjector } from './projector.js';
 import { cachingCdnIRs } from './irs.js';

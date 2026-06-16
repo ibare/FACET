@@ -15,8 +15,8 @@
  * 3 중 표현으로 대체되어 폐기됨 (extension-plan §7).
  */
 
-import type { ProjectorFactory } from '@facet/core/runtime';
-import { parseTarget } from '@facet/core/runtime';
+import type { ProjectorFactory } from '@ffacet/core/runtime';
+import { parseTarget } from '@ffacet/core/runtime';
 
 type ConveyorQueue = {
   enqueue(

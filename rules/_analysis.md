@@ -38,7 +38,7 @@
 | TS/TSX 파일 수 (node_modules 제외) | 187 |
 | `*.test.ts` 테스트 파일 수 | 25 |
 | Facet (cs-fundamentals) 수 | 18 |
-| 표준 View 종류 (`packages/core/src/views`) | 15 (bar-chart / control-bar / goal-preview / graph-layout / iso-bar / linked-list-chain / ordered-list / pass-tracker / queue-display / snapshot-strip / text-display / title-block / tree-layout / design-tokens / types) + `@facet/view-code` |
+| 표준 View 종류 (`packages/core/src/views`) | 15 (bar-chart / control-bar / goal-preview / graph-layout / iso-bar / linked-list-chain / ordered-list / pass-tracker / queue-display / snapshot-strip / text-display / title-block / tree-layout / design-tokens / types) + `@ffacet/view-code` |
 | 지원 언어 트랜스파일러 | 6 (cpp, csharp, java, javascript, python, typescript) |
 
 ### 1-4. 핵심 도메인
@@ -71,7 +71,7 @@
 
 ### 2-2. 등록 패턴 (레지스트리)
 
-`@facet/core/runtime` 의 `register*` 계열 함수를 통해서만 모듈이 등록된다. 러너는 `FacetJson.algorithm` / `FacetJson.projector` 의 `module:` prefix 참조 문자열을 `stripPrefix` 로 해석해 `getAlgorithm` / `getProjector` 로 조회한다.
+`@ffacet/core/runtime` 의 `register*` 계열 함수를 통해서만 모듈이 등록된다. 러너는 `FacetJson.algorithm` / `FacetJson.projector` 의 `module:` prefix 참조 문자열을 `stripPrefix` 로 해석해 `getAlgorithm` / `getProjector` 로 조회한다.
 
 - `registerAlgorithm(name, fn, { computeResult? })`
 - `registerProjector(name, factory)`
@@ -126,11 +126,11 @@ facet 의 `title`, `description`, block 라벨 (`title-block`, `code-view.label`
 
 ### 2-8. Import 경로
 
-패키지 간 참조는 모두 `@facet/<name>` 형태. `@facet/core` / `@facet/core/runtime` subpath 분리:
-- `@facet/core` — `types/ir.js` + `runtime/index.js` 재공개
-- `@facet/core/runtime` — 4-layer 러너 전용 진입점
+패키지 간 참조는 모두 `@ffacet/<name>` 형태. `@ffacet/core` / `@ffacet/core/runtime` subpath 분리:
+- `@ffacet/core` — `types/ir.js` + `runtime/index.js` 재공개
+- `@ffacet/core/runtime` — 4-layer 러너 전용 진입점
 
-facet 패키지는 `@facet/core/runtime` 에서 `register*` / `FacetContext` / `ProjectorFactory` / `FacetJson` 등을 import.
+facet 패키지는 `@ffacet/core/runtime` 에서 `register*` / `FacetContext` / `ProjectorFactory` / `FacetJson` 등을 import.
 
 ### 2-9. 에러 처리
 
@@ -190,13 +190,13 @@ tsc 가 잡을 수 없음 (둘 다 `string` 리터럴 분리). 테스트 (`ir-in
 
 ### A6. Test 파일이 placeholder 경로 참조
 
-`packages/host-tiptap/test/extension.test.ts:11` — `from '@facet/algorithm-quicksort'`. 현재 `packages/algorithm-quicksort` 디렉터리는 없고 (리팩토링으로 `facets/cs-fundamentals/quicksort` 로 이동), 해당 facet 패키지의 `package.json.name` 이 `@facet/algorithm-quicksort` 이기 때문에 pnpm workspace 가 resolve.
+`packages/host-tiptap/test/extension.test.ts:11` — `from '@ffacet/algorithm-quicksort'`. 현재 `packages/algorithm-quicksort` 디렉터리는 없고 (리팩토링으로 `facets/cs-fundamentals/quicksort` 로 이동), 해당 facet 패키지의 `package.json.name` 이 `@ffacet/algorithm-quicksort` 이기 때문에 pnpm workspace 가 resolve.
 
 → 규칙 위반은 아니지만, **패키지 이름과 경로가 불일치** 하는 상태. Rules 로 잡기 애매하고 별도 이슈.
 
 ### A7. 공개 API 가 패키지 루트 외 경로로 열려 있음
 
-`@facet/core/runtime` subpath 는 의도된 것이나, facet 패키지들의 `package.json.exports` 가 `./src/index.ts` 만 노출한다. 내부 파일 직접 import 는 관찰되지 않음. 비교적 건전.
+`@ffacet/core/runtime` subpath 는 의도된 것이나, facet 패키지들의 `package.json.exports` 가 `./src/index.ts` 만 노출한다. 내부 파일 직접 import 는 관찰되지 않음. 비교적 건전.
 
 → C7 (공개 API 최소화) 는 규칙으로 명문화할 가치 있음.
 

@@ -7,10 +7,10 @@ import {
   clearRegistry,
   registerFacets,
   type FacetJson,
-} from '@facet/core/runtime';
-import { registerBubblesort, bubblesortFacet } from '@facet/algorithm-bubblesort';
-import { registerPythonTranspiler } from '@facet/transpiler-python';
-import { registerCodeView } from '@facet/view-code';
+} from '@ffacet/core/runtime';
+import { registerBubblesort, bubblesortFacet } from '@ffacet/algorithm-bubblesort';
+import { registerPythonTranspiler } from '@ffacet/transpiler-python';
+import { registerCodeView } from '@ffacet/view-code';
 
 describe('FacetExtension — 기본 설정', () => {
   it('name 이 "facet"', () => {

@@ -1,5 +1,5 @@
 /**
- * @facet/algorithm-relational-tables-and-keys — 관계모델 테이블과 키 facet 번들.
+ * @ffacet/algorithm-relational-tables-and-keys — 관계모델 테이블과 키 facet 번들.
  *
  * 정적 + 입력 반응형 (ReactiveMechanism). 자동 호버 시연 (FK 셀 1001 →
  * PK 셀 1003 한 번 강조) 후 사용자 입력 (toggle-pk / toggle-rejects /
@@ -36,7 +36,7 @@ import {
   registerFacets,
   registerDescription,
   registerView,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 import {
   relationalTablesAndKeys,
   type TablesAndKeysFacetData,

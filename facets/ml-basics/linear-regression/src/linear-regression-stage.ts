@@ -29,8 +29,8 @@
  *   - 발산 표지 / 잘림 점선 — palette.danger
  */
 
-import type { View, ViewInstance, ViewMountParams } from '@facet/core/runtime';
-import { getColors, fonts, fontSizes, categorical } from '@facet/core/runtime';
+import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import { getColors, fonts, fontSizes, categorical } from '@ffacet/core/runtime';
 import type { Point, LrSegment } from './algorithm.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';

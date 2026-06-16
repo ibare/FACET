@@ -37,14 +37,14 @@ FACET 프로젝트에서 `rules/` 아래에 정의된 6 principles + 9 concerns 
 | **C4** (module 참조) | `'module:xxx'` / `'transpiler:yyy'` / `'ir:zzz'` / `'facet:kk'` / `{facet:kk}` 가 실제 `registerAlgorithm('xxx')` / `registerTranspiler('yyy')` / `registerIR('zzz')` / `id: 'facet:kk'` 와 일치하는지. |
 | **C5** (메트릭) | `ctx.metric('<name>', ...)` 의 `<name>` 이 kebab-case 이며 `facet.ts` 의 `metrics: [{ name }]` 에 선언되어 있는지. |
 | **C6** (로깅) | `facets/**` / `packages/**` (runner.ts 제외) 에 `console.*` 사용 여부. facet 에서의 try/catch 는 의심. |
-| **C7** (공개 API) | `from '@facet/<pkg>/src/'` 등 내부 경로 직접 import 금지. Subpath 는 지정된 것만 (`@facet/core/runtime`, `@facet/core/views` 등). |
+| **C7** (공개 API) | `from '@ffacet/<pkg>/src/'` 등 내부 경로 직접 import 금지. Subpath 는 지정된 것만 (`@ffacet/core/runtime`, `@ffacet/core/views` 등). |
 | **C8** (비동기 emit) | `ctx.emit(...)` 가 `await` 없이 호출되는지. 루프 안에서 `ctx.cancelled` 미점검 여부. |
 | **C9** (타입 경계) | `as any` 금지. `as unknown as` 는 View / BlockSpec 소비 지점만 허용. `as Record<string, unknown>` 은 `runner.ts` 외부에서 금지. |
 | **S-facet** | `facets/cs-fundamentals/<f>/src/` 에 정확히 6 파일 (algorithm / projector / irs / facet / description / index). `index.ts` 의 register 순서 준수. |
 | **S-view** | View 는 `design-tokens` 경유 색상, theme/locale 파라미터 수용. `document.body` 직접 부착 금지. |
 | **S-runtime** | Mode 전이는 `setMode` 전용. `BASE_DELAY_MS` 는 silent 이벤트에 미적용. reset 순서 준수. |
 | **S-transpiler** | `Transpiler.id` = `transpiler:<id>` 의 `<id>`. `supports` 에 없는 paradigm 은 throw. IR 변형 금지. |
-| **S-host** | DSL 파서가 `@facet/core` 로 침투 금지. `{facet:<id>}` 파싱은 host 어댑터 내부. |
+| **S-host** | DSL 파서가 `@ffacet/core` 로 침투 금지. `{facet:<id>}` 파싱은 host 어댑터 내부. |
 
 ### 출력 형식
 

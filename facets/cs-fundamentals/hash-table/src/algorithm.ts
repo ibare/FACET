@@ -51,7 +51,7 @@
  * 진행 동력은 ReactiveMechanism. registerAlgorithm 시 mechanismKind: 'reactive'.
  */
 
-import type { FacetContext, ReactiveContext } from '@facet/core/runtime';
+import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
 
 export type HashTableInputEvent =
   | { type: 'input'; payload?: { name: string; value: string } }

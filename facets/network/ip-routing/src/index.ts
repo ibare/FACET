@@ -1,5 +1,5 @@
 /**
- * @facet/algorithm-ip-routing — 4-layer IP 라우팅 facet 번들.
+ * @ffacet/algorithm-ip-routing — 4-layer IP 라우팅 facet 번들.
  *
  * 메시지 시퀀스형 + 입력 반응형 (ReactiveMechanism). 자동 시연 (정상 도착 / R4 분기 /
  * default 외부 / TTL=2 폐기) 4 발신 후 사용자 입력 (send/step-hop/auto-demo/
@@ -27,7 +27,7 @@ import {
   registerFacets,
   registerDescription,
   registerView,
-} from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
 import { ipRouting, type IpRoutingData } from './algorithm.js';
 import { ipRoutingProjector } from './projector.js';
 import { ipRoutingIRs } from './irs.js';

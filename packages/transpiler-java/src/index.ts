@@ -1,5 +1,5 @@
 /**
- * @facet/transpiler-java — IR → Java 학습 코드 emitter.
+ * @ffacet/transpiler-java — IR → Java 학습 코드 emitter.
  *
  * 디자인 원칙:
  *  - 학습 가독성 우선. 단일 static 메서드만 보여주고 클래스 wrapper 는 생략.
@@ -7,7 +7,7 @@
  *  - 들여쓰기 4 spaces.
  */
 
-import { registerTranspiler } from '@facet/core/runtime';
+import { registerTranspiler } from '@ffacet/core/runtime';
 import type {
   IR,
   IRExpr,
@@ -17,7 +17,7 @@ import type {
   TranspileLine,
   TranspileResult,
   Transpiler,
-} from '@facet/core';
+} from '@ffacet/core';
 
 const INDENT = '    ';
 

@@ -20,7 +20,7 @@
  * 메트릭: 'visited-count', 'layer-count', 'edge-scan-count'
  */
 
-import type { FacetContext } from '@facet/core/runtime';
+import type { FacetContext } from '@ffacet/core/runtime';
 
 export type BfsGraphData = {
   type: 'graph';

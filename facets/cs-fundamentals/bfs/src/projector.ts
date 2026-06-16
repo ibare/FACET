@@ -17,14 +17,14 @@
  *                        pulseEdge 는 안→밖 방향 흐름 입자 (반대 방향 없음).
  */
 
-import type { ProjectorFactory } from '@facet/core/runtime';
+import type { ProjectorFactory } from '@ffacet/core/runtime';
 import type {
   GraphData,
   GraphEdgeState,
   GraphNodeState,
   GraphPositions,
-} from '@facet/core/runtime';
-import { parseTarget } from '@facet/core/runtime';
+} from '@ffacet/core/runtime';
+import { parseTarget } from '@ffacet/core/runtime';
 import { computeBfsResult, type BfsGraphData } from './algorithm.js';
 
 export const BFS_CANVAS = { width: 520, height: 360 } as const;

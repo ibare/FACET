@@ -52,7 +52,7 @@
  *   - phase               payload: { phase: 'sequence' | 'idle' }, silent: true
  */
 
-import type { FacetContext, ReactiveContext } from '@facet/core/runtime';
+import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
 
 export type Point = { x: number; y: number };
 

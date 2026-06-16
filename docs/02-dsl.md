@@ -25,7 +25,7 @@ DSL 안에는 데이터, 색상, 레이아웃, 코드 패널, 메트릭 등 어�
 
 ## 호스트에서의 인식
 
-Tiptap 어댑터(`@facet/host-tiptap`)는 두 경로로 DSL 을 노드로 변환한다.
+Tiptap 어댑터(`@ffacet/host-tiptap`)는 두 경로로 DSL 을 노드로 변환한다.
 
 1. **InputRule / PasteRule** — 사용자가 `{facet:quickSort}` 를 타이핑하거나 붙여 넣으면 즉시 `facet` 노드로 치환.
 2. **parseHTML** — 직렬화된 문서에서 `<span data-facet="true" data-facet-id="facet:quickSort">` 를 만나면 동일 노드로 복원.
@@ -35,7 +35,7 @@ NodeView 는 `getFacetById(id)` 로 등록된 JSON 을 조회하고 `runFacet(fa
 ## 파서 헬퍼
 
 ```ts
-import { parseFacetRaw } from '@facet/host-tiptap';
+import { parseFacetRaw } from '@ffacet/host-tiptap';
 
 parseFacetRaw('{facet:quickSort}');  // → 'facet:quickSort'
 parseFacetRaw('{facet:bubble-sort}'); // → 'facet:bubble-sort'

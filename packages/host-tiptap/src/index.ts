@@ -1,5 +1,5 @@
 /**
- * @facet/host-tiptap — 4-layer 러너용 Tiptap 어댑터.
+ * @ffacet/host-tiptap — 4-layer 러너용 Tiptap 어댑터.
  *
  * DSL: {facet:<id>} 단일 식별자.
  * id 는 새 러너의 facets 레지스트리(getFacetById) 에서 조회된다.

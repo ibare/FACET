@@ -7,7 +7,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { resolveLocale, listFacetLoaderIds } from '@facet/core/runtime';
+import { resolveLocale, listFacetLoaderIds } from '@ffacet/core/runtime';
 import { bootstrapFacet, getFacetCatalog } from '../src/index.js';
 
 bootstrapFacet();

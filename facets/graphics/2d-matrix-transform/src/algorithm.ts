@@ -44,7 +44,7 @@
  * phase 어휘: 'demo' (자동 시연) | 'idle' (사용자 입력 대기).
  */
 
-import type { FacetContext, ReactiveContext } from '@facet/core/runtime';
+import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
 
 export type Matrix2x2 = { a: number; b: number; c: number; d: number };
 

@@ -14,7 +14,7 @@
  * 여기서는 결정적 14점 (시드 hash 없이 직접 명시).
  */
 
-import type { FacetJson } from '@facet/core/runtime';
+import type { FacetJson } from '@ffacet/core/runtime';
 
 // 고정 시드 14점 — y ≈ 1.8x + 0.5 + 가우시안 잡음. 잡음은 결정적 값.
 const POINTS_14: Array<{ x: number; y: number }> = [
