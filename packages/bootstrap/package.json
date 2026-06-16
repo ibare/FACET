@@ -1,44 +1,88 @@
 {
-  "name": "@facet/bootstrap",
-  "version": "0.0.0",
-  "private": true,
+  "name": "@ffacet/bootstrap",
+  "version": "0.1.0",
   "type": "module",
   "description": "facet 카탈로그 단일 출처. bubbleSort/bfs/queue/stack/array/linkedList/bst/hashTable/lruCache/messagingPubsub/cachingCdn/relationalTablesAndKeys/conditionalStatement/tokenization/asymmetricRsa/linearRegression/contextSwitching/matrixTransform2d/ipRouting lazy loader + view + transpiler 등록.",
+  "license": "MIT",
+  "author": "Mintae Kim <ibare77@gmail.com>",
+  "homepage": "https://github.com/ibare/FACET/tree/main/packages/bootstrap#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ibare/FACET.git",
+    "directory": "packages/bootstrap"
+  },
+  "bugs": {
+    "url": "https://github.com/ibare/FACET/issues"
+  },
+  "keywords": [
+    "facet",
+    "algorithm-visualization",
+    "bootstrap",
+    "catalog"
+  ],
   "main": "./src/index.ts",
   "types": "./src/index.ts",
   "exports": {
     ".": "./src/index.ts"
   },
-  "scripts": {
-    "typecheck": "tsc --noEmit"
+  "files": [
+    "dist"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "main": "./dist/bootstrap.js",
+    "types": "./dist/bootstrap.d.ts",
+    "exports": {
+      ".": {
+        "types": "./dist/bootstrap.d.ts",
+        "import": "./dist/bootstrap.js"
+      }
+    }
   },
-  "dependencies": {
-    "@facet/algorithm-array": "workspace:*",
-    "@facet/algorithm-asymmetric-rsa": "workspace:*",
-    "@facet/algorithm-bfs": "workspace:*",
-    "@facet/algorithm-bst": "workspace:*",
-    "@facet/algorithm-bubblesort": "workspace:*",
-    "@facet/algorithm-caching-cdn": "workspace:*",
-    "@facet/algorithm-conditional-statement": "workspace:*",
-    "@facet/algorithm-context-switching": "workspace:*",
-    "@facet/algorithm-hash-table": "workspace:*",
-    "@facet/algorithm-ip-routing": "workspace:*",
-    "@facet/algorithm-linear-regression": "workspace:*",
-    "@facet/algorithm-2d-matrix-transform": "workspace:*",
-    "@facet/algorithm-linked-list": "workspace:*",
-    "@facet/algorithm-lru-cache": "workspace:*",
-    "@facet/algorithm-messaging-pubsub": "workspace:*",
-    "@facet/algorithm-queue": "workspace:*",
-    "@facet/algorithm-relational-tables-and-keys": "workspace:*",
-    "@facet/algorithm-stack": "workspace:*",
-    "@facet/algorithm-tokenization": "workspace:*",
-    "@facet/core": "workspace:*",
-    "@facet/transpiler-cpp": "workspace:*",
-    "@facet/transpiler-csharp": "workspace:*",
-    "@facet/transpiler-java": "workspace:*",
-    "@facet/transpiler-javascript": "workspace:*",
-    "@facet/transpiler-python": "workspace:*",
-    "@facet/transpiler-typescript": "workspace:*",
-    "@facet/view-code": "workspace:*"
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "build": "pnpm run clean && rollup -c rollup.config.mjs",
+    "typecheck": "tsc --noEmit",
+    "prepack": "pnpm run build"
+  },
+  "peerDependencies": {
+    "@ffacet/core": "workspace:^"
+  },
+  "devDependencies": {
+    "@ffacet/algorithm-array": "workspace:*",
+    "@ffacet/algorithm-asymmetric-rsa": "workspace:*",
+    "@ffacet/algorithm-bfs": "workspace:*",
+    "@ffacet/algorithm-bst": "workspace:*",
+    "@ffacet/algorithm-bubblesort": "workspace:*",
+    "@ffacet/algorithm-caching-cdn": "workspace:*",
+    "@ffacet/algorithm-conditional-statement": "workspace:*",
+    "@ffacet/algorithm-context-switching": "workspace:*",
+    "@ffacet/algorithm-hash-table": "workspace:*",
+    "@ffacet/algorithm-ip-routing": "workspace:*",
+    "@ffacet/algorithm-linear-regression": "workspace:*",
+    "@ffacet/algorithm-2d-matrix-transform": "workspace:*",
+    "@ffacet/algorithm-linked-list": "workspace:*",
+    "@ffacet/algorithm-lru-cache": "workspace:*",
+    "@ffacet/algorithm-messaging-pubsub": "workspace:*",
+    "@ffacet/algorithm-queue": "workspace:*",
+    "@ffacet/algorithm-relational-tables-and-keys": "workspace:*",
+    "@ffacet/algorithm-stack": "workspace:*",
+    "@ffacet/algorithm-tokenization": "workspace:*",
+    "@ffacet/core": "workspace:*",
+    "@ffacet/transpiler-cpp": "workspace:*",
+    "@ffacet/transpiler-csharp": "workspace:*",
+    "@ffacet/transpiler-java": "workspace:*",
+    "@ffacet/transpiler-javascript": "workspace:*",
+    "@ffacet/transpiler-python": "workspace:*",
+    "@ffacet/transpiler-typescript": "workspace:*",
+    "@ffacet/view-code": "workspace:*",
+    "@rollup/plugin-node-resolve": "^15.3.0",
+    "rollup": "^4.28.0",
+    "rollup-plugin-dts": "^6.1.1",
+    "rollup-plugin-esbuild": "^6.1.1",
+    "typescript": "^5.6.3"
   }
 }

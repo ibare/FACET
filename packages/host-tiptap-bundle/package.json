@@ -1,9 +1,27 @@
 {
-  "name": "@facet/host-tiptap-bundle",
-  "version": "0.0.0",
-  "private": true,
+  "name": "@ffacet/host-tiptap-bundle",
+  "version": "0.1.0",
   "type": "module",
-  "description": "Self-contained ESM bundle of @facet/host-tiptap + 21 facets + transpilers + view-code. methii 등 외부 호스트 앱에서 단일 의존으로 소비.",
+  "description": "Self-contained ESM bundle of @ffacet/host-tiptap + 19 facets + transpilers + view-code. methii 등 외부 호스트 앱에서 단일 의존으로 소비.",
+  "license": "MIT",
+  "author": "Mintae Kim <ibare77@gmail.com>",
+  "homepage": "https://github.com/ibare/FACET/tree/main/packages/host-tiptap-bundle#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ibare/FACET.git",
+    "directory": "packages/host-tiptap-bundle"
+  },
+  "bugs": {
+    "url": "https://github.com/ibare/FACET/issues"
+  },
+  "keywords": [
+    "facet",
+    "tiptap",
+    "prosemirror",
+    "algorithm-visualization",
+    "interactive-visualization",
+    "nodeview"
+  ],
   "main": "./dist/host-tiptap-bundle.js",
   "types": "./dist/host-tiptap-bundle.d.ts",
   "exports": {
@@ -15,18 +33,28 @@
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
-    "build": "rollup -c rollup.config.mjs",
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "build": "pnpm run clean && rollup -c rollup.config.mjs",
     "build:analyze": "VISUALIZE=1 rollup -c rollup.config.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepack": "pnpm run build"
   },
   "peerDependencies": {
+    "@ffacet/core": "workspace:^",
     "@tiptap/core": "^3.0.0",
     "@tiptap/pm": "^3.0.0"
   },
   "devDependencies": {
-    "@facet/bootstrap": "workspace:*",
-    "@facet/host-tiptap": "workspace:*",
+    "@ffacet/bootstrap": "workspace:*",
+    "@ffacet/core": "workspace:*",
+    "@ffacet/host-tiptap": "workspace:*",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@tiptap/core": "^3.22.3",
     "@tiptap/pm": "^3.22.3",

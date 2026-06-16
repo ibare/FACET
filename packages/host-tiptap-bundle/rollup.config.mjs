@@ -1,6 +1,6 @@
 // @ts-check
 /**
- * @facet/host-tiptap-bundle — rollup 설정.
+ * @ffacet/host-tiptap-bundle — rollup 설정.
  *
  * 정책 (논의 결과):
  *  - 단일 ESM entry (host-tiptap-bundle.js) + dynamic import 자동 chunk 추론.
@@ -20,13 +20,17 @@ import { visualizer } from 'rollup-plugin-visualizer';
 
 const VISUALIZE = process.env.VISUALIZE === '1';
 
-const external = [/^@tiptap\/core/, /^@tiptap\/pm(\/.*)?$/];
+// @ffacet/core 는 external — 호스트가 단일 인스턴스로 설치(peerDependency)해 FacetExtension 의
+// registry 가 호스트의 runFacet/loadFacet(@ffacet/core/runtime)과 동일 인스턴스를 공유한다.
+// core 를 inline 하면 registry 가 갈라져 bootstrapFacet 등록 facet 을 FacetExtension 이 못 찾는다.
+const external = [/^@ffacet\/core(\/.*)?$/, /^@tiptap\/core/, /^@tiptap\/pm(\/.*)?$/];
 
 /**
  * chunk 분리 + 이름 부여.
  *
  *  - facet (facets/<group>/<name>/src) → 'facet-<name>' (개별 lazy chunk).
- *  - core / ir-interpreter / view-code / transpiler-* → 'runtime' (entry 와 facet 모두가 공유).
+ *  - ir-interpreter / view-code / transpiler-* → 'runtime' (entry 와 facet 모두가 공유).
+ *    core 는 external 이라 그래프에 들어오지 않는다.
  *
  * runtime 을 명시 분리하지 않으면 rollup 이 공용 코드를 임의의 한 facet chunk (알파벳 첫 번째) 에 흡수시켜 entry 가 그 facet 을 정적 import 하는 비정상 그래프가 만들어진다.
  *
@@ -36,7 +40,6 @@ function manualChunks(id) {
   const facet = id.match(/facets\/[^/]+\/([^/]+)\/src\//);
   if (facet) return `facet-${facet[1]}`;
   if (
-    id.includes('/packages/core/') ||
     id.includes('/packages/ir-interpreter/') ||
     id.includes('/packages/view-code/') ||
     /\/packages\/transpiler-[^/]+\//.test(id)
