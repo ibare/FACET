@@ -81,7 +81,7 @@ export const relationalTablesAndKeysProjector: ProjectorFactory = (views, runtim
   /** 상시 캡션. 여러 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
   const baseCaption = (): string =>
     tr(
-      'relationalTablesAndKeys.caption.base',
+      'caption.base',
       'A table is a named grid gathering rows of the same shape; a primary key identifies one row uniquely, and a foreign key points at a primary key value in another grid, binding the two into one structure.',
     );
   const stage = views.stage as unknown as TablesStage | undefined;

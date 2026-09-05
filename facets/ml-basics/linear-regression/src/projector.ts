@@ -59,7 +59,7 @@ export const linearRegressionProjector: ProjectorFactory = (views, runtime) => {
   /** 상시 캡션. 여러 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
   const baseCaption = (): string =>
     tr(
-      'linearRegression.caption.base',
+      'caption.base',
       'Linear regression threads one straight line through a cloud of points, turning each residual into the area of a square, and nudges the line a step at a time so the total of those areas shrinks.',
     );
   const stage = views.stage as unknown as LinRegStage | undefined;

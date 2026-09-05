@@ -76,7 +76,7 @@ export const tokenizationProjector: ProjectorFactory = (views, runtime) => {
   /** 상시 캡션. 여러 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
   const baseCaption = (): string =>
     tr(
-      'tokenization.caption.base',
+      'caption.base',
       'Tokenization is the first stage of a compiler. It reads the source a character at a time from left to right and cuts it into the smallest units that carry meaning — taking the longest run it can, and leaving whitespace and comments as nothing but traces.',
     );
   const stage = views.stage as unknown as StageView | undefined;

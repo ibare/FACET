@@ -3,9 +3,13 @@
  *
  * 실행: pnpm messages:gen
  *
- * 소스에서 `tr(K.<name>, '<en 원본>')` 호출을 스캔해 `messages/en.json` 을 만든다.
- * 이 파일이 호스트 번역 파이프라인의 입력이며, translationTargets (en 을 제외한
- * 9개 언어) 번들이 그 산출물이다.
+ * 빌트인 view 소스에서 `tr(키, '<en 원본>')` 호출을 스캔해 `messages/en.json` 을
+ * 만든다. 이 파일이 호스트 번역 파이프라인의 입력이며, translationTargets
+ * (en 을 제외한 9개 언어) 번들이 그 산출물이다.
+ *
+ * facet 고유 문안은 여기 없다 — FacetJson.messages 에 저작자가 선언하며,
+ * 장차 에디터가 그 번역을 담당한다. 이 스크립트는 프레임워크가 기본으로 제공하는
+ * 문자열만 다룬다.
  *
  * 키는 각 파일의 `const K = { ... } as const` 선언에서 해석한다. 키를 리터럴로
  * 직접 넘긴 호출도 함께 수집한다.
@@ -22,7 +26,9 @@ const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = join(here, '..');
 const outFile = join(repoRoot, 'messages/en.json');
 
-const SCAN_ROOTS = ['facets', 'packages'];
+// facet 고유 문안은 FacetJson.messages 에 있으므로 스캔 대상이 아니다.
+// 여기서 뽑는 것은 프레임워크가 제공하는 빌트인 view 의 기본값뿐이다.
+const SCAN_ROOTS = ['packages'];
 const SKIP_DIRS = new Set(['node_modules', 'dist', 'test', '.git']);
 
 function walk(dir: string, out: string[] = []): string[] {

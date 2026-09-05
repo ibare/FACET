@@ -42,6 +42,22 @@ export const arrayFacet: FacetJson = {
       { ref: 'controls' },
     ],
   },
+  messages: {
+    'caption.append': { en: 'Laid it on the end — nothing had to shift', ko: '끝 자리에 얹었다 — 옆 칸이 밀리지 않았다' },
+    'caption.base': { en: 'An array packs equal-width cells side by side with no gaps and calls each one by a number counted from 0 — know the number and you arrive in one step, but touch the middle and the neighbours shift along.', ko: '배열은 같은 너비의 칸을 옆자리끼리 빈틈 없이 붙여 놓고 0 부터 매긴 번호로 호명한다 — 번호만 알면 한 번에, 가운데를 건드리면 옆 칸이 줄줄이 밀린다.' },
+    'caption.handover': { en: 'Your turn — type an index and a value, then press Read, Write, Insert, Remove, Append or Search.', ko: '이제 직접 — 인덱스와 값을 입력하고 호명·쓰기·삽입·삭제·뒤에 추가·검색을 눌러보세요' },
+    'caption.insert': { en: 'Slid one in at {index} — the {shifted} cells behind it each moved one place along', ko: '{index} 자리에 끼웠다 — 뒤의 {shifted} 칸이 한 자리씩 밀렸다' },
+    'caption.limitReached': { en: 'Reached the teaching limit of {maxSize} — no further {op} is possible', ko: '학습 한도 {maxSize} 개 도달 — 더 이상 {op} 할 수 없다' },
+    'caption.outOfRange': { en: 'That position is out of range ({op} {index}) — nothing happens on the strip', ko: '범위를 벗어난 자리 ({op} {index}) — 띠 위에서 일어나는 일은 없다' },
+    'caption.read': { en: 'Jumped straight to cell {index} — one "start + {index}" reaches {value}', ko: '번호 {index} 칸으로 곧장 점프 — 시작 + {index} 한 번이면 {value} 에 도달' },
+    'caption.remove': { en: 'Emptied {index} — the {shifted} cells behind it each pulled one place back', ko: '{index} 자리를 비웠다 — 뒤의 {shifted} 칸이 한 자리씩 당겨졌다' },
+    'caption.resize': { en: 'The cells are full — moving {copied} of them onto a new strip twice the size', ko: '칸이 다 찼다 — 두 배 큰 새 띠로 {copied} 칸을 옮긴다' },
+    'caption.searchFound': { en: 'Found it — {value} at index {index}', ko: '찾았다 — 인덱스 {index} 에 {value}' },
+    'caption.searchMiss': { en: 'Not found — scanned the whole strip', ko: '찾지 못함 — 띠를 모두 살폈다' },
+    'caption.write': { en: 'Replaced the value in cell {index} — the neighbours are untouched', ko: '{index} 번 칸의 값을 바꾸었다 — 옆 칸은 그대로다' },
+    'label.arith': { en: 'start + {index}', ko: '시작 + {index}' },
+    'label.shifts': { en: 'Shifts', ko: '시프트' },
+  },
   blocks: {
     header: { type: 'title-block' },
     stage: {

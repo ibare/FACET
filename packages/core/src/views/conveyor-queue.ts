@@ -53,7 +53,7 @@ import {
   space,
 } from './design-tokens.js';
 import { resolveLocale, type LocaleStr } from '../types/locale.js';
-import { makeTranslator } from '../runtime/i18n.js';
+import { makeTranslator, type Translate } from '../runtime/i18n.js';
 import { createCubeBlock, type CubeBlockHandle } from './cube-block.js';
 
 export type ConveyorQueueFeature = 'bounded' | 'aging-gradient' | 'tail-log' | 'scoreboard';
@@ -86,8 +86,7 @@ const K = {
   empty: 'view.conveyorQueue.empty',
 } as const;
 
-function pickLabels(locale: string | undefined): Labels {
-  const tr = makeTranslator(locale);
+function pickLabels(tr: Translate): Labels {
   return {
     totalEnqueued: tr(K.totalEnqueued, 'Total in'),
     size: tr(K.size, 'Size'),
@@ -292,7 +291,7 @@ export const conveyorQueueView: View = {
     container.textContent = '';
     const colors = getColors(params.theme);
     const cfg = (params.config ?? {}) as ConveyorQueueConfig;
-    const labels = pickLabels(params.locale);
+    const labels = pickLabels(params.t ?? makeTranslator(params.locale));
     const userLabel = resolveLocale(cfg.label, params.locale);
 
     const features = new Set<ConveyorQueueFeature>(

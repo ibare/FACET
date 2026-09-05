@@ -131,31 +131,31 @@ type TraceEntry = {
  * 추출기(pnpm messages:gen)가 번역 대상을 모으고, 번들이 없어도 en 으로 동작한다.
  */
 const K = {
-  hashArea: 'lruCache.label.hashArea',
-  dllArea: 'lruCache.label.dllArea',
-  lruEnd: 'lruCache.label.lruEnd',
-  mruEnd: 'lruCache.label.mruEnd',
-  traceTitle: 'lruCache.label.traceTitle',
-  references: 'lruCache.label.references',
-  narrative1: 'lruCache.narrative.line1',
-  narrative2: 'lruCache.narrative.line2',
-  narrative3: 'lruCache.narrative.line3',
-  narrative4: 'lruCache.narrative.line4',
-  narrative5: 'lruCache.narrative.line5',
-  narrative6: 'lruCache.narrative.line6',
-  getHit: 'lruCache.caption.getHit',
-  getMiss: 'lruCache.caption.getMiss',
-  missMark: 'lruCache.caption.missMark',
-  putUpdate: 'lruCache.caption.putUpdate',
-  putInsert: 'lruCache.caption.putInsert',
-  evict: 'lruCache.caption.evict',
-  invalidKey: 'lruCache.caption.invalidKey',
-  handover: 'lruCache.caption.handover',
+  hashArea: 'label.hashArea',
+  dllArea: 'label.dllArea',
+  lruEnd: 'label.lruEnd',
+  mruEnd: 'label.mruEnd',
+  traceTitle: 'label.traceTitle',
+  references: 'label.references',
+  narrative1: 'narrative.line1',
+  narrative2: 'narrative.line2',
+  narrative3: 'narrative.line3',
+  narrative4: 'narrative.line4',
+  narrative5: 'narrative.line5',
+  narrative6: 'narrative.line6',
+  getHit: 'caption.getHit',
+  getMiss: 'caption.getMiss',
+  missMark: 'caption.missMark',
+  putUpdate: 'caption.putUpdate',
+  putInsert: 'caption.putInsert',
+  evict: 'caption.evict',
+  invalidKey: 'caption.invalidKey',
+  handover: 'caption.handover',
 } as const;
 
 export const lruCacheStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
-    const tr = makeTranslator(params.locale);
+    const tr = params.t ?? makeTranslator(params.locale);
     container.textContent = '';
     const colors = getColors(params.theme);
     const keyColors = categorical(KEY_PALETTE_SIZE, KEY_PALETTE_TONE);

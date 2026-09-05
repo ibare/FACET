@@ -83,6 +83,9 @@ export const conditionalStatementFacet: FacetJson = {
       { ref: 'controls' },
     ],
   },
+  messages: {
+    'caption.base': { en: 'A conditional is the promise that when running code reaches a fork it reads whether the current value is true or false, passes through exactly one branch, and then gathers back into a single line.', ko: '조건문은 흐르던 코드가 갈림길에 도착했을 때, 지금의 값이 참인지 거짓인지를 보고 단 한 길만 골라 통과한 뒤 다시 한 줄로 모이는 약속이다.' },
+  },
   blocks: {
     header: { type: 'title-block' },
     stage: { type: 'conditional-flowchart' },

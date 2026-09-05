@@ -104,7 +104,7 @@ export const ipRoutingProjector: ProjectorFactory = (views, runtime) => {
   /** 상시 캡션. 여러 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
   const baseCaption = (): string =>
     tr(
-      'ipRouting.caption.base',
+      'caption.base',
       'IP routing is a hop-by-hop distributed decision — at every router a packet consults only that router\'s own table to choose one next hop, and one is taken off its TTL each time.',
     );
   const stage = views.stage as unknown as IpRoutingStage | undefined;

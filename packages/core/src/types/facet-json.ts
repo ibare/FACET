@@ -107,4 +107,20 @@ export type FacetJson = {
   shuffleOnReset?: boolean;
   layout: LayoutNode;
   blocks: Record<string, BlockSpec>;
+  /**
+   * 이 facet 이 화면에 그리는 문자 리소스.
+   *
+   * FacetJson 은 저작자가 (장차 에디터로) 만드는 선언이므로, 시각화가 무엇이라
+   * 말하는지도 저작 결정이어야 한다. 문안이 projector/view 코드에 있으면 저작자가
+   * 손댈 수 없다 — 원칙 2 의 "모든 구체는 FacetJson 에 선언한다" 에 문자 리소스가
+   * 빠져 있던 구멍을 메운다.
+   *
+   * 키 두 종류를 한 곳에 담는다.
+   *   'caption.push'          facet 고유 문안. 이 facet 의 projector/view 만 조회한다.
+   *   'view.controlBar.play'  프레임워크 기본값 덮어쓰기. 빌트인 view 가 쓰는 키와 동일.
+   *
+   * 조회 순서는 messages → locale 번들 → 코드의 en 원본. 저작자가 쓴 것이 언제나
+   * 이긴다. 비워 두면 프레임워크 기본값이 그대로 쓰인다.
+   */
+  messages?: Record<string, LocaleStr>;
 };

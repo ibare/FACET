@@ -35,10 +35,10 @@ const SVG_NS = 'http://www.w3.org/2000/svg';
  * Projector 가 사건마다 조립하는 캡션은 여기 두지 않는다 — 그쪽은 ProjectorRuntime.t 가 맡는다.
  */
 const K = {
-  top: 'stack.label.top',
-  empty: 'stack.label.empty',
-  inputTrack: 'stack.label.inputTrack',
-  outputTrack: 'stack.label.outputTrack',
+  top: 'label.top',
+  empty: 'label.empty',
+  inputTrack: 'label.inputTrack',
+  outputTrack: 'label.outputTrack',
 } as const;
 
 const W = 680;
@@ -146,7 +146,7 @@ function pickColor(stamp: number): string {
 export const stackStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
     container.textContent = '';
-    const tr = makeTranslator(params.locale);
+    const tr = params.t ?? makeTranslator(params.locale);
 
     const colors = getColors(params.theme);
 

@@ -212,15 +212,15 @@ function stageSlotRect(col: number, row: number): {
 
 export const contextSwitchingStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
-    const tr = makeTranslator(params.locale);
+    const tr = params.t ?? makeTranslator(params.locale);
     /** 상단 개념 서술. tr 이 필요해 모듈 스코프가 아니라 여기 둔다. */
     const CONCEPT_TEXT = [
       tr(
-        'contextSwitching.concept.line1',
+        'concept.line1',
         "Context switching — on a single CPU stage one flow's whole register set is lifted out into its own holder,",
       ),
       tr(
-        'contextSwitching.concept.line2',
+        'concept.line2',
         "and the other flow's set is placed back into those same slots, so each resumes exactly where it stopped.",
       ),
     ];
@@ -258,13 +258,13 @@ export const contextSwitchingStageView: View = {
     const triggerLabel = (k: TriggerKind): string => {
       switch (k) {
         case 'timer':
-          return tr('contextSwitching.trigger.timer', 'timer');
+          return tr('trigger.timer', 'timer');
         case 'syscall':
-          return tr('contextSwitching.trigger.syscall', 'system call');
+          return tr('trigger.syscall', 'system call');
         case 'io':
-          return tr('contextSwitching.trigger.io', 'I/O completion');
+          return tr('trigger.io', 'I/O completion');
         case 'interrupt':
-          return tr('contextSwitching.trigger.interrupt', 'interrupt');
+          return tr('trigger.interrupt', 'interrupt');
       }
     };
 
@@ -275,7 +275,7 @@ export const contextSwitchingStageView: View = {
       height: 'auto',
       preserveAspectRatio: 'xMidYMid meet',
       role: 'img',
-      'aria-label': tr('contextSwitching.label.aria', 'Context switching visualization — one CPU stage, holders on each side, triggers from the ceiling, and a time strip'),
+      'aria-label': tr('label.aria', 'Context switching visualization — one CPU stage, holders on each side, triggers from the ceiling, and a time strip'),
     });
     svg.style.fontFamily = fonts.body;
     container.appendChild(svg);
@@ -314,7 +314,7 @@ export const contextSwitchingStageView: View = {
         'font-weight': 600,
         fill: colors.text,
       },
-      tr('contextSwitching.label.title', 'Context switching — stage / holders / time'),
+      tr('label.title', 'Context switching — stage / holders / time'),
     );
 
     // 개념 캡션 (2줄).
@@ -367,7 +367,7 @@ export const contextSwitchingStageView: View = {
         fill: colors.textMuted,
         opacity: 0.85,
       },
-      tr('contextSwitching.label.ceiling', '— ceiling: where triggers come down from outside —'),
+      tr('label.ceiling', '— ceiling: where triggers come down from outside —'),
     );
     void ceilingHint;
 
@@ -394,7 +394,7 @@ export const contextSwitchingStageView: View = {
       'font-size': fontSizes.xs,
       'font-weight': 600,
       fill: colors.textMuted,
-    }, tr('contextSwitching.label.stage', 'CPU stage (single occupancy)'));
+    }, tr('label.stage', 'CPU stage (single occupancy)'));
 
     const stageSlotEls: SVGRectElement[] = [];
     for (let r = 0; r < SLOT_ROWS; r++) {
@@ -439,7 +439,7 @@ export const contextSwitchingStageView: View = {
         'font-weight': 600,
         fill: FLOW_A,
       },
-      tr('contextSwitching.label.holderA', 'holder for flow A'),
+      tr('label.holderA', 'holder for flow A'),
     );
 
     const holderBBorder = makeRect(holderBGroup, {
@@ -463,7 +463,7 @@ export const contextSwitchingStageView: View = {
         'font-weight': 600,
         fill: FLOW_B,
       },
-      tr('contextSwitching.label.holderB', 'holder for flow B'),
+      tr('label.holderB', 'holder for flow B'),
     );
 
     // 모드 표지 — process 일 때 보관소 위에 'addr space + page table' 작은 표지가 얹힘.
@@ -533,7 +533,7 @@ export const contextSwitchingStageView: View = {
       'font-size': fontSizes.xs,
       'font-weight': 500,
       fill: colors.textMuted,
-    }, tr('contextSwitching.label.timeStrip', 'time strip — flow colour = progress, grey hatching = empty time (overhead)'));
+    }, tr('label.timeStrip', 'time strip — flow colour = progress, grey hatching = empty time (overhead)'));
     const stripBorder = makeRect(stripGroup, {
       x: STRIP_X,
       y: STRIP_Y,
@@ -591,7 +591,7 @@ export const contextSwitchingStageView: View = {
       'font-size': fontSizes.xs,
       fill: colors.textMuted,
       opacity: 0.7,
-    }, tr('contextSwitching.label.references', 'See also — OSTEP · Silberschatz · Wikipedia · Process Scheduling Visualizer'));
+    }, tr('label.references', 'See also — OSTEP · Silberschatz · Wikipedia · Process Scheduling Visualizer'));
 
     // ── 상태 ─────────────────────────────────────────────────────────────
     let currentMode: Mode = 'thread';
@@ -694,7 +694,7 @@ export const contextSwitchingStageView: View = {
 
     function applyTriggerKind(kind: TriggerKind): void {
       // 천장 영역 hint 만 갱신 — 실제 표식은 trigger-arrived 때 만들어진다.
-      ceilingHint.textContent = tr('contextSwitching.label.nextTrigger', 'next trigger: {kind}', { kind: triggerLabel(kind) });
+      ceilingHint.textContent = tr('label.nextTrigger', 'next trigger: {kind}', { kind: triggerLabel(kind) });
       ceilingHint.setAttribute('fill', triggerColor(kind));
     }
 
@@ -1156,14 +1156,14 @@ export const contextSwitchingStageView: View = {
         await animateTriggerDescent(g, PULSE_DUR);
         // 무대 점유 색 한 단계 흐려짐.
         paintStageSlotsFaint(payload.from);
-        setEventCaption(tr('contextSwitching.caption.triggerArrived', 'A trigger arrived — the flow stops.'));
+        setEventCaption(tr('caption.triggerArrived', 'A trigger arrived — the flow stops.'));
       });
     }
 
     function signalSaveBegin(payload: { from: Flow; kind: TriggerKind; mode: Mode }): Promise<void> {
       return queue.enqueue(async () => {
         applyMode(payload.mode);
-        setEventCaption(tr('contextSwitching.caption.save', 'Lifting the current state out into the holder.'));
+        setEventCaption(tr('caption.save', 'Lifting the current state out into the holder.'));
         // 저장 진입 — 무대 점유 색을 잠시 회색으로 안 칠하고 (아직 묶음 운동 중), animateSave 가
         // 운동 종료 후 paintStageSlots(null) 로 바꿈.
         const dur = payload.mode === 'process' ? 700 * 1.6 : 700;
@@ -1176,14 +1176,14 @@ export const contextSwitchingStageView: View = {
       return queue.enqueue(async () => {
         // animateSave 가 이미 마감 — 여기서 추가 처리 없음. 캡션만 갱신.
         void payload;
-        setEventCaption(tr('contextSwitching.caption.stageEmpty', 'The stage is empty — nobody is making progress.'));
+        setEventCaption(tr('caption.stageEmpty', 'The stage is empty — nobody is making progress.'));
       });
     }
 
     function signalRestoreBegin(payload: { to: Flow; mode: Mode }): Promise<void> {
       return queue.enqueue(async () => {
         applyMode(payload.mode);
-        setEventCaption(tr('contextSwitching.caption.restore', "Placing the next flow's state back onto the stage."));
+        setEventCaption(tr('caption.restore', "Placing the next flow's state back onto the stage."));
         const dur = payload.mode === 'process' ? 800 * 1.6 : 800;
         await animateRestore(payload.to, dur);
       });
@@ -1195,7 +1195,7 @@ export const contextSwitchingStageView: View = {
         stageFill = payload.to;
         // 마지막 슬롯 자리잡는 순간 무대 색 동기화 (이미 단계적으로 채워진 상태이지만 일관 보장).
         paintStageSlots(payload.to);
-        setEventCaption(tr('contextSwitching.caption.resume', 'Carrying on — it resumes exactly where it stopped.'));
+        setEventCaption(tr('caption.resume', 'Carrying on — it resumes exactly where it stopped.'));
         void payload.mode;
       });
     }
@@ -1204,14 +1204,14 @@ export const contextSwitchingStageView: View = {
       applyMode(mode);
       setEventCaption(
         mode === 'process'
-          ? tr('contextSwitching.caption.holderThicker', 'The holders got thicker — there is more to carry across.')
-          : tr('contextSwitching.caption.holderThinner', 'The holders got thinner — two threads inside one process.'),
+          ? tr('caption.holderThicker', 'The holders got thicker — there is more to carry across.')
+          : tr('caption.holderThinner', 'The holders got thinner — two threads inside one process.'),
       );
     }
 
     function applyTriggerKindChanged(kind: TriggerKind, _segmentIndex: number): void {
       applyTriggerKind(kind);
-      setEventCaption(tr('contextSwitching.caption.triggerChanged', 'The next trigger kind changed.'));
+      setEventCaption(tr('caption.triggerChanged', 'The next trigger kind changed.'));
     }
 
     function signalReset(): void {

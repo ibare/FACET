@@ -99,7 +99,7 @@ export const controlBarView: View = {
       metrics?: MetricSpec[];
     };
     const colors = getColors(params.theme);
-    const tr = makeTranslator(params.locale);
+    const tr = params.t ?? makeTranslator(params.locale);
     const btnLabels = buttonLabels(tr);
     const speedText = tr(K.speed, 'Speed');
 

@@ -39,6 +39,20 @@ export const stackFacet: FacetJson = {
       { ref: 'controls' },
     ],
   },
+  messages: {
+    'caption.base': { en: 'A stack hands back the most recently added element first — every change happens at one single place, the top.', ko: '스택은 가장 최근에 들어온 원소를 가장 먼저 꺼내는 자료구조다 — 모든 변화는 꼭대기 한 자리에서만 일어난다.' },
+    'caption.feedInput': { en: 'Boxes are waiting on the input track — they will be stacked on top one by one.', ko: '입력 트랙에 박스가 대기 중 — 차례로 꼭대기에 쌓인다' },
+    'caption.handover': { en: 'Your turn — type a value and press Push, Pop or Peek.', ko: '이제 직접 — 값을 입력하고 쌓기·떼기·보기를 눌러보세요' },
+    'caption.overflow': { en: 'No room left to stack.', ko: '더 쌓을 자리가 없다' },
+    'caption.peek': { en: 'Looked at the top value — the pile is unchanged.', ko: '꼭대기 값을 보았다 — 더미는 그대로다' },
+    'caption.pop': { en: 'Took the top box off — {value}', ko: '꼭대기의 박스를 떼어냈다 — {value}' },
+    'caption.push': { en: 'Placed a new box on top — {value}', ko: '꼭대기 위에 새 박스를 얹었다 — {value}' },
+    'caption.underflow': { en: 'No box left to take off.', ko: '떼어낼 박스가 없다' },
+    'label.empty': { en: '(empty)', ko: '비어 있음' },
+    'label.inputTrack': { en: 'input', ko: '입력' },
+    'label.outputTrack': { en: 'output', ko: '출력' },
+    'label.top': { en: 'Top', ko: '꼭대기' },
+  },
   blocks: {
     header: { type: 'title-block' },
     stage: {

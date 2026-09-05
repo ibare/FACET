@@ -148,7 +148,7 @@ type LinkRec = {
 // ── 본체 ───────────────────────────────────────────────────────────────────
 export const ipRoutingStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
-    const tr = makeTranslator(params.locale);
+    const tr = params.t ?? makeTranslator(params.locale);
     container.textContent = '';
     const colors: Palette = getColors(params.theme);
     const cat = categorical(8, 'vivid');
@@ -233,7 +233,7 @@ export const ipRoutingStageView: View = {
       'font-family': fonts.body,
       'font-weight': '700',
     });
-    subInfoTitle.textContent = tr('ipRouting.label.currentEvent', 'current event');
+    subInfoTitle.textContent = tr('label.currentEvent', 'current event');
     svg.appendChild(subInfoTitle);
 
     const subInfoText1 = svgEl('text', {
@@ -331,7 +331,7 @@ export const ipRoutingStageView: View = {
         'font-family': fonts.mono,
         'font-weight': '700',
       });
-      labelId.textContent = tr('ipRouting.label.host', 'host {id}', { id: host.id.replace('host:', '') });
+      labelId.textContent = tr('label.host', 'host {id}', { id: host.id.replace('host:', '') });
       g.appendChild(labelId);
       const labelIp = svgEl('text', {
         x: pos.x,
@@ -560,7 +560,7 @@ export const ipRoutingStageView: View = {
         'font-family': fonts.body,
         'font-weight': '700',
       });
-      h4.textContent = tr('ipRouting.label.matchLength', 'match length');
+      h4.textContent = tr('label.matchLength', 'match length');
       tablePanel.appendChild(h4);
     }
 
@@ -590,7 +590,7 @@ export const ipRoutingStageView: View = {
     // 라우터 표 펼침.
     function openTableForRouter(router: TopologyRouter, dst: string, dstBits: string): void {
       clearTableRows();
-      tableTitle.textContent = tr('ipRouting.label.routingTable', 'routing table ({router}) — dst {dst}', { router: router.id.replace('router:', ''), dst: String(dst) });
+      tableTitle.textContent = tr('label.routingTable', 'routing table ({router}) — dst {dst}', { router: router.id.replace('router:', ''), dst: String(dst) });
       dstBitsText.textContent = dstBits;
       const rowsTopY = tableHeaderY + 14;
       const rowH = 22;
@@ -876,7 +876,7 @@ export const ipRoutingStageView: View = {
         'font-family': fonts.body,
         'font-weight': '700',
       });
-      titleText.textContent = tr('ipRouting.label.packetHeader', 'packet header');
+      titleText.textContent = tr('label.packetHeader', 'packet header');
       packet.group.appendChild(titleText);
       setAttrs(packet.srcText, {
         x: 8,
@@ -1026,7 +1026,7 @@ export const ipRoutingStageView: View = {
       packet.group.setAttribute('opacity', '0');
       packet.visible = false;
       eventCaption.textContent = '';
-      setSubInfo(tr('ipRouting.sub.initialized', 'initialized'), tr('ipRouting.sub.initializedDetail', 'send / one hop / demo / initial TTL'));
+      setSubInfo(tr('sub.initialized', 'initialized'), tr('sub.initializedDetail', 'send / one hop / demo / initial TTL'));
     }
 
     function init(payload: {
@@ -1048,8 +1048,8 @@ export const ipRoutingStageView: View = {
       packet.ttlWarn = payload.ttlWarnThreshold;
       // 패킷 카드는 t0 에 비어 있다 — 첫 발신 때 표시.
       setSubInfo(
-        tr('ipRouting.sub.topology', '{routers} routers / {links} links', { routers: payload.routers.length, links: payload.links.length }),
-        tr('ipRouting.sub.topologyDetail', 'initial TTL {ttl}, demo sends {sends}', { ttl: payload.defaultTtl, sends: payload.autoDemoSequence.length }),
+        tr('sub.topology', '{routers} routers / {links} links', { routers: payload.routers.length, links: payload.links.length }),
+        tr('sub.topologyDetail', 'initial TTL {ttl}, demo sends {sends}', { ttl: payload.defaultTtl, sends: payload.autoDemoSequence.length }),
       );
     }
 
@@ -1085,7 +1085,7 @@ export const ipRoutingStageView: View = {
       }
       setPacketCard(payload.packet.src, payload.packet.dst, payload.packet.ttl, packet.ttlMax);
       setSubInfo(
-        tr('ipRouting.sub.send', 'host {host} sends #{n}', { host: payload.fromHost.replace('host:', ''), n: payload.traceIndex + 1 }),
+        tr('sub.send', 'host {host} sends #{n}', { host: payload.fromHost.replace('host:', ''), n: payload.traceIndex + 1 }),
         payload.note ? String(payload.note) : `dst ${payload.packet.dst} / TTL ${payload.packet.ttl}`,
       );
     }
@@ -1132,8 +1132,8 @@ export const ipRoutingStageView: View = {
       const pos = NODE_POS[payload.atRouter];
       if (pos) pulseRing(pos.x, pos.y, ADOPTED_COLOR, 600);
       setSubInfo(
-        tr('ipRouting.sub.arrived', '{router} reached', { router: payload.atRouter.replace('router:', '') }),
-        tr('ipRouting.sub.arrivedDetail', 'opening its table'),
+        tr('sub.arrived', '{router} reached', { router: payload.atRouter.replace('router:', '') }),
+        tr('sub.arrivedDetail', 'opening its table'),
       );
       await sleep(opts?.duration ?? 200);
     }
@@ -1146,8 +1146,8 @@ export const ipRoutingStageView: View = {
       if (!router) return;
       openTableForRouter(router, payload.dst, payload.dstBits);
       setSubInfo(
-        tr('ipRouting.sub.tableOpen', '{router} table open', { router: payload.atRouter.replace('router:', '') }),
-        tr('ipRouting.sub.bitCompare', 'starting bit comparison for dst {dst}', { dst: String(payload.dst) }),
+        tr('sub.tableOpen', '{router} table open', { router: payload.atRouter.replace('router:', '') }),
+        tr('sub.bitCompare', 'starting bit comparison for dst {dst}', { dst: String(payload.dst) }),
       );
       await sleep(opts?.duration ?? 250);
     }
@@ -1170,11 +1170,11 @@ export const ipRoutingStageView: View = {
       );
       if (payload.nextHopNode) {
         setSubInfo(
-          tr('ipRouting.sub.lpmResult', 'LPM result — {router} → {nextHop}', { router: payload.atRouter.replace('router:', ''), nextHop: String(payload.nextHopNode) }),
+          tr('sub.lpmResult', 'LPM result — {router} → {nextHop}', { router: payload.atRouter.replace('router:', ''), nextHop: String(payload.nextHopNode) }),
           payload.nextHopIface ? `via ${payload.nextHopIface}` : '',
         );
       } else {
-        setSubInfo(tr('ipRouting.sub.lpmNoMatch', 'LPM result — no match'), tr('ipRouting.sub.lpmNoMatchDetail', 'the packet is dropped'));
+        setSubInfo(tr('sub.lpmNoMatch', 'LPM result — no match'), tr('sub.lpmNoMatchDetail', 'the packet is dropped'));
       }
     }
 
@@ -1190,7 +1190,7 @@ export const ipRoutingStageView: View = {
       }
       await drawSightArrow(payload.fromRouter, payload.toNode);
       setSubInfo(
-        tr('ipRouting.sub.gazeArrow', 'gaze arrow → {node}', { node: String(payload.toNode) }),
+        tr('sub.gazeArrow', 'gaze arrow → {node}', { node: String(payload.toNode) }),
         payload.iface ? `via ${payload.iface}` : '',
       );
     }
@@ -1253,8 +1253,8 @@ export const ipRoutingStageView: View = {
       const pos = NODE_POS[payload.atHost];
       if (pos) pulseRing(pos.x, pos.y, cat[2]!, 700);
       setSubInfo(
-        tr('ipRouting.sub.delivered', 'host {host} reached', { host: payload.atHost.replace('host:', '') }),
-        tr('ipRouting.sub.ttlLeft', 'TTL {ttl} left', { ttl: payload.ttlRemaining }),
+        tr('sub.delivered', 'host {host} reached', { host: payload.atHost.replace('host:', '') }),
+        tr('sub.ttlLeft', 'TTL {ttl} left', { ttl: payload.ttlRemaining }),
       );
     }
 
@@ -1270,10 +1270,10 @@ export const ipRoutingStageView: View = {
       const pos = NODE_POS[payload.atRouter];
       if (pos) pulseRing(pos.x, pos.y, DROP_COLOR, 700);
       setSubInfo(
-        tr('ipRouting.sub.dropped', 'dropped — {router}', { router: payload.atRouter.replace('router:', '') }),
+        tr('sub.dropped', 'dropped — {router}', { router: payload.atRouter.replace('router:', '') }),
         payload.reason === 'ttl-zero'
-          ? tr('ipRouting.sub.dropTtl', 'TTL reached 0')
-          : tr('ipRouting.sub.dropNoRoute', 'no matching row'),
+          ? tr('sub.dropTtl', 'TTL reached 0')
+          : tr('sub.dropNoRoute', 'no matching row'),
       );
     }
 
@@ -1287,7 +1287,7 @@ export const ipRoutingStageView: View = {
       const pos = NODE_POS[payload.atRouter];
       if (pos) pulseRing(pos.x, pos.y, colors.textMuted, 600);
       setSubInfo(
-        tr('ipRouting.sub.egress', 'left via an external interface — {router}', { router: payload.atRouter.replace('router:', '') }),
+        tr('sub.egress', 'left via an external interface — {router}', { router: payload.atRouter.replace('router:', '') }),
         payload.viaInterface ? `via ${payload.viaInterface}` : '',
       );
     }
@@ -1301,7 +1301,7 @@ export const ipRoutingStageView: View = {
       'font-family': fonts.body,
     });
     refText.textContent =
-      tr('ipRouting.label.references', 'See also: Kurose-Ross LPM Interactive · INET/OMNeT++ Routing Visualizer · Cisco Packet Tracer · Practical Networking — Packet Traveling');
+      tr('label.references', 'See also: Kurose-Ross LPM Interactive · INET/OMNeT++ Routing Visualizer · Cisco Packet Tracer · Practical Networking — Packet Traveling');
     svg.appendChild(refText);
 
     const narrative = svgEl('text', {
@@ -1312,7 +1312,7 @@ export const ipRoutingStageView: View = {
       'font-family': fonts.body,
     });
     narrative.textContent =
-      tr('ipRouting.legend.rules', 'Only one router\'s table is open at any moment — a router sees only its own. The longest match wins. Every hop takes one off the TTL.');
+      tr('legend.rules', 'Only one router\'s table is open at any moment — a router sees only its own. The longest match wins. Every hop takes one off the TTL.');
     svg.appendChild(narrative);
 
     // 패킷 카드 init.
@@ -1320,7 +1320,7 @@ export const ipRoutingStageView: View = {
     packet.group.setAttribute('opacity', '0');
 
     // 사용 안내 (활성화 시 사라짐).
-    setSubInfo(tr('ipRouting.sub.idle', 'idle'), tr('ipRouting.sub.idleDetail', 'send / demo / one hop / initial TTL'));
+    setSubInfo(tr('sub.idle', 'idle'), tr('sub.idleDetail', 'send / demo / one hop / initial TTL'));
 
     return {
       destroy() {

@@ -15,7 +15,7 @@
 
 import type { View, ViewInstance, ViewMountParams } from './types.js';
 import { getColors, fonts, fontSizes, radii, space } from './design-tokens.js';
-import { makeTranslator } from '../runtime/i18n.js';
+import { makeTranslator, type Translate } from '../runtime/i18n.js';
 import { resolveLocale, type LocaleStr } from '../types/locale.js';
 
 type PassTrackerConfig = {
@@ -30,8 +30,7 @@ const K = {
   swapsPerPass: 'view.passTracker.swapsPerPass',
 } as const;
 
-function pickPassLabels(locale: string | undefined) {
-  const tr = makeTranslator(locale);
+function pickPassLabels(tr: Translate) {
   return {
     pass: tr(K.pass, 'Pass'),
     sortedTail: tr(K.sortedTail, 'Sorted Tail'),
@@ -45,7 +44,7 @@ export const passTrackerView: View = {
     const colors = getColors(params.theme);
     const cfg = params.config as PassTrackerConfig;
     const maxPasses = cfg.maxPasses ?? 0;
-    const i18n = pickPassLabels(params.locale);
+    const i18n = pickPassLabels(params.t ?? makeTranslator(params.locale));
     const label = resolveLocale(cfg.label, params.locale) || i18n.pass;
 
     const root = document.createElement('div');

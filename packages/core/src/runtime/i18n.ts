@@ -31,6 +31,8 @@
  *                                                 // Projector — runner 가 주입
  */
 
+import { resolveLocale, type LocaleStr } from '../types/locale.js';
+
 /** 키 → 번역문. 한 locale 의 번들. */
 export type MessageBundle = Record<string, string>;
 
@@ -85,10 +87,25 @@ function interpolate(text: string, vars?: Record<string, string | number>): stri
 /**
  * 주어진 locale 로 해석하는 조회 함수를 만든다.
  *
- * locale 이 없거나 SOURCE_LOCALE 이거나 번들이 없으면 fallback (en 원본) 을
- * 그대로 쓴다. 즉 번역이 하나도 등록되지 않아도 화면은 en 으로 온전히 동작한다.
+ * 세 계층을 순서대로 본다.
+ *   1. overrides — FacetJson.messages. 저작자가 정한 문안이라 언제나 이긴다.
+ *   2. locale 번들 — registerMessages 로 주입된 번역.
+ *   3. fallback — 코드에 남은 en 원본.
+ *
+ * 셋 다 없을 수 없다 (fallback 은 호출부가 반드시 준다). 즉 번역이 하나도
+ * 등록되지 않고 저작자가 아무것도 쓰지 않아도 화면은 en 으로 온전히 동작한다.
  */
-export function makeTranslator(locale?: string): Translate {
+export function makeTranslator(
+  locale?: string,
+  overrides?: Record<string, LocaleStr>,
+): Translate {
   const bundle = locale && locale !== SOURCE_LOCALE ? bundles.get(locale) : undefined;
-  return (key, fallback, vars) => interpolate(bundle?.[key] ?? fallback, vars);
+  return (key, fallback, vars) => {
+    const authored = overrides?.[key];
+    const text =
+      (authored !== undefined ? resolveLocale(authored, locale) : undefined) ||
+      bundle?.[key] ||
+      fallback;
+    return interpolate(text, vars);
+  };
 }

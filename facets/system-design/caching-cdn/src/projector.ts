@@ -52,7 +52,7 @@ export const cachingCdnProjector: ProjectorFactory = (views, runtime) => {
   /** 상시 캡션. 여러 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
   const baseCaption = (): string =>
     tr(
-      'cachingCdn.caption.base',
+      'caption.base',
       'A CDN is the system-level behaviour of edges worldwide taking requests from nearby clients — answering short when they hold the answer, and travelling up the hierarchy to fetch and keep it when they do not.',
     );
   const stage = views.stage as unknown as CdnStage | undefined;

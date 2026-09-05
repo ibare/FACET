@@ -57,7 +57,7 @@ export const messagingPubsubProjector: ProjectorFactory = (views, runtime) => {
   /** 상시 캡션. 여러 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
   const baseCaption = (): string =>
     tr(
-      'messagingPubsub.caption.base',
+      'caption.base',
       "Pub/Sub lets publishers and subscribers know only the broker's topic label instead of each other's identity — one publish fans out to every subscriber as copies, making many-to-many asynchronous messaging work.",
     );
   const stage = views.stage as unknown as PubsubStage | undefined;

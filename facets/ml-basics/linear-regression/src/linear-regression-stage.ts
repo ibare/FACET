@@ -245,12 +245,12 @@ function wait(ms: number): Promise<void> {
 
 export const linearRegressionStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
-    const tr = makeTranslator(params.locale);
+    const tr = params.t ?? makeTranslator(params.locale);
     /** 좌상단 개념 서술. tr 이 필요해 모듈 스코프가 아니라 여기 둔다. */
     const CONCEPT_TEXT = [
-      tr('linearRegression.concept.line1', 'Linear regression threads one line through a cloud of points,'),
-      tr('linearRegression.concept.line2', 'turning each residual into an area and rotating and shifting the line'),
-      tr('linearRegression.concept.line3', 'one step per iteration so those areas add up to as little as possible.'),
+      tr('concept.line1', 'Linear regression threads one line through a cloud of points,'),
+      tr('concept.line2', 'turning each residual into an area and rotating and shifting the line'),
+      tr('concept.line3', 'one step per iteration so those areas add up to as little as possible.'),
     ];
     container.textContent = '';
 
@@ -276,7 +276,7 @@ export const linearRegressionStageView: View = {
       height: 'auto',
       preserveAspectRatio: 'xMidYMid meet',
       role: 'img',
-      'aria-label': tr('linearRegression.label.aria', 'Linear regression visualization — residual squares synchronized one-to-one with the contour map'),
+      'aria-label': tr('label.aria', 'Linear regression visualization — residual squares synchronized one-to-one with the contour map'),
     });
     svg.style.fontFamily = fonts.body;
     svg.style.background = colors.bg;
@@ -293,7 +293,7 @@ export const linearRegressionStageView: View = {
         'font-weight': '600',
         fill: colors.text,
       },
-      tr('linearRegression.label.title', 'Linear regression — as the residual areas shrink, the dot rolls down into the valley'),
+      tr('label.title', 'Linear regression — as the residual areas shrink, the dot rolls down into the valley'),
     );
 
     for (let i = 0; i < CONCEPT_TEXT.length; i++) {
@@ -430,7 +430,7 @@ export const linearRegressionStageView: View = {
         'font-size': fontSizes.xs,
         fill: colors.textMuted,
       },
-      tr('linearRegression.label.residualSum', 'residual sum (signed)'),
+      tr('label.residualSum', 'residual sum (signed)'),
     );
     // 양방향 막대 트랙.
     makeRect(gaugeGroup, {
@@ -471,7 +471,7 @@ export const linearRegressionStageView: View = {
         'font-size': fontSizes.xs,
         fill: colors.textMuted,
       },
-      tr('linearRegression.label.rss', 'sum of squared residuals (loss)'),
+      tr('label.rss', 'sum of squared residuals (loss)'),
     );
     makeRect(gaugeGroup, {
       x: gaugeXBase,
@@ -556,7 +556,7 @@ export const linearRegressionStageView: View = {
         'font-size': fontSizes.xs,
         fill: colors.textMuted,
       },
-      tr('linearRegression.label.contour', 'contours: outer = larger, centre = smaller'),
+      tr('label.contour', 'contours: outer = larger, centre = smaller'),
     );
 
     const contourLayer = makeGroup(paramLayer);
@@ -583,7 +583,7 @@ export const linearRegressionStageView: View = {
         'font-size': fontSizes.xs,
         fill: colors.textMuted,
       },
-      tr('linearRegression.label.lossCurve', 'loss curve — RSS over time t'),
+      tr('label.lossCurve', 'loss curve — RSS over time t'),
     );
     makeText(
       lossLayer,
@@ -653,7 +653,7 @@ export const linearRegressionStageView: View = {
         fill: colors.textMuted,
         opacity: 0.7,
       },
-      tr('linearRegression.label.references', 'See also — Setosa · ml-visualized · Google ML Crash Course · angeloyeo'),
+      tr('label.references', 'See also — Setosa · ml-visualized · Google ML Crash Course · angeloyeo'),
     );
 
     // ── 상태 ──────────────────────────────────────────────────────────────
@@ -973,7 +973,7 @@ export const linearRegressionStageView: View = {
             'font-size': fontSizes.xs,
             fill: DANGER,
           },
-          tr('linearRegression.label.converged', 'converged'),
+          tr('label.converged', 'converged'),
         );
       }
     }
@@ -1127,7 +1127,7 @@ export const linearRegressionStageView: View = {
           }
           requestAnimationFrame(frame);
         });
-        setEventCaption(tr('linearRegression.caption.converged', 'Converged — it will not shrink any further.'));
+        setEventCaption(tr('caption.converged', 'Converged — it will not shrink any further.'));
       });
     }
 
@@ -1137,7 +1137,7 @@ export const linearRegressionStageView: View = {
         dangerOverlay.setAttribute('opacity', '0.7');
         // 직선을 살짝 빨강 강조 (한 박자만).
         linePath.setAttribute('stroke', DANGER);
-        setEventCaption(tr('linearRegression.caption.diverged', 'The learning rate is too large — the line diverged.'));
+        setEventCaption(tr('caption.diverged', 'The learning rate is too large — the line diverged.'));
         await wait(420);
         linePath.setAttribute('stroke', LINE_TONE);
       });
@@ -1147,11 +1147,11 @@ export const linearRegressionStageView: View = {
       // 학습률 segmented-slider 변경 — 캡션 한 줄.
       const label =
       [
-        tr('linearRegression.lr.slow', 'slow'),
-        tr('linearRegression.lr.good', 'just right'),
-        tr('linearRegression.lr.diverge', 'diverging'),
+        tr('lr.slow', 'slow'),
+        tr('lr.good', 'just right'),
+        tr('lr.diverge', 'diverging'),
       ][segmentIndex] ?? `η=${value.toFixed(3)}`;
-      setEventCaption(tr('linearRegression.caption.lrChanged', 'learning rate → {label} (η = {eta})', { label, eta: value.toFixed(3) }));
+      setEventCaption(tr('caption.lrChanged', 'learning rate → {label} (η = {eta})', { label, eta: value.toFixed(3) }));
       // 발산 표지가 떠 있던 경우 새 학습률에서 다시 시도하므로 표지 끔.
       if (segmentIndex !== 2) {
         dangerOverlay.setAttribute('opacity', '0');

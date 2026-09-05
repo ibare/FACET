@@ -37,14 +37,14 @@ type StackStage = {
  * View 고정 라벨은 View 가 params.locale 로 직접 해석한다 (S-view).
  */
 const K = {
-  base: 'stack.caption.base',
-  feedInput: 'stack.caption.feedInput',
-  push: 'stack.caption.push',
-  pop: 'stack.caption.pop',
-  peek: 'stack.caption.peek',
-  overflow: 'stack.caption.overflow',
-  underflow: 'stack.caption.underflow',
-  handover: 'stack.caption.handover',
+  base: 'caption.base',
+  feedInput: 'caption.feedInput',
+  push: 'caption.push',
+  pop: 'caption.pop',
+  peek: 'caption.peek',
+  overflow: 'caption.overflow',
+  underflow: 'caption.underflow',
+  handover: 'caption.handover',
 } as const;
 
 function isStackTop(target: unknown): boolean {

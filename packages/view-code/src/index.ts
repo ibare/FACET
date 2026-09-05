@@ -69,7 +69,7 @@ export const codeView: View = {
     const HL_BG = params.theme === 'dark' ? HL_BG_DARK : HL_BG_LIGHT;
     const SHIKI_THEME = params.theme === 'dark' ? 'github-dark' : 'github-light';
     const locale = params.locale;
-    const labels = codeViewLabels(makeTranslator(locale));
+    const labels = codeViewLabels(params.t ?? makeTranslator(locale));
 
     const cfg = params.config as {
       label?: string;

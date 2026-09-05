@@ -59,7 +59,7 @@ export const conditionalStatementProjector: ProjectorFactory = (views, runtime) 
   /** 상시 캡션. 여러 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
   const baseCaption = (): string =>
     tr(
-      'conditionalStatement.caption.base',
+      'caption.base',
       'A conditional is the promise that when running code reaches a fork it reads whether the current value is true or false, passes through exactly one branch, and then gathers back into a single line.',
     );
   const stage = views.stage as unknown as FlowchartStage | undefined;

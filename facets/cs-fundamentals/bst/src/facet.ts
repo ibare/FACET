@@ -66,6 +66,11 @@ export const bstFacet: FacetJson = {
       { ref: 'codePanel' },
     ],
   },
+  messages: {
+    'hud.compare': { en: '[key {key}] {sym} [node {node}]', ko: '[키 {key}] {sym} [노드 {node}]' },
+    'hud.done': { en: 'Done', ko: '완료' },
+    'hud.empty': { en: 'Tree is empty', ko: '트리 비어있음' },
+  },
   blocks: {
     header: { type: 'title-block' },
     stage: {

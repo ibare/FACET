@@ -93,7 +93,7 @@ type Layout = {
 
 export const arrayStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
-    const tr = makeTranslator(params.locale);
+    const tr = params.t ?? makeTranslator(params.locale);
     container.textContent = '';
     const colors = getColors(params.theme);
 
@@ -221,7 +221,7 @@ export const arrayStageView: View = {
       'font-family': fonts.body,
       'text-anchor': 'start',
     });
-    tallyHeader.textContent = tr('array.label.shifts', 'Shifts');
+    tallyHeader.textContent = tr('label.shifts', 'Shifts');
     tallyGroup.appendChild(tallyHeader);
     const tallyBg = document.createElementNS(SVG_NS, 'rect');
     setAttrs(tallyBg, {
@@ -546,7 +546,7 @@ export const arrayStageView: View = {
         opacity: '1',
         fill: colors.textMuted,
       });
-      arithLabel.textContent = tr('array.label.arith', 'start + {index}', { index: idx });
+      arithLabel.textContent = tr('label.arith', 'start + {index}', { index: idx });
       setTimeout(() => arithLabel.setAttribute('opacity', '0'), duration);
     }
 
@@ -935,9 +935,9 @@ export const arrayStageView: View = {
 
     function searchResult(found: boolean, index: number | undefined, value: string): void {
       if (found && typeof index === 'number') {
-        setCaption(tr('array.caption.searchFound', 'Found it — {value} at index {index}', { index, value }), { duration: 1800 });
+        setCaption(tr('caption.searchFound', 'Found it — {value} at index {index}', { index, value }), { duration: 1800 });
       } else {
-        setCaption(tr('array.caption.searchMiss', 'Not found — scanned the whole strip'), { duration: 1800 });
+        setCaption(tr('caption.searchMiss', 'Not found — scanned the whole strip'), { duration: 1800 });
       }
     }
 

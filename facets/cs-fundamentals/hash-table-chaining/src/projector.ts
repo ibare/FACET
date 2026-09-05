@@ -110,7 +110,7 @@ export const hashTableProjector: ProjectorFactory = (views, runtime) => {
   /** 상시 캡션. 두 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
   const baseCaption = (): string =>
     tr(
-      'hashTableChaining.caption.base',
+      'caption.base',
       'A hash table lays out a row of identical slots and a function box throws each key into the one slot it picks — when two land on the same slot, a chain grows there.',
     );
   const stage = views.stage as unknown as HashTableStage | undefined;
@@ -378,7 +378,7 @@ export const hashTableProjector: ProjectorFactory = (views, runtime) => {
           const p = (event.payload ?? {}) as { op?: string };
           stage.signalEmpty(String(p.op ?? ''));
           stage.setCaption(
-            tr('hashTableChaining.caption.emptyTableOp', 'The table is empty — there is no key to search for or remove.'),
+            tr('caption.emptyTableOp', 'The table is empty — there is no key to search for or remove.'),
             { duration: 1600 },
           );
           break;
@@ -393,7 +393,7 @@ export const hashTableProjector: ProjectorFactory = (views, runtime) => {
         case 'demo-end': {
           stage.setCaption(
             tr(
-              'hashTableChaining.caption.handover',
+              'caption.handover',
               'Your turn — type a key, then press Insert, Search or Remove.',
             ),
             { duration: 2400 },

@@ -190,21 +190,21 @@ function buildKindColors(palette: ReturnType<typeof getColors>): KindColors {
 function kindLabel(tr: Translate, k: TokenKind | 'swallow'): string {
   switch (k) {
     case 'keyword':
-      return tr('tokenization.kind.keyword', 'keyword');
+      return tr('kind.keyword', 'keyword');
     case 'identifier':
-      return tr('tokenization.kind.identifier', 'identifier');
+      return tr('kind.identifier', 'identifier');
     case 'number':
-      return tr('tokenization.kind.number', 'number');
+      return tr('kind.number', 'number');
     case 'operator':
-      return tr('tokenization.kind.operator', 'operator');
+      return tr('kind.operator', 'operator');
     case 'punct':
-      return tr('tokenization.kind.punctuation', 'punctuation');
+      return tr('kind.punctuation', 'punctuation');
     case 'string':
-      return tr('tokenization.kind.string', 'string');
+      return tr('kind.string', 'string');
     case 'error':
-      return tr('tokenization.kind.error', 'error');
+      return tr('kind.error', 'error');
     case 'swallow':
-      return tr('tokenization.kind.swallowed', 'swallowed');
+      return tr('kind.swallowed', 'swallowed');
   }
 }
 
@@ -250,13 +250,13 @@ type CardRec = {
 
 export const tokenizationStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
-    const tr = makeTranslator(params.locale);
+    const tr = params.t ?? makeTranslator(params.locale);
     /** 상단 개념 서술. tr 이 필요해 모듈 스코프가 아니라 여기 둔다. */
     const CONCEPT_LINES = [
-      tr('tokenization.concept.line1', 'Tokenization is the first stage of a compiler — reading left to right, one'),
-      tr('tokenization.concept.line2', 'character at a time, it cuts the source into the smallest meaningful units'),
-      tr('tokenization.concept.line3', '(tokens), taking the longest run it can. Whitespace and comments never'),
-      tr('tokenization.concept.line4', 'become tokens and sink into grey. Watch the strip above feed the cards below.'),
+      tr('concept.line1', 'Tokenization is the first stage of a compiler — reading left to right, one'),
+      tr('concept.line2', 'character at a time, it cuts the source into the smallest meaningful units'),
+      tr('concept.line3', '(tokens), taking the longest run it can. Whitespace and comments never'),
+      tr('concept.line4', 'become tokens and sink into grey. Watch the strip above feed the cards below.'),
     ];
     const palette = getColors(params.theme);
     const kindColors = buildKindColors(palette);
@@ -321,7 +321,7 @@ export const tokenizationStageView: View = {
         'font-weight': 700,
         fill: palette.text,
       },
-      tr('tokenization.label.title', 'Tokenization — one beat of condensation'),
+      tr('label.title', 'Tokenization — one beat of condensation'),
     );
     CONCEPT_LINES.forEach((line, i) => {
       makeText(
@@ -373,7 +373,7 @@ export const tokenizationStageView: View = {
         fill: palette.textMuted,
         'letter-spacing': '0.04em',
       },
-      tr('tokenization.label.input', 'input'),
+      tr('label.input', 'input'),
     );
 
     // 진행 인디케이터.
@@ -408,7 +408,7 @@ export const tokenizationStageView: View = {
         fill: palette.textMuted,
         'text-anchor': 'end',
       },
-      tr('tokenization.label.closed', '↓ closed'),
+      tr('label.closed', '↓ closed'),
     );
 
     // 출력 라벨.
@@ -422,7 +422,7 @@ export const tokenizationStageView: View = {
         fill: palette.textMuted,
         'letter-spacing': '0.04em',
       },
-      tr('tokenization.label.output', 'output tokens'),
+      tr('label.output', 'output tokens'),
     );
 
     // ── 범례 ───────────────────────────────────────────────────────────
@@ -436,7 +436,7 @@ export const tokenizationStageView: View = {
         fill: palette.textMuted,
         'letter-spacing': '0.04em',
       },
-      tr('tokenization.label.legend', 'legend'),
+      tr('label.legend', 'legend'),
     );
     const legendKinds: (TokenKind | 'swallow')[] = [
       'keyword',
@@ -486,7 +486,7 @@ export const tokenizationStageView: View = {
         fill: palette.textMuted,
         'letter-spacing': '0.04em',
       },
-      tr('tokenization.label.references', 'see also'),
+      tr('label.references', 'see also'),
     );
     const chipW = (W - 48 - (REFERENCES.length - 1) * 8) / REFERENCES.length;
     REFERENCES.forEach((ref, i) => {
@@ -877,7 +877,7 @@ export const tokenizationStageView: View = {
         if (sw) sw.setAttribute('opacity', '1');
       }
       if (payload.kind === 'comment') {
-        setCaption(tr('tokenization.caption.comment', 'A comment never becomes a token — it stays as a trace.'), { duration: 1400 });
+        setCaption(tr('caption.comment', 'A comment never becomes a token — it stays as a trace.'), { duration: 1400 });
       }
     }
 
@@ -1028,13 +1028,13 @@ export const tokenizationStageView: View = {
 
       setGaze(payload.gaze);
       setSegment(null);
-      setCaption(tr('tokenization.caption.unrecognized', 'An unrecognized character — it lands as a red card.'), { duration: 1400 });
+      setCaption(tr('caption.unrecognized', 'An unrecognized character — it lands as a red card.'), { duration: 1400 });
     }
 
     function applyDone(payload: { gaze: number; totalTokens: number }): void {
       setGaze(payload.gaze);
       setSegment(null);
-      setCaption(tr('tokenization.caption.scanDone', 'Scan complete — {count} tokens.', { count: payload.totalTokens }), { duration: 1400 });
+      setCaption(tr('caption.scanDone', 'Scan complete — {count} tokens.', { count: payload.totalTokens }), { duration: 1400 });
     }
 
     function signalExampleSet(payload: {
@@ -1044,7 +1044,7 @@ export const tokenizationStageView: View = {
     }): void {
       void payload.source;
       setCaption(
-        tr('tokenization.caption.example', 'Example {n} — {name}', {
+        tr('caption.example', 'Example {n} — {name}', {
             n: payload.exampleIndex + 1,
             name: resolveLocale(payload.exampleName, params.locale),
           }),
@@ -1053,7 +1053,7 @@ export const tokenizationStageView: View = {
     }
 
     function signalInvalid(op: string, raw: string): void {
-      setCaption(tr('tokenization.caption.ignoredInput', 'Input ignored — {op}: {raw}', { op: String(op), raw: String(raw) }), { duration: 1400 });
+      setCaption(tr('caption.ignoredInput', 'Input ignored — {op}: {raw}', { op: String(op), raw: String(raw) }), { duration: 1400 });
     }
 
     return {

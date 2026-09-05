@@ -118,7 +118,7 @@ type ContentRec = {
 
 export const cdnStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
-    const tr = makeTranslator(params.locale);
+    const tr = params.t ?? makeTranslator(params.locale);
     container.textContent = '';
     const colors = getColors(params.theme);
 
@@ -182,7 +182,7 @@ export const cdnStageView: View = {
       'font-family': fonts.body,
       'font-weight': '700',
     });
-    trayTitle.textContent = tr('cachingCdn.label.contentTray', 'content');
+    trayTitle.textContent = tr('label.contentTray', 'content');
     svg.appendChild(trayTitle);
 
     const trayGroup = document.createElementNS(SVG_NS, 'g');
@@ -322,7 +322,7 @@ export const cdnStageView: View = {
       'font-size': '8px',
       'font-family': fonts.body,
     });
-    gaugeLabel.textContent = tr('cachingCdn.label.originLoad', 'origin load (last 30)');
+    gaugeLabel.textContent = tr('label.originLoad', 'origin load (last 30)');
     upperGroup.appendChild(gaugeLabel);
 
     // 오리진 박스 (큰 사각형).
@@ -349,7 +349,7 @@ export const cdnStageView: View = {
       'font-family': fonts.mono,
       'font-weight': '700',
     });
-    originLabel.textContent = tr('cachingCdn.label.origin', 'origin');
+    originLabel.textContent = tr('label.origin', 'origin');
     upperGroup.appendChild(originLabel);
 
     // 지역 캐시 박스 (약간 작은 사각형).
@@ -376,7 +376,7 @@ export const cdnStageView: View = {
       'font-family': fonts.mono,
       'font-weight': '700',
     });
-    regionalLabel.textContent = tr('cachingCdn.label.regional', 'regional');
+    regionalLabel.textContent = tr('label.regional', 'regional');
     upperGroup.appendChild(regionalLabel);
 
     // === 엣지 PoP 그룹 ===
@@ -393,7 +393,7 @@ export const cdnStageView: View = {
       'font-family': fonts.body,
     });
     narrative.textContent =
-      tr('cachingCdn.legend.hitMiss', 'A hit is one short arc from client to edge — a miss is the long trip up the hierarchy and back, filling the edge on the way.');
+      tr('legend.hitMiss', 'A hit is one short arc from client to edge — a miss is the long trip up the hierarchy and back, filling the edge on the way.');
     svg.appendChild(narrative);
 
     // === 레퍼런스 라벨 ===
@@ -406,7 +406,7 @@ export const cdnStageView: View = {
       'font-family': fonts.body,
     });
     refText.textContent =
-      tr('cachingCdn.label.references', 'See also: Cloudflare CDN Reference Architecture · Cloudflare Global Network · ByteByteGo CDN · NAVER Cloud CDN tips');
+      tr('label.references', 'See also: Cloudflare CDN Reference Architecture · Cloudflare Global Network · ByteByteGo CDN · NAVER Cloud CDN tips');
     svg.appendChild(refText);
 
     // ── 모델 상태 ──
@@ -797,7 +797,7 @@ export const cdnStageView: View = {
         });
       }
 
-      setCaption(tr('cachingCdn.caption.coldStart', 'Every edge on the map is grey — starting from an empty cache.'), { duration: 2400 });
+      setCaption(tr('caption.coldStart', 'Every edge on the map is grey — starting from an empty cache.'), { duration: 2400 });
     }
 
     async function emitRequest(
@@ -851,7 +851,7 @@ export const cdnStageView: View = {
         );
         await chipAlongPath(arc2, color, label, SHORT_ARC_MS);
         setCaption(
-          tr('cachingCdn.caption.hit', 'Answered right at the {edge} edge — one short round trip ({detail}).', { edge: rec.label, detail: label }),
+          tr('caption.hit', 'Answered right at the {edge} edge — one short round trip ({detail}).', { edge: rec.label, detail: label }),
           { duration: 2200 },
         );
         return;
@@ -943,12 +943,12 @@ export const cdnStageView: View = {
 
       if (payload.outcome === 'miss') {
         setCaption(
-          tr('cachingCdn.caption.missOrigin', '{edge} missed — went all the way to the origin and filled the edge on the way back ({detail}).', { edge: rec.label, detail: label }),
+          tr('caption.missOrigin', '{edge} missed — went all the way to the origin and filled the edge on the way back ({detail}).', { edge: rec.label, detail: label }),
           { duration: 2400 },
         );
       } else {
         setCaption(
-          tr('cachingCdn.caption.missRegional', '{edge} missed — caught at the regional cache, so the origin was never reached ({detail}).', { edge: rec.label, detail: label }),
+          tr('caption.missRegional', '{edge} missed — caught at the regional cache, so the origin was never reached ({detail}).', { edge: rec.label, detail: label }),
           { duration: 2400 },
         );
       }
@@ -965,18 +965,18 @@ export const cdnStageView: View = {
       pulse(pulseGroup, rec.x, rec.y, colors.danger, 360, 14);
       await sleep(NEIGHBOR_LINE_MS);
       setCaption(
-        tr('cachingCdn.caption.purge', 'Invalidated the {edge} edge — the next request travels up the hierarchy again.', { edge: rec.label }),
+        tr('caption.purge', 'Invalidated the {edge} edge — the next request travels up the hierarchy again.', { edge: rec.label }),
         { duration: 2200 },
       );
     }
 
     function signalInvalid(op: string, raw: string): void {
-      setCaption(tr('cachingCdn.caption.invalidInput', '{op}: that input is not valid — "{raw}"', { op: String(op), raw: String(raw) }), { duration: 2000 });
+      setCaption(tr('caption.invalidInput', '{op}: that input is not valid — "{raw}"', { op: String(op), raw: String(raw) }), { duration: 2000 });
     }
 
     function signalDemoEnd(): void {
       setCaption(
-        tr('cachingCdn.caption.handover', 'Your turn — type a content name and an edge, then press Request, Demo or Reset.'),
+        tr('caption.handover', 'Your turn — type a content name and an edge, then press Request, Demo or Reset.'),
         { duration: 2800 },
       );
     }

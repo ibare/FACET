@@ -118,6 +118,9 @@ export function runFacet(
 
   // 3. Layout / blocks 처리 + locale 해석
   const locale = options?.locale;
+  // 저작자 문안(FacetJson.messages) 을 얹은 조회기. View 와 Projector 가 같은 것을
+  // 쓰므로 한 facet 안에서 문안 출처가 갈리지 않는다.
+  const tr = makeTranslator(locale, json.messages);
   const theme: Theme = options?.theme ?? 'light';
   const blocks = json.blocks;
 
@@ -177,7 +180,7 @@ export function runFacet(
   const views = mountBlocks({
     blocks: enrichedBlocks,
     blockMounts: built.blockMounts,
-    mountParams: { initialData: initialDataClone, locale, theme, dispatch: dispatchToMechanism },
+    mountParams: { initialData: initialDataClone, locale, theme, t: tr, dispatch: dispatchToMechanism },
   });
 
   // 8. goal-preview(computeFrom: 'sorted') 블록에 알고리즘의 computeResult 결과 주입
@@ -207,7 +210,7 @@ export function runFacet(
   // 9. Projector 인스턴스화 — getSpeed 는 mechanism 위임, t 는 현재 locale 로 해석.
   const projector = projectorFactory(views, {
     getSpeed: () => mechanism.getSpeed(),
-    t: makeTranslator(locale),
+    t: tr,
   });
 
   // 10. control-bar wire-up + hooks 정의.

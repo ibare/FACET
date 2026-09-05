@@ -75,7 +75,7 @@ export const lruCacheProjector: ProjectorFactory = (views, runtime) => {
   /** 상시 캡션. 두 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
   const baseCaption = (): string =>
     tr(
-      'lruCache.caption.base',
+      'caption.base',
       'An LRU cache shares one set of nodes between a hash map (key → node) and a doubly linked list (recency order) — every call drags a node to the MRU end, and on overflow the LRU end vanishes from both areas at once.',
     );
   const stage = views.stage as unknown as LruCacheStage | undefined;

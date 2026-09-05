@@ -78,7 +78,7 @@ export const arrayProjector: ProjectorFactory = (views, runtime) => {
   /** 상시 캡션. 두 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
   const baseCaption = (): string =>
     tr(
-      'array.caption.base',
+      'caption.base',
       'An array packs equal-width cells side by side with no gaps and calls each one by a number counted from 0 — know the number and you arrive in one step, but touch the middle and the neighbours shift along.',
     );
   const stage = views.stage as unknown as ArrayStage | undefined;
@@ -110,7 +110,7 @@ export const arrayProjector: ProjectorFactory = (views, runtime) => {
           const duration = 200 / speed;
           await stage.read(idx, { duration });
           stage.setCaption(
-            tr('array.caption.read', 'Jumped straight to cell {index} — one "start + {index}" reaches {value}', {
+            tr('caption.read', 'Jumped straight to cell {index} — one "start + {index}" reaches {value}', {
               index: idx,
               value: p.value ?? '',
             }),
@@ -127,7 +127,7 @@ export const arrayProjector: ProjectorFactory = (views, runtime) => {
             duration,
           });
           stage.setCaption(
-            tr('array.caption.write', 'Replaced the value in cell {index} — the neighbours are untouched', { index: idx }),
+            tr('caption.write', 'Replaced the value in cell {index} — the neighbours are untouched', { index: idx }),
           );
           break;
         }
@@ -151,7 +151,7 @@ export const arrayProjector: ProjectorFactory = (views, runtime) => {
             { duration },
           );
           stage.setCaption(
-            tr('array.caption.insert', 'Slid one in at {index} — the {shifted} cells behind it each moved one place along', {
+            tr('caption.insert', 'Slid one in at {index} — the {shifted} cells behind it each moved one place along', {
               index: idx,
               shifted: p.shifted ?? 0,
             }),
@@ -176,7 +176,7 @@ export const arrayProjector: ProjectorFactory = (views, runtime) => {
             { duration },
           );
           stage.setCaption(
-            tr('array.caption.remove', 'Emptied {index} — the {shifted} cells behind it each pulled one place back', {
+            tr('caption.remove', 'Emptied {index} — the {shifted} cells behind it each pulled one place back', {
               index: idx,
               shifted: p.shifted ?? 0,
             }),
@@ -197,7 +197,7 @@ export const arrayProjector: ProjectorFactory = (views, runtime) => {
             { duration },
           );
           stage.setCaption(
-            tr('array.caption.append', 'Laid it on the end — nothing had to shift'),
+            tr('caption.append', 'Laid it on the end — nothing had to shift'),
           );
           break;
         }
@@ -211,7 +211,7 @@ export const arrayProjector: ProjectorFactory = (views, runtime) => {
           };
           const duration = 800 / speed;
           stage.setCaption(
-            tr('array.caption.resize', 'The cells are full — moving {copied} of them onto a new strip twice the size', {
+            tr('caption.resize', 'The cells are full — moving {copied} of them onto a new strip twice the size', {
               copied: p.copied ?? 0,
             }),
             { duration: 1400 },
@@ -244,7 +244,7 @@ export const arrayProjector: ProjectorFactory = (views, runtime) => {
           const p = (event.payload ?? {}) as { index?: string; op?: string };
           stage.signalOutOfRange();
           stage.setCaption(
-            tr('array.caption.outOfRange', 'That position is out of range ({op} {index}) — nothing happens on the strip', {
+            tr('caption.outOfRange', 'That position is out of range ({op} {index}) — nothing happens on the strip', {
               op: p.op ?? '',
               index: p.index ?? '',
             }),
@@ -256,7 +256,7 @@ export const arrayProjector: ProjectorFactory = (views, runtime) => {
           const p = (event.payload ?? {}) as { op?: string; maxSize?: number };
           stage.signalOutOfRange();
           stage.setCaption(
-            tr('array.caption.limitReached', 'Reached the teaching limit of {maxSize} — no further {op} is possible', {
+            tr('caption.limitReached', 'Reached the teaching limit of {maxSize} — no further {op} is possible', {
               maxSize: p.maxSize ?? 0,
               op: p.op ?? 'append',
             }),
@@ -268,7 +268,7 @@ export const arrayProjector: ProjectorFactory = (views, runtime) => {
         case 'demo-end': {
           stage.setCaption(
             tr(
-              'array.caption.handover',
+              'caption.handover',
               'Your turn — type an index and a value, then press Read, Write, Insert, Remove, Append or Search.',
             ),
             { duration: 2400 },

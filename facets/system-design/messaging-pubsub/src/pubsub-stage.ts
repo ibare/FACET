@@ -124,7 +124,7 @@ type TraceEntry = {
 
 export const pubsubStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
-    const tr = makeTranslator(params.locale);
+    const tr = params.t ?? makeTranslator(params.locale);
     container.textContent = '';
     const colors = getColors(params.theme);
     const pubColors = categorical(PUB_PALETTE_SIZE, PUB_PALETTE_TONE);
@@ -196,7 +196,7 @@ export const pubsubStageView: View = {
       'font-size': '9px',
       'font-family': fonts.body,
     });
-    leftLabel.textContent = tr('messagingPubsub.label.publisherArea', 'publisher side');
+    leftLabel.textContent = tr('label.publisherArea', 'publisher side');
     svg.appendChild(leftLabel);
 
     const rightLabel = document.createElementNS(SVG_NS, 'text');
@@ -208,7 +208,7 @@ export const pubsubStageView: View = {
       'font-size': '9px',
       'font-family': fonts.body,
     });
-    rightLabel.textContent = tr('messagingPubsub.label.subscriberArea', 'subscriber side');
+    rightLabel.textContent = tr('label.subscriberArea', 'subscriber side');
     svg.appendChild(rightLabel);
 
     // === broker 박스 (가운데 1급) ===
@@ -398,7 +398,7 @@ export const pubsubStageView: View = {
         'font-size': '8px',
         'font-family': fonts.body,
       });
-      a.textContent = tr('messagingPubsub.label.time', 'time');
+      a.textContent = tr('label.time', 'time');
       timeArrow.appendChild(a);
       const b = document.createElementNS(SVG_NS, 'text');
       setAttrs(b, {
@@ -440,7 +440,7 @@ export const pubsubStageView: View = {
       'font-family': fonts.body,
       'font-weight': '700',
     });
-    traceTitle.textContent = tr('messagingPubsub.label.traceTitle', 'Call trace');
+    traceTitle.textContent = tr('label.traceTitle', 'Call trace');
     svg.appendChild(traceTitle);
 
     const traceGroup = document.createElementNS(SVG_NS, 'g');
@@ -456,7 +456,7 @@ export const pubsubStageView: View = {
       'font-family': fonts.body,
     });
     refText.textContent =
-      tr('messagingPubsub.label.references', 'See also: Hohpe — Publish-Subscribe Channel · MS Azure Architecture Center · GoF Observer · Aiven Kafka Visualization');
+      tr('label.references', 'See also: Hohpe — Publish-Subscribe Channel · MS Azure Architecture Center · GoF Observer · Aiven Kafka Visualization');
     svg.appendChild(refText);
 
     // === 시각화 안 텍스트 (하단 한 줄 narration) ===
@@ -469,7 +469,7 @@ export const pubsubStageView: View = {
       'font-family': fonts.body,
     });
     narrative.textContent =
-      tr('messagingPubsub.legend.indirection', 'Publishers throw only at a topic and subscribers ask only for a topic — the broker in between hands out the copies, and every arrow breaks once at the broker lifeline and starts again.');
+      tr('legend.indirection', 'Publishers throw only at a topic and subscribers ask only for a topic — the broker in between hands out the copies, and every arrow breaks once at the broker lifeline and starts again.');
     svg.appendChild(narrative);
 
     // === broker 라이프라인 (이벤트, alerts) ===
@@ -851,10 +851,10 @@ export const pubsubStageView: View = {
           'font-size': '9px',
           'font-family': fonts.mono,
         });
-        noDeliver.textContent = tr('messagingPubsub.label.noSubscriber', 'no subscriber');
+        noDeliver.textContent = tr('label.noSubscriber', 'no subscriber');
         motionGroup.appendChild(noDeliver);
         setCaption(
-          tr('messagingPubsub.caption.publishNoSubscriber', '{publisher} → {topic} published — nobody is listening on that topic.', { publisher: String(payload.publisherId), topic: String(payload.topic) }),
+          tr('caption.publishNoSubscriber', '{publisher} → {topic} published — nobody is listening on that topic.', { publisher: String(payload.publisherId), topic: String(payload.topic) }),
           { duration: 2000 },
         );
         return;
@@ -930,7 +930,7 @@ export const pubsubStageView: View = {
       }
       await Promise.all(fanoutPromises);
       setCaption(
-        tr('messagingPubsub.caption.publishFanout', 'One publish → {count} copies → each arriving at its own moment ({topic}).', { count: payload.deliverTo.length, topic: String(payload.topic) }),
+        tr('caption.publishFanout', 'One publish → {count} copies → each arriving at its own moment ({topic}).', { count: payload.deliverTo.length, topic: String(payload.topic) }),
         { duration: 2200 },
       );
     }
@@ -947,7 +947,7 @@ export const pubsubStageView: View = {
       rec.lifeline.setAttribute('opacity', '0');
       await fadeIn(rec.boxEl, 320);
       rec.lifeline.setAttribute('opacity', '1');
-      pushTrace(tr('messagingPubsub.trace.join', 't{row}  + {subscriber} joined the right-hand side', { row: rowCounter, subscriber: String(payload.subscriberId) }));
+      pushTrace(tr('trace.join', 't{row}  + {subscriber} joined the right-hand side', { row: rowCounter, subscriber: String(payload.subscriberId) }));
     }
 
     async function emitSubscribe(
@@ -1006,7 +1006,7 @@ export const pubsubStageView: View = {
       motionGroup.appendChild(label);
       void fadeIn(label, 200);
       setCaption(
-        tr('messagingPubsub.caption.subscribe', '{subscriber} joined {topic} — earlier publishes do not reach it.', { subscriber: String(payload.subscriberId), topic: String(payload.topic) }),
+        tr('caption.subscribe', '{subscriber} joined {topic} — earlier publishes do not reach it.', { subscriber: String(payload.subscriberId), topic: String(payload.topic) }),
         { duration: 2200 },
       );
     }
@@ -1058,18 +1058,18 @@ export const pubsubStageView: View = {
       void fadeIn(label, 200);
       await sleep(SUBSCRIBE_KNOT_MS);
       setCaption(
-        tr('messagingPubsub.caption.unsubscribe', '{subscriber} left {topic} — later publishes will not reach it.', { subscriber: String(payload.subscriberId), topic: String(payload.topic) }),
+        tr('caption.unsubscribe', '{subscriber} left {topic} — later publishes will not reach it.', { subscriber: String(payload.subscriberId), topic: String(payload.topic) }),
         { duration: 2200 },
       );
     }
 
     function signalInvalid(op: string, raw: string): void {
-      setCaption(tr('messagingPubsub.caption.invalidInput', '{op}: that input is not valid — "{raw}"', { op: String(op), raw: String(raw) }), { duration: 2000 });
+      setCaption(tr('caption.invalidInput', '{op}: that input is not valid — "{raw}"', { op: String(op), raw: String(raw) }), { duration: 2000 });
     }
 
     function signalDemoEnd(): void {
       setCaption(
-        tr('messagingPubsub.caption.handover', 'Your turn — type a publisher, topic and subscriber, then press publish, subscribe or unsubscribe.'),
+        tr('caption.handover', 'Your turn — type a publisher, topic and subscriber, then press publish, subscribe or unsubscribe.'),
         { duration: 2800 },
       );
     }

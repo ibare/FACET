@@ -113,9 +113,9 @@ function tiltRatio(n: ShadowNode | null): number {
  * 원본이 소스에 남아야 추출기(pnpm messages:gen)가 번역 대상을 모은다.
  */
 const K = {
-  empty: 'bst.hud.empty',
-  compare: 'bst.hud.compare',
-  done: 'bst.hud.done',
+  empty: 'hud.empty',
+  compare: 'hud.compare',
+  done: 'hud.done',
 } as const;
 
 export const bstProjector: ProjectorFactory = (views, runtime) => {

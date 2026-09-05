@@ -180,7 +180,7 @@ type RelationRec = {
 
 export const tablesStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
-    const tr = makeTranslator(params.locale);
+    const tr = params.t ?? makeTranslator(params.locale);
     container.textContent = '';
     container.style.width = '100%';
     container.style.maxWidth = '720px';
@@ -255,7 +255,7 @@ export const tablesStageView: View = {
       'font-size': '10px',
       'font-family': fonts.body,
     });
-    chipText.textContent = tr('relationalTablesAndKeys.label.pkChipDefault', 'primary key: student no ▼');
+    chipText.textContent = tr('label.pkChipDefault', 'primary key: student no ▼');
     chipGroup.appendChild(chipText);
 
     // ── 정적 그룹들 (z-order: 카드 → 곡선 → 셀 강조 → 텍스트) ──
@@ -332,7 +332,7 @@ export const tablesStageView: View = {
       relations.length = 0;
       pkChoice = {};
       rejectsVisible = true;
-      chipText.textContent = tr('relationalTablesAndKeys.label.pkChipDefault', 'primary key: student no ▼');
+      chipText.textContent = tr('label.pkChipDefault', 'primary key: student no ▼');
     }
 
     function init(payload: {
@@ -602,7 +602,7 @@ export const tablesStageView: View = {
             cell.columnId,
           );
           setCaption(
-            tr('relationalTablesAndKeys.caption.fkPointsTo', 'Foreign key {value} points at {column} {value} in {table}.', {
+            tr('caption.fkPointsTo', 'Foreign key {value} points at {column} {value} in {table}.', {
             value: String(cell.value),
             table: labelOfTable(col.references.tableId),
             column: labelOfColumn(col.references.tableId, col.references.columnId),
@@ -615,7 +615,7 @@ export const tablesStageView: View = {
         cell.bgEl.setAttribute('fill', palette.danger);
         cell.bgEl.setAttribute('opacity', '0.18');
         setCaption(
-          tr('relationalTablesAndKeys.caption.fkDangling', 'There is no row for foreign key {value} to point at.', { value: String(cell.value) }),
+          tr('caption.fkDangling', 'There is no row for foreign key {value} to point at.', { value: String(cell.value) }),
           { duration: 4000 },
         );
         return;
@@ -636,7 +636,7 @@ export const tablesStageView: View = {
             emphasizeRelation(tableId, cell.columnId, fkTbl.tableId, fkTbl.columnId);
           }
           setCaption(
-            tr('relationalTablesAndKeys.caption.referencedBy', '{count} rows in {fkTable} point at this {table}.', {
+            tr('caption.referencedBy', '{count} rows in {fkTable} point at this {table}.', {
             count: fkCells.length,
             table: labelOfTable(tableId),
             fkTable: labelOfTable(fkTbl?.tableId ?? ''),
@@ -646,7 +646,7 @@ export const tablesStageView: View = {
         } else {
           paintHoverHighlight([cell]);
           setCaption(
-            tr('relationalTablesAndKeys.caption.notReferenced', 'No foreign key in another table points at this row yet.'),
+            tr('caption.notReferenced', 'No foreign key in another table points at this row yet.'),
             { duration: 4000 },
           );
         }
@@ -656,7 +656,7 @@ export const tablesStageView: View = {
       if (col.kind === 'alt') {
         paintHoverHighlight([cell]);
         setCaption(
-          tr('relationalTablesAndKeys.caption.altKeySwap', '{alt} was a candidate key too — this time {pk} is the primary key.', {
+          tr('caption.altKeySwap', '{alt} was a candidate key too — this time {pk} is the primary key.', {
             alt: labelOfColumn(tableId, col.id),
             pk: labelOfColumn(tableId, pkChoice[tableId] ?? ''),
           }),
@@ -701,7 +701,7 @@ export const tablesStageView: View = {
       if (!tbl) return;
       const pkColId = pkChoice['member'] ?? '';
       const pkCol = tbl.columnsById.get(pkColId);
-      chipText.textContent = tr('relationalTablesAndKeys.label.pkChip', 'primary key: {column} ▼', { column: String(pkCol?.label ?? pkColId) });
+      chipText.textContent = tr('label.pkChip', 'primary key: {column} ▼', { column: String(pkCol?.label ?? pkColId) });
     }
 
     async function applyPkToggle(payload: {
@@ -777,7 +777,7 @@ export const tablesStageView: View = {
       // 6) 칩 텍스트 갱신.
       updateChipText();
       setCaption(
-        tr('relationalTablesAndKeys.caption.pkSwitched', '{to} was a candidate key too — this time {to} takes over from {from} as the primary key.', {
+        tr('caption.pkSwitched', '{to} was a candidate key too — this time {to} takes over from {from} as the primary key.', {
             from: labelOfColumn(tableId, fromColumn),
             to: labelOfColumn(tableId, toColumn),
           }),
@@ -806,7 +806,7 @@ export const tablesStageView: View = {
     }
 
     function signalInvalid(op: string, raw: string): void {
-      setCaption(tr('relationalTablesAndKeys.caption.invalidInput', 'Invalid input: {op} ({raw})', { op: String(op), raw: String(raw) }), { duration: 1800 });
+      setCaption(tr('caption.invalidInput', 'Invalid input: {op} ({raw})', { op: String(op), raw: String(raw) }), { duration: 1800 });
     }
 
     function signalDemoEnd(): void {
@@ -1522,11 +1522,11 @@ function drawLegend(
   altTone: string,
 ): void {
   const items: Array<{ kind: ColumnKindTok | 'one' | 'many'; label: string }> = [
-    { kind: 'pk', label: tr('relationalTablesAndKeys.legend.pk', '🔑 PK primary key') },
-    { kind: 'alt', label: tr('relationalTablesAndKeys.legend.alt', '🔑 alt alternate key') },
-    { kind: 'fk', label: tr('relationalTablesAndKeys.legend.fk', '⚷ FK foreign key') },
-    { kind: 'one', label: tr('relationalTablesAndKeys.legend.one', '─┤ exactly one') },
-    { kind: 'many', label: tr('relationalTablesAndKeys.legend.many', '─< many') },
+    { kind: 'pk', label: tr('legend.pk', '🔑 PK primary key') },
+    { kind: 'alt', label: tr('legend.alt', '🔑 alt alternate key') },
+    { kind: 'fk', label: tr('legend.fk', '⚷ FK foreign key') },
+    { kind: 'one', label: tr('legend.one', '─┤ exactly one') },
+    { kind: 'many', label: tr('legend.many', '─< many') },
   ];
   const startX = 28;
   const y = LEGEND_Y;
@@ -1555,10 +1555,10 @@ function drawLegend(
       });
       lab.textContent =
         it.kind === 'pk'
-            ? tr('relationalTablesAndKeys.legend.pkShort', 'PK primary key')
+            ? tr('legend.pkShort', 'PK primary key')
             : it.kind === 'alt'
-              ? tr('relationalTablesAndKeys.legend.altShort', 'alt alternate key')
-              : tr('relationalTablesAndKeys.legend.fkShort', 'FK foreign key');
+              ? tr('legend.altShort', 'alt alternate key')
+              : tr('legend.fkShort', 'FK foreign key');
       groupItem.appendChild(lab);
       x += 92;
     } else if (it.kind === 'one') {
@@ -1573,7 +1573,7 @@ function drawLegend(
         'font-size': '10px',
         'font-family': fonts.body,
       });
-      lab.textContent = tr('relationalTablesAndKeys.legend.oneShort', 'exactly one');
+      lab.textContent = tr('legend.oneShort', 'exactly one');
       groupItem.appendChild(lab);
       x += 100;
     } else {
@@ -1588,7 +1588,7 @@ function drawLegend(
         'font-size': '10px',
         'font-family': fonts.body,
       });
-      lab.textContent = tr('relationalTablesAndKeys.legend.manyShort', 'many');
+      lab.textContent = tr('legend.manyShort', 'many');
       groupItem.appendChild(lab);
       x += 70;
     }
@@ -1605,6 +1605,6 @@ function drawLegend(
     'font-family': fonts.body,
   });
   refs.textContent =
-    tr('relationalTablesAndKeys.label.references', "See also: Wikipedia · Crow's Foot · dbdiagram.io");
+    tr('label.references', "See also: Wikipedia · Crow's Foot · dbdiagram.io");
   g.appendChild(refs);
 }

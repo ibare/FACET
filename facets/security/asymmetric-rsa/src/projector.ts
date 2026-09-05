@@ -63,7 +63,7 @@ export const asymmetricRsaProjector: ProjectorFactory = (views, runtime) => {
   /** 상시 캡션. 여러 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
   const baseCaption = (): string =>
     tr(
-      'asymmetricRsa.caption.base',
+      'caption.base',
       'RSA locks and unlocks a message with a pair of keys born from two large primes. The public padlock anyone holds can only lock, and only the private key its owner keeps can open it.',
     );
   const stage = views.stage as unknown as RsaStage | undefined;

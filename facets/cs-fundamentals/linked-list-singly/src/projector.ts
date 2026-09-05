@@ -52,7 +52,7 @@ export const linkedListProjector: ProjectorFactory = (views, runtime) => {
   /** 상시 캡션. 두 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
   const baseCaption = (): string =>
     tr(
-      'linkedListSingly.caption.base',
+      'caption.base',
       'In a linked list every node holds a single finger pointing only at its own next — inserting or removing is not moving cards around but cutting and retying two or three fingers.',
     );
   const stage = views.stage as unknown as LinkedListStage | undefined;
@@ -104,7 +104,7 @@ export const linkedListProjector: ProjectorFactory = (views, runtime) => {
 
         case 'search-prepare': {
           stage.searchPrepare();
-          stage.setCaption(tr('linkedListSingly.caption.searchStart', 'Starting at the head — following the fingers one step at a time.'), { duration: 1400 });
+          stage.setCaption(tr('caption.searchStart', 'Starting at the head — following the fingers one step at a time.'), { duration: 1400 });
           break;
         }
 
@@ -137,10 +137,10 @@ export const linkedListProjector: ProjectorFactory = (views, runtime) => {
           const p = (event.payload ?? {}) as { index?: string; op?: string };
           stage.signalOutOfRange();
           if (p.op === 'insert-limit') {
-            stage.setCaption(tr('linkedListSingly.caption.insertLimit', 'Reached the teaching limit — no more cards can be threaded in.'), { duration: 1800 });
+            stage.setCaption(tr('caption.insertLimit', 'Reached the teaching limit — no more cards can be threaded in.'), { duration: 1800 });
           } else {
             stage.setCaption(
-              tr('linkedListSingly.caption.unreachable', 'That position cannot be reached ({op} {index}).', {
+              tr('caption.unreachable', 'That position cannot be reached ({op} {index}).', {
                 op: p.op ?? '',
                 index: p.index ?? '',
               }),
@@ -152,14 +152,14 @@ export const linkedListProjector: ProjectorFactory = (views, runtime) => {
 
         case 'empty-list': {
           stage.signalEmpty();
-          stage.setCaption(tr('linkedListSingly.caption.emptyList', 'The list is empty.'), { duration: 1600 });
+          stage.setCaption(tr('caption.emptyList', 'The list is empty.'), { duration: 1600 });
           break;
         }
 
         case 'demo-end': {
           stage.setCaption(
             tr(
-              'linkedListSingly.caption.handover',
+              'caption.handover',
               'Your turn — type an index and a value, then press Insert, Remove or Search.',
             ),
             { duration: 2400 },
