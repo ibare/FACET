@@ -22,7 +22,24 @@
  */
 
 import type { FacetConceptSource } from '../concept-types.js';
+import { arrayConcept } from './array.js';
+import { bfsConcept } from './bfs.js';
+import { bstConcept } from './bst.js';
+import { bubbleSortConcept } from './bubble-sort.js';
+import { hashTableChainingConcept } from './hash-table-chaining.js';
+import { linkedListSinglyConcept } from './linked-list-singly.js';
+import { lruCacheConcept } from './lru-cache.js';
 import { queueFifoConcept } from './queue.js';
 import { stackConcept } from './stack.js';
 
-export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [queueFifoConcept, stackConcept];
+export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
+  queueFifoConcept,
+  stackConcept,
+  bfsConcept,
+  bstConcept,
+  bubbleSortConcept,
+  arrayConcept,
+  linkedListSinglyConcept,
+  hashTableChainingConcept,
+  lruCacheConcept,
+];
