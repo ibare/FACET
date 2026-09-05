@@ -1,0 +1,39 @@
+{
+  "name": "@ffacet/authoring",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "facet 개념(concept) authoring 메타데이터. 호스트 LLM 파이프라인이 글에 넣을 시각화를 고르고(definition 임베딩), 고른 시각화의 내용을 writer 에게 전달(briefing)하는 데 쓰는 단일 출처.",
+  "license": "MIT",
+  "author": "Mintae Kim <ibare77@gmail.com>",
+  "homepage": "https://github.com/ibare/FACET/tree/main/packages/authoring#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ibare/FACET.git",
+    "directory": "packages/authoring"
+  },
+  "bugs": {
+    "url": "https://github.com/ibare/FACET/issues"
+  },
+  "keywords": [
+    "facet",
+    "authoring",
+    "concept",
+    "embedding",
+    "llm"
+  ],
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}
