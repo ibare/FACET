@@ -27,13 +27,12 @@ export type ProjectorRuntime = {
   /**
    * 메시지 카탈로그 조회 (`i18n.ts`).
    *
-   * Projector 가 캡션·상태 메시지처럼 **자기가 문안을 정하는** 텍스트를 View 에
-   * 넘길 때 쓴다. View 자신의 고정 라벨은 View 가 `params.locale` 로 만든
-   * translator 를 쓰지만 (S-view), Projector 가 사건마다 조립하는 문장은 View 가
-   * 알 수 없으므로 여기서 해석해 완성된 문자열로 넘긴다.
+   * Projector 가 캡션·상태 메시지를 View 에 넘길 때 쓴다. 러너가 만든 조회기를
+   * 그대로 받으므로 `FacetJson.messages` 오버라이드가 이미 얹혀 있다 — View 가
+   * 쓰는 `ViewMountParams.t` 와 같은 인스턴스라, 한 facet 안에서 문안 출처가
+   * 갈리지 않는다 (S-runtime).
    *
-   * 이 훅이 없으면 Projector 는 locale 을 알 방법이 없어 문안을 한 언어로
-   * 하드코딩하게 된다.
+   * 문안 자체는 `FacetJson.messages` 에 있고 코드에는 키와 en 원본만 남는다 (C10).
    */
   t: Translate;
 };

@@ -83,9 +83,14 @@ type Labels = {
 const K = {
   totalEnqueued: 'view.conveyorQueue.totalEnqueued',
   size: 'view.conveyorQueue.size',
+  sizeBounded: 'view.conveyorQueue.sizeBounded',
   empty: 'view.conveyorQueue.empty',
 } as const;
 
+/**
+ * 라벨과 값을 잇는 자리는 완성 문장 키로 둔다. `${label}: ${n}` 처럼 이어붙이면
+ * 번역문에서 어순을 바꿀 수 없다 (C10 MUST — {name} 플레이스홀더 + vars).
+ */
 function pickLabels(tr: Translate): Labels {
   return {
     totalEnqueued: tr(K.totalEnqueued, 'Total in'),
@@ -291,7 +296,8 @@ export const conveyorQueueView: View = {
     container.textContent = '';
     const colors = getColors(params.theme);
     const cfg = (params.config ?? {}) as ConveyorQueueConfig;
-    const labels = pickLabels(params.t ?? makeTranslator(params.locale));
+    const tr = params.t ?? makeTranslator(params.locale);
+    const labels = pickLabels(tr);
     const userLabel = resolveLocale(cfg.label, params.locale);
 
     const features = new Set<ConveyorQueueFeature>(
@@ -653,11 +659,11 @@ export const conveyorQueueView: View = {
     }
 
     function renderCounters(): void {
-      totalEl.textContent = `${labels.totalEnqueued}: ${totalEnqueued}`;
+      totalEl.textContent = tr(K.totalEnqueued, 'Total in: {n}', { n: totalEnqueued });
       if (hasBounded && currentCapacity !== null) {
-        sizeEl.textContent = `${labels.size}: ${blocks.length} / ${currentCapacity}`;
+        sizeEl.textContent = tr(K.sizeBounded, 'Size: {n} / {cap}', { n: blocks.length, cap: currentCapacity });
       } else {
-        sizeEl.textContent = `${labels.size}: ${blocks.length}`;
+        sizeEl.textContent = tr(K.size, 'Size: {n}', { n: blocks.length });
       }
     }
 
@@ -885,9 +891,9 @@ export const conveyorQueueView: View = {
       renderCounters();
       if (n !== blocks.length) {
         if (hasBounded && currentCapacity !== null) {
-          sizeEl.textContent = `${labels.size}: ${n} / ${currentCapacity}`;
+          sizeEl.textContent = tr(K.sizeBounded, 'Size: {n} / {cap}', { n, cap: currentCapacity });
         } else {
-          sizeEl.textContent = `${labels.size}: ${n}`;
+          sizeEl.textContent = tr(K.size, 'Size: {n}', { n });
         }
       }
     }

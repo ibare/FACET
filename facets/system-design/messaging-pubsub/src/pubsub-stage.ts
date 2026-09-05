@@ -1002,7 +1002,7 @@ export const pubsubStageView: View = {
         'font-family': fonts.mono,
         'font-weight': '700',
       });
-      label.textContent = `subscribe ${payload.topic}`;
+      label.textContent = tr('label.subscribeOp', 'subscribe {topic}', { topic: String(payload.topic) });
       motionGroup.appendChild(label);
       void fadeIn(label, 200);
       setCaption(
@@ -1053,7 +1053,7 @@ export const pubsubStageView: View = {
         'font-family': fonts.mono,
         'font-weight': '700',
       });
-      label.textContent = `unsubscribe ${payload.topic}`;
+      label.textContent = tr('label.unsubscribeOp', 'unsubscribe {topic}', { topic: String(payload.topic) });
       motionGroup.appendChild(label);
       void fadeIn(label, 200);
       await sleep(SUBSCRIBE_KNOT_MS);

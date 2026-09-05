@@ -2,8 +2,8 @@
 name: S-runtime
 description: runner / mechanism / event-bus / registry / layout-builder / context / projector 의 내부 규율. Mechanism 추상화, supportedControls 호환성 검증, dispatch 채널 직교 분리, Mode 전이, silent 이벤트, cancelled flag.
 type: specific
-version: 2
-last_verified: 2026-04-29
+version: 3
+last_verified: 2026-09-05
 ---
 
 # S-runtime. Runtime 내부 규율
@@ -14,6 +14,11 @@ last_verified: 2026-04-29
 - `packages/core/src/types/**/*.ts`
 
 ## MUST
+
+- 러너는 `makeTranslator(locale, json.messages)` 로 조회기를 **하나만** 만들어 View
+  (`ViewMountParams.t`) 와 Projector (`ProjectorRuntime.t`) 양쪽에 같은 것을 넘긴다.
+  둘이 각자 만들면 저작자 오버라이드 적용 여부가 갈려 한 화면에서 문안 출처가
+  섞인다 (C10).
 
 - `runFacet` 이 `FacetJson.algorithm` / `projector` / `blocks[*].ir` 를 조회할 때 **미등록이면 한국어 메시지로 throw** 한다 (`알고리즘 모듈 미등록: <name>`).
 - `cancelled` flag 는 `getter` 로 동적 반영 (`mechanism.ts` 의 `CoroutineMechanism.createContext`). 직접 속성 대입 금지.

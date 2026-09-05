@@ -2,8 +2,8 @@
 name: S-facet
 description: facets/**/*/ 내부의 6파일 (+ 선택적 stage view 1파일) 구성과 각 파일의 책임. 프로젝트 facet 전체에서 유지되어 온 가장 강한 구조 패턴.
 type: specific
-version: 3
-last_verified: 2026-04-30
+version: 5
+last_verified: 2026-09-05
 ---
 
 # S-facet. Facet 패키지 구조
@@ -30,7 +30,7 @@ last_verified: 2026-04-30
 
 `*-stage.ts` 는 빌트인 view (`packages/core/src/views/*` — bars / array-cells / linked-list / graph-canvas / text-display 등) 로 표현이 불가능한 facet 고유 시각화를 단일 SVG 캔버스 한 폭에 직접 그리는 view 모듈이다. projector 가 호출할 메서드 인터페이스 (`init`, `signalStepBegin` / `signalStepEnd` / `signalConverged` 등) 를 노출하고, 디자인 토큰만으로 색을 결정하며 (S-view 결정 트리 준수), 좌표계·레이아웃·캡션 영역·참조 칩 배치를 담당한다. projector 안에 SVG 렌더 코드를 1000+ LOC 두는 것은 책임 분리 위반이라 별도 파일로 분기한다.
 
-현재 stage view 를 둔 facet: `caching-cdn` / `relational-tables-and-keys` / `conditional-statement` / `asymmetric-rsa` / `tokenization` / `linear-regression`.
+현재 stage view 를 둔 facet (15종): `array` / `asymmetric-rsa` / `caching-cdn` / `conditional-statement` / `context-switching` / `hash-table-chaining` / `ip-routing` / `linear-regression` / `linked-list-singly` / `lru-cache` / `matrix-transform-2d` / `messaging-pubsub` / `relational-tables-and-keys` / `stack` / `tokenization`.
 
 ## MUST
 
@@ -44,6 +44,7 @@ last_verified: 2026-04-30
   6. `registerDescription(xxxFacet.id, xxxDescription)`
 - `algorithm.ts` 의 `TData` 제네릭 타입 (예: `BubbleSortData`) 은 `{ type: string; ... }` 형태이며 `index.ts` 와 facet 외부로 export 한다 (테스트가 사용).
 - `facet.ts` 는 로직을 담지 않는다 — `FacetJson` 객체 리터럴만.
+- **이 facet 의 projector / stage view 가 그리는 문안은 `facet.ts` 의 `messages` 에 선언한다.** 키는 네임스페이스 없이 `'caption.push'` / `'label.top'` 처럼 짧게 쓴다 (facet 안이라 충돌하지 않는다). 프레임워크 빌트인 view 의 기본 문구를 덮어쓸 때만 그쪽 키를 그대로 쓴다 (`'view.controlBar.play'`). 자세한 규약은 C10.
 - `description.ts` 에 등장하는 `{facet:<id>}` 토큰은 같은 패키지 `facet.ts::id` 와 일치해야 한다 (C4 참조).
 - `facet.ts` 의 control-bar 블록 `controls[]` 항목은 `{ widget, action, label? }` 객체 형식만 사용한다. `widget` 은 control-bar 가 해석할 위젯 어휘 (`'button'` / `'speed-slider'` / `'value-input'` / `'segmented-slider'`), `action` 은 mechanism `supportedControls` 와 매칭되는 어휘 (`'play' | 'step' | 'pause' | 'reset' | 'speed'`) 또는 facet 전용 onAction 어휘. 문자열 리터럴 / 구식 `{ type: 'speed-slider' }` 형태 금지.
 - **facet 영역 내 색 hex/rgba 리터럴 0건** (algorithm / projector / facet / description / irs / index 모두). Projector 는 view 메서드 호출만 하고 색은 view 가 토큰에서 받는다. 색 결정 트리는 S-view "색 토큰 결정 트리" 절을 따른다.

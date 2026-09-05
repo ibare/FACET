@@ -69,7 +69,8 @@ export const codeView: View = {
     const HL_BG = params.theme === 'dark' ? HL_BG_DARK : HL_BG_LIGHT;
     const SHIKI_THEME = params.theme === 'dark' ? 'github-dark' : 'github-light';
     const locale = params.locale;
-    const labels = codeViewLabels(params.t ?? makeTranslator(locale));
+    const tr = params.t ?? makeTranslator(locale);
+    const labels = codeViewLabels(tr);
 
     const cfg = params.config as {
       label?: string;
@@ -325,7 +326,9 @@ export const codeView: View = {
         // 현재 활성 phase 가 있으면 즉시 반영
         if (currentPhase) applyHighlight(panel, currentPhase);
       } catch (err) {
-        panel.codeMount.textContent = `${labels.errorPrefix}: ${(err as Error).message}`;
+        panel.codeMount.textContent = tr('view.codeView.errorPrefix', 'Error: {message}', {
+          message: (err as Error).message,
+        });
       }
     }
 

@@ -725,7 +725,7 @@ export const ipRoutingStageView: View = {
         const isAdopted = r.rowIdx === adoptedRowIdx;
         const fillColor = isAdopted ? ADOPTED_COLOR : r.matched ? cat[5]! : colors.textMuted;
         g.gaugeFill.setAttribute('fill', fillColor);
-        g.gaugeLabel.textContent = `${r.matchLen} bit`;
+        g.gaugeLabel.textContent = tr('label.matchBits', '{n} bit', { n: r.matchLen });
         return new Promise<void>((resolve) => {
           const start = performance.now();
           function tick(now: number): void {
@@ -950,7 +950,7 @@ export const ipRoutingStageView: View = {
     }
 
     function renderPacketTtl(): void {
-      packet.ttlValueText.textContent = `TTL: ${packet.ttl} / ${packet.ttlMax}`;
+      packet.ttlValueText.textContent = tr('label.ttl', 'TTL: {n} / {max}', { n: packet.ttl, max: packet.ttlMax });
       const ratio = packet.ttlMax > 0 ? Math.max(0, packet.ttl) / packet.ttlMax : 0;
       packet.ttlGaugeFill.setAttribute('width', String((CARD_W - 16) * ratio));
       const isWarn = packet.ttl <= packet.ttlWarn;
@@ -959,8 +959,8 @@ export const ipRoutingStageView: View = {
     }
 
     function setPacketCard(src: string, dst: string, ttl: number, ttlMax: number): void {
-      packet.srcText.textContent = `src: ${src}`;
-      packet.dstText.textContent = `dst: ${dst}`;
+      packet.srcText.textContent = tr('label.src', 'src: {v}', { v: src });
+      packet.dstText.textContent = tr('label.dst', 'dst: {v}', { v: dst });
       packet.ttl = ttl;
       packet.ttlMax = ttlMax;
       packet.crossX.setAttribute('opacity', '0');

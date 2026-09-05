@@ -23,18 +23,14 @@
 
 import type { View, ViewInstance, ViewMountParams } from './types.js';
 import { getColors, shiftLightness, fonts, radii, space } from './design-tokens.js';
+import { makeTranslator, type Translate } from '../runtime/i18n.js';
 import { createIsoBar, type IsoBarHandle } from './iso-bar.js';
 
-const SORTED_BOUNDARY_LABEL_BY_LOCALE: Record<string, string> = {
-  en: 'SORTED',
-  ko: '정렬됨',
-};
+/** View 자체 고정 라벨. 키 + en 원본 (i18n.ts). */
+const K = { sortedBoundary: 'view.barChart.sortedBoundary' } as const;
 
-function pickSortedLabel(locale: string | undefined): string {
-  if (locale && SORTED_BOUNDARY_LABEL_BY_LOCALE[locale]) {
-    return SORTED_BOUNDARY_LABEL_BY_LOCALE[locale];
-  }
-  return SORTED_BOUNDARY_LABEL_BY_LOCALE.en;
+function pickSortedLabel(tr: Translate): string {
+  return tr(K.sortedBoundary, 'SORTED');
 }
 
 export type BarItemState =
@@ -56,7 +52,7 @@ export const barChartView: View = {
     const colors = getColors(params.theme);
     const cfg = params.config as { height?: number; features?: BarChartFeature[] };
     const initialHeight = cfg.height ?? 200;
-    const sortedLabelText = pickSortedLabel(params.locale);
+    const sortedLabelText = pickSortedLabel(params.t ?? makeTranslator(params.locale));
     /** 동적 viewBox 높이. ResizeObserver 가 실제 SVG 픽셀 높이로 업데이트한다. */
     let height = initialHeight;
     const features = new Set<BarChartFeature>(cfg.features ?? []);

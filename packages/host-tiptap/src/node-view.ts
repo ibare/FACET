@@ -12,17 +12,19 @@ import {
   loadFacet,
   runFacet,
   type FacetRunHandle,
+  makeTranslator,
 } from '@ffacet/core/runtime';
 
-const STATUS_BY_LOCALE: Record<string, { loading: string; errorPrefix: string }> = {
-  en: { loading: '[facet] loading…', errorPrefix: '[facet]' },
-  ko: { loading: '[facet] 로딩…', errorPrefix: '[facet]' },
-};
-
-function pickStatus(locale: string | undefined) {
-  if (locale && STATUS_BY_LOCALE[locale]) return STATUS_BY_LOCALE[locale];
-  return STATUS_BY_LOCALE.en;
-}
+/**
+ * 호스트 어댑터가 facet 마운트 전후에 띄우는 상태 문구.
+ *
+ * facet 이 아직 없거나 실패한 상황이라 FacetJson.messages 를 쓸 수 없다. 프레임워크
+ * 문구로 취급해 메시지 카탈로그에서 조회한다 (C10 두 층 중 프레임워크 쪽).
+ */
+const K = {
+  loading: 'view.host.loading',
+  error: 'view.host.error',
+} as const;
 
 function renderError(mount: HTMLElement, message: string, locale?: string): void {
   mount.textContent = '';
@@ -34,7 +36,8 @@ function renderError(mount: HTMLElement, message: string, locale?: string): void
   box.style.background = '#FAECE7';
   box.style.color = '#A8331C';
   box.style.fontSize = '12px';
-  box.textContent = `${pickStatus(locale).errorPrefix} ${message}`;
+  const tr = makeTranslator(locale);
+  box.textContent = tr(K.error, '[facet] {message}', { message });
   mount.appendChild(box);
 }
 
@@ -68,7 +71,8 @@ export function createFacetNodeView(): NodeViewRenderer {
       box.style.padding = '2px 8px';
       box.style.fontSize = '12px';
       box.style.color = '#888';
-      box.textContent = pickStatus(opts.locale).loading;
+      const tr = makeTranslator(opts.locale);
+      box.textContent = tr(K.loading, '[facet] loading…');
       mount.appendChild(box);
     };
 

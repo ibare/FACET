@@ -2,8 +2,8 @@
 name: S-view
 description: View Catalog 의 인터페이스 계약, design-tokens 경유 색상, theme/locale 파라미터 존중.
 type: specific
-version: 3
-last_verified: 2026-04-29
+version: 4
+last_verified: 2026-09-05
 ---
 
 # S-view. View Catalog 규율
@@ -19,7 +19,8 @@ last_verified: 2026-04-29
 - `ViewInstance.destroy()` 는 **모든** 부착 DOM 노드와 이벤트 리스너를 정리한다. 리소스 누수 금지.
 - 색상은 `getColors(theme)` 로 현재 팔레트를 얻어서 사용한다. `design-tokens.ts` 의 `colors` / `lightColors` / `darkColors` 를 직접 참조해도 되지만, **리터럴 hex / rgb 하드코딩 금지**.
 - 폰트 크기 / 여백은 `fontSizes` / `space` / `radii` 토큰을 경유한다.
-- `params.locale` 이 있으면 View 내부 라벨을 해당 로캘로 해석한다. `packages/core/src/types/locale.ts` 의 `resolveLocale` 사용.
+- **화면에 그리는 문자열은 `params.t` 로 조회한다** (`t(key, 'en 원본', vars?)`). 러너가 `FacetJson.messages` 오버라이드를 얹은 조회기를 주입하므로, View 가 스스로 `makeTranslator` 를 부르면 저작자 문안을 보지 못한다. 러너 밖 mount 를 위한 fallback 은 `params.t ?? makeTranslator(params.locale)` 형태로만 둔다. 자세한 규약은 C10.
+- `FacetJson` 이 `LocaleStr` 로 주는 값 (`cfg.label`, `placeholder` 등) 은 `resolveLocale(value, params.locale)` 로 해석한다. 저작자가 준 값이 있으면 프레임워크 기본 라벨보다 우선한다.
 - `params.theme` 이 'dark' 일 때는 반드시 어두운 팔레트로 렌더한다. `light` 를 기본값으로 가정해도, theme 이 전달되면 즉시 반영.
 - View 메서드 (Projector 가 호출하는 `setData` / `setItemState` 등) 는 동기로 즉시 반영하되, **애니메이션이 있는 메서드는 `Promise<void>` 반환** (runner 가 `await` 가능하도록).
 - `params.dispatch` 가 주입되면 View 의 사용자 입력은 이 콜백으로만 발신한다. 페이로드는 `{ type: string; payload?: unknown }` 자유 구조이며, 해당 mechanism 이 정의한 입력 어휘에 맞춰야 한다. 미주입 시 View 는 정적 표시 모드로 동작 (사용자 입력 없는 경로).

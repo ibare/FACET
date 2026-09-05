@@ -1,9 +1,10 @@
 {
+  "view.barChart.sortedBoundary": "SORTED",
   "view.codeView.addLanguage": "+ Add language",
   "view.codeView.atMax": "Max {n}",
   "view.codeView.emptyNoIR": "No IR specified.",
   "view.codeView.emptyWithIR": "Add a language to view code.",
-  "view.codeView.errorPrefix": "Error",
+  "view.codeView.errorPrefix": "Error: {message}",
   "view.codeView.loading": "Loading…",
   "view.codeView.noMoreLanguages": "No additional languages available.",
   "view.controlBar.pause": "⏸ Pause",
@@ -12,9 +13,13 @@
   "view.controlBar.speed": "Speed",
   "view.controlBar.step": "⏭ Step",
   "view.conveyorQueue.empty": "(empty)",
-  "view.conveyorQueue.size": "Size",
-  "view.conveyorQueue.totalEnqueued": "Total in",
+  "view.conveyorQueue.size": "Size: {n}",
+  "view.conveyorQueue.sizeBounded": "Size: {n} / {cap}",
+  "view.conveyorQueue.totalEnqueued": "Total in: {n}",
+  "view.host.error": "[facet] {message}",
+  "view.host.loading": "[facet] loading…",
   "view.passTracker.pass": "Pass",
   "view.passTracker.sortedTail": "Sorted Tail",
-  "view.passTracker.swapsPerPass": "Swaps per Pass"
+  "view.passTracker.swapsPerPass": "Swaps per Pass",
+  "view.snapshotStrip.defaultLabel": "Pass Snapshots"
 }

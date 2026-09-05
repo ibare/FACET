@@ -13,7 +13,7 @@
 # 에만 집중한다. (예: 식별자 문법 일원화, phase 어휘 동기화, 이벤트 어휘,
 # 공개 API 경계, 레지스트리 경유 원칙, 4-layer 방향성)
 
-version: 1
+version: 2
 project: FACET
 
 # Baden MCP 연동: 규칙 ID (id:) 는 baden_rule 호출의 ruleId 에 그대로 사용한다.
@@ -151,6 +151,28 @@ concerns:
         - "as unknown as"
         - "as Record<"
         - "as any"
+
+  - id: C10
+    file: concerns/C10-message-resources.md
+    description: 화면 문자열은 코드에 하드코딩하지 않는다. facet 고유 문안은 FacetJson.messages, 프레임워크 공통은 메시지 카탈로그. 조회는 주입된 translator 경유
+    triggers:
+      paths:
+        - "facets/**/*.ts"
+        - "packages/core/src/views/**"
+        - "packages/view-*/**"
+        - "packages/host-tiptap/**"
+        - "packages/core/src/runtime/i18n.ts"
+        - "messages/*.json"
+      patterns:
+        - "tr("
+        - "Translate"
+        - "setCaption"
+        - "textContent"
+        - "makeTranslator"
+        - "registerMessages"
+        - "params.t"
+        - "runtime?.t"
+        - "messages:"
 
 # ─────────────────────────────────────
 # Specifics (Tier 3 — Domain-specific)

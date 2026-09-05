@@ -1,34 +1,40 @@
 /**
- * 메시지 카탈로그 — 화면 문자열의 다국어 해석.
+ * 메시지 카탈로그 — 프레임워크 공통 문구의 다국어 해석.
  *
- * ── 왜 LocaleStr 인라인이 아닌가
+ * ── 무엇이 여기 있고 무엇이 없는가
  *
- * `LocaleStr` (`{ en, ko }`) 은 facet.ts 의 title 처럼 **저작자가 소스에 직접
- * 쓰는 소수의 값** 에는 적합하다. 그러나 view / projector 가 그리는 화면 문자열은
- * 수백 건이고, 번역은 호스트의 번역 파이프라인이 생성한다. 인라인이면 번역이
- * 소스 수정으로만 들어와 갱신마다 FACET 재발행이 필요하다.
+ * facet 이 그리는 문안은 여기 없다. 그것은 `FacetJson.messages` 에 저작자가
+ * 선언한다 (C10). `FacetJson` 은 장차 에디터로 불특정 다수가 만드는 선언이므로
+ * 시각화가 무엇이라 말하는지도 저작 결정이며, 문안이 코드에 있으면 — 코드 안
+ * 카탈로그라 해도 — 저작자가 손댈 수 없다.
  *
- * 그래서 소스에는 **en 원본만** 두고 (fallback 겸 번역 추출 원본), 나머지 언어는
- * 런타임에 번들로 주입한다. 호스트 언어 팩의 translationTargets 가 en 을 제외한
- * 목록인 것과 같은 구조다 — en 이 원본이고 나머지는 파생이다.
+ * 이 카탈로그가 담는 것은 프레임워크가 제공하는 빌트인 view 의 기본 문구뿐이다
+ * (control-bar 의 재생 버튼, code-view 의 언어 추가 등). 저작자가 매번 쓸 것이
+ * 아니므로 프레임워크가 10개 언어를 책임지고, 필요하면 저작자가
+ * `FacetJson.messages` 에 같은 키를 써서 덮는다.
+ *
+ * ── 조회 순서
+ *
+ *   1. FacetJson.messages[key]   저작자가 정한 문안       ← 언제나 이김
+ *   2. locale 번들[key]           registerMessages 로 주입
+ *   3. 코드의 en 원본             호출부 fallback
+ *
+ * 셋째가 반드시 있으므로 번역이 하나도 등록되지 않고 저작자가 아무것도 쓰지
+ * 않아도 화면은 en 으로 온전히 동작한다.
  *
  * ── 키 규약
  *
- *   <namespace>.<area>.<name>     모두 lowerCamelCase 세그먼트
- *
- *   facet 고유    stack.caption.push      / stack.label.top
- *   빌트인 view   view.controlBar.play    / view.codeView.addLanguage
- *
- * namespace 는 facet id 의 `facet:` 접두사를 뗀 형태, 또는 빌트인 view 를 뜻하는
- * `view`. 키가 겹치면 나중 등록이 이긴다.
+ *   view.<viewName>.<name>    프레임워크 빌트인 view. 여기서 다루는 것.
+ *   caption.push / label.top  facet 고유. FacetJson.messages 에만 있다.
  *
  * ── 사용
  *
- *   const t = makeTranslator(params.locale);      // View — params.locale 사용
- *   t('stack.label.top', 'Top')
+ * View 와 Projector 는 러너가 주입한 조회기를 쓴다. 스스로 makeTranslator 를
+ * 부르면 저작자 오버라이드를 보지 못한다 (C10 MUST NOT).
  *
- *   runtime.t('stack.caption.push', 'Placed a new box on top — {value}', { value })
- *                                                 // Projector — runner 가 주입
+ *   const tr = params.t ?? makeTranslator(params.locale);   // View
+ *   const tr = runtime?.t ?? makeTranslator();              // Projector
+ *   tr('view.controlBar.play', '▶ Play')
  */
 
 import { resolveLocale, type LocaleStr } from '../types/locale.js';

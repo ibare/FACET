@@ -200,7 +200,7 @@ export async function ipRouting(ctxBase: FacetContext<IpRoutingData>): Promise<v
   await ctx.emit({
     type: 'caption',
     payload: {
-      text: '한 패킷이 라우터 사슬을 hop 단위로 흐른다 — 매 라우터에서 자기 표만 보고 next-hop 한 걸음을 정한다.',
+      textKey: 'caption.intro',
       kind: 'concept',
     },
   });
@@ -292,7 +292,7 @@ export async function ipRouting(ctxBase: FacetContext<IpRoutingData>): Promise<v
     if (lpm.adoptedRowIdx < 0) {
       await ctx.emit({
         type: 'caption',
-        payload: { text: '일치하는 행이 없다 — 패킷이 폐기된다.', kind: 'event' },
+        payload: { textKey: 'caption.noRoute', kind: 'event' },
       });
       await ctx.emit({
         type: 'packet-dropped',
@@ -348,7 +348,7 @@ export async function ipRouting(ctxBase: FacetContext<IpRoutingData>): Promise<v
     if (ttlAfter <= 0) {
       await ctx.emit({
         type: 'caption',
-        payload: { text: 'TTL 이 0 이다 — 패킷이 폐기되었다.', kind: 'event' },
+        payload: { textKey: 'caption.ttlExpired', kind: 'event' },
       });
       await ctx.emit({
         type: 'packet-dropped',
@@ -487,7 +487,7 @@ export async function ipRouting(ctxBase: FacetContext<IpRoutingData>): Promise<v
     await ctx.emit({
       type: 'caption',
       payload: {
-        text: '자동 시연 끝 — 발신 / 한 hop / 자동 시연 / 초기 TTL 로 추가 운동을 발화시킬 수 있다.',
+        textKey: 'caption.demoEnd',
         kind: 'concept',
       },
     });
@@ -528,7 +528,7 @@ export async function ipRouting(ctxBase: FacetContext<IpRoutingData>): Promise<v
     if (ev.type === 'step-hop') {
       // 한 hop 만 — 가장 단순한 구현으로, 대표 시나리오 한 패킷 발신.
       // 알고리즘 입장에서는 한 패킷 운동이 한 호흡이며, 사용자는 원하는 만큼 step 을 누른다.
-      await runPacket(hosts[hosts.length - 1].ip, defaultTtl, '한 hop 시연');
+      await runPacket(hosts[hosts.length - 1].ip, defaultTtl, 'oneHopDemo');
       continue;
     }
 

@@ -59,6 +59,8 @@ export const messagingPubsubFacet: FacetJson = {
     ],
   },
   messages: {
+    'label.subscribeOp': { en: 'subscribe {topic}', ko: 'subscribe {topic}' },
+    'label.unsubscribeOp': { en: 'unsubscribe {topic}', ko: 'unsubscribe {topic}' },
     'caption.base': { en: 'Pub/Sub lets publishers and subscribers know only the broker\'s topic label instead of each other\'s identity — one publish fans out to every subscriber as copies, making many-to-many asynchronous messaging work.', ko: 'Pub/Sub 은 발행자와 구독자가 서로의 신원 대신 broker 의 토픽 라벨만 매개로 — 한 발행이 모든 구독자에게 사본으로 펼쳐지는 다대다 비동기 메시징을 성립시킨다.' },
     'caption.handover': { en: 'Your turn — type a publisher, topic and subscriber, then press publish, subscribe or unsubscribe.', ko: '이제 직접 — 발행자·토픽·구독자를 입력하고 publish / subscribe / unsubscribe 를 눌러 보세요.' },
     'caption.invalidInput': { en: '{op}: that input is not valid — "{raw}"', ko: '{op}: 입력이 올바르지 않다 — "{raw}"' },

@@ -408,7 +408,10 @@ export const arrayStageView: View = {
         return;
       }
       const filled = primary.cells.filter((c) => c.filled).length;
-      sizeCapLabel.textContent = `size ${filled} / cap ${primary.layout.capacity}`;
+      sizeCapLabel.textContent = tr('label.sizeCap', 'size {n} / cap {cap}', {
+        n: filled,
+        cap: primary.layout.capacity,
+      });
     }
 
     function updateTallyFill(): void {

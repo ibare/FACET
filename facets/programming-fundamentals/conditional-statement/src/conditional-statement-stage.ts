@@ -22,6 +22,7 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import { makeTranslator } from '@ffacet/core/runtime';
 import { getColors, fonts, fontSizes, categorical } from '@ffacet/core/runtime';
 import type {
   ConditionalMode,
@@ -200,25 +201,25 @@ const REFERENCES: Refs[] = [
   { name: 'ko.javascript.info — if/else', url: 'https://ko.javascript.info/ifelse' },
 ];
 
-const SIDE_CONCEPT_TEXT = [
-  '조건문은 흐르던 코드가 갈림길에 도착했을',
-  '때, 지금의 값이 참인지 거짓인지를 보고 갈래',
-  '중 단 한 길만 골라 통과하는 약속이에요. 고르',
-  '지 않은 길은 이번 흐름에서는 닫혀 있어 단',
-  '한 줄도 동작하지 않아요. 갈림길이 끝나면',
-  '어느 길로 갔든 모두 다시 한 줄로 모여 다음',
-  '코드로 이어집니다.',
-];
-
-const SIDE_GUIDE_TEXT = [
-  '위쪽 슬라이더를 흔들어 보세요. 마름모에서',
-  '결과가 다시 응결되고, 켜지는 길과 닫히는',
-  '길이 바뀌는 모습을 보세요. 빗장이 그어진',
-  '가지는 이번에 동작하지 않은 길이에요.',
-];
-
 export const conditionalFlowchartView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+    const tr = params.t ?? makeTranslator(params.locale);
+    /** 좌측 서사. tr 이 필요해 모듈 스코프가 아니라 여기 둔다 (C10). */
+    const SIDE_CONCEPT_TEXT = [
+      tr('concept.line1', 'A conditional is the promise that when running code'),
+      tr('concept.line2', 'reaches a fork, it reads whether the current value is'),
+      tr('concept.line3', 'true or false and passes through exactly one branch.'),
+      tr('concept.line4', 'The branch not taken is closed for this run — not a'),
+      tr('concept.line5', 'single line of it executes. Once the fork is over,'),
+      tr('concept.line6', 'every path gathers back into one line and carries on'),
+      tr('concept.line7', 'into the code that follows.'),
+    ];
+    const SIDE_GUIDE_TEXT = [
+      tr('guide.line1', 'Try moving the slider above. Watch the result'),
+      tr('guide.line2', 'condense again at the diamond, and the lit path and'),
+      tr('guide.line3', 'the closed one swap. A branch with a bar drawn'),
+      tr('guide.line4', 'across it is the path that did not run this time.'),
+    ];
     const palette = getColors(params.theme);
     // categorical 시드 — 활성 가지 + 결과 참/거짓 칩.
     const cat = categorical(6, 'vivid');
@@ -305,7 +306,7 @@ export const conditionalFlowchartView: View = {
         'font-weight': 700,
         fill: palette.text,
       },
-      '조건문 — 한 박자의 응결',
+      tr('label.title', 'Conditional — one beat of condensation'),
     );
     void titleEl;
 
@@ -318,7 +319,7 @@ export const conditionalFlowchartView: View = {
         'font-size': fontSizes.sm,
         fill: palette.textMuted,
       },
-      '값',
+      tr('label.value', 'value'),
     );
     const trackEl = makeRect(sliderLayer, {
       x: SLIDER_TRACK_X0,
@@ -391,7 +392,7 @@ export const conditionalFlowchartView: View = {
         fill: palette.textMuted,
         'letter-spacing': '0.04em',
       },
-      '개념',
+      tr('label.concept', 'concept'),
     );
     void sideTitle;
 
@@ -419,7 +420,7 @@ export const conditionalFlowchartView: View = {
         fill: palette.textMuted,
         'letter-spacing': '0.04em',
       },
-      '학습자 안내',
+      tr('label.guide', 'how to explore'),
     );
     void guideTitle;
 
@@ -489,7 +490,7 @@ export const conditionalFlowchartView: View = {
         fill: palette.textMuted,
         'letter-spacing': '0.04em',
       },
-      '참고',
+      tr('label.references', 'see also'),
     );
     void chipsTitle;
     const chipW = (W - 24 - (REFERENCES.length - 1) * 8) / REFERENCES.length;
@@ -622,7 +623,7 @@ export const conditionalFlowchartView: View = {
             'font-weight': 700,
             fill: TRUE_TONE,
           },
-          '참',
+          tr('label.true', 'true'),
         );
         diamonds.set('if', {
           id: 'if',
@@ -758,11 +759,11 @@ export const conditionalFlowchartView: View = {
 
         branches.set(
           'then',
-          buildBranch('then', thenBranchD, '참', dCx - dW / 2 - 24, dCy - 4),
+          buildBranch('then', thenBranchD, tr('label.true', 'true'), dCx - dW / 2 - 24, dCy - 4),
         );
         branches.set(
           'else',
-          buildBranch('else', elseBranchD, '거짓', dCx + dW / 2 + 24, dCy - 4),
+          buildBranch('else', elseBranchD, tr('label.false', 'false'), dCx + dW / 2 + 24, dCy - 4),
         );
         // 라벨 위치 보정 — 좌측 라벨은 우측정렬, 우측 라벨은 좌측정렬.
         branches.get('then')!.labelEl.setAttribute('text-anchor', 'end');
@@ -825,7 +826,7 @@ export const conditionalFlowchartView: View = {
               'font-weight': 700,
               fill: TRUE_TONE,
             },
-            '참',
+            tr('label.true', 'true'),
           );
           return { id, cx, cy, w: dW, h: dH, pathEl, exprEl, chipG, chipBgEl: chipBg, chipTextEl: chipText };
         }
@@ -953,14 +954,14 @@ export const conditionalFlowchartView: View = {
 
         branches.set(
           'then',
-          buildBranch3('then', thenBranchD, '참', if_dCx - dW / 2 - 6, if_dCy - 4, 'end'),
+          buildBranch3('then', thenBranchD, tr('label.true', 'true'), if_dCx - dW / 2 - 6, if_dCy - 4, 'end'),
         );
         branches.set(
           'elif-then',
           buildBranch3(
             'elif-then',
             elifThenBranchD,
-            '참',
+            tr('label.true', 'true'),
             elif_dCx - dW / 2 - 6,
             elif_dCy - 4,
             'end',
@@ -968,7 +969,7 @@ export const conditionalFlowchartView: View = {
         );
         branches.set(
           'else',
-          buildBranch3('else', elseBranchD, '거짓', elif_dCx + dW / 2 + 6, elif_dCy - 4, 'start'),
+          buildBranch3('else', elseBranchD, tr('label.false', 'false'), elif_dCx + dW / 2 + 6, elif_dCy - 4, 'start'),
         );
       }
 
@@ -1015,7 +1016,7 @@ export const conditionalFlowchartView: View = {
           fill: palette.textMuted,
           'font-style': 'italic',
         },
-        '다음 코드',
+        tr('label.nextCode', 'next code'),
       );
 
       return {
@@ -1067,7 +1068,7 @@ export const conditionalFlowchartView: View = {
     // ── 마름모 사슬 점등 + 결과 칩 + 합류 봉합 ──────────────────────
     async function pulseDiamond(d: DiamondRec, result: 'true' | 'false', pulseMs: number): Promise<void> {
       const tone = result === 'true' ? TRUE_TONE : FALSE_TONE;
-      const label = result === 'true' ? '참' : '거짓';
+      const label = result === 'true' ? tr('label.true', 'true') : tr('label.false', 'false');
       d.pathEl.setAttribute('stroke', tone);
       d.pathEl.setAttribute('stroke-width', '2.6');
       d.exprEl.setAttribute('fill', palette.text);
@@ -1206,8 +1207,8 @@ export const conditionalFlowchartView: View = {
       });
       setCaption(
         payload.mode === 'three'
-          ? '3갈래 — if / else if / else 사슬로 펼쳐진다.'
-          : '2갈래 — if / else 한 마름모로 합쳐진다.',
+          ? tr('caption.threeWay', 'Three ways — it unfolds as an if / else if / else chain.')
+          : tr('caption.twoWay', 'Two ways — it folds into a single if / else diamond.'),
         { duration: 1600 },
       );
     }
@@ -1222,13 +1223,13 @@ export const conditionalFlowchartView: View = {
     }
 
     function signalDemoStart(): void {
-      setCaption('자동 시연 — 값에 따라 길이 바뀐다.', { duration: 1600 });
+      setCaption(tr('caption.autoDemo', 'Self-demonstration — the path changes with the value.'), { duration: 1600 });
     }
     function signalDemoEnd(): void {
-      setCaption('자동 시연 종료.', { duration: 1200 });
+      setCaption(tr('caption.demoEnd', 'Self-demonstration finished.'), { duration: 1200 });
     }
     function signalInvalid(op: string, raw: string): void {
-      setCaption(`입력 무시 — ${op}: ${raw}`, { duration: 1600 });
+      setCaption(tr('caption.ignoredInput', 'Input ignored — {op}: {raw}', { op: String(op), raw: String(raw) }), { duration: 1600 });
     }
 
     // ── 슬라이더 입력 wire-up ────────────────────────────────────────

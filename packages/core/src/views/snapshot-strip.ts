@@ -11,6 +11,7 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from './types.js';
+import { makeTranslator } from '../runtime/i18n.js';
 import { getColors, fonts, fontSizes, radii, space } from './design-tokens.js';
 import { resolveLocale, type LocaleStr } from '../types/locale.js';
 import { createIsoBar } from './iso-bar.js';
@@ -22,10 +23,8 @@ type SnapshotStripConfig = {
   label?: LocaleStr;
 };
 
-const SNAPSHOT_DEFAULT_LABEL_BY_LOCALE: Record<string, string> = {
-  en: 'Pass Snapshots',
-  ko: '패스 스냅샷',
-};
+/** View 자체 고정 라벨. 키 + en 원본 (i18n.ts). */
+const K = { defaultLabel: 'view.snapshotStrip.defaultLabel' } as const;
 
 type Snapshot = {
   label: string;
@@ -35,14 +34,12 @@ type Snapshot = {
 
 export const snapshotStripView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+    const tr = params.t ?? makeTranslator(params.locale);
     container.textContent = '';
     const colors = getColors(params.theme);
     const cfg = params.config as SnapshotStripConfig;
     const maxSnapshots = cfg.maxSnapshots ?? 12;
-    const localeKey = params.locale && SNAPSHOT_DEFAULT_LABEL_BY_LOCALE[params.locale]
-      ? params.locale
-      : 'en';
-    const defaultLabel = SNAPSHOT_DEFAULT_LABEL_BY_LOCALE[localeKey];
+    const defaultLabel = tr(K.defaultLabel, 'Pass Snapshots');
     const label = resolveLocale(cfg.label, params.locale) || defaultLabel;
 
     const root = document.createElement('div');

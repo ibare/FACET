@@ -43,6 +43,7 @@ export const arrayFacet: FacetJson = {
     ],
   },
   messages: {
+    'label.sizeCap': { en: 'size {n} / cap {cap}', ko: 'size {n} / cap {cap}' },
     'caption.append': { en: 'Laid it on the end — nothing had to shift', ko: '끝 자리에 얹었다 — 옆 칸이 밀리지 않았다' },
     'caption.base': { en: 'An array packs equal-width cells side by side with no gaps and calls each one by a number counted from 0 — know the number and you arrive in one step, but touch the middle and the neighbours shift along.', ko: '배열은 같은 너비의 칸을 옆자리끼리 빈틈 없이 붙여 놓고 0 부터 매긴 번호로 호명한다 — 번호만 알면 한 번에, 가운데를 건드리면 옆 칸이 줄줄이 밀린다.' },
     'caption.handover': { en: 'Your turn — type an index and a value, then press Read, Write, Insert, Remove, Append or Search.', ko: '이제 직접 — 인덱스와 값을 입력하고 호명·쓰기·삽입·삭제·뒤에 추가·검색을 눌러보세요' },

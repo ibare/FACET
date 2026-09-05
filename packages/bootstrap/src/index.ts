@@ -36,6 +36,7 @@ import { registerCppTranspiler } from '@ffacet/transpiler-cpp';
 import { registerCsharpTranspiler } from '@ffacet/transpiler-csharp';
 
 export { getFacetCatalog } from './catalog.js';
+export { loadFrameworkMessages } from './messages.js';
 export type { FacetCatalogEntry } from './catalog-types.js';
 
 let initialized = false;

@@ -1,6 +1,6 @@
 ---
-version: 2
-last_verified: 2026-04-29
+version: 3
+last_verified: 2026-09-05
 ---
 
 # FACET Principles (Tier 1)
@@ -19,7 +19,8 @@ last_verified: 2026-04-29
 ## 2. DSL 최소성
 
 - 호스트가 보는 DSL 은 `{facet:<id>}` 가 전부다. DSL 확장 금지.
-- 모든 구체 — 데이터 · 레이아웃 · 시각화 종류 · 메트릭 · 코드 패널 — 은 `FacetJson` 에 선언한다. `FacetJson` 에 런타임 로직/함수를 넣지 않는다.
+- 모든 구체 — 데이터 · 레이아웃 · 시각화 종류 · 메트릭 · 코드 패널 · **화면에 뜨는 문자** — 은 `FacetJson` 에 선언한다. `FacetJson` 에 런타임 로직/함수를 넣지 않는다.
+- **문자 리소스는 `FacetJson.messages` 에 둔다.** `FacetJson` 은 장차 에디터로 불특정 다수가 만드는 선언이므로, 시각화가 무엇이라 말하는지도 저작 결정이다. 문안이 projector / view 코드에 있으면 저작자가 손댈 수 없다. 코드에는 **키만** 남고 문안은 선언에 있다 (C10).
 
 ## 3. 레지스트리 경유
 
