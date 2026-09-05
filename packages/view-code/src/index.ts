@@ -22,6 +22,7 @@ import {
   space,
   resolveLocale,
 } from '@ffacet/core/runtime';
+import { makeTranslator, type Translate } from '@ffacet/core/runtime';
 import type { IR, Transpiler } from '@ffacet/core/runtime';
 import { ensureLanguage } from './highlighter.js';
 import type { ShikiTransformer } from 'shiki';
@@ -31,37 +32,28 @@ const MAX_PANELS = 2;
 const HL_BG_LIGHT = 'rgba(241, 194, 50, 0.35)';
 const HL_BG_DARK = 'rgba(245, 207, 63, 0.22)';
 
-const CODE_VIEW_LABELS_BY_LOCALE: Record<
-  string,
-  {
-    addLanguage: string;
-    atMax: string;
-    emptyWithIR: string;
-    emptyNoIR: string;
-    noMoreLanguages: string;
-    loading: string;
-    errorPrefix: string;
-  }
-> = {
-  en: {
-    addLanguage: '+ Add language',
-    atMax: 'Max 2',
-    emptyWithIR: 'Add a language to view code.',
-    emptyNoIR: 'No IR specified.',
-    noMoreLanguages: 'No additional languages available.',
-    loading: 'Loading…',
-    errorPrefix: 'Error',
-  },
-  ko: {
-    addLanguage: '+ 언어 추가',
-    atMax: '최대 2개',
-    emptyWithIR: '언어를 추가해 코드를 확인하세요.',
-    emptyNoIR: 'IR 이 지정되지 않았습니다.',
-    noMoreLanguages: '추가 가능한 언어가 없습니다.',
-    loading: '로딩…',
-    errorPrefix: '오류',
-  },
-};
+/** View 자체 고정 라벨. 키 + en 원본 (@ffacet/core/runtime i18n). */
+const K = {
+  addLanguage: 'view.codeView.addLanguage',
+  atMax: 'view.codeView.atMax',
+  emptyWithIR: 'view.codeView.emptyWithIR',
+  emptyNoIR: 'view.codeView.emptyNoIR',
+  noMoreLanguages: 'view.codeView.noMoreLanguages',
+  loading: 'view.codeView.loading',
+  errorPrefix: 'view.codeView.errorPrefix',
+} as const;
+
+function codeViewLabels(tr: Translate) {
+  return {
+    addLanguage: tr(K.addLanguage, '+ Add language'),
+    atMax: tr(K.atMax, 'Max {n}', { n: MAX_PANELS }),
+    emptyWithIR: tr(K.emptyWithIR, 'Add a language to view code.'),
+    emptyNoIR: tr(K.emptyNoIR, 'No IR specified.'),
+    noMoreLanguages: tr(K.noMoreLanguages, 'No additional languages available.'),
+    loading: tr(K.loading, 'Loading…'),
+    errorPrefix: tr(K.errorPrefix, 'Error'),
+  };
+}
 
 type PanelState = {
   transpilerId: string;
@@ -77,7 +69,7 @@ export const codeView: View = {
     const HL_BG = params.theme === 'dark' ? HL_BG_DARK : HL_BG_LIGHT;
     const SHIKI_THEME = params.theme === 'dark' ? 'github-dark' : 'github-light';
     const locale = params.locale;
-    const labels = CODE_VIEW_LABELS_BY_LOCALE[locale ?? 'en'] ?? CODE_VIEW_LABELS_BY_LOCALE.en;
+    const labels = codeViewLabels(makeTranslator(locale));
 
     const cfg = params.config as {
       label?: string;

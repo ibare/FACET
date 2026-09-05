@@ -71,7 +71,7 @@ export const messagingPubsubFacet: FacetJson = {
           name: 'publisher',
           action: 'input',
           label: { en: 'pub', ko: '발행자' },
-          placeholder: '예: P1',
+          placeholder: { en: 'e.g. P1', ko: '예: P1' },
           default: '',
         },
         {
@@ -79,7 +79,7 @@ export const messagingPubsubFacet: FacetJson = {
           name: 'topic',
           action: 'input',
           label: { en: 'topic', ko: '토픽' },
-          placeholder: '예: events',
+          placeholder: { en: 'e.g. events', ko: '예: events' },
           default: '',
         },
         {
@@ -87,7 +87,7 @@ export const messagingPubsubFacet: FacetJson = {
           name: 'subscriber',
           action: 'input',
           label: { en: 'sub', ko: '구독자' },
-          placeholder: '예: S5',
+          placeholder: { en: 'e.g. S5', ko: '예: S5' },
           default: '',
         },
         { widget: 'button', action: 'publish', label: { en: 'Publish', ko: '발행' } },

@@ -62,7 +62,7 @@ export const lruCacheFacet: FacetJson = {
           name: 'key',
           action: 'input',
           label: { en: 'key', ko: 'key' },
-          placeholder: '예: k4',
+          placeholder: { en: 'e.g. k4', ko: '예: k4' },
           default: '',
         },
         {
@@ -70,7 +70,7 @@ export const lruCacheFacet: FacetJson = {
           name: 'value',
           action: 'input',
           label: { en: 'value', ko: 'value' },
-          placeholder: '예: v4',
+          placeholder: { en: 'e.g. v4', ko: '예: v4' },
           default: '',
         },
         { widget: 'button', action: 'get', label: { en: 'Get', ko: 'get' } },

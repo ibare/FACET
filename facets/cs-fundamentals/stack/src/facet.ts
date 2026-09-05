@@ -52,7 +52,7 @@ export const stackFacet: FacetJson = {
           name: 'value',
           action: 'input',
           label: { en: 'Value', ko: '값' },
-          placeholder: '예: A',
+          placeholder: { en: 'e.g. A', ko: '예: A' },
           default: '',
         },
         { widget: 'button', action: 'push', label: { en: 'Push', ko: '쌓기' } },

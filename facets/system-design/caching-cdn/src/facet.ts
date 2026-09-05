@@ -74,7 +74,7 @@ export const cachingCdnFacet: FacetJson = {
           name: 'content',
           action: 'input',
           label: { en: 'content', ko: '콘텐츠' },
-          placeholder: '예: A',
+          placeholder: { en: 'e.g. A', ko: '예: A' },
           default: '',
         },
         {
@@ -82,7 +82,7 @@ export const cachingCdnFacet: FacetJson = {
           name: 'edge',
           action: 'input',
           label: { en: 'edge', ko: '엣지' },
-          placeholder: '예: seoul',
+          placeholder: { en: 'e.g. seoul', ko: '예: seoul' },
           default: '',
         },
         { widget: 'button', action: 'request', label: { en: 'Request', ko: '요청' } },

@@ -16,7 +16,7 @@
  *                                                            value-input 들의 현재 값 모음
  *                                                            ({ [name]: value }).
  *   widget='speed-slider', action='speed', default?=number, steps?=number[]
- *   widget='value-input', name=<key>, action='input', label?, placeholder?, default?=string
+ *   widget='value-input', name=<key>, action='input', label?, placeholder?=LocaleStr, default?=string
  *                                                          — 텍스트 입력 박스. 입력 변경 시
  *                                                            params.dispatch({ type: 'input',
  *                                                            payload: { name, value } }) 발신.
@@ -41,7 +41,8 @@
 
 import type { View, ViewInstance, ViewMountParams } from './types.js';
 import type { ControlSpec, MetricSpec } from '../types/facet-json.js';
-import { resolveLocale } from '../types/locale.js';
+import { resolveLocale, type LocaleStr } from '../types/locale.js';
+import { makeTranslator, type Translate } from '../runtime/i18n.js';
 import { getColors, type Palette, fontSizes, fonts, radii, space } from './design-tokens.js';
 
 type ButtonId = 'play' | 'step' | 'pause' | 'reset';
@@ -71,19 +72,22 @@ function makeButton(id: string, label: string, colors: Palette): HTMLButtonEleme
   return btn;
 }
 
-const BTN_LABEL_BY_LOCALE: Record<string, Record<ButtonId, string>> = {
-  en: { play: '▶ Play', step: '⏭ Step', pause: '⏸ Pause', reset: '↺ Reset' },
-  ko: { play: '▶ 재생', step: '⏭ 단계', pause: '⏸ 정지', reset: '↺ 리셋' },
-};
+/** View 자체 고정 라벨. 키 + en 원본 (i18n.ts). */
+const K = {
+  play: 'view.controlBar.play',
+  step: 'view.controlBar.step',
+  pause: 'view.controlBar.pause',
+  reset: 'view.controlBar.reset',
+  speed: 'view.controlBar.speed',
+} as const;
 
-const SPEED_LABEL_BY_LOCALE: Record<string, string> = {
-  en: 'Speed',
-  ko: '속도',
-};
-
-function pickLocaleMap<T>(map: Record<string, T>, locale: string | undefined): T {
-  if (locale && map[locale] !== undefined) return map[locale];
-  return map.en;
+function buttonLabels(tr: Translate): Record<ButtonId, string> {
+  return {
+    play: tr(K.play, '▶ Play'),
+    step: tr(K.step, '⏭ Step'),
+    pause: tr(K.pause, '⏸ Pause'),
+    reset: tr(K.reset, '↺ Reset'),
+  };
 }
 
 export const controlBarView: View = {
@@ -95,8 +99,9 @@ export const controlBarView: View = {
       metrics?: MetricSpec[];
     };
     const colors = getColors(params.theme);
-    const btnLabels = pickLocaleMap(BTN_LABEL_BY_LOCALE, params.locale);
-    const speedText = pickLocaleMap(SPEED_LABEL_BY_LOCALE, params.locale);
+    const tr = makeTranslator(params.locale);
+    const btnLabels = buttonLabels(tr);
+    const speedText = tr(K.speed, 'Speed');
 
     const root = document.createElement('div');
     root.className = 'facet-control-bar';
@@ -180,7 +185,10 @@ export const controlBarView: View = {
         }
       } else if (c.widget === 'value-input') {
         const name = typeof c.name === 'string' ? c.name : c.action;
-        const placeholder = typeof c.placeholder === 'string' ? c.placeholder : '';
+        // placeholder 는 화면에 보이는 문자열이므로 label 과 같이 LocaleStr 을 받는다.
+        // bare string 도 그대로 통과한다 (resolveLocale 이 단일 언어 형태를 지원).
+        const placeholder =
+          c.placeholder !== undefined ? resolveLocale(c.placeholder as LocaleStr, params.locale) : '';
         const def = typeof c.default === 'string' ? c.default : '';
         inputState[name] = def;
         const wrap = document.createElement('label');

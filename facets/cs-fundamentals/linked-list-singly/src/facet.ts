@@ -53,7 +53,7 @@ export const linkedListFacet: FacetJson = {
           name: 'index',
           action: 'input',
           label: { en: 'i', ko: 'i' },
-          placeholder: '예: 2',
+          placeholder: { en: 'e.g. 2', ko: '예: 2' },
           default: '',
         },
         {
@@ -61,7 +61,7 @@ export const linkedListFacet: FacetJson = {
           name: 'value',
           action: 'input',
           label: { en: 'v', ko: 'v' },
-          placeholder: '예: 25',
+          placeholder: { en: 'e.g. 25', ko: '예: 25' },
           default: '',
         },
         { widget: 'button', action: 'insert', label: { en: 'Insert', ko: '삽입' } },

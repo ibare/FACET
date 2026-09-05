@@ -55,7 +55,7 @@ export const arrayFacet: FacetJson = {
           name: 'index',
           action: 'input',
           label: { en: 'i', ko: 'i' },
-          placeholder: '예: 3',
+          placeholder: { en: 'e.g. 3', ko: '예: 3' },
           default: '',
         },
         {
@@ -63,7 +63,7 @@ export const arrayFacet: FacetJson = {
           name: 'value',
           action: 'input',
           label: { en: 'v', ko: 'v' },
-          placeholder: '예: 5',
+          placeholder: { en: 'e.g. 5', ko: '예: 5' },
           default: '',
         },
         { widget: 'button', action: 'read', label: { en: 'Read', ko: '호명' } },

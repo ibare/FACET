@@ -60,7 +60,7 @@ export const hashTableFacet: FacetJson = {
           name: 'key',
           action: 'input',
           label: { en: 'key', ko: 'key' },
-          placeholder: '예: 42',
+          placeholder: { en: 'e.g. 42', ko: '예: 42' },
           default: '',
         },
         { widget: 'button', action: 'insert', label: { en: 'Insert', ko: '삽입' } },

@@ -53,6 +53,7 @@ import {
   space,
 } from './design-tokens.js';
 import { resolveLocale, type LocaleStr } from '../types/locale.js';
+import { makeTranslator } from '../runtime/i18n.js';
 import { createCubeBlock, type CubeBlockHandle } from './cube-block.js';
 
 export type ConveyorQueueFeature = 'bounded' | 'aging-gradient' | 'tail-log' | 'scoreboard';
@@ -78,26 +79,22 @@ type Labels = {
   out: string;
 };
 
-const LABELS_BY_LOCALE: Record<string, Labels> = {
-  en: {
-    totalEnqueued: 'Total in',
-    size: 'Size',
-    empty: '(empty)',
-    in: 'IN',
-    out: 'OUT',
-  },
-  ko: {
-    totalEnqueued: '총 입장',
-    size: '크기',
-    empty: '(비어 있음)',
-    in: 'IN',
-    out: 'OUT',
-  },
-};
+/** View 자체 고정 라벨. 키 + en 원본 (i18n.ts). IN/OUT 은 캡에 새겨진 표식이라 번역하지 않는다. */
+const K = {
+  totalEnqueued: 'view.conveyorQueue.totalEnqueued',
+  size: 'view.conveyorQueue.size',
+  empty: 'view.conveyorQueue.empty',
+} as const;
 
 function pickLabels(locale: string | undefined): Labels {
-  if (locale && LABELS_BY_LOCALE[locale]) return LABELS_BY_LOCALE[locale];
-  return LABELS_BY_LOCALE.en;
+  const tr = makeTranslator(locale);
+  return {
+    totalEnqueued: tr(K.totalEnqueued, 'Total in'),
+    size: tr(K.size, 'Size'),
+    empty: tr(K.empty, '(empty)'),
+    in: 'IN',
+    out: 'OUT',
+  };
 }
 
 // ──────────────────────────────────────────────────────

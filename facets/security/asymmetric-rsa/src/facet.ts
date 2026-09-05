@@ -68,7 +68,7 @@ export const asymmetricRsaFacet: FacetJson = {
           action: 'input',
           name: 'm',
           label: { en: 'Plaintext m', ko: '평문 m' },
-          placeholder: '2',
+          placeholder: { en: '2', ko: '2' },
           default: '2',
         },
         { widget: 'button', action: 'replay', label: { en: 'Replay', ko: '재생' } },

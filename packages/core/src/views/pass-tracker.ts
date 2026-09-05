@@ -15,6 +15,7 @@
 
 import type { View, ViewInstance, ViewMountParams } from './types.js';
 import { getColors, fonts, fontSizes, radii, space } from './design-tokens.js';
+import { makeTranslator } from '../runtime/i18n.js';
 import { resolveLocale, type LocaleStr } from '../types/locale.js';
 
 type PassTrackerConfig = {
@@ -22,14 +23,20 @@ type PassTrackerConfig = {
   label?: LocaleStr;
 };
 
-const PASS_LABELS_BY_LOCALE: Record<string, { pass: string; sortedTail: string; swapsPerPass: string }> = {
-  en: { pass: 'Pass', sortedTail: 'Sorted Tail', swapsPerPass: 'Swaps per Pass' },
-  ko: { pass: '패스', sortedTail: '정렬된 꼬리', swapsPerPass: '패스별 교환' },
-};
+/** View 자체 고정 라벨. 키 + en 원본 (i18n.ts). */
+const K = {
+  pass: 'view.passTracker.pass',
+  sortedTail: 'view.passTracker.sortedTail',
+  swapsPerPass: 'view.passTracker.swapsPerPass',
+} as const;
 
 function pickPassLabels(locale: string | undefined) {
-  if (locale && PASS_LABELS_BY_LOCALE[locale]) return PASS_LABELS_BY_LOCALE[locale];
-  return PASS_LABELS_BY_LOCALE.en;
+  const tr = makeTranslator(locale);
+  return {
+    pass: tr(K.pass, 'Pass'),
+    sortedTail: tr(K.sortedTail, 'Sorted Tail'),
+    swapsPerPass: tr(K.swapsPerPass, 'Swaps per Pass'),
+  };
 }
 
 export const passTrackerView: View = {
