@@ -27,6 +27,7 @@
  */
 
 import type { View, ViewMountParams, ViewInstance } from '@ffacet/core/runtime';
+import { makeTranslator } from '@ffacet/core/runtime';
 import {
   getColors,
   fonts,
@@ -147,6 +148,7 @@ type LinkRec = {
 // ── 본체 ───────────────────────────────────────────────────────────────────
 export const ipRoutingStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+    const tr = makeTranslator(params.locale);
     container.textContent = '';
     const colors: Palette = getColors(params.theme);
     const cat = categorical(8, 'vivid');
@@ -231,7 +233,7 @@ export const ipRoutingStageView: View = {
       'font-family': fonts.body,
       'font-weight': '700',
     });
-    subInfoTitle.textContent = '현재 사건';
+    subInfoTitle.textContent = tr('ipRouting.label.currentEvent', 'current event');
     svg.appendChild(subInfoTitle);
 
     const subInfoText1 = svgEl('text', {
@@ -329,7 +331,7 @@ export const ipRoutingStageView: View = {
         'font-family': fonts.mono,
         'font-weight': '700',
       });
-      labelId.textContent = host.id.replace('host:', '호스트 ');
+      labelId.textContent = tr('ipRouting.label.host', 'host {id}', { id: host.id.replace('host:', '') });
       g.appendChild(labelId);
       const labelIp = svgEl('text', {
         x: pos.x,
@@ -558,7 +560,7 @@ export const ipRoutingStageView: View = {
         'font-family': fonts.body,
         'font-weight': '700',
       });
-      h4.textContent = '일치 길이';
+      h4.textContent = tr('ipRouting.label.matchLength', 'match length');
       tablePanel.appendChild(h4);
     }
 
@@ -588,7 +590,7 @@ export const ipRoutingStageView: View = {
     // 라우터 표 펼침.
     function openTableForRouter(router: TopologyRouter, dst: string, dstBits: string): void {
       clearTableRows();
-      tableTitle.textContent = `라우팅 테이블 (${router.id.replace('router:', '')}) — dst ${dst}`;
+      tableTitle.textContent = tr('ipRouting.label.routingTable', 'routing table ({router}) — dst {dst}', { router: router.id.replace('router:', ''), dst: String(dst) });
       dstBitsText.textContent = dstBits;
       const rowsTopY = tableHeaderY + 14;
       const rowH = 22;
@@ -874,7 +876,7 @@ export const ipRoutingStageView: View = {
         'font-family': fonts.body,
         'font-weight': '700',
       });
-      titleText.textContent = '패킷 헤더';
+      titleText.textContent = tr('ipRouting.label.packetHeader', 'packet header');
       packet.group.appendChild(titleText);
       setAttrs(packet.srcText, {
         x: 8,
@@ -1024,7 +1026,7 @@ export const ipRoutingStageView: View = {
       packet.group.setAttribute('opacity', '0');
       packet.visible = false;
       eventCaption.textContent = '';
-      setSubInfo('초기화 됨', '발신 / 한 hop / 자동 시연 / 초기 TTL');
+      setSubInfo(tr('ipRouting.sub.initialized', 'initialized'), tr('ipRouting.sub.initializedDetail', 'send / one hop / demo / initial TTL'));
     }
 
     function init(payload: {
@@ -1046,8 +1048,8 @@ export const ipRoutingStageView: View = {
       packet.ttlWarn = payload.ttlWarnThreshold;
       // 패킷 카드는 t0 에 비어 있다 — 첫 발신 때 표시.
       setSubInfo(
-        `라우터 ${payload.routers.length} 대 / 링크 ${payload.links.length} 줄`,
-        `초기 TTL ${payload.defaultTtl}, 자동 시연 ${payload.autoDemoSequence.length} 발신`,
+        tr('ipRouting.sub.topology', '{routers} routers / {links} links', { routers: payload.routers.length, links: payload.links.length }),
+        tr('ipRouting.sub.topologyDetail', 'initial TTL {ttl}, demo sends {sends}', { ttl: payload.defaultTtl, sends: payload.autoDemoSequence.length }),
       );
     }
 
@@ -1083,7 +1085,7 @@ export const ipRoutingStageView: View = {
       }
       setPacketCard(payload.packet.src, payload.packet.dst, payload.packet.ttl, packet.ttlMax);
       setSubInfo(
-        `${payload.fromHost.replace('host:', '호스트 ')} 발신 #${payload.traceIndex + 1}`,
+        tr('ipRouting.sub.send', 'host {host} sends #{n}', { host: payload.fromHost.replace('host:', ''), n: payload.traceIndex + 1 }),
         payload.note ? String(payload.note) : `dst ${payload.packet.dst} / TTL ${payload.packet.ttl}`,
       );
     }
@@ -1129,7 +1131,10 @@ export const ipRoutingStageView: View = {
       if (rec) setFog(rec, false, opts?.duration ?? 200);
       const pos = NODE_POS[payload.atRouter];
       if (pos) pulseRing(pos.x, pos.y, ADOPTED_COLOR, 600);
-      setSubInfo(`${payload.atRouter.replace('router:', '')} 도착`, '표를 펼친다');
+      setSubInfo(
+        tr('ipRouting.sub.arrived', '{router} reached', { router: payload.atRouter.replace('router:', '') }),
+        tr('ipRouting.sub.arrivedDetail', 'opening its table'),
+      );
       await sleep(opts?.duration ?? 200);
     }
 
@@ -1141,8 +1146,8 @@ export const ipRoutingStageView: View = {
       if (!router) return;
       openTableForRouter(router, payload.dst, payload.dstBits);
       setSubInfo(
-        `${payload.atRouter.replace('router:', '')} 표 펼침`,
-        `dst ${payload.dst} 비트 비교 시작`,
+        tr('ipRouting.sub.tableOpen', '{router} table open', { router: payload.atRouter.replace('router:', '') }),
+        tr('ipRouting.sub.bitCompare', 'starting bit comparison for dst {dst}', { dst: String(payload.dst) }),
       );
       await sleep(opts?.duration ?? 250);
     }
@@ -1165,11 +1170,11 @@ export const ipRoutingStageView: View = {
       );
       if (payload.nextHopNode) {
         setSubInfo(
-          `LPM 결과 — ${payload.atRouter.replace('router:', '')} → ${payload.nextHopNode}`,
+          tr('ipRouting.sub.lpmResult', 'LPM result — {router} → {nextHop}', { router: payload.atRouter.replace('router:', ''), nextHop: String(payload.nextHopNode) }),
           payload.nextHopIface ? `via ${payload.nextHopIface}` : '',
         );
       } else {
-        setSubInfo(`LPM 결과 — 일치 없음`, '패킷이 폐기된다');
+        setSubInfo(tr('ipRouting.sub.lpmNoMatch', 'LPM result — no match'), tr('ipRouting.sub.lpmNoMatchDetail', 'the packet is dropped'));
       }
     }
 
@@ -1185,7 +1190,7 @@ export const ipRoutingStageView: View = {
       }
       await drawSightArrow(payload.fromRouter, payload.toNode);
       setSubInfo(
-        `시선 화살표 → ${payload.toNode}`,
+        tr('ipRouting.sub.gazeArrow', 'gaze arrow → {node}', { node: String(payload.toNode) }),
         payload.iface ? `via ${payload.iface}` : '',
       );
     }
@@ -1248,8 +1253,8 @@ export const ipRoutingStageView: View = {
       const pos = NODE_POS[payload.atHost];
       if (pos) pulseRing(pos.x, pos.y, cat[2]!, 700);
       setSubInfo(
-        `${payload.atHost.replace('host:', '호스트 ')} 도달`,
-        `TTL ${payload.ttlRemaining} 남음`,
+        tr('ipRouting.sub.delivered', 'host {host} reached', { host: payload.atHost.replace('host:', '') }),
+        tr('ipRouting.sub.ttlLeft', 'TTL {ttl} left', { ttl: payload.ttlRemaining }),
       );
     }
 
@@ -1265,8 +1270,10 @@ export const ipRoutingStageView: View = {
       const pos = NODE_POS[payload.atRouter];
       if (pos) pulseRing(pos.x, pos.y, DROP_COLOR, 700);
       setSubInfo(
-        `폐기 — ${payload.atRouter.replace('router:', '')}`,
-        payload.reason === 'ttl-zero' ? 'TTL 이 0 에 닿았다' : '일치 행 없음',
+        tr('ipRouting.sub.dropped', 'dropped — {router}', { router: payload.atRouter.replace('router:', '') }),
+        payload.reason === 'ttl-zero'
+          ? tr('ipRouting.sub.dropTtl', 'TTL reached 0')
+          : tr('ipRouting.sub.dropNoRoute', 'no matching row'),
       );
     }
 
@@ -1280,7 +1287,7 @@ export const ipRoutingStageView: View = {
       const pos = NODE_POS[payload.atRouter];
       if (pos) pulseRing(pos.x, pos.y, colors.textMuted, 600);
       setSubInfo(
-        `외부 인터페이스로 나감 — ${payload.atRouter.replace('router:', '')}`,
+        tr('ipRouting.sub.egress', 'left via an external interface — {router}', { router: payload.atRouter.replace('router:', '') }),
         payload.viaInterface ? `via ${payload.viaInterface}` : '',
       );
     }
@@ -1294,7 +1301,7 @@ export const ipRoutingStageView: View = {
       'font-family': fonts.body,
     });
     refText.textContent =
-      '참고: Kurose-Ross LPM Interactive · INET/OMNeT++ Routing Visualizer · Cisco Packet Tracer · Practical Networking — Packet Traveling';
+      tr('ipRouting.label.references', 'See also: Kurose-Ross LPM Interactive · INET/OMNeT++ Routing Visualizer · Cisco Packet Tracer · Practical Networking — Packet Traveling');
     svg.appendChild(refText);
 
     const narrative = svgEl('text', {
@@ -1305,7 +1312,7 @@ export const ipRoutingStageView: View = {
       'font-family': fonts.body,
     });
     narrative.textContent =
-      '한 시점에 단 한 라우터의 표만 펼쳐진다 — 라우터는 자기 표만 본다. 가장 긴 일치가 이긴다. 한 hop 마다 TTL 이 한 칸 줄어든다.';
+      tr('ipRouting.legend.rules', 'Only one router\'s table is open at any moment — a router sees only its own. The longest match wins. Every hop takes one off the TTL.');
     svg.appendChild(narrative);
 
     // 패킷 카드 init.
@@ -1313,7 +1320,7 @@ export const ipRoutingStageView: View = {
     packet.group.setAttribute('opacity', '0');
 
     // 사용 안내 (활성화 시 사라짐).
-    setSubInfo('대기 중', '발신 / 자동 시연 / 한 hop / 초기 TTL');
+    setSubInfo(tr('ipRouting.sub.idle', 'idle'), tr('ipRouting.sub.idleDetail', 'send / demo / one hop / initial TTL'));
 
     return {
       destroy() {

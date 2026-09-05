@@ -14,7 +14,8 @@
  * invalid-input 만 stage 메서드로 번역한다.
  */
 
-import type { ProjectorFactory } from '@ffacet/core/runtime';
+import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
+import { makeTranslator } from '@ffacet/core/runtime';
 
 type ColumnPayload = {
   id: string;
@@ -74,17 +75,22 @@ type TablesStage = {
   signalDemoEnd(): void;
 };
 
-const BASE_CAPTION =
-  '테이블은 같은 형태의 행을 모은 이름 붙은 격자이고, 기본키가 한 행을 유일하게 식별하며 외래키가 다른 격자의 기본키 값을 가리켜 두 격자를 한 구조로 엮는다.';
 
 export const relationalTablesAndKeysProjector: ProjectorFactory = (views, runtime) => {
+  const tr: Translate = runtime?.t ?? makeTranslator();
+  /** 상시 캡션. 여러 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
+  const baseCaption = (): string =>
+    tr(
+      'relationalTablesAndKeys.caption.base',
+      'A table is a named grid gathering rows of the same shape; a primary key identifies one row uniquely, and a foreign key points at a primary key value in another grid, binding the two into one structure.',
+    );
   const stage = views.stage as unknown as TablesStage | undefined;
 
   return {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
     },
 
     async onEvent(event) {
@@ -177,7 +183,7 @@ export const relationalTablesAndKeysProjector: ProjectorFactory = (views, runtim
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
     },
   };
 };

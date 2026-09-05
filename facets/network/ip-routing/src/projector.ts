@@ -12,7 +12,8 @@
  * runtime.getSpeed() 보정 duration 을 전달한다.
  */
 
-import type { ProjectorFactory } from '@ffacet/core/runtime';
+import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
+import { makeTranslator } from '@ffacet/core/runtime';
 
 type TopologyHost = { id: string; ip: string; x: number; y: number };
 type TopologyRouter = {
@@ -97,17 +98,22 @@ type IpRoutingStage = {
   }): void;
 };
 
-const BASE_CAPTION =
-  'IP 라우팅은 한 패킷이 매 라우터에서 자기 표만 보고 next-hop 한 걸음을 정하며 TTL 한 칸씩만 깎이는 hop-by-hop 분산 결정이다.';
 
 export const ipRoutingProjector: ProjectorFactory = (views, runtime) => {
+  const tr: Translate = runtime?.t ?? makeTranslator();
+  /** 상시 캡션. 여러 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
+  const baseCaption = (): string =>
+    tr(
+      'ipRouting.caption.base',
+      'IP routing is a hop-by-hop distributed decision — at every router a packet consults only that router\'s own table to choose one next hop, and one is taken off its TTL each time.',
+    );
   const stage = views.stage as unknown as IpRoutingStage | undefined;
 
   return {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
     },
 
     async onEvent(event) {
@@ -334,7 +340,7 @@ export const ipRoutingProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
     },
   };
 };

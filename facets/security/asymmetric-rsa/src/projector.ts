@@ -12,7 +12,8 @@
  * projector 는 init / 시퀀스 사건들 / 상태 변경 사건만 stage 메서드로 번역한다.
  */
 
-import type { ProjectorFactory } from '@ffacet/core/runtime';
+import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
+import { makeTranslator } from '@ffacet/core/runtime';
 
 type RsaStage = {
   reset(): void;
@@ -56,17 +57,22 @@ type RsaStage = {
   signalInvalid(op: string, raw: string): void;
 };
 
-const BASE_CAPTION =
-  'RSA 는 두 큰 소수에서 태어난 한 짝의 키로 메시지를 잠그고 푼다. 누구나 가진 공개 자물쇠로는 잠그기만 할 수 있고, 주인만 가진 비밀 열쇠로만 풀 수 있다.';
 
-export const asymmetricRsaProjector: ProjectorFactory = (views) => {
+export const asymmetricRsaProjector: ProjectorFactory = (views, runtime) => {
+  const tr: Translate = runtime?.t ?? makeTranslator();
+  /** 상시 캡션. 여러 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
+  const baseCaption = (): string =>
+    tr(
+      'asymmetricRsa.caption.base',
+      'RSA locks and unlocks a message with a pair of keys born from two large primes. The public padlock anyone holds can only lock, and only the private key its owner keeps can open it.',
+    );
   const stage = views.stage as unknown as RsaStage | undefined;
 
   return {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
     },
 
     async onEvent(event) {
@@ -227,7 +233,7 @@ export const asymmetricRsaProjector: ProjectorFactory = (views) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
     },
   };
 };

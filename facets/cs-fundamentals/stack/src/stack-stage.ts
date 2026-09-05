@@ -37,6 +37,8 @@ const SVG_NS = 'http://www.w3.org/2000/svg';
 const K = {
   top: 'stack.label.top',
   empty: 'stack.label.empty',
+  inputTrack: 'stack.label.inputTrack',
+  outputTrack: 'stack.label.outputTrack',
 } as const;
 
 const W = 680;
@@ -224,8 +226,8 @@ export const stackStageView: View = {
       t.textContent = text;
       return t;
     }
-    stageGroup.appendChild(makeTrackLabel('입력', (INPUT_TRACK_LEFT + INPUT_TRACK_RIGHT) / 2));
-    stageGroup.appendChild(makeTrackLabel('출력', (OUTPUT_TRACK_LEFT + OUTPUT_TRACK_RIGHT) / 2));
+    stageGroup.appendChild(makeTrackLabel(tr(K.inputTrack, 'input'), (INPUT_TRACK_LEFT + INPUT_TRACK_RIGHT) / 2));
+    stageGroup.appendChild(makeTrackLabel(tr(K.outputTrack, 'output'), (OUTPUT_TRACK_LEFT + OUTPUT_TRACK_RIGHT) / 2));
 
     // 더미 영역 시각 안내 (가는 외곽선)
     const stackOutline = document.createElementNS(SVG_NS, 'rect');

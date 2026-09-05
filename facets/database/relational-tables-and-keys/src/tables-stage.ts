@@ -20,7 +20,8 @@
  * 셀 호버 인터랙션은 view 내부에서 직접 SVG mouseover/mouseout 으로 처리.
  */
 
-import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import type { Translate, View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import { makeTranslator } from '@ffacet/core/runtime';
 import {
   getColors,
   fonts,
@@ -179,6 +180,7 @@ type RelationRec = {
 
 export const tablesStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+    const tr = makeTranslator(params.locale);
     container.textContent = '';
     container.style.width = '100%';
     container.style.maxWidth = '720px';
@@ -253,7 +255,7 @@ export const tablesStageView: View = {
       'font-size': '10px',
       'font-family': fonts.body,
     });
-    chipText.textContent = '기본키: 학번 ▼';
+    chipText.textContent = tr('relationalTablesAndKeys.label.pkChipDefault', 'primary key: student no ▼');
     chipGroup.appendChild(chipText);
 
     // ── 정적 그룹들 (z-order: 카드 → 곡선 → 셀 강조 → 텍스트) ──
@@ -275,7 +277,7 @@ export const tablesStageView: View = {
     // ── 범례 ──
     const legendGroup = document.createElementNS(SVG_NS, 'g');
     svg.appendChild(legendGroup);
-    drawLegend(legendGroup, palette, PK_TONE, FK_TONE, ALT_TONE);
+    drawLegend(tr, legendGroup, palette, PK_TONE, FK_TONE, ALT_TONE);
 
     // ── 모델 ──
     const tables = new Map<string, TableRec>();
@@ -330,7 +332,7 @@ export const tablesStageView: View = {
       relations.length = 0;
       pkChoice = {};
       rejectsVisible = true;
-      chipText.textContent = '기본키: 학번 ▼';
+      chipText.textContent = tr('relationalTablesAndKeys.label.pkChipDefault', 'primary key: student no ▼');
     }
 
     function init(payload: {
@@ -600,7 +602,11 @@ export const tablesStageView: View = {
             cell.columnId,
           );
           setCaption(
-            `외래키 값 ${cell.value} 은 ${labelOfTable(col.references.tableId)}의 ${labelOfColumn(col.references.tableId, col.references.columnId)} ${cell.value} 을 가리킨다.`,
+            tr('relationalTablesAndKeys.caption.fkPointsTo', 'Foreign key {value} points at {column} {value} in {table}.', {
+            value: String(cell.value),
+            table: labelOfTable(col.references.tableId),
+            column: labelOfColumn(col.references.tableId, col.references.columnId),
+          }),
             { duration: 4000 },
           );
           return;
@@ -609,7 +615,7 @@ export const tablesStageView: View = {
         cell.bgEl.setAttribute('fill', palette.danger);
         cell.bgEl.setAttribute('opacity', '0.18');
         setCaption(
-          `외래키 값 ${cell.value} 을 가리킬 행이 없다.`,
+          tr('relationalTablesAndKeys.caption.fkDangling', 'There is no row for foreign key {value} to point at.', { value: String(cell.value) }),
           { duration: 4000 },
         );
         return;
@@ -630,13 +636,17 @@ export const tablesStageView: View = {
             emphasizeRelation(tableId, cell.columnId, fkTbl.tableId, fkTbl.columnId);
           }
           setCaption(
-            `이 ${labelOfTable(tableId)}을 가리키는 ${labelOfTable(fkTbl?.tableId ?? '')}이 ${fkCells.length} 건이다.`,
+            tr('relationalTablesAndKeys.caption.referencedBy', '{count} rows in {fkTable} point at this {table}.', {
+            count: fkCells.length,
+            table: labelOfTable(tableId),
+            fkTable: labelOfTable(fkTbl?.tableId ?? ''),
+          }),
             { duration: 4000 },
           );
         } else {
           paintHoverHighlight([cell]);
           setCaption(
-            `이 행을 가리키는 다른 테이블의 외래키가 아직 없다.`,
+            tr('relationalTablesAndKeys.caption.notReferenced', 'No foreign key in another table points at this row yet.'),
             { duration: 4000 },
           );
         }
@@ -646,7 +656,10 @@ export const tablesStageView: View = {
       if (col.kind === 'alt') {
         paintHoverHighlight([cell]);
         setCaption(
-          `${labelOfColumn(tableId, col.id)} 도 후보키였다 — 이번엔 ${labelOfColumn(tableId, pkChoice[tableId] ?? '')} 을 기본키로 둔다.`,
+          tr('relationalTablesAndKeys.caption.altKeySwap', '{alt} was a candidate key too — this time {pk} is the primary key.', {
+            alt: labelOfColumn(tableId, col.id),
+            pk: labelOfColumn(tableId, pkChoice[tableId] ?? ''),
+          }),
           { duration: 4000 },
         );
         return;
@@ -688,7 +701,7 @@ export const tablesStageView: View = {
       if (!tbl) return;
       const pkColId = pkChoice['member'] ?? '';
       const pkCol = tbl.columnsById.get(pkColId);
-      chipText.textContent = `기본키: ${pkCol?.label ?? pkColId} ▼`;
+      chipText.textContent = tr('relationalTablesAndKeys.label.pkChip', 'primary key: {column} ▼', { column: String(pkCol?.label ?? pkColId) });
     }
 
     async function applyPkToggle(payload: {
@@ -764,7 +777,10 @@ export const tablesStageView: View = {
       // 6) 칩 텍스트 갱신.
       updateChipText();
       setCaption(
-        `${labelOfColumn(tableId, toColumn)} 도 후보키였다 — 이번엔 ${labelOfColumn(tableId, fromColumn)} 대신 ${labelOfColumn(tableId, toColumn)} 을 기본키로 둔다.`,
+        tr('relationalTablesAndKeys.caption.pkSwitched', '{to} was a candidate key too — this time {to} takes over from {from} as the primary key.', {
+            from: labelOfColumn(tableId, fromColumn),
+            to: labelOfColumn(tableId, toColumn),
+          }),
         { duration: 3000 },
       );
     }
@@ -790,7 +806,7 @@ export const tablesStageView: View = {
     }
 
     function signalInvalid(op: string, raw: string): void {
-      setCaption(`잘못된 입력: ${op} (${raw})`, { duration: 1800 });
+      setCaption(tr('relationalTablesAndKeys.caption.invalidInput', 'Invalid input: {op} ({raw})', { op: String(op), raw: String(raw) }), { duration: 1800 });
     }
 
     function signalDemoEnd(): void {
@@ -1498,6 +1514,7 @@ function drawCardinalityMany(
 }
 
 function drawLegend(
+  tr: Translate,
   g: SVGGElement,
   palette: ReturnType<typeof getColors>,
   pkTone: string,
@@ -1505,11 +1522,11 @@ function drawLegend(
   altTone: string,
 ): void {
   const items: Array<{ kind: ColumnKindTok | 'one' | 'many'; label: string }> = [
-    { kind: 'pk', label: '🔑 PK 기본키' },
-    { kind: 'alt', label: '🔑 alt 대체키' },
-    { kind: 'fk', label: '⚷ FK 외래키' },
-    { kind: 'one', label: '─┤ 정확히 하나' },
-    { kind: 'many', label: '─< 여럿' },
+    { kind: 'pk', label: tr('relationalTablesAndKeys.legend.pk', '🔑 PK primary key') },
+    { kind: 'alt', label: tr('relationalTablesAndKeys.legend.alt', '🔑 alt alternate key') },
+    { kind: 'fk', label: tr('relationalTablesAndKeys.legend.fk', '⚷ FK foreign key') },
+    { kind: 'one', label: tr('relationalTablesAndKeys.legend.one', '─┤ exactly one') },
+    { kind: 'many', label: tr('relationalTablesAndKeys.legend.many', '─< many') },
   ];
   const startX = 28;
   const y = LEGEND_Y;
@@ -1537,7 +1554,11 @@ function drawLegend(
         'font-family': fonts.body,
       });
       lab.textContent =
-        it.kind === 'pk' ? 'PK 기본키' : it.kind === 'alt' ? 'alt 대체키' : 'FK 외래키';
+        it.kind === 'pk'
+            ? tr('relationalTablesAndKeys.legend.pkShort', 'PK primary key')
+            : it.kind === 'alt'
+              ? tr('relationalTablesAndKeys.legend.altShort', 'alt alternate key')
+              : tr('relationalTablesAndKeys.legend.fkShort', 'FK foreign key');
       groupItem.appendChild(lab);
       x += 92;
     } else if (it.kind === 'one') {
@@ -1552,7 +1573,7 @@ function drawLegend(
         'font-size': '10px',
         'font-family': fonts.body,
       });
-      lab.textContent = '정확히 하나';
+      lab.textContent = tr('relationalTablesAndKeys.legend.oneShort', 'exactly one');
       groupItem.appendChild(lab);
       x += 100;
     } else {
@@ -1567,7 +1588,7 @@ function drawLegend(
         'font-size': '10px',
         'font-family': fonts.body,
       });
-      lab.textContent = '여럿';
+      lab.textContent = tr('relationalTablesAndKeys.legend.manyShort', 'many');
       groupItem.appendChild(lab);
       x += 70;
     }
@@ -1584,6 +1605,6 @@ function drawLegend(
     'font-family': fonts.body,
   });
   refs.textContent =
-    "참고: Wikipedia · Crow's Foot · dbdiagram.io · 위키백과(외래 키)";
+    tr('relationalTablesAndKeys.label.references', "See also: Wikipedia · Crow's Foot · dbdiagram.io");
   g.appendChild(refs);
 }

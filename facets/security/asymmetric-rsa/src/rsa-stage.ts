@@ -30,6 +30,7 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import { makeTranslator } from '@ffacet/core/runtime';
 import { getColors, fonts, fontSizes, categorical } from '@ffacet/core/runtime';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -94,13 +95,6 @@ const REFERENCES: Refs[] = [
   { name: 'Khan Academy — RSA encryption', url: 'https://www.khanacademy.org/computing/computer-science/cryptography/modern-crypt/v/intro-to-rsa-encryption' },
   { name: 'CrypTool — RSA visual', url: 'https://legacy.cryptool.org/en/cto/rsa-visual' },
   { name: 'Computerphile — Public Key', url: 'https://www.youtube.com/watch?v=GSIDS_lvRv4' },
-];
-
-const CONCEPT_TEXT = [
-  'RSA 는 두 큰 소수에서 태어난 한 짝의 키로',
-  '메시지를 잠그고 푼다. 누구나 가진 공개 자물',
-  '쇠로는 잠그기만 할 수 있고, 주인만 가진',
-  '비밀 열쇠로만 풀 수 있다.',
 ];
 
 // ── SVG 헬퍼 ────────────────────────────────────────────────────────────
@@ -202,6 +196,14 @@ type KeyRec = {
 
 export const rsaStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+    const tr = makeTranslator(params.locale);
+    /** 상단 개념 서술. tr 이 필요해 모듈 스코프가 아니라 여기 둔다. */
+    const CONCEPT_TEXT = [
+      tr('asymmetricRsa.concept.line1', 'RSA locks and unlocks a message with a pair of keys'),
+          tr('asymmetricRsa.concept.line2', 'born from two large primes. The public padlock anyone'),
+          tr('asymmetricRsa.concept.line3', 'holds can only lock, and only the private key its'),
+          tr('asymmetricRsa.concept.line4', 'owner keeps can open it again.'),
+    ];
     const palette = getColors(params.theme);
     const cat = categorical(8, 'vivid');
     const catDeep = categorical(8, 'deep');
@@ -282,7 +284,7 @@ export const rsaStageView: View = {
         'font-weight': 700,
         fill: palette.text,
       },
-      'RSA — 한 짝의 비대칭 키',
+      tr('asymmetricRsa.label.title', 'RSA — one pair of asymmetric keys'),
     );
 
     CONCEPT_TEXT.forEach((line, i) => {
@@ -331,7 +333,7 @@ export const rsaStageView: View = {
         'letter-spacing': '0.04em',
         fill: palette.textMuted,
       },
-      '키 생성 시퀀스',
+      tr('asymmetricRsa.label.keygenSeq', 'key generation sequence'),
     );
 
     // 좌측: p, q 두 카드.
@@ -390,8 +392,8 @@ export const rsaStageView: View = {
       return { group: g, valueEl };
     }
 
-    const primePCard = buildPrimeCard(PRIME_P_X, 'p (소수)');
-    const primeQCard = buildPrimeCard(PRIME_Q_X, 'q (소수)');
+    const primePCard = buildPrimeCard(PRIME_P_X, tr('asymmetricRsa.label.primeP', 'p (prime)'));
+    const primeQCard = buildPrimeCard(PRIME_Q_X, tr('asymmetricRsa.label.primeQ', 'q (prime)'));
 
     // p·q → n 가벼운 화살표.
     const multArrow = makePath(keygenLayer, {
@@ -411,7 +413,7 @@ export const rsaStageView: View = {
         'text-anchor': 'middle',
         fill: palette.textMuted,
       },
-      '× (가벼움)',
+      tr('asymmetricRsa.label.multiplyEasy', '× (cheap)'),
     );
     multLabel.setAttribute('opacity', '0');
 
@@ -554,7 +556,7 @@ export const rsaStageView: View = {
         'text-anchor': 'middle',
         fill: palette.textMuted,
       },
-      '자물쇠 (공개)',
+      tr('asymmetricRsa.label.padlockPublic', 'padlock (public)'),
     );
     makeText(
       keygenLayer,
@@ -565,7 +567,7 @@ export const rsaStageView: View = {
         'text-anchor': 'middle',
         fill: palette.textMuted,
       },
-      '열쇠 (비밀)',
+      tr('asymmetricRsa.label.keyPrivate', 'key (private)'),
     );
 
     // ── 외부 관찰자 영역 ────────────────────────────────────────────
@@ -587,7 +589,7 @@ export const rsaStageView: View = {
         'letter-spacing': '0.04em',
         fill: palette.textMuted,
       },
-      '외부 관찰자 영역 — 공개된 n 만 보임',
+      tr('asymmetricRsa.label.observerArea', 'observer area — only the published n is visible'),
     );
 
     // 공개된 n 카드 (옅게).
@@ -663,7 +665,7 @@ export const rsaStageView: View = {
         'font-size': fontSizes.xs,
         fill: palette.textMuted,
       },
-      'p, q 로의 길은 사실상 막혀 있다',
+      tr('asymmetricRsa.label.factoringHard', 'the road back to p and q is effectively closed'),
     );
 
     // ── Alice 영역 ──────────────────────────────────────────────────
@@ -687,7 +689,7 @@ export const rsaStageView: View = {
         'font-weight': 700,
         fill: palette.text,
       },
-      'Alice (보내는 사람)',
+      tr('asymmetricRsa.label.alice', 'Alice (sender)'),
     );
 
     // Alice 평문 m 카드.
@@ -715,7 +717,7 @@ export const rsaStageView: View = {
         'text-anchor': 'middle',
         fill: palette.textMuted,
       },
-      '평문 m',
+      tr('asymmetricRsa.label.plaintext', 'plaintext m'),
     );
     const aliceMValueEl = makeText(
       aliceMCard,
@@ -745,7 +747,7 @@ export const rsaStageView: View = {
         'text-anchor': 'middle',
         fill: palette.textMuted,
       },
-      '공개 자물쇠 (사본)',
+      tr('asymmetricRsa.label.padlockCopy', 'public padlock (copy)'),
     );
 
     // ── 채널 영역 ──────────────────────────────────────────────────
@@ -770,7 +772,7 @@ export const rsaStageView: View = {
         'font-weight': 700,
         fill: palette.textMuted,
       },
-      '채널 (공개 통로)',
+      tr('asymmetricRsa.label.channel', 'channel (open path)'),
     );
 
     // 채널 가이드 라인.
@@ -796,7 +798,7 @@ export const rsaStageView: View = {
         'text-anchor': 'middle',
         fill: LOCK_TONE,
       },
-      '잠금',
+      tr('asymmetricRsa.label.lock', 'lock'),
     );
 
     const unlockSnapshotG = makeGroup(channelLayer, { opacity: 0 });
@@ -811,7 +813,7 @@ export const rsaStageView: View = {
         'text-anchor': 'middle',
         fill: KEY_TONE,
       },
-      '풀림',
+      tr('asymmetricRsa.label.unlock', 'unlock'),
     );
 
     // 봉투 (잠긴 봉투 c) — 처음엔 숨김.
@@ -925,7 +927,7 @@ export const rsaStageView: View = {
         'font-weight': 700,
         fill: palette.text,
       },
-      'Bob — 공개 마당',
+      tr('asymmetricRsa.label.bobYard', 'Bob — public yard'),
     );
     makeText(
       bobLayer,
@@ -936,7 +938,7 @@ export const rsaStageView: View = {
         'font-weight': 700,
         fill: palette.bg,
       },
-      'Bob — 비밀 방',
+      tr('asymmetricRsa.label.bobRoom', 'Bob — private room'),
     );
 
     // 공개 마당 자물쇠.
@@ -954,7 +956,7 @@ export const rsaStageView: View = {
         'text-anchor': 'middle',
         fill: palette.textMuted,
       },
-      '공개 자물쇠 + n',
+      tr('asymmetricRsa.label.padlockPlusN', 'public padlock + n'),
     );
 
     // 비밀 방 — 비밀 열쇠 + p, q.
@@ -972,7 +974,7 @@ export const rsaStageView: View = {
         fill: palette.bg,
         opacity: 0.8,
       },
-      '비밀 열쇠',
+      tr('asymmetricRsa.label.privateKey', 'private key'),
     );
 
     // 비밀 방 안 두 소수 (작은 칩으로).
@@ -1028,7 +1030,7 @@ export const rsaStageView: View = {
         'text-anchor': 'middle',
         fill: palette.textMuted,
       },
-      '복원된 m',
+      tr('asymmetricRsa.label.recoveredM', 'recovered m'),
     );
     const bobOutValueEl = makeText(
       bobOutG,
@@ -1156,8 +1158,8 @@ export const rsaStageView: View = {
     }
     function updateReverseStatus(): void {
       reverseStatusEl.textContent = reverseAttempt
-        ? '거꾸로 시도: ON'
-        : '거꾸로 시도: OFF';
+        ? tr('asymmetricRsa.label.reverseOn', 'reverse attempt: ON')
+        : tr('asymmetricRsa.label.reverseOff', 'reverse attempt: OFF');
     }
 
     // ── 정적 상태 표시 헬퍼 (init / 변경 직후) ────────────────────
@@ -1285,21 +1287,21 @@ export const rsaStageView: View = {
     async function signalPrimeSeat(_id: 'p' | 'q', _value: number): Promise<void> {
       const g = _id === 'p' ? primePCard.group : primeQCard.group;
       await fadeIn(g, 280);
-      setCaption('두 소수 p, q 가 자리에 앉았다.', { duration: 1100 });
+      setCaption(tr('asymmetricRsa.caption.primesSeated', 'The two primes p and q took their seats.'), { duration: 1100 });
     }
 
     async function signalProductForm(_p: number, _q: number, _n: number): Promise<void> {
       multArrow.setAttribute('opacity', '1');
       multLabel.setAttribute('opacity', '1');
       await fadeIn(productGroup, 320);
-      setCaption('두 소수가 곱해져 합성수 n 을 낳았다.', { duration: 1200 });
+      setCaption(tr('asymmetricRsa.caption.modulus', 'The two primes multiplied and produced the composite n.'), { duration: 1200 });
     }
 
     async function signalKeypairBirth(_n: number, _e: number, _d: number): Promise<void> {
       birthArrow.setAttribute('opacity', '1');
       // 자물쇠와 열쇠 동시 출생.
       await Promise.all([fadeIn(lockBornG, 360), fadeIn(keyBornG, 360)]);
-      setCaption('n 위에 자물쇠와 열쇠 한 짝이 태어났다.', { duration: 1300 });
+      setCaption(tr('asymmetricRsa.caption.keypair', 'A padlock and a key were born as a pair on top of n.'), { duration: 1300 });
     }
 
     async function signalKeypairDistribute(): Promise<void> {
@@ -1312,7 +1314,7 @@ export const rsaStageView: View = {
         fadeIn(bobPQG, 380),
         fadeIn(obsNCard, 380),
       ]);
-      setCaption('자물쇠 한 벌이 채널을 건너 모두에게 사본되었다.', { duration: 1300 });
+      setCaption(tr('asymmetricRsa.caption.publish', 'A copy of the padlock crossed the channel out to everyone.'), { duration: 1300 });
     }
 
     async function signalFactoringBlock(): Promise<void> {
@@ -1351,7 +1353,7 @@ export const rsaStageView: View = {
         };
         raf(tick);
       });
-      setCaption('공개된 n 만으로는 두 소수에 닿지 못한다.', { duration: 1300 });
+      setCaption(tr('asymmetricRsa.caption.factoringFails', 'The published n alone does not lead back to the two primes.'), { duration: 1300 });
     }
 
     async function signalEnvelopeFill(_m: number): Promise<void> {
@@ -1366,7 +1368,7 @@ export const rsaStageView: View = {
       // 봉투 위 자물쇠도 잠시 숨김 (잠금 사건에서 얹힘).
       envelopeLockSubG.setAttribute('opacity', '0');
       await fadeIn(envelopeG, 280);
-      setCaption('Alice 가 평문 m 을 봉투에 넣었다.', { duration: 1100 });
+      setCaption(tr('asymmetricRsa.caption.aliceEnvelope', 'Alice put the plaintext m into an envelope.'), { duration: 1100 });
     }
 
     async function signalLockEngage(): Promise<void> {
@@ -1378,7 +1380,7 @@ export const rsaStageView: View = {
       // 잠금 스냅샷 활성.
       lockSnapshotG.setAttribute('opacity', '1');
       await sleep(120);
-      setCaption('Alice 가 평문을 봉투에 넣고 공개 자물쇠로 잠갔다.', { duration: 1300 });
+      setCaption(tr('asymmetricRsa.caption.aliceLocks', 'Alice sealed the envelope with the public padlock.'), { duration: 1300 });
     }
 
     async function signalChannelCross(_c: number): Promise<void> {
@@ -1419,7 +1421,7 @@ export const rsaStageView: View = {
         };
         raf(tick);
       });
-      setCaption('잠긴 봉투가 채널을 건넌다 — 안의 평문은 보이지 않는다.', { duration: 1500 });
+      setCaption(tr('asymmetricRsa.caption.transit', 'The locked envelope crosses the channel — the plaintext inside stays hidden.'), { duration: 1500 });
     }
 
     async function signalReverseAttempt(): Promise<void> {
@@ -1445,7 +1447,7 @@ export const rsaStageView: View = {
         raf(tick);
       });
       rejectX.setAttribute('opacity', '0');
-      setCaption('같은 자물쇠로는 풀리지 않는다 — 비대칭의 벽.', { duration: 1500 });
+      setCaption(tr('asymmetricRsa.caption.wrongKey', 'The same padlock will not open it — the asymmetry is the wall.'), { duration: 1500 });
     }
 
     async function signalUnlock(): Promise<void> {
@@ -1469,7 +1471,7 @@ export const rsaStageView: View = {
         };
         raf(tick);
       });
-      setCaption('Bob 의 비밀 열쇠가 봉투를 열고 평문이 돌아왔다.', { duration: 1500 });
+      setCaption(tr('asymmetricRsa.caption.bobUnlocks', "Bob's private key opened the envelope and the plaintext came back."), { duration: 1500 });
     }
 
     async function signalDecrypted(_m: number): Promise<void> {
@@ -1477,11 +1479,11 @@ export const rsaStageView: View = {
       await fadeIn(bobOutG, 320);
       // 봉투는 잔상으로 옅게.
       envelopeG.setAttribute('opacity', '0.35');
-      setCaption('평문 m 이 Bob 의 책상에 도착했다.', { duration: 1500 });
+      setCaption(tr('asymmetricRsa.caption.delivered', "The plaintext m arrived on Bob's desk."), { duration: 1500 });
     }
 
     function signalDone(): void {
-      setCaption('한 호흡 완료 — 같은 화면에 잠금 / 채널 / 풀림 잔상이 함께 남는다.', {
+      setCaption(tr('asymmetricRsa.caption.cycleDone', 'One full breath — the traces of lock, channel and unlock all stay on the same screen.'), {
         duration: 2200,
       });
     }
@@ -1507,7 +1509,7 @@ export const rsaStageView: View = {
       updatePlaintext();
       // 키 짝 재출생 — 시퀀스 직전 상태로 리셋.
       resetAll();
-      setCaption(`소수 ${payload.which} 변경 — 키 짝이 다시 태어난다.`, {
+      setCaption(tr('asymmetricRsa.caption.primeChanged', 'Prime {which} changed — the key pair is born again.', { which: String(payload.which) }), {
         duration: 1200,
       });
     }
@@ -1517,7 +1519,7 @@ export const rsaStageView: View = {
       cVal = payload.c;
       updatePlaintext();
       resetAll();
-      setCaption(`평문 m = ${mVal} 으로 갱신 — 시퀀스를 다시 굴린다.`, {
+      setCaption(tr('asymmetricRsa.caption.plaintextChanged', 'Plaintext updated to m = {m} — rolling the sequence again.', { m: String(mVal) }), {
         duration: 1200,
       });
     }
@@ -1525,13 +1527,17 @@ export const rsaStageView: View = {
     function applyReverseToggled(on: boolean): void {
       reverseAttempt = on;
       updateReverseStatus();
-      setCaption(on ? '거꾸로 시도 ON — 거부 시연이 끼어든다.' : '거꾸로 시도 OFF — 정상 흐름.', {
+      setCaption(
+        on
+          ? tr('asymmetricRsa.caption.reverseOn', 'Reverse attempt ON — the refusal demo steps in.')
+          : tr('asymmetricRsa.caption.reverseOff', 'Reverse attempt OFF — the normal flow.'),
+        {
         duration: 1400,
       });
     }
 
     function signalInvalid(op: string, raw: string): void {
-      setCaption(`입력 무시 — ${op}: ${raw}`, { duration: 1500 });
+      setCaption(tr('asymmetricRsa.caption.ignoredInput', 'Input ignored — {op}: {raw}', { op: String(op), raw: String(raw) }), { duration: 1500 });
     }
 
     return {

@@ -19,7 +19,7 @@
  */
 
 import type { View, ViewMountParams, ViewInstance } from '@ffacet/core';
-import { getColors, categorical, fontSizes, type Palette } from '@ffacet/core/runtime';
+import { getColors, categorical, fontSizes, makeTranslator, type Palette } from '@ffacet/core/runtime';
 
 // ── 좌표·치수 상수 ───────────────────────────────────────────────────────────
 const W = 720;
@@ -91,6 +91,7 @@ function svgToPlane(x: number, y: number): { u: number; v: number } {
 // ── view ────────────────────────────────────────────────────────────────────
 export const matrixTransformStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+    const tr = makeTranslator(params.locale);
     const colors: Palette = getColors(params.theme);
     const cat = categorical(8, 'vivid');
     const catPastel = categorical(8, 'pastel');
@@ -113,7 +114,7 @@ export const matrixTransformStageView: View = {
       width: '100%',
       preserveAspectRatio: 'xMidYMid meet',
       role: 'img',
-      'aria-label': '2D 행렬 변환 시각화',
+      'aria-label': tr('matrixTransform2d.label.aria', '2D matrix transform visualization'),
     });
     svg.style.maxWidth = `${W}px`;
     svg.style.display = 'block';
@@ -158,7 +159,7 @@ export const matrixTransformStageView: View = {
       'font-weight': '600',
       fill: colors.text,
     });
-    captionText.textContent = '평면을 평면으로 보내는 선형 사상 — 두 기저의 도착지가 곧 두 열';
+    captionText.textContent = tr('matrixTransform2d.label.caption', 'A linear map sending the plane to the plane — where the two basis vectors land is exactly the two columns');
     svg.appendChild(captionText);
 
     const eventCaption = el('text', {
@@ -191,7 +192,7 @@ export const matrixTransformStageView: View = {
       'font-size': fontSizes.xs,
       fill: colors.textMuted,
     });
-    modeLabel.textContent = '자유 모드';
+    modeLabel.textContent = tr('matrixTransform2d.mode.free', 'free mode');
     svg.appendChild(modeLabel);
 
     // 격자 그룹 (clip 적용).
@@ -268,7 +269,7 @@ export const matrixTransformStageView: View = {
       fill: colors.text,
       'text-anchor': 'middle',
     });
-    parallelogramLabel.textContent = '면적 = 1.00';
+    parallelogramLabel.textContent = tr('matrixTransform2d.label.area', 'area = {value}', { value: '1.00' });
     planeGroup.appendChild(parallelogramLabel);
 
     // i-hat / j-hat 화살표 — line + 끝 원 (드래그 핸들).
@@ -349,7 +350,7 @@ export const matrixTransformStageView: View = {
     const cellPanelTitle = html('div');
     cellPanelTitle.style.fontSize = `${fontSizes.xs}px`;
     cellPanelTitle.style.color = colors.textMuted;
-    cellPanelTitle.textContent = '행렬 셀 — 한 칸 = 한 좌표';
+    cellPanelTitle.textContent = tr('matrixTransform2d.label.cellPanel', 'matrix cells — one cell = one coordinate');
     panelDiv.appendChild(cellPanelTitle);
 
     const cellGrid = html('div');
@@ -418,7 +419,7 @@ export const matrixTransformStageView: View = {
     const presetTitle = html('div');
     presetTitle.style.fontSize = `${fontSizes.xs}px`;
     presetTitle.style.color = colors.textMuted;
-    presetTitle.textContent = '프리셋 — 셀 패턴의 학습';
+    presetTitle.textContent = tr('matrixTransform2d.label.presetPanel', 'presets — learning the cell patterns');
     panelDiv.appendChild(presetTitle);
 
     const presetRow = html('div');
@@ -432,11 +433,11 @@ export const matrixTransformStageView: View = {
       HTMLButtonElement
     >;
     const presetLabels: Record<PresetMode, string> = {
-      rotate: '회전',
-      scale: '스케일',
-      shear: '전단',
-      reflect: '반사',
-      free: '자유',
+      rotate: tr('matrixTransform2d.preset.rotate', 'rotate'),
+      scale: tr('matrixTransform2d.preset.scale', 'scale'),
+      shear: tr('matrixTransform2d.preset.shear', 'shear'),
+      reflect: tr('matrixTransform2d.preset.reflect', 'reflect'),
+      free: tr('matrixTransform2d.preset.free', 'free'),
     };
     (['rotate', 'scale', 'shear', 'reflect', 'free'] as PresetMode[]).forEach((mode) => {
       const btn = html('button');
@@ -512,16 +513,16 @@ export const matrixTransformStageView: View = {
         );
         subSliderWrap.appendChild(wrap);
       } else if (mode === 'scale') {
-        const { wrap: w1 } = makeRange('s (가로)', -2, 2, 0.05, p.s, (v) =>
+        const { wrap: w1 } = makeRange(tr('matrixTransform2d.range.s', 's (horizontal)'), -2, 2, 0.05, p.s, (v) =>
           params.dispatch?.({ type: 'preset-param', payload: { kind: 's', value: v } }),
         );
-        const { wrap: w2 } = makeRange('t (세로)', -2, 2, 0.05, p.t, (v) =>
+        const { wrap: w2 } = makeRange(tr('matrixTransform2d.range.t', 't (vertical)'), -2, 2, 0.05, p.t, (v) =>
           params.dispatch?.({ type: 'preset-param', payload: { kind: 't', value: v } }),
         );
         subSliderWrap.appendChild(w1);
         subSliderWrap.appendChild(w2);
       } else if (mode === 'shear') {
-        const { wrap } = makeRange('k (가로 전단)', -2, 2, 0.05, p.k, (v) =>
+        const { wrap } = makeRange(tr('matrixTransform2d.range.k', 'k (horizontal shear)'), -2, 2, 0.05, p.k, (v) =>
           params.dispatch?.({ type: 'preset-param', payload: { kind: 'k', value: v } }),
         );
         subSliderWrap.appendChild(wrap);
@@ -532,7 +533,12 @@ export const matrixTransformStageView: View = {
         row.style.gap = '4px';
         (['x', 'y', 'origin'] as ReflectAxis[]).forEach((axis) => {
           const btn = html('button');
-          btn.textContent = axis === 'x' ? 'x축' : axis === 'y' ? 'y축' : '원점';
+          btn.textContent =
+        axis === 'x'
+          ? tr('matrixTransform2d.axis.x', 'x axis')
+          : axis === 'y'
+            ? tr('matrixTransform2d.axis.y', 'y axis')
+            : tr('matrixTransform2d.axis.origin', 'origin');
           btn.style.padding = '4px 0';
           btn.style.fontSize = `${fontSizes.xs}px`;
           btn.style.border = `1px solid ${p.axis === axis ? colors.text : colors.border}`;
@@ -550,7 +556,7 @@ export const matrixTransformStageView: View = {
         const hint = html('div');
         hint.style.fontSize = `${fontSizes.xs}px`;
         hint.style.color = colors.textMuted;
-        hint.textContent = '자유 모드 — 셀을 직접 입력하거나 화살표 끝을 드래그하라.';
+        hint.textContent = tr('matrixTransform2d.label.freeHint', 'Free mode — type the cells directly or drag the arrow tips.');
         subSliderWrap.appendChild(hint);
       }
     }
@@ -569,7 +575,7 @@ export const matrixTransformStageView: View = {
     const gaugeTitle = html('div');
     gaugeTitle.style.fontSize = `${fontSizes.xs}px`;
     gaugeTitle.style.color = colors.textMuted;
-    gaugeTitle.textContent = '|det| 게이지 — 면적과 부호';
+    gaugeTitle.textContent = tr('matrixTransform2d.label.detGauge', '|det| gauge — area and sign');
     panelDiv.appendChild(gaugeTitle);
 
     const gaugeWrap = html('div');
@@ -771,7 +777,7 @@ export const matrixTransformStageView: View = {
       const cy = (o.y + i.y + ij.y + j.y) / 4;
       parallelogramLabel.setAttribute('x', String(cx));
       parallelogramLabel.setAttribute('y', String(cy + 4));
-      parallelogramLabel.textContent = `면적 = ${fmt(Math.abs(d), 2)}`;
+      parallelogramLabel.textContent = tr('matrixTransform2d.label.area', 'area = {value}', { value: fmt(Math.abs(d), 2) });
       parallelogramLabel.setAttribute('fill', colors.text);
     }
 
@@ -840,7 +846,7 @@ export const matrixTransformStageView: View = {
         gfx.labelUv.textContent = `(u,v) = (${fmt(p.u, 2)}, ${fmt(p.v, 2)})`;
         gfx.labelXy.setAttribute('x', String(labX));
         gfx.labelXy.setAttribute('y', String(labY + 11));
-        gfx.labelXy.textContent = `위치 = (${fmt(pos.x, 2)}, ${fmt(pos.y, 2)})`;
+        gfx.labelXy.textContent = tr('matrixTransform2d.label.position', 'position = ({x}, {y})', { x: fmt(pos.x, 2), y: fmt(pos.y, 2) });
         gfx.removeBtn.setAttribute('x', String(labX + 88));
         gfx.removeBtn.setAttribute('y', String(labY));
       }
@@ -939,27 +945,39 @@ export const matrixTransformStageView: View = {
 
     function captionFor(dim: 'a' | 'b' | 'c' | 'd' | 'all', cause: string): string {
       if (cause === 'preset') return '';
-      if (cause === 'identity') return '처음의 격자로 돌아갔다 — 두 기저가 (1, 0) 과 (0, 1).';
-      if (cause === 'tip') return '두 기저의 도착지를 직접 잡았다.';
-      if (dim === 'a' || dim === 'c') return 'i-hat 의 한 좌표만 변했다 — j-hat 은 그대로다.';
-      if (dim === 'b' || dim === 'd') return 'j-hat 의 한 좌표만 변했다 — i-hat 은 그대로다.';
+      if (cause === 'identity')
+        return tr('matrixTransform2d.caption.identity', 'Back to the starting grid — the two bases are (1, 0) and (0, 1).');
+      if (cause === 'tip') return tr('matrixTransform2d.caption.tipDrag', 'You grabbed where the two bases land.');
+      if (dim === 'a' || dim === 'c')
+        return tr('matrixTransform2d.caption.iHatOnly', 'Only one coordinate of i-hat changed — j-hat stayed put.');
+      if (dim === 'b' || dim === 'd')
+        return tr('matrixTransform2d.caption.jHatOnly', 'Only one coordinate of j-hat changed — i-hat stayed put.');
       return '';
     }
 
     function captionForPreset(mode: PresetMode): string {
-      if (mode === 'rotate') return '회전 — 두 기저가 같이 돈다.';
-      if (mode === 'scale') return '스케일 — 두 기저가 각자 늘거나 줄어든다.';
-      if (mode === 'shear') return '전단 — 한 기저가 비스듬해진다.';
-      if (mode === 'reflect') return '반사 — 평면이 거울에 비친다.';
+      if (mode === 'rotate') return tr('matrixTransform2d.caption.rotate', 'Rotation — the two bases turn together.');
+      if (mode === 'scale') return tr('matrixTransform2d.caption.scale', 'Scale — each basis stretches or shrinks on its own.');
+      if (mode === 'shear') return tr('matrixTransform2d.caption.shear', 'Shear — one basis leans over.');
+      if (mode === 'reflect') return tr('matrixTransform2d.caption.reflect', 'Reflection — the plane is mirrored.');
       return '';
     }
 
     function modeLabelFor(mode: PresetMode, p: PresetParams): string {
-      if (mode === 'rotate') return `회전 모드 — θ = ${fmt(p.theta, 2)} rad`;
-      if (mode === 'scale') return `스케일 모드 — s = ${fmt(p.s, 2)}, t = ${fmt(p.t, 2)}`;
-      if (mode === 'shear') return `전단 모드 — k = ${fmt(p.k, 2)}`;
-      if (mode === 'reflect') return `반사 모드 — ${p.axis === 'x' ? 'x축' : p.axis === 'y' ? 'y축' : '원점'}`;
-      return '자유 모드';
+      if (mode === 'rotate') return tr('matrixTransform2d.mode.rotate', 'rotate mode — θ = {theta} rad', { theta: fmt(p.theta, 2) });
+      if (mode === 'scale')
+        return tr('matrixTransform2d.mode.scale', 'scale mode — s = {s}, t = {t}', { s: fmt(p.s, 2), t: fmt(p.t, 2) });
+      if (mode === 'shear') return tr('matrixTransform2d.mode.shear', 'shear mode — k = {k}', { k: fmt(p.k, 2) });
+      if (mode === 'reflect')
+        return tr('matrixTransform2d.mode.reflect', 'reflect mode — {axis}', {
+          axis:
+            p.axis === 'x'
+              ? tr('matrixTransform2d.axis.x', 'x axis')
+              : p.axis === 'y'
+                ? tr('matrixTransform2d.axis.y', 'y axis')
+                : tr('matrixTransform2d.axis.origin', 'origin'),
+        });
+      return tr('matrixTransform2d.mode.free', 'free mode');
     }
 
     // ── 외부 메서드 (projector 가 호출) ─────────────────────────────────────
@@ -979,7 +997,7 @@ export const matrixTransformStageView: View = {
       });
       pointGfx.clear();
       eventCaption.textContent = '';
-      modeLabel.textContent = '자유 모드';
+      modeLabel.textContent = tr('matrixTransform2d.mode.free', 'free mode');
       setCellValue(cellA, 1);
       setCellValue(cellB, 0);
       setCellValue(cellC, 0);
@@ -1078,7 +1096,7 @@ export const matrixTransformStageView: View = {
     function applyPointAdded(payload: { id: number; u: number; v: number }): void {
       pointsState.push({ ...payload });
       repaintPoints(matrix);
-      setEventCaption('한 점이 격자와 같은 법칙으로 따라간다.');
+      setEventCaption(tr('matrixTransform2d.caption.pointFollows', 'A single point follows the same law as the grid.'));
     }
 
     function applyPointRemoved(payload: { id: number }): void {
@@ -1095,19 +1113,19 @@ export const matrixTransformStageView: View = {
     }
 
     function signalDetZero(_payload: { matrix: Matrix2x2 }): void {
-      setEventCaption('면적이 0 이다 — 평면이 직선으로 무너졌다.', 1800);
+      setEventCaption(tr('matrixTransform2d.caption.degenerate', 'The area is 0 — the plane collapsed onto a line.'), 1800);
     }
 
     function signalDetFlipped(payload: { sign: 'pos' | 'neg'; det: number }): void {
       if (payload.sign === 'neg') {
-        setEventCaption('방향이 뒤집혔다 — 평면이 거울에 비쳤다.', 1800);
+        setEventCaption(tr('matrixTransform2d.caption.flipped', 'Orientation flipped — the plane was mirrored.'), 1800);
       } else {
-        setEventCaption('방향이 다시 보존된다.', 1200);
+        setEventCaption(tr('matrixTransform2d.caption.orientationBack', 'Orientation is preserved again.'), 1200);
       }
     }
 
     function signalReset(): void {
-      setEventCaption('처음의 격자로 돌아갔다.', 1200);
+      setEventCaption(tr('matrixTransform2d.caption.backToIdentity', 'Back to the starting grid.'), 1200);
     }
 
     // 첫 렌더 (init 전 폴백).
