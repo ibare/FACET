@@ -37,7 +37,7 @@
  *   tr('view.controlBar.play', '▶ Play')
  */
 
-import { resolveLocale, type LocaleStr } from '../types/locale.js';
+import type { LocaleStr } from '../types/locale.js';
 
 /** 키 → 번역문. 한 locale 의 번들. */
 export type MessageBundle = Record<string, string>;
@@ -107,11 +107,19 @@ export function makeTranslator(
 ): Translate {
   const bundle = locale && locale !== SOURCE_LOCALE ? bundles.get(locale) : undefined;
   return (key, fallback, vars) => {
+    // 저작자가 **이 locale 을 직접 썼을 때만** 오버라이드가 이긴다. resolveLocale 은
+    // 요청 locale 이 없으면 en 으로 떨어지므로, 그대로 쓰면 저작자가 en 만 적은
+    // 경우에도 번들을 건너뛰고 영어가 나간다 — 번역을 파이프라인에 맡기는 순간
+    // 프레임워크 번들이 통째로 무시된다.
     const authored = overrides?.[key];
-    const text =
-      (authored !== undefined ? resolveLocale(authored, locale) : undefined) ||
-      bundle?.[key] ||
-      fallback;
-    return interpolate(text, vars);
+    const direct =
+      authored === undefined
+        ? undefined
+        : typeof authored === 'string'
+          ? authored
+          : locale === undefined
+            ? undefined
+            : authored[locale];
+    return interpolate(direct || bundle?.[key] || fallback, vars);
   };
 }

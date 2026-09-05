@@ -15,7 +15,7 @@
 import { registerMessages, SOURCE_LOCALE } from '@ffacet/core/runtime';
 
 /** 리포에 번들이 들어 있는 locale. en 은 소스 원본이라 로드할 것이 없다. */
-const AVAILABLE = new Set(['ko']);
+const AVAILABLE = new Set(['ko', 'ja', 'zh', 'ar', 'es', 'fr', 'hi', 'id', 'pt']);
 
 /**
  * 프레임워크 문구 번들을 등록한다.
