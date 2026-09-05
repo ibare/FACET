@@ -1,5 +1,5 @@
 {
-  "name": "@ffacet/algorithm-2d-matrix-transform",
+  "name": "@ffacet/algorithm-bubble-sort",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -13,5 +13,9 @@
   },
   "dependencies": {
     "@ffacet/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@ffacet/transpiler-python": "workspace:*",
+    "@ffacet/view-code": "workspace:*"
   }
 }

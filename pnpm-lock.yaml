@@ -8,9 +8,9 @@ importers:
 
   .:
     devDependencies:
-      '@ffacet/algorithm-bubblesort':
+      '@ffacet/algorithm-bubble-sort':
         specifier: workspace:*
-        version: link:facets/cs-fundamentals/bubblesort
+        version: link:facets/cs-fundamentals/bubble-sort
       '@ffacet/bootstrap':
         specifier: workspace:*
         version: link:packages/bootstrap
@@ -149,7 +149,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
-  facets/cs-fundamentals/bubblesort:
+  facets/cs-fundamentals/bubble-sort:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -162,13 +162,13 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/view-code
 
-  facets/cs-fundamentals/hash-table:
+  facets/cs-fundamentals/hash-table-chaining:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
-  facets/cs-fundamentals/linked-list:
+  facets/cs-fundamentals/linked-list-singly:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -180,7 +180,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
-  facets/cs-fundamentals/queue:
+  facets/cs-fundamentals/queue-fifo:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -205,7 +205,7 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
-  facets/graphics/2d-matrix-transform:
+  facets/graphics/matrix-transform-2d:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -253,11 +253,14 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  packages/authoring:
+    devDependencies:
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
+
   packages/bootstrap:
     devDependencies:
-      '@ffacet/algorithm-2d-matrix-transform':
-        specifier: workspace:*
-        version: link:../../facets/graphics/2d-matrix-transform
       '@ffacet/algorithm-array':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/array
@@ -270,9 +273,9 @@ importers:
       '@ffacet/algorithm-bst':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bst
-      '@ffacet/algorithm-bubblesort':
+      '@ffacet/algorithm-bubble-sort':
         specifier: workspace:*
-        version: link:../../facets/cs-fundamentals/bubblesort
+        version: link:../../facets/cs-fundamentals/bubble-sort
       '@ffacet/algorithm-caching-cdn':
         specifier: workspace:*
         version: link:../../facets/system-design/caching-cdn
@@ -282,27 +285,30 @@ importers:
       '@ffacet/algorithm-context-switching':
         specifier: workspace:*
         version: link:../../facets/os/context-switching
-      '@ffacet/algorithm-hash-table':
+      '@ffacet/algorithm-hash-table-chaining':
         specifier: workspace:*
-        version: link:../../facets/cs-fundamentals/hash-table
+        version: link:../../facets/cs-fundamentals/hash-table-chaining
       '@ffacet/algorithm-ip-routing':
         specifier: workspace:*
         version: link:../../facets/network/ip-routing
       '@ffacet/algorithm-linear-regression':
         specifier: workspace:*
         version: link:../../facets/ml-basics/linear-regression
-      '@ffacet/algorithm-linked-list':
+      '@ffacet/algorithm-linked-list-singly':
         specifier: workspace:*
-        version: link:../../facets/cs-fundamentals/linked-list
+        version: link:../../facets/cs-fundamentals/linked-list-singly
       '@ffacet/algorithm-lru-cache':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/lru-cache
+      '@ffacet/algorithm-matrix-transform-2d':
+        specifier: workspace:*
+        version: link:../../facets/graphics/matrix-transform-2d
       '@ffacet/algorithm-messaging-pubsub':
         specifier: workspace:*
         version: link:../../facets/system-design/messaging-pubsub
-      '@ffacet/algorithm-queue':
+      '@ffacet/algorithm-queue-fifo':
         specifier: workspace:*
-        version: link:../../facets/cs-fundamentals/queue
+        version: link:../../facets/cs-fundamentals/queue-fifo
       '@ffacet/algorithm-relational-tables-and-keys':
         specifier: workspace:*
         version: link:../../facets/database/relational-tables-and-keys
@@ -379,9 +385,9 @@ importers:
         specifier: ^14.1.3
         version: 14.1.4
     devDependencies:
-      '@ffacet/algorithm-bubblesort':
+      '@ffacet/algorithm-bubble-sort':
         specifier: workspace:*
-        version: link:../../facets/cs-fundamentals/bubblesort
+        version: link:../../facets/cs-fundamentals/bubble-sort
       '@ffacet/transpiler-python':
         specifier: workspace:*
         version: link:../transpiler-python
@@ -440,9 +446,9 @@ importers:
         specifier: workspace:*
         version: link:../core
     devDependencies:
-      '@ffacet/algorithm-bubblesort':
+      '@ffacet/algorithm-bubble-sort':
         specifier: workspace:*
-        version: link:../../facets/cs-fundamentals/bubblesort
+        version: link:../../facets/cs-fundamentals/bubble-sort
       '@ffacet/transpiler-cpp':
         specifier: workspace:*
         version: link:../transpiler-cpp

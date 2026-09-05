@@ -15,7 +15,7 @@
 import type { FacetJson } from '@ffacet/core/runtime';
 
 export const queueFacet: FacetJson = {
-  id: 'facet:queue',
+  id: 'facet:queueFifo',
   title: { en: 'Queue (FIFO)', ko: '큐 (FIFO)' },
   description: {
     en: 'Conveyor belt: oldest leaves first, newest rides at the back',

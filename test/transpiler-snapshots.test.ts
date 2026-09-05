@@ -6,7 +6,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import { bubblesortImperativeIR } from '@ffacet/algorithm-bubblesort';
+import { bubblesortImperativeIR } from '@ffacet/algorithm-bubble-sort';
 import { pythonTranspiler } from '@ffacet/transpiler-python';
 import { javascriptTranspiler } from '@ffacet/transpiler-javascript';
 import { typescriptTranspiler } from '@ffacet/transpiler-typescript';

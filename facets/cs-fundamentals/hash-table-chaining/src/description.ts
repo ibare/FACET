@@ -1,14 +1,14 @@
 /**
  * HashTable 학습 설명 — 단일 마크다운.
  *
- * `{facet:hashTable}` 토큰은 호스트가 인라인 시각화 노드로 치환한다.
+ * `{facet:hashTableChaining}` 토큰은 호스트가 인라인 시각화 노드로 치환한다.
  */
 
 export const hashTableDescription = `## 해시 테이블 (Hash Table — 분리 체이닝)
 
 **키를 결정적 규칙으로 슬롯 배열의 한 자리에 던져 넣어 평균 한 번의 점프로 값을 찾도록 만든 자료구조.** 키 공간이 슬롯 공간보다 크므로 두 키가 같은 자리로 떨어지는 충돌은 정상 작동의 일부이며, 그 자리에 사슬을 늘여 함께 둠으로써 흡수한다. 표가 차오를수록 충돌이 잦아지므로 적재율이 임계를 넘으면 표를 키우고 모든 키를 새 함수로 다시 던지는 리해싱이 일어난다.
 
-{facet:hashTable}
+{facet:hashTableChaining}
 
 ### 핵심 아이디어
 

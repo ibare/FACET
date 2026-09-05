@@ -55,13 +55,13 @@ export function bootstrapFacet(): void {
   registerCsharpTranspiler();
 
   registerFacetLoader('facet:bubbleSort', () =>
-    import('@ffacet/algorithm-bubblesort').then((m) => m.registerBubblesort()),
+    import('@ffacet/algorithm-bubble-sort').then((m) => m.registerBubblesort()),
   );
   registerFacetLoader('facet:bfs', () =>
     import('@ffacet/algorithm-bfs').then((m) => m.registerBfs()),
   );
-  registerFacetLoader('facet:queue', () =>
-    import('@ffacet/algorithm-queue').then((m) => m.registerQueue()),
+  registerFacetLoader('facet:queueFifo', () =>
+    import('@ffacet/algorithm-queue-fifo').then((m) => m.registerQueue()),
   );
   registerFacetLoader('facet:stack', () =>
     import('@ffacet/algorithm-stack').then((m) => m.registerStack()),
@@ -69,11 +69,11 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:array', () =>
     import('@ffacet/algorithm-array').then((m) => m.registerArray()),
   );
-  registerFacetLoader('facet:linkedList', () =>
-    import('@ffacet/algorithm-linked-list').then((m) => m.registerLinkedList()),
+  registerFacetLoader('facet:linkedListSingly', () =>
+    import('@ffacet/algorithm-linked-list-singly').then((m) => m.registerLinkedList()),
   );
-  registerFacetLoader('facet:hashTable', () =>
-    import('@ffacet/algorithm-hash-table').then((m) => m.registerHashTable()),
+  registerFacetLoader('facet:hashTableChaining', () =>
+    import('@ffacet/algorithm-hash-table-chaining').then((m) => m.registerHashTable()),
   );
   registerFacetLoader('facet:bst', () =>
     import('@ffacet/algorithm-bst').then((m) => m.registerBst()),
@@ -110,7 +110,7 @@ export function bootstrapFacet(): void {
     import('@ffacet/algorithm-context-switching').then((m) => m.registerContextSwitching()),
   );
   registerFacetLoader('facet:matrixTransform2d', () =>
-    import('@ffacet/algorithm-2d-matrix-transform').then((m) => m.registerMatrixTransform2d()),
+    import('@ffacet/algorithm-matrix-transform-2d').then((m) => m.registerMatrixTransform2d()),
   );
   registerFacetLoader('facet:ipRouting', () =>
     import('@ffacet/algorithm-ip-routing').then((m) => m.registerIpRouting()),

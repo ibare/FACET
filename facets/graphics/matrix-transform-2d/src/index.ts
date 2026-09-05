@@ -1,5 +1,5 @@
 /**
- * @ffacet/algorithm-2d-matrix-transform — 4-layer 2D 행렬 변환 facet 번들.
+ * @ffacet/algorithm-matrix-transform-2d — 4-layer 2D 행렬 변환 facet 번들.
  *
  * 입력 반응형 (ReactiveMechanism). mount 직후 1.5초 자동 시연 후 idle 진입.
  * 사용자 입력 (셀 직접 입력 / 화살표 끝 드래그 / 프리셋 토글 / 보조 슬라이더 /

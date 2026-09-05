@@ -1,14 +1,14 @@
 /**
  * LinkedList 학습 설명 — 단일 마크다운.
  *
- * `{facet:linkedList}` 토큰은 호스트가 인라인 시각화 노드로 치환한다.
+ * `{facet:linkedListSingly}` 토큰은 호스트가 인라인 시각화 노드로 치환한다.
  */
 
 export const linkedListDescription = `## 연결 리스트 (Linked List)
 
 **노드 각각이 자기 다음 한 명만 가리키는 단 하나의 손가락을 갖는 자료구조.** 어떤 위치에 닿으려면 머리(head)에서 출발해 손가락을 한 칸씩 따라가야 하고, 어떤 자리에 새 원소를 끼우거나 빼는 일은 노드를 옮기는 게 아니라 두세 개의 손가락을 끊고 다시 잇는 일이다. 끝은 NULL 이라는 명시적 표식으로 닫힌다.
 
-{facet:linkedList}
+{facet:linkedListSingly}
 
 ### 핵심 아이디어
 

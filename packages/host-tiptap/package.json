@@ -20,7 +20,7 @@
     "@tiptap/pm": "^3.0.0"
   },
   "devDependencies": {
-    "@ffacet/algorithm-bubblesort": "workspace:*",
+    "@ffacet/algorithm-bubble-sort": "workspace:*",
     "@ffacet/transpiler-python": "workspace:*",
     "@ffacet/view-code": "workspace:*",
     "@tiptap/core": "^3.22.3",

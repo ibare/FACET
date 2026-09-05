@@ -15,7 +15,7 @@
     "@ffacet/core": "workspace:*"
   },
   "devDependencies": {
-    "@ffacet/algorithm-bubblesort": "workspace:*",
+    "@ffacet/algorithm-bubble-sort": "workspace:*",
     "@ffacet/transpiler-cpp": "workspace:*",
     "@ffacet/transpiler-csharp": "workspace:*",
     "@ffacet/transpiler-java": "workspace:*",

@@ -15,7 +15,7 @@
 import type { FacetJson } from '@ffacet/core/runtime';
 
 export const linkedListFacet: FacetJson = {
-  id: 'facet:linkedList',
+  id: 'facet:linkedListSingly',
   title: { en: 'Linked List', ko: '연결 리스트' },
   description: {
     en: 'Each node has a single finger pointing only at its next — insert/remove rewires arrows, not cards',

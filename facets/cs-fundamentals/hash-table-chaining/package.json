@@ -1,5 +1,5 @@
 {
-  "name": "@ffacet/algorithm-hash-table",
+  "name": "@ffacet/algorithm-hash-table-chaining",
   "version": "0.0.0",
   "private": true,
   "type": "module",

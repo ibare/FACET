@@ -16,7 +16,7 @@
     "typecheck": "pnpm -r run typecheck"
   },
   "devDependencies": {
-    "@ffacet/algorithm-bubblesort": "workspace:*",
+    "@ffacet/algorithm-bubble-sort": "workspace:*",
     "@ffacet/bootstrap": "workspace:*",
     "@ffacet/core": "workspace:*",
     "@ffacet/host-tiptap": "workspace:*",

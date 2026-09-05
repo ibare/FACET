@@ -19,7 +19,7 @@
 import type { FacetJson } from '@ffacet/core/runtime';
 
 export const hashTableFacet: FacetJson = {
-  id: 'facet:hashTable',
+  id: 'facet:hashTableChaining',
   title: { en: 'Hash Table', ko: '해시 테이블' },
   description: {
     en: 'Keys land in slots picked by a deterministic function — same-slot collisions grow chains, not chaos',

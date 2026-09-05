@@ -8,7 +8,7 @@ import {
   registerFacets,
   type FacetJson,
 } from '@ffacet/core/runtime';
-import { registerBubblesort, bubblesortFacet } from '@ffacet/algorithm-bubblesort';
+import { registerBubblesort, bubblesortFacet } from '@ffacet/algorithm-bubble-sort';
 import { registerPythonTranspiler } from '@ffacet/transpiler-python';
 import { registerCodeView } from '@ffacet/view-code';
 

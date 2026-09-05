@@ -1,5 +1,5 @@
 {
-  "name": "@ffacet/algorithm-queue",
+  "name": "@ffacet/algorithm-matrix-transform-2d",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -13,9 +13,5 @@
   },
   "dependencies": {
     "@ffacet/core": "workspace:*"
-  },
-  "devDependencies": {
-    "@ffacet/transpiler-python": "workspace:*",
-    "@ffacet/view-code": "workspace:*"
   }
 }

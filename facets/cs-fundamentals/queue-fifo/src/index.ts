@@ -1,5 +1,5 @@
 /**
- * @ffacet/algorithm-queue — 4-layer 큐 (FIFO) facet 번들.
+ * @ffacet/algorithm-queue-fifo — 4-layer 큐 (FIFO) facet 번들.
  *
  * 양끝 비대칭 게이트 · 입장 스탬프 단조증가 · 나이 그라디언트 · 동기 시프트 ·
  * 꼬리 로그 · 연산 로그를 한 벨트에 집약한 자료구조 시각화. algorithm /

@@ -1,7 +1,7 @@
 /**
  * Queue (FIFO) 학습 설명 — 단일 마크다운 (i18n 미적용).
  *
- * 본문 안의 `{facet:queue}` 토큰은 호스트(Tiptap NodeView) 가 시각화
+ * 본문 안의 `{facet:queueFifo}` 토큰은 호스트(Tiptap NodeView) 가 시각화
  * 노드로 치환해 인라인 마운트한다.
  */
 
@@ -9,7 +9,7 @@ export const queueDescription = `## 큐 (Queue — FIFO)
 
 뒤로만 쌓이고 앞으로만 빠지는, **가장 오래 기다린 것이 가장 먼저 떠나는 기계**. 양끝이 서로 다른 역할을 맡아 "들어온 순서 = 나가는 순서" 를 구조적으로 보장한다. 공장 조립 라인의 **컨베이어 벨트** 를 떠올리면 된다 — 오른쪽에서 얹히고 왼쪽으로만 빠진다.
 
-{facet:queue}
+{facet:queueFifo}
 
 ### 핵심 아이디어
 

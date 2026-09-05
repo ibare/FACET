@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import type { IR } from '@ffacet/core';
 import { runIR } from '../src/index.js';
-import { bubblesortImperativeIR } from '@ffacet/algorithm-bubblesort';
+import { bubblesortImperativeIR } from '@ffacet/algorithm-bubble-sort';
 import { javascriptTranspiler } from '@ffacet/transpiler-javascript';
 
 const SEEDS: number[][] = [

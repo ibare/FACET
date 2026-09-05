@@ -1,5 +1,5 @@
 {
-  "name": "@ffacet/algorithm-linked-list",
+  "name": "@ffacet/algorithm-queue-fifo",
   "version": "0.0.0",
   "private": true,
   "type": "module",
@@ -13,5 +13,9 @@
   },
   "dependencies": {
     "@ffacet/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@ffacet/transpiler-python": "workspace:*",
+    "@ffacet/view-code": "workspace:*"
   }
 }
