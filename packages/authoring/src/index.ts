@@ -26,6 +26,7 @@ import type {
 } from './concept-types.js';
 import { CONCEPT_SOURCES } from './concepts/index.js';
 import { contentHash } from './hash.js';
+import { SCREEN_LABELS } from './screen-labels.generated.js';
 
 export type {
   FacetConcept,
@@ -40,7 +41,7 @@ export type {
 export { contentHash } from './hash.js';
 
 /**
- * screen.labels 에 요청 locale 이 없을 때의 대체 언어.
+ * 생성된 screen 라벨 표에 요청 locale 이 없을 때의 대체 언어.
  *
  * view 들의 라벨 조회 (conveyor-queue pickLabels 등) 가 같은 규칙이라, 미지원
  * locale 에서 화면이 실제로 영어로 뜨는 것과 일치한다. 즉 fallback 은 편의가
@@ -77,14 +78,16 @@ const VALIDATED = validate();
  */
 function resolveScreen(
   screen: ConceptScreen,
+  canonicalFacet: string,
   locale: string,
 ): { screen: ResolvedConceptScreen; applied: string } {
-  const direct = screen.labels[locale];
+  const byLocale = SCREEN_LABELS[canonicalFacet] ?? {};
+  const direct = byLocale[locale];
   if (direct !== undefined) {
     return { screen: { ...screen, labels: direct }, applied: locale };
   }
   return {
-    screen: { ...screen, labels: screen.labels[FALLBACK_LOCALE] ?? [] },
+    screen: { ...screen, labels: byLocale[FALLBACK_LOCALE] ?? [] },
     applied: FALLBACK_LOCALE,
   };
 }
@@ -96,7 +99,7 @@ function build(locale: string): readonly FacetConcept[] {
   if (cached) return cached;
 
   const built = VALIDATED.map((c) => {
-    const { screen, applied } = resolveScreen(c.briefing.screen, locale);
+    const { screen, applied } = resolveScreen(c.briefing.screen, c.canonicalFacet, locale);
     return { ...c, briefing: { ...c.briefing, screen }, locale: applied };
   });
   CACHE.set(locale, built);

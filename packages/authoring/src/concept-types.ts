@@ -127,20 +127,22 @@ export type ConceptBriefing = {
  */
 export type ConceptScreen = {
   /**
-   * 화면에 실제로 렌더되는 문자열. 설명을 붙이지 않고 있는 그대로 나열한다.
-   * 이 스키마에서 언어 구분이 남는 유일한 필드 (LocaleMap 주석 참조).
+   * 독자가 할 수 있는 조작과 초기 상태. 영어 단일.
    *
-   * 선언(FacetConceptSource)에서는 locale 전체를 갖지만, 공개 조회 API 는
-   * 요청 locale 하나로 해석해 string[] 로 내보낸다 — 호스트가 LocaleMap 구조를
-   * 알 필요가 없게 한다.
+   * 화면에 뜨는 문자열 목록(labels)은 여기 선언하지 않는다. 원천이 FacetJson 이라
+   * 손으로 옮겨 적으면 반드시 어긋나므로 (실제로 title-block 제목과 stack 의
+   * 입력/출력 트랙 라벨이 누락된 적이 있다) `pnpm screen:gen` 이 뽑은 표에서
+   * 조회 시점에 붙인다.
    */
-  labels: LocaleMap<string[]>;
-  /** 독자가 할 수 있는 조작과 초기 상태. 영어 단일. */
   affordances: string[];
 };
 
-/** 공개 조회 API 가 내보내는 screen — labels 가 요청 locale 로 해석된 형태. */
-export type ResolvedConceptScreen = Omit<ConceptScreen, 'labels'> & {
+/**
+ * 공개 조회 API 가 내보내는 screen — 생성된 표에서 가져온 labels 가 요청 locale 로
+ * 해석되어 붙은 형태.
+ */
+export type ResolvedConceptScreen = ConceptScreen & {
+  /** 화면에 실제로 렌더되는 문자열. FacetJson 에서 기계 수집한 것이라 어긋나지 않는다. */
   labels: string[];
 };
 
