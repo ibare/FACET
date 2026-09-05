@@ -84,7 +84,7 @@ export const queueFifoConcept: FacetConceptSource = {
         note: 'What a queue gives up is exactly what an array is for: an array reaches any index in one step, a queue only ever touches its two ends.',
       },
       {
-        concept: 'linkedList',
+        concept: 'linkedListSingly',
         note: 'A linked list is a common substrate for a queue — it explains how both ends stay constant-time, but it shows rewiring rather than order preservation.',
       },
     ],

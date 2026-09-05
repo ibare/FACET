@@ -67,7 +67,20 @@ function validate(): readonly (FacetConceptSource & { definitionHash: string })[
   });
 }
 
+/** contrastWith 가 실재하는 개념만 가리키는지 확인. 미선언 id 는 오타다. */
+function validateContrasts(concepts: readonly FacetConceptSource[]): void {
+  const ids = new Set(concepts.map((c) => c.id));
+  for (const c of concepts) {
+    for (const x of c.briefing.contrastWith) {
+      if (!ids.has(x.concept)) {
+        throw new Error(`미선언 개념 참조: ${c.id}.contrastWith → ${x.concept}`);
+      }
+    }
+  }
+}
+
 const VALIDATED = validate();
+validateContrasts(VALIDATED);
 
 /**
  * screen.labels 를 요청 locale 하나로 접는다.
