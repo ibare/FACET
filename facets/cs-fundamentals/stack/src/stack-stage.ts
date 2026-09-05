@@ -19,6 +19,7 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import { makeTranslator } from '@ffacet/core/runtime';
 import {
   getColors,
   categorical,
@@ -28,6 +29,15 @@ import {
 } from '@ffacet/core/runtime';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
+
+/**
+ * View 자체 고정 라벨. params.locale 로 만든 translator 로 해석한다 (S-view).
+ * Projector 가 사건마다 조립하는 캡션은 여기 두지 않는다 — 그쪽은 ProjectorRuntime.t 가 맡는다.
+ */
+const K = {
+  top: 'stack.label.top',
+  empty: 'stack.label.empty',
+} as const;
 
 const W = 680;
 const H = 400;
@@ -134,6 +144,7 @@ function pickColor(stamp: number): string {
 export const stackStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
     container.textContent = '';
+    const tr = makeTranslator(params.locale);
 
     const colors = getColors(params.theme);
 
@@ -250,7 +261,7 @@ export const stackStageView: View = {
     topLabel.setAttribute('font-family', fonts.body);
     topLabel.setAttribute('font-weight', '600');
     topLabel.setAttribute('text-anchor', 'middle');
-    topLabel.textContent = '꼭대기';
+    topLabel.textContent = tr(K.top, 'Top');
 
     const topSubLabel = document.createElementNS(SVG_NS, 'text');
     topSubLabel.setAttribute('x', '0');
@@ -259,7 +270,7 @@ export const stackStageView: View = {
     topSubLabel.setAttribute('font-size', fontSizes.xs);
     topSubLabel.setAttribute('font-family', fonts.body);
     topSubLabel.setAttribute('text-anchor', 'middle');
-    topSubLabel.textContent = '비어 있음';
+    topSubLabel.textContent = tr(K.empty, '(empty)');
 
     topMarker.append(topLabel, topSubLabel);
     stageGroup.appendChild(topMarker);

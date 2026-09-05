@@ -12,7 +12,8 @@
  * 운동 시간 (ms) 은 기획 §3 / §9 기준 + runtime.getSpeed() 로 보정.
  */
 
-import type { ProjectorFactory } from '@ffacet/core/runtime';
+import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
+import { makeTranslator } from '@ffacet/core/runtime';
 
 type LruCacheStage = {
   reset(): void;
@@ -69,17 +70,21 @@ type LruCacheStage = {
   signalDemoEnd(): void;
 };
 
-const BASE_CAPTION =
-  'LRU 캐시는 hash map (키 → 노드) 과 doubly linked list (사용 순서) 를 같은 노드로 공유한다 — 모든 호출이 노드를 MRU 끝으로 끌어올리고, 용량 초과면 LRU 끝이 두 영역에서 동시에 사라진다.';
-
 export const lruCacheProjector: ProjectorFactory = (views, runtime) => {
+  const tr: Translate = runtime?.t ?? makeTranslator();
+  /** 상시 캡션. 두 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
+  const baseCaption = (): string =>
+    tr(
+      'lruCache.caption.base',
+      'An LRU cache shares one set of nodes between a hash map (key → node) and a doubly linked list (recency order) — every call drags a node to the MRU end, and on overflow the LRU end vanishes from both areas at once.',
+    );
   const stage = views.stage as unknown as LruCacheStage | undefined;
 
   return {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
     },
 
     async onEvent(event) {
@@ -224,7 +229,7 @@ export const lruCacheProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
     },
   };
 };

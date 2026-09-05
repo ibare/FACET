@@ -12,6 +12,7 @@
 import type { FacetJson, BlockSpec, ControlSpec } from '../types/facet-json.js';
 import type { LocaleStr } from '../types/locale.js';
 import { resolveLocale } from '../types/locale.js';
+import { makeTranslator } from './i18n.js';
 import type { Theme } from '../views/design-tokens.js';
 import type { ProjectorViews } from './projector.js';
 import { CoroutineMechanism, ReactiveMechanism, type Mechanism, type MechanismHooks } from './mechanism.js';
@@ -203,8 +204,11 @@ export function runFacet(
     }
   }
 
-  // 9. Projector 인스턴스화 — getSpeed 는 mechanism 위임.
-  const projector = projectorFactory(views, { getSpeed: () => mechanism.getSpeed() });
+  // 9. Projector 인스턴스화 — getSpeed 는 mechanism 위임, t 는 현재 locale 로 해석.
+  const projector = projectorFactory(views, {
+    getSpeed: () => mechanism.getSpeed(),
+    t: makeTranslator(locale),
+  });
 
   // 10. control-bar wire-up + hooks 정의.
   const controlBar = findControlBar(views);

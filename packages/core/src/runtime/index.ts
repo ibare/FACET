@@ -15,6 +15,7 @@ export * from './mechanism.js';
 export * from './event-bus.js';
 export * from './layout-builder.js';
 export * from './registry.js';
+export * from './i18n.js';
 export * from './runner.js';
 
 export {

@@ -21,9 +21,8 @@
  *   algorithm 과 동일한 id 부여 규칙을 공유해 id 가 어긋나지 않는다.
  */
 
-import type { ProjectorFactory } from '@ffacet/core/runtime';
-import type { TreeNode } from '@ffacet/core/runtime';
-import { parseTarget } from '@ffacet/core/runtime';
+import type { ProjectorFactory, TreeNode, Translate } from '@ffacet/core/runtime';
+import { makeTranslator, parseTarget } from '@ffacet/core/runtime';
 import { computeInitialBst, type BstInitialData } from './algorithm.js';
 
 export const BST_CANVAS = { width: 560, height: 320, stripH: 44 } as const;
@@ -109,7 +108,18 @@ function tiltRatio(n: ShadowNode | null): number {
   return ideal > 0 ? h / ideal : h;
 }
 
+/**
+ * Projector 가 문안을 정하는 화면 문자열. 키 + en 원본을 함께 둔다 —
+ * 원본이 소스에 남아야 추출기(pnpm messages:gen)가 번역 대상을 모은다.
+ */
+const K = {
+  empty: 'bst.hud.empty',
+  compare: 'bst.hud.compare',
+  done: 'bst.hud.done',
+} as const;
+
 export const bstProjector: ProjectorFactory = (views, runtime) => {
+  const tr: Translate = runtime?.t ?? makeTranslator();
   const stage = views.stage as unknown as TreeLayoutHandle | undefined;
   const compareHud = views.compareHud as unknown as TextDisplay | undefined;
   const tiltGauge = views.tiltGauge as unknown as TextDisplay | undefined;
@@ -130,7 +140,7 @@ export const bstProjector: ProjectorFactory = (views, runtime) => {
     if (!tiltGauge) return;
     const size = sizeOf(shadow);
     if (size === 0) {
-      tiltGauge.setText('트리 비어있음');
+      tiltGauge.setText(tr(K.empty, 'Tree is empty'));
       return;
     }
     const ratio = tiltRatio(shadow);
@@ -310,7 +320,13 @@ export const bstProjector: ProjectorFactory = (views, runtime) => {
             | undefined;
           if (!p?.key || !p.nodeValue) break;
           const sym = p.result ?? '?';
-          compareHud?.setText(`[키 ${p.key}] ${sym} [노드 ${p.nodeValue}]`);
+          compareHud?.setText(
+            tr(K.compare, '[key {key}] {sym} [node {node}]', {
+              key: String(p.key),
+              sym,
+              node: String(p.nodeValue),
+            }),
+          );
           break;
         }
 
@@ -336,7 +352,7 @@ export const bstProjector: ProjectorFactory = (views, runtime) => {
 
         case 'done': {
           codePanel?.clearHighlight();
-          compareHud?.setText('완료');
+          compareHud?.setText(tr(K.done, 'Done'));
           break;
         }
       }

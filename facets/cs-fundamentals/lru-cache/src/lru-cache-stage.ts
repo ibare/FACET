@@ -22,6 +22,7 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import { makeTranslator } from '@ffacet/core/runtime';
 import {
   getColors,
   fonts,
@@ -125,8 +126,36 @@ type TraceEntry = {
   bg: SVGRectElement;
 };
 
+/**
+ * View 가 그리는 화면 문자열. 키 + en 원본을 함께 둔다 — 원본이 소스에 남아야
+ * 추출기(pnpm messages:gen)가 번역 대상을 모으고, 번들이 없어도 en 으로 동작한다.
+ */
+const K = {
+  hashArea: 'lruCache.label.hashArea',
+  dllArea: 'lruCache.label.dllArea',
+  lruEnd: 'lruCache.label.lruEnd',
+  mruEnd: 'lruCache.label.mruEnd',
+  traceTitle: 'lruCache.label.traceTitle',
+  references: 'lruCache.label.references',
+  narrative1: 'lruCache.narrative.line1',
+  narrative2: 'lruCache.narrative.line2',
+  narrative3: 'lruCache.narrative.line3',
+  narrative4: 'lruCache.narrative.line4',
+  narrative5: 'lruCache.narrative.line5',
+  narrative6: 'lruCache.narrative.line6',
+  getHit: 'lruCache.caption.getHit',
+  getMiss: 'lruCache.caption.getMiss',
+  missMark: 'lruCache.caption.missMark',
+  putUpdate: 'lruCache.caption.putUpdate',
+  putInsert: 'lruCache.caption.putInsert',
+  evict: 'lruCache.caption.evict',
+  invalidKey: 'lruCache.caption.invalidKey',
+  handover: 'lruCache.caption.handover',
+} as const;
+
 export const lruCacheStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+    const tr = makeTranslator(params.locale);
     container.textContent = '';
     const colors = getColors(params.theme);
     const keyColors = categorical(KEY_PALETTE_SIZE, KEY_PALETTE_TONE);
@@ -177,7 +206,7 @@ export const lruCacheStageView: View = {
       'font-family': fonts.body,
       'font-weight': '600',
     });
-    hashAreaLabel.textContent = 'hash map  (key → 노드 포인터)';
+    hashAreaLabel.textContent = tr(K.hashArea, 'hash map  (key → node pointer)');
     svg.appendChild(hashAreaLabel);
 
     // === hash 슬롯 그룹 (동적으로 채워짐) ===
@@ -227,7 +256,7 @@ export const lruCacheStageView: View = {
       'font-family': fonts.body,
       'font-weight': '600',
     });
-    dllAreaLabel.textContent = 'doubly linked list  (사용 순서)';
+    dllAreaLabel.textContent = tr(K.dllArea, 'doubly linked list  (recency order)');
     svg.appendChild(dllAreaLabel);
 
     const dllGroup = document.createElementNS(SVG_NS, 'g');
@@ -317,7 +346,7 @@ export const lruCacheStageView: View = {
       'font-family': fonts.body,
       'font-weight': '700',
     });
-    lruLabel.textContent = '◀ LRU (가장 오래 안 본 것)';
+    lruLabel.textContent = tr(K.lruEnd, '◀ LRU (least recently seen)');
     svg.appendChild(lruLabel);
 
     const mruLabel = document.createElementNS(SVG_NS, 'text');
@@ -330,7 +359,7 @@ export const lruCacheStageView: View = {
       'font-family': fonts.body,
       'font-weight': '700',
     });
-    mruLabel.textContent = '(방금 본 것) MRU ▶';
+    mruLabel.textContent = tr(K.mruEnd, '(just seen) MRU ▶');
     svg.appendChild(mruLabel);
 
     // === 시각화 안 텍스트 ===
@@ -358,12 +387,12 @@ export const lruCacheStageView: View = {
     svg.appendChild(narrativeText);
 
     const narrativeLines = [
-      'LRU 캐시는 키-값 저장소 위에 "최근 사용 순서" 라는 추상을 새긴다.',
-      '위쪽 hash 슬롯은 키 → 노드 포인터의 빠른 조회를,',
-      '아래쪽 doubly linked list 는 사용 순서를 담당한다.',
-      '두 영역은 같은 노드를 공유하므로 모든 호출이 두 곳을 동시에 갱신한다.',
-      'get 도 단순 조회가 아니라 노드를 MRU 끝으로 끌어올리는 쓰기성 행위다.',
-      'capacity 가 꽉 찬 상태에서 새 키 put → LRU 끝의 노드가 두 영역에서 동기 소멸.',
+      tr(K.narrative1, 'An LRU cache carves a "recency order" onto a plain key-value store.'),
+      tr(K.narrative2, 'The hash slots on top give fast key → node pointer lookup,'),
+      tr(K.narrative3, 'while the doubly linked list below carries the order of use.'),
+      tr(K.narrative4, 'Both areas share the same nodes, so every call updates the two at once.'),
+      tr(K.narrative5, 'Even a get is a write in effect — it drags its node to the MRU end.'),
+      tr(K.narrative6, 'A put on a full cache makes the node at the LRU end vanish from both areas together.'),
     ];
     for (let i = 0; i < narrativeLines.length; i++) {
       const tspan = document.createElementNS(SVG_NS, 'tspan');
@@ -396,7 +425,7 @@ export const lruCacheStageView: View = {
       'font-family': fonts.body,
       'font-weight': '700',
     });
-    traceTitle.textContent = '호출 트레이스';
+    traceTitle.textContent = tr(K.traceTitle, 'Call trace');
     svg.appendChild(traceTitle);
 
     const traceGroup = document.createElementNS(SVG_NS, 'g');
@@ -411,7 +440,7 @@ export const lruCacheStageView: View = {
       'font-size': '10px',
       'font-family': fonts.body,
     });
-    refText.textContent = '참고: NeetCode 146 · dev.to LRU illustrated · GeeksforGeeks LRU';
+    refText.textContent = tr(K.references, 'See also: NeetCode 146 · dev.to LRU illustrated · GeeksforGeeks LRU');
     svg.appendChild(refText);
 
     // === 운동 overlay ===
@@ -983,7 +1012,7 @@ export const lruCacheStageView: View = {
       listOrder = [...payload.listOrder];
       refreshAllLinks();
       await sleep(PROMOTE_SETTLE_MS);
-      setCaption(`${payload.key} 가 MRU 끝으로 끌려 올라갔다 — get 도 list 를 회전시킨다.`, {
+      setCaption(tr(K.getHit, '{key} was dragged to the MRU end — even a get rotates the list.', { key: String(payload.key) }), {
         duration: 2000,
       });
     }
@@ -1004,7 +1033,7 @@ export const lruCacheStageView: View = {
         'font-weight': '700',
         opacity: '0',
       });
-      x.textContent = `${payload.key} ?  미존재`;
+      x.textContent = tr(K.missMark, '{key} ?  absent', { key: String(payload.key) });
       overlayGroup.appendChild(x);
       await fadeIn(x, 200);
       await sleep(900);
@@ -1021,7 +1050,7 @@ export const lruCacheStageView: View = {
         }
         raf(tick);
       });
-      setCaption(`${payload.key} 는 캐시에 없다 — list 는 변하지 않는다.`, { duration: 1800 });
+      setCaption(tr(K.getMiss, '{key} is not in the cache — the list stays as it was.', { key: String(payload.key) }), { duration: 1800 });
     }
 
     async function emitPutUpdate(
@@ -1065,7 +1094,7 @@ export const lruCacheStageView: View = {
       await arcMoveCard(card, payload.fromListIndex, targetListIdx, dur);
       listOrder = [...payload.listOrder];
       refreshAllLinks();
-      setCaption(`${payload.key} 의 값이 갱신되며 MRU 끝으로 끌려 올라갔다.`, {
+      setCaption(tr(K.putUpdate, 'The value for {key} was updated and dragged to the MRU end.', { key: String(payload.key) }), {
         duration: 2000,
       });
     }
@@ -1133,7 +1162,7 @@ export const lruCacheStageView: View = {
       // 다른 카드들이 자리 갱신되었을 수 있으므로 일괄 재배치.
       applyListOrder(listOrder);
       refreshGauge(payload.size);
-      setCaption(`새 키 ${payload.key} 가 MRU 끝에 들어왔다 (여유 있음).`, {
+      setCaption(tr(K.putInsert, 'New key {key} entered at the MRU end (room to spare).', { key: String(payload.key) }), {
         duration: 1800,
       });
     }
@@ -1160,7 +1189,7 @@ export const lruCacheStageView: View = {
       // 1. 게이지에 "초과 시도" 한 박자.
       refreshGauge(payload.capacity, { overflowAttempt: true });
       setCaption(
-        `용량 초과 — LRU 끝의 ${payload.evictedKey} 가 두 영역에서 함께 사라진다.`,
+        tr(K.evict, 'Over capacity — {key} at the LRU end disappears from both areas together.', { key: String(payload.evictedKey) }),
         { duration: 2400 },
       );
       await sleep(EVICT_PAUSE_MS);
@@ -1221,14 +1250,14 @@ export const lruCacheStageView: View = {
 
     function signalInvalid(op: string, raw: string): void {
       setCaption(
-        `${op}: 짧은 영숫자 키 (값) 만 받는다 — 입력: "${raw}"`,
+        tr(K.invalidKey, '{op}: only short alphanumeric keys (values) are accepted — got "{raw}"', { op: String(op), raw: String(raw) }),
         { duration: 1800 },
       );
     }
 
     function signalDemoEnd(): void {
       setCaption(
-        '이제 직접 — 키와 값을 입력하고 get / put 를 눌러 보세요.',
+        tr(K.handover, 'Your turn — type a key and value, then press get or put.'),
         { duration: 2400 },
       );
     }

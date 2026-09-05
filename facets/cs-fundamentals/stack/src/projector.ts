@@ -15,8 +15,8 @@
  * 운동 시간(ms) 은 기획 §9 기준 + runtime.getSpeed() 로 보정.
  */
 
-import type { ProjectorFactory } from '@ffacet/core/runtime';
-import { parseTarget } from '@ffacet/core/runtime';
+import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
+import { makeTranslator, parseTarget } from '@ffacet/core/runtime';
 
 type StackStage = {
   reset(): void;
@@ -31,8 +31,21 @@ type StackStage = {
   signalOverflow(label: string, opts?: { duration?: number }): Promise<void>;
 };
 
-const BASE_CAPTION =
-  '스택은 가장 최근에 들어온 원소를 가장 먼저 꺼내는 자료구조다 — 모든 변화는 꼭대기 한 자리에서만 일어난다.';
+/**
+ * Projector 가 문안을 정하는 캡션. 키와 en 원본을 함께 둔다 — 원본이 소스에
+ * 남아 있어야 추출기가 번역 대상을 모을 수 있고, 번들이 없어도 en 으로 동작한다.
+ * View 고정 라벨은 View 가 params.locale 로 직접 해석한다 (S-view).
+ */
+const K = {
+  base: 'stack.caption.base',
+  feedInput: 'stack.caption.feedInput',
+  push: 'stack.caption.push',
+  pop: 'stack.caption.pop',
+  peek: 'stack.caption.peek',
+  overflow: 'stack.caption.overflow',
+  underflow: 'stack.caption.underflow',
+  handover: 'stack.caption.handover',
+} as const;
 
 function isStackTop(target: unknown): boolean {
   const t = Array.isArray(target) ? target[0] : target;
@@ -43,12 +56,15 @@ function isStackTop(target: unknown): boolean {
 
 export const stackProjector: ProjectorFactory = (views, runtime) => {
   const stage = views.stage as unknown as StackStage | undefined;
+  const tr: Translate = runtime?.t ?? makeTranslator();
 
   return {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(
+        tr(K.base, 'A stack hands back the most recently added element first — every change happens at one single place, the top.'),
+      );
     },
 
     async onEvent(event) {
@@ -60,7 +76,9 @@ export const stackProjector: ProjectorFactory = (views, runtime) => {
           if (!isStackTop(event.target)) break;
           const items = (event.payload as { items?: Array<{ stamp: number; label: string }> } | undefined)?.items ?? [];
           stage.feedInput(items);
-          stage.setCaption('입력 트랙에 박스가 대기 중 — 차례로 꼭대기에 쌓인다');
+          stage.setCaption(
+            tr(K.feedInput, 'Boxes are waiting on the input track — they will be stacked on top one by one.'),
+          );
           break;
         }
 
@@ -80,7 +98,7 @@ export const stackProjector: ProjectorFactory = (views, runtime) => {
           } else {
             await stage.pushFresh({ stamp, label }, { duration });
           }
-          stage.setCaption(`꼭대기 위에 새 박스를 얹었다 — ${label}`);
+          stage.setCaption(tr(K.push, 'Placed a new box on top — {value}', { value: label }));
           break;
         }
 
@@ -90,7 +108,7 @@ export const stackProjector: ProjectorFactory = (views, runtime) => {
           const label = typeof p.label === 'string' ? p.label : String(p.value ?? '');
           const duration = 400 / speed;
           await stage.pop({ duration });
-          stage.setCaption(`꼭대기의 박스를 떼어냈다 — ${label}`);
+          stage.setCaption(tr(K.pop, 'Took the top box off — {value}', { value: label }));
           break;
         }
 
@@ -98,7 +116,7 @@ export const stackProjector: ProjectorFactory = (views, runtime) => {
           if (!isStackTop(event.target)) break;
           const duration = 250 / speed;
           await stage.pulseTop({ duration });
-          stage.setCaption('꼭대기 값을 보았다 — 더미는 그대로다');
+          stage.setCaption(tr(K.peek, 'Looked at the top value — the pile is unchanged.'));
           break;
         }
 
@@ -108,7 +126,7 @@ export const stackProjector: ProjectorFactory = (views, runtime) => {
           const label = typeof p.attempted === 'string' ? p.attempted : '';
           const duration = 300 / speed;
           await stage.signalOverflow(label, { duration });
-          stage.setCaption('더 쌓을 자리가 없다');
+          stage.setCaption(tr(K.overflow, 'No room left to stack.'));
           break;
         }
 
@@ -116,12 +134,12 @@ export const stackProjector: ProjectorFactory = (views, runtime) => {
           if (!isStackTop(event.target)) break;
           const duration = 300 / speed;
           await stage.signalUnderflow({ duration });
-          stage.setCaption('떼어낼 박스가 없다');
+          stage.setCaption(tr(K.underflow, 'No box left to take off.'));
           break;
         }
 
         case 'demo-end': {
-          stage.setCaption('이제 직접 — 값을 입력하고 쌓기·떼기·보기를 눌러보세요', {
+          stage.setCaption(tr(K.handover, 'Your turn — type a value and press Push, Pop or Peek.'), {
             duration: 2400,
           });
           break;
@@ -136,7 +154,9 @@ export const stackProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(
+        tr(K.base, 'A stack hands back the most recently added element first — every change happens at one single place, the top.'),
+      );
     },
   };
 };
