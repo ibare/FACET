@@ -10,7 +10,8 @@
  *   5. 수렴 깃발 + 손실 곡선 — 운동의 정지에 사건성을 부여.
  */
 
-import type { ProjectorFactory } from '@ffacet/core/runtime';
+import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
+import { makeTranslator } from '@ffacet/core/runtime';
 import type { Point, LrSegment } from './algorithm.js';
 
 type LinRegStage = {
@@ -52,17 +53,22 @@ type LinRegStage = {
   signalReset(): void;
 };
 
-const BASE_CAPTION =
-  '선형 회귀는 점 무리에 직선 한 줄을 끼우되, 잔차의 제곱을 면적으로 환원해 그 면적의 합이 가장 작아지도록 직선을 매 반복마다 한 걸음씩 회전·이동시키는 학습 운동이다.';
 
-export const linearRegressionProjector: ProjectorFactory = (views) => {
+export const linearRegressionProjector: ProjectorFactory = (views, runtime) => {
+  const tr: Translate = runtime?.t ?? makeTranslator();
+  /** 상시 캡션. 여러 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
+  const baseCaption = (): string =>
+    tr(
+      'linearRegression.caption.base',
+      'Linear regression threads one straight line through a cloud of points, turning each residual into the area of a square, and nudges the line a step at a time so the total of those areas shrinks.',
+    );
   const stage = views.stage as unknown as LinRegStage | undefined;
 
   return {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
     },
 
     async onEvent(event) {
@@ -192,7 +198,7 @@ export const linearRegressionProjector: ProjectorFactory = (views) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
       stage.signalReset();
     },
   };

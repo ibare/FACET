@@ -12,7 +12,8 @@
  *   7. 컨텍스트 양의 차이 — 보관소 부피의 토글.
  */
 
-import type { ProjectorFactory } from '@ffacet/core/runtime';
+import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
+import { makeTranslator } from '@ffacet/core/runtime';
 import type { Flow, TriggerKind, Mode } from './algorithm.js';
 
 type CtxStage = {
@@ -43,8 +44,6 @@ type CtxStage = {
   signalReset(): void;
 };
 
-const BASE_CAPTION =
-  '컨텍스트 스위칭 — 단 하나의 CPU 무대 위에서 한 흐름의 상태 일습이 자기 보관소로 떠내지고, 다른 흐름의 상태 일습이 그 자리에 되돌려 들어가, 두 흐름이 멈춘 지점에서 정확히 이어 실행된다.';
 
 function asFlow(v: unknown): Flow {
   return v === 'b' ? 'b' : 'a';
@@ -59,14 +58,21 @@ function asMode(v: unknown): Mode {
   return v === 'process' ? 'process' : 'thread';
 }
 
-export const contextSwitchingProjector: ProjectorFactory = (views) => {
+export const contextSwitchingProjector: ProjectorFactory = (views, runtime) => {
+  const tr: Translate = runtime?.t ?? makeTranslator();
+  /** 상시 캡션. 여러 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
+  const baseCaption = (): string =>
+    tr(
+      'contextSwitching.caption.base',
+      "Context switching — on a single CPU stage one flow's whole register set is lifted out into its own holder, the other flow's set is placed back into those same slots, and each resumes exactly where it stopped.",
+    );
   const stage = views.stage as unknown as CtxStage | undefined;
 
   return {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
     },
 
     async onEvent(event) {
@@ -191,7 +197,7 @@ export const contextSwitchingProjector: ProjectorFactory = (views) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
       stage.signalReset();
     },
   };

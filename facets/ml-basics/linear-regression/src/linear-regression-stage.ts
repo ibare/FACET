@@ -30,6 +30,7 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import { makeTranslator } from '@ffacet/core/runtime';
 import { getColors, fonts, fontSizes, categorical } from '@ffacet/core/runtime';
 import type { Point, LrSegment } from './algorithm.js';
 
@@ -97,13 +98,7 @@ const REFERENCES: Refs[] = [
   { name: 'Setosa — OLS Regression', url: 'https://setosa.io/ev/ordinary-least-squares-regression/' },
   { name: 'ml-visualized — Linear Regression', url: 'https://ml-visualized.com/chapter1/linear_regression' },
   { name: 'Google ML — Loss / GD', url: 'https://developers.google.com/machine-learning/crash-course/linear-regression/loss' },
-  { name: 'angeloyeo — 선형회귀', url: 'https://angeloyeo.github.io/2020/08/24/linear_regression.html' },
-];
-
-const CONCEPT_TEXT = [
-  '선형 회귀는 점 무리에 직선 한 줄을 끼우되, 잔차 제곱을',
-  '면적으로 환원해 그 면적의 합이 가장 작아지도록 직선을 매',
-  '반복마다 한 걸음씩 회전·이동시키는 학습 운동이다.',
+  { name: 'angeloyeo — linear regression', url: 'https://angeloyeo.github.io/2020/08/24/linear_regression.html' },
 ];
 
 // ── SVG 헬퍼 ────────────────────────────────────────────────────────────
@@ -250,6 +245,13 @@ function wait(ms: number): Promise<void> {
 
 export const linearRegressionStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+    const tr = makeTranslator(params.locale);
+    /** 좌상단 개념 서술. tr 이 필요해 모듈 스코프가 아니라 여기 둔다. */
+    const CONCEPT_TEXT = [
+      tr('linearRegression.concept.line1', 'Linear regression threads one line through a cloud of points,'),
+      tr('linearRegression.concept.line2', 'turning each residual into an area and rotating and shifting the line'),
+      tr('linearRegression.concept.line3', 'one step per iteration so those areas add up to as little as possible.'),
+    ];
     container.textContent = '';
 
     const colors = getColors(params.theme);
@@ -274,7 +276,7 @@ export const linearRegressionStageView: View = {
       height: 'auto',
       preserveAspectRatio: 'xMidYMid meet',
       role: 'img',
-      'aria-label': '선형 회귀 시각화 — 잔차 정사각형과 등고선의 1:1 동기',
+      'aria-label': tr('linearRegression.label.aria', 'Linear regression visualization — residual squares synchronized one-to-one with the contour map'),
     });
     svg.style.fontFamily = fonts.body;
     svg.style.background = colors.bg;
@@ -291,7 +293,7 @@ export const linearRegressionStageView: View = {
         'font-weight': '600',
         fill: colors.text,
       },
-      '선형 회귀 — 잔차의 면적이 줄어들수록 점이 골짜기를 굴러간다',
+      tr('linearRegression.label.title', 'Linear regression — as the residual areas shrink, the dot rolls down into the valley'),
     );
 
     for (let i = 0; i < CONCEPT_TEXT.length; i++) {
@@ -428,7 +430,7 @@ export const linearRegressionStageView: View = {
         'font-size': fontSizes.xs,
         fill: colors.textMuted,
       },
-      '잔차 합 (부호 포함)',
+      tr('linearRegression.label.residualSum', 'residual sum (signed)'),
     );
     // 양방향 막대 트랙.
     makeRect(gaugeGroup, {
@@ -469,7 +471,7 @@ export const linearRegressionStageView: View = {
         'font-size': fontSizes.xs,
         fill: colors.textMuted,
       },
-      '잔차 제곱 합 (손실)',
+      tr('linearRegression.label.rss', 'sum of squared residuals (loss)'),
     );
     makeRect(gaugeGroup, {
       x: gaugeXBase,
@@ -554,7 +556,7 @@ export const linearRegressionStageView: View = {
         'font-size': fontSizes.xs,
         fill: colors.textMuted,
       },
-      '등고선: 바깥=큼, 중심=작음',
+      tr('linearRegression.label.contour', 'contours: outer = larger, centre = smaller'),
     );
 
     const contourLayer = makeGroup(paramLayer);
@@ -581,7 +583,7 @@ export const linearRegressionStageView: View = {
         'font-size': fontSizes.xs,
         fill: colors.textMuted,
       },
-      '손실 곡선 — 시간 t 에 따른 RSS',
+      tr('linearRegression.label.lossCurve', 'loss curve — RSS over time t'),
     );
     makeText(
       lossLayer,
@@ -651,7 +653,7 @@ export const linearRegressionStageView: View = {
         fill: colors.textMuted,
         opacity: 0.7,
       },
-      '참고 — Setosa · ml-visualized · Google ML Crash Course · angeloyeo',
+      tr('linearRegression.label.references', 'See also — Setosa · ml-visualized · Google ML Crash Course · angeloyeo'),
     );
 
     // ── 상태 ──────────────────────────────────────────────────────────────
@@ -971,7 +973,7 @@ export const linearRegressionStageView: View = {
             'font-size': fontSizes.xs,
             fill: DANGER,
           },
-          '수렴',
+          tr('linearRegression.label.converged', 'converged'),
         );
       }
     }
@@ -1125,7 +1127,7 @@ export const linearRegressionStageView: View = {
           }
           requestAnimationFrame(frame);
         });
-        setEventCaption('수렴 — 더 줄지 않는다.');
+        setEventCaption(tr('linearRegression.caption.converged', 'Converged — it will not shrink any further.'));
       });
     }
 
@@ -1135,7 +1137,7 @@ export const linearRegressionStageView: View = {
         dangerOverlay.setAttribute('opacity', '0.7');
         // 직선을 살짝 빨강 강조 (한 박자만).
         linePath.setAttribute('stroke', DANGER);
-        setEventCaption('학습률이 너무 크다 — 직선이 발산했다.');
+        setEventCaption(tr('linearRegression.caption.diverged', 'The learning rate is too large — the line diverged.'));
         await wait(420);
         linePath.setAttribute('stroke', LINE_TONE);
       });
@@ -1143,8 +1145,13 @@ export const linearRegressionStageView: View = {
 
     function applyLrChanged(value: number, segmentIndex: number): void {
       // 학습률 segmented-slider 변경 — 캡션 한 줄.
-      const label = ['느림', '적정', '발산'][segmentIndex] ?? `η=${value.toFixed(3)}`;
-      setEventCaption(`학습률 → ${label} (η = ${value.toFixed(3)})`);
+      const label =
+      [
+        tr('linearRegression.lr.slow', 'slow'),
+        tr('linearRegression.lr.good', 'just right'),
+        tr('linearRegression.lr.diverge', 'diverging'),
+      ][segmentIndex] ?? `η=${value.toFixed(3)}`;
+      setEventCaption(tr('linearRegression.caption.lrChanged', 'learning rate → {label} (η = {eta})', { label, eta: value.toFixed(3) }));
       // 발산 표지가 떠 있던 경우 새 학습률에서 다시 시도하므로 표지 끔.
       if (segmentIndex !== 2) {
         dangerOverlay.setAttribute('opacity', '0');

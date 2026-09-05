@@ -13,7 +13,8 @@
  * opts.duration 은 보조적으로 전달.
  */
 
-import type { ProjectorFactory } from '@ffacet/core/runtime';
+import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
+import { makeTranslator } from '@ffacet/core/runtime';
 
 type CdnStage = {
   reset(): void;
@@ -45,17 +46,22 @@ type CdnStage = {
   signalDemoEnd(): void;
 };
 
-const BASE_CAPTION =
-  'CDN 은 전 세계 엣지가 가까운 클라이언트의 요청을 받아 가진 답이면 짧게, 없으면 위 계층까지 다녀와 채워두는 시스템 차원의 행위다.';
 
 export const cachingCdnProjector: ProjectorFactory = (views, runtime) => {
+  const tr: Translate = runtime?.t ?? makeTranslator();
+  /** 상시 캡션. 여러 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
+  const baseCaption = (): string =>
+    tr(
+      'cachingCdn.caption.base',
+      'A CDN is the system-level behaviour of edges worldwide taking requests from nearby clients — answering short when they hold the answer, and travelling up the hierarchy to fetch and keep it when they do not.',
+    );
   const stage = views.stage as unknown as CdnStage | undefined;
 
   return {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
     },
 
     async onEvent(event) {
@@ -162,7 +168,7 @@ export const cachingCdnProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
     },
   };
 };

@@ -22,7 +22,8 @@
  * 통과시키므로 view 는 dispatch 를 직접 쓰지 않는다 — 메서드 호출만 담당.
  */
 
-import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import type { Translate, View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import { makeTranslator, resolveLocale } from '@ffacet/core/runtime';
 import { getColors, fonts, fontSizes, categorical } from '@ffacet/core/runtime';
 import type {
   KindPalette,
@@ -156,13 +157,6 @@ function makeLine(
   return el;
 }
 
-const CONCEPT_LINES = [
-  '토큰화는 컴파일러의 첫 단계 — 좌에서 우로 한 글자씩 읽어 의미 있는 최소',
-  '단위 (토큰) 로 끊어 낸다. 더 길게 묶을 수 있으면 더 길게 묶고, 공백·주석',
-  '은 토큰이 되지 못하고 회색으로 가라앉는다. 위 띠에서 글자가 어떻게 묶여',
-  '아래 카드로 떨어지는지 보자.',
-];
-
 type Refs = { name: string; url: string };
 const REFERENCES: Refs[] = [
   { name: 'Crafting Interpreters — Scanning', url: 'https://craftinginterpreters.com/scanning.html' },
@@ -192,24 +186,25 @@ function buildKindColors(palette: ReturnType<typeof getColors>): KindColors {
   };
 }
 
-function kindLabelKo(k: TokenKind | 'swallow'): string {
+/** 토큰 종류 라벨. 모듈 스코프 함수라 translator 를 인자로 받는다. */
+function kindLabel(tr: Translate, k: TokenKind | 'swallow'): string {
   switch (k) {
     case 'keyword':
-      return '키워드';
+      return tr('tokenization.kind.keyword', 'keyword');
     case 'identifier':
-      return '식별자';
+      return tr('tokenization.kind.identifier', 'identifier');
     case 'number':
-      return '숫자';
+      return tr('tokenization.kind.number', 'number');
     case 'operator':
-      return '연산자';
+      return tr('tokenization.kind.operator', 'operator');
     case 'punct':
-      return '구분자';
+      return tr('tokenization.kind.punctuation', 'punctuation');
     case 'string':
-      return '문자열';
+      return tr('tokenization.kind.string', 'string');
     case 'error':
-      return '오류';
+      return tr('tokenization.kind.error', 'error');
     case 'swallow':
-      return '삼킴';
+      return tr('tokenization.kind.swallowed', 'swallowed');
   }
 }
 
@@ -255,6 +250,14 @@ type CardRec = {
 
 export const tokenizationStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+    const tr = makeTranslator(params.locale);
+    /** 상단 개념 서술. tr 이 필요해 모듈 스코프가 아니라 여기 둔다. */
+    const CONCEPT_LINES = [
+      tr('tokenization.concept.line1', 'Tokenization is the first stage of a compiler — reading left to right, one'),
+      tr('tokenization.concept.line2', 'character at a time, it cuts the source into the smallest meaningful units'),
+      tr('tokenization.concept.line3', '(tokens), taking the longest run it can. Whitespace and comments never'),
+      tr('tokenization.concept.line4', 'become tokens and sink into grey. Watch the strip above feed the cards below.'),
+    ];
     const palette = getColors(params.theme);
     const kindColors = buildKindColors(palette);
 
@@ -318,7 +321,7 @@ export const tokenizationStageView: View = {
         'font-weight': 700,
         fill: palette.text,
       },
-      '토큰화 — 한 박자의 응결',
+      tr('tokenization.label.title', 'Tokenization — one beat of condensation'),
     );
     CONCEPT_LINES.forEach((line, i) => {
       makeText(
@@ -370,7 +373,7 @@ export const tokenizationStageView: View = {
         fill: palette.textMuted,
         'letter-spacing': '0.04em',
       },
-      '입력',
+      tr('tokenization.label.input', 'input'),
     );
 
     // 진행 인디케이터.
@@ -405,7 +408,7 @@ export const tokenizationStageView: View = {
         fill: palette.textMuted,
         'text-anchor': 'end',
       },
-      '↓ 닫힘',
+      tr('tokenization.label.closed', '↓ closed'),
     );
 
     // 출력 라벨.
@@ -419,7 +422,7 @@ export const tokenizationStageView: View = {
         fill: palette.textMuted,
         'letter-spacing': '0.04em',
       },
-      '출력 토큰',
+      tr('tokenization.label.output', 'output tokens'),
     );
 
     // ── 범례 ───────────────────────────────────────────────────────────
@@ -433,7 +436,7 @@ export const tokenizationStageView: View = {
         fill: palette.textMuted,
         'letter-spacing': '0.04em',
       },
-      '범례',
+      tr('tokenization.label.legend', 'legend'),
     );
     const legendKinds: (TokenKind | 'swallow')[] = [
       'keyword',
@@ -468,7 +471,7 @@ export const tokenizationStageView: View = {
           'font-size': fontSizes.xs,
           fill: palette.text,
         },
-        kindLabelKo(k),
+        kindLabel(tr, k),
       );
     });
 
@@ -483,7 +486,7 @@ export const tokenizationStageView: View = {
         fill: palette.textMuted,
         'letter-spacing': '0.04em',
       },
-      '참고',
+      tr('tokenization.label.references', 'see also'),
     );
     const chipW = (W - 48 - (REFERENCES.length - 1) * 8) / REFERENCES.length;
     REFERENCES.forEach((ref, i) => {
@@ -725,7 +728,7 @@ export const tokenizationStageView: View = {
           'font-weight': 700,
           'letter-spacing': '0.04em',
         },
-        kindLabelKo(token.kind),
+        kindLabel(tr, token.kind),
       );
       const valueEl = makeText(
         groupEl,
@@ -874,7 +877,7 @@ export const tokenizationStageView: View = {
         if (sw) sw.setAttribute('opacity', '1');
       }
       if (payload.kind === 'comment') {
-        setCaption('주석은 토큰이 되지 못해 흔적으로만 남는다.', { duration: 1400 });
+        setCaption(tr('tokenization.caption.comment', 'A comment never becomes a token — it stays as a trace.'), { duration: 1400 });
       }
     }
 
@@ -976,7 +979,7 @@ export const tokenizationStageView: View = {
           card.barEl.setAttribute('fill', cur);
           card.kindLabelEl.setAttribute('fill', cur);
           if (t >= 0.5) {
-            card.kindLabelEl.textContent = kindLabelKo(payload.toKind);
+            card.kindLabelEl.textContent = kindLabel(tr, payload.toKind);
             card.token = { ...card.token, kind: payload.toKind };
           }
           if (t < 1) raf(tick);
@@ -1025,13 +1028,13 @@ export const tokenizationStageView: View = {
 
       setGaze(payload.gaze);
       setSegment(null);
-      setCaption('인식 불가 글자 — 빨간 카드로 박힌다.', { duration: 1400 });
+      setCaption(tr('tokenization.caption.unrecognized', 'An unrecognized character — it lands as a red card.'), { duration: 1400 });
     }
 
     function applyDone(payload: { gaze: number; totalTokens: number }): void {
       setGaze(payload.gaze);
       setSegment(null);
-      setCaption(`스캔 완료 — ${payload.totalTokens}장의 토큰.`, { duration: 1400 });
+      setCaption(tr('tokenization.caption.scanDone', 'Scan complete — {count} tokens.', { count: payload.totalTokens }), { duration: 1400 });
     }
 
     function signalExampleSet(payload: {
@@ -1041,13 +1044,16 @@ export const tokenizationStageView: View = {
     }): void {
       void payload.source;
       setCaption(
-        `예제 ${payload.exampleIndex + 1} — ${payload.exampleName.ko ?? payload.exampleName.en}`,
+        tr('tokenization.caption.example', 'Example {n} — {name}', {
+            n: payload.exampleIndex + 1,
+            name: resolveLocale(payload.exampleName, params.locale),
+          }),
         { duration: 1400 },
       );
     }
 
     function signalInvalid(op: string, raw: string): void {
-      setCaption(`입력 무시 — ${op}: ${raw}`, { duration: 1400 });
+      setCaption(tr('tokenization.caption.ignoredInput', 'Input ignored — {op}: {raw}', { op: String(op), raw: String(raw) }), { duration: 1400 });
     }
 
     return {

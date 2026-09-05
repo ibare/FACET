@@ -19,6 +19,7 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import { makeTranslator } from '@ffacet/core/runtime';
 import {
   getColors,
   fonts,
@@ -117,6 +118,7 @@ type ContentRec = {
 
 export const cdnStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+    const tr = makeTranslator(params.locale);
     container.textContent = '';
     const colors = getColors(params.theme);
 
@@ -180,7 +182,7 @@ export const cdnStageView: View = {
       'font-family': fonts.body,
       'font-weight': '700',
     });
-    trayTitle.textContent = '콘텐츠';
+    trayTitle.textContent = tr('cachingCdn.label.contentTray', 'content');
     svg.appendChild(trayTitle);
 
     const trayGroup = document.createElementNS(SVG_NS, 'g');
@@ -320,7 +322,7 @@ export const cdnStageView: View = {
       'font-size': '8px',
       'font-family': fonts.body,
     });
-    gaugeLabel.textContent = '오리진 부하 (최근 30회)';
+    gaugeLabel.textContent = tr('cachingCdn.label.originLoad', 'origin load (last 30)');
     upperGroup.appendChild(gaugeLabel);
 
     // 오리진 박스 (큰 사각형).
@@ -347,7 +349,7 @@ export const cdnStageView: View = {
       'font-family': fonts.mono,
       'font-weight': '700',
     });
-    originLabel.textContent = '오리진';
+    originLabel.textContent = tr('cachingCdn.label.origin', 'origin');
     upperGroup.appendChild(originLabel);
 
     // 지역 캐시 박스 (약간 작은 사각형).
@@ -374,7 +376,7 @@ export const cdnStageView: View = {
       'font-family': fonts.mono,
       'font-weight': '700',
     });
-    regionalLabel.textContent = '지역';
+    regionalLabel.textContent = tr('cachingCdn.label.regional', 'regional');
     upperGroup.appendChild(regionalLabel);
 
     // === 엣지 PoP 그룹 ===
@@ -391,7 +393,7 @@ export const cdnStageView: View = {
       'font-family': fonts.body,
     });
     narrative.textContent =
-      '히트는 클라이언트→엣지 짧은 호 한 줄 — 미스는 위 계층까지 거슬러 올라가는 긴 여정 뒤 엣지 채움.';
+      tr('cachingCdn.legend.hitMiss', 'A hit is one short arc from client to edge — a miss is the long trip up the hierarchy and back, filling the edge on the way.');
     svg.appendChild(narrative);
 
     // === 레퍼런스 라벨 ===
@@ -404,7 +406,7 @@ export const cdnStageView: View = {
       'font-family': fonts.body,
     });
     refText.textContent =
-      '참고: Cloudflare CDN Reference Architecture · Cloudflare Global Network · ByteByteGo CDN · NAVER Cloud CDN 활용 팁';
+      tr('cachingCdn.label.references', 'See also: Cloudflare CDN Reference Architecture · Cloudflare Global Network · ByteByteGo CDN · NAVER Cloud CDN tips');
     svg.appendChild(refText);
 
     // ── 모델 상태 ──
@@ -795,7 +797,7 @@ export const cdnStageView: View = {
         });
       }
 
-      setCaption('지도 위 엣지가 모두 회색 — 빈 캐시 상태에서 시작.', { duration: 2400 });
+      setCaption(tr('cachingCdn.caption.coldStart', 'Every edge on the map is grey — starting from an empty cache.'), { duration: 2400 });
     }
 
     async function emitRequest(
@@ -849,7 +851,7 @@ export const cdnStageView: View = {
         );
         await chipAlongPath(arc2, color, label, SHORT_ARC_MS);
         setCaption(
-          `${rec.label} 엣지에서 즉답 — 짧은 왕복으로 끝났다 (${label}).`,
+          tr('cachingCdn.caption.hit', 'Answered right at the {edge} edge — one short round trip ({detail}).', { edge: rec.label, detail: label }),
           { duration: 2200 },
         );
         return;
@@ -941,12 +943,12 @@ export const cdnStageView: View = {
 
       if (payload.outcome === 'miss') {
         setCaption(
-          `${rec.label} 미스 — 오리진까지 다녀와 엣지에 채워 두었다 (${label}).`,
+          tr('cachingCdn.caption.missOrigin', '{edge} missed — went all the way to the origin and filled the edge on the way back ({detail}).', { edge: rec.label, detail: label }),
           { duration: 2400 },
         );
       } else {
         setCaption(
-          `${rec.label} 미스 — 지역 캐시에서 잡혔다 (오리진까지 가지 않음, ${label}).`,
+          tr('cachingCdn.caption.missRegional', '{edge} missed — caught at the regional cache, so the origin was never reached ({detail}).', { edge: rec.label, detail: label }),
           { duration: 2400 },
         );
       }
@@ -963,18 +965,18 @@ export const cdnStageView: View = {
       pulse(pulseGroup, rec.x, rec.y, colors.danger, 360, 14);
       await sleep(NEIGHBOR_LINE_MS);
       setCaption(
-        `${rec.label} 엣지 무효화 — 다음 요청은 다시 위 계층까지 다녀온다.`,
+        tr('cachingCdn.caption.purge', 'Invalidated the {edge} edge — the next request travels up the hierarchy again.', { edge: rec.label }),
         { duration: 2200 },
       );
     }
 
     function signalInvalid(op: string, raw: string): void {
-      setCaption(`${op}: 입력이 올바르지 않다 — "${raw}"`, { duration: 2000 });
+      setCaption(tr('cachingCdn.caption.invalidInput', '{op}: that input is not valid — "{raw}"', { op: String(op), raw: String(raw) }), { duration: 2000 });
     }
 
     function signalDemoEnd(): void {
       setCaption(
-        '이제 직접 — 콘텐츠와 엣지를 입력하고 요청 / 자동 시연 / 초기화 를 눌러 보세요.',
+        tr('cachingCdn.caption.handover', 'Your turn — type a content name and an edge, then press Request, Demo or Reset.'),
         { duration: 2800 },
       );
     }

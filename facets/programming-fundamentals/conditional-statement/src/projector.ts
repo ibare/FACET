@@ -14,7 +14,8 @@
  * 만 stage 메서드로 번역한다.
  */
 
-import type { ProjectorFactory } from '@ffacet/core/runtime';
+import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
+import { makeTranslator } from '@ffacet/core/runtime';
 import type {
   ConditionalMode,
   ConditionalRuleSet,
@@ -52,17 +53,22 @@ type FlowchartStage = {
   signalInvalid(op: string, raw: string): void;
 };
 
-const BASE_CAPTION =
-  '조건문은 흐르던 코드가 갈림길에 도착했을 때, 지금의 값이 참인지 거짓인지를 보고 단 한 길만 골라 통과한 뒤 다시 한 줄로 모이는 약속이다.';
 
 export const conditionalStatementProjector: ProjectorFactory = (views, runtime) => {
+  const tr: Translate = runtime?.t ?? makeTranslator();
+  /** 상시 캡션. 여러 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
+  const baseCaption = (): string =>
+    tr(
+      'conditionalStatement.caption.base',
+      'A conditional is the promise that when running code reaches a fork it reads whether the current value is true or false, passes through exactly one branch, and then gathers back into a single line.',
+    );
   const stage = views.stage as unknown as FlowchartStage | undefined;
 
   return {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
     },
 
     async onEvent(event) {
@@ -163,7 +169,7 @@ export const conditionalStatementProjector: ProjectorFactory = (views, runtime) 
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
     },
   };
 };
