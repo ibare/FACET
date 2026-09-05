@@ -32,6 +32,7 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import { makeTranslator } from '@ffacet/core/runtime';
 import {
   getColors,
   fonts,
@@ -142,6 +143,7 @@ type SlotRec = {
 
 export const hashTableStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+    const tr = makeTranslator(params.locale);
     container.textContent = '';
     const colors = getColors(params.theme);
     const keyColors = categorical(KEY_PALETTE_SIZE, KEY_PALETTE_TONE);
@@ -316,7 +318,7 @@ export const hashTableStageView: View = {
       'font-size': fontSizes.xs,
       'font-family': fonts.body,
     });
-    gaugeTitle.textContent = '적재율 (load factor)';
+    gaugeTitle.textContent = tr('hashTableChaining.label.loadFactor', 'load factor');
     gaugeGroup.appendChild(gaugeTitle);
 
     // === 분포 요약 ===
@@ -329,7 +331,7 @@ export const hashTableStageView: View = {
       'font-size': fontSizes.xs,
       'font-family': fonts.body,
     });
-    distLabel.textContent = '분포: —';
+    distLabel.textContent = tr('hashTableChaining.label.distEmpty', 'distribution: —');
     svg.appendChild(distLabel);
 
     // === 보조 비교 영역 ===
@@ -345,7 +347,7 @@ export const hashTableStageView: View = {
       'font-family': fonts.body,
       'font-weight': '700',
     });
-    auxTitle1.textContent = '보조 비교 — 분리 체이닝';
+    auxTitle1.textContent = tr('hashTableChaining.label.auxChaining', 'side by side — separate chaining');
     auxGroup.appendChild(auxTitle1);
 
     const auxNote1 = document.createElementNS(SVG_NS, 'text');
@@ -356,7 +358,7 @@ export const hashTableStageView: View = {
       'font-size': fontSizes.xs,
       'font-family': fonts.body,
     });
-    auxNote1.textContent = '아래로 사슬이 늘어진다';
+    auxNote1.textContent = tr('hashTableChaining.label.auxChainingNote', 'the chain hangs downward');
     auxGroup.appendChild(auxNote1);
 
     const auxTitle2 = document.createElementNS(SVG_NS, 'text');
@@ -368,7 +370,7 @@ export const hashTableStageView: View = {
       'font-family': fonts.body,
       'font-weight': '700',
     });
-    auxTitle2.textContent = '대비 — 선형 탐사';
+    auxTitle2.textContent = tr('hashTableChaining.label.auxProbing', 'in contrast — linear probing');
     auxGroup.appendChild(auxTitle2);
 
     const auxNote2 = document.createElementNS(SVG_NS, 'text');
@@ -379,7 +381,7 @@ export const hashTableStageView: View = {
       'font-size': fontSizes.xs,
       'font-family': fonts.body,
     });
-    auxNote2.textContent = '옆으로 비집고 전진한다';
+    auxNote2.textContent = tr('hashTableChaining.label.auxProbingNote', 'it squeezes sideways and moves on');
     auxGroup.appendChild(auxNote2);
 
     // 보조 미니 슬롯 두 줄. AUX_M 칸 고정.
@@ -755,7 +757,11 @@ export const hashTableStageView: View = {
     }
 
     function setDistribution(d: Distribution): void {
-      distLabel.textContent = `분포: 비어 ${d.empty} · 길이 1: ${d.len1} · 길이 2: ${d.len2} · 길이 3+: ${d.len3plus}`;
+      distLabel.textContent = tr(
+        'hashTableChaining.label.distribution',
+        'distribution: empty {empty} · length 1: {len1} · length 2: {len2} · length 3+: {len3plus}',
+        { empty: d.empty, len1: d.len1, len2: d.len2, len3plus: d.len3plus },
+      );
     }
 
     function setHashLabel(text: string): void {
@@ -849,7 +855,7 @@ export const hashTableStageView: View = {
       gaugeFill.setAttribute('width', '0');
       gaugeLabel.textContent = 'α = 0.00 (0/—)';
       setGaugeLevel('safe');
-      distLabel.textContent = '분포: —';
+      distLabel.textContent = tr('hashTableChaining.label.distEmpty', 'distribution: —');
       fnLabel.textContent = 'h(k) = k mod ?';
       fnTransform.textContent = '';
       mirrorReset();
@@ -957,9 +963,9 @@ export const hashTableStageView: View = {
 
       // 캡션.
       if (payload.isCollision) {
-        setCaption('같은 자리에 둘이 떨어졌다 — 사슬이 한 칸 자란다.', { duration: 1800 });
+        setCaption(tr('hashTableChaining.caption.collision', 'Two landed on the same slot — the chain grows by one.'), { duration: 1800 });
       } else {
-        setCaption('키를 정해진 자리로 던져 넣었다.', { duration: 1400 });
+        setCaption(tr('hashTableChaining.caption.insert', 'Threw the key into the slot the function chose.'), { duration: 1400 });
       }
 
       // 변환 라인은 잠시 남겨둠.
@@ -977,7 +983,7 @@ export const hashTableStageView: View = {
       const orig = node.rect.getAttribute('stroke') ?? colors.text;
       node.rect.setAttribute('stroke', colors.itemPivot);
       node.rect.setAttribute('stroke-width', '2.5');
-      setCaption(`key ${payload.key} 는 이미 그 자리 사슬에 있다.`, { duration: 1400 });
+      setCaption(tr('hashTableChaining.caption.duplicate', 'key {key} is already on that chain.', { key: String(payload.key) }), { duration: 1400 });
       return new Promise<void>((resolve) => {
         setTimeout(() => {
           node.rect.setAttribute('stroke', orig);
@@ -988,8 +994,8 @@ export const hashTableStageView: View = {
     }
 
     function searchPrepare(key: string): void {
-      setTransformLine(`찾을 key=${key}`);
-      setCaption('함수 박스가 자리를 가리킨다 — 그 자리의 사슬을 짚어 본다.', {
+      setTransformLine(tr('hashTableChaining.line.searchKey', 'key to find = {key}', { key: String(key) }));
+      setCaption(tr('hashTableChaining.caption.searchStart', "The function box points at a slot — now walking that slot's chain."), {
         duration: 1800,
       });
     }
@@ -1046,18 +1052,22 @@ export const hashTableStageView: View = {
     }): void {
       if (payload.found) {
         setCaption(
-          `한 번의 점프 + ${payload.walked} 칸 비교 — 인덱스 ${payload.index ?? '?'} 의 ${payload.key} 도착.`,
+          tr('hashTableChaining.caption.searchFound', 'One jump plus {walked} comparisons — arrived at {key} in index {index}.', {
+            walked: payload.walked ?? 0,
+            key: String(payload.key),
+            index: String(payload.index ?? '?'),
+          }),
           { duration: 2200 },
         );
       } else {
-        setCaption('이 자리 사슬에 그 키는 없다.', { duration: 2000 });
+        setCaption(tr('hashTableChaining.caption.searchMiss', "That key is not on this slot's chain."), { duration: 2000 });
       }
       setTimeout(() => setTransformLine(''), 1800);
     }
 
     function removePrepare(key: string): void {
-      setTransformLine(`삭제할 key=${key}`);
-      setCaption('함수 박스가 자리를 가리킨다 — 그 자리에서 떼어낸다.', { duration: 1800 });
+      setTransformLine(tr('hashTableChaining.line.removeKey', 'key to remove = {key}', { key: String(key) }));
+      setCaption(tr('hashTableChaining.caption.removeStart', 'The function box points at a slot — taking it off there.'), { duration: 1800 });
     }
 
     async function removeJump(
@@ -1124,9 +1134,9 @@ export const hashTableStageView: View = {
             refreshOverflowBadge(payload.index);
           }
         }
-        setCaption(`사슬에서 ${payload.key} 만 떼어냈다.`, { duration: 1600 });
+        setCaption(tr('hashTableChaining.caption.removed', 'Took only {key} off the chain.', { key: String(payload.key) }), { duration: 1600 });
       } else {
-        setCaption('이 자리 사슬에 그 키는 없다.', { duration: 1600 });
+        setCaption(tr('hashTableChaining.caption.searchMiss', "That key is not on this slot's chain."), { duration: 1600 });
       }
       setDistribution(payload.distribution);
       const level: AlphaLevel =
@@ -1138,7 +1148,7 @@ export const hashTableStageView: View = {
     function updateAlpha(payload: { alpha: number; level: AlphaLevel }): void {
       setGaugeLevel(payload.level);
       if (payload.level === 'warn') {
-        setCaption('표가 답답해지고 있다 — 곧 표를 키워야 한다.', { duration: 1400 });
+        setCaption(tr('hashTableChaining.caption.alphaWarn', 'The table is getting cramped — it will need to grow soon.'), { duration: 1400 });
       }
     }
 
@@ -1147,7 +1157,7 @@ export const hashTableStageView: View = {
       opts?: { duration?: number },
     ): Promise<void> {
       const dur = opts?.duration ?? 600;
-      setCaption('표가 답답해졌다 — 표를 키우고 모두 다시 던진다.', { duration: 2200 });
+      setCaption(tr('hashTableChaining.caption.rehashBegin', 'The table got cramped — growing it and throwing everything again.'), { duration: 2200 });
       setHashLabel(payload.hashLabel);
       // 옛 사슬 카드들을 모두 위로 떠올려 페이드 (노드만, 셀은 새 표로 교체).
       const fadePromises: Promise<void>[] = [];
@@ -1181,7 +1191,7 @@ export const hashTableStageView: View = {
       // 새 표로 슬롯 재구성.
       buildSlots(payload.newM);
       // 보조 영역은 그대로 두되 안내 문구 회색 처리.
-      auxNote1.textContent = '본 시각은 새 표로, 보조는 옛 표 비교용';
+      auxNote1.textContent = tr('hashTableChaining.label.auxRehashNote', 'the main view shows the new table, the side panel the old one');
     }
 
     async function rehashStep(
@@ -1239,19 +1249,19 @@ export const hashTableStageView: View = {
       // size 는 distribution 으로 환산: M - empty 자리에 nodes...실은 알파 * M.
       const size = Math.round(payload.alpha * payload.M);
       setGauge(payload.alpha, size, payload.M, level);
-      setCaption('표를 키우고 모두 다시 던졌다 — α 가 다시 안전 구간이다.', {
+      setCaption(tr('hashTableChaining.caption.rehashEnd', 'Grew the table and threw everything again — α is back in the safe range.'), {
         duration: 2400,
       });
       setTimeout(() => setTransformLine(''), 2000);
     }
 
     function signalEmpty(op: string): void {
-      setCaption('표가 비어 있다.', { duration: 1400 });
+      setCaption(tr('hashTableChaining.caption.emptyTable', 'The table is empty.'), { duration: 1400 });
       void op;
     }
 
     function signalInvalid(op: string, raw: string): void {
-      setCaption(`정수 키만 받는다 (입력: "${raw}").`, { duration: 1600 });
+      setCaption(tr('hashTableChaining.caption.invalidKey', 'Only integer keys are accepted (got "{raw}").', { raw: String(raw) }), { duration: 1600 });
       void op;
     }
 

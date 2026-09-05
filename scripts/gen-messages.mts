@@ -44,14 +44,22 @@ function parseKeyMap(src: string): Record<string, string> {
   return map;
 }
 
-/** `tr(K.name, 'fallback')` / `tr('key', 'fallback')` 수집. */
+/**
+ * `tr(K.name, 'fallback')` / `tr('key', "fallback")` 수집.
+ *
+ * en 원본에 apostrophe 가 들어가면 큰따옴표로 감싸게 되므로 두 따옴표를 모두 받는다.
+ * 백틱은 받지 않는다 — 템플릿 리터럴은 `${}` 보간을 부르는데, 보간은 vars 로만
+ * 넘겨야 번역문에서 어순을 바꿀 수 있기 때문이다.
+ */
 function collect(src: string, keyMap: Record<string, string>): Record<string, string> {
   const found: Record<string, string> = {};
-  const call = /\btr\(\s*(?:K\.(\w+)|'([^']+)')\s*,\s*'((?:[^'\\]|\\.)*)'/g;
+  const call =
+    /\btr\(\s*(?:K\.(\w+)|'([^']+)'|"([^"]+)")\s*,\s*(?:'((?:[^'\\]|\\.)*)'|"((?:[^"\\]|\\.)*)")/g;
   for (const m of src.matchAll(call)) {
-    const key = m[1] ? keyMap[m[1]] : m[2];
+    const key = m[1] ? keyMap[m[1]] : (m[2] ?? m[3]);
     if (!key) continue;
-    found[key] = m[3].replace(/\\'/g, "'");
+    const raw = m[4] ?? m[5] ?? '';
+    found[key] = raw.replace(/\\'/g, "'").replace(/\\"/g, '"');
   }
   return found;
 }

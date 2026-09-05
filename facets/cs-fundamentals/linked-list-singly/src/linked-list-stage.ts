@@ -25,6 +25,7 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import { makeTranslator } from '@ffacet/core/runtime';
 import { getColors, fonts, fontSizes, categorical } from '@ffacet/core/runtime';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -110,6 +111,7 @@ type ChainArrow = {
 
 export const linkedListStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+    const tr = makeTranslator(params.locale);
     container.textContent = '';
     const colors = getColors(params.theme);
     const cardColors = categorical(CARD_PALETTE_SIZE, CARD_PALETTE_TONE);
@@ -630,7 +632,7 @@ export const linkedListStageView: View = {
         pip2.setAttribute('fill', colors.border);
         return;
       }
-      stageLabel.textContent = '단계';
+      stageLabel.textContent = tr('linkedListSingly.label.stage', 'Step');
       pip1.setAttribute('fill', n >= 1 ? colors.itemActive : colors.border);
       pip2.setAttribute('fill', n >= 2 ? colors.itemActive : colors.border);
     }
@@ -711,7 +713,7 @@ export const linkedListStageView: View = {
       newCard.pointerDot.setAttribute('stroke-dasharray', '2 2');
 
       setStagePip(1);
-      setCaption('새 카드의 손가락을 다음 카드에 먼저 묶었다.', { duration: stage1 + 400 });
+      setCaption(tr('linkedListSingly.caption.insertBindNext', "Tied the new card's finger to the next card first."), { duration: stage1 + 400 });
 
       const nextNode = nodes[idx]; // idx 자리에 있던 옛 다음 카드 (있을 수 있음)
       const newCardNextSrcX = waitX + CARD_W / 2 - 2; // 대기 카드 next 칸 우측 변
@@ -730,7 +732,7 @@ export const linkedListStageView: View = {
 
       // 휴지기.
       setStagePip(2);
-      setCaption('이전 카드의 손가락을 새 카드로 옮겨 끼웠다.', { duration: stage2 + 600 });
+      setCaption(tr('linkedListSingly.caption.insertRewirePrev', "Moved the previous card's finger over to the new card."), { duration: stage2 + 600 });
       await sleep(pause);
 
       // 2단계: 동시에
@@ -819,7 +821,7 @@ export const linkedListStageView: View = {
       newCard.pointerDot.setAttribute('stroke-dasharray', '2 2');
 
       setStagePip(1);
-      setCaption('새 카드의 손가락을 옛 첫 카드로 묶었다.', { duration: stage1 + 400 });
+      setCaption(tr('linkedListSingly.caption.insertHeadBind', "Tied the new card's finger to the old first card."), { duration: stage1 + 400 });
 
       // 1단계: 새 카드 next → 옛 첫 카드 호.
       let arc1: { remove: () => void; promise: Promise<void> } | null = null;
@@ -835,7 +837,7 @@ export const linkedListStageView: View = {
       }
 
       setStagePip(2);
-      setCaption('head 라벨이 새 카드 위로 활주했다.', { duration: stage2 + 600 });
+      setCaption(tr('linkedListSingly.caption.headSlideNew', 'The head label glided over to the new card.'), { duration: stage2 + 600 });
       await sleep(pause);
 
       // 2단계: 새 카드만 자기 슬롯 자리로 하강 + head 라벨이 옛 첫 카드 → 새 카드 활주.
@@ -894,7 +896,7 @@ export const linkedListStageView: View = {
       }
 
       setStagePip(0);
-      setCaption('이전 카드의 손가락을 다음 카드로 곧장 옮겨 끼웠다.', { duration: dur + 600 });
+      setCaption(tr('linkedListSingly.caption.removeRewire', "Moved the previous card's finger straight on to the next card."), { duration: dur + 600 });
 
       const prev = nodes[idx - 1]!;
       const next = nodes[idx + 1] ?? null;
@@ -966,7 +968,7 @@ export const linkedListStageView: View = {
       if (!oldHead) return;
 
       setStagePip(0);
-      setCaption('head 라벨이 두 번째 카드 위로 활주했다.', { duration: dur + 600 });
+      setCaption(tr('linkedListSingly.caption.headSlideSecond', 'The head label glided over to the second card.'), { duration: dur + 600 });
 
       const second = nodes[1] ?? null;
 
@@ -1069,7 +1071,7 @@ export const linkedListStageView: View = {
       } else {
         node.bodyRect.setAttribute('fill', colors.itemComparing);
       }
-      setCaption(`지금까지 ${walkedCount} 칸 걸었다.`, { duration: dur + 200 });
+      setCaption(tr('linkedListSingly.caption.walked', 'Walked {count} steps so far.', { count: walkedCount }), { duration: dur + 200 });
 
       await sleep(dur);
 
@@ -1098,9 +1100,9 @@ export const linkedListStageView: View = {
       walked: number,
     ): void {
       if (found && typeof idx === 'number') {
-        setCaption(`${walked} 칸 만에 찾았다 — 인덱스 ${idx} 의 ${value}`, { duration: 2000 });
+        setCaption(tr('linkedListSingly.caption.searchFound', 'Found it after {walked} steps — {value} at index {index}', { walked, index: idx, value }), { duration: 2000 });
       } else {
-        setCaption('끝까지 갔지만 그 값은 없었다.', { duration: 2000 });
+        setCaption(tr('linkedListSingly.caption.searchMiss', 'Walked to the end, and that value was not there.'), { duration: 2000 });
       }
     }
 

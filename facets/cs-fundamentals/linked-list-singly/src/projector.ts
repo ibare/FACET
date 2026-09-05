@@ -12,8 +12,8 @@
  * 운동 시간 (ms) 은 기획 §9 기준 + runtime.getSpeed() 로 보정.
  */
 
-import type { ProjectorFactory } from '@ffacet/core/runtime';
-import { parseTarget } from '@ffacet/core/runtime';
+import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
+import { makeTranslator, parseTarget } from '@ffacet/core/runtime';
 
 type LinkedListStage = {
   reset(): void;
@@ -37,8 +37,6 @@ type LinkedListStage = {
   signalEmpty(opts?: { duration?: number }): void;
 };
 
-const BASE_CAPTION =
-  '연결 리스트는 노드 각각이 자기 다음 한 명만 가리키는 단 하나의 손가락을 갖는다 — 끼우거나 빼는 일은 카드를 옮기는 게 아니라 두세 개의 손가락을 끊고 다시 잇는 일이다.';
 
 function indexFromTarget(target: unknown): number | null {
   const t = Array.isArray(target) ? target[0] : target;
@@ -50,13 +48,20 @@ function indexFromTarget(target: unknown): number | null {
 }
 
 export const linkedListProjector: ProjectorFactory = (views, runtime) => {
+  const tr: Translate = runtime?.t ?? makeTranslator();
+  /** 상시 캡션. 두 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
+  const baseCaption = (): string =>
+    tr(
+      'linkedListSingly.caption.base',
+      'In a linked list every node holds a single finger pointing only at its own next — inserting or removing is not moving cards around but cutting and retying two or three fingers.',
+    );
   const stage = views.stage as unknown as LinkedListStage | undefined;
 
   return {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
     },
 
     async onEvent(event) {
@@ -99,7 +104,7 @@ export const linkedListProjector: ProjectorFactory = (views, runtime) => {
 
         case 'search-prepare': {
           stage.searchPrepare();
-          stage.setCaption('머리에서 출발 — 손가락을 한 칸씩 따라간다.', { duration: 1400 });
+          stage.setCaption(tr('linkedListSingly.caption.searchStart', 'Starting at the head — following the fingers one step at a time.'), { duration: 1400 });
           break;
         }
 
@@ -132,10 +137,13 @@ export const linkedListProjector: ProjectorFactory = (views, runtime) => {
           const p = (event.payload ?? {}) as { index?: string; op?: string };
           stage.signalOutOfRange();
           if (p.op === 'insert-limit') {
-            stage.setCaption('학습 한도 도달 — 더 이상 새 카드를 끼울 수 없다.', { duration: 1800 });
+            stage.setCaption(tr('linkedListSingly.caption.insertLimit', 'Reached the teaching limit — no more cards can be threaded in.'), { duration: 1800 });
           } else {
             stage.setCaption(
-              `그 자리에 닿을 수 없다 (${p.op ?? ''} ${p.index ?? ''}).`,
+              tr('linkedListSingly.caption.unreachable', 'That position cannot be reached ({op} {index}).', {
+                op: p.op ?? '',
+                index: p.index ?? '',
+              }),
               { duration: 1600 },
             );
           }
@@ -144,13 +152,16 @@ export const linkedListProjector: ProjectorFactory = (views, runtime) => {
 
         case 'empty-list': {
           stage.signalEmpty();
-          stage.setCaption('리스트가 비어 있다.', { duration: 1600 });
+          stage.setCaption(tr('linkedListSingly.caption.emptyList', 'The list is empty.'), { duration: 1600 });
           break;
         }
 
         case 'demo-end': {
           stage.setCaption(
-            '이제 직접 — 인덱스와 값을 입력하고 삽입·삭제·검색을 눌러보세요.',
+            tr(
+              'linkedListSingly.caption.handover',
+              'Your turn — type an index and a value, then press Insert, Remove or Search.',
+            ),
             { duration: 2400 },
           );
           break;
@@ -165,7 +176,7 @@ export const linkedListProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
     },
   };
 };

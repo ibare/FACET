@@ -15,8 +15,8 @@
  * 운동 시간 (ms) 은 기획 §9 기준 + runtime.getSpeed() 로 보정.
  */
 
-import type { ProjectorFactory } from '@ffacet/core/runtime';
-import { parseTarget } from '@ffacet/core/runtime';
+import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
+import { makeTranslator, parseTarget } from '@ffacet/core/runtime';
 
 type Distribution = { empty: number; len1: number; len2: number; len3plus: number };
 type AlphaLevel = 'safe' | 'caution' | 'warn';
@@ -95,8 +95,6 @@ type HashTableStage = {
   signalInvalid(op: string, raw: string, opts?: { duration?: number }): void;
 };
 
-const BASE_CAPTION =
-  '해시 테이블은 같은 모양의 칸을 여러 개 늘어놓고 함수 박스가 키마다 한 자리를 정해 던진다 — 같은 자리에 둘이 떨어지면 그 자리에 사슬을 늘인다.';
 
 function indexFromTarget(target: unknown): number | null {
   const t = Array.isArray(target) ? target[0] : target;
@@ -108,13 +106,20 @@ function indexFromTarget(target: unknown): number | null {
 }
 
 export const hashTableProjector: ProjectorFactory = (views, runtime) => {
+  const tr: Translate = runtime?.t ?? makeTranslator();
+  /** 상시 캡션. 두 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
+  const baseCaption = (): string =>
+    tr(
+      'hashTableChaining.caption.base',
+      'A hash table lays out a row of identical slots and a function box throws each key into the one slot it picks — when two land on the same slot, a chain grows there.',
+    );
   const stage = views.stage as unknown as HashTableStage | undefined;
 
   return {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
     },
 
     async onEvent(event) {
@@ -372,7 +377,10 @@ export const hashTableProjector: ProjectorFactory = (views, runtime) => {
         case 'empty-table': {
           const p = (event.payload ?? {}) as { op?: string };
           stage.signalEmpty(String(p.op ?? ''));
-          stage.setCaption('표가 비어 있다 — 검색·삭제할 키가 없다.', { duration: 1600 });
+          stage.setCaption(
+            tr('hashTableChaining.caption.emptyTableOp', 'The table is empty — there is no key to search for or remove.'),
+            { duration: 1600 },
+          );
           break;
         }
 
@@ -384,7 +392,10 @@ export const hashTableProjector: ProjectorFactory = (views, runtime) => {
 
         case 'demo-end': {
           stage.setCaption(
-            '이제 직접 — 키를 입력하고 삽입·검색·삭제를 눌러보세요.',
+            tr(
+              'hashTableChaining.caption.handover',
+              'Your turn — type a key, then press Insert, Search or Remove.',
+            ),
             { duration: 2400 },
           );
           break;
@@ -399,7 +410,7 @@ export const hashTableProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
     },
   };
 };

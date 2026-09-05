@@ -21,6 +21,7 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import { makeTranslator } from '@ffacet/core/runtime';
 import { getColors, fonts, fontSizes } from '@ffacet/core/runtime';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -92,6 +93,7 @@ type Layout = {
 
 export const arrayStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+    const tr = makeTranslator(params.locale);
     container.textContent = '';
     const colors = getColors(params.theme);
 
@@ -219,7 +221,7 @@ export const arrayStageView: View = {
       'font-family': fonts.body,
       'text-anchor': 'start',
     });
-    tallyHeader.textContent = '시프트';
+    tallyHeader.textContent = tr('array.label.shifts', 'Shifts');
     tallyGroup.appendChild(tallyHeader);
     const tallyBg = document.createElementNS(SVG_NS, 'rect');
     setAttrs(tallyBg, {
@@ -544,7 +546,7 @@ export const arrayStageView: View = {
         opacity: '1',
         fill: colors.textMuted,
       });
-      arithLabel.textContent = `시작 + ${idx}`;
+      arithLabel.textContent = tr('array.label.arith', 'start + {index}', { index: idx });
       setTimeout(() => arithLabel.setAttribute('opacity', '0'), duration);
     }
 
@@ -933,9 +935,9 @@ export const arrayStageView: View = {
 
     function searchResult(found: boolean, index: number | undefined, value: string): void {
       if (found && typeof index === 'number') {
-        setCaption(`찾았다 — 인덱스 ${index} 에 ${value}`, { duration: 1800 });
+        setCaption(tr('array.caption.searchFound', 'Found it — {value} at index {index}', { index, value }), { duration: 1800 });
       } else {
-        setCaption('찾지 못함 — 띠를 모두 살폈다', { duration: 1800 });
+        setCaption(tr('array.caption.searchMiss', 'Not found — scanned the whole strip'), { duration: 1800 });
       }
     }
 

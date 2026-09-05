@@ -11,8 +11,8 @@
  * 운동 시간(ms) 은 기획 §9 기준 + runtime.getSpeed() 로 보정.
  */
 
-import type { ProjectorFactory } from '@ffacet/core/runtime';
-import { parseTarget } from '@ffacet/core/runtime';
+import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
+import { makeTranslator, parseTarget } from '@ffacet/core/runtime';
 
 type ArrayStage = {
   reset(): void;
@@ -64,9 +64,6 @@ type ArrayStage = {
   signalOutOfRange(opts?: { duration?: number }): void;
 };
 
-const BASE_CAPTION =
-  '배열은 같은 너비의 칸을 옆자리끼리 빈틈 없이 붙여 놓고 0 부터 매긴 번호로 호명한다 — 번호만 알면 한 번에, 가운데를 건드리면 옆 칸이 줄줄이 밀린다.';
-
 function indexFromTarget(target: unknown): number | null {
   const t = Array.isArray(target) ? target[0] : target;
   if (typeof t !== 'string') return null;
@@ -77,13 +74,20 @@ function indexFromTarget(target: unknown): number | null {
 }
 
 export const arrayProjector: ProjectorFactory = (views, runtime) => {
+  const tr: Translate = runtime?.t ?? makeTranslator();
+  /** 상시 캡션. 두 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
+  const baseCaption = (): string =>
+    tr(
+      'array.caption.base',
+      'An array packs equal-width cells side by side with no gaps and calls each one by a number counted from 0 — know the number and you arrive in one step, but touch the middle and the neighbours shift along.',
+    );
   const stage = views.stage as unknown as ArrayStage | undefined;
 
   return {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
     },
 
     async onEvent(event) {
@@ -106,7 +110,10 @@ export const arrayProjector: ProjectorFactory = (views, runtime) => {
           const duration = 200 / speed;
           await stage.read(idx, { duration });
           stage.setCaption(
-            `번호 ${idx} 칸으로 곧장 점프 — 시작 + ${idx} 한 번이면 ${p.value ?? ''} 에 도달`,
+            tr('array.caption.read', 'Jumped straight to cell {index} — one "start + {index}" reaches {value}', {
+              index: idx,
+              value: p.value ?? '',
+            }),
           );
           break;
         }
@@ -119,7 +126,9 @@ export const arrayProjector: ProjectorFactory = (views, runtime) => {
           await stage.write(idx, String(p.oldValue ?? ''), String(p.newValue ?? ''), {
             duration,
           });
-          stage.setCaption(`${idx} 번 칸의 값을 바꾸었다 — 옆 칸은 그대로다`);
+          stage.setCaption(
+            tr('array.caption.write', 'Replaced the value in cell {index} — the neighbours are untouched', { index: idx }),
+          );
           break;
         }
 
@@ -141,7 +150,12 @@ export const arrayProjector: ProjectorFactory = (views, runtime) => {
             typeof p.capacity === 'number' ? p.capacity : 0,
             { duration },
           );
-          stage.setCaption(`${idx} 자리에 끼웠다 — 뒤의 ${p.shifted ?? 0} 칸이 한 자리씩 밀렸다`);
+          stage.setCaption(
+            tr('array.caption.insert', 'Slid one in at {index} — the {shifted} cells behind it each moved one place along', {
+              index: idx,
+              shifted: p.shifted ?? 0,
+            }),
+          );
           break;
         }
 
@@ -161,7 +175,12 @@ export const arrayProjector: ProjectorFactory = (views, runtime) => {
             typeof p.size === 'number' ? p.size : 0,
             { duration },
           );
-          stage.setCaption(`${idx} 자리를 비웠다 — 뒤의 ${p.shifted ?? 0} 칸이 한 자리씩 당겨졌다`);
+          stage.setCaption(
+            tr('array.caption.remove', 'Emptied {index} — the {shifted} cells behind it each pulled one place back', {
+              index: idx,
+              shifted: p.shifted ?? 0,
+            }),
+          );
           break;
         }
 
@@ -177,7 +196,9 @@ export const arrayProjector: ProjectorFactory = (views, runtime) => {
             typeof p.capacity === 'number' ? p.capacity : 0,
             { duration },
           );
-          stage.setCaption('끝 자리에 얹었다 — 옆 칸이 밀리지 않았다');
+          stage.setCaption(
+            tr('array.caption.append', 'Laid it on the end — nothing had to shift'),
+          );
           break;
         }
 
@@ -190,7 +211,9 @@ export const arrayProjector: ProjectorFactory = (views, runtime) => {
           };
           const duration = 800 / speed;
           stage.setCaption(
-            `칸이 다 찼다 — 두 배 큰 새 띠로 ${p.copied ?? 0} 칸을 옮긴다`,
+            tr('array.caption.resize', 'The cells are full — moving {copied} of them onto a new strip twice the size', {
+              copied: p.copied ?? 0,
+            }),
             { duration: 1400 },
           );
           await stage.resize(
@@ -220,7 +243,12 @@ export const arrayProjector: ProjectorFactory = (views, runtime) => {
         case 'out-of-range': {
           const p = (event.payload ?? {}) as { index?: string; op?: string };
           stage.signalOutOfRange();
-          stage.setCaption(`범위를 벗어난 자리 (${p.op ?? ''} ${p.index ?? ''}) — 띠 위에서 일어나는 일은 없다`);
+          stage.setCaption(
+            tr('array.caption.outOfRange', 'That position is out of range ({op} {index}) — nothing happens on the strip', {
+              op: p.op ?? '',
+              index: p.index ?? '',
+            }),
+          );
           break;
         }
 
@@ -228,7 +256,10 @@ export const arrayProjector: ProjectorFactory = (views, runtime) => {
           const p = (event.payload ?? {}) as { op?: string; maxSize?: number };
           stage.signalOutOfRange();
           stage.setCaption(
-            `학습 한도 ${p.maxSize ?? 0} 개 도달 — 더 이상 ${p.op ?? '추가'} 할 수 없다`,
+            tr('array.caption.limitReached', 'Reached the teaching limit of {maxSize} — no further {op} is possible', {
+              maxSize: p.maxSize ?? 0,
+              op: p.op ?? 'append',
+            }),
             { duration: 1800 },
           );
           break;
@@ -236,7 +267,10 @@ export const arrayProjector: ProjectorFactory = (views, runtime) => {
 
         case 'demo-end': {
           stage.setCaption(
-            '이제 직접 — 인덱스와 값을 입력하고 호명·쓰기·삽입·삭제·뒤에 추가·검색을 눌러보세요',
+            tr(
+              'array.caption.handover',
+              'Your turn — type an index and a value, then press Read, Write, Insert, Remove, Append or Search.',
+            ),
             { duration: 2400 },
           );
           break;
@@ -250,7 +284,7 @@ export const arrayProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(BASE_CAPTION);
+      stage.setBaseCaption(baseCaption());
     },
   };
 };
