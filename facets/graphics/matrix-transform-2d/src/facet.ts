@@ -20,14 +20,8 @@ import type { FacetJson } from '@ffacet/core/runtime';
 
 export const matrixTransform2dFacet: FacetJson = {
   id: 'facet:matrixTransform2d',
-  title: {
-    en: '2D Matrix Transform — Two Columns, Two Basis Destinations',
-    ko: '2D 행렬 변환 — 두 열은 두 기저의 도착지',
-  },
-  description: {
-    en: 'A 2×2 matrix is the destinations of i-hat and j-hat — every point on the plane follows the same (u, v) coefficients into the new basis combination, lines stay lines, and the origin stays put',
-    ko: '2×2 행렬은 두 기저 i-hat·j-hat 의 도착지이며, 평면의 모든 점은 같은 (u, v) 계수로 새 기저의 결합을 따라 이동하고, 직선은 직선으로 유지되고 원점은 그 자리에 박힌 채로 평면이 휘어지는 사상',
-  },
+  title: { en: '2D Matrix Transform — Two Columns, Two Basis Destinations', ko: '2D 행렬 변환 — 두 열은 두 기저의 도착지', ja: '2D 行列変換 — 二つの列は二つの基底の行き先', zh: '2D 矩阵变换 — 两列即两个基的落点', ar: 'تحويل مصفوفة ثنائية الأبعاد — العمودان هما وجهتا الأساسين', es: 'Transformación matricial 2D: dos columnas, dos destinos de la base', fr: 'Transformation matricielle 2D — deux colonnes, deux destinations de base', hi: '2D आव्यूह रूपांतरण — दो स्तंभ, दो आधारों के गंतव्य', id: 'Transformasi matriks 2D — dua kolom, dua tujuan basis', pt: 'Transformação matricial 2D — duas colunas, dois destinos da base' },
+  description: { en: 'A 2×2 matrix is the destinations of i-hat and j-hat — every point on the plane follows the same (u, v) coefficients into the new basis combination, lines stay lines, and the origin stays put', ko: '2×2 행렬은 두 기저 i-hat·j-hat 의 도착지이며, 평면의 모든 점은 같은 (u, v) 계수로 새 기저의 결합을 따라 이동하고, 직선은 직선으로 유지되고 원점은 그 자리에 박힌 채로 평면이 휘어지는 사상', ja: '2×2 行列は i-hat と j-hat の行き先そのものだ — 平面上のどの点も同じ (u, v) 係数のまま新しい基底の組み合わせへ移り、直線は直線のまま、原点はその場に残る', zh: '2×2 矩阵就是 i-hat 与 j-hat 的落点 — 平面上每个点都以同样的 (u, v) 系数进入新基的组合，直线仍是直线，原点留在原处', ar: 'المصفوفة 2×2 هي وجهتا i-hat و j-hat — كل نقطة في المستوي تتبع المعاملين (u, v) نفسيهما إلى تركيب الأساس الجديد، تبقى المستقيمات مستقيمات ويثبت الأصل مكانه', es: 'Una matriz 2×2 son los destinos de i-hat y j-hat: todo punto del plano lleva los mismos coeficientes (u, v) a la nueva combinación de base, las rectas siguen rectas y el origen no se mueve', fr: 'Une matrice 2×2, ce sont les destinations de i-hat et j-hat — chaque point du plan garde les mêmes coefficients (u, v) vers la nouvelle combinaison de base, les droites restent droites et l\'origine ne bouge pas', hi: '2×2 आव्यूह i-hat और j-hat के गंतव्य ही हैं — तल का हर बिंदु उन्हीं (u, v) गुणांकों के साथ नए आधार के संयोजन में जाता है, रेखाएँ रेखाएँ रहती हैं और मूल बिंदु अपनी जगह', id: 'Matriks 2×2 adalah tujuan i-hat dan j-hat — tiap titik di bidang membawa koefisien (u, v) yang sama ke kombinasi basis baru, garis tetap garis, dan titik asal tak bergerak', pt: 'Uma matriz 2×2 são os destinos de i-hat e j-hat — todo ponto do plano leva os mesmos coeficientes (u, v) para a nova combinação de base, retas continuam retas e a origem fica parada' },
   algorithm: 'module:matrixTransform',
   projector: 'module:matrixTransformProjector',
   initialData: {
@@ -501,10 +495,10 @@ export const matrixTransform2dFacet: FacetJson = {
     controls: {
       type: 'control-bar',
       controls: [
-        { widget: 'button', action: 'point-add', label: { en: '+ Point', ko: '점 추가' } },
-        { widget: 'button', action: 'point-remove', label: { en: '− Point', ko: '점 제거' } },
-        { widget: 'button', action: 'identity', label: { en: 'Identity', ko: '항등 리셋' } },
-        { widget: 'button', action: 'reset', label: { en: '↺ Reset', ko: '↺ 초기화' } },
+        { widget: 'button', action: 'point-add', label: { en: '+ Point', ko: '점 추가', ja: '+ 点', zh: '+ 点', ar: '+ نقطة', es: '+ Punto', fr: '+ Point', hi: '+ बिंदु', id: '+ Titik', pt: '+ Ponto' } },
+        { widget: 'button', action: 'point-remove', label: { en: '− Point', ko: '점 제거', ja: '− 点', zh: '− 点', ar: '− نقطة', es: '− Punto', fr: '− Point', hi: '− बिंदु', id: '− Titik', pt: '− Ponto' } },
+        { widget: 'button', action: 'identity', label: { en: 'Identity', ko: '항등 리셋', ja: '恒等', zh: '单位', ar: 'المحايد', es: 'Identidad', fr: 'Identité', hi: 'तत्समक', id: 'Identitas', pt: 'Identidade' } },
+        { widget: 'button', action: 'reset', label: { en: '↺ Reset', ko: '↺ 초기화', ja: '↺ リセット', zh: '↺ 重置', ar: '↺ إعادة', es: '↺ Reiniciar', fr: '↺ Réinit.', hi: '↺ रीसेट', id: '↺ Atur ulang', pt: '↺ Reiniciar' } },
       ],
     },
   },

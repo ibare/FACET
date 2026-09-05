@@ -18,11 +18,8 @@ import type { FacetJson } from '@ffacet/core/runtime';
 
 export const relationalTablesAndKeysFacet: FacetJson = {
   id: 'facet:relationalTablesAndKeys',
-  title: { en: 'Tables & Keys', ko: '테이블과 키' },
-  description: {
-    en: 'Two named grids — a primary key locks each row of one table while a foreign key in the other points at that locked value, binding two grids into one consistent structure',
-    ko: '이름 붙은 두 격자 — 한 격자의 기본키가 모든 행의 정체를 잠그고, 다른 격자의 외래키가 그 잠긴 값을 가리켜 두 격자를 일관된 한 구조로 엮는다',
-  },
+  title: { en: 'Tables & Keys', ko: '테이블과 키', ja: 'テーブルとキー', zh: '表与键', ar: 'الجداول والمفاتيح', es: 'Tablas y claves', fr: 'Tables et clés', hi: 'तालिकाएँ और कुंजियाँ', id: 'Tabel dan kunci', pt: 'Tabelas e chaves' },
+  description: { en: 'Two named grids — a primary key locks each row of one table while a foreign key in the other points at that locked value, binding two grids into one consistent structure', ko: '이름 붙은 두 격자 — 한 격자의 기본키가 모든 행의 정체를 잠그고, 다른 격자의 외래키가 그 잠긴 값을 가리켜 두 격자를 일관된 한 구조로 엮는다', ja: '名前を持つ二つの格子 — 一方の主キーが各行の身元を固定し、他方の外部キーがその固定値を指して、二つを一貫した一つの構造に結ぶ', zh: '两张有名字的格子 — 一边的主键锁定每一行的身份，另一边的外键指向那个被锁定的值，把两者绑成一个一致的结构', ar: 'شبكتان مسمّاتان — مفتاح أساسي يثبّت هوية كل صف في إحداهما، ومفتاح أجنبي في الأخرى يشير إلى تلك القيمة المثبّتة فيربطهما في بنية واحدة متسقة', es: 'Dos cuadrículas con nombre: una clave primaria fija la identidad de cada fila y una clave foránea en la otra apunta a ese valor fijado, ligando ambas en una estructura coherente', fr: 'Deux grilles nommées — une clé primaire fixe l\'identité de chaque ligne, une clé étrangère de l\'autre pointe vers cette valeur fixée, liant les deux en une structure cohérente', hi: 'नाम वाली दो जालियाँ — एक की प्राथमिक कुंजी हर पंक्ति की पहचान बाँधती है, दूसरी की विदेशी कुंजी उसी बंधे मान की ओर इशारा कर दोनों को एक संगत संरचना बनाती है', id: 'Dua kisi bernama — kunci primer mengunci identitas tiap baris di satu sisi, kunci asing di sisi lain menunjuk nilai terkunci itu, mengikat keduanya jadi satu struktur konsisten', pt: 'Duas grades nomeadas — uma chave primária trava a identidade de cada linha e uma chave estrangeira da outra aponta para esse valor travado, ligando as duas numa estrutura coerente' },
   algorithm: 'module:relationalTablesAndKeys',
   projector: 'module:relationalTablesAndKeysProjector',
   initialData: {
@@ -385,14 +382,14 @@ export const relationalTablesAndKeysFacet: FacetJson = {
     controls: {
       type: 'control-bar',
       controls: [
-        { widget: 'button', action: 'toggle-pk', label: { en: 'Toggle PK', ko: '기본키 토글' } },
+        { widget: 'button', action: 'toggle-pk', label: { en: 'Toggle PK', ko: '기본키 토글', ja: '主キー切替', zh: '切换主键', ar: 'تبديل المفتاح الأساسي', es: 'Cambiar PK', fr: 'Changer PK', hi: 'PK बदलें', id: 'Ganti PK', pt: 'Alternar PK' } },
         {
           widget: 'button',
           action: 'toggle-rejects',
-          label: { en: 'Rejects', ko: '거부 인서트' },
+          label: { en: 'Rejects', ko: '거부 인서트', ja: '拒否', zh: '拒绝', ar: 'رفض', es: 'Rechazos', fr: 'Rejets', hi: 'अस्वीकृति', id: 'Tolak', pt: 'Rejeições' },
         },
-        { widget: 'button', action: 'auto-demo', label: { en: 'Auto demo', ko: '자동 시연' } },
-        { widget: 'button', action: 'reset', label: { en: 'Reset', ko: '초기화' } },
+        { widget: 'button', action: 'auto-demo', label: { en: 'Auto demo', ko: '자동 시연', ja: '自動デモ', zh: '自动演示', ar: 'عرض تلقائي', es: 'Demo automática', fr: 'Démo auto', hi: 'स्वतः डेमो', id: 'Demo otomatis', pt: 'Demo automática' } },
+        { widget: 'button', action: 'reset', label: { en: 'Reset', ko: '초기화', ja: 'リセット', zh: '重置', ar: 'إعادة', es: 'Reiniciar', fr: 'Réinit.', hi: 'रीसेट', id: 'Atur ulang', pt: 'Reiniciar' } },
       ],
     },
   },

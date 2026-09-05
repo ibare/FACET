@@ -21,11 +21,8 @@ import type { FacetJson } from '@ffacet/core/runtime';
 
 export const tokenizationFacet: FacetJson = {
   id: 'facet:tokenization',
-  title: { en: 'Tokenization (Lexical Analysis)', ko: '토큰화 (어휘 분석)' },
-  description: {
-    en: 'A left-to-right gaze that fuses same-kind characters into a single segment until it cannot extend further, then drops the closed run as a labeled token card onto the output row',
-    ko: '응시가 좌에서 우로 한 글자씩 전진하며 같은 종류 글자들을 한 구간으로 묶다가 더는 못 묶이는 순간 닫고, 그 구간을 종류 라벨과 원문이 함께 새겨진 한 장의 카드로 떨궈 출력열에 붙이는 첫 변환 단계',
-  },
+  title: { en: 'Tokenization (Lexical Analysis)', ko: '토큰화 (어휘 분석)', ja: 'トークン化 (字句解析)', zh: '词法切分 (词法分析)', ar: 'التقطيع إلى رموز (التحليل المعجمي)', es: 'Tokenización (análisis léxico)', fr: 'Tokenisation (analyse lexicale)', hi: 'टोकनीकरण (शाब्दिक विश्लेषण)', id: 'Tokenisasi (analisis leksikal)', pt: 'Tokenização (análise léxica)' },
+  description: { en: 'A left-to-right gaze that fuses same-kind characters into a single segment until it cannot extend further, then drops the closed run as a labeled token card onto the output row', ko: '응시가 좌에서 우로 한 글자씩 전진하며 같은 종류 글자들을 한 구간으로 묶다가 더는 못 묶이는 순간 닫고, 그 구간을 종류 라벨과 원문이 함께 새겨진 한 장의 카드로 떨궈 출력열에 붙이는 첫 변환 단계', ja: '左から右へ進む視線が同じ種類の文字を一つの区間に融かしていき、もう伸ばせなくなった時点で閉じて、その区間を種類のラベルを付けたトークンカードとして出力の列へ落とす', zh: '自左向右的目光把同类字符熔进一个区段，直到再也伸不长时闭合，然后把这个闭合的段落作为带类别标签的词元卡片落到输出行', ar: 'نظرة تمضي من اليسار إلى اليمين تصهر الحروف المتماثلة في مقطع واحد حتى يعجز عن الامتداد، ثم تُسقط المقطع المغلق بطاقةَ رمزٍ تحمل نوعها في صف الإخراج', es: 'Una mirada de izquierda a derecha funde caracteres del mismo tipo en un segmento hasta que no puede extenderse más, y entonces deja el tramo cerrado como tarjeta de token etiquetada en la fila de salida', fr: 'Un regard de gauche à droite fond les caractères de même nature en un segment jusqu\'à ne plus pouvoir s\'étendre, puis dépose ce segment clos en carte de jeton étiquetée sur la ligne de sortie', hi: 'बाएँ से दाएँ बढ़ती दृष्टि एक ही प्रकार के अक्षरों को एक खंड में पिघलाती जाती है जब तक और न बढ़ सके, फिर उस बंद खंड को प्रकार-लेबल वाले टोकन कार्ड के रूप में निर्गत पंक्ति पर गिरा देती है', id: 'Pandangan dari kiri ke kanan melebur karakter sejenis menjadi satu segmen sampai tak bisa diperpanjang lagi, lalu menjatuhkan runtunan tertutup itu sebagai kartu token berlabel ke baris keluaran', pt: 'Um olhar da esquerda para a direita funde caracteres do mesmo tipo num segmento até não poder mais estender, e então solta o trecho fechado como uma carta de token rotulada na linha de saída' },
   algorithm: 'module:tokenization',
   projector: 'module:tokenizationProjector',
   initialData: {
@@ -34,20 +31,17 @@ export const tokenizationFacet: FacetJson = {
     examples: [
       {
         id: 'basic',
-        name: { en: 'var x = 42;', ko: '간단 — var x = 42;' },
+        name: { en: 'var x = 42;', ko: '간단 — var x = 42;', ja: 'var x = 42;', zh: 'var x = 42;', ar: 'var x = 42;', es: 'var x = 42;', fr: 'var x = 42;', hi: 'var x = 42;', id: 'var x = 42;', pt: 'var x = 42;' },
         source: 'var x = 42;',
       },
       {
         id: 'compound',
-        name: {
-          en: 'if x >= 10 // ok',
-          ko: '복합 — if x >= 10  // ok',
-        },
+        name: { en: 'if x >= 10 // ok', ko: '복합 — if x >= 10  // ok', ja: 'if x >= 10 // ok', zh: 'if x >= 10 // ok', ar: 'if x >= 10 // ok', es: 'if x >= 10 // ok', fr: 'if x >= 10 // ok', hi: 'if x >= 10 // ok', id: 'if x >= 10 // ok', pt: 'if x >= 10 // ok' },
         source: 'if x >= 10  // ok\n  return x;',
       },
       {
         id: 'comment',
-        name: { en: '// note + return n', ko: '주석 — // note + return n' },
+        name: { en: '// note + return n', ko: '주석 — // note + return n', ja: '// note + return n', zh: '// note + return n', ar: '// note + return n', es: '// note + return n', fr: '// note + return n', hi: '// note + return n', id: '// note + return n', pt: '// note + return n' },
         source: '// note\n  return n',
       },
     ],
@@ -69,14 +63,14 @@ export const tokenizationFacet: FacetJson = {
       'null',
     ],
     kindPalette: {
-      keyword: { swatch: 'keyword', label: { en: 'keyword', ko: '키워드' } },
-      identifier: { swatch: 'identifier', label: { en: 'identifier', ko: '식별자' } },
-      number: { swatch: 'number', label: { en: 'number', ko: '숫자' } },
-      operator: { swatch: 'operator', label: { en: 'operator', ko: '연산자' } },
-      punct: { swatch: 'punct', label: { en: 'punct', ko: '구분자' } },
-      string: { swatch: 'string', label: { en: 'string', ko: '문자열' } },
-      error: { swatch: 'error', label: { en: 'error', ko: '오류' } },
-      swallow: { swatch: 'swallow', label: { en: 'whitespace', ko: '삼킴' } },
+      keyword: { swatch: 'keyword', label: { en: 'keyword', ko: '키워드', ja: 'キーワード', zh: '关键字', ar: 'كلمة مفتاحية', es: 'palabra clave', fr: 'mot-clé', hi: 'कीवर्ड', id: 'kata kunci', pt: 'palavra-chave' } },
+      identifier: { swatch: 'identifier', label: { en: 'identifier', ko: '식별자', ja: '識別子', zh: '标识符', ar: 'مُعرِّف', es: 'identificador', fr: 'identifiant', hi: 'पहचानकर्ता', id: 'pengenal', pt: 'identificador' } },
+      number: { swatch: 'number', label: { en: 'number', ko: '숫자', ja: '数値', zh: '数字', ar: 'عدد', es: 'número', fr: 'nombre', hi: 'संख्या', id: 'angka', pt: 'número' } },
+      operator: { swatch: 'operator', label: { en: 'operator', ko: '연산자', ja: '演算子', zh: '运算符', ar: 'عامل', es: 'operador', fr: 'opérateur', hi: 'संकारक', id: 'operator', pt: 'operador' } },
+      punct: { swatch: 'punct', label: { en: 'punct', ko: '구분자', ja: '区切り', zh: '标点', ar: 'ترقيم', es: 'punt.', fr: 'ponct.', hi: 'विराम', id: 'tanda baca', pt: 'pontuação' } },
+      string: { swatch: 'string', label: { en: 'string', ko: '문자열', ja: '文字列', zh: '字符串', ar: 'سلسلة', es: 'cadena', fr: 'chaîne', hi: 'स्ट्रिंग', id: 'string', pt: 'cadeia' } },
+      error: { swatch: 'error', label: { en: 'error', ko: '오류', ja: 'エラー', zh: '错误', ar: 'خطأ', es: 'error', fr: 'erreur', hi: 'त्रुटि', id: 'galat', pt: 'erro' } },
+      swallow: { swatch: 'swallow', label: { en: 'whitespace', ko: '삼킴', ja: '空白', zh: '空白', ar: 'مسافة', es: 'espacio', fr: 'espace', hi: 'रिक्ति', id: 'spasi', pt: 'espaço' } },
     },
   },
   shuffleOnReset: false,
@@ -388,11 +382,11 @@ export const tokenizationFacet: FacetJson = {
         {
           widget: 'button',
           action: 'next-example',
-          label: { en: 'Next example', ko: '다음 예제' },
+          label: { en: 'Next example', ko: '다음 예제', ja: '次の例', zh: '下一个示例', ar: 'المثال التالي', es: 'Siguiente ejemplo', fr: 'Exemple suivant', hi: 'अगला उदाहरण', id: 'Contoh berikutnya', pt: 'Próximo exemplo' },
         },
-        { widget: 'button', action: 'replay', label: { en: 'Replay', ko: '다시 재생' } },
+        { widget: 'button', action: 'replay', label: { en: 'Replay', ko: '다시 재생', ja: '再演', zh: '重播', ar: 'إعادة العرض', es: 'Repetir', fr: 'Rejouer', hi: 'दोबारा', id: 'Ulangi', pt: 'Repetir' } },
         { widget: 'speed-slider', action: 'speed' },
-        { widget: 'button', action: 'reset', label: { en: 'Reset', ko: '초기화' } },
+        { widget: 'button', action: 'reset', label: { en: 'Reset', ko: '초기화', ja: 'リセット', zh: '重置', ar: 'إعادة', es: 'Reiniciar', fr: 'Réinit.', hi: 'रीसेट', id: 'Atur ulang', pt: 'Reiniciar' } },
       ],
     },
   },

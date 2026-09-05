@@ -103,11 +103,8 @@ const R4_TABLE = [
 
 export const ipRoutingFacet: FacetJson = {
   id: 'facet:ipRouting',
-  title: { en: 'IP Routing', ko: 'IP 라우팅' },
-  description: {
-    en: 'A packet hops router-by-router; each router consults only its own table and picks the longest-prefix-match next-hop, decrementing TTL on every hop',
-    ko: '한 패킷이 매 라우터에서 자기 표만 보고 가장 긴 일치 prefix 의 next-hop 한 걸음을 정하며 TTL 한 칸씩 깎이는 hop-by-hop 분산 결정',
-  },
+  title: { en: 'IP Routing', ko: 'IP 라우팅', ja: 'IP ルーティング', zh: 'IP 路由', ar: 'توجيه IP', es: 'Enrutamiento IP', fr: 'Routage IP', hi: 'IP रूटिंग', id: 'Perutean IP', pt: 'Roteamento IP' },
+  description: { en: 'A packet hops router-by-router; each router consults only its own table and picks the longest-prefix-match next-hop, decrementing TTL on every hop', ko: '한 패킷이 매 라우터에서 자기 표만 보고 가장 긴 일치 prefix 의 next-hop 한 걸음을 정하며 TTL 한 칸씩 깎이는 hop-by-hop 분산 결정', ja: 'パケットはルータからルータへ跳ぶ — どのルータも自分の表だけを見て最長一致の next-hop を選び、跳ぶたびに TTL が一つ減る', zh: '数据包在路由器之间逐跳前进 — 每台只看自己的表，挑出最长前缀匹配的下一跳，每跳 TTL 减一', ar: 'تقفز الحزمة من موجّه إلى موجّه — كلٌّ ينظر في جدوله وحده ويختار القفزة التالية بأطول تطابق بادئة، وينقص TTL بواحد كل قفزة', es: 'Un paquete salta de router en router: cada uno consulta solo su tabla y elige el siguiente salto por coincidencia de prefijo más largo, restando uno al TTL en cada salto', fr: 'Un paquet saute de routeur en routeur — chacun ne consulte que sa table et choisit le saut suivant par plus long préfixe, en retirant un au TTL à chaque saut', hi: 'पैकेट राउटर-दर-राउटर छलाँग लगाता है — हर राउटर केवल अपनी तालिका देखकर सबसे लंबे उपसर्ग मिलान का अगला hop चुनता है, और हर hop पर TTL एक घटता है', id: 'Paket melompat dari router ke router — tiap router hanya menengok tabelnya sendiri dan memilih hop berikutnya dengan kecocokan awalan terpanjang, TTL berkurang satu tiap hop', pt: 'Um pacote salta de roteador em roteador — cada um consulta só a sua tabela e escolhe o próximo salto pela correspondência de prefixo mais longa, tirando um do TTL a cada salto' },
   algorithm: 'module:ipRouting',
   projector: 'module:ipRoutingProjector',
   initialData: {
@@ -612,26 +609,26 @@ export const ipRoutingFacet: FacetJson = {
     controls: {
       type: 'control-bar',
       controls: [
-        { widget: 'button', action: 'send', label: { en: 'Send', ko: '발신' } },
-        { widget: 'button', action: 'step-hop', label: { en: '1 hop', ko: '한 hop' } },
-        { widget: 'button', action: 'auto-demo', label: { en: 'Auto demo', ko: '자동 시연' } },
-        { widget: 'button', action: 'pause', label: { en: '⏸ Pause', ko: '⏸ 일시정지' } },
-        { widget: 'button', action: 'resume', label: { en: 'Resume', ko: '재개' } },
+        { widget: 'button', action: 'send', label: { en: 'Send', ko: '발신', ja: '送信', zh: '发送', ar: 'إرسال', es: 'Enviar', fr: 'Envoyer', hi: 'भेजें', id: 'Kirim', pt: 'Enviar' } },
+        { widget: 'button', action: 'step-hop', label: { en: '1 hop', ko: '한 hop', ja: '1 hop', zh: '单跳', ar: 'قفزة واحدة', es: '1 salto', fr: '1 saut', hi: '1 hop', id: '1 hop', pt: '1 salto' } },
+        { widget: 'button', action: 'auto-demo', label: { en: 'Auto demo', ko: '자동 시연', ja: '自動デモ', zh: '自动演示', ar: 'عرض تلقائي', es: 'Demo automática', fr: 'Démo auto', hi: 'स्वतः डेमो', id: 'Demo otomatis', pt: 'Demo automática' } },
+        { widget: 'button', action: 'pause', label: { en: '⏸ Pause', ko: '⏸ 일시정지', ja: '⏸ 停止', zh: '⏸ 暂停', ar: '⏸ إيقاف', es: '⏸ Pausa', fr: '⏸ Pause', hi: '⏸ रोकें', id: '⏸ Jeda', pt: '⏸ Pausar' } },
+        { widget: 'button', action: 'resume', label: { en: 'Resume', ko: '재개', ja: '再開', zh: '继续', ar: 'استئناف', es: 'Reanudar', fr: 'Reprendre', hi: 'जारी', id: 'Lanjut', pt: 'Retomar' } },
         {
           widget: 'segmented-slider',
           action: 'ttl-default',
           name: 'ttl',
-          label: { en: 'Initial TTL', ko: '초기 TTL' },
+          label: { en: 'Initial TTL', ko: '초기 TTL', ja: '初期 TTL', zh: '初始 TTL', ar: 'TTL الابتدائي', es: 'TTL inicial', fr: 'TTL initial', hi: 'प्रारंभिक TTL', id: 'TTL awal', pt: 'TTL inicial' },
           segments: [
-            { value: 64, label: { en: '64', ko: '64' }, default: true },
-            { value: 32, label: { en: '32', ko: '32' } },
-            { value: 8, label: { en: '8', ko: '8' } },
-            { value: 4, label: { en: '4', ko: '4' } },
-            { value: 2, label: { en: '2', ko: '2' } },
+            { value: 64, label: { en: '64', ko: '64', ja: '64', zh: '64', ar: '64', es: '64', fr: '64', hi: '64', id: '64', pt: '64' }, default: true },
+            { value: 32, label: { en: '32', ko: '32', ja: '32', zh: '32', ar: '32', es: '32', fr: '32', hi: '32', id: '32', pt: '32' } },
+            { value: 8, label: { en: '8', ko: '8', ja: '8', zh: '8', ar: '8', es: '8', fr: '8', hi: '8', id: '8', pt: '8' } },
+            { value: 4, label: { en: '4', ko: '4', ja: '4', zh: '4', ar: '4', es: '4', fr: '4', hi: '4', id: '4', pt: '4' } },
+            { value: 2, label: { en: '2', ko: '2', ja: '2', zh: '2', ar: '2', es: '2', fr: '2', hi: '2', id: '2', pt: '2' } },
           ],
         },
         { widget: 'speed-slider', action: 'speed', default: 1, steps: [0.5, 1, 2] },
-        { widget: 'button', action: 'reset', label: { en: '↺ Reset', ko: '↺ 초기화' } },
+        { widget: 'button', action: 'reset', label: { en: '↺ Reset', ko: '↺ 초기화', ja: '↺ リセット', zh: '↺ 重置', ar: '↺ إعادة', es: '↺ Reiniciar', fr: '↺ Réinit.', hi: '↺ रीसेट', id: '↺ Atur ulang', pt: '↺ Reiniciar' } },
       ],
     },
   },

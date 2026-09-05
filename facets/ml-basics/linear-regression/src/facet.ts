@@ -36,11 +36,8 @@ const POINTS_14: Array<{ x: number; y: number }> = [
 
 export const linearRegressionFacet: FacetJson = {
   id: 'facet:linearRegression',
-  title: { en: 'Linear Regression — A Line Through the Points', ko: '선형 회귀 — 점들 사이를 가르는 직선' },
-  description: {
-    en: 'Fit a line by sliding (w, b) downhill — residual squares shrink as a point rolls into the valley',
-    ko: '잔차 정사각형의 면적을 줄이며 매개변수 평면 위 점이 골짜기로 굴러가는 학습 운동',
-  },
+  title: { en: 'Linear Regression — A Line Through the Points', ko: '선형 회귀 — 점들 사이를 가르는 직선', ja: '線形回帰 — 点の間を貫く直線', zh: '线性回归 — 穿过点群的一条直线', ar: 'الانحدار الخطي — خط يشقّ النقاط', es: 'Regresión lineal: una recta entre los puntos', fr: 'Régression linéaire — une droite à travers les points', hi: 'रैखिक प्रतिगमन — बिंदुओं के बीच एक रेखा', id: 'Regresi linear — sebuah garis menembus titik', pt: 'Regressão linear — uma reta entre os pontos' },
+  description: { en: 'Fit a line by sliding (w, b) downhill — residual squares shrink as a point rolls into the valley', ko: '잔차 정사각형의 면적을 줄이며 매개변수 평면 위 점이 골짜기로 굴러가는 학습 운동', ja: '(w, b) を坂の下へ滑らせて直線を合わせる — 残差の正方形が縮むにつれ、点が谷へ転がっていく', zh: '让 (w, b) 顺坡下滑来拟合直线 — 残差方块缩小，点也就滚进了谷底', ar: 'نلائم الخط بإنزلاق (w, b) نحو الأسفل — تتقلّص مربعات البواقي بينما تتدحرج النقطة إلى الوادي', es: 'Ajustar una recta deslizando (w, b) cuesta abajo: los cuadrados de residuos encogen mientras el punto rueda al valle', fr: 'Ajuster une droite en faisant glisser (w, b) vers le bas — les carrés des résidus rétrécissent tandis que le point roule dans la vallée', hi: '(w, b) को ढलान पर सरकाकर रेखा बिठाना — अवशेष वर्ग सिकुड़ते हैं और बिंदु घाटी में लुढ़कता है', id: 'Mencocokkan garis dengan meluncurkan (w, b) menuruni lereng — kuadrat residu mengecil sementara titik menggelinding ke lembah', pt: 'Ajustar uma reta deslizando (w, b) ladeira abaixo — os quadrados dos resíduos encolhem enquanto o ponto rola ao vale' },
   algorithm: 'module:linearRegression',
   projector: 'module:linearRegressionProjector',
   initialData: {
@@ -298,19 +295,19 @@ export const linearRegressionFacet: FacetJson = {
     controls: {
       type: 'control-bar',
       controls: [
-        { widget: 'button', action: 'play', label: { en: '▶ Play', ko: '▶ 재생' } },
-        { widget: 'button', action: 'pause', label: { en: '⏸ Pause', ko: '⏸ 일시정지' } },
-        { widget: 'button', action: 'step', label: { en: '⏭ Step', ko: '⏭ 한 스텝' } },
-        { widget: 'button', action: 'reset', label: { en: '↺ Reset', ko: '↺ 리셋' } },
+        { widget: 'button', action: 'play', label: { en: '▶ Play', ko: '▶ 재생', ja: '▶ 再生', zh: '▶ 播放', ar: '▶ تشغيل', es: '▶ Reproducir', fr: '▶ Lecture', hi: '▶ चलाएं', id: '▶ Putar', pt: '▶ Reproduzir' } },
+        { widget: 'button', action: 'pause', label: { en: '⏸ Pause', ko: '⏸ 일시정지', ja: '⏸ 停止', zh: '⏸ 暂停', ar: '⏸ إيقاف', es: '⏸ Pausa', fr: '⏸ Pause', hi: '⏸ रोकें', id: '⏸ Jeda', pt: '⏸ Pausar' } },
+        { widget: 'button', action: 'step', label: { en: '⏭ Step', ko: '⏭ 한 스텝', ja: '⏭ 一歩', zh: '⏭ 单步', ar: '⏭ خطوة', es: '⏭ Paso', fr: '⏭ Pas', hi: '⏭ चरण', id: '⏭ Langkah', pt: '⏭ Passo' } },
+        { widget: 'button', action: 'reset', label: { en: '↺ Reset', ko: '↺ 리셋', ja: '↺ リセット', zh: '↺ 重置', ar: '↺ إعادة', es: '↺ Reiniciar', fr: '↺ Réinit.', hi: '↺ रीसेट', id: '↺ Atur ulang', pt: '↺ Reiniciar' } },
         {
           widget: 'segmented-slider',
           action: 'lr',
           name: 'lr',
-          label: { en: 'Learning rate', ko: '학습률' },
+          label: { en: 'Learning rate', ko: '학습률', ja: '学習率', zh: '学习率', ar: 'معدل التعلم', es: 'Tasa de aprendizaje', fr: 'Taux d\'apprentissage', hi: 'अधिगम दर', id: 'Laju belajar', pt: 'Taxa de aprendizado' },
           segments: [
-            { value: 0.01, label: { en: 'Slow', ko: '느림' } },
-            { value: 0.05, label: { en: 'Tuned', ko: '적정' }, default: true },
-            { value: 0.18, label: { en: 'Diverge', ko: '발산' } },
+            { value: 0.01, label: { en: 'Slow', ko: '느림', ja: '遅い', zh: '慢', ar: 'بطيء', es: 'Lento', fr: 'Lent', hi: 'धीमा', id: 'Lambat', pt: 'Lento' } },
+            { value: 0.05, label: { en: 'Tuned', ko: '적정', ja: '適正', zh: '合适', ar: 'مناسب', es: 'Justo', fr: 'Juste', hi: 'उपयुक्त', id: 'Pas', pt: 'Adequado' }, default: true },
+            { value: 0.18, label: { en: 'Diverge', ko: '발산', ja: '発散', zh: '发散', ar: 'تباعد', es: 'Divergente', fr: 'Divergent', hi: 'अपसरित', id: 'Divergen', pt: 'Divergente' } },
           ],
         },
       ],

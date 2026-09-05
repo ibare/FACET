@@ -19,14 +19,8 @@ import type { FacetJson } from '@ffacet/core/runtime';
 
 export const contextSwitchingFacet: FacetJson = {
   id: 'facet:contextSwitching',
-  title: {
-    en: 'Context Switching — One Stage, Two Owners',
-    ko: '컨텍스트 스위칭 — 한 무대 위 주인의 교대',
-  },
-  description: {
-    en: 'A single CPU stage swaps owners — one flow\'s register bundle is lifted into its holder, the other\'s is replaced into the same slots, and time resumes exactly where each had stopped',
-    ko: '단 하나의 CPU 무대 위에서 한 흐름의 레지스터 묶음이 자기 보관소로 떠내지고, 다른 흐름의 묶음이 같은 자리에 되돌려져, 두 흐름이 멈춘 지점부터 정확히 이어 실행되는 사건',
-  },
+  title: { en: 'Context Switching — One Stage, Two Owners', ko: '컨텍스트 스위칭 — 한 무대 위 주인의 교대', ja: 'コンテキストスイッチ — 一つの舞台, 二人の主', zh: '上下文切换 — 一个舞台, 两位主人', ar: 'تبديل السياق — مسرح واحد ومالكان', es: 'Cambio de contexto: un escenario, dos dueños', fr: 'Changement de contexte — une scène, deux propriétaires', hi: 'संदर्भ परिवर्तन — एक मंच, दो स्वामी', id: 'Alih konteks — satu panggung, dua pemilik', pt: 'Troca de contexto — um palco, dois donos' },
+  description: { en: 'A single CPU stage swaps owners — one flow\\\'s register bundle is lifted into its holder, the other\\\'s is replaced into the same slots, and time resumes exactly where each had stopped', ko: '단 하나의 CPU 무대 위에서 한 흐름의 레지스터 묶음이 자기 보관소로 떠내지고, 다른 흐름의 묶음이 같은 자리에 되돌려져, 두 흐름이 멈춘 지점부터 정확히 이어 실행되는 사건', ja: 'ただ一つの CPU 舞台で主が入れ替わる — 一方の流れのレジスタ束が自分の保管所へ持ち上げられ、他方の束が同じ場所へ戻され、それぞれ止まった時点から時間が再び動き出す', zh: '唯一的 CPU 舞台上主人交替 — 一个流的寄存器束被抬进自己的保管处，另一个的被放回同样的位置，时间各自从停下的地方重新开始', ar: 'يتبادل المالكان مسرح معالج واحد — تُرفع حزمة سجلات تدفق إلى حافظتها وتُعاد حزمة الآخر إلى الخانات نفسها، فيستأنف الزمن عند كل منهما من حيث توقّف', es: 'Un único escenario de CPU cambia de dueño: el paquete de registros de un flujo sube a su guarda, el del otro vuelve a esas mismas ranuras y el tiempo se reanuda justo donde cada uno paró', fr: 'Une seule scène CPU change de propriétaire — le paquet de registres d\'un flux monte dans son dépôt, celui de l\'autre revient aux mêmes emplacements, et le temps repart là où chacun s\'était arrêté', hi: 'एक ही CPU मंच पर स्वामी बदलते हैं — एक प्रवाह का रजिस्टर-गट्ठर अपने संग्राहक में उठता है, दूसरे का उन्हीं खानों में लौटता है, और समय वहीं से चलता है जहाँ हर एक रुका था', id: 'Satu panggung CPU berganti pemilik — berkas register satu alur diangkat ke penyimpannya, milik yang lain dikembalikan ke slot yang sama, dan waktu berlanjut tepat dari tempat masing-masing berhenti', pt: 'Um único palco de CPU troca de dono — o feixe de registradores de um fluxo sobe à sua guarda, o do outro volta às mesmas ranhuras, e o tempo retoma exatamente onde cada um parou' },
   algorithm: 'module:contextSwitching',
   projector: 'module:contextSwitchingProjector',
   initialData: {
@@ -365,30 +359,30 @@ export const contextSwitchingFacet: FacetJson = {
     controls: {
       type: 'control-bar',
       controls: [
-        { widget: 'button', action: 'play', label: { en: '▶ Play', ko: '▶ 재생' } },
-        { widget: 'button', action: 'pause', label: { en: '⏸ Pause', ko: '⏸ 일시정지' } },
-        { widget: 'button', action: 'step', label: { en: '⏭ Step', ko: '⏭ 한 박자' } },
-        { widget: 'button', action: 'reset', label: { en: '↺ Reset', ko: '↺ 리셋' } },
+        { widget: 'button', action: 'play', label: { en: '▶ Play', ko: '▶ 재생', ja: '▶ 再生', zh: '▶ 播放', ar: '▶ تشغيل', es: '▶ Reproducir', fr: '▶ Lecture', hi: '▶ चलाएं', id: '▶ Putar', pt: '▶ Reproduzir' } },
+        { widget: 'button', action: 'pause', label: { en: '⏸ Pause', ko: '⏸ 일시정지', ja: '⏸ 停止', zh: '⏸ 暂停', ar: '⏸ إيقاف', es: '⏸ Pausa', fr: '⏸ Pause', hi: '⏸ रोकें', id: '⏸ Jeda', pt: '⏸ Pausar' } },
+        { widget: 'button', action: 'step', label: { en: '⏭ Step', ko: '⏭ 한 박자', ja: '⏭ 一歩', zh: '⏭ 单步', ar: '⏭ خطوة', es: '⏭ Paso', fr: '⏭ Pas', hi: '⏭ चरण', id: '⏭ Langkah', pt: '⏭ Passo' } },
+        { widget: 'button', action: 'reset', label: { en: '↺ Reset', ko: '↺ 리셋', ja: '↺ リセット', zh: '↺ 重置', ar: '↺ إعادة', es: '↺ Reiniciar', fr: '↺ Réinit.', hi: '↺ रीसेट', id: '↺ Atur ulang', pt: '↺ Reiniciar' } },
         {
           widget: 'segmented-slider',
           action: 'triggerKind',
           name: 'triggerKind',
-          label: { en: 'Trigger', ko: '트리거' },
+          label: { en: 'Trigger', ko: '트리거', ja: 'トリガ', zh: '触发', ar: 'مُطلِق', es: 'Disparador', fr: 'Déclencheur', hi: 'ट्रिगर', id: 'Pemicu', pt: 'Gatilho' },
           segments: [
-            { value: 0, label: { en: 'Timer', ko: '타이머' }, default: true },
-            { value: 1, label: { en: 'Syscall', ko: '시스템 호출' } },
-            { value: 2, label: { en: 'I/O', ko: 'I/O' } },
-            { value: 3, label: { en: 'Interrupt', ko: '인터럽트' } },
+            { value: 0, label: { en: 'Timer', ko: '타이머', ja: 'タイマ', zh: '定时器', ar: 'مؤقّت', es: 'Temporizador', fr: 'Minuteur', hi: 'टाइमर', id: 'Pewaktu', pt: 'Temporizador' }, default: true },
+            { value: 1, label: { en: 'Syscall', ko: '시스템 호출', ja: 'システムコール', zh: '系统调用', ar: 'نداء نظام', es: 'Llamada al sistema', fr: 'Appel système', hi: 'सिस्टम कॉल', id: 'Panggilan sistem', pt: 'Chamada de sistema' } },
+            { value: 2, label: { en: 'I/O', ko: 'I/O', ja: 'I/O', zh: 'I/O', ar: 'إدخال/إخراج', es: 'E/S', fr: 'E/S', hi: 'I/O', id: 'I/O', pt: 'E/S' } },
+            { value: 3, label: { en: 'Interrupt', ko: '인터럽트', ja: '割り込み', zh: '中断', ar: 'مقاطعة', es: 'Interrupción', fr: 'Interruption', hi: 'व्यवधान', id: 'Interupsi', pt: 'Interrupção' } },
           ],
         },
         {
           widget: 'segmented-slider',
           action: 'mode',
           name: 'mode',
-          label: { en: 'Mode', ko: '모드' },
+          label: { en: 'Mode', ko: '모드', ja: 'モード', zh: '模式', ar: 'الوضع', es: 'Modo', fr: 'Mode', hi: 'विधा', id: 'Mode', pt: 'Modo' },
           segments: [
-            { value: 0, label: { en: 'Thread', ko: '스레드' }, default: true },
-            { value: 1, label: { en: 'Process', ko: '프로세스' } },
+            { value: 0, label: { en: 'Thread', ko: '스레드', ja: 'スレッド', zh: '线程', ar: 'خيط', es: 'Hilo', fr: 'Fil', hi: 'थ्रेड', id: 'Utas', pt: 'Thread' }, default: true },
+            { value: 1, label: { en: 'Process', ko: '프로세스', ja: 'プロセス', zh: '进程', ar: 'عملية', es: 'Proceso', fr: 'Processus', hi: 'प्रक्रिया', id: 'Proses', pt: 'Processo' } },
           ],
         },
       ],

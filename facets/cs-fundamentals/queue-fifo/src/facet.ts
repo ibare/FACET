@@ -16,11 +16,8 @@ import type { FacetJson } from '@ffacet/core/runtime';
 
 export const queueFacet: FacetJson = {
   id: 'facet:queueFifo',
-  title: { en: 'Queue (FIFO)', ko: '큐 (FIFO)' },
-  description: {
-    en: 'Conveyor belt: oldest leaves first, newest rides at the back',
-    ko: '컨베이어 벨트 — 가장 오래 기다린 것이 가장 먼저 떠나는 기계',
-  },
+  title: { en: 'Queue (FIFO)', ko: '큐 (FIFO)', ja: 'キュー (FIFO)', zh: '队列 (FIFO)', ar: 'طابور (FIFO)', es: 'Cola (FIFO)', fr: 'File (FIFO)', hi: 'कतार (FIFO)', id: 'Antrean (FIFO)', pt: 'Fila (FIFO)' },
+  description: { en: 'Conveyor belt: oldest leaves first, newest rides at the back', ko: '컨베이어 벨트 — 가장 오래 기다린 것이 가장 먼저 떠나는 기계', ja: 'ベルトコンベア — 最も長く待ったものが最も早く去る機械', zh: '传送带 — 等得最久的最先离开的机器', ar: 'سير ناقل — آلة يغادر فيها أقدم المنتظرين أولًا', es: 'Cinta transportadora: la máquina donde el que más esperó se va primero', fr: 'Tapis roulant — la machine où celui qui a le plus attendu part le premier', hi: 'कन्वेयर बेल्ट — जो सबसे अधिक प्रतीक्षा कर चुका वही पहले जाता है', id: 'Ban berjalan — mesin tempat yang paling lama menunggu pergi lebih dulu', pt: 'Esteira transportadora — a máquina em que quem mais esperou parte primeiro' },
   algorithm: 'module:queue',
   projector: 'module:queueProjector',
   initialData: {
@@ -60,7 +57,7 @@ export const queueFacet: FacetJson = {
     header: { type: 'title-block' },
     stage: {
       type: 'conveyor-queue',
-      label: { en: 'Queue', ko: '큐' },
+      label: { en: 'Queue', ko: '큐', ja: 'キュー', zh: '队列', ar: 'طابور', es: 'Cola', fr: 'File', hi: 'कतार', id: 'Antrean', pt: 'Fila' },
       capacity: 10,
       maxTailEntries: 3,
       features: ['bounded', 'aging-gradient', 'tail-log', 'scoreboard'],
@@ -69,16 +66,16 @@ export const queueFacet: FacetJson = {
       type: 'control-bar',
       controls: [{ widget: 'button', action: 'play' }, { widget: 'button', action: 'step' }, { widget: 'button', action: 'pause' }, { widget: 'button', action: 'reset' }, { widget: 'speed-slider', action: 'speed', default: 1 }],
       metrics: [
-        { name: 'enqueue-count', label: { en: 'Enqueued', ko: '입장' }, initial: 0 },
-        { name: 'dequeue-count', label: { en: 'Dequeued', ko: '퇴장' }, initial: 0 },
-        { name: 'peek-count', label: { en: 'Peek', ko: '조회' }, initial: 0 },
-        { name: 'overflow-count', label: { en: 'Overflow', ko: '넘침' }, initial: 0 },
-        { name: 'underflow-count', label: { en: 'Underflow', ko: '빔' }, initial: 0 },
+        { name: 'enqueue-count', label: { en: 'Enqueued', ko: '입장', ja: '入場', zh: '入队', ar: 'دخل', es: 'Encolados', fr: 'Enfilés', hi: 'प्रविष्ट', id: 'Masuk', pt: 'Enfileirados' }, initial: 0 },
+        { name: 'dequeue-count', label: { en: 'Dequeued', ko: '퇴장', ja: '退場', zh: '出队', ar: 'خرج', es: 'Desencolados', fr: 'Défilés', hi: 'निर्गत', id: 'Keluar', pt: 'Desenfileirados' }, initial: 0 },
+        { name: 'peek-count', label: { en: 'Peek', ko: '조회', ja: 'のぞく', zh: '查看', ar: 'إطلالة', es: 'Ojear', fr: 'Consulter', hi: 'झाँकें', id: 'Intip', pt: 'Espiar' }, initial: 0 },
+        { name: 'overflow-count', label: { en: 'Overflow', ko: '넘침', ja: 'あふれ', zh: '溢出', ar: 'فيض', es: 'Desborde', fr: 'Débordement', hi: 'अतिप्रवाह', id: 'Luber', pt: 'Estouro' }, initial: 0 },
+        { name: 'underflow-count', label: { en: 'Underflow', ko: '빔', ja: '空取り', zh: '下溢', ar: 'نضوب', es: 'Subdesborde', fr: 'Sous-débordement', hi: 'अधःप्रवाह', id: 'Kosong', pt: 'Subfluxo' }, initial: 0 },
       ],
     },
     codePanel: {
       type: 'code-view',
-      label: { en: 'Code', ko: '코드' },
+      label: { en: 'Code', ko: '코드', ja: 'コード', zh: '代码', ar: 'الشيفرة', es: 'Código', fr: 'Code', hi: 'कोड', id: 'Kode', pt: 'Código' },
       ir: 'ir:queue-imperative',
     },
   },

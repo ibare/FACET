@@ -22,11 +22,8 @@ import type { FacetJson } from '@ffacet/core/runtime';
 
 export const conditionalStatementFacet: FacetJson = {
   id: 'facet:conditionalStatement',
-  title: { en: 'If / Else If / Else', ko: '조건문 (if / else if / else)' },
-  description: {
-    en: 'A flow that hits a fork, evaluates each condition top-down, lights exactly one branch on the first true, and merges back into a single line',
-    ko: '흐르던 길이 분기점에 도착해 조건의 참/거짓을 위에서부터 평가하다 처음 참이 된 한 가지에서 흐름이 확정되고, 나머지 가지는 어두워진 채 닫힌 뒤 다시 한 줄로 합쳐지는 약속',
-  },
+  title: { en: 'If / Else If / Else', ko: '조건문 (if / else if / else)', ja: 'if / else if / else', zh: 'if / else if / else', ar: 'if / else if / else', es: 'if / else if / else', fr: 'if / else if / else', hi: 'if / else if / else', id: 'if / else if / else', pt: 'if / else if / else' },
+  description: { en: 'A flow that hits a fork, evaluates each condition top-down, lights exactly one branch on the first true, and merges back into a single line', ko: '흐르던 길이 분기점에 도착해 조건의 참/거짓을 위에서부터 평가하다 처음 참이 된 한 가지에서 흐름이 확정되고, 나머지 가지는 어두워진 채 닫힌 뒤 다시 한 줄로 합쳐지는 약속', ja: '流れが分かれ道に着き、条件を上から順に見ていって最初に真になった一つの枝だけを灯し、また一本の線に合流する', zh: '流走到岔路口，自上而下逐个判断条件，在第一个为真处只点亮一条分支，然后重新汇成一条线', ar: 'تدفق يبلغ مفترقًا فيقيّم الشروط من الأعلى إلى الأسفل، يضيء فرعًا واحدًا عند أول شرط صحيح، ثم يعود ليندمج في سطر واحد', es: 'Un flujo llega a una bifurcación, evalúa las condiciones de arriba abajo, enciende exactamente una rama en la primera verdadera y vuelve a fundirse en una sola línea', fr: 'Un flux atteint une bifurcation, évalue les conditions de haut en bas, allume exactement une branche à la première vraie, puis se rassemble en une seule ligne', hi: 'प्रवाह दोराहे पर पहुँचता है, शर्तों को ऊपर से नीचे जाँचता है, पहली सत्य पर ठीक एक शाखा जलाता है, और फिर एक ही रेखा में मिल जाता है', id: 'Alur tiba di persimpangan, menilai syarat dari atas ke bawah, menyalakan tepat satu cabang pada yang pertama benar, lalu menyatu lagi jadi satu baris', pt: 'Um fluxo chega a uma bifurcação, avalia as condições de cima para baixo, acende exatamente um ramo na primeira verdadeira e volta a se fundir numa só linha' },
   algorithm: 'module:conditionalStatement',
   projector: 'module:conditionalStatementProjector',
   initialData: {
@@ -394,10 +391,10 @@ export const conditionalStatementFacet: FacetJson = {
         {
           widget: 'button',
           action: 'mode-toggle',
-          label: { en: 'Branches: 2 / 3', ko: '갈래 2 / 3' },
+          label: { en: 'Branches: 2 / 3', ko: '갈래 2 / 3', ja: '分岐: 2 / 3', zh: '分支: 2 / 3', ar: 'الفروع: ٢ / ٣', es: 'Ramas: 2 / 3', fr: 'Branches : 2 / 3', hi: 'शाखाएँ: 2 / 3', id: 'Cabang: 2 / 3', pt: 'Ramos: 2 / 3' },
         },
-        { widget: 'button', action: 'auto-demo', label: { en: 'Auto demo', ko: '자동 시연' } },
-        { widget: 'button', action: 'reset', label: { en: 'Reset', ko: '초기화' } },
+        { widget: 'button', action: 'auto-demo', label: { en: 'Auto demo', ko: '자동 시연', ja: '自動デモ', zh: '自动演示', ar: 'عرض تلقائي', es: 'Demo automática', fr: 'Démo auto', hi: 'स्वतः डेमो', id: 'Demo otomatis', pt: 'Demo automática' } },
+        { widget: 'button', action: 'reset', label: { en: 'Reset', ko: '초기화', ja: 'リセット', zh: '重置', ar: 'إعادة', es: 'Reiniciar', fr: 'Réinit.', hi: 'रीसेट', id: 'Atur ulang', pt: 'Reiniciar' } },
       ],
     },
   },

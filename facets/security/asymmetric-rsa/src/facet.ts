@@ -20,11 +20,8 @@ import type { FacetJson } from '@ffacet/core/runtime';
 
 export const asymmetricRsaFacet: FacetJson = {
   id: 'facet:asymmetricRsa',
-  title: { en: 'RSA — Public-Key Cryptography', ko: 'RSA — 공개키 암호' },
-  description: {
-    en: 'A pair of asymmetric keys born from two primes — one locks, the other unlocks, and the same lock cannot be undone',
-    ko: '두 소수에서 태어난 한 짝의 비대칭 키 — 한쪽으로만 잠기고 다른 쪽으로만 풀리며 잠근 쪽으로는 결코 되돌릴 수 없다',
-  },
+  title: { en: 'RSA — Public-Key Cryptography', ko: 'RSA — 공개키 암호', ja: 'RSA — 公開鍵暗号', zh: 'RSA — 公钥密码', ar: 'RSA — تعمية المفتاح العام', es: 'RSA: criptografía de clave pública', fr: 'RSA — cryptographie à clé publique', hi: 'RSA — सार्वजनिक कुंजी क्रिप्टोग्राफी', id: 'RSA — kriptografi kunci publik', pt: 'RSA — criptografia de chave pública' },
+  description: { en: 'A pair of asymmetric keys born from two primes — one locks, the other unlocks, and the same lock cannot be undone', ko: '두 소수에서 태어난 한 짝의 비대칭 키 — 한쪽으로만 잠기고 다른 쪽으로만 풀리며 잠근 쪽으로는 결코 되돌릴 수 없다', ja: '二つの素数から生まれた一対の非対称鍵 — 片方でしか掛からず、もう片方でしか外れず、掛けた鍵では決して戻せない', zh: '由两个素数所生的一对非对称密钥 — 一把只能锁，另一把才能开，用上锁的那把绝不能还原', ar: 'زوج من المفاتيح غير المتماثلة وُلد من عددين أوليين — أحدهما يقفل والآخر يفتح، ولا يُفكّ القفل بالمفتاح الذي أقفله', es: 'Un par de claves asimétricas nacidas de dos primos: una cierra, la otra abre, y con la que cerró jamás se deshace', fr: 'Une paire de clés asymétriques nées de deux nombres premiers — l\'une verrouille, l\'autre déverrouille, et celle qui a fermé ne peut défaire', hi: 'दो अभाज्य से जन्मी असममित कुंजियों की एक जोड़ी — एक बंद करती है, दूसरी खोलती है, और जिससे बंद हुआ उससे कभी नहीं खुलता', id: 'Sepasang kunci asimetris yang lahir dari dua bilangan prima — satu mengunci, satu membuka, dan yang mengunci tak pernah bisa membatalkannya', pt: 'Um par de chaves assimétricas nascidas de dois primos — uma tranca, a outra destranca, e a que trancou nunca desfaz' },
   algorithm: 'module:asymmetricRsa',
   projector: 'module:asymmetricRsaProjector',
   initialData: {
@@ -591,24 +588,24 @@ export const asymmetricRsaFacet: FacetJson = {
     controls: {
       type: 'control-bar',
       controls: [
-        { widget: 'button', action: 'next-p', label: { en: 'Next p', ko: '다음 p' } },
-        { widget: 'button', action: 'next-q', label: { en: 'Next q', ko: '다음 q' } },
+        { widget: 'button', action: 'next-p', label: { en: 'Next p', ko: '다음 p', ja: '次の p', zh: '下一个 p', ar: 'p التالي', es: 'Siguiente p', fr: 'p suivant', hi: 'अगला p', id: 'p berikutnya', pt: 'Próximo p' } },
+        { widget: 'button', action: 'next-q', label: { en: 'Next q', ko: '다음 q', ja: '次の q', zh: '下一个 q', ar: 'q التالي', es: 'Siguiente q', fr: 'q suivant', hi: 'अगला q', id: 'q berikutnya', pt: 'Próximo q' } },
         {
           widget: 'value-input',
           action: 'input',
           name: 'm',
-          label: { en: 'Plaintext m', ko: '평문 m' },
-          placeholder: { en: '2', ko: '2' },
+          label: { en: 'Plaintext m', ko: '평문 m', ja: '平文 m', zh: '明文 m', ar: 'النص الصريح m', es: 'Texto claro m', fr: 'Texte clair m', hi: 'सादा पाठ m', id: 'Teks polos m', pt: 'Texto claro m' },
+          placeholder: { en: '2', ko: '2', ja: '2', zh: '2', ar: '2', es: '2', fr: '2', hi: '2', id: '2', pt: '2' },
           default: '2',
         },
-        { widget: 'button', action: 'replay', label: { en: 'Replay', ko: '재생' } },
+        { widget: 'button', action: 'replay', label: { en: 'Replay', ko: '재생', ja: '再演', zh: '重播', ar: 'إعادة العرض', es: 'Repetir', fr: 'Rejouer', hi: 'दोबारा', id: 'Ulangi', pt: 'Repetir' } },
         { widget: 'speed-slider', action: 'speed', default: 1, steps: [0.5, 1, 2] },
         {
           widget: 'button',
           action: 'toggle-reverse',
-          label: { en: 'Reverse attempt', ko: '거꾸로 시도' },
+          label: { en: 'Reverse attempt', ko: '거꾸로 시도', ja: '逆向きの試み', zh: '反向尝试', ar: 'محاولة عكسية', es: 'Intento inverso', fr: 'Tentative inverse', hi: 'उल्टा प्रयास', id: 'Percobaan terbalik', pt: 'Tentativa inversa' },
         },
-        { widget: 'button', action: 'reset', label: { en: 'Reset', ko: '초기화' } },
+        { widget: 'button', action: 'reset', label: { en: 'Reset', ko: '초기화', ja: 'リセット', zh: '重置', ar: 'إعادة', es: 'Reiniciar', fr: 'Réinit.', hi: 'रीसेट', id: 'Atur ulang', pt: 'Reiniciar' } },
       ],
     },
   },
