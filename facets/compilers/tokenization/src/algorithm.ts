@@ -61,7 +61,7 @@
  *   - phase          payload: { phase: 'idle' | 'scanning' | 'done' }
  */
 
-import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
+import type { FacetContext, LocaleStr, ReactiveContext } from '@ffacet/core/runtime';
 
 export type TokenKind =
   | 'keyword'
@@ -84,13 +84,13 @@ export type Token = {
 export type TokenizationExample = {
   /** 예제 식별자 — 'basic' | 'compound' | 'comment' 등. */
   id: string;
-  /** 사람이 읽는 짧은 이름. */
-  name: { en: string; ko: string };
+  /** 사람이 읽는 짧은 이름. 화면에 뜨므로 요청 locale 로 해석해 쓴다 (C10). */
+  name: LocaleStr;
   /** 원시 소스 텍스트. */
   source: string;
 };
 
-export type KindPalette = Record<TokenKind | 'swallow', { swatch: string; label: { en: string; ko: string } }>;
+export type KindPalette = Record<TokenKind | 'swallow', { swatch: string; label: LocaleStr }>;
 
 export type TokenizationFacetData = {
   type: 'tokenization';

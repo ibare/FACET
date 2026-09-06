@@ -23,6 +23,7 @@
  */
 
 import type { Translate, View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import type { LocaleStr } from '@ffacet/core/runtime';
 import { makeTranslator, resolveLocale } from '@ffacet/core/runtime';
 import { getColors, fonts, fontSizes, categorical } from '@ffacet/core/runtime';
 import type {
@@ -758,19 +759,17 @@ export const tokenizationStageView: View = {
     }
 
     // ── init / reset ──────────────────────────────────────────────────
-    let exampleName: { en: string; ko: string } = { en: '', ko: '' };
+    let exampleName: LocaleStr = '';
 
     function applyExampleNameLabel(): void {
-      const ko = exampleName.ko ?? '';
-      const en = exampleName.en ?? '';
-      exampleNameEl.textContent = ko || en;
+      exampleNameEl.textContent = resolveLocale(exampleName, params.locale);
     }
 
     function init(payload: {
       source: string;
       exampleIndex: number;
-      exampleName: { en: string; ko: string };
-      examples: { id: string; name: { en: string; ko: string } }[];
+      exampleName: LocaleStr;
+      examples: { id: string; name: LocaleStr }[];
       kindPalette: KindPalette;
     }): void {
       void payload.kindPalette;
@@ -1039,7 +1038,7 @@ export const tokenizationStageView: View = {
 
     function signalExampleSet(payload: {
       exampleIndex: number;
-      exampleName: { en: string; ko: string };
+      exampleName: LocaleStr;
       source: string;
     }): void {
       void payload.source;

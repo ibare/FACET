@@ -16,7 +16,7 @@
  * runner 가 자동 wire-up 하므로 projector 는 view 메서드 호출만 담당한다.
  */
 
-import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
+import type { LocaleStr, ProjectorFactory, Translate } from '@ffacet/core/runtime';
 import { makeTranslator } from '@ffacet/core/runtime';
 import type {
   KindPalette,
@@ -33,7 +33,7 @@ type StageView = {
   init(payload: {
     source: string;
     exampleIndex: number;
-    exampleName: { en: string; ko: string };
+    exampleName: LocaleStr;
     examples: { id: string; name: { en: string; ko: string } }[];
     kindPalette: KindPalette;
   }): void;
@@ -64,7 +64,7 @@ type StageView = {
   applyDone(payload: { gaze: number; totalTokens: number }): void;
   signalExampleSet(payload: {
     exampleIndex: number;
-    exampleName: { en: string; ko: string };
+    exampleName: LocaleStr;
     source: string;
   }): void;
   signalInvalid(op: string, raw: string): void;
@@ -102,14 +102,14 @@ export const tokenizationProjector: ProjectorFactory = (views, runtime) => {
           const p = (event.payload ?? {}) as Partial<{
             source: string;
             exampleIndex: number;
-            exampleName: { en: string; ko: string };
+            exampleName: LocaleStr;
             examples: { id: string; name: { en: string; ko: string } }[];
             kindPalette: KindPalette;
           }>;
           stage.init({
             source: typeof p.source === 'string' ? p.source : '',
             exampleIndex: typeof p.exampleIndex === 'number' ? p.exampleIndex : 0,
-            exampleName: p.exampleName ?? { en: '', ko: '' },
+            exampleName: p.exampleName ?? '',
             examples: Array.isArray(p.examples) ? p.examples : [],
             kindPalette: (p.kindPalette ?? {}) as KindPalette,
           });
@@ -216,12 +216,12 @@ export const tokenizationProjector: ProjectorFactory = (views, runtime) => {
         case 'example-set': {
           const p = (event.payload ?? {}) as Partial<{
             exampleIndex: number;
-            exampleName: { en: string; ko: string };
+            exampleName: LocaleStr;
             source: string;
           }>;
           stage.signalExampleSet({
             exampleIndex: typeof p.exampleIndex === 'number' ? p.exampleIndex : 0,
-            exampleName: p.exampleName ?? { en: '', ko: '' },
+            exampleName: p.exampleName ?? '',
             source: typeof p.source === 'string' ? p.source : '',
           });
           break;
