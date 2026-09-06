@@ -14,6 +14,7 @@
  */
 
 import { nodeResolve } from '@rollup/plugin-node-resolve';
+import json from '@rollup/plugin-json';
 import esbuild from 'rollup-plugin-esbuild';
 import dts from 'rollup-plugin-dts';
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -73,6 +74,10 @@ const jsBundle = {
     manualChunks,
   },
   plugins: [
+    // bootstrap 의 loadFrameworkMessages 가 messages/<locale>.json 을 정적 경로로
+    // 동적 import 한다. 이 번들은 bootstrap 을 inline 하므로 여기서도 json 을
+    // 읽을 수 있어야 한다.
+    json({ compact: true, namedExports: false }),
     nodeResolve({
       extensions: ['.ts', '.tsx', '.mjs', '.js'],
       preferBuiltins: false,

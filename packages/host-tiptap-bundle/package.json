@@ -55,6 +55,7 @@
     "@ffacet/bootstrap": "workspace:*",
     "@ffacet/core": "workspace:*",
     "@ffacet/host-tiptap": "workspace:*",
+    "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.3.0",
     "@tiptap/core": "^3.22.3",
     "@tiptap/pm": "^3.22.3",

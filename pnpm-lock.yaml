@@ -418,6 +418,9 @@ importers:
       '@ffacet/host-tiptap':
         specifier: workspace:*
         version: link:../host-tiptap
+      '@rollup/plugin-json':
+        specifier: ^6.1.0
+        version: 6.1.0(rollup@4.60.1)
       '@rollup/plugin-node-resolve':
         specifier: ^15.3.0
         version: 15.3.1(rollup@4.60.1)
