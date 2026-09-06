@@ -144,14 +144,15 @@ export const ipRoutingProjector: ProjectorFactory = (views, runtime) => {
 
         case 'caption': {
           const p = (event.payload ?? {}) as {
-            text?: string;
             textKey?: string;
+            vars?: Record<string, string | number>;
             kind?: 'concept' | 'event';
             durationMs?: number;
           };
           // algorithm 은 사건만 알리고 문안은 표현 계층이 정한다 (4-layer / C10).
-          // textKey 가 오면 FacetJson.messages 에서 해석하고, 없으면 그대로 쓴다.
-          const caption = p.textKey !== undefined ? tr(p.textKey, '') : String(p.text ?? '');
+          // 키로만 받는다 — 완성된 문자열을 받는 폴백을 두면 그 경로로 한국어
+          // 문안이 다시 새어 들어온다.
+          const caption = p.textKey === undefined ? '' : tr(p.textKey, '', p.vars);
           stage.setCaption(caption, {
             kind: p.kind,
             duration: p.durationMs,

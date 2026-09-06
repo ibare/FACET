@@ -45,7 +45,11 @@
  *   - packet-delivered      { traceIndex, atHost, ttlRemaining }
  *   - packet-dropped        { traceIndex, atRouter, reason: 'ttl-zero' | 'no-route' }
  *   - packet-external       { traceIndex, atRouter, viaInterface } — default → 외부 페이드.
- *   - caption               { text, kind: 'concept' | 'event', durationMs? }
+ *   - caption               { textKey, vars?, kind: 'concept' | 'event', durationMs? }
+ *                             textKey 는 FacetJson.messages 의 키. algorithm 은 사건만
+ *                             알리고 문안은 표현 계층이 정한다 (C10). 값 삽입은 vars 의
+ *                             {name} 플레이스홀더로 넘긴다 — 문장에 직접 보간하면 어순이
+ *                             다른 언어에서 번역이 불가능해진다.
  *   - mode                  { mode: 'auto' | 'step' | 'paused' | 'idle' }, silent
  *   - phase                 { phase: 'demo' | 'idle' }, silent
  *
@@ -262,7 +266,11 @@ export async function ipRouting(ctxBase: FacetContext<IpRoutingData>): Promise<v
     await ctx.emit({ type: 'packet-arrived', payload: { traceIndex: trace, atRouter: router.id } });
     await ctx.emit({
       type: 'caption',
-      payload: { text: `패킷이 ${router.id} 에 도착했다 — 표를 펼친다.`, kind: 'event' },
+      payload: {
+        textKey: 'caption.arrived',
+        vars: { router: router.id },
+        kind: 'event',
+      },
     });
     if (await sleepOrInterrupt(hopTimings.arriveMs)) {
       // interrupt 무시 — 시퀀스 한 번은 끝까지.
@@ -303,13 +311,18 @@ export async function ipRouting(ctxBase: FacetContext<IpRoutingData>): Promise<v
     const adopted = router.table[lpm.adoptedRowIdx];
     await ctx.emit({
       type: 'caption',
-      payload: {
-        text:
-          adopted.prefixLen === 0
-            ? `구체 일치 없음 — default 행이 채택되어 ${adopted.nextHop} 으로 나간다.`
-            : `${adopted.prefix} 가 가장 긴 일치 — next-hop 은 ${adopted.nextHop} 다.`,
-        kind: 'event',
-      },
+      payload:
+        adopted.prefixLen === 0
+          ? {
+              textKey: 'caption.lpmDefault',
+              vars: { nextHop: adopted.nextHop },
+              kind: 'event',
+            }
+          : {
+              textKey: 'caption.lpmMatch',
+              vars: { prefix: adopted.prefix, nextHop: adopted.nextHop },
+              kind: 'event',
+            },
     });
     await sleepOrInterrupt(hopTimings.bitCompareMs);
 
@@ -361,7 +374,11 @@ export async function ipRouting(ctxBase: FacetContext<IpRoutingData>): Promise<v
     if (adopted.nextHop === 'external') {
       await ctx.emit({
         type: 'caption',
-        payload: { text: `${router.id} 의 외부 인터페이스로 나갔다.`, kind: 'event' },
+        payload: {
+          textKey: 'caption.external',
+          vars: { router: router.id },
+          kind: 'event',
+        },
       });
       await ctx.emit({
         type: 'packet-external',
@@ -372,7 +389,11 @@ export async function ipRouting(ctxBase: FacetContext<IpRoutingData>): Promise<v
     if (adopted.nextHop === 'direct') {
       await ctx.emit({
         type: 'caption',
-        payload: { text: `${router.id} 의 직접 연결망으로 도달했다.`, kind: 'event' },
+        payload: {
+          textKey: 'caption.direct',
+          vars: { router: router.id },
+          kind: 'event',
+        },
       });
       return { kind: 'terminal', reason: 'directly-connected' };
     }
@@ -396,7 +417,8 @@ export async function ipRouting(ctxBase: FacetContext<IpRoutingData>): Promise<v
     await ctx.emit({
       type: 'caption',
       payload: {
-        text: `${startHost.id} 가 패킷을 만들었다 — dst=${dst}, TTL=${ttl}.`,
+        textKey: 'caption.created',
+        vars: { host: startHost.id, dst, ttl },
         kind: 'event',
       },
     });
@@ -437,7 +459,8 @@ export async function ipRouting(ctxBase: FacetContext<IpRoutingData>): Promise<v
         await ctx.emit({
           type: 'caption',
           payload: {
-            text: `패킷이 목적지에 도달했다 — TTL ${currentTtl} 남음.`,
+            textKey: 'caption.delivered',
+            vars: { ttl: currentTtl },
             kind: 'event',
           },
         });
@@ -538,7 +561,11 @@ export async function ipRouting(ctxBase: FacetContext<IpRoutingData>): Promise<v
         defaultTtl = v;
         await ctx.emit({
           type: 'caption',
-          payload: { text: `초기 TTL 을 ${v} 로 설정했다.`, kind: 'event' },
+          payload: {
+            textKey: 'caption.ttlSet',
+            vars: { ttl: v },
+            kind: 'event',
+          },
         });
       }
       continue;
