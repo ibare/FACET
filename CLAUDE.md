@@ -86,34 +86,36 @@ Baden MCP 도구 (`mcp__baden__*`) 가 활성화되면 다음 순서를 지킨�
 
 npm scope 는 **`@ffacet`** (`ibare` 소유 org). `@facet` 은 타 계정 선점이라 사용 불가 — 신규 패키지도 반드시 `@ffacet/*` 로 만든다.
 
-### 배포 대상 (3개만 public)
+### 배포 대상 (4개만 public)
 
-외부 호스트(methii 등)가 직접 import 하는 진입점만 발행한다. 나머지 26개 패키지는 `private: true` 로 발행 차단하고 번들에 inline 한다.
+외부 호스트(methii 등)가 직접 import 하는 진입점만 발행한다. 나머지 25개 패키지는 `private: true` 로 발행 차단하고 번들에 inline 한다.
 
 | 패키지 | 진입점 | 빌드 |
 | --- | --- | --- |
 | `@ffacet/core` | `.` + `./runtime` (runFacet/loadFacet/registry) | rollup 2-entry, 자족 |
 | `@ffacet/bootstrap` | `bootstrapFacet` / `getFacetCatalog` | rollup self-contained (core external) |
 | `@ffacet/host-tiptap-bundle` | Tiptap 통합 + 카탈로그 | rollup self-contained (core external) |
+| `@ffacet/authoring` | `getFacetConcepts` / `getFacetConcept` (개념 메타) | tsc 단독 (의존 0) |
 
 새 패키지를 발행 대상에 추가하려면: 외부에서 직접 import 되는 진입점인지 먼저 확인한다. 번들에 inline 되는 내부 패키지는 추가하지 않는다.
 
 ### 배포 방식
 
 - **`pnpm publish` 만 사용** (`npm publish` 금지). `workspace:^` / `workspace:*` 프로토콜을 npm semver 로 변환하는 건 pnpm 뿐이다. `npm publish` 는 workspace 프로토콜을 그대로 올려 깨진 의존을 발행한다.
-- **`prepack`** 스크립트가 `clean + rollup build` 를 자동 수행한다. dist 는 `.gitignore` 라 발행 직전 항상 새로 빌드된다.
+- **`prepack`** 스크립트가 `clean + build` 를 자동 수행한다. dist 는 `.gitignore` 라 발행 직전 항상 새로 빌드된다. 빌드기는 패키지 사정에 따른다 — 번들 3종은 rollup, `authoring` 은 의존이 없어 tsc 단독(`tsconfig.build.json`)이다.
 - **`publishConfig`** 로 src(개발)↔dist(발행)를 분리한다. `main`/`types`/`exports` 는 `./src/*.ts` 를 가리켜 워크스페이스 내부는 빌드 없이 소스 직참조하고, `publishConfig.{main,types,exports}` 가 publish 시에만 `./dist/*` 로 오버라이드된다. `publishConfig.access` 는 `public` (scope 패키지 필수).
 - **단일 registry 인스턴스 제약**: `bootstrap`·`host-tiptap-bundle` 은 `@ffacet/core` 를 rollup `external` + `peerDependency` 로 둔다. core 를 inline 하면 registry 가 갈라져 bootstrapFacet 등록 facet 을 runFacet 이 못 찾는다. 호스트가 core 단일 인스턴스를 설치해 공유한다 (`rules/specifics/S-runtime.md` 단일 인스턴스).
-- **발행 순서**: peer 의존 때문에 `core` → `bootstrap` → `host-tiptap-bundle` 순.
+- **발행 순서**: peer 의존 때문에 `core` → `bootstrap` → `host-tiptap-bundle` 순. `authoring` 은 무의존이라 순서에 매이지 않는다.
   ```sh
   cd packages/core && pnpm publish --no-git-checks
   cd packages/bootstrap && pnpm publish --no-git-checks
   cd packages/host-tiptap-bundle && pnpm publish --no-git-checks
+  cd packages/authoring && pnpm publish --no-git-checks
   ```
 
 ### 버저닝 (semver lockstep)
 
-- **3개 패키지를 동일 버전으로 묶어 동시 발행** (lockstep). core 가 나머지의 peer 라 독립 버저닝은 peer range 관리 비용만 키운다. 한 패키지만 바뀌어도 셋 다 같은 버전으로 올린다.
+- **4개 패키지를 동일 버전으로 묶어 동시 발행** (lockstep). 번들 3종은 core 가 나머지의 peer 라 독립 버저닝이 peer range 관리 비용만 키운다. `authoring` 은 core 무의존이라 그 제약을 받지 않지만, 릴리스 시점을 한 눈에 맞추려 같은 버전으로 간다. 한 패키지만 바뀌어도 넷 다 같은 버전으로 올린다.
 - peer range 는 `workspace:^` 로 선언 → 발행 시 `^<현재버전>` 으로 변환된다 (예: `0.1.0` → `^0.1.0`). 별도 손수정 불필요.
 - **bump 기준**: 공개 API(export 표면)·동작 호환 깨짐 = major, 기능 추가 = minor, 버그 수정 = patch. 0.x 동안은 minor 를 breaking 허용 구간으로 본다.
 
