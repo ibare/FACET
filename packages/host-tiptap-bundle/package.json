@@ -1,6 +1,6 @@
 {
   "name": "@ffacet/host-tiptap-bundle",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "Self-contained ESM bundle of @ffacet/host-tiptap + 19 facets + transpilers + view-code. methii 등 외부 호스트 앱에서 단일 의존으로 소비.",
   "license": "MIT",
