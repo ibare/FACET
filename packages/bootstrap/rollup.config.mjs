@@ -14,6 +14,7 @@
  */
 
 import { nodeResolve } from '@rollup/plugin-node-resolve';
+import json from '@rollup/plugin-json';
 import esbuild from 'rollup-plugin-esbuild';
 import dts from 'rollup-plugin-dts';
 
@@ -61,6 +62,9 @@ const jsBundle = {
   },
   plugins: [
     nodeResolve({ extensions: ['.ts', '.tsx', '.mjs', '.js'], preferBuiltins: false }),
+    // messages/<locale>.json 을 locale 별 lazy chunk 로 흡수. 없으면 rollup 이
+    // 동적 import 를 external 로 남겨 발행본에서 모듈 해석에 실패한다.
+    json({ compact: true, namedExports: false }),
     esbuild({
       target: 'es2022',
       sourceMap: true,
