@@ -105,7 +105,12 @@ const dtsBundle = {
     file: 'dist/host-tiptap-bundle.d.ts',
     format: 'es',
   },
-  plugins: [dts()],
+  // dts 는 기본적으로 모든 외부 모듈을 external 로 분류해 `export ... from
+  // '@ffacet/host-tiptap'` 를 그대로 남긴다. 그 둘은 발행되지 않는 private
+  // 패키지라 소비자는 타입을 전혀 받지 못한다 — includeExternal 로 이 둘의
+  // 타입만 끌어들인다. core / tiptap 은 여기 없으므로 external 로 남아
+  // 호스트가 설치한 단일 인스턴스의 타입을 그대로 쓴다.
+  plugins: [dts({ includeExternal: ['@ffacet/host-tiptap', '@ffacet/bootstrap'] })],
 };
 
 export default [jsBundle, dtsBundle];
