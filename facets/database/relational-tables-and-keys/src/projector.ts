@@ -36,7 +36,7 @@ type RejectPayload = {
   kind: 'duplicate-pk' | 'missing-fk';
   cells: Record<string, string>;
   failingColumn: string;
-  message: string;
+  messageKey: string;
 };
 
 type RelationPayload = {

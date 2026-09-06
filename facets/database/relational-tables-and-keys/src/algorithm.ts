@@ -94,8 +94,8 @@ export type RejectInit = {
   cells: Record<string, string>;
   /** 빨간 X 가 박힐 컬럼. */
   failingColumn: string;
-  /** 짧은 거부 안내. */
-  message: string;
+  /** 짧은 거부 안내의 messages 키. 문안 자체는 FacetJson.messages 에 있다 (C10). */
+  messageKey: string;
 };
 
 export type AutoHoverStep = {
@@ -252,7 +252,7 @@ export async function relationalTablesAndKeys(
         kind: r.kind,
         cells: { ...r.cells },
         failingColumn: r.failingColumn,
-        message: r.message,
+        messageKey: r.messageKey,
       })),
     },
   });

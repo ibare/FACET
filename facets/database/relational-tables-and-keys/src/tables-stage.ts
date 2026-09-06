@@ -360,7 +360,7 @@ export const tablesStageView: View = {
         kind: 'duplicate-pk' | 'missing-fk';
         cells: Record<string, string>;
         failingColumn: string;
-        message: string;
+        messageKey: string;
       }>;
     }): void {
       reset();
@@ -397,7 +397,9 @@ export const tablesStageView: View = {
             highlightTone: HIGHLIGHT_TONE,
           },
           pkChoice[t.id] ?? null,
-          payload.rejects.find((r) => r.tableId === t.id) ?? null,
+          ((r) => (r ? { ...r, message: tr(r.messageKey, '') } : null))(
+            payload.rejects.find((x) => x.tableId === t.id),
+          ),
           handleCellEnter,
           handleCellLeave,
         );
@@ -871,6 +873,7 @@ function drawTable(
   layers: DrawLayers,
   tones: DrawTones,
   _pkColumnId: string | null,
+  /** message 는 호출부에서 messages 키를 이미 해석해 넣은 완성 문안이다. */
   reject: {
     tableId: string;
     kind: 'duplicate-pk' | 'missing-fk';
