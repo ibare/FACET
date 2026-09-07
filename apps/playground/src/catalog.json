@@ -338,7 +338,12 @@
           "topics": [
             { "id": "process-state", "name": "프로세스 상태" },
             { "id": "context-switch", "name": "컨텍스트 스위칭", "facetId": "facet:contextSwitching" },
-            { "id": "pcb", "name": "PCB" }
+            { "id": "pcb", "name": "PCB" },
+            { "id": "state-transitions", "name": "준비·실행·대기를 오간다", "kind": "piece", "origin": "process-state" },
+            { "id": "blocked-waits-event", "name": "기다리던 것이 오면 깨어난다", "kind": "piece", "origin": "process-state" },
+            { "id": "save-and-restore", "name": "하던 자리를 적어 두고 남의 자리를 꺼낸다", "kind": "piece", "origin": "context-switch" },
+            { "id": "switch-costs", "name": "바꿀 때마다 값을 치른다", "kind": "piece", "origin": "context-switch" },
+            { "id": "pcb-holds-state", "name": "프로세스마다 적어 두는 표", "kind": "piece", "origin": "pcb" }
           ]
         },
         {
@@ -350,7 +355,19 @@
             { "id": "round-robin", "name": "Round Robin" },
             { "id": "priority", "name": "Priority" },
             { "id": "mlfq", "name": "MLFQ" },
-            { "id": "cfs", "name": "CFS" }
+            { "id": "cfs", "name": "CFS" },
+            { "id": "ready-queue-pick", "name": "기다리는 줄에서 하나를 고른다", "kind": "piece", "origin": "fcfs" },
+            { "id": "turnaround-vs-wait", "name": "끝나기까지와 기다린 시간", "kind": "piece", "origin": "fcfs" },
+            { "id": "first-come-first-run", "name": "온 순서대로 보낸다", "kind": "piece", "origin": "fcfs" },
+            { "id": "convoy-effect", "name": "앞의 큰 것이 뒤를 다 막는다", "kind": "piece", "origin": "fcfs" },
+            { "id": "shortest-first", "name": "짧은 것부터 보내면 평균이 준다", "kind": "piece", "origin": "sjf" },
+            { "id": "starvation-of-long", "name": "긴 것은 계속 밀린다", "kind": "piece", "origin": "sjf" },
+            { "id": "time-slice-rotate", "name": "정해진 몫만 쓰고 뒤로 간다", "kind": "piece", "origin": "round-robin" },
+            { "id": "quantum-size-tradeoff", "name": "몫이 작으면 자주 바뀐다", "kind": "piece", "origin": "round-robin" },
+            { "id": "priority-preempt", "name": "높은 것이 오면 자리를 뺏는다", "kind": "piece", "origin": "priority" },
+            { "id": "aging", "name": "오래 기다리면 순위가 오른다", "kind": "piece", "origin": "priority" },
+            { "id": "demote-on-overuse", "name": "오래 쓰면 아래 줄로 내린다", "kind": "piece", "origin": "mlfq" },
+            { "id": "virtual-runtime", "name": "덜 쓴 쪽에 먼저 준다", "kind": "piece", "origin": "cfs" }
           ]
         },
         {
@@ -361,7 +378,19 @@
             { "id": "semaphore", "name": "세마포어" },
             { "id": "monitor", "name": "모니터" },
             { "id": "deadlock", "name": "데드락" },
-            { "id": "producer-consumer", "name": "생산자-소비자" }
+            { "id": "producer-consumer", "name": "생산자-소비자" },
+            { "id": "interleaving", "name": "두 줄이 섞여 실행된다", "kind": "piece", "origin": "mutex" },
+            { "id": "non-atomic-increment", "name": "하나처럼 보이는 것이 셋이다", "kind": "piece", "origin": "mutex" },
+            { "id": "lost-update", "name": "한쪽 결과가 덮여 사라진다", "kind": "piece", "origin": "mutex" },
+            { "id": "critical-section", "name": "한 번에 하나만 드는 구간", "kind": "piece", "origin": "mutex" },
+            { "id": "lock-excludes", "name": "잡으면 막고 놓으면 들인다", "kind": "piece", "origin": "mutex" },
+            { "id": "counting-permits", "name": "표를 세어 그만큼만 들인다", "kind": "piece", "origin": "semaphore" },
+            { "id": "wait-and-signal", "name": "조건이 아니면 내려놓고 잔다", "kind": "piece", "origin": "monitor" },
+            { "id": "hold-and-wait", "name": "쥔 채로 다른 것을 기다린다", "kind": "piece", "origin": "deadlock" },
+            { "id": "no-preemption", "name": "한 번 잡으면 뺏을 수 없다", "kind": "piece", "origin": "deadlock" },
+            { "id": "wait-cycle", "name": "기다림이 고리를 이룬다", "kind": "piece", "origin": "deadlock" },
+            { "id": "lock-ordering", "name": "순서를 정하면 고리가 안 생긴다", "kind": "piece", "origin": "deadlock" },
+            { "id": "bounded-buffer", "name": "차면 못 넣고 비면 못 꺼낸다", "kind": "piece", "origin": "producer-consumer" }
           ]
         },
         {
@@ -373,7 +402,20 @@
             { "id": "virtual-memory", "name": "가상 메모리" },
             { "id": "lru", "name": "LRU 페이지 교체" },
             { "id": "fifo-page", "name": "FIFO 페이지 교체" },
-            { "id": "clock-algorithm", "name": "Clock 알고리즘" }
+            { "id": "clock-algorithm", "name": "Clock 알고리즘" },
+            { "id": "page-table-lookup", "name": "가상 번호를 실제 자리로 옮긴다", "kind": "piece", "origin": "paging" },
+            { "id": "fixed-size-frames", "name": "같은 크기 칸으로 자른다", "kind": "piece", "origin": "paging" },
+            { "id": "tlb-caches-translation", "name": "자주 쓰는 번역을 곁에 둔다", "kind": "piece", "origin": "paging" },
+            { "id": "variable-size-segments", "name": "뜻에 따라 다른 크기로 자른다", "kind": "piece", "origin": "segmentation" },
+            { "id": "external-fragmentation", "name": "틈이 흩어져 못 쓴다", "kind": "piece", "origin": "segmentation" },
+            { "id": "page-fault", "name": "없으면 그때 가서 가져온다", "kind": "piece", "origin": "virtual-memory" },
+            { "id": "swap-in-out", "name": "자리가 모자라면 디스크로 밀어낸다", "kind": "piece", "origin": "virtual-memory" },
+            { "id": "thrashing", "name": "가져오자마자 다시 밀려난다", "kind": "piece", "origin": "virtual-memory" },
+            { "id": "evict-least-recent", "name": "가장 오래 안 쓴 것을 버린다", "kind": "piece", "origin": "lru" },
+            { "id": "recency-reorder", "name": "쓸 때마다 앞으로 당긴다", "kind": "piece", "origin": "lru" },
+            { "id": "evict-oldest", "name": "먼저 들어온 것을 먼저 버린다", "kind": "piece", "origin": "fifo-page" },
+            { "id": "belady-anomaly", "name": "자리를 늘렸는데 더 나빠진다", "kind": "piece", "origin": "fifo-page" },
+            { "id": "second-chance", "name": "한 번은 봐주고 표시를 지운다", "kind": "piece", "origin": "clock-algorithm" }
           ]
         },
         {
@@ -383,7 +425,14 @@
             { "id": "inode", "name": "inode" },
             { "id": "fat", "name": "FAT" },
             { "id": "journaling", "name": "저널링" },
-            { "id": "directory-structure", "name": "디렉토리 구조" }
+            { "id": "directory-structure", "name": "디렉토리 구조" },
+            { "id": "inode-points-blocks", "name": "표 하나가 흩어진 조각을 가리킨다", "kind": "piece", "origin": "inode" },
+            { "id": "indirect-block", "name": "가리킬 것이 많으면 한 단계 더", "kind": "piece", "origin": "inode" },
+            { "id": "chain-of-blocks", "name": "다음 조각 번호를 표에 적어 잇는다", "kind": "piece", "origin": "fat" },
+            { "id": "write-intent-first", "name": "하려는 일을 먼저 적는다", "kind": "piece", "origin": "journaling" },
+            { "id": "replay-after-crash", "name": "끊긴 자리부터 다시 밟는다", "kind": "piece", "origin": "journaling" },
+            { "id": "path-resolution", "name": "이름을 따라 내려가 찾는다", "kind": "piece", "origin": "directory-structure" },
+            { "id": "hard-vs-soft-link", "name": "실체에 이름 둘, 이름을 가리키는 이름", "kind": "piece", "origin": "directory-structure" }
           ]
         },
         {
@@ -392,7 +441,12 @@
           "topics": [
             { "id": "dma", "name": "DMA" },
             { "id": "interrupt", "name": "인터럽트" },
-            { "id": "disk-scheduling", "name": "디스크 스케줄링" }
+            { "id": "disk-scheduling", "name": "디스크 스케줄링" },
+            { "id": "transfer-without-cpu", "name": "주고받는 동안 다른 일을 한다", "kind": "piece", "origin": "dma" },
+            { "id": "interrupt-preempts", "name": "하던 일을 멈추고 손님을 받는다", "kind": "piece", "origin": "interrupt" },
+            { "id": "polling-vs-interrupt", "name": "계속 묻는가, 부를 때까지 기다리는가", "kind": "piece", "origin": "interrupt" },
+            { "id": "seek-distance-costs", "name": "팔이 움직인 만큼 걸린다", "kind": "piece", "origin": "disk-scheduling" },
+            { "id": "elevator-sweep", "name": "한 방향으로 훑고 돌아온다", "kind": "piece", "origin": "disk-scheduling" }
           ]
         }
       ]
