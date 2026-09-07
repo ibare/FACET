@@ -270,7 +270,8 @@ export function runFacet(
     if (built.root.parentElement) built.root.remove();
   }
 
-  if (options?.autoStart) mechanism.start();
+  // 호출자 지정이 있으면 그쪽이, 없으면 facet 선언이 정한다.
+  if (options?.autoStart ?? json.autoStart) mechanism.start();
 
   return {
     start: () => mechanism.start(),

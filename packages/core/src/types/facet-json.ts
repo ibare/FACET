@@ -105,6 +105,20 @@ export type FacetJson = {
    * (이진/보간 탐색 등) 에서는 켜지 말 것.
    */
   shuffleOnReset?: boolean;
+  /**
+   * mount 직후 알고리즘을 스스로 시작할지.
+   *
+   * coroutine facet 은 control-bar 의 play 가 유일한 진행 동력이라, 컨트롤바를
+   * 두지 않은 facet 은 이 선언이 없으면 영영 시작하지 않는다. 글의 흐름에 박히는
+   * 그림은 독자가 무엇을 누르지 않아도 할 말을 마쳐야 하므로, 자동 시작 여부도
+   * 저작 결정으로 선언에 둔다 (원칙 2).
+   *
+   * `runFacet` 의 `options.autoStart` 가 명시되면 그쪽이 이긴다 — 호스트가
+   * 자기 사정으로 끄거나 켤 수 있어야 한다.
+   *
+   * reactive facet 은 mechanism 이 mount 시 스스로 돌기 시작하므로 이 값과 무관하다.
+   */
+  autoStart?: boolean;
   layout: LayoutNode;
   blocks: Record<string, BlockSpec>;
   /**
