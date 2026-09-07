@@ -577,7 +577,16 @@
             { "id": "1nf", "name": "1NF" },
             { "id": "2nf", "name": "2NF" },
             { "id": "3nf", "name": "3NF" },
-            { "id": "bcnf", "name": "BCNF" }
+            { "id": "bcnf", "name": "BCNF" },
+            { "id": "primary-key-identifies", "name": "한 줄을 집어내는 이름", "kind": "piece", "origin": "table-key" },
+            { "id": "foreign-key-points", "name": "다른 표의 줄을 가리킨다", "kind": "piece", "origin": "table-key" },
+            { "id": "row-is-a-fact", "name": "한 줄이 사실 하나", "kind": "piece", "origin": "relation" },
+            { "id": "set-of-rows", "name": "순서 없는 줄의 모음", "kind": "piece", "origin": "relation" },
+            { "id": "update-anomaly", "name": "중복이 어긋남을 낳는다", "kind": "piece", "origin": "1nf" },
+            { "id": "atomic-cell", "name": "칸 하나에 값 하나", "kind": "piece", "origin": "1nf" },
+            { "id": "partial-dependency", "name": "열쇠 일부에만 매달린 열", "kind": "piece", "origin": "2nf" },
+            { "id": "transitive-dependency", "name": "열쇠가 아닌 것에 매달린 열", "kind": "piece", "origin": "3nf" },
+            { "id": "determinant-must-be-key", "name": "정하는 쪽은 열쇠여야 한다", "kind": "piece", "origin": "bcnf" }
           ]
         },
         {
@@ -590,7 +599,15 @@
             { "id": "outer-join", "name": "OUTER JOIN" },
             { "id": "cross-join", "name": "CROSS JOIN" },
             { "id": "subquery", "name": "서브쿼리" },
-            { "id": "window-function", "name": "윈도우 함수" }
+            { "id": "window-function", "name": "윈도우 함수" },
+            { "id": "insert-update-delete", "name": "넣고 고치고 지운다", "kind": "piece", "origin": "dml" },
+            { "id": "group-then-aggregate", "name": "묶어서 하나로 줄인다", "kind": "piece", "origin": "dml" },
+            { "id": "schema-defines-shape", "name": "표의 모양을 미리 정한다", "kind": "piece", "origin": "ddl" },
+            { "id": "match-on-key", "name": "열쇠가 맞는 줄끼리 잇는다", "kind": "piece", "origin": "inner-join" },
+            { "id": "keep-unmatched", "name": "짝 없는 줄도 남긴다", "kind": "piece", "origin": "outer-join" },
+            { "id": "all-pairs", "name": "모든 짝을 만든다", "kind": "piece", "origin": "cross-join" },
+            { "id": "query-inside-query", "name": "안쪽 답을 바깥이 쓴다", "kind": "piece", "origin": "subquery" },
+            { "id": "window-slides", "name": "이웃을 보면서도 줄은 남는다", "kind": "piece", "origin": "window-function" }
           ]
         },
         {
@@ -600,7 +617,14 @@
             { "id": "b-plus-tree", "name": "B+ Tree 인덱스" },
             { "id": "hash-index", "name": "Hash Index" },
             { "id": "bitmap-index", "name": "Bitmap Index" },
-            { "id": "composite-index", "name": "복합 인덱스" }
+            { "id": "composite-index", "name": "복합 인덱스" },
+            { "id": "leaves-linked", "name": "잎끼리 이어져 범위를 훑는다", "kind": "piece", "origin": "b-plus-tree" },
+            { "id": "all-data-in-leaves", "name": "값은 잎에만 있다", "kind": "piece", "origin": "b-plus-tree" },
+            { "id": "exact-match-only", "name": "딱 맞는 것만 빠르다", "kind": "piece", "origin": "hash-index" },
+            { "id": "bit-per-row", "name": "줄마다 0과 1로 표시한다", "kind": "piece", "origin": "bitmap-index" },
+            { "id": "bitwise-combine", "name": "비트끼리 겹쳐 골라낸다", "kind": "piece", "origin": "bitmap-index" },
+            { "id": "leftmost-prefix", "name": "왼쪽부터 맞아야 쓴다", "kind": "piece", "origin": "composite-index" },
+            { "id": "index-costs-write", "name": "읽기가 빨라진 만큼 쓰기가 느려진다", "kind": "piece", "origin": "b-plus-tree" }
           ]
         },
         {
@@ -610,7 +634,12 @@
             { "id": "parsing", "name": "파싱" },
             { "id": "optimizer", "name": "옵티마이저" },
             { "id": "execution-plan", "name": "실행 계획" },
-            { "id": "cost-model", "name": "비용 모델" }
+            { "id": "cost-model", "name": "비용 모델" },
+            { "id": "same-answer-different-plan", "name": "답은 같은데 길이 여럿", "kind": "piece", "origin": "optimizer" },
+            { "id": "reorder-joins", "name": "어느 것부터 잇느냐로 갈린다", "kind": "piece", "origin": "optimizer" },
+            { "id": "plan-is-a-tree", "name": "아래에서 위로 흘러 올라간다", "kind": "piece", "origin": "execution-plan" },
+            { "id": "estimate-from-stats", "name": "통계로 값을 미리 셈한다", "kind": "piece", "origin": "cost-model" },
+            { "id": "bad-estimate-bad-plan", "name": "짐작이 틀리면 길도 틀린다", "kind": "piece", "origin": "cost-model" }
           ]
         },
         {
@@ -621,7 +650,17 @@
             { "id": "isolation-level", "name": "격리 수준" },
             { "id": "lock", "name": "락" },
             { "id": "mvcc", "name": "MVCC" },
-            { "id": "two-pl", "name": "2PL" }
+            { "id": "two-pl", "name": "2PL" },
+            { "id": "all-or-nothing", "name": "다 되거나 하나도 안 되거나", "kind": "piece", "origin": "acid" },
+            { "id": "durable-after-commit", "name": "적었으면 남는다", "kind": "piece", "origin": "acid" },
+            { "id": "dirty-read", "name": "아직 확정 안 된 것을 읽는다", "kind": "piece", "origin": "isolation-level" },
+            { "id": "non-repeatable-read", "name": "같은 것을 두 번 읽었는데 다르다", "kind": "piece", "origin": "isolation-level" },
+            { "id": "phantom-read", "name": "없던 줄이 생긴다", "kind": "piece", "origin": "isolation-level" },
+            { "id": "shared-vs-exclusive", "name": "같이 읽기는 되고 함께 쓰기는 안 된다", "kind": "piece", "origin": "lock" },
+            { "id": "lock-wait", "name": "남이 놓을 때까지 기다린다", "kind": "piece", "origin": "lock" },
+            { "id": "keep-old-version", "name": "고칠 때 옛 판을 남긴다", "kind": "piece", "origin": "mvcc" },
+            { "id": "read-sees-snapshot", "name": "읽는 쪽은 그때의 판을 본다", "kind": "piece", "origin": "mvcc" },
+            { "id": "grow-then-shrink", "name": "다 잡은 다음에야 놓기 시작한다", "kind": "piece", "origin": "two-pl" }
           ]
         },
         {
@@ -632,7 +671,17 @@
             { "id": "replication", "name": "복제" },
             { "id": "cap", "name": "CAP 정리" },
             { "id": "raft", "name": "Raft" },
-            { "id": "paxos", "name": "Paxos" }
+            { "id": "paxos", "name": "Paxos" },
+            { "id": "split-by-key", "name": "열쇠로 갈라 나눠 담는다", "kind": "piece", "origin": "sharding" },
+            { "id": "hot-shard", "name": "한쪽으로 쏠린다", "kind": "piece", "origin": "sharding" },
+            { "id": "copy-to-followers", "name": "같은 것을 여럿에 둔다", "kind": "piece", "origin": "replication" },
+            { "id": "replication-lag", "name": "따라오는 데 시간이 걸린다", "kind": "piece", "origin": "replication" },
+            { "id": "partition-forces-choice", "name": "갈라지면 둘 중 하나를 골라야 한다", "kind": "piece", "origin": "cap" },
+            { "id": "elect-a-leader", "name": "하나를 뽑아 그를 따른다", "kind": "piece", "origin": "raft" },
+            { "id": "majority-decides", "name": "과반이 동의해야 정해진다", "kind": "piece", "origin": "raft" },
+            { "id": "log-replicate-in-order", "name": "적힌 순서 그대로 옮긴다", "kind": "piece", "origin": "raft" },
+            { "id": "split-brain", "name": "갈라지면 둘 다 자기가 우두머리라 한다", "kind": "piece", "origin": "raft" },
+            { "id": "propose-and-promise", "name": "제안하고 약속을 받는다", "kind": "piece", "origin": "paxos" }
           ]
         },
         {
@@ -642,7 +691,11 @@
             { "id": "document-db", "name": "문서 DB" },
             { "id": "kv-db", "name": "키-값 DB" },
             { "id": "column-family", "name": "컬럼 패밀리" },
-            { "id": "graph-db", "name": "그래프 DB" }
+            { "id": "graph-db", "name": "그래프 DB" },
+            { "id": "nested-document", "name": "표 대신 겹친 문서", "kind": "piece", "origin": "document-db" },
+            { "id": "key-to-value", "name": "열쇠 하나에 값 하나", "kind": "piece", "origin": "kv-db" },
+            { "id": "column-oriented", "name": "줄이 아니라 칸 방향으로 모은다", "kind": "piece", "origin": "column-family" },
+            { "id": "traverse-relationships", "name": "이음을 따라 건너간다", "kind": "piece", "origin": "graph-db" }
           ]
         }
       ]
