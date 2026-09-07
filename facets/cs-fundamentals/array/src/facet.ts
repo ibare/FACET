@@ -13,6 +13,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL } from '@ffacet/core/runtime';
 
 export const arrayFacet: FacetJson = {
   id: 'facet:array',
@@ -251,11 +252,11 @@ export const arrayFacet: FacetJson = {
         },
         { widget: 'button', action: 'read', label: { en: 'Read', ko: '호명', ja: '読み取り', zh: '读取', ar: 'قراءة', es: 'Leer', fr: 'Lire', hi: 'पढ़ें', id: 'Baca', pt: 'Ler' } },
         { widget: 'button', action: 'write', label: { en: 'Write', ko: '쓰기', ja: '書き込み', zh: '写入', ar: 'كتابة', es: 'Escribir', fr: 'Écrire', hi: 'लिखें', id: 'Tulis', pt: 'Escrever' } },
-        { widget: 'button', action: 'insert', label: { en: 'Insert', ko: '삽입', ja: '挿入', zh: '插入', ar: 'إدراج', es: 'Insertar', fr: 'Insérer', hi: 'डालें', id: 'Sisip', pt: 'Inserir' } },
-        { widget: 'button', action: 'remove', label: { en: 'Remove', ko: '삭제', ja: '削除', zh: '删除', ar: 'حذف', es: 'Eliminar', fr: 'Supprimer', hi: 'हटाएं', id: 'Hapus', pt: 'Remover' } },
+        CONTROL.insert,
+        CONTROL.remove,
         { widget: 'button', action: 'append', label: { en: 'Append', ko: '뒤에 추가', ja: '末尾に追加', zh: '追加', ar: 'إلحاق', es: 'Añadir', fr: 'Ajouter', hi: 'जोड़ें', id: 'Tambah', pt: 'Anexar' } },
-        { widget: 'button', action: 'search', label: { en: 'Search', ko: '검색', ja: '検索', zh: '查找', ar: 'بحث', es: 'Buscar', fr: 'Rechercher', hi: 'खोजें', id: 'Cari', pt: 'Buscar' } },
-        { widget: 'button', action: 'reset', label: { en: 'Reset', ko: '초기화', ja: 'リセット', zh: '重置', ar: 'إعادة', es: 'Reiniciar', fr: 'Réinit.', hi: 'रीसेट', id: 'Atur ulang', pt: 'Reiniciar' } },
+        CONTROL.search,
+        CONTROL.reset,
       ],
       metrics: [
         { name: 'read-count', label: { en: 'Read', ko: '호명', ja: '読み取り', zh: '读取', ar: 'قراءة', es: 'Leer', fr: 'Lire', hi: 'पढ़ें', id: 'Baca', pt: 'Ler' }, initial: 0 },

@@ -24,7 +24,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const hashIntegrityCheckFacet: FacetJson = {
   id: 'facet:hashIntegrityCheck',
@@ -95,7 +95,7 @@ export const hashIntegrityCheckFacet: FacetJson = {
     stage: { type: 'integrity-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.piece,
     },
   },
 };

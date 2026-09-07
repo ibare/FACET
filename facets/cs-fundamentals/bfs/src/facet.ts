@@ -11,6 +11,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 import { BFS_CANVAS } from './projector.js';
 
 export const bfsFacet: FacetJson = {
@@ -98,7 +99,7 @@ export const bfsFacet: FacetJson = {
     },
     controls: {
       type: 'control-bar',
-      controls: [{ widget: 'button', action: 'play' }, { widget: 'button', action: 'step' }, { widget: 'button', action: 'pause' }, { widget: 'button', action: 'reset' }, { widget: 'speed-slider', action: 'speed', default: 1 }],
+      controls: CONTROL_SET.playback,
       metrics: [
         { name: 'visited-count', label: { en: 'Visited', ko: '방문', ja: '訪問済み', zh: '已访问', ar: 'مُزار', es: 'Visitados', fr: 'Visités', hi: 'देखे गए', id: 'Dikunjungi', pt: 'Visitados' }, initial: 0 },
         { name: 'layer-count', label: { en: 'Layers', ko: '레이어', ja: '層数', zh: '层数', ar: 'طبقات', es: 'Capas', fr: 'Couches', hi: 'परतें', id: 'Lapisan', pt: 'Camadas' }, initial: 0 },

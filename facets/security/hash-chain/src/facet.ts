@@ -21,7 +21,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const hashChainFacet: FacetJson = {
   id: 'facet:hashChain',
@@ -124,7 +124,7 @@ export const hashChainFacet: FacetJson = {
     stage: { type: 'chain-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.piece,
     },
   },
 };

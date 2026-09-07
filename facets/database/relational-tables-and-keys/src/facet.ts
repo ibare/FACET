@@ -15,6 +15,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL } from '@ffacet/core/runtime';
 
 export const relationalTablesAndKeysFacet: FacetJson = {
   id: 'facet:relationalTablesAndKeys',
@@ -412,8 +413,8 @@ export const relationalTablesAndKeysFacet: FacetJson = {
           action: 'toggle-rejects',
           label: { en: 'Rejects', ko: '거부 인서트', ja: '拒否', zh: '拒绝', ar: 'رفض', es: 'Rechazos', fr: 'Rejets', hi: 'अस्वीकृति', id: 'Tolak', pt: 'Rejeições' },
         },
-        { widget: 'button', action: 'auto-demo', label: { en: 'Auto demo', ko: '자동 시연', ja: '自動デモ', zh: '自动演示', ar: 'عرض تلقائي', es: 'Demo automática', fr: 'Démo auto', hi: 'स्वतः डेमो', id: 'Demo otomatis', pt: 'Demo automática' } },
-        { widget: 'button', action: 'reset', label: { en: 'Reset', ko: '초기화', ja: 'リセット', zh: '重置', ar: 'إعادة', es: 'Reiniciar', fr: 'Réinit.', hi: 'रीसेट', id: 'Atur ulang', pt: 'Reiniciar' } },
+        CONTROL.autoDemo,
+        CONTROL.reset,
       ],
     },
   },

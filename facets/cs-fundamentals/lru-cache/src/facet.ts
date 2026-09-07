@@ -18,6 +18,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL } from '@ffacet/core/runtime';
 
 export const lruCacheFacet: FacetJson = {
   id: 'facet:lruCache',
@@ -326,7 +327,7 @@ export const lruCacheFacet: FacetJson = {
         },
         { widget: 'button', action: 'get', label: { en: 'Get', ko: 'get', ja: '取得', zh: '读取', ar: 'جلب', es: 'Obtener', fr: 'Obtenir', hi: 'प्राप्त', id: 'Ambil', pt: 'Obter' } },
         { widget: 'button', action: 'put', label: { en: 'Put', ko: 'put', ja: '格納', zh: '写入', ar: 'وضع', es: 'Guardar', fr: 'Placer', hi: 'रखें', id: 'Simpan', pt: 'Guardar' } },
-        { widget: 'button', action: 'reset', label: { en: 'Reset', ko: '초기화', ja: 'リセット', zh: '重置', ar: 'إعادة', es: 'Reiniciar', fr: 'Réinit.', hi: 'रीसेट', id: 'Atur ulang', pt: 'Reiniciar' } },
+        CONTROL.reset,
       ],
       metrics: [
         { name: 'get-count', label: { en: 'Get', ko: 'get', ja: '取得', zh: '读取', ar: 'جلب', es: 'Obtener', fr: 'Obtenir', hi: 'प्राप्त', id: 'Ambil', pt: 'Obter' }, initial: 0 },

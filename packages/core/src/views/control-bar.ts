@@ -161,11 +161,24 @@ export const controlBarView: View = {
       { widget: 'button', action: 'pause' },
       { widget: 'button', action: 'reset' },
     ];
+    /**
+     * 컨트롤 하나의 라벨을 정한다.
+     *
+     * facet 이 적은 `label` 이 언제나 이긴다 (저작자가 쓴 것이 이긴다는 C10 의
+     * 조회 순서). 없으면 `labelKey` 로 카탈로그를 찾고, 그것도 없으면 호출부가
+     * 준 기본값이다.
+     */
+    function labelFor(c: ControlSpec, fallback: string): string {
+      if (c.label !== undefined) return resolveLocale(c.label, params.locale);
+      if (typeof c.labelKey === 'string') return tr(c.labelKey, fallback);
+      return fallback;
+    }
+
     for (const c of controls) {
       if (c.widget === 'button') {
         const action = c.action;
         if (action === 'play' || action === 'step' || action === 'pause' || action === 'reset') {
-          const label = c.label !== undefined ? resolveLocale(c.label, params.locale) : btnLabels[action];
+          const label = labelFor(c, btnLabels[action] ?? action);
           const btn = makeButton(action, label, colors);
           btn.addEventListener('click', () => {
             for (const h of handlers[action]) h();
@@ -173,8 +186,9 @@ export const controlBarView: View = {
           buttons[action] = btn;
           buttonGroup.appendChild(btn);
         } else {
-          // facet 고유 button — onAction 채널로 통과. label 누락 시 action 명을 그대로 표시.
-          const label = c.label !== undefined ? resolveLocale(c.label, params.locale) : action;
+          // facet 고유 button — onAction 채널로 통과. 라벨은 label → labelKey →
+          // view.controlBar.<action> → action 명 순으로 정해진다.
+          const label = labelFor(c, tr(`view.controlBar.${action}`, action));
           const btn = makeButton(action, label, colors);
           btn.addEventListener('click', () => {
             const payload = { ...inputState };

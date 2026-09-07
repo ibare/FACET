@@ -16,6 +16,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 import { BST_CANVAS } from './projector.js';
 
 export const bstFacet: FacetJson = {
@@ -128,7 +129,7 @@ export const bstFacet: FacetJson = {
     },
     controls: {
       type: 'control-bar',
-      controls: [{ widget: 'button', action: 'play' }, { widget: 'button', action: 'step' }, { widget: 'button', action: 'pause' }, { widget: 'button', action: 'reset' }, { widget: 'speed-slider', action: 'speed', default: 1 }],
+      controls: CONTROL_SET.playback,
       metrics: [
         { name: 'compare-count', label: { en: 'Compares', ko: '비교', ja: '比較回数', zh: '比较次数', ar: 'مقارنات', es: 'Comparaciones', fr: 'Comparaisons', hi: 'तुलनाएँ', id: 'Perbandingan', pt: 'Comparações' }, initial: 0 },
         { name: 'insert-count', label: { en: 'Inserts', ko: '삽입', ja: '挿入回数', zh: '插入次数', ar: 'إدراجات', es: 'Inserciones', fr: 'Insertions', hi: 'प्रविष्टियाँ', id: 'Penyisipan', pt: 'Inserções' }, initial: 0 },

@@ -18,6 +18,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL } from '@ffacet/core/runtime';
 
 export const tokenizationFacet: FacetJson = {
   id: 'facet:tokenization',
@@ -385,8 +386,8 @@ export const tokenizationFacet: FacetJson = {
           label: { en: 'Next example', ko: '다음 예제', ja: '次の例', zh: '下一个示例', ar: 'المثال التالي', es: 'Siguiente ejemplo', fr: 'Exemple suivant', hi: 'अगला उदाहरण', id: 'Contoh berikutnya', pt: 'Próximo exemplo' },
         },
         { widget: 'button', action: 'replay', label: { en: 'Replay', ko: '다시 재생', ja: '再演', zh: '重播', ar: 'إعادة العرض', es: 'Repetir', fr: 'Rejouer', hi: 'दोबारा', id: 'Ulangi', pt: 'Repetir' } },
-        { widget: 'speed-slider', action: 'speed' },
-        { widget: 'button', action: 'reset', label: { en: 'Reset', ko: '초기화', ja: 'リセット', zh: '重置', ar: 'إعادة', es: 'Reiniciar', fr: 'Réinit.', hi: 'रीसेट', id: 'Atur ulang', pt: 'Reiniciar' } },
+        CONTROL.speed,
+        CONTROL.reset,
       ],
     },
   },

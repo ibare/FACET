@@ -14,6 +14,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL } from '@ffacet/core/runtime';
 
 export const cachingCdnFacet: FacetJson = {
   id: 'facet:cachingCdn',
@@ -253,8 +254,8 @@ export const cachingCdnFacet: FacetJson = {
           default: '',
         },
         { widget: 'button', action: 'request', label: { en: 'Request', ko: '요청', ja: '要求', zh: '请求', ar: 'طلب', es: 'Solicitar', fr: 'Requête', hi: 'अनुरोध', id: 'Minta', pt: 'Solicitar' } },
-        { widget: 'button', action: 'auto-demo', label: { en: 'Auto demo', ko: '자동 시연', ja: '自動デモ', zh: '自动演示', ar: 'عرض تلقائي', es: 'Demo automática', fr: 'Démo auto', hi: 'स्वतः डेमो', id: 'Demo otomatis', pt: 'Demo automática' } },
-        { widget: 'button', action: 'reset', label: { en: 'Reset', ko: '초기화', ja: 'リセット', zh: '重置', ar: 'إعادة', es: 'Reiniciar', fr: 'Réinit.', hi: 'रीसेट', id: 'Atur ulang', pt: 'Reiniciar' } },
+        CONTROL.autoDemo,
+        CONTROL.reset,
       ],
       metrics: [
         { name: 'request-count', label: { en: 'Req', ko: '요청', ja: '要求', zh: '请求', ar: 'طلبات', es: 'Solic.', fr: 'Req.', hi: 'अनुरोध', id: 'Minta', pt: 'Solic.' }, initial: 0 },

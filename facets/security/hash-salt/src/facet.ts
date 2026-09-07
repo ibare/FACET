@@ -22,7 +22,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const hashSaltFacet: FacetJson = {
   id: 'facet:hashSalt',
@@ -94,7 +94,7 @@ export const hashSaltFacet: FacetJson = {
     stage: { type: 'salt-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.piece,
     },
   },
 };

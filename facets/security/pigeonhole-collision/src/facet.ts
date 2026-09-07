@@ -34,7 +34,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const pigeonholeCollisionFacet: FacetJson = {
   id: 'facet:pigeonholeCollision',
@@ -113,7 +113,7 @@ export const pigeonholeCollisionFacet: FacetJson = {
       type: 'control-bar',
       // ReactiveMechanism 의 reset() 은 끝에 ensureStarted() 를 부른다 — 즉
       // reset 이 곧 다시 재생이다. 그래서 action 은 reset 이고 라벨만 다르다.
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.piece,
     },
   },
 };

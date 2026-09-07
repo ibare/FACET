@@ -64,6 +64,14 @@ export type ControlSpec = {
   widget: string;
   action: string;
   label?: LocaleStr;
+  /**
+   * 라벨을 메시지 카탈로그에서 가져올 키.
+   *
+   * `label` 이 있으면 그쪽이 이긴다. 액션과 라벨을 갈라 놓아야 하는 경우에
+   * 쓴다 — 조각의 "다시 보기" 는 액션이 `reset` 이지만 "↺ Reset" 이 아니라
+   * "↻ Replay" 로 불려야 하고, 그러려면 키를 따로 지정할 수밖에 없다.
+   */
+  labelKey?: string;
   [key: string]: unknown;
 };
 

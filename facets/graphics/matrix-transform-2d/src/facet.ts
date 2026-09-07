@@ -17,6 +17,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL } from '@ffacet/core/runtime';
 
 export const matrixTransform2dFacet: FacetJson = {
   id: 'facet:matrixTransform2d',
@@ -498,7 +499,7 @@ export const matrixTransform2dFacet: FacetJson = {
         { widget: 'button', action: 'point-add', label: { en: '+ Point', ko: '점 추가', ja: '+ 点', zh: '+ 点', ar: '+ نقطة', es: '+ Punto', fr: '+ Point', hi: '+ बिंदु', id: '+ Titik', pt: '+ Ponto' } },
         { widget: 'button', action: 'point-remove', label: { en: '− Point', ko: '점 제거', ja: '− 点', zh: '− 点', ar: '− نقطة', es: '− Punto', fr: '− Point', hi: '− बिंदु', id: '− Titik', pt: '− Ponto' } },
         { widget: 'button', action: 'identity', label: { en: 'Identity', ko: '항등 리셋', ja: '恒等', zh: '单位', ar: 'المحايد', es: 'Identidad', fr: 'Identité', hi: 'तत्समक', id: 'Identitas', pt: 'Identidade' } },
-        { widget: 'button', action: 'reset', label: { en: '↺ Reset', ko: '↺ 초기화', ja: '↺ リセット', zh: '↺ 重置', ar: '↺ إعادة', es: '↺ Reiniciar', fr: '↺ Réinit.', hi: '↺ रीसेट', id: '↺ Atur ulang', pt: '↺ Reiniciar' } },
+        CONTROL.reset,
       ],
     },
   },

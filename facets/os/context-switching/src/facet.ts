@@ -16,6 +16,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL } from '@ffacet/core/runtime';
 
 export const contextSwitchingFacet: FacetJson = {
   id: 'facet:contextSwitching',
@@ -359,10 +360,10 @@ export const contextSwitchingFacet: FacetJson = {
     controls: {
       type: 'control-bar',
       controls: [
-        { widget: 'button', action: 'play', label: { en: '▶ Play', ko: '▶ 재생', ja: '▶ 再生', zh: '▶ 播放', ar: '▶ تشغيل', es: '▶ Reproducir', fr: '▶ Lecture', hi: '▶ चलाएं', id: '▶ Putar', pt: '▶ Reproduzir' } },
-        { widget: 'button', action: 'pause', label: { en: '⏸ Pause', ko: '⏸ 일시정지', ja: '⏸ 停止', zh: '⏸ 暂停', ar: '⏸ إيقاف', es: '⏸ Pausa', fr: '⏸ Pause', hi: '⏸ रोकें', id: '⏸ Jeda', pt: '⏸ Pausar' } },
+        CONTROL.play,
+        CONTROL.pause,
         { widget: 'button', action: 'step', label: { en: '⏭ Step', ko: '⏭ 한 박자', ja: '⏭ 一歩', zh: '⏭ 单步', ar: '⏭ خطوة', es: '⏭ Paso', fr: '⏭ Pas', hi: '⏭ चरण', id: '⏭ Langkah', pt: '⏭ Passo' } },
-        { widget: 'button', action: 'reset', label: { en: '↺ Reset', ko: '↺ 리셋', ja: '↺ リセット', zh: '↺ 重置', ar: '↺ إعادة', es: '↺ Reiniciar', fr: '↺ Réinit.', hi: '↺ रीसेट', id: '↺ Atur ulang', pt: '↺ Reiniciar' } },
+        CONTROL.reset,
         {
           widget: 'segmented-slider',
           action: 'triggerKind',

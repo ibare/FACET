@@ -17,6 +17,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL } from '@ffacet/core/runtime';
 
 export const asymmetricRsaFacet: FacetJson = {
   id: 'facet:asymmetricRsa',
@@ -599,13 +600,13 @@ export const asymmetricRsaFacet: FacetJson = {
           default: '2',
         },
         { widget: 'button', action: 'replay', label: { en: 'Replay', ko: '재생', ja: '再演', zh: '重播', ar: 'إعادة العرض', es: 'Repetir', fr: 'Rejouer', hi: 'दोबारा', id: 'Ulangi', pt: 'Repetir' } },
-        { widget: 'speed-slider', action: 'speed', default: 1, steps: [0.5, 1, 2] },
+        { ...CONTROL.speed, default: 1, steps: [0.5, 1, 2] },
         {
           widget: 'button',
           action: 'toggle-reverse',
           label: { en: 'Reverse attempt', ko: '거꾸로 시도', ja: '逆向きの試み', zh: '反向尝试', ar: 'محاولة عكسية', es: 'Intento inverso', fr: 'Tentative inverse', hi: 'उल्टा प्रयास', id: 'Percobaan terbalik', pt: 'Tentativa inversa' },
         },
-        { widget: 'button', action: 'reset', label: { en: 'Reset', ko: '초기화', ja: 'リセット', zh: '重置', ar: 'إعادة', es: 'Reiniciar', fr: 'Réinit.', hi: 'रीसेट', id: 'Atur ulang', pt: 'Reiniciar' } },
+        CONTROL.reset,
       ],
     },
   },

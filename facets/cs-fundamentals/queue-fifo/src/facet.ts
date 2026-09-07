@@ -13,6 +13,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const queueFacet: FacetJson = {
   id: 'facet:queueFifo',
@@ -64,7 +65,7 @@ export const queueFacet: FacetJson = {
     },
     controls: {
       type: 'control-bar',
-      controls: [{ widget: 'button', action: 'play' }, { widget: 'button', action: 'step' }, { widget: 'button', action: 'pause' }, { widget: 'button', action: 'reset' }, { widget: 'speed-slider', action: 'speed', default: 1 }],
+      controls: CONTROL_SET.playback,
       metrics: [
         { name: 'enqueue-count', label: { en: 'Enqueued', ko: '입장', ja: '入場', zh: '入队', ar: 'دخل', es: 'Encolados', fr: 'Enfilés', hi: 'प्रविष्ट', id: 'Masuk', pt: 'Enfileirados' }, initial: 0 },
         { name: 'dequeue-count', label: { en: 'Dequeued', ko: '퇴장', ja: '退場', zh: '出队', ar: 'خرج', es: 'Desencolados', fr: 'Défilés', hi: 'निर्गत', id: 'Keluar', pt: 'Desenfileirados' }, initial: 0 },

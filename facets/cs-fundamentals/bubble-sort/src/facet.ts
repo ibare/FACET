@@ -9,6 +9,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const bubblesortFacet: FacetJson = {
   id: 'facet:bubbleSort',
@@ -66,7 +67,7 @@ export const bubblesortFacet: FacetJson = {
     snapshotStrip: { type: 'snapshot-strip', maxSnapshots: 8 },
     controls: {
       type: 'control-bar',
-      controls: [{ widget: 'button', action: 'play' }, { widget: 'button', action: 'step' }, { widget: 'button', action: 'pause' }, { widget: 'button', action: 'reset' }, { widget: 'speed-slider', action: 'speed', default: 1 }],
+      controls: CONTROL_SET.playback,
       metrics: [
         { name: 'compare-count', label: { en: 'Compare', ko: '비교', ja: '比較', zh: '比较', ar: 'مقارنة', es: 'Comparar', fr: 'Comparer', hi: 'तुलना', id: 'Banding', pt: 'Comparar' }, initial: 0 },
         { name: 'swap-count', label: { en: 'Swap', ko: '교환', ja: '交換', zh: '交换', ar: 'تبديل', es: 'Intercambio', fr: 'Échange', hi: 'अदला-बदली', id: 'Tukar', pt: 'Troca' }, initial: 0 },

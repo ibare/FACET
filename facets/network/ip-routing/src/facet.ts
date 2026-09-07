@@ -12,6 +12,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL } from '@ffacet/core/runtime';
 
 const R1_TABLE = [
   // 짧은 일치 (LPM 으로 패배) — 그러나 표 위에 같이 등장.
@@ -707,8 +708,8 @@ export const ipRoutingFacet: FacetJson = {
       controls: [
         { widget: 'button', action: 'send', label: { en: 'Send', ko: '발신', ja: '送信', zh: '发送', ar: 'إرسال', es: 'Enviar', fr: 'Envoyer', hi: 'भेजें', id: 'Kirim', pt: 'Enviar' } },
         { widget: 'button', action: 'step-hop', label: { en: '1 hop', ko: '한 hop', ja: '1 hop', zh: '单跳', ar: 'قفزة واحدة', es: '1 salto', fr: '1 saut', hi: '1 hop', id: '1 hop', pt: '1 salto' } },
-        { widget: 'button', action: 'auto-demo', label: { en: 'Auto demo', ko: '자동 시연', ja: '自動デモ', zh: '自动演示', ar: 'عرض تلقائي', es: 'Demo automática', fr: 'Démo auto', hi: 'स्वतः डेमो', id: 'Demo otomatis', pt: 'Demo automática' } },
-        { widget: 'button', action: 'pause', label: { en: '⏸ Pause', ko: '⏸ 일시정지', ja: '⏸ 停止', zh: '⏸ 暂停', ar: '⏸ إيقاف', es: '⏸ Pausa', fr: '⏸ Pause', hi: '⏸ रोकें', id: '⏸ Jeda', pt: '⏸ Pausar' } },
+        CONTROL.autoDemo,
+        CONTROL.pause,
         { widget: 'button', action: 'resume', label: { en: 'Resume', ko: '재개', ja: '再開', zh: '继续', ar: 'استئناف', es: 'Reanudar', fr: 'Reprendre', hi: 'जारी', id: 'Lanjut', pt: 'Retomar' } },
         {
           widget: 'segmented-slider',
@@ -723,8 +724,8 @@ export const ipRoutingFacet: FacetJson = {
             { value: 2, label: { en: '2', ko: '2', ja: '2', zh: '2', ar: '2', es: '2', fr: '2', hi: '2', id: '2', pt: '2' } },
           ],
         },
-        { widget: 'speed-slider', action: 'speed', default: 1, steps: [0.5, 1, 2] },
-        { widget: 'button', action: 'reset', label: { en: '↺ Reset', ko: '↺ 초기화', ja: '↺ リセット', zh: '↺ 重置', ar: '↺ إعادة', es: '↺ Reiniciar', fr: '↺ Réinit.', hi: '↺ रीसेट', id: '↺ Atur ulang', pt: '↺ Reiniciar' } },
+        { ...CONTROL.speed, default: 1, steps: [0.5, 1, 2] },
+        CONTROL.reset,
       ],
     },
   },

@@ -19,6 +19,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL } from '@ffacet/core/runtime';
 
 export const conditionalStatementFacet: FacetJson = {
   id: 'facet:conditionalStatement',
@@ -393,8 +394,8 @@ export const conditionalStatementFacet: FacetJson = {
           action: 'mode-toggle',
           label: { en: 'Branches: 2 / 3', ko: '갈래 2 / 3', ja: '分岐: 2 / 3', zh: '分支: 2 / 3', ar: 'الفروع: ٢ / ٣', es: 'Ramas: 2 / 3', fr: 'Branches : 2 / 3', hi: 'शाखाएँ: 2 / 3', id: 'Cabang: 2 / 3', pt: 'Ramos: 2 / 3' },
         },
-        { widget: 'button', action: 'auto-demo', label: { en: 'Auto demo', ko: '자동 시연', ja: '自動デモ', zh: '自动演示', ar: 'عرض تلقائي', es: 'Demo automática', fr: 'Démo auto', hi: 'स्वतः डेमो', id: 'Demo otomatis', pt: 'Demo automática' } },
-        { widget: 'button', action: 'reset', label: { en: 'Reset', ko: '초기화', ja: 'リセット', zh: '重置', ar: 'إعادة', es: 'Reiniciar', fr: 'Réinit.', hi: 'रीसेट', id: 'Atur ulang', pt: 'Reiniciar' } },
+        CONTROL.autoDemo,
+        CONTROL.reset,
       ],
     },
   },

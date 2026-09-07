@@ -17,6 +17,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL } from '@ffacet/core/runtime';
 
 export const hashTableFacet: FacetJson = {
   id: 'facet:hashTableChaining',
@@ -374,10 +375,10 @@ export const hashTableFacet: FacetJson = {
           placeholder: { en: 'e.g. 42', ko: '예: 42', ja: '例: 42', zh: '例: 42', ar: 'مثال: ٤٢', es: 'p. ej. 42', fr: 'ex. 42', hi: 'जैसे 42', id: 'mis. 42', pt: 'ex.: 42' },
           default: '',
         },
-        { widget: 'button', action: 'insert', label: { en: 'Insert', ko: '삽입', ja: '挿入', zh: '插入', ar: 'إدراج', es: 'Insertar', fr: 'Insérer', hi: 'डालें', id: 'Sisip', pt: 'Inserir' } },
-        { widget: 'button', action: 'search', label: { en: 'Search', ko: '검색', ja: '検索', zh: '查找', ar: 'بحث', es: 'Buscar', fr: 'Rechercher', hi: 'खोजें', id: 'Cari', pt: 'Buscar' } },
-        { widget: 'button', action: 'remove', label: { en: 'Remove', ko: '삭제', ja: '削除', zh: '删除', ar: 'حذف', es: 'Eliminar', fr: 'Supprimer', hi: 'हटाएं', id: 'Hapus', pt: 'Remover' } },
-        { widget: 'button', action: 'reset', label: { en: 'Reset', ko: '초기화', ja: 'リセット', zh: '重置', ar: 'إعادة', es: 'Reiniciar', fr: 'Réinit.', hi: 'रीसेट', id: 'Atur ulang', pt: 'Reiniciar' } },
+        CONTROL.insert,
+        CONTROL.search,
+        CONTROL.remove,
+        CONTROL.reset,
       ],
       metrics: [
         { name: 'insert-count', label: { en: 'Insert', ko: '삽입', ja: '挿入', zh: '插入', ar: 'إدراج', es: 'Insertar', fr: 'Insérer', hi: 'डालें', id: 'Sisip', pt: 'Inserir' }, initial: 0 },

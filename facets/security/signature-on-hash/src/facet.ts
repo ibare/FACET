@@ -20,7 +20,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const signatureOnHashFacet: FacetJson = {
   id: 'facet:signatureOnHash',
@@ -80,7 +80,7 @@ export const signatureOnHashFacet: FacetJson = {
     stage: { type: 'sign-hash-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.piece,
     },
   },
 };

@@ -14,6 +14,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL } from '@ffacet/core/runtime';
 
 export const messagingPubsubFacet: FacetJson = {
   id: 'facet:messagingPubsub',
@@ -300,7 +301,7 @@ export const messagingPubsubFacet: FacetJson = {
           action: 'unsubscribe',
           label: { en: 'Unsubscribe', ko: '구독해지', ja: '購読解除', zh: '取消订阅', ar: 'إلغاء الاشتراك', es: 'Cancelar', fr: 'Se désabonner', hi: 'सदस्यता छोड़ें', id: 'Berhenti langganan', pt: 'Cancelar assinatura' },
         },
-        { widget: 'button', action: 'reset', label: { en: 'Reset', ko: '초기화', ja: 'リセット', zh: '重置', ar: 'إعادة', es: 'Reiniciar', fr: 'Réinit.', hi: 'रीसेट', id: 'Atur ulang', pt: 'Reiniciar' } },
+        CONTROL.reset,
       ],
       metrics: [
         { name: 'publish-count', label: { en: 'Publish', ko: '발행', ja: '発行', zh: '发布', ar: 'نشر', es: 'Publicar', fr: 'Publier', hi: 'प्रकाशित', id: 'Terbitkan', pt: 'Publicar' }, initial: 0 },

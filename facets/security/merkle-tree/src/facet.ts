@@ -20,7 +20,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const merkleTreeFacet: FacetJson = {
   id: 'facet:merkleTree',
@@ -97,7 +97,7 @@ export const merkleTreeFacet: FacetJson = {
     stage: { type: 'merkle-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.piece,
     },
   },
 };

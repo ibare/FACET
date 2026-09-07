@@ -13,6 +13,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL } from '@ffacet/core/runtime';
 
 export const stackFacet: FacetJson = {
   id: 'facet:stack',
@@ -201,7 +202,7 @@ export const stackFacet: FacetJson = {
         { widget: 'button', action: 'push', label: { en: 'Push', ko: '쌓기', ja: '積む', zh: '入栈', ar: 'دفع', es: 'Apilar', fr: 'Empiler', hi: 'रखें', id: 'Tumpuk', pt: 'Empilhar' } },
         { widget: 'button', action: 'pop', label: { en: 'Pop', ko: '떼기', ja: '取る', zh: '出栈', ar: 'سحب', es: 'Desapilar', fr: 'Dépiler', hi: 'हटाएं', id: 'Ambil', pt: 'Desempilhar' } },
         { widget: 'button', action: 'peek', label: { en: 'Peek', ko: '보기', ja: 'のぞく', zh: '查看', ar: 'إطلالة', es: 'Ojear', fr: 'Consulter', hi: 'झाँकें', id: 'Intip', pt: 'Espiar' } },
-        { widget: 'button', action: 'reset', label: { en: 'Reset', ko: '초기화', ja: 'リセット', zh: '重置', ar: 'إعادة', es: 'Reiniciar', fr: 'Réinit.', hi: 'रीसेट', id: 'Atur ulang', pt: 'Reiniciar' } },
+        CONTROL.reset,
       ],
       metrics: [
         { name: 'push-count', label: { en: 'Push', ko: '쌓기', ja: '積む', zh: '入栈', ar: 'دفع', es: 'Apilar', fr: 'Empiler', hi: 'रखें', id: 'Tumpuk', pt: 'Empilhar' }, initial: 0 },

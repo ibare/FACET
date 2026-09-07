@@ -18,9 +18,11 @@
  * 어휘 — 은 그 facet 이 직접 적는다. 프리셋은 반복을 없애는 장치이지 어휘를
  * 통제하는 장치가 아니다.
  *
- * 문안이 코드에 있는 것은 C10 의 예외가 아니라 그 규약대로다. 이것은 특정
- * facet 의 문안이 아니라 **프레임워크 공통 문안**이며, facet 이 자기 화면에서
- * 달리 부르고 싶으면 `messages` 의 `view.controlBar.*` 키로 덮어쓸 수 있다.
+ * 프리셋은 **구조만** 담고 문안은 담지 않는다. 라벨은 메시지 카탈로그
+ * (`messages/*.json` 의 `view.controlBar.*`) 가 정본이고, facet 이 자기 화면에서
+ * 달리 부르고 싶으면 `label` 을 직접 적거나 `messages` 로 그 키를 덮어쓴다 (C10).
+ * 액션과 라벨이 갈려야 하는 경우 — `replay` 는 액션이 `reset` 이지만 "↻ Replay" 로
+ * 불려야 한다 — 는 `labelKey` 로 키를 지정한다.
  */
 
 import type { ControlSpec } from '../types/facet-json.js';
@@ -32,47 +34,26 @@ import type { ControlSpec } from '../types/facet-json.js';
  * 하고, `ControlSpec` 이 이미 열린 타입이라 얼려도 얻을 것이 없다.
  */
 export const CONTROL: Record<string, ControlSpec> = {
+  /** 재생. coroutine facet 의 표준 컨트롤. */
+  play: { widget: 'button', action: 'play' },
+
+  /** 한 단계씩. coroutine 의 표준 컨트롤이며 조각의 `advance` 와 다르다. */
+  step: { widget: 'button', action: 'step' },
+
+  /** 일시정지. coroutine facet 의 표준 컨트롤. */
+  pause: { widget: 'button', action: 'pause' },
+
   /** 처음 상태로 되돌린다. 완결형 facet 의 표준 컨트롤. */
-  reset: {
-    widget: 'button',
-    action: 'reset',
-    label: {
-      en: 'Reset',
-      ko: '초기화',
-      ja: 'リセット',
-      zh: '重置',
-      ar: 'إعادة',
-      es: 'Reiniciar',
-      fr: 'Réinit.',
-      hi: 'रीसेट',
-      id: 'Atur ulang',
-      pt: 'Reiniciar',
-    },
-  },
+  reset: { widget: 'button', action: 'reset' },
 
   /**
    * 처음부터 다시 재생한다.
    *
    * 액션은 `reset` 과 같다 — `ReactiveMechanism.reset()` 이 끝에
    * `ensureStarted()` 를 부르므로 되돌리는 일이 곧 다시 재생하는 일이다.
-   * 조각(piece) facet 처럼 되돌림이 재생으로 읽히는 화면이 이것을 쓴다.
+   * 다만 화면에서는 "다시 보기" 로 불려야 하므로 라벨 키를 따로 지정한다.
    */
-  replay: {
-    widget: 'button',
-    action: 'reset',
-    label: {
-      en: 'Replay',
-      ko: '다시 보기',
-      ja: '再生',
-      zh: '重播',
-      ar: 'إعادة العرض',
-      es: 'Repetir',
-      fr: 'Rejouer',
-      hi: 'फिर देखें',
-      id: 'Putar ulang',
-      pt: 'Repetir',
-    },
-  },
+  replay: { widget: 'button', action: 'reset', labelKey: 'view.controlBar.replay' },
 
   /**
    * 한 걸음 나아간다.
@@ -81,56 +62,50 @@ export const CONTROL: Record<string, ControlSpec> = {
    * `ReactiveMechanism` 이 `dispatch` 로 라우팅하고, algorithm 이
    * `waitForInput` 으로 받아 스스로 한 걸음을 발신한다.
    */
-  advance: {
-    widget: 'button',
-    action: 'advance',
-    label: {
-      en: 'Step',
-      ko: '한 걸음',
-      ja: '一歩',
-      zh: '单步',
-      ar: 'خطوة',
-      es: 'Paso',
-      fr: 'Pas',
-      hi: 'एक कदम',
-      id: 'Selangkah',
-      pt: 'Passo',
-    },
-  },
+  advance: { widget: 'button', action: 'advance' },
 
   /** 자동 시연을 다시 돌린다. */
-  autoDemo: {
-    widget: 'button',
-    action: 'auto-demo',
-    label: {
-      en: 'Auto demo',
-      ko: '자동 시연',
-      ja: '自動デモ',
-      zh: '自动演示',
-      ar: 'عرض تلقائي',
-      es: 'Demo automática',
-      fr: 'Démo auto',
-      hi: 'स्वतः डेमो',
-      id: 'Demo otomatis',
-      pt: 'Demo automática',
-    },
-  },
+  autoDemo: { widget: 'button', action: 'auto-demo' },
 
   /** 재생 속도. coroutine facet 의 표준 컨트롤. */
-  speed: {
-    widget: 'speed-slider',
-    action: 'speed',
-    label: {
-      en: 'Speed',
-      ko: '속도',
-      ja: '速度',
-      zh: '速度',
-      ar: 'السرعة',
-      es: 'Velocidad',
-      fr: 'Vitesse',
-      hi: 'गति',
-      id: 'Kecepatan',
-      pt: 'Velocidade',
-    },
-  },
+  speed: { widget: 'speed-slider', action: 'speed' },
+
+  // ── 자료구조 연산. 세 facet 이 글자 하나 다르지 않게 같은 말을 써 왔다.
+  //    다르게 부르고 싶은 facet 은 label 로 덮는다.
+
+  /** 값을 찾는다. */
+  search: { widget: 'button', action: 'search' },
+
+  /** 값을 넣는다. */
+  insert: { widget: 'button', action: 'insert' },
+
+  /** 값을 뺀다. */
+  remove: { widget: 'button', action: 'remove' },
+};
+
+/**
+ * 통째로 반복되는 컨트롤 묶음.
+ *
+ * 같은 다섯이 네 facet 에, 같은 둘이 조각 아홉에 그대로 반복됐다. 낱개 프리셋만
+ * 두면 그 배열을 다시 열세 번 적게 되므로 묶음도 함께 둔다.
+ *
+ * 하나만 다르면 펼쳐서 고친다 — `[...CONTROL_SET.playback, CONTROL.autoDemo]`
+ * 처럼 덧붙이거나, 배열을 직접 적어도 된다. 묶음은 흔한 경우를 짧게 쓰기 위한
+ * 것이지 다른 조합을 막는 것이 아니다.
+ *
+ * runner 가 `controls` 를 읽어 새 배열로 옮기므로 (`runner.ts` 의 enrichedBlocks)
+ * 여러 facet 이 같은 배열을 참조해도 서로 간섭하지 않는다.
+ */
+export const CONTROL_SET: Record<string, ControlSpec[]> = {
+  /** coroutine facet 의 표준 재생 묶음. */
+  playback: [
+    CONTROL.play,
+    CONTROL.step,
+    CONTROL.pause,
+    CONTROL.reset,
+    { ...CONTROL.speed, default: 1 },
+  ],
+
+  /** 조각(piece) facet 의 표준 묶음 — 다시 보기와 한 걸음 (S-piece). */
+  piece: [CONTROL.replay, CONTROL.advance],
 };

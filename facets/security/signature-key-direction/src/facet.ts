@@ -20,7 +20,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const signatureKeyDirectionFacet: FacetJson = {
   id: 'facet:signatureKeyDirection',
@@ -81,7 +81,7 @@ export const signatureKeyDirectionFacet: FacetJson = {
     stage: { type: 'key-direction-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.piece,
     },
   },
 };
