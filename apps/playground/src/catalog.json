@@ -730,6 +730,9 @@
           "name": "해시",
           "topics": [
             { "id": "sha", "name": "SHA" },
+            { "id": "hash-fixed-length", "name": "무엇을 넣든 같은 길이", "facetId": "facet:hashFixedLength" },
+            { "id": "hash-avalanche", "name": "눈사태 효과", "facetId": "facet:hashAvalanche" },
+            { "id": "pigeonhole-collision", "name": "충돌은 반드시 있다", "facetId": "facet:pigeonholeCollision" },
             { "id": "collision", "name": "충돌" },
             { "id": "mac", "name": "MAC" },
             { "id": "hmac", "name": "HMAC" }

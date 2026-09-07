@@ -21,7 +21,10 @@ import { bubbleSortConcept } from './bubble-sort.js';
 import { cachingCdnConcept } from './caching-cdn.js';
 import { conditionalStatementConcept } from './conditional-statement.js';
 import { contextSwitchingConcept } from './context-switching.js';
+import { hashAvalancheConcept } from './hash-avalanche.js';
+import { hashFixedLengthConcept } from './hash-fixed-length.js';
 import { hashTableChainingConcept } from './hash-table-chaining.js';
+import { pigeonholeCollisionConcept } from './pigeonhole-collision.js';
 import { ipRoutingConcept } from './ip-routing.js';
 import { linearRegressionConcept } from './linear-regression.js';
 import { linkedListSinglyConcept } from './linked-list-singly.js';
@@ -41,7 +44,10 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   bubbleSortConcept,
   arrayConcept,
   linkedListSinglyConcept,
+  hashAvalancheConcept,
+  hashFixedLengthConcept,
   hashTableChainingConcept,
+  pigeonholeCollisionConcept,
   lruCacheConcept,
   tokenizationConcept,
   relationalTablesAndKeysConcept,

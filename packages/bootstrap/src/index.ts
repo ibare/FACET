@@ -129,6 +129,17 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:asymmetricRsa', () =>
     import('@ffacet/algorithm-asymmetric-rsa').then((m) => m.registerAsymmetricRsa()),
   );
+  registerFacetLoader('facet:hashAvalanche', () =>
+    import('@ffacet/algorithm-hash-avalanche').then((m) => m.registerHashAvalanche()),
+  );
+  registerFacetLoader('facet:hashFixedLength', () =>
+    import('@ffacet/algorithm-hash-fixed-length').then((m) => m.registerHashFixedLength()),
+  );
+  registerFacetLoader('facet:pigeonholeCollision', () =>
+    import('@ffacet/algorithm-pigeonhole-collision').then((m) =>
+      m.registerPigeonholeCollision(),
+    ),
+  );
   registerFacetLoader('facet:linearRegression', () =>
     import('@ffacet/algorithm-linear-regression').then((m) => m.registerLinearRegression()),
   );

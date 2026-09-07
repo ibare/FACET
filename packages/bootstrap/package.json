@@ -54,6 +54,9 @@
   "devDependencies": {
     "@ffacet/algorithm-array": "workspace:*",
     "@ffacet/algorithm-asymmetric-rsa": "workspace:*",
+    "@ffacet/algorithm-hash-avalanche": "workspace:*",
+    "@ffacet/algorithm-hash-fixed-length": "workspace:*",
+    "@ffacet/algorithm-pigeonhole-collision": "workspace:*",
     "@ffacet/algorithm-bfs": "workspace:*",
     "@ffacet/algorithm-bst": "workspace:*",
     "@ffacet/algorithm-bubble-sort": "workspace:*",

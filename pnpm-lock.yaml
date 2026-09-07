@@ -241,6 +241,24 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/security/hash-avalanche:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/security/hash-fixed-length:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/security/pigeonhole-collision:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/system-design/caching-cdn:
     dependencies:
       '@ffacet/core':
@@ -285,6 +303,12 @@ importers:
       '@ffacet/algorithm-context-switching':
         specifier: workspace:*
         version: link:../../facets/os/context-switching
+      '@ffacet/algorithm-hash-avalanche':
+        specifier: workspace:*
+        version: link:../../facets/security/hash-avalanche
+      '@ffacet/algorithm-hash-fixed-length':
+        specifier: workspace:*
+        version: link:../../facets/security/hash-fixed-length
       '@ffacet/algorithm-hash-table-chaining':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/hash-table-chaining
@@ -306,6 +330,9 @@ importers:
       '@ffacet/algorithm-messaging-pubsub':
         specifier: workspace:*
         version: link:../../facets/system-design/messaging-pubsub
+      '@ffacet/algorithm-pigeonhole-collision':
+        specifier: workspace:*
+        version: link:../../facets/security/pigeonhole-collision
       '@ffacet/algorithm-queue-fifo':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/queue-fifo
