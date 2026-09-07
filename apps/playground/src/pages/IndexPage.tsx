@@ -261,6 +261,7 @@ function TopicTile({ topic, accent }: { topic: Topic; accent: AccentTokens }) {
     return (
       <Link
         to={`/facet/${encodeURIComponent(topic.facetId)}`}
+        title={topic.desc}
         className={`group/tile relative flex items-center justify-between gap-2 overflow-hidden rounded-lg bg-surface-raised px-3 py-2.5 ring-1 ring-border transition hover:bg-surface-raised-hover hover:ring-border-strong focus-visible:outline-none focus-visible:ring-2 ${accent.ringSoft}`}
       >
         <div className="flex min-w-0 items-center gap-2">
@@ -276,7 +277,10 @@ function TopicTile({ topic, accent }: { topic: Topic; accent: AccentTokens }) {
   }
 
   return (
-    <div className="flex cursor-not-allowed items-center justify-between gap-2 rounded-lg bg-surface px-3 py-2.5 ring-1 ring-border opacity-70">
+    <div
+      title={topic.desc}
+      className="flex cursor-not-allowed items-center justify-between gap-2 rounded-lg bg-surface px-3 py-2.5 ring-1 ring-border opacity-70"
+    >
       <div className="flex min-w-0 items-center gap-2">
         {isPiece ? (
           <PuzzlePiece weight="duotone" className="h-3 w-3 shrink-0 text-fg-subtle" />

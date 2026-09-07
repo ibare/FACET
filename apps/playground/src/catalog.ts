@@ -11,6 +11,12 @@ export type Topic = {
    */
   kind?: 'piece';
   /**
+   * 한 줄 묘사. 조각은 name 이 개념의 이름이고 desc 가 그 개념이 하는 일이다
+   * (FacetJson 의 title/description 과 같은 나눔). 이름만으로 충분한 조각에는
+   * 없을 수 있다.
+   */
+  desc?: string;
+  /**
    * 조각을 도출할 때 출발한 자리(토픽 또는 서브도메인 id).
    * 기록일 뿐이며 소속을 뜻하지 않는다 — 한 조각은 여러 주제에서 불릴 수 있다.
    */
