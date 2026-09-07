@@ -713,7 +713,14 @@
           "topics": [
             { "id": "tokenization", "name": "토큰화", "facetId": "facet:tokenization" },
             { "id": "regex", "name": "정규 표현식" },
-            { "id": "fa", "name": "유한 오토마타" }
+            { "id": "fa", "name": "유한 오토마타" },
+            { "id": "split-into-tokens", "name": "글자 줄을 낱말로 자른다", "kind": "piece", "origin": "tokenization" },
+            { "id": "longest-match-wins", "name": "가장 길게 맞는 것을 집는다", "kind": "piece", "origin": "tokenization" },
+            { "id": "pattern-matches-set", "name": "한 무늬가 여러 글줄을 뜻한다", "kind": "piece", "origin": "regex" },
+            { "id": "backtrack-on-fail", "name": "안 맞으면 되돌아가 다시", "kind": "piece", "origin": "regex" },
+            { "id": "state-eats-char", "name": "글자 하나에 자리 하나를 옮긴다", "kind": "piece", "origin": "fa" },
+            { "id": "accept-state", "name": "멈춘 자리가 받는 자리인가", "kind": "piece", "origin": "fa" },
+            { "id": "nfa-to-dfa", "name": "여럿일 수 있는 것을 하나로 모은다", "kind": "piece", "origin": "fa" }
           ]
         },
         {
@@ -723,7 +730,14 @@
             { "id": "cfg", "name": "CFG" },
             { "id": "recursive-descent", "name": "재귀 하강" },
             { "id": "lr-lalr", "name": "LR / LALR" },
-            { "id": "ast", "name": "AST 생성" }
+            { "id": "ast", "name": "AST 생성" },
+            { "id": "rule-expands", "name": "규칙이 자기를 펼친다", "kind": "piece", "origin": "cfg" },
+            { "id": "derivation-tree", "name": "펼친 자취가 나무가 된다", "kind": "piece", "origin": "cfg" },
+            { "id": "one-function-per-rule", "name": "규칙마다 함수 하나", "kind": "piece", "origin": "recursive-descent" },
+            { "id": "lookahead-one", "name": "한 낱말 앞을 보고 고른다", "kind": "piece", "origin": "recursive-descent" },
+            { "id": "shift-or-reduce", "name": "밀어 넣을까 접을까", "kind": "piece", "origin": "lr-lalr" },
+            { "id": "parse-conflict", "name": "어느 쪽인지 못 정하면 충돌", "kind": "piece", "origin": "lr-lalr" },
+            { "id": "tree-drops-syntax", "name": "괄호는 버리고 뜻만 남긴다", "kind": "piece", "origin": "ast" }
           ]
         },
         {
@@ -732,7 +746,11 @@
           "topics": [
             { "id": "type-check", "name": "타입 검사" },
             { "id": "scope-resolve", "name": "스코프 해석" },
-            { "id": "symbol-table", "name": "심볼 테이블" }
+            { "id": "symbol-table", "name": "심볼 테이블" },
+            { "id": "type-flows-up", "name": "아래에서 정해진 타입이 위로 오른다", "kind": "piece", "origin": "type-check" },
+            { "id": "type-mismatch", "name": "맞물리지 않는 자리", "kind": "piece", "origin": "type-check" },
+            { "id": "resolve-to-declaration", "name": "이름을 선언한 자리로 잇는다", "kind": "piece", "origin": "scope-resolve" },
+            { "id": "table-per-scope", "name": "스코프마다 이름 표를 쌓는다", "kind": "piece", "origin": "symbol-table" }
           ]
         },
         {
@@ -742,7 +760,13 @@
             { "id": "ir-design", "name": "IR 설계" },
             { "id": "ssa", "name": "SSA 형식" },
             { "id": "cfg-ir", "name": "CFG" },
-            { "id": "dfg", "name": "DFG" }
+            { "id": "dfg", "name": "DFG" },
+            { "id": "lower-to-simpler", "name": "뜻은 두고 말을 단순하게", "kind": "piece", "origin": "ir-design" },
+            { "id": "assign-once", "name": "이름마다 한 번만 적는다", "kind": "piece", "origin": "ssa" },
+            { "id": "phi-merges", "name": "갈라진 값이 만나는 자리", "kind": "piece", "origin": "ssa" },
+            { "id": "basic-block", "name": "갈래 없이 쭉 가는 토막", "kind": "piece", "origin": "cfg-ir" },
+            { "id": "edges-are-jumps", "name": "토막과 토막을 잇는 뜀", "kind": "piece", "origin": "cfg-ir" },
+            { "id": "value-flows-to-use", "name": "만든 자리에서 쓰는 자리로", "kind": "piece", "origin": "dfg" }
           ]
         },
         {
@@ -752,7 +776,13 @@
             { "id": "constant-folding", "name": "상수 폴딩" },
             { "id": "dce", "name": "죽은 코드 제거" },
             { "id": "loop-opt", "name": "루프 최적화" },
-            { "id": "inlining", "name": "인라이닝" }
+            { "id": "inlining", "name": "인라이닝" },
+            { "id": "fold-at-compile", "name": "미리 셈해 값으로 바꾼다", "kind": "piece", "origin": "constant-folding" },
+            { "id": "unused-is-removed", "name": "아무도 안 쓰면 지운다", "kind": "piece", "origin": "dce" },
+            { "id": "hoist-invariant", "name": "안 변하는 것을 밖으로 꺼낸다", "kind": "piece", "origin": "loop-opt" },
+            { "id": "unroll-loop", "name": "반복을 펴서 늘어놓는다", "kind": "piece", "origin": "loop-opt" },
+            { "id": "paste-the-body", "name": "부르는 대신 몸통을 붙여 넣는다", "kind": "piece", "origin": "inlining" },
+            { "id": "inline-grows-code", "name": "빨라진 만큼 커진다", "kind": "piece", "origin": "inlining" }
           ]
         },
         {
@@ -761,7 +791,13 @@
           "topics": [
             { "id": "register-alloc", "name": "레지스터 할당" },
             { "id": "instr-select", "name": "명령어 선택" },
-            { "id": "linking", "name": "링킹" }
+            { "id": "linking", "name": "링킹" },
+            { "id": "registers-are-few", "name": "자리는 적고 값은 많다", "kind": "piece", "origin": "register-alloc" },
+            { "id": "spill-to-memory", "name": "넘치면 메모리로 밀어낸다", "kind": "piece", "origin": "register-alloc" },
+            { "id": "interference-graph", "name": "같이 살아 있으면 같은 자리를 못 쓴다", "kind": "piece", "origin": "register-alloc" },
+            { "id": "pattern-to-instruction", "name": "나무 조각을 명령 하나로", "kind": "piece", "origin": "instr-select" },
+            { "id": "resolve-symbols", "name": "빈 자리를 다른 파일에서 메운다", "kind": "piece", "origin": "linking" },
+            { "id": "relocate-addresses", "name": "주소를 옮겨 맞춘다", "kind": "piece", "origin": "linking" }
           ]
         }
       ]
