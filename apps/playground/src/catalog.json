@@ -819,20 +819,20 @@
             { "id": "decision-tree", "name": "의사결정 트리" },
             { "id": "random-forest", "name": "랜덤 포레스트" },
             { "id": "svm", "name": "SVM" },
-            { "id": "fit-a-line", "name": "점들 사이로 선을 긋는다", "kind": "piece", "origin": "linear-regression" },
-            { "id": "residual-distance", "name": "선에서 벗어난 만큼", "kind": "piece", "origin": "linear-regression" },
-            { "id": "least-squares", "name": "벗어남의 제곱을 가장 작게", "kind": "piece", "origin": "linear-regression" },
-            { "id": "squash-to-probability", "name": "아무 수나 0과 1 사이로 눌러 담는다", "kind": "piece", "origin": "logistic-regression" },
-            { "id": "decision-boundary", "name": "어느 쪽인지 가르는 선", "kind": "piece", "origin": "logistic-regression" },
-            { "id": "vote-by-neighbors", "name": "가까운 것들에게 물어본다", "kind": "piece", "origin": "knn" },
-            { "id": "k-changes-boundary", "name": "k 를 바꾸면 경계가 바뀐다", "kind": "piece", "origin": "knn" },
-            { "id": "split-by-question", "name": "질문 하나로 둘로 가른다", "kind": "piece", "origin": "decision-tree" },
-            { "id": "impurity-drops", "name": "가를수록 섞임이 줄어든다", "kind": "piece", "origin": "decision-tree" },
-            { "id": "many-trees-vote", "name": "여러 나무가 투표한다", "kind": "piece", "origin": "random-forest" },
-            { "id": "bagging-sample", "name": "뽑고 되돌리며 다르게 배운다", "kind": "piece", "origin": "random-forest" },
-            { "id": "widest-margin", "name": "가장 넓은 틈을 낸다", "kind": "piece", "origin": "svm" },
-            { "id": "support-vectors-only", "name": "경계에 닿은 것만 정한다", "kind": "piece", "origin": "svm" },
-            { "id": "kernel-lifts", "name": "못 가르면 차원을 올린다", "kind": "piece", "origin": "svm" }
+            { "id": "fit-a-line", "name": "직선 적합", "desc": "점들 사이로 선을 긋는다", "kind": "piece", "origin": "linear-regression" },
+            { "id": "residual-distance", "name": "잔차", "desc": "선에서 벗어난 만큼", "kind": "piece", "origin": "linear-regression" },
+            { "id": "least-squares", "name": "최소제곱", "desc": "벗어남의 제곱을 가장 작게", "kind": "piece", "origin": "linear-regression" },
+            { "id": "squash-to-probability", "name": "시그모이드", "desc": "아무 수나 0과 1 사이로 눌러 담는다", "kind": "piece", "origin": "logistic-regression" },
+            { "id": "decision-boundary", "name": "결정 경계", "desc": "어느 쪽인지 가르는 선", "kind": "piece", "origin": "logistic-regression" },
+            { "id": "vote-by-neighbors", "name": "최근접 이웃 투표", "desc": "가까운 것들에게 물어본다", "kind": "piece", "origin": "knn" },
+            { "id": "k-changes-boundary", "name": "k 값의 영향", "desc": "k 를 바꾸면 경계가 바뀐다", "kind": "piece", "origin": "knn" },
+            { "id": "split-by-question", "name": "분기 기준", "desc": "질문 하나로 둘로 가른다", "kind": "piece", "origin": "decision-tree" },
+            { "id": "impurity-drops", "name": "불순도 감소", "desc": "가를수록 섞임이 줄어든다", "kind": "piece", "origin": "decision-tree" },
+            { "id": "many-trees-vote", "name": "앙상블 투표", "desc": "여러 나무가 투표한다", "kind": "piece", "origin": "random-forest" },
+            { "id": "bagging-sample", "name": "배깅", "desc": "뽑고 되돌리며 다르게 배운다", "kind": "piece", "origin": "random-forest" },
+            { "id": "widest-margin", "name": "최대 마진", "desc": "가장 넓은 틈을 낸다", "kind": "piece", "origin": "svm" },
+            { "id": "support-vectors-only", "name": "서포트 벡터", "desc": "경계에 닿은 것만 정한다", "kind": "piece", "origin": "svm" },
+            { "id": "kernel-lifts", "name": "커널 트릭", "desc": "못 가르면 차원을 올린다", "kind": "piece", "origin": "svm" }
           ]
         },
         {
@@ -845,16 +845,16 @@
             { "id": "pca", "name": "PCA" },
             { "id": "tsne", "name": "t-SNE" },
             { "id": "umap", "name": "UMAP" },
-            { "id": "assign-then-move", "name": "가까운 곳에 붙이고 가운데로 옮긴다", "kind": "piece", "origin": "kmeans" },
-            { "id": "k-must-be-given", "name": "몇 무리인지 미리 정해야 한다", "kind": "piece", "origin": "kmeans" },
-            { "id": "merge-nearest-pair", "name": "가장 가까운 둘을 합쳐 올라간다", "kind": "piece", "origin": "hierarchical" },
-            { "id": "dendrogram-cut", "name": "어디서 자르느냐로 무리 수가 정해진다", "kind": "piece", "origin": "hierarchical" },
-            { "id": "dense-neighborhood", "name": "이웃이 촘촘하면 한 무리", "kind": "piece", "origin": "dbscan" },
-            { "id": "noise-left-out", "name": "어디에도 안 붙는 것은 남긴다", "kind": "piece", "origin": "dbscan" },
-            { "id": "direction-of-most-spread", "name": "가장 넓게 퍼진 방향", "kind": "piece", "origin": "pca" },
-            { "id": "project-and-lose", "name": "내려 찍으면 얼마를 잃는가", "kind": "piece", "origin": "pca" },
-            { "id": "keep-neighbors-close", "name": "가까운 것만 가깝게 남긴다", "kind": "piece", "origin": "tsne" },
-            { "id": "global-and-local", "name": "멀고 가까움을 함께 지킨다", "kind": "piece", "origin": "umap" }
+            { "id": "assign-then-move", "name": "할당과 갱신", "desc": "가까운 곳에 붙이고 가운데로 옮긴다", "kind": "piece", "origin": "kmeans" },
+            { "id": "k-must-be-given", "name": "군집 수 선택", "desc": "몇 무리인지 미리 정해야 한다", "kind": "piece", "origin": "kmeans" },
+            { "id": "merge-nearest-pair", "name": "병합 군집화", "desc": "가장 가까운 둘을 합쳐 올라간다", "kind": "piece", "origin": "hierarchical" },
+            { "id": "dendrogram-cut", "name": "덴드로그램 절단", "desc": "어디서 자르느냐로 무리 수가 정해진다", "kind": "piece", "origin": "hierarchical" },
+            { "id": "dense-neighborhood", "name": "밀도 기반 군집", "desc": "이웃이 촘촘하면 한 무리", "kind": "piece", "origin": "dbscan" },
+            { "id": "noise-left-out", "name": "잡음점", "desc": "어디에도 안 붙는 것은 남긴다", "kind": "piece", "origin": "dbscan" },
+            { "id": "direction-of-most-spread", "name": "주성분", "desc": "가장 넓게 퍼진 방향", "kind": "piece", "origin": "pca" },
+            { "id": "project-and-lose", "name": "설명 분산", "desc": "내려 찍으면 얼마를 잃는가", "kind": "piece", "origin": "pca" },
+            { "id": "keep-neighbors-close", "name": "지역 구조 보존", "desc": "가까운 것만 가깝게 남긴다", "kind": "piece", "origin": "tsne" },
+            { "id": "global-and-local", "name": "전역과 지역 구조", "desc": "멀고 가까움을 함께 지킨다", "kind": "piece", "origin": "umap" }
           ]
         },
         {
@@ -865,12 +865,12 @@
             { "id": "mlp", "name": "MLP" },
             { "id": "activation", "name": "활성화 함수" },
             { "id": "loss", "name": "손실 함수" },
-            { "id": "weighted-sum-threshold", "name": "무게를 실어 더하고 넘으면 켠다", "kind": "piece", "origin": "perceptron" },
-            { "id": "layers-compose", "name": "층을 겹쳐 굽은 경계를 만든다", "kind": "piece", "origin": "mlp" },
-            { "id": "hidden-layer-features", "name": "가운데 층이 제 나름의 특징을 만든다", "kind": "piece", "origin": "mlp" },
-            { "id": "nonlinear-bends", "name": "굽히지 않으면 아무리 겹쳐도 직선", "kind": "piece", "origin": "activation" },
-            { "id": "saturate-and-vanish", "name": "양끝에서는 기울기가 사라진다", "kind": "piece", "origin": "activation" },
-            { "id": "loss-measures-wrongness", "name": "얼마나 틀렸는지 하나의 수로", "kind": "piece", "origin": "loss" }
+            { "id": "weighted-sum-threshold", "name": "퍼셉트론", "desc": "무게를 실어 더하고 넘으면 켠다", "kind": "piece", "origin": "perceptron" },
+            { "id": "layers-compose", "name": "다층 구조", "desc": "층을 겹쳐 굽은 경계를 만든다", "kind": "piece", "origin": "mlp" },
+            { "id": "hidden-layer-features", "name": "은닉 표현", "desc": "가운데 층이 제 나름의 특징을 만든다", "kind": "piece", "origin": "mlp" },
+            { "id": "nonlinear-bends", "name": "비선형성", "desc": "굽히지 않으면 아무리 겹쳐도 직선", "kind": "piece", "origin": "activation" },
+            { "id": "saturate-and-vanish", "name": "포화와 기울기 소실", "desc": "양끝에서는 기울기가 사라진다", "kind": "piece", "origin": "activation" },
+            { "id": "loss-measures-wrongness", "name": "손실 함수", "desc": "얼마나 틀렸는지 하나의 수로", "kind": "piece", "origin": "loss" }
           ]
         },
         {
@@ -882,14 +882,14 @@
             { "id": "momentum", "name": "Momentum" },
             { "id": "adam", "name": "Adam" },
             { "id": "backprop", "name": "역전파" },
-            { "id": "learning-rate-too-big", "name": "너무 크면 골짜기를 뛰어넘는다", "kind": "piece", "origin": "gradient-descent" },
-            { "id": "local-minimum", "name": "여기서 멈췄는데 바닥이 아니다", "kind": "piece", "origin": "gradient-descent" },
-            { "id": "one-batch-at-a-time", "name": "조금씩 보고 자주 움직인다", "kind": "piece", "origin": "sgd" },
-            { "id": "noisy-path", "name": "흔들리며 내려간다", "kind": "piece", "origin": "sgd" },
-            { "id": "carry-velocity", "name": "가던 방향을 이어 받는다", "kind": "piece", "origin": "momentum" },
-            { "id": "per-parameter-step", "name": "자리마다 걸음 폭을 달리한다", "kind": "piece", "origin": "adam" },
-            { "id": "error-flows-backward", "name": "틀린 만큼이 뒤로 흘러간다", "kind": "piece", "origin": "backprop" },
-            { "id": "gradient-through-layers", "name": "층마다 기울기가 곱해진다", "kind": "piece", "origin": "backprop" }
+            { "id": "learning-rate-too-big", "name": "학습률", "desc": "너무 크면 골짜기를 뛰어넘는다", "kind": "piece", "origin": "gradient-descent" },
+            { "id": "local-minimum", "name": "지역 최솟값", "desc": "여기서 멈췄는데 바닥이 아니다", "kind": "piece", "origin": "gradient-descent" },
+            { "id": "one-batch-at-a-time", "name": "미니배치", "desc": "조금씩 보고 자주 움직인다", "kind": "piece", "origin": "sgd" },
+            { "id": "noisy-path", "name": "확률적 경사하강", "desc": "흔들리며 내려간다", "kind": "piece", "origin": "sgd" },
+            { "id": "carry-velocity", "name": "모멘텀", "desc": "가던 방향을 이어 받는다", "kind": "piece", "origin": "momentum" },
+            { "id": "per-parameter-step", "name": "적응적 학습률", "desc": "자리마다 걸음 폭을 달리한다", "kind": "piece", "origin": "adam" },
+            { "id": "error-flows-backward", "name": "역전파", "desc": "틀린 만큼이 뒤로 흘러간다", "kind": "piece", "origin": "backprop" },
+            { "id": "gradient-through-layers", "name": "층별 기울기 전파", "desc": "층마다 기울기가 곱해진다", "kind": "piece", "origin": "backprop" }
           ]
         },
         {
@@ -901,11 +901,11 @@
             { "id": "dropout", "name": "Dropout" },
             { "id": "batchnorm", "name": "배치 정규화" },
             { "id": "early-stopping", "name": "조기 종료" },
-            { "id": "push-to-zero", "name": "작은 무게를 0으로 밀어낸다", "kind": "piece", "origin": "l1" },
-            { "id": "shrink-all", "name": "모든 무게를 조금씩 줄인다", "kind": "piece", "origin": "l2" },
-            { "id": "drop-random-units", "name": "무작위로 몇을 쉬게 한다", "kind": "piece", "origin": "dropout" },
-            { "id": "rescale-each-batch", "name": "한 묶음마다 자리와 폭을 맞춘다", "kind": "piece", "origin": "batchnorm" },
-            { "id": "stop-before-turn", "name": "검증이 나빠지기 시작하면 멈춘다", "kind": "piece", "origin": "early-stopping" }
+            { "id": "push-to-zero", "name": "L1 희소성", "desc": "작은 무게를 0으로 밀어낸다", "kind": "piece", "origin": "l1" },
+            { "id": "shrink-all", "name": "L2 가중치 감쇠", "desc": "모든 무게를 조금씩 줄인다", "kind": "piece", "origin": "l2" },
+            { "id": "drop-random-units", "name": "드롭아웃", "desc": "무작위로 몇을 쉬게 한다", "kind": "piece", "origin": "dropout" },
+            { "id": "rescale-each-batch", "name": "배치 정규화", "desc": "한 묶음마다 자리와 폭을 맞춘다", "kind": "piece", "origin": "batchnorm" },
+            { "id": "stop-before-turn", "name": "조기 종료", "desc": "검증이 나빠지기 시작하면 멈춘다", "kind": "piece", "origin": "early-stopping" }
           ]
         },
         {
@@ -917,12 +917,12 @@
             { "id": "roc", "name": "ROC 곡선" },
             { "id": "confusion-matrix", "name": "혼동 행렬" },
             { "id": "overfitting", "name": "오버피팅 진단" },
-            { "id": "hold-out-some", "name": "못 본 것으로 재야 한다", "kind": "piece", "origin": "train-val-split" },
-            { "id": "rotate-the-fold", "name": "돌아가며 한 조각씩 시험지로", "kind": "piece", "origin": "cross-validation" },
-            { "id": "threshold-slides", "name": "문턱을 옮기면 맞춤과 헛집음이 함께 움직인다", "kind": "piece", "origin": "roc" },
-            { "id": "four-boxes", "name": "맞음과 틀림을 네 칸으로", "kind": "piece", "origin": "confusion-matrix" },
-            { "id": "memorize-vs-generalize", "name": "외운 것과 배운 것", "kind": "piece", "origin": "overfitting" },
-            { "id": "train-down-val-up", "name": "한쪽은 내려가는데 다른 쪽은 오른다", "kind": "piece", "origin": "overfitting" }
+            { "id": "hold-out-some", "name": "홀드아웃", "desc": "못 본 것으로 재야 한다", "kind": "piece", "origin": "train-val-split" },
+            { "id": "rotate-the-fold", "name": "교차 검증", "desc": "돌아가며 한 조각씩 시험지로", "kind": "piece", "origin": "cross-validation" },
+            { "id": "threshold-slides", "name": "ROC 곡선", "desc": "문턱을 옮기면 맞춤과 헛집음이 함께 움직인다", "kind": "piece", "origin": "roc" },
+            { "id": "four-boxes", "name": "혼동 행렬", "desc": "맞음과 틀림을 네 칸으로", "kind": "piece", "origin": "confusion-matrix" },
+            { "id": "memorize-vs-generalize", "name": "일반화", "desc": "외운 것과 배운 것", "kind": "piece", "origin": "overfitting" },
+            { "id": "train-down-val-up", "name": "과적합", "desc": "한쪽은 내려가는데 다른 쪽은 오른다", "kind": "piece", "origin": "overfitting" }
           ]
         }
       ]
@@ -942,12 +942,12 @@
             { "id": "pooling", "name": "풀링" },
             { "id": "filter-viz", "name": "필터 시각화" },
             { "id": "receptive-field", "name": "수용장" },
-            { "id": "slide-the-kernel", "name": "작은 창을 밀며 겹쳐 곱한다", "kind": "piece", "origin": "convolution" },
-            { "id": "weight-sharing", "name": "같은 창을 모든 자리에 쓴다", "kind": "piece", "origin": "convolution" },
-            { "id": "stride-and-padding", "name": "몇 칸씩 뛰고 가장자리는 어떻게", "kind": "piece", "origin": "convolution" },
-            { "id": "shrink-by-summary", "name": "몇 칸을 하나로 줄인다", "kind": "piece", "origin": "pooling" },
-            { "id": "filters-learn-edges", "name": "배운 창이 무엇에 반응하는가", "kind": "piece", "origin": "filter-viz" },
-            { "id": "field-grows-with-depth", "name": "깊어질수록 넓게 본다", "kind": "piece", "origin": "receptive-field" }
+            { "id": "slide-the-kernel", "name": "합성곱", "desc": "작은 창을 밀며 겹쳐 곱한다", "kind": "piece", "origin": "convolution" },
+            { "id": "weight-sharing", "name": "가중치 공유", "desc": "같은 창을 모든 자리에 쓴다", "kind": "piece", "origin": "convolution" },
+            { "id": "stride-and-padding", "name": "스트라이드와 패딩", "desc": "몇 칸씩 뛰고 가장자리는 어떻게", "kind": "piece", "origin": "convolution" },
+            { "id": "shrink-by-summary", "name": "풀링", "desc": "몇 칸을 하나로 줄인다", "kind": "piece", "origin": "pooling" },
+            { "id": "filters-learn-edges", "name": "필터 시각화", "desc": "배운 창이 무엇에 반응하는가", "kind": "piece", "origin": "filter-viz" },
+            { "id": "field-grows-with-depth", "name": "수용 영역", "desc": "깊어질수록 넓게 본다", "kind": "piece", "origin": "receptive-field" }
           ]
         },
         {
@@ -958,13 +958,13 @@
             { "id": "lstm", "name": "LSTM" },
             { "id": "gru", "name": "GRU" },
             { "id": "bptt", "name": "BPTT" },
-            { "id": "carry-hidden-state", "name": "앞에서 본 것을 들고 다음으로", "kind": "piece", "origin": "sequence-process" },
-            { "id": "same-weights-each-step", "name": "걸음마다 같은 무게를 쓴다", "kind": "piece", "origin": "sequence-process" },
-            { "id": "gate-lets-through", "name": "문을 열고 닫아 흘릴 것을 고른다", "kind": "piece", "origin": "lstm" },
-            { "id": "cell-carries-long", "name": "긴 길을 따로 낸다", "kind": "piece", "origin": "lstm" },
-            { "id": "fewer-gates", "name": "문을 줄여 같은 일을", "kind": "piece", "origin": "gru" },
-            { "id": "unroll-then-backprop", "name": "펼쳐 놓고 뒤로 흘린다", "kind": "piece", "origin": "bptt" },
-            { "id": "vanishing-over-time", "name": "멀어질수록 기울기가 사라진다", "kind": "piece", "origin": "bptt" }
+            { "id": "carry-hidden-state", "name": "은닉 상태", "desc": "앞에서 본 것을 들고 다음으로", "kind": "piece", "origin": "sequence-process" },
+            { "id": "same-weights-each-step", "name": "시간 축 가중치 공유", "desc": "걸음마다 같은 무게를 쓴다", "kind": "piece", "origin": "sequence-process" },
+            { "id": "gate-lets-through", "name": "게이트", "desc": "문을 열고 닫아 흘릴 것을 고른다", "kind": "piece", "origin": "lstm" },
+            { "id": "cell-carries-long", "name": "셀 상태", "desc": "긴 길을 따로 낸다", "kind": "piece", "origin": "lstm" },
+            { "id": "fewer-gates", "name": "GRU", "desc": "문을 줄여 같은 일을", "kind": "piece", "origin": "gru" },
+            { "id": "unroll-then-backprop", "name": "시간 역전파", "desc": "펼쳐 놓고 뒤로 흘린다", "kind": "piece", "origin": "bptt" },
+            { "id": "vanishing-over-time", "name": "장기 의존성 문제", "desc": "멀어질수록 기울기가 사라진다", "kind": "piece", "origin": "bptt" }
           ]
         },
         {
@@ -974,11 +974,11 @@
             { "id": "self-attention", "name": "Self-attention" },
             { "id": "multi-head", "name": "Multi-head" },
             { "id": "positional-encoding", "name": "위치 인코딩" },
-            { "id": "query-key-value", "name": "묻고 맞춰 보고 가져온다", "kind": "piece", "origin": "self-attention" },
-            { "id": "attend-to-all-at-once", "name": "순서 없이 모두를 한 번에 본다", "kind": "piece", "origin": "self-attention" },
-            { "id": "attention-weights", "name": "어디를 얼마나 볼지 무게로", "kind": "piece", "origin": "self-attention" },
-            { "id": "several-views", "name": "여러 눈으로 각기 다른 관계를", "kind": "piece", "origin": "multi-head" },
-            { "id": "order-must-be-added", "name": "순서를 잃었으니 표시를 더한다", "kind": "piece", "origin": "positional-encoding" }
+            { "id": "query-key-value", "name": "Query·Key·Value", "desc": "묻고 맞춰 보고 가져온다", "kind": "piece", "origin": "self-attention" },
+            { "id": "attend-to-all-at-once", "name": "셀프 어텐션", "desc": "순서 없이 모두를 한 번에 본다", "kind": "piece", "origin": "self-attention" },
+            { "id": "attention-weights", "name": "어텐션 가중치", "desc": "어디를 얼마나 볼지 무게로", "kind": "piece", "origin": "self-attention" },
+            { "id": "several-views", "name": "멀티 헤드", "desc": "여러 눈으로 각기 다른 관계를", "kind": "piece", "origin": "multi-head" },
+            { "id": "order-must-be-added", "name": "위치 인코딩", "desc": "순서를 잃었으니 표시를 더한다", "kind": "piece", "origin": "positional-encoding" }
           ]
         },
         {
@@ -988,12 +988,12 @@
             { "id": "vae", "name": "VAE" },
             { "id": "gan", "name": "GAN" },
             { "id": "diffusion", "name": "Diffusion 기초" },
-            { "id": "encode-to-distribution", "name": "점이 아니라 퍼짐으로 담는다", "kind": "piece", "origin": "vae" },
-            { "id": "sample-and-decode", "name": "뽑아서 되돌린다", "kind": "piece", "origin": "vae" },
-            { "id": "two-nets-compete", "name": "만드는 쪽과 가려내는 쪽이 겨룬다", "kind": "piece", "origin": "gan" },
-            { "id": "mode-collapse", "name": "한 가지만 만들어 낸다", "kind": "piece", "origin": "gan" },
-            { "id": "add-noise-then-remove", "name": "흐리게 만들었다 되돌린다", "kind": "piece", "origin": "diffusion" },
-            { "id": "denoise-step-by-step", "name": "한 걸음씩 걷어낸다", "kind": "piece", "origin": "diffusion" }
+            { "id": "encode-to-distribution", "name": "잠재 분포", "desc": "점이 아니라 퍼짐으로 담는다", "kind": "piece", "origin": "vae" },
+            { "id": "sample-and-decode", "name": "샘플링과 복원", "desc": "뽑아서 되돌린다", "kind": "piece", "origin": "vae" },
+            { "id": "two-nets-compete", "name": "적대적 학습", "desc": "만드는 쪽과 가려내는 쪽이 겨룬다", "kind": "piece", "origin": "gan" },
+            { "id": "mode-collapse", "name": "모드 붕괴", "desc": "한 가지만 만들어 낸다", "kind": "piece", "origin": "gan" },
+            { "id": "add-noise-then-remove", "name": "확산 과정", "desc": "흐리게 만들었다 되돌린다", "kind": "piece", "origin": "diffusion" },
+            { "id": "denoise-step-by-step", "name": "역확산", "desc": "한 걸음씩 걷어낸다", "kind": "piece", "origin": "diffusion" }
           ]
         },
         {
@@ -1003,11 +1003,11 @@
             { "id": "q-learning", "name": "Q-learning" },
             { "id": "policy-gradient", "name": "Policy Gradient" },
             { "id": "mdp", "name": "MDP" },
-            { "id": "state-action-reward", "name": "자리에서 골라 상을 받는다", "kind": "piece", "origin": "mdp" },
-            { "id": "discount-future", "name": "먼 상은 덜 친다", "kind": "piece", "origin": "mdp" },
-            { "id": "value-of-action", "name": "이 자리에서 이 선택의 값", "kind": "piece", "origin": "q-learning" },
-            { "id": "explore-vs-exploit", "name": "새것을 볼까 아는 것을 쓸까", "kind": "piece", "origin": "q-learning" },
-            { "id": "nudge-toward-reward", "name": "상을 받은 쪽으로 확률을 민다", "kind": "piece", "origin": "policy-gradient" }
+            { "id": "state-action-reward", "name": "마르코프 결정 과정", "desc": "자리에서 골라 상을 받는다", "kind": "piece", "origin": "mdp" },
+            { "id": "discount-future", "name": "할인율", "desc": "먼 상은 덜 친다", "kind": "piece", "origin": "mdp" },
+            { "id": "value-of-action", "name": "Q 값", "desc": "이 자리에서 이 선택의 값", "kind": "piece", "origin": "q-learning" },
+            { "id": "explore-vs-exploit", "name": "탐험과 활용", "desc": "새것을 볼까 아는 것을 쓸까", "kind": "piece", "origin": "q-learning" },
+            { "id": "nudge-toward-reward", "name": "정책 경사", "desc": "상을 받은 쪽으로 확률을 민다", "kind": "piece", "origin": "policy-gradient" }
           ]
         }
       ]
