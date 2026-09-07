@@ -941,7 +941,13 @@
             { "id": "convolution", "name": "합성곱 연산" },
             { "id": "pooling", "name": "풀링" },
             { "id": "filter-viz", "name": "필터 시각화" },
-            { "id": "receptive-field", "name": "수용장" }
+            { "id": "receptive-field", "name": "수용장" },
+            { "id": "slide-the-kernel", "name": "작은 창을 밀며 겹쳐 곱한다", "kind": "piece", "origin": "convolution" },
+            { "id": "weight-sharing", "name": "같은 창을 모든 자리에 쓴다", "kind": "piece", "origin": "convolution" },
+            { "id": "stride-and-padding", "name": "몇 칸씩 뛰고 가장자리는 어떻게", "kind": "piece", "origin": "convolution" },
+            { "id": "shrink-by-summary", "name": "몇 칸을 하나로 줄인다", "kind": "piece", "origin": "pooling" },
+            { "id": "filters-learn-edges", "name": "배운 창이 무엇에 반응하는가", "kind": "piece", "origin": "filter-viz" },
+            { "id": "field-grows-with-depth", "name": "깊어질수록 넓게 본다", "kind": "piece", "origin": "receptive-field" }
           ]
         },
         {
@@ -951,7 +957,14 @@
             { "id": "sequence-process", "name": "시퀀스 처리" },
             { "id": "lstm", "name": "LSTM" },
             { "id": "gru", "name": "GRU" },
-            { "id": "bptt", "name": "BPTT" }
+            { "id": "bptt", "name": "BPTT" },
+            { "id": "carry-hidden-state", "name": "앞에서 본 것을 들고 다음으로", "kind": "piece", "origin": "sequence-process" },
+            { "id": "same-weights-each-step", "name": "걸음마다 같은 무게를 쓴다", "kind": "piece", "origin": "sequence-process" },
+            { "id": "gate-lets-through", "name": "문을 열고 닫아 흘릴 것을 고른다", "kind": "piece", "origin": "lstm" },
+            { "id": "cell-carries-long", "name": "긴 길을 따로 낸다", "kind": "piece", "origin": "lstm" },
+            { "id": "fewer-gates", "name": "문을 줄여 같은 일을", "kind": "piece", "origin": "gru" },
+            { "id": "unroll-then-backprop", "name": "펼쳐 놓고 뒤로 흘린다", "kind": "piece", "origin": "bptt" },
+            { "id": "vanishing-over-time", "name": "멀어질수록 기울기가 사라진다", "kind": "piece", "origin": "bptt" }
           ]
         },
         {
@@ -960,7 +973,12 @@
           "topics": [
             { "id": "self-attention", "name": "Self-attention" },
             { "id": "multi-head", "name": "Multi-head" },
-            { "id": "positional-encoding", "name": "위치 인코딩" }
+            { "id": "positional-encoding", "name": "위치 인코딩" },
+            { "id": "query-key-value", "name": "묻고 맞춰 보고 가져온다", "kind": "piece", "origin": "self-attention" },
+            { "id": "attend-to-all-at-once", "name": "순서 없이 모두를 한 번에 본다", "kind": "piece", "origin": "self-attention" },
+            { "id": "attention-weights", "name": "어디를 얼마나 볼지 무게로", "kind": "piece", "origin": "self-attention" },
+            { "id": "several-views", "name": "여러 눈으로 각기 다른 관계를", "kind": "piece", "origin": "multi-head" },
+            { "id": "order-must-be-added", "name": "순서를 잃었으니 표시를 더한다", "kind": "piece", "origin": "positional-encoding" }
           ]
         },
         {
@@ -969,7 +987,13 @@
           "topics": [
             { "id": "vae", "name": "VAE" },
             { "id": "gan", "name": "GAN" },
-            { "id": "diffusion", "name": "Diffusion 기초" }
+            { "id": "diffusion", "name": "Diffusion 기초" },
+            { "id": "encode-to-distribution", "name": "점이 아니라 퍼짐으로 담는다", "kind": "piece", "origin": "vae" },
+            { "id": "sample-and-decode", "name": "뽑아서 되돌린다", "kind": "piece", "origin": "vae" },
+            { "id": "two-nets-compete", "name": "만드는 쪽과 가려내는 쪽이 겨룬다", "kind": "piece", "origin": "gan" },
+            { "id": "mode-collapse", "name": "한 가지만 만들어 낸다", "kind": "piece", "origin": "gan" },
+            { "id": "add-noise-then-remove", "name": "흐리게 만들었다 되돌린다", "kind": "piece", "origin": "diffusion" },
+            { "id": "denoise-step-by-step", "name": "한 걸음씩 걷어낸다", "kind": "piece", "origin": "diffusion" }
           ]
         },
         {
@@ -978,7 +1002,12 @@
           "topics": [
             { "id": "q-learning", "name": "Q-learning" },
             { "id": "policy-gradient", "name": "Policy Gradient" },
-            { "id": "mdp", "name": "MDP" }
+            { "id": "mdp", "name": "MDP" },
+            { "id": "state-action-reward", "name": "자리에서 골라 상을 받는다", "kind": "piece", "origin": "mdp" },
+            { "id": "discount-future", "name": "먼 상은 덜 친다", "kind": "piece", "origin": "mdp" },
+            { "id": "value-of-action", "name": "이 자리에서 이 선택의 값", "kind": "piece", "origin": "q-learning" },
+            { "id": "explore-vs-exploit", "name": "새것을 볼까 아는 것을 쓸까", "kind": "piece", "origin": "q-learning" },
+            { "id": "nudge-toward-reward", "name": "상을 받은 쪽으로 확률을 민다", "kind": "piece", "origin": "policy-gradient" }
           ]
         }
       ]
