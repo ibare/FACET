@@ -1,0 +1,82 @@
+/**
+ * 해시 사슬 (hash chain) 시각화 알고리즘 — 조각(단일 주장) facet.
+ *
+ * 이 facet 이 답하는 질문 하나:
+ *   "지난 기록을 몰래 고치면 왜 들통나는가?"
+ *
+ * 각 칸이 앞 칸의 해시를 자기 안에 품기 때문이다. 그래서 한 칸을 고치면 그
+ * 칸의 해시가 바뀌고, 다음 칸이 품고 있던 값과 어긋나고, 그 어긋남이 끝까지
+ * 번진다. 고친 자리 하나만 손봐서는 덮을 수 없다.
+ *
+ * 진행 동력은 ReactiveMechanism. 컨트롤바 없이 스스로 시작하고 걸음 간격도
+ * 스스로 정한다 (ctx.sleep).
+ *
+ * 식별자 (C1): 칸을 가리키는 곳이 payload 뿐이라 target 을 쓰지 않는다.
+ *
+ * 이벤트 (C2) — 전부 facet 로컬 (StandardEventType 미포함):
+ *   - init          payload: { algorithmLabel, blocks, tamper }
+ *   - reveal-chain  payload: {}   칸들이 앞 칸의 해시를 품은 채 이어진다
+ *   - tamper        payload: {}   가운데 한 칸의 내용이 바뀐다
+ *   - break-link    payload: {}   그 칸의 해시가 바뀌어 다음 칸과 어긋난다
+ *   - cascade       payload: {}   어긋남이 끝까지 번진다
+ *
+ * 메트릭 (C5): 없다.
+ */
+
+import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
+
+/** 사슬 한 칸. */
+export type ChainBlock = {
+  /** 이 칸이 담은 내용. */
+  data: string;
+  /** 이 칸이 품은 앞 칸의 해시. 첫 칸은 0으로 채운다. */
+  prev: string;
+  /** sha256(prev + data) 실측값. */
+  hash: string;
+};
+
+/** 손댄 뒤의 사슬. 고친 자리부터 끝까지 값이 갈린다. */
+export type ChainTamper = {
+  /** 손댄 칸의 위치 (0-based). */
+  index: number;
+  /** 바뀐 내용. */
+  data: string;
+  /** 손댄 뒤 다시 계산한 칸들. blocks 와 길이가 같다. */
+  blocks: ChainBlock[];
+};
+
+export type HashChainFacetData = {
+  type: 'hash-chain';
+  /** 화면에 인쇄할 해시 함수 이름. */
+  algorithmLabel: string;
+  /** 손대기 전의 사슬. */
+  blocks: ChainBlock[];
+  /** 손댄 뒤의 사슬. */
+  tamper: ChainTamper;
+  /**
+   * 한 걸음 사이 머무는 간격 ms.
+   *
+   * 조각은 컨트롤바가 없어 speed-slider 로 늦출 수 없다 (원칙 2).
+   */
+  stepMs: number;
+};
+
+export async function hashChain(
+  ctxBase: FacetContext<HashChainFacetData>,
+): Promise<void> {
+  const ctx = ctxBase as ReactiveContext<HashChainFacetData>;
+  const { algorithmLabel, blocks, tamper, stepMs } = ctx.data;
+
+  await ctx.emit({
+    type: 'init',
+    payload: { algorithmLabel, blocks, tamper },
+  });
+
+  // 네 걸음. 성한 사슬을 먼저 보여야 어긋남이 어긋남으로 보인다.
+  for (const type of ['reveal-chain', 'tamper', 'break-link', 'cascade'] as const) {
+    if (ctx.cancelled) return;
+    const ok = await ctx.sleep(stepMs);
+    if (!ok || ctx.cancelled) return;
+    await ctx.emit({ type });
+  }
+}

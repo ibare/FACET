@@ -695,6 +695,10 @@
             { "id": "hash-fixed-length", "name": "무엇을 넣든 같은 길이", "facetId": "facet:hashFixedLength" },
             { "id": "hash-avalanche", "name": "눈사태 효과", "facetId": "facet:hashAvalanche" },
             { "id": "pigeonhole-collision", "name": "충돌은 반드시 있다", "facetId": "facet:pigeonholeCollision" },
+            { "id": "hash-integrity", "name": "받은 것이 원본인지 확인", "facetId": "facet:hashIntegrityCheck" },
+            { "id": "hash-salt", "name": "같은 비밀번호, 다른 저장값", "facetId": "facet:hashSalt" },
+            { "id": "hash-chain", "name": "지난 기록을 고치면 드러난다", "facetId": "facet:hashChain" },
+            { "id": "merkle-tree", "name": "무엇이 바뀌었는지 찾기", "facetId": "facet:merkleTree" },
             { "id": "collision", "name": "충돌" },
             { "id": "mac", "name": "MAC" },
             { "id": "hmac", "name": "HMAC" }

@@ -116,6 +116,20 @@ export function bootstrapFacet(): void {
       m.registerPigeonholeCollision(),
     ),
   );
+  registerFacetLoader('facet:hashIntegrityCheck', () =>
+    import('@ffacet/algorithm-hash-integrity-check').then((m) =>
+      m.registerHashIntegrityCheck(),
+    ),
+  );
+  registerFacetLoader('facet:hashSalt', () =>
+    import('@ffacet/algorithm-hash-salt').then((m) => m.registerHashSalt()),
+  );
+  registerFacetLoader('facet:hashChain', () =>
+    import('@ffacet/algorithm-hash-chain').then((m) => m.registerHashChain()),
+  );
+  registerFacetLoader('facet:merkleTree', () =>
+    import('@ffacet/algorithm-merkle-tree').then((m) => m.registerMerkleTree()),
+  );
   registerFacetLoader('facet:linearRegression', () =>
     import('@ffacet/algorithm-linear-regression').then((m) => m.registerLinearRegression()),
   );

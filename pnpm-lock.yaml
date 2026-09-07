@@ -247,7 +247,31 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/security/hash-chain:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/security/hash-fixed-length:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/security/hash-integrity-check:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/security/hash-salt:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/security/merkle-tree:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -306,9 +330,18 @@ importers:
       '@ffacet/algorithm-hash-avalanche':
         specifier: workspace:*
         version: link:../../facets/security/hash-avalanche
+      '@ffacet/algorithm-hash-chain':
+        specifier: workspace:*
+        version: link:../../facets/security/hash-chain
       '@ffacet/algorithm-hash-fixed-length':
         specifier: workspace:*
         version: link:../../facets/security/hash-fixed-length
+      '@ffacet/algorithm-hash-integrity-check':
+        specifier: workspace:*
+        version: link:../../facets/security/hash-integrity-check
+      '@ffacet/algorithm-hash-salt':
+        specifier: workspace:*
+        version: link:../../facets/security/hash-salt
       '@ffacet/algorithm-hash-table-chaining':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/hash-table-chaining
@@ -327,6 +360,9 @@ importers:
       '@ffacet/algorithm-matrix-transform-2d':
         specifier: workspace:*
         version: link:../../facets/graphics/matrix-transform-2d
+      '@ffacet/algorithm-merkle-tree':
+        specifier: workspace:*
+        version: link:../../facets/security/merkle-tree
       '@ffacet/algorithm-messaging-pubsub':
         specifier: workspace:*
         version: link:../../facets/system-design/messaging-pubsub

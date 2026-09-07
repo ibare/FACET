@@ -22,12 +22,16 @@ import { cachingCdnConcept } from './caching-cdn.js';
 import { conditionalStatementConcept } from './conditional-statement.js';
 import { contextSwitchingConcept } from './context-switching.js';
 import { hashAvalancheConcept } from './hash-avalanche.js';
+import { hashChainConcept } from './hash-chain.js';
+import { hashIntegrityCheckConcept } from './hash-integrity-check.js';
+import { hashSaltConcept } from './hash-salt.js';
 import { hashFixedLengthConcept } from './hash-fixed-length.js';
 import { hashTableChainingConcept } from './hash-table-chaining.js';
 import { pigeonholeCollisionConcept } from './pigeonhole-collision.js';
 import { ipRoutingConcept } from './ip-routing.js';
 import { linearRegressionConcept } from './linear-regression.js';
 import { linkedListSinglyConcept } from './linked-list-singly.js';
+import { merkleTreeConcept } from './merkle-tree.js';
 import { lruCacheConcept } from './lru-cache.js';
 import { matrixTransform2dConcept } from './matrix-transform-2d.js';
 import { messagingPubsubConcept } from './messaging-pubsub.js';
@@ -45,6 +49,10 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   arrayConcept,
   linkedListSinglyConcept,
   hashAvalancheConcept,
+  hashChainConcept,
+  hashIntegrityCheckConcept,
+  hashSaltConcept,
+  merkleTreeConcept,
   hashFixedLengthConcept,
   hashTableChainingConcept,
   pigeonholeCollisionConcept,
