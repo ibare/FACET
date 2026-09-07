@@ -16,7 +16,7 @@ export const hashIntegrityCheckConcept: FacetConceptSource = {
 
   surface: {
     definition:
-      'Comparing the hash of a received file against a hash the original publisher announced tells you whether the copy was altered in transit.',
+      'A file and its hash travel by separate routes, so whoever alters the file in transit cannot alter the hash to match, and the mismatch reveals the change.',
     exemplarKeywords: [
       'checksum',
       'verify download',
@@ -31,16 +31,18 @@ export const hashIntegrityCheckConcept: FacetConceptSource = {
 
   briefing: {
     observable: [
-      'A published hash sits alone at the top, separated by a rule, so it reads as the reference rather than as one more row.',
-      'An untouched copy is hashed and its value matches the reference exactly, marked with a check.',
-      'An altered copy is hashed next and its value bears no resemblance, marked with a cross.',
-      'Only then is the single changed character highlighted, so the cause is shown after the effect rather than before it.',
+      'Two routes fan out from the origin: the file above on a dashed line marked "any route", the hash below on a solid line marked "a route you trust".',
+      'Both cross the frame as tokens and meet at the receiving end, where the two digests agree.',
+      'The file is sent again and is edited halfway across — the cut happens mid-route, so it reads as interception rather than as a change made after arrival.',
+      'The lower route does nothing at all during that, and its stillness is the argument: the attacker could not reach it.',
+      'The two digests then disagree at the receiving end.',
     ],
 
     screen: {
       affordances: [
         'The screen plays four steps on its own and stops. A single Replay button is the only control.',
         'The two payloads differ by one digit (Pay 100 / Pay 900), which makes the intent of the alteration legible without explanation.',
+      'A footnote states what breaks the whole thing: if both came down the same route, the hash could have been swapped too.',
       ],
     },
 
@@ -48,7 +50,7 @@ export const hashIntegrityCheckConcept: FacetConceptSource = {
       'The article is about why the hash changes so completely. That property has its own screen; this one uses it rather than explaining it.',
       'The subject is digital signatures or certificates. Those establish who vouched for the hash, which nothing here shows.',
       'The point is error detection in transmission — CRC, parity. Those are about accidental corruption, not about an adversary.',
-      'The article needs the trust model spelled out. This screen states the assumption in a footnote but does not demonstrate what happens when the hash itself is swapped.',
+      'The article needs the case where the hash itself is swapped. This screen shows why separate routes matter but never plays out an attack on the trusted route.',
     ],
 
     contrastWith: [

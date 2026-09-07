@@ -4,12 +4,16 @@
  * 이 facet 이 답하는 질문 하나:
  *   "받은 파일이 원본 그대로인지 어떻게 아는가?"
  *
- * 답은 대조다. 원본이 함께 내건 해시 한 줄을 기준으로 두고, 받은 것을 해싱해
- * 같은지 본다. 온전한 것은 기준과 한 글자도 다르지 않고, 손댄 것은 알아볼 수
- * 없을 만큼 달라진다.
+ * 답은 대조 절차가 아니라 **두 경로**에 있다. 파일은 아무 데서나 받아도 되고
+ * 해시는 믿을 수 있는 곳에서 받는다. 경로가 갈라져 있으므로, 파일을 건드린
+ * 쪽은 해시까지 함께 바꿀 수 없고 그래서 어긋남이 드러난다.
+ *
+ * 경로가 하나면 이 방법은 서지 않는다 — 파일과 해시를 같은 서버에서 받으면
+ * 공격자는 둘 다 바꿔치기하면 그만이다. 그 사실이 각주가 아니라 화면의 골격이
+ * 되어야 하므로, 대조표가 아니라 갈라진 두 선을 그린다.
  *
  * 눈사태 조각과 답하는 질문이 다르다. 그쪽은 왜 달라지는가를, 이쪽은 그 성질을
- * 어떻게 써먹는가를 말한다. 그래서 화면의 주인공도 비트가 아니라 판정이다.
+ * 무엇에 기대어 써먹는가를 말한다.
  *
  * 진행 동력은 ReactiveMechanism. 컨트롤바 없이 스스로 시작하고 (init 의
  * ensureStarted) 걸음 간격도 스스로 정한다 (ctx.sleep).
@@ -17,11 +21,11 @@
  * 식별자 (C1): 행을 가리키는 곳이 payload 뿐이라 target 을 쓰지 않는다.
  *
  * 이벤트 (C2) — 전부 facet 로컬 (StandardEventType 미포함):
- *   - init             payload: { referenceHash, intact, tampered, diffIndex }
- *   - reveal-reference payload: {}   원본이 내건 기준 해시를 놓는다
- *   - check-intact     payload: {}   온전한 것을 해싱해 기준과 견준다
- *   - check-tampered   payload: {}   손댄 것을 해싱해 기준과 견준다
- *   - mark-difference  payload: {}   무엇이 달라졌는지 짚는다
+ *   - init          payload: { referenceHash, intact, tampered, diffIndex }
+ *   - split-paths   payload: {}   원본에서 파일과 해시가 각자의 경로로 갈라진다
+ *   - deliver       payload: {}   둘 다 건너와 만나고, 대조가 맞는다
+ *   - tamper        payload: {}   파일만 다시 오는데 도중에 손댄다
+ *   - detect        payload: {}   대조가 어긋난다 — 해시 경로는 건드리지 못했다
  *
  * 메트릭 (C5): 없다.
  */
@@ -92,13 +96,13 @@ export async function hashIntegrityCheck(
     },
   });
 
-  // 네 걸음. 기준을 먼저 세우지 않으면 나머지는 대조가 되지 못한다.
+  // 네 걸음. 성한 왕복을 먼저 보여야 어긋남이 어긋남으로 보인다.
   if (!(await pause())) return;
-  await ctx.emit({ type: 'reveal-reference' });
+  await ctx.emit({ type: 'split-paths' });
   if (!(await pause())) return;
-  await ctx.emit({ type: 'check-intact' });
+  await ctx.emit({ type: 'deliver' });
   if (!(await pause())) return;
-  await ctx.emit({ type: 'check-tampered' });
+  await ctx.emit({ type: 'tamper' });
   if (!(await pause())) return;
-  await ctx.emit({ type: 'mark-difference' });
+  await ctx.emit({ type: 'detect' });
 }

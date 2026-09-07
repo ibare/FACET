@@ -1,17 +1,22 @@
 /**
  * integrity-stage View — 무결성 대조 단일 캔버스.
  *
- * 위에 기준 해시 한 줄을 두고, 아래 두 행이 각각 그것과 견준다. 판정 표시(✓/✗)가
- * 화면의 주인공이다 — 이 조각이 말하는 것은 해시가 어떻게 생겼는지가 아니라
- * 대조가 어떻게 끝나는지이기 때문이다.
+ * 이 조각이 말하는 것은 대조 절차가 아니라 **경로가 둘이라는 사실**이다. 그래서
+ * 화면의 골격도 표가 아니라 원본에서 갈라져 나오는 두 선이다. 위는 파일이 오는
+ * 아무 경로, 아래는 해시가 오는 믿는 경로다.
  *
- * 기준선을 세로 점선으로 내려 두 해시가 같은 자리에서 견줘짐을 표시한다.
+ * 동사는 갈라진다 · 건너온다 · 만난다 이므로, 파일과 해시가 실제로 화면을
+ * 가로질러 이동한다 (S-piece). 손대는 일도 도중에 일어난다 — 도착한 뒤에 값이
+ * 바뀌면 "오는 길에 당했다" 가 아니라 "받고 나서 달라졌다" 로 읽힌다.
+ *
+ * 해시 경로만 손대지 못하는 것이 논증의 전부라, 파일이 변조될 때 아래 선은
+ * 아무 일도 일어나지 않아야 한다.
  *
  * 색 토큰 (S-view 결정 트리):
  *   - 일치 — palette.success
- *   - 불일치 / 바뀐 글자 — palette.danger
- *   - 기준 해시 — palette.text
- *   - 나머지 hex — palette.textMuted
+ *   - 불일치 / 손댄 자리 — palette.danger
+ *   - 믿는 경로 — palette.primary
+ *   - 아무 경로 — palette.border
  */
 
 import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
@@ -20,23 +25,32 @@ import { getColors, fonts, fontSizes, PIECE_CANVAS_W } from '@ffacet/core/runtim
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 const W = PIECE_CANVAS_W;
-const H = 262;
+const H = 268;
 
-const LABEL_X = 20;
-const HASH_X = 150;
-const VERDICT_X = 560;
+// ── 두 끝점 ─────────────────────────────────────────────────────────────
+const ORIGIN_X = 56;
+const TARGET_X = W - 56;
 
-const REF_Y = 74;
-const RULE_Y = 96;
-const ROW_Y0 = 128;
-const ROW_PITCH = 56;
+// ── 두 경로 ─────────────────────────────────────────────────────────────
+const FILE_Y = 96;
+const HASH_Y = 168;
+/** 손대는 자리. 경로 한가운데여야 "오는 길에" 로 읽힌다. */
+const TAMPER_X = (ORIGIN_X + TARGET_X) / 2;
+
+const TOKEN_W = 92;
+const TOKEN_H = 22;
 
 const CAPTION_BASE_Y = 16;
 const CAPTION_EVENT_Y = 34;
-const NOTE_Y = 250;
+const ORIGIN_LABEL_Y = 60;
+const VERDICT_Y = 218;
+const NOTE_Y = 252;
 
-/** hex 앞머리만 인쇄한다. 전체는 화면에 들어가지 않고 요점도 아니다. */
-const HEX_HEAD = 30;
+/** 토큰 하나가 경로를 건너는 시간 (ms). */
+const TRAVEL_MS = 620;
+
+/** 해시는 앞 10자만 인쇄한다. 같은지 다른지만 보면 되는 자리다. */
+const HEX_HEAD = 10;
 
 type Item = { content: string; hash: string };
 type InitPayload = {
@@ -44,6 +58,14 @@ type InitPayload = {
   intact: Item;
   tampered: Item;
   diffIndex: number;
+};
+type Labels = {
+  origin: string;
+  target: string;
+  filePath: string;
+  hashPath: string;
+  file: string;
+  hash: string;
 };
 
 function el<K extends keyof SVGElementTagNameMap>(
@@ -60,6 +82,7 @@ export const integrityStageView: View = {
     const palette = getColors(params.theme);
     const OK = palette.success;
     const BAD = palette.danger;
+    const TRUSTED = palette.primary;
 
     const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, width: '100%', role: 'img' });
     svg.style.maxWidth = `${W}px`;
@@ -75,116 +98,201 @@ export const integrityStageView: View = {
       return el('text', {
         x,
         y,
-        'text-anchor': opts.anchor ?? 'start',
+        'text-anchor': opts.anchor ?? 'middle',
         fill: opts.fill ?? palette.text,
         'font-family': opts.family ?? fonts.body,
-        'font-size': opts.size ?? fontSizes.sm,
+        'font-size': opts.size ?? fontSizes.xs,
         ...(opts.weight ? { 'font-weight': opts.weight } : {}),
       });
     }
 
-    const captionBase = text(W / 2, CAPTION_BASE_Y, { anchor: 'middle' });
+    const captionBase = text(W / 2, CAPTION_BASE_Y, { size: fontSizes.sm });
     const captionEvent = text(W / 2, CAPTION_EVENT_Y, {
-      anchor: 'middle',
       fill: palette.accent,
+      size: fontSizes.sm,
       weight: '600',
     });
-    const refLabel = text(LABEL_X, REF_Y, { fill: palette.textMuted, size: fontSizes.xs });
-    const refHash = text(HASH_X, REF_Y, { family: fonts.mono, size: fontSizes.xs });
-    const rule = el('line', {
-      x1: LABEL_X,
-      y1: RULE_Y,
-      x2: W - LABEL_X,
-      y2: RULE_Y,
-      stroke: palette.border,
-      'stroke-width': 1,
-    });
-    const note = text(W / 2, NOTE_Y, {
-      anchor: 'middle',
+    const note = text(W / 2, NOTE_Y, { fill: palette.textMuted });
+
+    // ── 두 끝점과 두 경로 ───────────────────────────────────────────────
+    const originLabel = text(ORIGIN_X, ORIGIN_LABEL_Y, { fill: palette.textMuted });
+    const targetLabel = text(TARGET_X, ORIGIN_LABEL_Y, { fill: palette.textMuted });
+
+    function pathLine(y: number, stroke: string, dashed: boolean): SVGLineElement {
+      const line = el('line', {
+        x1: ORIGIN_X,
+        y1: y,
+        x2: TARGET_X,
+        y2: y,
+        stroke,
+        'stroke-width': 1.4,
+        ...(dashed ? { 'stroke-dasharray': '4 4' } : {}),
+      });
+      line.style.opacity = '0';
+      line.style.transition = 'opacity 240ms ease-out';
+      return line;
+    }
+    const filePath = pathLine(FILE_Y, palette.border, true);
+    const hashPath = pathLine(HASH_Y, TRUSTED, false);
+
+    const filePathLabel = text(ORIGIN_X + 74, FILE_Y - 10, {
+      anchor: 'start',
       fill: palette.textMuted,
-      size: fontSizes.xs,
     });
-    const rowsGroup = el('g');
-    svg.append(captionBase, captionEvent, refLabel, refHash, rule, rowsGroup, note);
-    refLabel.style.opacity = '0';
-    refHash.style.opacity = '0';
-    rule.style.opacity = '0';
-
-    type Row = {
-      group: SVGGElement;
-      label: SVGTextElement;
-      content: SVGTextElement;
-      hash: SVGTextElement;
-      verdict: SVGTextElement;
-    };
-    let rows: Row[] = [];
-    let snapshot: InitPayload | null = null;
-
-    function buildRow(i: number, label: string, item: Item): Row {
-      const y = ROW_Y0 + i * ROW_PITCH;
-      const group = el('g');
-      const lab = text(LABEL_X, y, { fill: palette.textMuted, size: fontSizes.xs });
-      lab.textContent = label;
-      const content = text(LABEL_X, y + 18, { family: fonts.mono, size: fontSizes.sm });
-      content.textContent = item.content;
-      const hash = text(HASH_X + 100, y + 18, {
-        family: fonts.mono,
-        size: fontSizes.xs,
-        fill: palette.textMuted,
-      });
-      hash.textContent = `${item.hash.slice(0, HEX_HEAD)}…`;
-      const verdict = text(VERDICT_X, y + 18, {
-        anchor: 'middle',
-        family: fonts.mono,
-        size: fontSizes.lg,
-        weight: '700',
-      });
-      group.append(lab, content, hash, verdict);
-      group.style.opacity = '0';
-      group.style.transition = 'opacity 220ms ease-out';
-      rowsGroup.appendChild(group);
-      return { group, label: lab, content, hash, verdict };
+    const hashPathLabel = text(ORIGIN_X + 74, HASH_Y - 10, {
+      anchor: 'start',
+      fill: TRUSTED,
+    });
+    for (const n of [filePathLabel, hashPathLabel]) {
+      n.style.opacity = '0';
+      n.style.transition = 'opacity 240ms ease-out';
     }
 
-    /** 바뀐 글자만 물들인다 — 어디가 손댔는지 화면이 짚어야 한다. */
-    function paintDiffChar(node: SVGTextElement, value: string, idx: number): void {
-      node.textContent = '';
-      [...value].forEach((ch, i) => {
-        const span = el('tspan', {
-          fill: i === idx ? BAD : palette.text,
-          'font-weight': i === idx ? '700' : '400',
-        });
-        span.textContent = ch;
-        node.appendChild(span);
+    // ── 손대는 자리 ─────────────────────────────────────────────────────
+    const tamperMark = text(TAMPER_X, FILE_Y - 16, { fill: BAD, weight: '700' });
+    tamperMark.textContent = '✂';
+    tamperMark.style.opacity = '0';
+    tamperMark.style.transition = 'opacity 200ms ease-out';
+
+    // ── 도착 지점의 대조 ────────────────────────────────────────────────
+    const verdictHashes = text(W / 2, VERDICT_Y, {
+      family: fonts.mono,
+      fill: palette.textMuted,
+    });
+    const verdictMark = text(W / 2, VERDICT_Y + 22, {
+      family: fonts.mono,
+      size: fontSizes.lg,
+      weight: '700',
+    });
+
+    const travelGroup = el('g');
+    svg.append(
+      captionBase,
+      captionEvent,
+      filePath,
+      hashPath,
+      filePathLabel,
+      hashPathLabel,
+      originLabel,
+      targetLabel,
+      tamperMark,
+      travelGroup,
+      verdictHashes,
+      verdictMark,
+      note,
+    );
+
+    let snapshot: InitPayload | null = null;
+    let labels: Labels | null = null;
+    /**
+     * 도착해 자리를 지키는 파일 토큰. 손댄 뒤 다시 보낼 때 갈아 끼운다.
+     *
+     * 해시 토큰은 잡아 두지 않는다 — 도착한 뒤 아무도 손대지 못하는 것이
+     * 이 조각의 논증이라, 코드에서도 다시 건드릴 일이 없다.
+     */
+    let arrivedFile: SVGGElement | null = null;
+
+    const timers = new Set<ReturnType<typeof setTimeout>>();
+    function later(fn: () => void, ms: number): void {
+      const id = setTimeout(() => {
+        timers.delete(id);
+        fn();
+      }, ms);
+      timers.add(id);
+    }
+    function clearTravel(): void {
+      for (const id of timers) clearTimeout(id);
+      timers.clear();
+      travelGroup.textContent = '';
+      arrivedFile = null;
+    }
+
+    /** 경로 위를 건너는 토큰 하나. 상자와 글자를 묶은 그룹으로 만든다. */
+    function makeToken(y: number, label: string, color: string): SVGGElement {
+      const g = el('g');
+      const box = el('rect', {
+        x: ORIGIN_X - TOKEN_W / 2,
+        y: y - TOKEN_H / 2,
+        width: TOKEN_W,
+        height: TOKEN_H,
+        rx: 4,
+        fill: palette.bg,
+        stroke: color,
+        'stroke-width': 1.4,
       });
+      const t = text(ORIGIN_X, y + 4, { family: fonts.mono, fill: palette.text });
+      t.textContent = label;
+      g.append(box, t);
+      g.style.transition = `transform ${TRAVEL_MS}ms ease-in-out`;
+      travelGroup.appendChild(g);
+      return g;
+    }
+
+    /**
+     * 토큰을 원본에서 받는 쪽까지 보낸다.
+     *
+     * `onMidway` 는 경로 한가운데에서 불린다 — 손대는 일이 도중에 일어나야
+     * "오는 길에 당했다" 로 읽히기 때문이다.
+     */
+    function travel(
+      token: SVGGElement,
+      delayMs: number,
+      onArrive: () => void,
+      onMidway?: () => void,
+    ): void {
+      later(() => {
+        token.style.transform = `translate(${TARGET_X - ORIGIN_X}px, 0px)`;
+      }, delayMs + 16);
+      if (onMidway) later(onMidway, delayMs + TRAVEL_MS / 2);
+      later(onArrive, delayMs + TRAVEL_MS + 16);
+    }
+
+    /** 도착한 토큰의 글자를 갈아 끼운다 (손댄 뒤의 내용). */
+    function retitle(token: SVGGElement | null, label: string, color: string): void {
+      if (!token) return;
+      const t = token.childNodes[1];
+      const box = token.childNodes[0];
+      if (t instanceof SVGTextElement) {
+        t.textContent = label;
+        t.setAttribute('fill', color);
+      }
+      if (box instanceof SVGRectElement) box.setAttribute('stroke', color);
+    }
+
+    function showVerdict(left: string, right: string, mark: string, color: string): void {
+      verdictHashes.textContent = `${left.slice(0, HEX_HEAD)}…   ${right.slice(0, HEX_HEAD)}…`;
+      verdictHashes.setAttribute('fill', color);
+      verdictMark.textContent = mark;
+      verdictMark.setAttribute('fill', color);
     }
 
     return {
       destroy() {
+        clearTravel();
         if (svg.parentNode) svg.parentNode.removeChild(svg);
       },
 
       reset() {
+        clearTravel();
         captionEvent.textContent = '';
-        refLabel.style.opacity = '0';
-        refHash.style.opacity = '0';
-        rule.style.opacity = '0';
-        for (const r of rows) {
-          r.group.style.opacity = '0';
-          r.verdict.textContent = '';
-          r.hash.setAttribute('fill', palette.textMuted);
-        }
-        const tamperedRow = rows[1];
-        if (snapshot && tamperedRow) {
-          paintDiffChar(tamperedRow.content, snapshot.tampered.content, -1);
+        verdictHashes.textContent = '';
+        verdictMark.textContent = '';
+        tamperMark.style.opacity = '0';
+        for (const n of [filePath, hashPath, filePathLabel, hashPathLabel]) {
+          n.style.opacity = '0';
         }
       },
 
-      init(p: InitPayload, labels: { intact: string; tampered: string }) {
+      init(p: InitPayload, l: Labels) {
+        clearTravel();
         snapshot = p;
-        rowsGroup.textContent = '';
-        rows = [buildRow(0, labels.intact, p.intact), buildRow(1, labels.tampered, p.tampered)];
-        refHash.textContent = `${p.referenceHash.slice(0, HEX_HEAD)}…`;
+        labels = l;
+        originLabel.textContent = l.origin;
+        targetLabel.textContent = l.target;
+        filePathLabel.textContent = l.filePath;
+        hashPathLabel.textContent = l.hashPath;
+        verdictHashes.textContent = '';
+        verdictMark.textContent = '';
         captionEvent.textContent = '';
       },
 
@@ -200,37 +308,61 @@ export const integrityStageView: View = {
         note.textContent = value;
       },
 
-      revealReference(label: string) {
-        refLabel.textContent = label;
-        refLabel.style.opacity = '1';
-        refHash.style.opacity = '1';
-        rule.style.opacity = '1';
+      /** 원본에서 두 경로가 갈라진다. 갈라짐 자체가 이 조각의 전제다. */
+      splitPaths() {
+        for (const n of [filePath, hashPath, filePathLabel, hashPathLabel]) {
+          n.style.opacity = '1';
+        }
       },
 
-      /** 온전한 것 — 기준과 한 글자도 다르지 않다. */
-      checkIntact(mark: string) {
-        const r = rows[0];
-        if (!r) return;
-        r.group.style.opacity = '1';
-        r.verdict.textContent = mark;
-        r.verdict.setAttribute('fill', OK);
-        r.hash.setAttribute('fill', OK);
+      /** 둘 다 건너와 만난다. 대조가 맞는다. */
+      deliver(mark: string) {
+        const snap = snapshot;
+        const l = labels;
+        if (!snap || !l) return;
+        const fileToken = makeToken(FILE_Y, `${l.file}  ${snap.intact.content}`, palette.border);
+        const hashToken = makeToken(HASH_Y, `${l.hash}  ${snap.referenceHash.slice(0, 8)}…`, TRUSTED);
+        arrivedFile = fileToken;
+        travel(fileToken, 0, () => {
+          travel(hashToken, 0, () => {
+            showVerdict(snap.intact.hash, snap.referenceHash, mark, OK);
+          });
+        });
       },
 
-      /** 손댄 것 — 알아볼 수 없을 만큼 달라졌다. */
-      checkTampered(mark: string) {
-        const r = rows[1];
-        if (!r) return;
-        r.group.style.opacity = '1';
-        r.verdict.textContent = mark;
-        r.verdict.setAttribute('fill', BAD);
-        r.hash.setAttribute('fill', BAD);
+      /**
+       * 파일만 다시 오는데 도중에 손댄다.
+       *
+       * 아래 해시 경로는 아무 일도 일어나지 않는다 — 그 정지가 논증이다.
+       */
+      tamper(markLabel: string) {
+        const snap = snapshot;
+        const l = labels;
+        if (!snap || !l) return;
+        verdictHashes.textContent = '';
+        verdictMark.textContent = '';
+        if (arrivedFile) arrivedFile.remove();
+        const fileToken = makeToken(FILE_Y, `${l.file}  ${snap.intact.content}`, palette.border);
+        arrivedFile = fileToken;
+        travel(
+          fileToken,
+          0,
+          () => {
+            /* 도착만 하고 판정은 다음 걸음이 한다 */
+          },
+          () => {
+            tamperMark.style.opacity = '1';
+            tamperMark.textContent = markLabel;
+            retitle(fileToken, `${l.file}  ${snap.tampered.content}`, BAD);
+          },
+        );
       },
 
-      /** 내용에서 바뀐 글자를 짚는다. 해시의 차이는 이미 보였으므로 원인 쪽이다. */
-      markDifference() {
-        if (!snapshot || !rows[1]) return;
-        paintDiffChar(rows[1].content, snapshot.tampered.content, snapshot.diffIndex);
+      /** 대조가 어긋난다. 해시는 다른 경로라 손댈 수 없었다. */
+      detect(mark: string) {
+        const snap = snapshot;
+        if (!snap) return;
+        showVerdict(snap.tampered.hash, snap.referenceHash, mark, BAD);
       },
     };
   },

@@ -9,11 +9,16 @@
  * 조각의 규범: 필수 조작 없음(다시 보기 하나) / 제목 없음 / 한 주장 /
  * 메트릭 없음 / 캔버스 폭 620 / 전제를 각주로 밝힘.
  *
+ * 화면의 골격은 대조표가 아니라 갈라진 두 경로다. 이 조각이 답하는 것은 대조를
+ * 어떻게 하느냐가 아니라 **무엇에 기대어 그 대조를 믿느냐** 이고, 그 답이
+ * "경로가 둘이다" 이기 때문이다. 경로가 하나면 파일을 고친 쪽이 해시도 고친다.
+ *
+ * 그래서 손대는 일도 도중에 일어난다 — 도착한 뒤 값이 바뀌면 "오는 길에 당했다"
+ * 가 아니라 "받고 나서 달라졌다" 로 읽힌다. 아래 해시 경로는 그동안 아무 일도
+ * 일어나지 않으며, 그 정지가 논증이다.
+ *
  * 데이터는 실측 SHA-256 이다. 'Pay 100 to Alice' 와 'Pay 900 to Alice' 는
  * 숫자 한 글자만 다른데 해시는 알아볼 수 없을 만큼 갈린다.
- *
- * 각주가 밝히는 전제: 이 방법이 서는 것은 해시를 믿을 수 있는 경로로 받았을
- * 때뿐이다. 파일과 해시를 같은 곳에서 받으면 둘 다 바꿔치기할 수 있다.
  *
  * title / description / messages 는 en·ko 만 채웠다 (조각 방식 1차 시험).
  */
@@ -41,7 +46,8 @@ export const hashIntegrityCheckFacet: FacetJson = {
       content: 'Pay 900 to Alice',
       hash: '988bcb940b89811fb258dcc53b6ea8d8f848baa8c29049ed73975e0e57d1c99c',
     },
-    stepMs: 950,
+    // 토큰이 경로를 건너는 travel 이 한 걸음 안에서 끝나야 한다.
+    stepMs: 1500,
   },
   shuffleOnReset: false,
   layout: {
@@ -51,29 +57,37 @@ export const hashIntegrityCheckFacet: FacetJson = {
   },
   messages: {
     'caption.base': {
-      en: 'The original publishes its hash, so anyone can check what they received against it.',
-      ko: '원본이 자기 해시를 내걸면, 받은 사람은 그것과 견줘 확인할 수 있다.',
+      en: 'The file and its hash travel by different routes.',
+      ko: '파일과 그 해시는 서로 다른 경로로 온다.',
+    },
+    'caption.split': {
+      en: 'Two routes leave the origin — the file, and its hash.',
+      ko: '원본에서 두 경로가 갈라진다 — 파일과 그 해시.',
     },
     'caption.match': {
-      en: 'Identical to the published hash.',
-      ko: '내걸린 해시와 한 글자도 다르지 않다.',
+      en: 'Both arrive and the two agree.',
+      ko: '둘 다 도착했고 서로 맞는다.',
     },
-    'caption.mismatch': {
-      en: 'Nothing like it — this one was changed on the way.',
-      ko: '닮은 구석이 없다 — 오는 길에 바뀐 것이다.',
+    'caption.tampered': {
+      en: 'Someone edits the file on the way — one digit.',
+      ko: '오는 길에 누군가 파일을 고친다 — 숫자 하나.',
     },
-    'caption.oneChar': {
-      en: 'One character was enough to break the match.',
-      ko: '한 글자면 대조가 깨지기에 충분하다.',
+    'caption.detected': {
+      en: 'They never touched the lower route, so the hash still tells on them.',
+      ko: '아래 경로는 건드리지 못했으니, 해시가 그것을 일러바친다.',
     },
-    'label.published': { en: 'published hash', ko: '내걸린 해시' },
-    'label.intact': { en: 'received (untouched)', ko: '받은 것 (손대지 않음)' },
-    'label.tampered': { en: 'received (altered)', ko: '받은 것 (손댐)' },
+    'label.origin': { en: 'origin', ko: '원본' },
+    'label.target': { en: 'you', ko: '받는 쪽' },
+    'label.filePath': { en: 'any route', ko: '아무 경로' },
+    'label.hashPath': { en: 'a route you trust', ko: '믿는 경로' },
+    'label.file': { en: 'file', ko: '파일' },
+    'label.hash': { en: 'hash', ko: '해시' },
     'label.match': { en: '✓', ko: '✓' },
     'label.mismatch': { en: '✗', ko: '✗' },
+    'label.scissors': { en: '✂', ko: '✂' },
     'label.note': {
-      en: 'The file can come from anywhere as long as the hash came from somewhere trusted.',
-      ko: '해시를 믿을 수 있는 곳에서 받았다면, 파일은 어디서 받아도 된다.',
+      en: 'If both came down the same route, whoever changed the file could have changed the hash too.',
+      ko: '둘이 같은 경로로 왔다면, 파일을 고친 쪽이 해시도 함께 고쳤을 것이다.',
     },
   },
   blocks: {

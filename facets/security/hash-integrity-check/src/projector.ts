@@ -17,16 +17,25 @@ type StageInit = {
   diffIndex: number;
 };
 
+type Labels = {
+  origin: string;
+  target: string;
+  filePath: string;
+  hashPath: string;
+  file: string;
+  hash: string;
+};
+
 type IntegrityStage = {
   reset(): void;
-  init(payload: StageInit, labels: { intact: string; tampered: string }): void;
+  init(payload: StageInit, labels: Labels): void;
   setBaseCaption(text: string): void;
   setCaption(text: string): void;
   setNote(text: string): void;
-  revealReference(label: string): void;
-  checkIntact(mark: string): void;
-  checkTampered(mark: string): void;
-  markDifference(): void;
+  splitPaths(): void;
+  deliver(mark: string): void;
+  tamper(markLabel: string): void;
+  detect(mark: string): void;
 };
 
 
@@ -62,16 +71,22 @@ export const hashIntegrityCheckProjector: ProjectorFactory = (views, runtime) =>
   const stage = views.stage as unknown as IntegrityStage | undefined;
 
   const baseCaption = (): string =>
-    tr(
-      'caption.base',
-      'The original publishes its hash, so anyone can check what they received against it.',
-    );
+    tr('caption.base', 'The file and its hash travel by different routes.');
 
   const note = (): string =>
     tr(
       'label.note',
-      'The file can come from anywhere as long as the hash came from somewhere trusted.',
+      'If both came down the same route, whoever changed the file could have changed the hash too.',
     );
+
+  const labels = (): Labels => ({
+    origin: tr('label.origin', 'origin'),
+    target: tr('label.target', 'you'),
+    filePath: tr('label.filePath', 'any route'),
+    hashPath: tr('label.hashPath', 'a route you trust'),
+    file: tr('label.file', 'file'),
+    hash: tr('label.hash', 'hash'),
+  });
 
   return {
     onInit() {
@@ -85,38 +100,41 @@ export const hashIntegrityCheckProjector: ProjectorFactory = (views, runtime) =>
 
       switch (event.type) {
         case 'init': {
-          stage.init(narrowInit(event.payload), {
-            intact: tr('label.intact', 'received (untouched)'),
-            tampered: tr('label.tampered', 'received (altered)'),
-          });
+          stage.init(narrowInit(event.payload), labels());
           stage.setBaseCaption(baseCaption());
           stage.setNote(note());
           break;
         }
 
-        case 'reveal-reference': {
-          stage.revealReference(tr('label.published', 'published hash'));
-          break;
-        }
-
-        case 'check-intact': {
-          stage.checkIntact(tr('label.match', '✓'));
-          stage.setCaption(tr('caption.match', 'Identical to the published hash.'));
-          break;
-        }
-
-        case 'check-tampered': {
-          stage.checkTampered(tr('label.mismatch', '✗'));
+        case 'split-paths': {
+          stage.splitPaths();
           stage.setCaption(
-            tr('caption.mismatch', 'Nothing like it — this one was changed on the way.'),
+            tr('caption.split', 'Two routes leave the origin — the file, and its hash.'),
           );
           break;
         }
 
-        case 'mark-difference': {
-          stage.markDifference();
+        case 'deliver': {
+          stage.deliver(tr('label.match', '✓'));
+          stage.setCaption(tr('caption.match', 'Both arrive and the two agree.'));
+          break;
+        }
+
+        case 'tamper': {
+          stage.tamper(tr('label.scissors', '✂'));
           stage.setCaption(
-            tr('caption.oneChar', 'One character was enough to break the match.'),
+            tr('caption.tampered', 'Someone edits the file on the way — one digit.'),
+          );
+          break;
+        }
+
+        case 'detect': {
+          stage.detect(tr('label.mismatch', '✗'));
+          stage.setCaption(
+            tr(
+              'caption.detected',
+              'They never touched the lower route, so the hash still tells on them.',
+            ),
           );
           break;
         }
