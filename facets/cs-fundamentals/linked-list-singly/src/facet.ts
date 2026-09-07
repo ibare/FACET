@@ -2,7 +2,11 @@
  * LinkedList facet JSON 선언.
  *
  * 진행 모델 입력 반응형 — algorithm 등록 시 mechanismKind: 'reactive' 사용.
- * mount 즉시 자동 시연 (insert(2, "25")) 후 학습자 입력 대기.
+ * mount 즉시 자동 시연 (initialData.autoDemoSequence) 후 학습자 입력 대기.
+ *
+ * 이 파일은 완결형 facet 하나와 aspect facet 셋을 함께 선언한다. 넷은 algorithm /
+ * projector / stage view 를 그대로 공유하고 initialData 와 layout 만 다르다 —
+ * 개념의 한 대목만 확대해 글의 한 문단 옆에 놓기 위한 발췌다.
  *
  * 컨트롤바 어휘 (기획 §6 § 7 컨트롤 영역):
  *   [ i ] [ v ] [ 삽입 ] [ 삭제 ] [ 검색 ] [ 초기화 ]
@@ -26,6 +30,8 @@ export const linkedListFacet: FacetJson = {
     autoDemoIntervalMs: 1000,
     searchStepMs: 280,
     maxSize: 7,
+    autoDemoSequence: [{ op: 'insert', index: 2, value: '25' }],
+    handoverAfterDemo: true,
   },
   shuffleOnReset: false,
   layout: {
@@ -267,5 +273,112 @@ export const linkedListFacet: FacetJson = {
         { name: 'walk-count', label: { en: 'Walk', ko: '걸음', ja: '歩数', zh: '步数', ar: 'خطوات', es: 'Pasos', fr: 'Pas', hi: 'कदम', id: 'Langkah', pt: 'Passos' }, initial: 0 },
       ],
     },
+  },
+};
+
+/**
+ * aspect facet — 개념의 한 대목만 확대한 보조 시각화.
+ *
+ * canonical (`linkedListFacet`) 과 algorithm / projector / stage view 를 공유하고
+ * `initialData` 와 `layout` 만 다르다. 셋 다 header 와 control-bar 를 두지 않는다 —
+ * 글의 흐름에 박히는 그림은 독자가 조작하지 않아도 할 말을 마쳐야 하기 때문이다.
+ *
+ * 문안은 canonical 의 messages 를 그대로 쓴다. 같은 화면을 좁게 보는 것이라
+ * 캡션 어휘가 갈리면 같은 그림이 두 가지로 불린다.
+ *
+ * title / description 은 en·ko 만 채웠다. 발췌 방식을 판정하기 위한 1차 시험이라
+ * 10개 언어 확장은 채택 이후로 미룬다.
+ */
+
+/** 노드 하나 — value 칸과 next 칸. 자동 시연 없이 정지한다. */
+export const linkedListNodeFacet: FacetJson = {
+  id: 'facet:linkedListSingly-node',
+  title: { en: 'A node', ko: '값과 참조를 담는 노드' },
+  description: {
+    en: 'One node — a value box and a next box side by side',
+    ko: '노드 하나 — 값 칸과 다음 칸이 나란히 붙어 있다',
+  },
+  algorithm: 'module:linkedList',
+  projector: 'module:linkedListProjector',
+  initialData: {
+    type: 'linked-list',
+    initialValues: ['10'],
+    autoDemoIntervalMs: 1000,
+    searchStepMs: 280,
+    maxSize: 7,
+    autoDemoSequence: [],
+    handoverAfterDemo: false,
+  },
+  shuffleOnReset: false,
+  layout: {
+    type: 'column',
+    gap: 8,
+    children: [{ ref: 'stage', padding: '8px 0' }],
+  },
+  messages: linkedListFacet.messages,
+  blocks: {
+    stage: { type: 'linked-list-stage' },
+  },
+};
+
+/** 노드 둘과 그 사이 참조 하나. 연결이 무엇인지만 보여 준다. */
+export const linkedListLinkFacet: FacetJson = {
+  id: 'facet:linkedListSingly-link',
+  title: { en: 'A link between nodes', ko: '참조로 잇는 노드 관계' },
+  description: {
+    en: 'Two nodes and the single arrow that ties one to the next',
+    ko: '노드 둘과 앞의 것을 뒤의 것에 잇는 화살표 하나',
+  },
+  algorithm: 'module:linkedList',
+  projector: 'module:linkedListProjector',
+  initialData: {
+    type: 'linked-list',
+    initialValues: ['10', '20'],
+    autoDemoIntervalMs: 1000,
+    searchStepMs: 280,
+    maxSize: 7,
+    autoDemoSequence: [],
+    handoverAfterDemo: false,
+  },
+  shuffleOnReset: false,
+  layout: {
+    type: 'column',
+    gap: 8,
+    children: [{ ref: 'stage', padding: '8px 0' }],
+  },
+  messages: linkedListFacet.messages,
+  blocks: {
+    stage: { type: 'linked-list-stage' },
+  },
+};
+
+/** head 부터 끝까지 한 칸씩 — 임의 접근이 없다는 사실만 보여 준다. */
+export const linkedListTraverseFacet: FacetJson = {
+  id: 'facet:linkedListSingly-traverse',
+  title: { en: 'Walking the list', ko: '연결을 따라가는 리스트' },
+  description: {
+    en: 'A walk from head to the last node — the only way in is one step at a time',
+    ko: 'head 부터 마지막 노드까지의 걸음 — 들어가는 길은 한 칸씩뿐이다',
+  },
+  algorithm: 'module:linkedList',
+  projector: 'module:linkedListProjector',
+  initialData: {
+    type: 'linked-list',
+    initialValues: ['10', '20', '30', '40'],
+    autoDemoIntervalMs: 700,
+    searchStepMs: 420,
+    maxSize: 7,
+    autoDemoSequence: [{ op: 'search', value: '40' }],
+    handoverAfterDemo: false,
+  },
+  shuffleOnReset: false,
+  layout: {
+    type: 'column',
+    gap: 8,
+    children: [{ ref: 'stage', padding: '8px 0' }],
+  },
+  messages: linkedListFacet.messages,
+  blocks: {
+    stage: { type: 'linked-list-stage' },
   },
 };

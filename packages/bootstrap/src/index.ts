@@ -41,6 +41,17 @@ export type { FacetCatalogEntry } from './catalog-types.js';
 
 let initialized = false;
 
+/**
+ * 한 모듈이 등록하는 facet id 들을 같은 loader 에 묶는다.
+ *
+ * aspect facet 은 canonical 과 한 모듈에 함께 선언되므로 (S-facet 6파일 구성),
+ * 어느 id 로 진입하든 같은 `register<Name>()` 이 넷을 한 번에 등록한다.
+ * registry 가 이미 등록된 facet 을 건너뛰므로 중복 로드는 일어나지 않는다.
+ */
+function registerFacetGroup(ids: readonly string[], load: () => Promise<void>): void {
+  for (const id of ids) registerFacetLoader(id, load);
+}
+
 export function bootstrapFacet(): void {
   if (initialized) return;
   initialized = true;
@@ -61,23 +72,37 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:bfs', () =>
     import('@ffacet/algorithm-bfs').then((m) => m.registerBfs()),
   );
-  registerFacetLoader('facet:queueFifo', () =>
+  registerFacetGroup(['facet:queueFifo', 'facet:queueFifo-fifo'], () =>
     import('@ffacet/algorithm-queue-fifo').then((m) => m.registerQueue()),
   );
-  registerFacetLoader('facet:stack', () =>
+  registerFacetGroup(['facet:stack', 'facet:stack-top', 'facet:stack-lifo'], () =>
     import('@ffacet/algorithm-stack').then((m) => m.registerStack()),
   );
-  registerFacetLoader('facet:array', () =>
-    import('@ffacet/algorithm-array').then((m) => m.registerArray()),
+  registerFacetGroup(
+    ['facet:array', 'facet:array-index', 'facet:array-shift', 'facet:array-grow'],
+    () => import('@ffacet/algorithm-array').then((m) => m.registerArray()),
   );
-  registerFacetLoader('facet:linkedListSingly', () =>
-    import('@ffacet/algorithm-linked-list-singly').then((m) => m.registerLinkedList()),
+  registerFacetGroup(
+    [
+      'facet:linkedListSingly',
+      'facet:linkedListSingly-node',
+      'facet:linkedListSingly-link',
+      'facet:linkedListSingly-traverse',
+    ],
+    () => import('@ffacet/algorithm-linked-list-singly').then((m) => m.registerLinkedList()),
   );
-  registerFacetLoader('facet:hashTableChaining', () =>
-    import('@ffacet/algorithm-hash-table-chaining').then((m) => m.registerHashTable()),
+  registerFacetGroup(
+    [
+      'facet:hashTableChaining',
+      'facet:hashTableChaining-hash',
+      'facet:hashTableChaining-collision',
+      'facet:hashTableChaining-chain',
+    ],
+    () => import('@ffacet/algorithm-hash-table-chaining').then((m) => m.registerHashTable()),
   );
-  registerFacetLoader('facet:bst', () =>
-    import('@ffacet/algorithm-bst').then((m) => m.registerBst()),
+  registerFacetGroup(
+    ['facet:bst', 'facet:bst-shape', 'facet:bst-search', 'facet:bst-insert'],
+    () => import('@ffacet/algorithm-bst').then((m) => m.registerBst()),
   );
   registerFacetLoader('facet:lruCache', () =>
     import('@ffacet/algorithm-lru-cache').then((m) => m.registerLruCache()),

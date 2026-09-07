@@ -391,6 +391,10 @@ export const hashTableProjector: ProjectorFactory = (views, runtime) => {
         }
 
         case 'demo-end': {
+          // control-bar 없이 글에 박히는 aspect 는 누를 것이 없다 — 없는 조작을
+          // 안내하지 않도록 알고리즘이 실어 보낸 handover 를 따른다.
+          const p = (event.payload ?? {}) as { handover?: boolean };
+          if (p.handover === false) break;
           stage.setCaption(
             tr(
               'caption.handover',

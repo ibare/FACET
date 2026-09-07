@@ -25,6 +25,7 @@ export const stackFacet: FacetJson = {
     initialValues: ['1', '2', '3'],
     maxHeight: 8,
     autoDemoIntervalMs: 700,
+    handoverAfterDemo: true,
   },
   shuffleOnReset: false,
   layout: {
@@ -211,5 +212,79 @@ export const stackFacet: FacetJson = {
         { name: 'underflow-count', label: { en: 'Underflow', ko: '빔', ja: '空取り', zh: '下溢', ar: 'نضوب', es: 'Subdesborde', fr: 'Sous-débordement', hi: 'अधःप्रवाह', id: 'Kosong', pt: 'Subfluxo' }, initial: 0 },
       ],
     },
+  },
+};
+
+
+/**
+ * aspect facet — 개념의 한 대목만 확대한 보조 시각화.
+ *
+ * canonical (`stackFacet`) 과 algorithm / projector / stage view 를 공유하고
+ * `initialData` 와 `layout` 만 다르다. lifo 는 세 개를 쌓은 뒤 하나를 빼는 것으로
+ * "마지막에 넣은 것이 먼저 나온다" 를 한 번에 마친다 — 그 한 줄이 이 조각의 전부다.
+ *
+ * 둘 다 header 와 control-bar 를 두지 않는다. 글의 흐름에 박히는 그림은 독자가
+ * 조작하지 않아도 할 말을 마쳐야 하기 때문이다.
+ *
+ * title / description 은 en·ko 만 채웠다 (발췌 방식 1차 시험).
+ */
+
+/** 한 자리에만 얹힌다 — 변화가 일어나는 곳이 꼭대기 하나뿐임을 보여 준다. */
+export const stackTopFacet: FacetJson = {
+  id: 'facet:stack-top',
+  title: { en: 'Everything happens at the top', ko: '변화는 꼭대기 한 자리에서만' },
+  description: {
+    en: 'Boxes pile up at one single place — the top is the only opening',
+    ko: '상자는 한 자리에만 쌓인다 — 열려 있는 곳은 꼭대기뿐이다',
+  },
+  algorithm: 'module:stack',
+  projector: 'module:stackProjector',
+  initialData: {
+    type: 'stack',
+    initialValues: ['1', '2'],
+    maxHeight: 8,
+    autoDemoIntervalMs: 700,
+    autoDemoSequence: [{ op: 'push' }, { op: 'push' }],
+    handoverAfterDemo: false,
+  },
+  shuffleOnReset: false,
+  layout: {
+    type: 'column',
+    gap: 8,
+    children: [{ ref: 'stage', padding: '8px 0' }],
+  },
+  messages: stackFacet.messages,
+  blocks: {
+    stage: { type: 'stack-stage' },
+  },
+};
+
+/** 마지막에 넣은 것이 먼저 나온다 — push 셋 뒤 pop 하나. */
+export const stackLifoFacet: FacetJson = {
+  id: 'facet:stack-lifo',
+  title: { en: 'Last in, first out', ko: '나중에 넣고 먼저 꺼내기' },
+  description: {
+    en: 'Three go in, and the one that arrived last is the one that leaves',
+    ko: '셋이 들어가고, 가장 나중에 온 것이 나간다',
+  },
+  algorithm: 'module:stack',
+  projector: 'module:stackProjector',
+  initialData: {
+    type: 'stack',
+    initialValues: ['1', '2', '3'],
+    maxHeight: 8,
+    autoDemoIntervalMs: 700,
+    autoDemoSequence: [{ op: 'push' }, { op: 'push' }, { op: 'push' }, { op: 'pop' }],
+    handoverAfterDemo: false,
+  },
+  shuffleOnReset: false,
+  layout: {
+    type: 'column',
+    gap: 8,
+    children: [{ ref: 'stage', padding: '8px 0' }],
+  },
+  messages: stackFacet.messages,
+  blocks: {
+    stage: { type: 'stack-stage' },
   },
 };

@@ -26,6 +26,10 @@ export function FacetPage() {
   const { locale, theme } = usePreferences();
   const location = facetId ? findTopicByFacetId(facetId) : null;
 
+  // location 은 매 렌더 새 객체다. facetId 로 참조를 고정해야 아래 effect 가
+  // 매 렌더 다시 돌지 않는다.
+  const aspectIds = useMemo(() => location?.topic.aspectFacetIds ?? [], [facetId]);
+
   const [state, setState] = useState<LoadState>({ kind: 'loading' });
 
   useEffect(() => {
@@ -44,16 +48,16 @@ export function FacetPage() {
       return;
     }
 
-    void loadFacet(facetId).then(
-      (facet) => {
+    void Promise.all([loadFacet(facetId), ...aspectIds.map((a) => loadFacet(a))]).then(
+      ([facet, ...aspects]) => {
         if (cancelled) return;
         if (!facet) {
           setState({ kind: 'error', message: `facet 로드 실패: ${facetId}` });
           return;
         }
         const md = getDescription(facetId);
-        const body = md ?? `*(설명 없음)*\n\n{${facetId.replace(':', ':')}}`;
-        const html = renderFacetMarkdown(body);
+        const body = md ?? `*(설명 없음)*\n\n{${facetId}}`;
+        const html = renderFacetMarkdown(body + aspectSection(aspectIds, aspects, locale));
         setState({ kind: 'ready', facet, html });
       },
       (err: unknown) => {
@@ -66,7 +70,7 @@ export function FacetPage() {
     return () => {
       cancelled = true;
     };
-  }, [facetId]);
+  }, [facetId, aspectIds, locale]);
 
   const html = state.kind === 'ready' ? state.html : '';
   // locale/theme 가 바뀌면 facet NodeView 가 새 옵션으로 다시 마운트되도록
@@ -137,6 +141,30 @@ export function FacetPage() {
       </main>
     </div>
   );
+}
+
+/**
+ * 분해 조각을 canonical 설명 뒤에 이어 붙인다.
+ *
+ * 조각을 따로 뜯어 보이는 별도 화면이 아니라 한 문서 안에 잇는다 — 발췌가
+ * 글의 흐름에서 어떻게 읽히는지가 판단 대상이기 때문이다.
+ */
+function aspectSection(
+  ids: string[],
+  facets: (FacetJson | null | undefined)[],
+  locale: string,
+): string {
+  if (ids.length === 0) return '';
+  const parts = ['\n\n---\n\n## 분해 — 한 대목만 확대한 조각\n'];
+  ids.forEach((id, i) => {
+    const f = facets[i];
+    const title = f ? resolveLocale(f.title, locale) : id;
+    const desc = f?.description ? resolveLocale(f.description, locale) : '';
+    parts.push(`\n### ${title}\n`);
+    if (desc) parts.push(`\n${desc}\n`);
+    parts.push(`\n{${id}}\n`);
+  });
+  return parts.join('');
 }
 
 function ErrorBox({ title, detail }: { title: string; detail: string }) {

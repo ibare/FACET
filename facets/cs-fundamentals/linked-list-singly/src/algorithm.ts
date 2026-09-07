@@ -1,8 +1,10 @@
 /**
  * 단일 연결 리스트 (Linked List) 자료구조 시각화 알고리즘 — 입력 반응형.
  *
- * mount 직후 자동 시연 (insert(2, "25")) 으로 결정적 순간을 첫 화면에서 보여 준 뒤,
- * 무한 waitForInput 루프로 사용자 입력 (insert/remove/search) 을 1:1 시각 사건으로 매핑.
+ * mount 직후 `initialData.autoDemoSequence` 를 순서대로 재생한 뒤, 무한 waitForInput
+ * 루프로 사용자 입력 (insert/remove/search) 을 1:1 시각 사건으로 매핑한다.
+ * 시퀀스가 비어 있으면 자동 시연 없이 초기 배치 그대로 머문다 — 한 대목만 확대한
+ * aspect facet 이 정지 화면을 얻는 경로다.
  *
  * 식별자 (C1):
  *   - `index:<n>` — 리스트 내 노드 위치 (0-based). 표준 prefix `index:` 를 재사용한다.
@@ -17,7 +19,7 @@
  *     - search-result  payload: { found, index?, value, walked }
  *     - out-of-range   payload: { index, op }
  *     - empty-list     payload: { op }
- *     - demo-end       payload: {}
+ *     - demo-end       payload: { handover }
  *
  *   메타 (silent):
  *     - phase  payload: { phase: 'auto-demo' | 'idle' | 'insert' | 'remove' | 'search' }
@@ -39,6 +41,12 @@ export type LinkedListInputEvent =
   | { type: 'remove'; payload?: { index?: string; value?: string } }
   | { type: 'search'; payload?: { index?: string; value?: string } };
 
+/** 자동 시연 한 걸음. 사용자 입력과 같은 실행 경로를 탄다. */
+export type LinkedListAutoDemoStep =
+  | { op: 'insert'; index: number; value: string }
+  | { op: 'remove'; index: number }
+  | { op: 'search'; value: string };
+
 export type LinkedListFacetData = {
   type: 'linked-list';
   /** 초기 노드 값 (좌→우, head 부터). */
@@ -49,6 +57,21 @@ export type LinkedListFacetData = {
   searchStepMs: number;
   /** 학습 한도 — 노드 수가 이 값 이상이면 insert 가 거부된다 (사슬 가독성 보호). */
   maxSize: number;
+  /**
+   * mount 직후 재생할 자동 시연. 빈 배열이면 초기 배치 그대로 정지한다.
+   *
+   * 무엇을 시연할지는 저작 결정이므로 알고리즘이 아니라 선언에 둔다 (원칙 2).
+   * 같은 algorithm 을 공유하면서 시연만 달리한 aspect facet 이 이 필드로 갈린다.
+   */
+  autoDemoSequence?: LinkedListAutoDemoStep[];
+  /**
+   * 자동 시연이 끝난 뒤 "이제 직접 해 보라" 고 안내할지.
+   *
+   * control-bar 를 두지 않은 aspect facet 은 누를 것이 없으므로 false 다.
+   * 알고리즘은 layout 을 알지 못하니 (원칙 1) 그 사실을 선언에서 받는다.
+   * 생략하면 true — 완결형 facet 의 기본 거동이다.
+   */
+  handoverAfterDemo?: boolean;
 };
 
 function parseInsertIndex(raw: string | undefined, size: number): number | null {
@@ -75,7 +98,14 @@ function parseRemoveIndex(raw: string | undefined, size: number): number | null 
 
 export async function linkedList(ctxBase: FacetContext<LinkedListFacetData>): Promise<void> {
   const ctx = ctxBase as ReactiveContext<LinkedListFacetData>;
-  const { initialValues, autoDemoIntervalMs, searchStepMs, maxSize } = ctx.data;
+  const {
+    initialValues,
+    autoDemoIntervalMs,
+    searchStepMs,
+    maxSize,
+    autoDemoSequence,
+    handoverAfterDemo,
+  } = ctx.data;
 
   // 모델 상태.
   const values: string[] = [...initialValues];
@@ -84,31 +114,96 @@ export async function linkedList(ctxBase: FacetContext<LinkedListFacetData>): Pr
   let lastIndex = '';
   let lastValue = '';
 
+  // 실행부 — 자동 시연과 입력 루프가 같은 경로를 공유한다. 둘이 갈라지면
+  // 시연이 보여 준 것과 학습자가 눌러 본 것이 달라진다.
+  async function applyInsert(index: number, value: string): Promise<void> {
+    values.splice(index, 0, value);
+    await ctx.emit({ type: 'phase', payload: { phase: 'insert' }, silent: true });
+    await ctx.emit({
+      type: 'insert',
+      target: `index:${index}`,
+      payload: { index, value, isHead: index === 0 },
+    });
+    ctx.metric('insert-count', 'inc');
+  }
+
+  async function applyRemove(index: number): Promise<void> {
+    const value = values[index]!;
+    values.splice(index, 1);
+    await ctx.emit({ type: 'phase', payload: { phase: 'remove' }, silent: true });
+    await ctx.emit({
+      type: 'remove',
+      target: `index:${index}`,
+      payload: { index, value, isHead: index === 0 },
+    });
+    ctx.metric('remove-count', 'inc');
+  }
+
+  /** head 부터 한 칸씩 훑는다. 취소되면 false — 호출부가 즉시 빠져나가야 한다 (C8). */
+  async function applySearch(needle: string): Promise<boolean> {
+    ctx.metric('search-count', 'inc');
+    await ctx.emit({ type: 'phase', payload: { phase: 'search' }, silent: true });
+    await ctx.emit({ type: 'search-prepare', payload: { value: needle } });
+
+    let matchIdx = -1;
+    let walked = 0;
+    for (let i = 0; i < values.length; i++) {
+      if (ctx.cancelled) return false;
+      walked += 1;
+      const isMatch = values[i] === needle;
+      const isFinal = isMatch || i === values.length - 1;
+      await ctx.emit({
+        type: 'search-step',
+        target: `index:${i}`,
+        payload: { index: i, value: values[i], isMatch, isFinal },
+      });
+      ctx.metric('walk-count', 'inc');
+      const ok = await ctx.sleep(searchStepMs);
+      if (!ok || ctx.cancelled) return false;
+      if (isMatch) {
+        matchIdx = i;
+        break;
+      }
+    }
+    await ctx.emit({
+      type: 'search-result',
+      payload:
+        matchIdx >= 0
+          ? { found: true, index: matchIdx, value: needle, walked }
+          : { found: false, value: needle, walked },
+    });
+    return true;
+  }
+
   // 0. 초기 상태 통보.
   await ctx.emit({
     type: 'init',
     payload: { values: [...values] },
   });
 
-  // 1. 자동 시연 — insert(2, "25") (기획 §3 결정적 순간).
+  // 1. 자동 시연 — 무엇을 보여 줄지는 facet 선언이 정한다.
   await ctx.emit({ type: 'phase', payload: { phase: 'auto-demo' }, silent: true });
-  if (values.length >= 2) {
+  for (const step of autoDemoSequence ?? []) {
+    if (ctx.cancelled) return;
     const ok = await ctx.sleep(autoDemoIntervalMs);
     if (!ok || ctx.cancelled) return;
-    const insertIdx = Math.min(2, values.length);
-    const insertVal = '25';
-    values.splice(insertIdx, 0, insertVal);
-    await ctx.emit({ type: 'phase', payload: { phase: 'insert' }, silent: true });
-    await ctx.emit({
-      type: 'insert',
-      target: `index:${insertIdx}`,
-      payload: { index: insertIdx, value: insertVal, isHead: insertIdx === 0 },
-    });
-    ctx.metric('insert-count', 'inc');
+    if (step.op === 'insert') {
+      if (values.length >= maxSize) continue;
+      await applyInsert(Math.min(step.index, values.length), step.value);
+    } else if (step.op === 'remove') {
+      if (values.length === 0) continue;
+      await applyRemove(Math.min(step.index, values.length - 1));
+    } else {
+      if (values.length === 0) continue;
+      if (!(await applySearch(step.value))) return;
+    }
   }
 
   if (ctx.cancelled) return;
-  await ctx.emit({ type: 'demo-end' });
+  await ctx.emit({
+    type: 'demo-end',
+    payload: { handover: handoverAfterDemo !== false },
+  });
 
   // 2. 입력 반응 루프.
   await ctx.emit({ type: 'phase', payload: { phase: 'idle' }, silent: true });
@@ -161,14 +256,7 @@ export async function linkedList(ctxBase: FacetContext<LinkedListFacetData>): Pr
         continue;
       }
       const insertVal = valRaw.trim() !== '' ? valRaw.trim() : String(values.length + 1);
-      values.splice(idx, 0, insertVal);
-      await ctx.emit({ type: 'phase', payload: { phase: 'insert' }, silent: true });
-      await ctx.emit({
-        type: 'insert',
-        target: `index:${idx}`,
-        payload: { index: idx, value: insertVal, isHead: idx === 0 },
-      });
-      ctx.metric('insert-count', 'inc');
+      await applyInsert(idx, insertVal);
       continue;
     }
 
@@ -185,15 +273,7 @@ export async function linkedList(ctxBase: FacetContext<LinkedListFacetData>): Pr
         });
         continue;
       }
-      const value = values[idx]!;
-      values.splice(idx, 1);
-      await ctx.emit({ type: 'phase', payload: { phase: 'remove' }, silent: true });
-      await ctx.emit({
-        type: 'remove',
-        target: `index:${idx}`,
-        payload: { index: idx, value, isHead: idx === 0 },
-      });
-      ctx.metric('remove-count', 'inc');
+      await applyRemove(idx);
       continue;
     }
 
@@ -204,37 +284,7 @@ export async function linkedList(ctxBase: FacetContext<LinkedListFacetData>): Pr
       }
       const needle = valRaw.trim() !== '' ? valRaw.trim() : '';
       if (needle === '') continue;
-      ctx.metric('search-count', 'inc');
-      await ctx.emit({ type: 'phase', payload: { phase: 'search' }, silent: true });
-      await ctx.emit({ type: 'search-prepare', payload: { value: needle } });
-
-      let matchIdx = -1;
-      let walked = 0;
-      for (let i = 0; i < values.length; i++) {
-        if (ctx.cancelled) return;
-        walked += 1;
-        const isMatch = values[i] === needle;
-        const isFinal = isMatch || i === values.length - 1;
-        await ctx.emit({
-          type: 'search-step',
-          target: `index:${i}`,
-          payload: { index: i, value: values[i], isMatch, isFinal },
-        });
-        ctx.metric('walk-count', 'inc');
-        const ok = await ctx.sleep(searchStepMs);
-        if (!ok || ctx.cancelled) return;
-        if (isMatch) {
-          matchIdx = i;
-          break;
-        }
-      }
-      await ctx.emit({
-        type: 'search-result',
-        payload:
-          matchIdx >= 0
-            ? { found: true, index: matchIdx, value: needle, walked }
-            : { found: false, value: needle, walked },
-      });
+      if (!(await applySearch(needle))) return;
       continue;
     }
   }

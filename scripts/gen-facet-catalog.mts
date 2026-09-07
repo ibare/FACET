@@ -28,7 +28,8 @@ const repoRoot = join(here, '..');
 const facetsRoot = join(repoRoot, 'facets');
 const outFile = join(repoRoot, 'packages/bootstrap/src/facet-catalog.generated.ts');
 
-const ID_PATTERN = /id:\s*'(facet:[A-Za-z0-9-]+)'/;
+// facet.ts 하나에 여러 FacetJson 이 선언될 수 있다 (canonical + aspect). 전부 잡는다.
+const ID_PATTERN = /id:\s*'(facet:[A-Za-z0-9-]+)'/g;
 
 /** facets/<domain>/<name>/src/facet.ts 에서 facet id → domain 매핑 구축. */
 function buildDomainMap(): Map<string, string> {
@@ -43,8 +44,9 @@ function buildDomainMap(): Map<string, string> {
     for (const name of names) {
       const facetFile = join(facetsRoot, domain, name, 'src', 'facet.ts');
       if (!existsSync(facetFile)) continue;
-      const match = ID_PATTERN.exec(readFileSync(facetFile, 'utf8'));
-      if (match) idToDomain.set(match[1], domain);
+      for (const match of readFileSync(facetFile, 'utf8').matchAll(ID_PATTERN)) {
+        idToDomain.set(match[1]!, domain);
+      }
     }
   }
   return idToDomain;

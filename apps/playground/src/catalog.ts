@@ -4,6 +4,13 @@ export type Topic = {
   id: string;
   name: string;
   facetId?: string;
+  /**
+   * 이 주제를 한 대목씩 확대한 보조 facet.
+   *
+   * 인덱스에는 내지 않는다 — 부모를 고른 사람에게만 보이는 것이 발췌의 지위다.
+   * facet 페이지가 canonical 아래에 이어 붙여 렌더한다.
+   */
+  aspectFacetIds?: string[];
 };
 
 export type Subdomain = {

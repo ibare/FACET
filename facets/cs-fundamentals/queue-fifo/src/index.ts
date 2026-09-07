@@ -10,7 +10,7 @@
 export { queue, computeQueueResult, type QueueFacetData, type QueueOp } from './algorithm.js';
 export { queueProjector } from './projector.js';
 export { queueImperativeIR, queueIRs } from './irs.js';
-export { queueFacet } from './facet.js';
+export { queueFacet, queueFifoFacet } from './facet.js';
 export { queueDescription } from './description.js';
 
 import {
@@ -23,7 +23,7 @@ import {
 import { queue, type QueueFacetData } from './algorithm.js';
 import { queueProjector } from './projector.js';
 import { queueIRs } from './irs.js';
-import { queueFacet } from './facet.js';
+import { queueFacet, queueFifoFacet } from './facet.js';
 import { queueDescription } from './description.js';
 
 /** algorithm/projector/IR/facet/description 등록 헬퍼 (transpiler 는 호스트가 별도 등록). */
@@ -31,6 +31,6 @@ export function registerQueue(): void {
   registerAlgorithm<QueueFacetData>('queue', queue);
   registerProjector('queueProjector', queueProjector);
   for (const ir of queueIRs) registerIR(ir.id, ir);
-  registerFacets([queueFacet]);
+  registerFacets([queueFacet, queueFifoFacet]);
   registerDescription(queueFacet.id, queueDescription);
 }

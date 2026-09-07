@@ -253,6 +253,11 @@ function TopicTile({ topic, accent }: { topic: Topic; accent: AccentTokens }) {
         <div className="flex min-w-0 items-center gap-2">
           <Sparkle weight="fill" className={`h-3 w-3 shrink-0 ${accent.text}`} />
           <span className="truncate text-sm text-fg">{topic.name}</span>
+          {topic.aspectFacetIds && topic.aspectFacetIds.length > 0 && (
+            <span className="shrink-0 rounded-full bg-surface px-1.5 py-0.5 text-[10px] text-fg-subtle ring-1 ring-border">
+              분해 {topic.aspectFacetIds.length}
+            </span>
+          )}
         </div>
         <ArrowRight
           weight="bold"

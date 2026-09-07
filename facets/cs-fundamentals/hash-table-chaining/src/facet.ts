@@ -33,6 +33,7 @@ export const hashTableFacet: FacetJson = {
     chainStepMs: 280,
     rehashStepMs: 360,
     autoDemoKeys: ['14', '7', '25', '11', '5', '19', '6'],
+    handoverAfterDemo: true,
   },
   shuffleOnReset: false,
   layout: {
@@ -388,5 +389,116 @@ export const hashTableFacet: FacetJson = {
         { name: 'rehash-count', label: { en: 'Rehash', ko: '이사', ja: '再ハッシュ', zh: '再散列', ar: 'إعادة تقطيع', es: 'Rehash', fr: 'Réhachage', hi: 'पुनःहैश', id: 'Rehash', pt: 'Re-hash' }, initial: 0 },
       ],
     },
+  },
+};
+
+
+/**
+ * aspect facet — 개념의 한 대목만 확대한 보조 시각화.
+ *
+ * canonical (`hashTableFacet`) 과 algorithm / projector / stage view 를 공유하고
+ * `initialData.autoDemoKeys` 와 `layout` 만 다르다. 키를 골라 넣는 것만으로 계산 ·
+ * 충돌 · 사슬이라는 세 국면이 갈린다 — h(k) = k mod 11 이라 14 · 25 · 36 이 모두
+ * 슬롯 3 으로 떨어지는 것을 이용한다.
+ *
+ * 셋 다 header 와 control-bar 를 두지 않는다. 글의 흐름에 박히는 그림은 독자가
+ * 조작하지 않아도 할 말을 마쳐야 하기 때문이다.
+ *
+ * title / description 은 en·ko 만 채웠다 (발췌 방식 1차 시험).
+ */
+
+export const hashTableHashFacet: FacetJson = {
+  id: 'facet:hashTableChaining-hash',
+  title: { en: 'Turning a key into a slot', ko: '키에서 저장 위치 구하기' },
+  description: {
+    en: 'Three keys, three slots — h(k) = k mod 11 decides where each one lands',
+    ko: '키 셋이 각자의 자리로 — h(k) = k mod 11 이 어디에 놓일지를 정한다',
+  },
+  algorithm: 'module:hashTable',
+  projector: 'module:hashTableProjector',
+  initialData: {
+    type: 'hash-table',
+    initialM: 11,
+    rehashM: 23,
+    rehashThreshold: 0.75,
+    autoDemoIntervalMs: 900,
+    chainStepMs: 280,
+    rehashStepMs: 360,
+    autoDemoKeys: ['14', '7', '5'],
+    handoverAfterDemo: false,
+  },
+  shuffleOnReset: false,
+  layout: {
+    type: 'column',
+    gap: 8,
+    children: [{ ref: 'stage', padding: '8px 0' }],
+  },
+  messages: hashTableFacet.messages,
+  blocks: {
+    stage: { type: 'hash-table-stage' },
+  },
+};
+
+export const hashTableCollisionFacet: FacetJson = {
+  id: 'facet:hashTableChaining-collision',
+  title: { en: 'Two keys, one slot', ko: '서로 다른 키, 같은 위치' },
+  description: {
+    en: 'Different keys can land on the same slot — 14 and 25 both give 3',
+    ko: '서로 다른 키가 같은 자리로 떨어진다 — 14 도 25 도 3 이다',
+  },
+  algorithm: 'module:hashTable',
+  projector: 'module:hashTableProjector',
+  initialData: {
+    type: 'hash-table',
+    initialM: 11,
+    rehashM: 23,
+    rehashThreshold: 0.75,
+    autoDemoIntervalMs: 900,
+    chainStepMs: 280,
+    rehashStepMs: 360,
+    autoDemoKeys: ['14', '25'],
+    handoverAfterDemo: false,
+  },
+  shuffleOnReset: false,
+  layout: {
+    type: 'column',
+    gap: 8,
+    children: [{ ref: 'stage', padding: '8px 0' }],
+  },
+  messages: hashTableFacet.messages,
+  blocks: {
+    stage: { type: 'hash-table-stage' },
+  },
+};
+
+export const hashTableChainFacet: FacetJson = {
+  id: 'facet:hashTableChaining-chain',
+  title: { en: 'A chain grows', ko: '한 자리에 매달리는 사슬' },
+  description: {
+    en: 'Keys that collide hang off the same slot in a chain',
+    ko: '충돌한 키들이 같은 자리에 사슬로 매달린다',
+  },
+  algorithm: 'module:hashTable',
+  projector: 'module:hashTableProjector',
+  initialData: {
+    type: 'hash-table',
+    initialM: 11,
+    rehashM: 23,
+    rehashThreshold: 0.75,
+    autoDemoIntervalMs: 900,
+    chainStepMs: 280,
+    rehashStepMs: 360,
+    autoDemoKeys: ['14', '25', '36'],
+    handoverAfterDemo: false,
+  },
+  shuffleOnReset: false,
+  layout: {
+    type: 'column',
+    gap: 8,
+    children: [{ ref: 'stage', padding: '8px 0' }],
+  },
+  messages: hashTableFacet.messages,
+  blocks: {
+    stage: { type: 'hash-table-stage' },
   },
 };

@@ -15,7 +15,7 @@
  *     - peek        target: stack:top  payload: { stamp, label, value }
  *     - overflow    target: stack:top  payload: { attempted, capacity }
  *     - underflow   target: stack:top  payload: { op: 'pop' | 'peek' }
- *     - demo-end    payload: {}                 (자동 시연 종료 신호)
+ *     - demo-end    payload: { handover }       (자동 시연 종료 신호)
  *
  *   메타 (silent):
  *     - phase  payload: { phase: 'auto-demo' | 'idle' | 'push' | 'pop' | 'peek' }
@@ -38,6 +38,9 @@ export type StackInputEvent =
   | { type: 'peek' }
   | { type: 'input'; payload?: { name: string; value: string } };
 
+/** 자동 시연 한 걸음. push 는 initialValues 에서 순서대로 값을 가져온다. */
+export type StackAutoDemoStep = { op: 'push' } | { op: 'pop' };
+
 export type StackFacetData = {
   type: 'stack';
   /** 자동 시연으로 미리 push 될 값 (좌→우 = 첫번째 push → 마지막 push). */
@@ -46,13 +49,29 @@ export type StackFacetData = {
   maxHeight: number;
   /** 자동 시연 사이 간격 ms (speedMul 자동 적용은 mechanism.sleep 이 처리). */
   autoDemoIntervalMs: number;
+  /**
+   * 자동 시연 순서. 생략하면 initialValues 를 차례로 push 하는 기존 거동이다.
+   *
+   * push 는 initialValues 에서 앞에서부터 하나씩 꺼내 쓴다 — 무엇을 쌓을지는
+   * initialValues 가, 언제 빼는지는 이 시퀀스가 정한다 (원칙 2).
+   */
+  autoDemoSequence?: StackAutoDemoStep[];
+  /**
+   * 자동 시연이 끝난 뒤 "이제 직접 해 보라" 고 안내할지.
+   *
+   * control-bar 를 두지 않은 aspect facet 은 누를 것이 없으므로 false 다.
+   * 알고리즘은 layout 을 알지 못하니 (원칙 1) 그 사실을 선언에서 받는다.
+   * 생략하면 true — 완결형 facet 의 기본 거동이다.
+   */
+  handoverAfterDemo?: boolean;
 };
 
 type StackEntry = { stamp: number; label: string };
 
 export async function stack(ctxBase: FacetContext<StackFacetData>): Promise<void> {
   const ctx = ctxBase as ReactiveContext<StackFacetData>;
-  const { initialValues, maxHeight, autoDemoIntervalMs } = ctx.data;
+  const { initialValues, maxHeight, autoDemoIntervalMs, autoDemoSequence, handoverAfterDemo } =
+    ctx.data;
 
   const state: StackEntry[] = [];
   let nextStamp = 0;
@@ -74,27 +93,57 @@ export async function stack(ctxBase: FacetContext<StackFacetData>): Promise<void
       payload: { items },
     });
 
-    for (const it of items) {
+    // 시퀀스를 선언하지 않으면 initialValues 를 차례로 push 하는 것이 기본이다.
+    const steps: StackAutoDemoStep[] =
+      autoDemoSequence ?? items.map(() => ({ op: 'push' }) as StackAutoDemoStep);
+    let fed = 0;
+
+    for (const step of steps) {
       if (ctx.cancelled) return;
       const ok = await ctx.sleep(autoDemoIntervalMs);
       if (!ok || ctx.cancelled) return;
-      state.push(it);
+
+      if (step.op === 'push') {
+        const it = items[fed];
+        if (!it) continue;
+        fed += 1;
+        state.push(it);
+        await ctx.emit({
+          type: 'push',
+          target: 'stack:top',
+          payload: {
+            stamp: it.stamp,
+            label: it.label,
+            value: it.label,
+            size: state.length,
+            fromInput: true,
+          },
+        });
+        ctx.metric('push-count', 'inc');
+        continue;
+      }
+
+      const top = state.pop();
+      if (!top) continue;
+      await ctx.emit({ type: 'phase', payload: { phase: 'pop' }, silent: true });
       await ctx.emit({
-        type: 'push',
+        type: 'pop',
         target: 'stack:top',
         payload: {
-          stamp: it.stamp,
-          label: it.label,
-          value: it.label,
+          stamp: top.stamp,
+          label: top.label,
+          value: top.label,
           size: state.length,
-          fromInput: true,
         },
       });
-      ctx.metric('push-count', 'inc');
+      ctx.metric('pop-count', 'inc');
     }
 
     if (ctx.cancelled) return;
-    await ctx.emit({ type: 'demo-end' });
+    await ctx.emit({
+      type: 'demo-end',
+      payload: { handover: handoverAfterDemo !== false },
+    });
   }
 
   // 1. 입력 반응 루프.

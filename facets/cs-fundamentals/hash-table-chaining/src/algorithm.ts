@@ -34,7 +34,7 @@
  *     - empty-table         payload: { op: 'search' | 'remove' }
  *     - invalid-key         payload: { op: 'insert' | 'search' | 'remove', raw }
  *     - not-found           payload: { op: 'search' | 'remove', key }
- *     - demo-end            payload: {}
+ *     - demo-end            payload: { handover }
  *
  *   메타 (silent):
  *     - phase  payload: { phase: 'auto-demo' | 'idle' | 'insert' | 'search' |
@@ -75,6 +75,14 @@ export type HashTableFacetData = {
   rehashStepMs: number;
   /** 자동 시연 키 시퀀스 (정수 문자열, h(k) = k mod 11 기준 충돌 1회 의도). */
   autoDemoKeys: string[];
+  /**
+   * 자동 시연이 끝난 뒤 "이제 직접 해 보라" 고 안내할지.
+   *
+   * control-bar 를 두지 않은 aspect facet 은 누를 것이 없으므로 false 다.
+   * 알고리즘은 layout 을 알지 못하니 (원칙 1) 그 사실을 선언에서 받는다.
+   * 생략하면 true — 완결형 facet 의 기본 거동이다.
+   */
+  handoverAfterDemo?: boolean;
 };
 
 const ALPHA_CAUTION = 0.5;
@@ -137,6 +145,7 @@ export async function hashTable(ctxBase: FacetContext<HashTableFacetData>): Prom
     chainStepMs,
     rehashStepMs,
     autoDemoKeys,
+    handoverAfterDemo,
   } = ctx.data;
 
   // 모델 상태.
@@ -267,7 +276,10 @@ export async function hashTable(ctxBase: FacetContext<HashTableFacetData>): Prom
   }
 
   if (ctx.cancelled) return;
-  await ctx.emit({ type: 'demo-end' });
+  await ctx.emit({
+    type: 'demo-end',
+    payload: { handover: handoverAfterDemo !== false },
+  });
   await ctx.emit({ type: 'phase', payload: { phase: 'idle' }, silent: true });
 
   // 2. 입력 반응 루프.

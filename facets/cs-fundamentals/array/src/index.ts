@@ -11,7 +11,12 @@
 export { array, type ArrayFacetData, type ArrayInputEvent } from './algorithm.js';
 export { arrayProjector } from './projector.js';
 export { arrayIRs } from './irs.js';
-export { arrayFacet } from './facet.js';
+export {
+  arrayFacet,
+  arrayIndexFacet,
+  arrayShiftFacet,
+  arrayGrowFacet,
+} from './facet.js';
 export { arrayDescription } from './description.js';
 export { arrayStageView } from './array-stage.js';
 
@@ -26,7 +31,12 @@ import {
 import { array, type ArrayFacetData } from './algorithm.js';
 import { arrayProjector } from './projector.js';
 import { arrayIRs } from './irs.js';
-import { arrayFacet } from './facet.js';
+import {
+  arrayFacet,
+  arrayIndexFacet,
+  arrayShiftFacet,
+  arrayGrowFacet,
+} from './facet.js';
 import { arrayDescription } from './description.js';
 import { arrayStageView } from './array-stage.js';
 
@@ -42,6 +52,6 @@ export function registerArray(): void {
   registerProjector('arrayProjector', arrayProjector);
   for (const ir of arrayIRs) registerIR(ir.id, ir);
   registerView('array-stage', arrayStageView);
-  registerFacets([arrayFacet]);
+  registerFacets([arrayFacet, arrayIndexFacet, arrayShiftFacet, arrayGrowFacet]);
   registerDescription(arrayFacet.id, arrayDescription);
 }

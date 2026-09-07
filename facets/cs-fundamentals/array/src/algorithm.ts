@@ -1,7 +1,7 @@
 /**
  * 배열 (Array) 자료구조 시각화 알고리즘 — 입력 반응형.
  *
- * mount 직후 자동 시연 (read(3) → insert(1, "5")) 후 무한 waitForInput 루프로
+ * mount 직후 `initialData.autoDemoSequence` 를 재생한 뒤 무한 waitForInput 루프로
  * 사용자 입력 (read/write/insert/remove/append/search) 을 1:1 시각 사건으로 매핑.
  *
  * 식별자 (C1):
@@ -20,7 +20,7 @@
  *     - resize         payload: { oldCapacity, newCapacity, copied, values }
  *     - out-of-range   payload: { index, op, size }
  *     - limit-reached  payload: { op: 'append' | 'insert', size, maxSize }
- *     - demo-end       payload: {}
+ *     - demo-end       payload: { handover }
  *
  *   메타 (silent):
  *     - phase  payload: { phase: 'auto-demo' | 'idle' | 'read' | 'write' |
@@ -50,6 +50,11 @@ export type ArrayInputEvent =
   | { type: 'append'; payload?: { index?: string; value?: string } }
   | { type: 'search'; payload?: { index?: string; value?: string } };
 
+/** 자동 시연 한 걸음. 사용자 입력과 같은 실행 경로를 탄다. */
+export type ArrayAutoDemoStep =
+  | { op: 'read'; index: number }
+  | { op: 'insert'; index: number; value: string };
+
 export type ArrayFacetData = {
   type: 'array';
   /** 초기 채색 칸 (좌→우). size = initialValues.length. */
@@ -64,6 +69,21 @@ export type ArrayFacetData = {
   searchStepMs: number;
   /** 학습 한도 — size 가 이 값 이상이면 append / insert 가 거부된다. */
   maxSize: number;
+  /**
+   * mount 직후 재생할 자동 시연. 빈 배열이면 초기 배치 그대로 정지한다.
+   *
+   * 무엇을 시연할지는 저작 결정이므로 알고리즘이 아니라 선언에 둔다 (원칙 2).
+   * 같은 algorithm 을 공유하면서 시연만 달리한 aspect facet 이 이 필드로 갈린다.
+   */
+  autoDemoSequence?: ArrayAutoDemoStep[];
+  /**
+   * 자동 시연이 끝난 뒤 "이제 직접 해 보라" 고 안내할지.
+   *
+   * control-bar 를 두지 않은 aspect facet 은 누를 것이 없으므로 false 다.
+   * 알고리즘은 layout 을 알지 못하니 (원칙 1) 그 사실을 선언에서 받는다.
+   * 생략하면 true — 완결형 facet 의 기본 거동이다.
+   */
+  handoverAfterDemo?: boolean;
 };
 
 function parseIndex(raw: string | undefined, size: number): number | null {
@@ -98,6 +118,8 @@ export async function array(ctxBase: FacetContext<ArrayFacetData>): Promise<void
     autoDemoIntervalMs,
     searchStepMs,
     maxSize,
+    autoDemoSequence,
+    handoverAfterDemo,
   } = ctx.data;
 
   // 모델 상태.
@@ -114,40 +136,42 @@ export async function array(ctxBase: FacetContext<ArrayFacetData>): Promise<void
     payload: { values: [...values], capacity },
   });
 
-  // 1. 자동 시연 — read(3) → insert(1, "5") (기획 §9 권장 시퀀스).
+  // 1. 자동 시연 — 무엇을 보여 줄지는 facet 선언이 정한다.
   await ctx.emit({ type: 'phase', payload: { phase: 'auto-demo' }, silent: true });
 
-  if (values.length > 3) {
-    const ok1 = await ctx.sleep(autoDemoIntervalMs);
-    if (!ok1 || ctx.cancelled) return;
-    await ctx.emit({ type: 'phase', payload: { phase: 'read' }, silent: true });
-    await ctx.emit({
-      type: 'read',
-      target: 'index:3',
-      payload: { index: 3, value: values[3] },
-    });
-    ctx.metric('read-count', 'inc');
-  }
+  for (const step of autoDemoSequence ?? []) {
+    if (ctx.cancelled) return;
+    const ok = await ctx.sleep(autoDemoIntervalMs);
+    if (!ok || ctx.cancelled) return;
 
-  if (values.length > 1) {
-    const ok2 = await ctx.sleep(autoDemoIntervalMs);
-    if (!ok2 || ctx.cancelled) return;
+    if (step.op === 'read') {
+      if (step.index < 0 || step.index >= values.length) continue;
+      await ctx.emit({ type: 'phase', payload: { phase: 'read' }, silent: true });
+      await ctx.emit({
+        type: 'read',
+        target: `index:${step.index}`,
+        payload: { index: step.index, value: values[step.index] },
+      });
+      ctx.metric('read-count', 'inc');
+      continue;
+    }
+
+    if (values.length >= maxSize) continue;
     // resize 가 필요한지 먼저 검사.
     if (values.length >= capacity) {
       await emitResize(ctx, values, capacity, growthFactor);
       capacity = capacity * growthFactor;
     }
-    const insertIdx = 1;
-    const insertVal = '5';
+    const insertIdx = Math.max(0, Math.min(step.index, values.length));
     const shifted = values.length - insertIdx;
-    values.splice(insertIdx, 0, insertVal);
+    values.splice(insertIdx, 0, step.value);
     await ctx.emit({ type: 'phase', payload: { phase: 'insert' }, silent: true });
     await ctx.emit({
       type: 'insert',
       target: `index:${insertIdx}`,
       payload: {
         index: insertIdx,
-        value: insertVal,
+        value: step.value,
         shifted,
         size: values.length,
         capacity,
@@ -158,7 +182,10 @@ export async function array(ctxBase: FacetContext<ArrayFacetData>): Promise<void
   }
 
   if (ctx.cancelled) return;
-  await ctx.emit({ type: 'demo-end' });
+  await ctx.emit({
+    type: 'demo-end',
+    payload: { handover: handoverAfterDemo !== false },
+  });
 
   // 2. 입력 반응 루프.
   await ctx.emit({ type: 'phase', payload: { phase: 'idle' }, silent: true });

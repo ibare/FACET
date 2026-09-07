@@ -28,6 +28,11 @@ export const arrayFacet: FacetJson = {
     autoDemoIntervalMs: 1000,
     searchStepMs: 120,
     maxSize: 15,
+    autoDemoSequence: [
+      { op: 'read', index: 3 },
+      { op: 'insert', index: 1, value: '5' },
+    ],
+    handoverAfterDemo: true,
   },
   shuffleOnReset: false,
   layout: {
@@ -264,5 +269,115 @@ export const arrayFacet: FacetJson = {
         { name: 'resize-count', label: { en: 'Resize', ko: '이사', ja: '再確保', zh: '扩容', ar: 'تغيير الحجم', es: 'Redimensión', fr: 'Redimension', hi: 'आकार बदलाव', id: 'Ubah ukuran', pt: 'Redimensão' }, initial: 0 },
       ],
     },
+  },
+};
+
+
+/**
+ * aspect facet — 개념의 한 대목만 확대한 보조 시각화.
+ *
+ * canonical (`arrayFacet`) 과 algorithm / projector / stage view 를 공유하고
+ * `initialData` 와 `layout` 만 다르다. grow 는 initialCapacity 를 size 와 같게 두어
+ * 첫 삽입이 곧바로 재할당을 부르게 한 것이 전부다 — 알고리즘은 그대로다.
+ *
+ * 셋 다 header 와 control-bar 를 두지 않는다. 글의 흐름에 박히는 그림은 독자가
+ * 조작하지 않아도 할 말을 마쳐야 하기 때문이다.
+ *
+ * title / description 은 en·ko 만 채웠다 (발췌 방식 1차 시험).
+ */
+
+export const arrayIndexFacet: FacetJson = {
+  id: 'facet:array-index',
+  title: { en: 'Reaching by index', ko: '인덱스로 찾는 연속 공간' },
+  description: {
+    en: 'One index, one hop — the address is computed, not walked to',
+    ko: '인덱스 하나로 한 번에 — 주소는 걸어가서 찾는 것이 아니라 계산된다',
+  },
+  algorithm: 'module:array',
+  projector: 'module:arrayProjector',
+  initialData: {
+    type: 'array',
+    initialValues: ['7', '3', '9', '1', '4'],
+    initialCapacity: 8,
+    growthFactor: 2,
+    autoDemoIntervalMs: 1000,
+    searchStepMs: 120,
+    maxSize: 15,
+    autoDemoSequence: [{ op: 'read', index: 3 }],
+    handoverAfterDemo: false,
+  },
+  shuffleOnReset: false,
+  layout: {
+    type: 'column',
+    gap: 8,
+    children: [{ ref: 'stage', padding: '8px 0' }],
+  },
+  messages: arrayFacet.messages,
+  blocks: {
+    stage: { type: 'array-stage' },
+  },
+};
+
+export const arrayShiftFacet: FacetJson = {
+  id: 'facet:array-shift',
+  title: { en: 'Inserting shifts the rest', ko: '삽입은 뒤를 밀어낸다' },
+  description: {
+    en: 'A value enters at index 1 and everything behind it slides one place',
+    ko: '1 번 자리에 값이 끼어들면 뒤의 것들이 한 칸씩 밀린다',
+  },
+  algorithm: 'module:array',
+  projector: 'module:arrayProjector',
+  initialData: {
+    type: 'array',
+    initialValues: ['7', '3', '9', '1', '4'],
+    initialCapacity: 8,
+    growthFactor: 2,
+    autoDemoIntervalMs: 1000,
+    searchStepMs: 120,
+    maxSize: 15,
+    autoDemoSequence: [{ op: 'insert', index: 1, value: '5' }],
+    handoverAfterDemo: false,
+  },
+  shuffleOnReset: false,
+  layout: {
+    type: 'column',
+    gap: 8,
+    children: [{ ref: 'stage', padding: '8px 0' }],
+  },
+  messages: arrayFacet.messages,
+  blocks: {
+    stage: { type: 'array-stage' },
+  },
+};
+
+export const arrayGrowFacet: FacetJson = {
+  id: 'facet:array-grow',
+  title: { en: 'Running out of room', ko: '자리가 모자라면 옮겨 심는다' },
+  description: {
+    en: 'The band is full — a longer one is allocated and everything moves over',
+    ko: '띠가 가득 찼다 — 더 긴 띠를 얻어 전부 옮겨 간다',
+  },
+  algorithm: 'module:array',
+  projector: 'module:arrayProjector',
+  initialData: {
+    type: 'array',
+    initialValues: ['7', '3', '9', '1', '4'],
+    initialCapacity: 5,
+    growthFactor: 2,
+    autoDemoIntervalMs: 1000,
+    searchStepMs: 120,
+    maxSize: 15,
+    autoDemoSequence: [{ op: 'insert', index: 1, value: '5' }],
+    handoverAfterDemo: false,
+  },
+  shuffleOnReset: false,
+  layout: {
+    type: 'column',
+    gap: 8,
+    children: [{ ref: 'stage', padding: '8px 0' }],
+  },
+  messages: arrayFacet.messages,
+  blocks: {
+    stage: { type: 'array-stage' },
   },
 };
