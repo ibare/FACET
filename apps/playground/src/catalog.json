@@ -1026,7 +1026,13 @@
             { "id": "lru-cache", "name": "LRU 캐시", "facetId": "facet:lruCache" },
             { "id": "lfu-cache", "name": "LFU 캐시" },
             { "id": "cache-coherence", "name": "캐시 일관성" },
-            { "id": "cdn", "name": "CDN", "facetId": "facet:cachingCdn" }
+            { "id": "cdn", "name": "CDN", "facetId": "facet:cachingCdn" },
+            { "id": "cache-hit-miss", "name": "있으면 바로, 없으면 가서 가져온다", "kind": "piece", "origin": "lru-cache" },
+            { "id": "evict-least-frequent", "name": "가장 덜 쓴 것을 버린다", "kind": "piece", "origin": "lfu-cache" },
+            { "id": "stale-copy", "name": "한 곳을 고쳤는데 다른 곳은 옛것", "kind": "piece", "origin": "cache-coherence" },
+            { "id": "invalidate-others", "name": "고치면 남의 것을 무르게 한다", "kind": "piece", "origin": "cache-coherence" },
+            { "id": "serve-from-near", "name": "가까운 곳에서 내어 준다", "kind": "piece", "origin": "cdn" },
+            { "id": "origin-pull", "name": "없으면 본진에서 한 번만 끌어온다", "kind": "piece", "origin": "cdn" }
           ]
         },
         {
@@ -1034,7 +1040,12 @@
           "name": "메시지 큐",
           "topics": [
             { "id": "pubsub", "name": "Pub/Sub", "facetId": "facet:messagingPubsub" },
-            { "id": "kafka-pattern", "name": "Kafka 패턴" }
+            { "id": "kafka-pattern", "name": "Kafka 패턴" },
+            { "id": "publish-to-many", "name": "한 번 보내면 여럿이 받는다", "kind": "piece", "origin": "pubsub" },
+            { "id": "decouple-sender-receiver", "name": "보내는 쪽은 누가 받는지 모른다", "kind": "piece", "origin": "pubsub" },
+            { "id": "append-only-log", "name": "뒤에만 덧붙인다", "kind": "piece", "origin": "kafka-pattern" },
+            { "id": "consumer-offset", "name": "어디까지 읽었는지 각자 센다", "kind": "piece", "origin": "kafka-pattern" },
+            { "id": "replay-from-offset", "name": "되감아 다시 읽는다", "kind": "piece", "origin": "kafka-pattern" }
           ]
         },
         {
@@ -1043,7 +1054,11 @@
           "topics": [
             { "id": "round-robin-lb", "name": "Round Robin" },
             { "id": "least-connection", "name": "Least Connection" },
-            { "id": "consistent-hashing", "name": "일관된 해싱" }
+            { "id": "consistent-hashing", "name": "일관된 해싱" },
+            { "id": "spread-in-turn", "name": "차례대로 돌려 보낸다", "kind": "piece", "origin": "round-robin-lb" },
+            { "id": "send-to-idlest", "name": "가장 한가한 쪽으로", "kind": "piece", "origin": "least-connection" },
+            { "id": "ring-of-hashes", "name": "고리 위에 자리를 잡는다", "kind": "piece", "origin": "consistent-hashing" },
+            { "id": "move-few-on-change", "name": "하나가 빠져도 조금만 옮긴다", "kind": "piece", "origin": "consistent-hashing" }
           ]
         },
         {
@@ -1052,7 +1067,12 @@
           "topics": [
             { "id": "consistency-model", "name": "일관성 모델" },
             { "id": "consensus", "name": "합의 알고리즘" },
-            { "id": "clock-sync", "name": "시계 동기화" }
+            { "id": "clock-sync", "name": "시계 동기화" },
+            { "id": "read-your-write", "name": "내가 쓴 것은 내가 본다", "kind": "piece", "origin": "consistency-model" },
+            { "id": "eventually-agrees", "name": "시간이 지나면 같아진다", "kind": "piece", "origin": "consistency-model" },
+            { "id": "agree-on-one-value", "name": "여럿이 하나를 정한다", "kind": "piece", "origin": "consensus" },
+            { "id": "clocks-drift", "name": "시계가 저마다 어긋난다", "kind": "piece", "origin": "clock-sync" },
+            { "id": "happens-before", "name": "무엇이 먼저인지 순서만 정한다", "kind": "piece", "origin": "clock-sync" }
           ]
         },
         {
@@ -1061,7 +1081,11 @@
           "topics": [
             { "id": "service-discovery", "name": "서비스 디스커버리" },
             { "id": "api-gateway", "name": "API 게이트웨이" },
-            { "id": "circuit-breaker", "name": "서킷 브레이커" }
+            { "id": "circuit-breaker", "name": "서킷 브레이커" },
+            { "id": "register-and-find", "name": "스스로 알리고 찾아 쓴다", "kind": "piece", "origin": "service-discovery" },
+            { "id": "one-door-many-rooms", "name": "문 하나로 들어가 여럿에 닿는다", "kind": "piece", "origin": "api-gateway" },
+            { "id": "trip-after-failures", "name": "자꾸 실패하면 아예 끊는다", "kind": "piece", "origin": "circuit-breaker" },
+            { "id": "half-open-probe", "name": "가끔 한 번 찔러 본다", "kind": "piece", "origin": "circuit-breaker" }
           ]
         }
       ]
@@ -1144,7 +1168,12 @@
           "topics": [
             { "id": "matrix-transform", "name": "행렬 변환", "facetId": "facet:matrixTransform2d" },
             { "id": "scale-rotate-translate", "name": "스케일 · 회전 · 이동" },
-            { "id": "homogeneous", "name": "동차좌표" }
+            { "id": "homogeneous", "name": "동차좌표" },
+            { "id": "scale-stretches", "name": "늘이고 줄인다", "kind": "piece", "origin": "scale-rotate-translate" },
+            { "id": "rotate-turns", "name": "한 점을 중심으로 돈다", "kind": "piece", "origin": "scale-rotate-translate" },
+            { "id": "translate-slides", "name": "통째로 옮긴다", "kind": "piece", "origin": "scale-rotate-translate" },
+            { "id": "extra-dimension-for-translate", "name": "한 줄을 더해 옮김도 곱으로", "kind": "piece", "origin": "homogeneous" },
+            { "id": "w-divide", "name": "나누어 되돌린다", "kind": "piece", "origin": "homogeneous" }
           ]
         },
         {
@@ -1154,7 +1183,15 @@
             { "id": "camera-model", "name": "카메라 모델" },
             { "id": "projection", "name": "투영" },
             { "id": "clipping", "name": "클리핑" },
-            { "id": "rasterization", "name": "래스터화" }
+            { "id": "rasterization", "name": "래스터화" },
+            { "id": "world-to-camera", "name": "눈이 있는 자리로 세상을 옮긴다", "kind": "piece", "origin": "camera-model" },
+            { "id": "look-at-direction", "name": "어디를 보고 있는가", "kind": "piece", "origin": "camera-model" },
+            { "id": "perspective-shrinks-far", "name": "멀수록 작아진다", "kind": "piece", "origin": "projection" },
+            { "id": "orthographic-keeps-size", "name": "멀어도 그대로", "kind": "piece", "origin": "projection" },
+            { "id": "cut-outside-frustum", "name": "보이는 틀 밖은 잘라낸다", "kind": "piece", "origin": "clipping" },
+            { "id": "triangle-to-pixels", "name": "삼각형을 격자에 채운다", "kind": "piece", "origin": "rasterization" },
+            { "id": "depth-test", "name": "앞의 것이 뒤를 가린다", "kind": "piece", "origin": "rasterization" },
+            { "id": "interpolate-across", "name": "꼭짓점 값이 안으로 번진다", "kind": "piece", "origin": "rasterization" }
           ]
         },
         {
@@ -1163,7 +1200,12 @@
           "topics": [
             { "id": "phong", "name": "Phong 셰이딩" },
             { "id": "pbr", "name": "PBR" },
-            { "id": "brdf", "name": "BRDF" }
+            { "id": "brdf", "name": "BRDF" },
+            { "id": "ambient-diffuse-specular", "name": "바탕빛·퍼진빛·번쩍임을 더한다", "kind": "piece", "origin": "phong" },
+            { "id": "normal-decides-brightness", "name": "면이 향한 쪽이 밝기를 정한다", "kind": "piece", "origin": "phong" },
+            { "id": "energy-conserving", "name": "나간 빛이 들어온 빛을 넘지 않는다", "kind": "piece", "origin": "pbr" },
+            { "id": "roughness-metallic", "name": "거칠기와 금속성으로 재질을", "kind": "piece", "origin": "pbr" },
+            { "id": "reflect-distribution", "name": "어느 쪽으로 얼마나 튀는가", "kind": "piece", "origin": "brdf" }
           ]
         },
         {
@@ -1172,7 +1214,13 @@
           "topics": [
             { "id": "ray-casting", "name": "Ray casting" },
             { "id": "ray-tracing-base", "name": "Ray tracing" },
-            { "id": "global-illumination", "name": "글로벌 일루미네이션" }
+            { "id": "global-illumination", "name": "글로벌 일루미네이션" },
+            { "id": "shoot-ray-per-pixel", "name": "픽셀마다 광선을 쏜다", "kind": "piece", "origin": "ray-casting" },
+            { "id": "nearest-hit", "name": "가장 먼저 닿은 것", "kind": "piece", "origin": "ray-casting" },
+            { "id": "reflect-and-refract", "name": "튕기고 꺾인다", "kind": "piece", "origin": "ray-tracing-base" },
+            { "id": "shadow-ray", "name": "빛까지 길이 막혔는가", "kind": "piece", "origin": "ray-tracing-base" },
+            { "id": "light-bounces-many", "name": "빛이 여러 번 튄다", "kind": "piece", "origin": "global-illumination" },
+            { "id": "color-bleeding", "name": "옆의 색이 묻어난다", "kind": "piece", "origin": "global-illumination" }
           ]
         }
       ]
