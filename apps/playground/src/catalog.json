@@ -466,7 +466,13 @@
             { "id": "datalink-layer", "name": "데이터 링크 계층" },
             { "id": "network-layer", "name": "네트워크 계층" },
             { "id": "transport-layer", "name": "전송 계층" },
-            { "id": "application-layer", "name": "응용 계층" }
+            { "id": "application-layer", "name": "응용 계층" },
+            { "id": "layer-wraps-payload", "name": "아래로 내려가며 봉투를 씌운다", "kind": "piece", "origin": "network-layer" },
+            { "id": "peer-layer-talk", "name": "같은 층끼리 말이 통한다", "kind": "piece", "origin": "network-layer" },
+            { "id": "bits-as-signal", "name": "0과 1을 신호로 바꾼다", "kind": "piece", "origin": "physical-layer" },
+            { "id": "frame-boundary", "name": "어디서 시작해 어디서 끝나는가", "kind": "piece", "origin": "datalink-layer" },
+            { "id": "hop-by-hop", "name": "한 번에 한 걸음씩 넘긴다", "kind": "piece", "origin": "network-layer" },
+            { "id": "port-demultiplex", "name": "같은 주소 안에서 문을 나눈다", "kind": "piece", "origin": "transport-layer" }
           ]
         },
         {
@@ -475,7 +481,11 @@
           "topics": [
             { "id": "ethernet", "name": "이더넷 프레이밍" },
             { "id": "mac", "name": "MAC 주소" },
-            { "id": "arp", "name": "ARP 프로토콜" }
+            { "id": "arp", "name": "ARP 프로토콜" },
+            { "id": "collision-and-backoff", "name": "부딪히면 물러났다 다시", "kind": "piece", "origin": "ethernet" },
+            { "id": "mac-is-local", "name": "같은 망 안에서만 쓰는 이름", "kind": "piece", "origin": "mac" },
+            { "id": "ask-who-has", "name": "누구 것이냐고 모두에게 묻는다", "kind": "piece", "origin": "arp" },
+            { "id": "arp-cache", "name": "한 번 알면 적어 둔다", "kind": "piece", "origin": "arp" }
           ]
         },
         {
@@ -487,7 +497,18 @@
             { "id": "ospf", "name": "OSPF" },
             { "id": "bgp", "name": "BGP" },
             { "id": "nat", "name": "NAT" },
-            { "id": "icmp", "name": "ICMP" }
+            { "id": "icmp", "name": "ICMP" },
+            { "id": "longest-prefix-match", "name": "가장 길게 맞는 줄을 고른다", "kind": "piece", "origin": "ip-routing" },
+            { "id": "forwarding-table", "name": "어디로 넘길지 적힌 표", "kind": "piece", "origin": "ip-routing" },
+            { "id": "hop-count-metric", "name": "몇 걸음인지로 고른다", "kind": "piece", "origin": "rip" },
+            { "id": "count-to-infinity", "name": "끊긴 줄 알기까지 오래 걸린다", "kind": "piece", "origin": "rip" },
+            { "id": "link-state-flood", "name": "내 이웃을 모두에게 알린다", "kind": "piece", "origin": "ospf" },
+            { "id": "shortest-path-tree", "name": "각자 최단 나무를 그린다", "kind": "piece", "origin": "ospf" },
+            { "id": "path-vector-policy", "name": "길 전체를 보고 정책으로 고른다", "kind": "piece", "origin": "bgp" },
+            { "id": "rewrite-address-port", "name": "나가면서 주소를 갈아 끼운다", "kind": "piece", "origin": "nat" },
+            { "id": "nat-mapping-table", "name": "누구 것인지 적어 두고 되돌린다", "kind": "piece", "origin": "nat" },
+            { "id": "echo-and-reply", "name": "찔러 보고 답을 듣는다", "kind": "piece", "origin": "icmp" },
+            { "id": "ttl-expired-reports", "name": "수명이 다하면 알려 준다", "kind": "piece", "origin": "icmp" }
           ]
         },
         {
@@ -497,7 +518,14 @@
             { "id": "tcp-handshake", "name": "TCP 핸드셰이크" },
             { "id": "flow-control", "name": "흐름 제어" },
             { "id": "congestion-control", "name": "혼잡 제어" },
-            { "id": "udp", "name": "UDP" }
+            { "id": "udp", "name": "UDP" },
+            { "id": "three-way-sync", "name": "세 번 주고받아 문을 연다", "kind": "piece", "origin": "tcp-handshake" },
+            { "id": "sequence-number", "name": "어디까지 받았는지 번호로 센다", "kind": "piece", "origin": "tcp-handshake" },
+            { "id": "receiver-window", "name": "받는 쪽이 감당할 만큼만", "kind": "piece", "origin": "flow-control" },
+            { "id": "slow-start", "name": "조금씩 늘려 본다", "kind": "piece", "origin": "congestion-control" },
+            { "id": "back-off-on-loss", "name": "잃으면 줄인다", "kind": "piece", "origin": "congestion-control" },
+            { "id": "sawtooth", "name": "톱니 모양으로 오르내린다", "kind": "piece", "origin": "congestion-control" },
+            { "id": "send-and-forget", "name": "보내고 확인하지 않는다", "kind": "piece", "origin": "udp" }
           ]
         },
         {
@@ -508,7 +536,14 @@
             { "id": "dns", "name": "DNS" },
             { "id": "smtp", "name": "SMTP" },
             { "id": "ftp", "name": "FTP" },
-            { "id": "websocket", "name": "WebSocket" }
+            { "id": "websocket", "name": "WebSocket" },
+            { "id": "request-response", "name": "묻고 답한다", "kind": "piece", "origin": "http" },
+            { "id": "stateless-needs-token", "name": "기억하지 않아 표를 들려 보낸다", "kind": "piece", "origin": "http" },
+            { "id": "delegate-down-the-tree", "name": "위에서 아래로 물어 내려간다", "kind": "piece", "origin": "dns" },
+            { "id": "cache-ttl", "name": "답을 정해진 동안 들고 있는다", "kind": "piece", "origin": "dns" },
+            { "id": "store-and-forward", "name": "받아 두었다 다음으로 넘긴다", "kind": "piece", "origin": "smtp" },
+            { "id": "control-and-data-channel", "name": "명령 길과 짐 길이 따로", "kind": "piece", "origin": "ftp" },
+            { "id": "upgrade-then-keep-open", "name": "한 번 열고 계속 쓴다", "kind": "piece", "origin": "websocket" }
           ]
         },
         {
@@ -517,7 +552,11 @@
           "topics": [
             { "id": "tls-handshake", "name": "TLS 핸드셰이크" },
             { "id": "auth", "name": "인증" },
-            { "id": "firewall", "name": "방화벽" }
+            { "id": "firewall", "name": "방화벽" },
+            { "id": "shared-secret-in-public", "name": "비밀 없이 비밀을 맞춘다", "kind": "piece", "origin": "tls-handshake" },
+            { "id": "certificate-chain", "name": "누가 보증했는지 거슬러 오른다", "kind": "piece", "origin": "tls-handshake" },
+            { "id": "token-bearer", "name": "표를 든 사람이 통과한다", "kind": "piece", "origin": "auth" },
+            { "id": "rule-match-order", "name": "규칙을 위에서부터 맞춰 본다", "kind": "piece", "origin": "firewall" }
           ]
         }
       ]
