@@ -69,14 +69,20 @@ last_verified: 2026-09-07
   결정이다 (원칙 2).
 - **`ctx.emit` 의 type 은 리터럴로 쓴다** (C2). 걸음을 배열로 순회하지 말고 한
   줄씩 편다. `pause()` 헬퍼로 취소 검사와 `ctx.sleep` 을 묶으면 두 줄로 끝난다.
-- **control-bar 에는 다시 보기와 한 걸음, 둘만 둔다.**
-  - `action: 'reset'` — `ReactiveMechanism.reset()` 이 끝에 `ensureStarted()` 를
-    부르므로 reset 이 곧 재생이다. 놓친 사람을 위한 것이다.
-  - `action: 'advance'` — 자동 재생이 끝난 뒤 처음부터 한 걸음씩 짚어 볼 수 있게
+- **control-bar 는 `[CONTROL.replay, CONTROL.advance]` 다.** 라벨을 손으로 적지
+  않는다 — 같은 컨트롤을 아홉 번 적으면 문안이 갈라진다 (실제로 `reset` 이 29곳에
+  쓰이는 동안 라벨이 세 갈래로 어긋나 있었다).
+  - `CONTROL.replay` — 액션은 `reset` 이다. `ReactiveMechanism.reset()` 이 끝에
+    `ensureStarted()` 를 부르므로 되돌리는 일이 곧 다시 재생하는 일이다.
+    놓친 사람을 위한 것이다.
+  - `CONTROL.advance` — 자동 재생이 끝난 뒤 처음부터 한 걸음씩 짚어 볼 수 있게
     한다. 곱씹으며 읽고 싶은 사람을 위한 것이다. `onControl` 이 reset/speed 외
     액션을 `dispatch` 로 보내므로 (`supportedControls` 의 `'*'`) 코어 변경 없이
     통한다. algorithm 은 자동 재생을 마친 뒤 `waitForInput` 루프에서 이것을 받고,
     처음으로 돌아갈 때 `rewind` 를 발신한다.
+
+  다르게 해야 할 조각이 생기면 펼쳐서 덮어쓴다 (`{ ...CONTROL.replay, label }`).
+  프리셋은 반복을 없애는 장치이지 어휘를 통제하는 장치가 아니다.
 
   둘 다 **눌러야 완성되는 조작이 아니다.** 자동 재생만 보고 지나가도 화면은 할
   말을 마치고, 완료 상태 자체가 정보다. 그래서 뷰포트 진입 시 재생 같은 장치는

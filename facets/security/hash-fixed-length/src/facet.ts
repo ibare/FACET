@@ -24,6 +24,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL } from '@ffacet/core/runtime';
 
 export const hashFixedLengthFacet: FacetJson = {
   id: 'facet:hashFixedLength',
@@ -112,16 +113,7 @@ export const hashFixedLengthFacet: FacetJson = {
       type: 'control-bar',
       // ReactiveMechanism 의 reset() 은 끝에 ensureStarted() 를 부른다 — 즉
       // reset 이 곧 다시 재생이다. 그래서 action 은 reset 이고 라벨만 다르다.
-      controls: [
-        {
-          widget: 'button',
-          action: 'reset',
-          label: { en: 'Replay', ko: '다시 보기' },
-        },
-        // ReactiveMechanism 은 reset/speed 외의 action 을 dispatch 로 보내므로
-        // (supportedControls 의 '*') facet 고유 버튼이 그대로 통한다.
-        { widget: 'button', action: 'advance', label: { en: 'Step', ko: '한 걸음' } },
-      ],
+      controls: [CONTROL.replay, CONTROL.advance],
     },
   },
 };

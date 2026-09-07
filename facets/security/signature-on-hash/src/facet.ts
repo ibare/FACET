@@ -20,6 +20,7 @@
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL } from '@ffacet/core/runtime';
 
 export const signatureOnHashFacet: FacetJson = {
   id: 'facet:signatureOnHash',
@@ -79,12 +80,7 @@ export const signatureOnHashFacet: FacetJson = {
     stage: { type: 'sign-hash-stage' },
     controls: {
       type: 'control-bar',
-      controls: [
-        { widget: 'button', action: 'reset', label: { en: 'Replay', ko: '다시 보기' } },
-        // ReactiveMechanism 은 reset/speed 외의 action 을 dispatch 로 보내므로
-        // (supportedControls 의 '*') facet 고유 버튼이 그대로 통한다.
-        { widget: 'button', action: 'advance', label: { en: 'Step', ko: '한 걸음' } },
-      ],
+      controls: [CONTROL.replay, CONTROL.advance],
     },
   },
 };
