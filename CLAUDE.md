@@ -142,5 +142,7 @@ npm scope 는 **`@ffacet`** (`ibare` 소유 org). `@facet` 은 타 계정 선점
 - `packages/host-tiptap/` — Tiptap NodeView 호스트 어댑터 (DSL 파싱)
 - `packages/transpiler-{cpp,csharp,java,javascript,python,typescript}/` — IR → 언어 소스
 - `packages/ir-interpreter/` — IR 실행기 / phase 검증
-- `facets/cs-fundamentals/<name>/src/` — facet 18종 (algorithm / projector / irs / facet / description / index)
+- `facets/cs-fundamentals/<name>/src/` — 완결형 facet (algorithm / projector / irs / facet / description / index)
+- `facets/<domain>/<name>/src/` — 도메인별 facet. `facets/security/` 에는 완결형 (`asymmetric-rsa`) 과
+  조각(piece) 9종이 함께 있다. 조각은 한 주장만 말하고 멈추는 작은 facet 으로, 규범은 `rules/specifics/S-piece.md`
 - `apps/playground/` — 데모 앱

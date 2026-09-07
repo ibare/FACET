@@ -188,6 +188,19 @@ specifics:
         - create-file
         - rename-file
 
+  - id: S-piece
+    file: specifics/S-piece.md
+    description: 조각(piece) facet 규범 — 한 주장 · 필수 조작 없음 · reactive + stepMs · 전제 각주 · 캔버스 폭 620 · 부품이 아니라 어휘를 공유
+    triggers:
+      paths:
+        - "facets/**/facet.ts"
+        - "facets/**/algorithm.ts"
+      patterns:
+        - "조각(piece)"
+        - "piece) facet"
+        - "stepMs"
+        - "이 facet 이 답하는 질문"
+
   - id: S-view
     file: specifics/S-view.md
     description: View 인터페이스 계약 (mount/destroy), design-tokens 경유 색상, theme/locale 파라미터 준수, dispatch 채널을 통한 사용자 입력 발신, 색 토큰 결정 트리 (state/severity/categorical/LED/iso-body/region)
