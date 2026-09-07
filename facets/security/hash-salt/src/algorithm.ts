@@ -63,21 +63,30 @@ export async function hashSalt(
   const ctx = ctxBase as ReactiveContext<HashSaltFacetData>;
   const { algorithmLabel, password, unsaltedHash, users, stepMs } = ctx.data;
 
+  /**
+   * 걸음 사이 머무름. 취소되면 false — 호출부가 즉시 빠져나가야 한다 (C8).
+   *
+   * 걸음을 배열로 순회하지 않고 한 줄씩 펴 쓰는 이유는 `ctx.emit` 의 type 이
+   * 리터럴이어야 하기 때문이다 (C2). 덕분에 어휘가 코드에 그대로 드러난다.
+   */
+  async function pause(): Promise<boolean> {
+    if (ctx.cancelled) return false;
+    const ok = await ctx.sleep(stepMs);
+    return ok && !ctx.cancelled;
+  }
+
   await ctx.emit({
     type: 'init',
     payload: { algorithmLabel, password, unsaltedHash, users },
   });
 
   // 네 걸음. 문제를 먼저 보이지 않으면 소금이 무엇을 푸는지 알 수 없다.
-  for (const type of [
-    'reveal-users',
-    'hash-unsalted',
-    'add-salt',
-    'hash-salted',
-  ] as const) {
-    if (ctx.cancelled) return;
-    const ok = await ctx.sleep(stepMs);
-    if (!ok || ctx.cancelled) return;
-    await ctx.emit({ type });
-  }
+  if (!(await pause())) return;
+  await ctx.emit({ type: 'reveal-users' });
+  if (!(await pause())) return;
+  await ctx.emit({ type: 'hash-unsalted' });
+  if (!(await pause())) return;
+  await ctx.emit({ type: 'add-salt' });
+  if (!(await pause())) return;
+  await ctx.emit({ type: 'hash-salted' });
 }

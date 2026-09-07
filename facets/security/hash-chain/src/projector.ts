@@ -8,9 +8,16 @@
 import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
 import { makeTranslator } from '@ffacet/core/runtime';
 
+/** stage 가 그리는 데 필요한 형태. projector 가 경계에서 이 모양으로 좁힌다. */
+type Block = { data: string; prev: string; hash: string };
+type StageInit = {
+  blocks: Block[];
+  tamper: { index: number; data: string; blocks: Block[] };
+};
+
 type ChainStage = {
   reset(): void;
-  init(payload: unknown, labels: { prev: string; hash: string }): void;
+  init(payload: StageInit, labels: { prev: string; hash: string }): void;
   setBaseCaption(text: string): void;
   setCaption(text: string): void;
   setNote(text: string): void;
@@ -19,6 +26,31 @@ type ChainStage = {
   breakLink(): void;
   cascade(): void;
 };
+
+
+/** unknown → 화면이 쓰는 형태. 생산자가 같은 패키지라도 경계는 경계다 (C9). */
+function str(v: unknown): string {
+  return typeof v === 'string' ? v : '';
+}
+function num(v: unknown): number {
+  return typeof v === 'number' && Number.isFinite(v) ? v : 0;
+}
+
+function block(v: unknown): Block {
+  const b = (v ?? {}) as { data?: unknown; prev?: unknown; hash?: unknown };
+  return { data: str(b.data), prev: str(b.prev), hash: str(b.hash) };
+}
+function blocks(v: unknown): Block[] {
+  return Array.isArray(v) ? v.map(block) : [];
+}
+function narrowInit(raw: unknown): StageInit {
+  const p = (raw ?? {}) as { blocks?: unknown; tamper?: unknown };
+  const t = (p.tamper ?? {}) as { index?: unknown; data?: unknown; blocks?: unknown };
+  return {
+    blocks: blocks(p.blocks),
+    tamper: { index: num(t.index), data: str(t.data), blocks: blocks(t.blocks) },
+  };
+}
 
 export const hashChainProjector: ProjectorFactory = (views, runtime) => {
   const tr: Translate = runtime?.t ?? makeTranslator();
@@ -45,7 +77,7 @@ export const hashChainProjector: ProjectorFactory = (views, runtime) => {
 
       switch (event.type) {
         case 'init': {
-          stage.init(event.payload, {
+          stage.init(narrowInit(event.payload), {
             prev: tr('label.prev', 'prev'),
             hash: tr('label.hash', 'hash'),
           });

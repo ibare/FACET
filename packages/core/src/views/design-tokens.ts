@@ -225,6 +225,16 @@ export const space = {
   xl: '24px',
 } as const;
 
+/**
+ * 조각(piece) facet 의 캔버스 폭.
+ *
+ * playground 의 넓은 컨테이너가 아니라 글의 문단 폭(대략 600~800px)에 맞춘다.
+ * viewBox SVG 는 늘리면 글자까지 비례해 커지므로 상한을 두지 않으면 조각이
+ * 아니라 포스터가 된다. 조각끼리 폭이 제각각이면 한 글에 여럿 박혔을 때
+ * 들쭉날쭉해 보이므로 값을 하나로 묶는다 (S-piece).
+ */
+export const PIECE_CANVAS_W = 620;
+
 export const fonts = {
   body: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
   mono: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, monospace',

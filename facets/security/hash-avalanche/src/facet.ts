@@ -4,6 +4,8 @@
  * 이 facet 이 답하는 질문:
  *   "입력을 한 글자만 바꿨는데 왜 해시가 전혀 달라지는가?"
  *
+ * @piece — 이 표식이 S-piece 의 적용 범위를 정한다.
+ *
  * 조각의 규범 (완결형 facet 과 다른 종류다):
  *   - 필수 조작 없음 — 아무것도 누르지 않아도 할 말을 마친다. 다만 다시 보기
  *     하나는 둔다. 이 조각은 격자가 물드는 운동 자체가 메시지라, 최종 상태만
@@ -70,6 +72,10 @@ export const hashAvalancheFacet: FacetJson = {
     'label.through': {
       en: '↓  {algorithm}  ↓',
       ko: '↓  {algorithm}  ↓',
+    },
+    'label.note': {
+      en: 'The digests are real SHA-256 values, declared rather than computed — this screen takes no input.',
+      ko: '해시는 미리 계산해 선언한 실측 SHA-256 이다 — 이 화면은 입력을 받지 않는다.',
     },
   },
   blocks: {

@@ -8,9 +8,13 @@
 import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
 import { makeTranslator } from '@ffacet/core/runtime';
 
+/** stage 가 그리는 데 필요한 형태. projector 가 경계에서 이 모양으로 좁힌다. */
+type User = { name: string; salt: string; hash: string };
+type StageInit = { password: string; unsaltedHash: string; users: User[] };
+
 type SaltStage = {
   reset(): void;
-  init(payload: unknown, headers: { password: string; salt: string; stored: string }): void;
+  init(payload: StageInit, headers: { password: string; salt: string; stored: string }): void;
   setBaseCaption(text: string): void;
   setCaption(text: string): void;
   setNote(text: string): void;
@@ -19,6 +23,25 @@ type SaltStage = {
   addSalt(): void;
   hashSalted(verdictLabel: string): void;
 };
+
+
+/** unknown → 화면이 쓰는 형태. 생산자가 같은 패키지라도 경계는 경계다 (C9). */
+function str(v: unknown): string {
+  return typeof v === 'string' ? v : '';
+}
+
+function user(v: unknown): User {
+  const u = (v ?? {}) as { name?: unknown; salt?: unknown; hash?: unknown };
+  return { name: str(u.name), salt: str(u.salt), hash: str(u.hash) };
+}
+function narrowInit(raw: unknown): StageInit {
+  const p = (raw ?? {}) as { password?: unknown; unsaltedHash?: unknown; users?: unknown };
+  return {
+    password: str(p.password),
+    unsaltedHash: str(p.unsaltedHash),
+    users: Array.isArray(p.users) ? p.users.map(user) : [],
+  };
+}
 
 export const hashSaltProjector: ProjectorFactory = (views, runtime) => {
   const tr: Translate = runtime?.t ?? makeTranslator();
@@ -48,7 +71,7 @@ export const hashSaltProjector: ProjectorFactory = (views, runtime) => {
 
       switch (event.type) {
         case 'init': {
-          stage.init(event.payload, {
+          stage.init(narrowInit(event.payload), {
             password: tr('label.password', 'password'),
             salt: tr('label.salt', 'salt'),
             stored: tr('label.stored', 'what gets stored'),

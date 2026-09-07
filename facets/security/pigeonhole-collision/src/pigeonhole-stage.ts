@@ -20,18 +20,11 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
-import { getColors, fonts, fontSizes } from '@ffacet/core/runtime';
+import { getColors, fonts, fontSizes, PIECE_CANVAS_W } from '@ffacet/core/runtime';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
-/**
- * 캔버스 폭.
- *
- * playground 의 넓은 컨테이너가 아니라 글의 문단 폭에 맞춘다. 조각이 놓이는
- * 자리는 문서 본문이고 (보통 600~800px), viewBox SVG 는 늘리면 글자까지 비례해
- * 커지므로 컨테이너를 다 채우게 두면 조각이 아니라 포스터가 된다.
- */
-const W = 620;
+const W = PIECE_CANVAS_W;
 const H = 230;
 
 // ── 입력 칩 ─────────────────────────────────────────────────────────────

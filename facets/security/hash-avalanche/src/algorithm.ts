@@ -18,7 +18,7 @@
  * 걸음 간격을 스스로 정하는 것 (ctx.sleep). coroutine 은 BASE_DELAY_MS 100ms 로만
  * 나아가고 속도 조정이 speed-slider 로만 가능해 (S-runtime) 조각에는 맞지 않는다.
  *
- * 입력 대기 루프는 두지 않는다. 여섯 걸음을 마치면 그대로 끝난다.
+ * 입력 대기 루프는 두지 않는다. 네 걸음을 마치면 그대로 끝난다.
  *
  * 식별자 (C1): 위치 기반 식별 대상이 없어 target 을 쓰지 않는다.
  *
@@ -116,6 +116,18 @@ export async function hashAvalanche(
   const outputBitsB = hexToBits(hashB);
   const outputFlipped = bitDiff(outputBitsA, outputBitsB);
 
+  /**
+   * 걸음 사이 머무름. 취소되면 false — 호출부가 즉시 빠져나가야 한다 (C8).
+   *
+   * 걸음을 배열로 순회하지 않고 한 줄씩 펴 쓰는 이유는 `ctx.emit` 의 type 이
+   * 리터럴이어야 하기 때문이다 (C2). 덕분에 어휘가 코드에 그대로 드러난다.
+   */
+  async function pause(): Promise<boolean> {
+    if (ctx.cancelled) return false;
+    const ok = await ctx.sleep(stepMs);
+    return ok && !ctx.cancelled;
+  }
+
   await ctx.emit({
     type: 'init',
     payload: {
@@ -136,15 +148,12 @@ export async function hashAvalanche(
   });
 
   // 네 걸음. 견줄 두 항을 먼저 놓고, 그 다음에 차이를 물들인다.
-  for (const type of [
-    'reveal-inputs',
-    'mark-input-diff',
-    'reveal-outputs',
-    'mark-output-diff',
-  ] as const) {
-    if (ctx.cancelled) return;
-    const ok = await ctx.sleep(stepMs);
-    if (!ok || ctx.cancelled) return;
-    await ctx.emit({ type });
-  }
+  if (!(await pause())) return;
+  await ctx.emit({ type: 'reveal-inputs' });
+  if (!(await pause())) return;
+  await ctx.emit({ type: 'mark-input-diff' });
+  if (!(await pause())) return;
+  await ctx.emit({ type: 'reveal-outputs' });
+  if (!(await pause())) return;
+  await ctx.emit({ type: 'mark-output-diff' });
 }

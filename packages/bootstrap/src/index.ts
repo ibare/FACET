@@ -41,7 +41,6 @@ export type { FacetCatalogEntry } from './catalog-types.js';
 
 let initialized = false;
 
-
 export function bootstrapFacet(): void {
   if (initialized) return;
   initialized = true;

@@ -62,16 +62,28 @@ export async function hashFixedLength(
   const ctx = ctxBase as ReactiveContext<HashFixedLengthFacetData>;
   const { algorithmLabel, hashBits, rows, stepMs } = ctx.data;
 
+  /**
+   * 걸음 사이 머무름. 취소되면 false — 호출부가 즉시 빠져나가야 한다 (C8).
+   *
+   * 걸음을 배열로 순회하지 않고 한 줄씩 펴 쓰는 이유는 `ctx.emit` 의 type 이
+   * 리터럴이어야 하기 때문이다 (C2). 덕분에 어휘가 코드에 그대로 드러난다.
+   */
+  async function pause(): Promise<boolean> {
+    if (ctx.cancelled) return false;
+    const ok = await ctx.sleep(stepMs);
+    return ok && !ctx.cancelled;
+  }
+
   await ctx.emit({
     type: 'init',
     payload: { algorithmLabel, hashBits, rows },
   });
 
   // 세 걸음. 길이가 다름을 먼저 보이고, 그 다음에 같음을 보인다.
-  for (const type of ['reveal-inputs', 'reveal-outputs', 'mark-uniform'] as const) {
-    if (ctx.cancelled) return;
-    const ok = await ctx.sleep(stepMs);
-    if (!ok || ctx.cancelled) return;
-    await ctx.emit({ type });
-  }
+  if (!(await pause())) return;
+  await ctx.emit({ type: 'reveal-inputs' });
+  if (!(await pause())) return;
+  await ctx.emit({ type: 'reveal-outputs' });
+  if (!(await pause())) return;
+  await ctx.emit({ type: 'mark-uniform' });
 }

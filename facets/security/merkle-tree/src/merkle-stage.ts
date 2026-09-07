@@ -14,11 +14,11 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
-import { getColors, fonts, fontSizes } from '@ffacet/core/runtime';
+import { getColors, fonts, fontSizes, PIECE_CANVAS_W } from '@ffacet/core/runtime';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
-const W = 620;
+const W = PIECE_CANVAS_W;
 const H = 244;
 
 const ROOT_Y = 76;
@@ -186,7 +186,7 @@ export const merkleStageView: View = {
       },
 
       /** 아래에서 위로 접힌다. 중간이 먼저, 꼭대기가 나중. */
-      foldUp() {
+      combineUp() {
         for (let i = 0; i < 4; i++) {
           const e = edges[i];
           if (e) e.style.opacity = '1';

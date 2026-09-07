@@ -9,9 +9,12 @@
 import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
 import { makeTranslator } from '@ffacet/core/runtime';
 
+/** stage 가 그리는 데 필요한 형태. projector 가 경계에서 이 모양으로 좁힌다. */
+type StageInit = { rows: { input: string; bytes: number; hash: string }[] };
+
 type FixedLengthStage = {
   reset(): void;
-  init(payload: unknown, emptyLabel: string): void;
+  init(payload: StageInit, emptyLabel: string): void;
   setBaseCaption(text: string): void;
   setCaption(text: string): void;
   setHeaders(inLabel: string, outLabel: string): void;
@@ -22,10 +25,25 @@ type FixedLengthStage = {
 };
 
 type InitPayload = {
-  algorithmLabel?: string;
-  hashBits?: number;
-  rows?: { input: string; bytes: number; hash: string }[];
+  algorithmLabel?: unknown;
+  hashBits?: unknown;
+  rows?: unknown;
 };
+
+/** unknown → 화면이 쓰는 형태. 생산자가 같은 패키지라도 경계는 경계다 (C9). */
+function str(v: unknown): string {
+  return typeof v === 'string' ? v : '';
+}
+function num(v: unknown): number {
+  return typeof v === 'number' && Number.isFinite(v) ? v : 0;
+}
+function narrowRows(v: unknown): StageInit['rows'] {
+  if (!Array.isArray(v)) return [];
+  return v.map((r) => {
+    const row = (r ?? {}) as { input?: unknown; bytes?: unknown; hash?: unknown };
+    return { input: str(row.input), bytes: num(row.bytes), hash: str(row.hash) };
+  });
+}
 
 export const hashFixedLengthProjector: ProjectorFactory = (views, runtime) => {
   const tr: Translate = runtime?.t ?? makeTranslator();
@@ -70,10 +88,11 @@ export const hashFixedLengthProjector: ProjectorFactory = (views, runtime) => {
       switch (event.type) {
         case 'init': {
           const p = (event.payload ?? {}) as InitPayload;
-          algorithmLabel = p.algorithmLabel ?? '';
-          hashBits = p.hashBits ?? 0;
-          longestBytes = (p.rows ?? []).reduce((m, r) => Math.max(m, r.bytes), 0);
-          stage.init(event.payload, emptyLabel());
+          const rows = narrowRows(p.rows);
+          algorithmLabel = str(p.algorithmLabel);
+          hashBits = num(p.hashBits);
+          longestBytes = rows.reduce((m, r) => Math.max(m, r.bytes), 0);
+          stage.init({ rows }, emptyLabel());
           applyChrome();
           break;
         }

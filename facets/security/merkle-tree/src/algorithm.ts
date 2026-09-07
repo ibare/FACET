@@ -20,7 +20,7 @@
  * 이벤트 (C2) — 전부 facet 로컬 (StandardEventType 미포함):
  *   - init          payload: { algorithmLabel, before, after, changedLeaf }
  *   - build-leaves  payload: {}   잎마다 자기 해시가 붙는다
- *   - fold-up       payload: {}   둘씩 묶여 위로 접혀 꼭대기 값이 남는다
+ *   - combine-up    payload: {}   둘씩 묶여 위로 합쳐져 꼭대기 값이 남는다
  *   - change-leaf   payload: {}   잎 하나가 바뀐다
  *   - mark-path     payload: {}   꼭대기까지 한 줄만 갈리고 나머지는 그대로다
  *
@@ -72,16 +72,30 @@ export async function merkleTree(
   const ctx = ctxBase as ReactiveContext<MerkleTreeFacetData>;
   const { algorithmLabel, before, after, changedLeaf, stepMs } = ctx.data;
 
+  /**
+   * 걸음 사이 머무름. 취소되면 false — 호출부가 즉시 빠져나가야 한다 (C8).
+   *
+   * 걸음을 배열로 순회하지 않고 한 줄씩 펴 쓰는 이유는 `ctx.emit` 의 type 이
+   * 리터럴이어야 하기 때문이다 (C2). 덕분에 어휘가 코드에 그대로 드러난다.
+   */
+  async function pause(): Promise<boolean> {
+    if (ctx.cancelled) return false;
+    const ok = await ctx.sleep(stepMs);
+    return ok && !ctx.cancelled;
+  }
+
   await ctx.emit({
     type: 'init',
     payload: { algorithmLabel, before, after, changedLeaf },
   });
 
   // 네 걸음. 접히는 것을 먼저 보여야 한 줄만 갈린다는 말이 뜻을 갖는다.
-  for (const type of ['build-leaves', 'fold-up', 'change-leaf', 'mark-path'] as const) {
-    if (ctx.cancelled) return;
-    const ok = await ctx.sleep(stepMs);
-    if (!ok || ctx.cancelled) return;
-    await ctx.emit({ type });
-  }
+  if (!(await pause())) return;
+  await ctx.emit({ type: 'build-leaves' });
+  if (!(await pause())) return;
+  await ctx.emit({ type: 'combine-up' });
+  if (!(await pause())) return;
+  await ctx.emit({ type: 'change-leaf' });
+  if (!(await pause())) return;
+  await ctx.emit({ type: 'mark-path' });
 }

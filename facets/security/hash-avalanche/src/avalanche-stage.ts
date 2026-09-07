@@ -23,20 +23,13 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
-import { getColors, fonts, fontSizes } from '@ffacet/core/runtime';
+import { getColors, fonts, fontSizes, PIECE_CANVAS_W } from '@ffacet/core/runtime';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 // ── 캔버스 ──────────────────────────────────────────────────────────────
-/**
- * 캔버스 폭.
- *
- * playground 의 넓은 컨테이너가 아니라 글의 문단 폭에 맞춘다. 조각이 놓이는
- * 자리는 문서 본문이고 (보통 600~800px), viewBox SVG 는 늘리면 글자까지 비례해
- * 커지므로 컨테이너를 다 채우게 두면 조각이 아니라 포스터가 된다.
- */
-const W = 620;
-const H = 372;
+const W = PIECE_CANVAS_W;
+const H = 392;
 
 // ── 두 컬럼 (좌: 원본, 우: 한 글자 바뀐 것) ─────────────────────────────
 const COL_A_CX = 160;
@@ -63,6 +56,7 @@ const INPUT_LABEL_Y = 58;
 const IN_COUNT_Y = 148;
 const ARROW_Y = 172;
 const OUT_COUNT_Y = 356;
+const NOTE_Y = 382;
 
 /** 한 행이 물드는 간격 (ms). 위에서 아래로 훑는 느낌을 준다. */
 const PAINT_ROW_MS = 40;
@@ -146,7 +140,8 @@ export const avalancheStageView: View = {
       size: fontSizes.lg,
       weight: '600',
     });
-    svg.append(inCount, arrow, outCount);
+    const note = text(W / 2, NOTE_Y, { fill: palette.textMuted, size: fontSizes.xs });
+    svg.append(inCount, arrow, outCount, note);
 
     let inA: Grid | null = null;
     let inB: Grid | null = null;

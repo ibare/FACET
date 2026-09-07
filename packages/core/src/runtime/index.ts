@@ -54,6 +54,7 @@ export {
   fontSizes,
   radii,
   space,
+  PIECE_CANVAS_W,
 } from '../views/design-tokens.js';
 export type { Theme, Palette, CategoricalTone } from '../views/design-tokens.js';
 export type { View, ViewInstance, ViewMountParams } from '../views/types.js';

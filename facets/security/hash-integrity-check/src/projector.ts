@@ -8,9 +8,18 @@
 import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
 import { makeTranslator } from '@ffacet/core/runtime';
 
+/** stage 가 그리는 데 필요한 형태. projector 가 경계에서 이 모양으로 좁힌다. */
+type Item = { content: string; hash: string };
+type StageInit = {
+  referenceHash: string;
+  intact: Item;
+  tampered: Item;
+  diffIndex: number;
+};
+
 type IntegrityStage = {
   reset(): void;
-  init(payload: unknown, labels: { intact: string; tampered: string }): void;
+  init(payload: StageInit, labels: { intact: string; tampered: string }): void;
   setBaseCaption(text: string): void;
   setCaption(text: string): void;
   setNote(text: string): void;
@@ -19,6 +28,34 @@ type IntegrityStage = {
   checkTampered(mark: string): void;
   markDifference(): void;
 };
+
+
+/** unknown → 화면이 쓰는 형태. 생산자가 같은 패키지라도 경계는 경계다 (C9). */
+function str(v: unknown): string {
+  return typeof v === 'string' ? v : '';
+}
+function num(v: unknown): number {
+  return typeof v === 'number' && Number.isFinite(v) ? v : 0;
+}
+
+function item(v: unknown): Item {
+  const i = (v ?? {}) as { content?: unknown; hash?: unknown };
+  return { content: str(i.content), hash: str(i.hash) };
+}
+function narrowInit(raw: unknown): StageInit {
+  const p = (raw ?? {}) as {
+    referenceHash?: unknown;
+    intact?: unknown;
+    tampered?: unknown;
+    diffIndex?: unknown;
+  };
+  return {
+    referenceHash: str(p.referenceHash),
+    intact: item(p.intact),
+    tampered: item(p.tampered),
+    diffIndex: num(p.diffIndex),
+  };
+}
 
 export const hashIntegrityCheckProjector: ProjectorFactory = (views, runtime) => {
   const tr: Translate = runtime?.t ?? makeTranslator();
@@ -48,7 +85,7 @@ export const hashIntegrityCheckProjector: ProjectorFactory = (views, runtime) =>
 
       switch (event.type) {
         case 'init': {
-          stage.init(event.payload, {
+          stage.init(narrowInit(event.payload), {
             intact: tr('label.intact', 'received (untouched)'),
             tampered: tr('label.tampered', 'received (altered)'),
           });

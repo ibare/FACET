@@ -18,11 +18,11 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
-import { getColors, fonts, fontSizes, categorical } from '@ffacet/core/runtime';
+import { getColors, fonts, fontSizes, categorical, PIECE_CANVAS_W } from '@ffacet/core/runtime';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
-const W = 620;
+const W = PIECE_CANVAS_W;
 const H = 244;
 
 // ── 열 (두 행이 공유한다 — 그래야 교차가 세로로 보인다) ─────────────────

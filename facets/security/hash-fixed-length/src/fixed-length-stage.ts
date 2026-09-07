@@ -19,11 +19,11 @@
  */
 
 import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
-import { getColors, fonts, fontSizes } from '@ffacet/core/runtime';
+import { getColors, fonts, fontSizes, PIECE_CANVAS_W } from '@ffacet/core/runtime';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
-const W = 620;
+const W = PIECE_CANVAS_W;
 const H = 288;
 
 // ── 열 좌표 ─────────────────────────────────────────────────────────────

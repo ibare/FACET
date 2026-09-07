@@ -1,8 +1,8 @@
 /**
  * HashAvalanche Projector — algorithm 이벤트를 avalanche-stage view 호출로 번역.
  *
- * 조각 facet 이라 번역이 단순하다. 여섯 걸음이 여섯 메서드에 1:1 로 대응하고,
- * 분기도 상태도 없다.
+ * 조각 facet 이라 번역이 단순하다. 네 걸음이 네 메서드에 1:1 로 대응하고,
+ * 분기도 상태도 거의 없다.
  *
  * 문안은 전부 FacetJson.messages 에서 온다 (C10). 코드에는 키와 en 원본만 있다.
  */
@@ -10,28 +10,71 @@
 import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
 import { makeTranslator } from '@ffacet/core/runtime';
 
+/** stage 가 그리는 데 필요한 형태. projector 가 경계에서 이 모양으로 좁힌다. */
+type StageInit = {
+  inputA: string;
+  inputB: string;
+  inputBitsA: boolean[];
+  inputBitsB: boolean[];
+  inputFlipped: boolean[];
+  outputBitsA: boolean[];
+  outputBitsB: boolean[];
+  outputFlipped: boolean[];
+};
+
 type AvalancheStage = {
   reset(): void;
-  init(payload: unknown): void;
+  init(payload: StageInit): void;
   setBaseCaption(text: string): void;
   setCaption(text: string): void;
+  setNote(text: string): void;
   revealInputs(): void;
   markInputDiff(countLabel: string): void;
   revealOutputs(arrowLabel: string): void;
   markOutputDiff(countLabel: string): void;
 };
 
-type InitPayload = {
-  algorithmLabel?: string;
-  inputTotalBits?: number;
-  inputFlippedBits?: number;
-  outputTotalBits?: number;
-  outputFlippedBits?: number;
+type InitPayload = Partial<StageInit> & {
+  algorithmLabel?: unknown;
+  inputTotalBits?: unknown;
+  inputFlippedBits?: unknown;
+  outputTotalBits?: unknown;
+  outputFlippedBits?: unknown;
 };
+
+/** unknown → 화면이 쓰는 형태. 생산자가 같은 패키지라도 경계는 경계다 (C9). */
+function str(v: unknown): string {
+  return typeof v === 'string' ? v : '';
+}
+function num(v: unknown): number {
+  return typeof v === 'number' && Number.isFinite(v) ? v : 0;
+}
+function bits(v: unknown): boolean[] {
+  return Array.isArray(v) ? v.map((b) => b === true) : [];
+}
+function narrowInit(p: InitPayload): StageInit {
+  return {
+    inputA: str(p.inputA),
+    inputB: str(p.inputB),
+    inputBitsA: bits(p.inputBitsA),
+    inputBitsB: bits(p.inputBitsB),
+    inputFlipped: bits(p.inputFlipped),
+    outputBitsA: bits(p.outputBitsA),
+    outputBitsB: bits(p.outputBitsB),
+    outputFlipped: bits(p.outputFlipped),
+  };
+}
 
 export const hashAvalancheProjector: ProjectorFactory = (views, runtime) => {
   const tr: Translate = runtime?.t ?? makeTranslator();
   const stage = views.stage as unknown as AvalancheStage | undefined;
+
+  /** 이 화면이 값을 계산하지 않는다는 전제를 밝히는 각주 (S-piece). */
+  const note = (): string =>
+    tr(
+      'label.note',
+      'The digests are real SHA-256 values, declared rather than computed — this screen takes no input.',
+    );
 
   /** 상시 캡션. init 과 reset 두 곳에서 쓰이므로 en 원본은 여기 한 번만 둔다. */
   const baseCaption = (): string =>
@@ -51,6 +94,7 @@ export const hashAvalancheProjector: ProjectorFactory = (views, runtime) => {
     onInit() {
       if (!stage) return;
       stage.setBaseCaption(baseCaption());
+      stage.setNote(note());
     },
 
     async onEvent(event) {
@@ -59,13 +103,14 @@ export const hashAvalancheProjector: ProjectorFactory = (views, runtime) => {
       switch (event.type) {
         case 'init': {
           const p = (event.payload ?? {}) as InitPayload;
-          algorithmLabel = p.algorithmLabel ?? '';
-          inputTotalBits = p.inputTotalBits ?? 0;
-          inputFlippedBits = p.inputFlippedBits ?? 0;
-          outputTotalBits = p.outputTotalBits ?? 0;
-          outputFlippedBits = p.outputFlippedBits ?? 0;
-          stage.init(event.payload);
+          algorithmLabel = str(p.algorithmLabel);
+          inputTotalBits = num(p.inputTotalBits);
+          inputFlippedBits = num(p.inputFlippedBits);
+          outputTotalBits = num(p.outputTotalBits);
+          outputFlippedBits = num(p.outputFlippedBits);
+          stage.init(narrowInit(p));
           stage.setBaseCaption(baseCaption());
+          stage.setNote(note());
           break;
         }
 
@@ -122,6 +167,7 @@ export const hashAvalancheProjector: ProjectorFactory = (views, runtime) => {
       if (!stage) return;
       stage.reset();
       stage.setBaseCaption(baseCaption());
+      stage.setNote(note());
     },
   };
 };

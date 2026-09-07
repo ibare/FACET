@@ -10,9 +10,13 @@
 import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
 import { makeTranslator } from '@ffacet/core/runtime';
 
+/** stage 가 그리는 데 필요한 형태. projector 가 경계에서 이 모양으로 좁힌다. */
+type Entry = { input: string; slot: number };
+type StageInit = { slotCount: number; fillers: Entry[]; overflow: Entry };
+
 type PigeonholeStage = {
   reset(): void;
-  init(payload: unknown): void;
+  init(payload: StageInit): void;
   setBaseCaption(text: string): void;
   setCaption(text: string): void;
   setNote(scaleLine: string, arrangementLine: string): void;
@@ -22,11 +26,27 @@ type PigeonholeStage = {
   placeOverflow(): void;
 };
 
-type InitPayload = {
-  slotCount?: number;
-  fillers?: { input: string; slot: number }[];
-  overflow?: { input: string; slot: number };
-};
+type InitPayload = { slotCount?: unknown; fillers?: unknown; overflow?: unknown };
+
+/** unknown → 화면이 쓰는 형태. 생산자가 같은 패키지라도 경계는 경계다 (C9). */
+function str(v: unknown): string {
+  return typeof v === 'string' ? v : '';
+}
+function num(v: unknown): number {
+  return typeof v === 'number' && Number.isFinite(v) ? v : 0;
+}
+
+function entry(v: unknown): Entry {
+  const e = (v ?? {}) as { input?: unknown; slot?: unknown };
+  return { input: str(e.input), slot: num(e.slot) };
+}
+function narrowInit(p: InitPayload): StageInit {
+  return {
+    slotCount: num(p.slotCount),
+    fillers: Array.isArray(p.fillers) ? p.fillers.map(entry) : [],
+    overflow: entry(p.overflow),
+  };
+}
 
 export const pigeonholeCollisionProjector: ProjectorFactory = (views, runtime) => {
   const tr: Translate = runtime?.t ?? makeTranslator();
@@ -75,12 +95,12 @@ export const pigeonholeCollisionProjector: ProjectorFactory = (views, runtime) =
 
       switch (event.type) {
         case 'init': {
-          const p = (event.payload ?? {}) as InitPayload;
-          slotCount = p.slotCount ?? 0;
-          overflowInput = p.overflow?.input ?? '';
-          const taken = p.fillers?.find((f) => f.slot === p.overflow?.slot);
-          occupantInput = taken?.input ?? '';
-          stage.init(event.payload);
+          const init = narrowInit((event.payload ?? {}) as InitPayload);
+          slotCount = init.slotCount;
+          overflowInput = init.overflow.input;
+          occupantInput =
+            init.fillers.find((f) => f.slot === init.overflow.slot)?.input ?? '';
+          stage.init(init);
           stage.setBaseCaption(baseCaption());
           stage.setNote(noteScale(), noteArrangement());
           break;

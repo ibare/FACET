@@ -8,10 +8,19 @@
 import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
 import { makeTranslator } from '@ffacet/core/runtime';
 
+/** stage 가 그리는 데 필요한 형태. projector 가 경계에서 이 모양으로 좁힌다. */
+type StageInit = {
+  hashLabel: string;
+  signatureLabel: string;
+  documentBytes: number;
+  digestBytes: number;
+  signatureBytes: number;
+};
+
 type SignHashStage = {
   reset(): void;
   init(
-    payload: unknown,
+    payload: StageInit,
     labels: {
       document: string;
       digest: string;
@@ -27,6 +36,26 @@ type SignHashStage = {
   signIt(): void;
   compare(): void;
 };
+
+
+/** unknown → 화면이 쓰는 형태. 생산자가 같은 패키지라도 경계는 경계다 (C9). */
+function str(v: unknown): string {
+  return typeof v === 'string' ? v : '';
+}
+function num(v: unknown): number {
+  return typeof v === 'number' && Number.isFinite(v) ? v : 0;
+}
+
+function narrowInit(raw: unknown): StageInit {
+  const p = (raw ?? {}) as Record<string, unknown>;
+  return {
+    hashLabel: str(p.hashLabel),
+    signatureLabel: str(p.signatureLabel),
+    documentBytes: num(p.documentBytes),
+    digestBytes: num(p.digestBytes),
+    signatureBytes: num(p.signatureBytes),
+  };
+}
 
 /** 바이트 수를 사람이 읽는 단위로. 화면 폭이 좁아 소수점은 한 자리까지만. */
 function formatBytes(n: number): string {
@@ -60,7 +89,7 @@ export const signatureOnHashProjector: ProjectorFactory = (views, runtime) => {
 
       switch (event.type) {
         case 'init': {
-          stage.init(event.payload, {
+          stage.init(narrowInit(event.payload), {
             document: tr('label.document', 'document'),
             digest: tr('label.digest', 'digest'),
             signature: tr('label.signature', 'signature'),
