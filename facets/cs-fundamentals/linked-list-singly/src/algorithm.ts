@@ -19,7 +19,7 @@
  *     - search-result  payload: { found, index?, value, walked }
  *     - out-of-range   payload: { index, op }
  *     - empty-list     payload: { op }
- *     - demo-end       payload: { handover }
+ *     - demo-end       payload: {}
  *
  *   메타 (silent):
  *     - phase  payload: { phase: 'auto-demo' | 'idle' | 'insert' | 'remove' | 'search' }
@@ -64,14 +64,6 @@ export type LinkedListFacetData = {
    * 같은 algorithm 을 공유하면서 시연만 달리한 aspect facet 이 이 필드로 갈린다.
    */
   autoDemoSequence?: LinkedListAutoDemoStep[];
-  /**
-   * 자동 시연이 끝난 뒤 "이제 직접 해 보라" 고 안내할지.
-   *
-   * control-bar 를 두지 않은 aspect facet 은 누를 것이 없으므로 false 다.
-   * 알고리즘은 layout 을 알지 못하니 (원칙 1) 그 사실을 선언에서 받는다.
-   * 생략하면 true — 완결형 facet 의 기본 거동이다.
-   */
-  handoverAfterDemo?: boolean;
 };
 
 function parseInsertIndex(raw: string | undefined, size: number): number | null {
@@ -104,7 +96,6 @@ export async function linkedList(ctxBase: FacetContext<LinkedListFacetData>): Pr
     searchStepMs,
     maxSize,
     autoDemoSequence,
-    handoverAfterDemo,
   } = ctx.data;
 
   // 모델 상태.
@@ -200,10 +191,7 @@ export async function linkedList(ctxBase: FacetContext<LinkedListFacetData>): Pr
   }
 
   if (ctx.cancelled) return;
-  await ctx.emit({
-    type: 'demo-end',
-    payload: { handover: handoverAfterDemo !== false },
-  });
+  await ctx.emit({ type: 'demo-end' });
 
   // 2. 입력 반응 루프.
   await ctx.emit({ type: 'phase', payload: { phase: 'idle' }, silent: true });

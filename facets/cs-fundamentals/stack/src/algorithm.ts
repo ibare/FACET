@@ -15,7 +15,7 @@
  *     - peek        target: stack:top  payload: { stamp, label, value }
  *     - overflow    target: stack:top  payload: { attempted, capacity }
  *     - underflow   target: stack:top  payload: { op: 'pop' | 'peek' }
- *     - demo-end    payload: { handover }       (자동 시연 종료 신호)
+ *     - demo-end    payload: {}                 (자동 시연 종료 신호)
  *
  *   메타 (silent):
  *     - phase  payload: { phase: 'auto-demo' | 'idle' | 'push' | 'pop' | 'peek' }
@@ -56,22 +56,13 @@ export type StackFacetData = {
    * initialValues 가, 언제 빼는지는 이 시퀀스가 정한다 (원칙 2).
    */
   autoDemoSequence?: StackAutoDemoStep[];
-  /**
-   * 자동 시연이 끝난 뒤 "이제 직접 해 보라" 고 안내할지.
-   *
-   * control-bar 를 두지 않은 aspect facet 은 누를 것이 없으므로 false 다.
-   * 알고리즘은 layout 을 알지 못하니 (원칙 1) 그 사실을 선언에서 받는다.
-   * 생략하면 true — 완결형 facet 의 기본 거동이다.
-   */
-  handoverAfterDemo?: boolean;
 };
 
 type StackEntry = { stamp: number; label: string };
 
 export async function stack(ctxBase: FacetContext<StackFacetData>): Promise<void> {
   const ctx = ctxBase as ReactiveContext<StackFacetData>;
-  const { initialValues, maxHeight, autoDemoIntervalMs, autoDemoSequence, handoverAfterDemo } =
-    ctx.data;
+  const { initialValues, maxHeight, autoDemoIntervalMs, autoDemoSequence } = ctx.data;
 
   const state: StackEntry[] = [];
   let nextStamp = 0;
@@ -140,10 +131,7 @@ export async function stack(ctxBase: FacetContext<StackFacetData>): Promise<void
     }
 
     if (ctx.cancelled) return;
-    await ctx.emit({
-      type: 'demo-end',
-      payload: { handover: handoverAfterDemo !== false },
-    });
+    await ctx.emit({ type: 'demo-end' });
   }
 
   // 1. 입력 반응 루프.

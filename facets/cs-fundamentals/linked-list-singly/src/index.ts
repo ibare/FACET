@@ -19,12 +19,7 @@ export {
 } from './algorithm.js';
 export { linkedListProjector } from './projector.js';
 export { linkedListIRs } from './irs.js';
-export {
-  linkedListFacet,
-  linkedListNodeFacet,
-  linkedListLinkFacet,
-  linkedListTraverseFacet,
-} from './facet.js';
+export { linkedListFacet } from './facet.js';
 export { linkedListDescription } from './description.js';
 export { linkedListStageView } from './linked-list-stage.js';
 
@@ -39,12 +34,7 @@ import {
 import { linkedList, type LinkedListFacetData } from './algorithm.js';
 import { linkedListProjector } from './projector.js';
 import { linkedListIRs } from './irs.js';
-import {
-  linkedListFacet,
-  linkedListNodeFacet,
-  linkedListLinkFacet,
-  linkedListTraverseFacet,
-} from './facet.js';
+import { linkedListFacet } from './facet.js';
 import { linkedListDescription } from './description.js';
 import { linkedListStageView } from './linked-list-stage.js';
 
@@ -55,11 +45,6 @@ export function registerLinkedList(): void {
   registerProjector('linkedListProjector', linkedListProjector);
   for (const ir of linkedListIRs) registerIR(ir.id, ir);
   registerView('linked-list-stage', linkedListStageView);
-  registerFacets([
-    linkedListFacet,
-    linkedListNodeFacet,
-    linkedListLinkFacet,
-    linkedListTraverseFacet,
-  ]);
+  registerFacets([linkedListFacet]);
   registerDescription(linkedListFacet.id, linkedListDescription);
 }

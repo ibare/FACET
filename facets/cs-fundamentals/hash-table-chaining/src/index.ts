@@ -15,12 +15,7 @@ export {
 } from './algorithm.js';
 export { hashTableProjector } from './projector.js';
 export { hashTableIRs } from './irs.js';
-export {
-  hashTableFacet,
-  hashTableHashFacet,
-  hashTableCollisionFacet,
-  hashTableChainFacet,
-} from './facet.js';
+export { hashTableFacet } from './facet.js';
 export { hashTableDescription } from './description.js';
 export { hashTableStageView } from './hash-table-stage.js';
 
@@ -35,12 +30,7 @@ import {
 import { hashTable, type HashTableFacetData } from './algorithm.js';
 import { hashTableProjector } from './projector.js';
 import { hashTableIRs } from './irs.js';
-import {
-  hashTableFacet,
-  hashTableHashFacet,
-  hashTableCollisionFacet,
-  hashTableChainFacet,
-} from './facet.js';
+import { hashTableFacet } from './facet.js';
 import { hashTableDescription } from './description.js';
 import { hashTableStageView } from './hash-table-stage.js';
 
@@ -51,11 +41,6 @@ export function registerHashTable(): void {
   registerProjector('hashTableProjector', hashTableProjector);
   for (const ir of hashTableIRs) registerIR(ir.id, ir);
   registerView('hash-table-stage', hashTableStageView);
-  registerFacets([
-    hashTableFacet,
-    hashTableHashFacet,
-    hashTableCollisionFacet,
-    hashTableChainFacet,
-  ]);
+  registerFacets([hashTableFacet]);
   registerDescription(hashTableFacet.id, hashTableDescription);
 }

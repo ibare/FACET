@@ -16,12 +16,7 @@ export {
 } from './algorithm.js';
 export { bstProjector, BST_CANVAS } from './projector.js';
 export { bstRecursiveIR, bstIterativeIR, bstIRs } from './irs.js';
-export {
-  bstFacet,
-  bstShapeFacet,
-  bstSearchFacet,
-  bstInsertFacet,
-} from './facet.js';
+export { bstFacet } from './facet.js';
 export { bstDescription } from './description.js';
 
 import {
@@ -34,12 +29,7 @@ import {
 import { bst, type BstInitialData } from './algorithm.js';
 import { bstProjector } from './projector.js';
 import { bstIRs } from './irs.js';
-import {
-  bstFacet,
-  bstShapeFacet,
-  bstSearchFacet,
-  bstInsertFacet,
-} from './facet.js';
+import { bstFacet } from './facet.js';
 import { bstDescription } from './description.js';
 
 /** algorithm/projector/IR/facet/description 등록 헬퍼 (transpiler 는 호스트가 별도 등록). */
@@ -47,6 +37,6 @@ export function registerBst(): void {
   registerAlgorithm<BstInitialData>('bst', bst);
   registerProjector('bstProjector', bstProjector);
   for (const ir of bstIRs) registerIR(ir.id, ir);
-  registerFacets([bstFacet, bstShapeFacet, bstSearchFacet, bstInsertFacet]);
+  registerFacets([bstFacet]);
   registerDescription(bstFacet.id, bstDescription);
 }

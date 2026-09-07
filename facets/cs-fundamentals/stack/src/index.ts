@@ -11,7 +11,7 @@
 export { stack, type StackFacetData, type StackInputEvent } from './algorithm.js';
 export { stackProjector } from './projector.js';
 export { stackIRs } from './irs.js';
-export { stackFacet, stackTopFacet, stackLifoFacet } from './facet.js';
+export { stackFacet } from './facet.js';
 export { stackDescription } from './description.js';
 export { stackStageView } from './stack-stage.js';
 
@@ -26,7 +26,7 @@ import {
 import { stack, type StackFacetData } from './algorithm.js';
 import { stackProjector } from './projector.js';
 import { stackIRs } from './irs.js';
-import { stackFacet, stackTopFacet, stackLifoFacet } from './facet.js';
+import { stackFacet } from './facet.js';
 import { stackDescription } from './description.js';
 import { stackStageView } from './stack-stage.js';
 
@@ -42,6 +42,6 @@ export function registerStack(): void {
   registerProjector('stackProjector', stackProjector);
   for (const ir of stackIRs) registerIR(ir.id, ir);
   registerView('stack-stage', stackStageView);
-  registerFacets([stackFacet, stackTopFacet, stackLifoFacet]);
+  registerFacets([stackFacet]);
   registerDescription(stackFacet.id, stackDescription);
 }
