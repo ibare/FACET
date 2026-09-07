@@ -130,6 +130,14 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:merkleTree', () =>
     import('@ffacet/algorithm-merkle-tree').then((m) => m.registerMerkleTree()),
   );
+  registerFacetLoader('facet:signatureKeyDirection', () =>
+    import('@ffacet/algorithm-signature-key-direction').then((m) =>
+      m.registerSignatureKeyDirection(),
+    ),
+  );
+  registerFacetLoader('facet:signatureOnHash', () =>
+    import('@ffacet/algorithm-signature-on-hash').then((m) => m.registerSignatureOnHash()),
+  );
   registerFacetLoader('facet:linearRegression', () =>
     import('@ffacet/algorithm-linear-regression').then((m) => m.registerLinearRegression()),
   );

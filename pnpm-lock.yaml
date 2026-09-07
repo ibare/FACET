@@ -283,6 +283,18 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/security/signature-key-direction:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/security/signature-on-hash:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/system-design/caching-cdn:
     dependencies:
       '@ffacet/core':
@@ -375,6 +387,12 @@ importers:
       '@ffacet/algorithm-relational-tables-and-keys':
         specifier: workspace:*
         version: link:../../facets/database/relational-tables-and-keys
+      '@ffacet/algorithm-signature-key-direction':
+        specifier: workspace:*
+        version: link:../../facets/security/signature-key-direction
+      '@ffacet/algorithm-signature-on-hash':
+        specifier: workspace:*
+        version: link:../../facets/security/signature-on-hash
       '@ffacet/algorithm-stack':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/stack

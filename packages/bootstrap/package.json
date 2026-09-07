@@ -60,6 +60,8 @@
     "@ffacet/algorithm-hash-integrity-check": "workspace:*",
     "@ffacet/algorithm-hash-salt": "workspace:*",
     "@ffacet/algorithm-merkle-tree": "workspace:*",
+    "@ffacet/algorithm-signature-key-direction": "workspace:*",
+    "@ffacet/algorithm-signature-on-hash": "workspace:*",
     "@ffacet/algorithm-pigeonhole-collision": "workspace:*",
     "@ffacet/algorithm-bfs": "workspace:*",
     "@ffacet/algorithm-bst": "workspace:*",

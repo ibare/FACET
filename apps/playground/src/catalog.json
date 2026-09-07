@@ -708,6 +708,8 @@
           "id": "signature",
           "name": "디지털 서명",
           "topics": [
+            { "id": "signature-key-direction", "name": "두 키의 자리가 바뀐다", "facetId": "facet:signatureKeyDirection" },
+            { "id": "signature-on-hash", "name": "서명은 해시에 한다", "facetId": "facet:signatureOnHash" },
             { "id": "certificate", "name": "인증서" },
             { "id": "pki", "name": "PKI" },
             { "id": "auth-chain", "name": "인증 체인" }

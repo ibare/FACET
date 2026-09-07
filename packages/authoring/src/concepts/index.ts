@@ -38,6 +38,8 @@ import { messagingPubsubConcept } from './messaging-pubsub.js';
 import { relationalTablesAndKeysConcept } from './relational-tables-and-keys.js';
 import { tokenizationConcept } from './tokenization.js';
 import { queueFifoConcept } from './queue.js';
+import { signatureKeyDirectionConcept } from './signature-key-direction.js';
+import { signatureOnHashConcept } from './signature-on-hash.js';
 import { stackConcept } from './stack.js';
 
 export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
@@ -53,6 +55,8 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   hashIntegrityCheckConcept,
   hashSaltConcept,
   merkleTreeConcept,
+  signatureKeyDirectionConcept,
+  signatureOnHashConcept,
   hashFixedLengthConcept,
   hashTableChainingConcept,
   pigeonholeCollisionConcept,
