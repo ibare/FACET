@@ -1140,12 +1140,12 @@
             { "id": "hash-chain", "name": "지난 기록을 고치면 드러난다", "facetId": "facet:hashChain", "kind": "piece", "origin": "hash" },
             { "id": "merkle-tree", "name": "무엇이 바뀌었는지 찾기", "facetId": "facet:merkleTree", "kind": "piece", "origin": "hash" },
             { "id": "collision", "name": "충돌" },
-            { "id": "mac", "name": "MAC" },
+            { "id": "mac-code", "name": "MAC" },
             { "id": "hmac", "name": "HMAC" },
             { "id": "compress-block-by-block", "name": "덩어리마다 접어 넣는다", "kind": "piece", "origin": "sha" },
             { "id": "internal-state-carries", "name": "접힌 결과가 다음으로 이어진다", "kind": "piece", "origin": "sha" },
             { "id": "birthday-paradox", "name": "생각보다 빨리 겹친다", "kind": "piece", "origin": "collision" },
-            { "id": "key-plus-message", "name": "열쇠를 아는 사람만 만들 수 있는 표", "kind": "piece", "origin": "mac" },
+            { "id": "key-plus-message", "name": "열쇠를 아는 사람만 만들 수 있는 표", "kind": "piece", "origin": "mac-code" },
             { "id": "hash-twice-with-pads", "name": "안팎으로 두 번 접는다", "kind": "piece", "origin": "hmac" }
           ]
         },
