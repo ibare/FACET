@@ -26,7 +26,7 @@ import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const hashSaltFacet: FacetJson = {
   id: 'facet:hashSalt',
-  title: { en: 'Same Password, Different Rows', ko: '같은 비밀번호, 다른 저장값' },
+  title: { en: 'Salt', ko: '솔트' },
   description: {
     en: 'A per-account salt keeps two identical passwords from being stored identically',
     ko: '계정마다 다른 소금이 같은 비밀번호를 같게 저장되지 않도록 막는다',

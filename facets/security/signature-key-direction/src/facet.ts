@@ -24,7 +24,7 @@ import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const signatureKeyDirectionFacet: FacetJson = {
   id: 'facet:signatureKeyDirection',
-  title: { en: 'The Keys Swap Places', ko: '두 키의 자리가 바뀐다' },
+  title: { en: 'Key Direction', ko: '키 방향' },
   description: {
     en: 'Encrypting and signing use one key pair in opposite directions',
     ko: '암호화와 서명은 같은 키 한 쌍을 반대 방향으로 쓴다',

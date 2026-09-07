@@ -38,7 +38,7 @@ import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const pigeonholeCollisionFacet: FacetJson = {
   id: 'facet:pigeonholeCollision',
-  title: { en: 'Why Collisions Must Exist', ko: '충돌은 반드시 있다' },
+  title: { en: 'Pigeonhole Principle', ko: '비둘기집 원리' },
   description: {
     en: 'Sixteen places, seventeen inputs — one of them has nowhere of its own',
     ko: '자리는 열여섯, 입력은 열일곱 — 하나는 제 자리를 가질 수 없다',

@@ -28,7 +28,7 @@ import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const hashIntegrityCheckFacet: FacetJson = {
   id: 'facet:hashIntegrityCheck',
-  title: { en: 'Checking What You Received', ko: '받은 것이 원본인지 확인하기' },
+  title: { en: 'Integrity Verification', ko: '무결성 검증' },
   description: {
     en: 'One published hash tells you whether the copy you got was touched',
     ko: '내걸린 해시 한 줄이 받은 사본이 손댔는지를 알려 준다',

@@ -35,7 +35,7 @@ import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const hashAvalancheFacet: FacetJson = {
   id: 'facet:hashAvalanche',
-  title: { en: 'Hash Avalanche', ko: '해시 눈사태' },
+  title: { en: 'Avalanche Effect', ko: '눈사태 효과' },
   description: {
     en: 'One changed character flips about half of a hash output',
     ko: '한 글자를 바꾸면 해시 출력의 절반이 뒤집힌다',

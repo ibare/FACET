@@ -25,7 +25,7 @@ import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const hashChainFacet: FacetJson = {
   id: 'facet:hashChain',
-  title: { en: 'Rewriting the Past Shows', ko: '지난 기록을 고치면 드러난다' },
+  title: { en: 'Hash Chain', ko: '해시 체인' },
   description: {
     en: 'Each entry carries the previous hash, so one edit breaks everything after it',
     ko: '칸마다 앞의 해시를 품고 있어, 한 번의 수정이 그 뒤를 전부 어긋나게 한다',

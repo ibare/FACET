@@ -24,7 +24,7 @@ import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const signatureOnHashFacet: FacetJson = {
   id: 'facet:signatureOnHash',
-  title: { en: 'Signing the Digest', ko: '서명은 해시에 한다' },
+  title: { en: 'Signing the Digest', ko: '다이제스트 서명' },
   description: {
     en: 'A signature stays 64 bytes however large the document it stands for',
     ko: '문서가 아무리 커도 서명은 64바이트에 머문다',

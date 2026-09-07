@@ -28,7 +28,7 @@ import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const hashFixedLengthFacet: FacetJson = {
   id: 'facet:hashFixedLength',
-  title: { en: 'Always the Same Length', ko: '무엇을 넣든 같은 길이' },
+  title: { en: 'Fixed-Length Output', ko: '고정 길이 출력' },
   description: {
     en: 'Inputs from nothing to a whole file, outputs all exactly the same size',
     ko: '입력은 빈 것부터 파일까지, 출력은 언제나 같은 크기',

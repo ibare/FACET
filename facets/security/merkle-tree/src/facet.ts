@@ -24,7 +24,7 @@ import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const merkleTreeFacet: FacetJson = {
   id: 'facet:merkleTree',
-  title: { en: 'Finding What Changed', ko: '무엇이 바뀌었는지 찾기' },
+  title: { en: 'Merkle Tree', ko: '머클 트리' },
   description: {
     en: 'Fold hashes in pairs and one leaf changing moves only its own path to the top',
     ko: '해시를 둘씩 접어 두면 잎 하나가 바뀔 때 꼭대기까지 한 줄만 움직인다',
