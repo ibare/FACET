@@ -121,7 +121,15 @@
             { "id": "loop", "name": "반복문" },
             { "id": "branching", "name": "분기" },
             { "id": "recursive-call", "name": "재귀 호출" },
-            { "id": "exception", "name": "예외 처리" }
+            { "id": "exception", "name": "예외 처리" },
+            { "id": "branch-take-one-path", "name": "갈림길에서 한쪽만 간다", "kind": "piece", "origin": "conditional" },
+            { "id": "multiway-branch", "name": "여러 갈래 중 하나로", "kind": "piece", "origin": "branching" },
+            { "id": "loop-back", "name": "같은 곳을 다시 밟는다", "kind": "piece", "origin": "loop" },
+            { "id": "loop-termination", "name": "멈출 조건이 없으면 끝나지 않는다", "kind": "piece", "origin": "loop" },
+            { "id": "recursion-self-call", "name": "자기를 다시 부른다", "kind": "piece", "origin": "recursion-call" },
+            { "id": "call-stack-unwind", "name": "쌓였다가 되돌아온다", "kind": "piece", "origin": "recursion-call" },
+            { "id": "base-case", "name": "바닥에 닿아야 돌아온다", "kind": "piece", "origin": "recursion-call" },
+            { "id": "exception-propagate", "name": "던지면 부른 자리를 거슬러 오른다", "kind": "piece", "origin": "exception" }
           ]
         },
         {
@@ -132,7 +140,14 @@
             { "id": "reference-type", "name": "참조 타입" },
             { "id": "type-coercion", "name": "타입 변환" },
             { "id": "scope", "name": "스코프" },
-            { "id": "lifetime", "name": "라이프타임" }
+            { "id": "lifetime", "name": "라이프타임" },
+            { "id": "value-in-place", "name": "값이 자리에 직접 있다", "kind": "piece", "origin": "primitive-type" },
+            { "id": "reference-holds-address", "name": "자리에는 주소만 있다", "kind": "piece", "origin": "reference-type" },
+            { "id": "aliasing", "name": "이름이 둘, 실체는 하나", "kind": "piece", "origin": "reference-type" },
+            { "id": "narrowing-loss", "name": "좁은 그릇으로 옮기면 넘친다", "kind": "piece", "origin": "type-conversion" },
+            { "id": "shadowing", "name": "안쪽 이름이 바깥을 가린다", "kind": "piece", "origin": "scope" },
+            { "id": "scope-exit", "name": "블록을 벗어나면 사라진다", "kind": "piece", "origin": "scope" },
+            { "id": "dangling-reference", "name": "가리키던 것이 먼저 사라진다", "kind": "piece", "origin": "lifetime" }
           ]
         },
         {
@@ -143,7 +158,12 @@
             { "id": "return-value", "name": "반환" },
             { "id": "closure", "name": "클로저" },
             { "id": "higher-order", "name": "고차 함수" },
-            { "id": "currying", "name": "커링" }
+            { "id": "currying", "name": "커링" },
+            { "id": "pass-by-value-vs-reference", "name": "복사해 넘기는가, 자리를 넘기는가", "kind": "piece", "origin": "argument-passing" },
+            { "id": "return-to-caller", "name": "부른 자리로 값을 들고 돌아온다", "kind": "piece", "origin": "return" },
+            { "id": "closure-captures", "name": "함수가 바깥 변수를 데리고 다닌다", "kind": "piece", "origin": "closure" },
+            { "id": "function-as-value", "name": "함수를 값처럼 넘긴다", "kind": "piece", "origin": "higher-order" },
+            { "id": "currying-partial", "name": "인자를 하나씩 받아 함수를 남긴다", "kind": "piece", "origin": "currying" }
           ]
         },
         {
@@ -155,7 +175,12 @@
             { "id": "polymorphism", "name": "다형성" },
             { "id": "interface", "name": "인터페이스" },
             { "id": "abstraction", "name": "추상화" },
-            { "id": "encapsulation", "name": "캡슐화" }
+            { "id": "encapsulation", "name": "캡슐화" },
+            { "id": "instantiate-from-class", "name": "틀에서 찍어 낸다", "kind": "piece", "origin": "class" },
+            { "id": "method-lookup-up", "name": "없으면 위로 찾아 올라간다", "kind": "piece", "origin": "inheritance" },
+            { "id": "dynamic-dispatch", "name": "같은 이름이 대상마다 다르게 간다", "kind": "piece", "origin": "polymorphism" },
+            { "id": "interface-slot", "name": "약속만 있고 몸통은 꽂아 넣는다", "kind": "piece", "origin": "interface" },
+            { "id": "encapsulation-boundary", "name": "밖에서 닿는 것과 닿지 않는 것", "kind": "piece", "origin": "encapsulation" }
           ]
         },
         {
@@ -165,7 +190,14 @@
             { "id": "pure-function", "name": "순수 함수" },
             { "id": "immutability", "name": "불변성" },
             { "id": "map-filter-reduce", "name": "map/filter/reduce" },
-            { "id": "monad-basics", "name": "모나드 기초" }
+            { "id": "monad-basics", "name": "모나드 기초" },
+            { "id": "pure-same-output", "name": "같은 입력이면 언제나 같은 출력", "kind": "piece", "origin": "pure-function" },
+            { "id": "no-side-effect", "name": "바깥을 건드리지 않는다", "kind": "piece", "origin": "pure-function" },
+            { "id": "immutable-copy", "name": "고치지 않고 새로 만든다", "kind": "piece", "origin": "immutability" },
+            { "id": "map-one-by-one", "name": "하나씩 바꾼다", "kind": "piece", "origin": "map-filter-reduce" },
+            { "id": "filter-keep-some", "name": "걸러 낸다", "kind": "piece", "origin": "map-filter-reduce" },
+            { "id": "reduce-fold", "name": "접어서 하나로", "kind": "piece", "origin": "map-filter-reduce" },
+            { "id": "monad-chain-in-box", "name": "상자에 담은 채로 이어 붙인다", "kind": "piece", "origin": "monad" }
           ]
         },
         {
@@ -176,7 +208,15 @@
             { "id": "pointer", "name": "포인터" },
             { "id": "reference", "name": "참조" },
             { "id": "gc", "name": "가비지 컬렉션" },
-            { "id": "manual-memory", "name": "수동 메모리 관리" }
+            { "id": "manual-memory", "name": "수동 메모리 관리" },
+            { "id": "stack-vs-heap", "name": "쌓였다 사라지는 곳, 흩어져 남는 곳", "kind": "piece", "origin": "stack-heap" },
+            { "id": "pointer-dereference", "name": "주소를 따라간다", "kind": "piece", "origin": "pointer" },
+            { "id": "gc-reachable-from-root", "name": "뿌리에서 닿지 않으면 치운다", "kind": "piece", "origin": "gc" },
+            { "id": "refcount-zero", "name": "세던 수가 0이 되면 치운다", "kind": "piece", "origin": "gc" },
+            { "id": "reference-cycle", "name": "서로 가리키면 수가 0이 되지 않는다", "kind": "piece", "origin": "gc" },
+            { "id": "manual-free", "name": "빌린 것을 돌려준다", "kind": "piece", "origin": "manual-memory" },
+            { "id": "double-free", "name": "두 번 돌려주면 망가진다", "kind": "piece", "origin": "manual-memory" },
+            { "id": "memory-leak", "name": "돌려주지 않으면 쌓인다", "kind": "piece", "origin": "manual-memory" }
           ]
         }
       ]
