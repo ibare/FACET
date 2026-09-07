@@ -22,6 +22,7 @@
  *
  * 이벤트 (C2) — 전부 facet 로컬 (StandardEventType 미포함):
  *   - init          payload: { referenceHash, intact, tampered, diffIndex }
+ *   - rewind payload: {}   손으로 짚기 시작할 때 화면을 되감는다
  *   - split-paths   payload: {}   원본에서 파일과 해시가 각자의 경로로 갈라진다
  *   - deliver       payload: {}   둘 다 건너와 만나고, 대조가 맞는다
  *   - tamper        payload: {}   파일만 다시 오는데 도중에 손댄다
@@ -39,6 +40,12 @@ export type ReceivedItem = {
   /** 그 내용의 해시 (소문자 hex, 실측값). */
   hash: string;
 };
+
+/** 손으로 짚어 보는 입력. control-bar 의 advance 버튼이 보낸다. */
+export type IntegrityInput = { type: 'advance' } | { type: string };
+
+/** 자동 재생과 손으로 짚기가 공유하는 걸음 수. */
+const STEP_COUNT = 4;
 
 export type HashIntegrityFacetData = {
   type: 'hash-integrity';
@@ -74,6 +81,28 @@ export async function hashIntegrityCheck(
   const { algorithmLabel, referenceHash, intact, tampered, stepMs } = ctx.data;
 
   /**
+   * 한 걸음을 실제로 발신한다. 자동 재생과 손으로 짚기가 같은 경로를 쓴다.
+   *
+   * 인덱스로 분기하되 emit 의 type 은 리터럴이다 (C2).
+   */
+  async function playStep(i: number): Promise<void> {
+    switch (i) {
+      case 0:
+        await ctx.emit({ type: 'split-paths' });
+        break;
+      case 1:
+        await ctx.emit({ type: 'deliver' });
+        break;
+      case 2:
+        await ctx.emit({ type: 'tamper' });
+        break;
+      default:
+        await ctx.emit({ type: 'detect' });
+        break;
+    }
+  }
+
+  /**
    * 걸음 사이 머무름. 취소되면 false — 호출부가 즉시 빠져나가야 한다 (C8).
    *
    * 걸음을 배열로 순회하지 않고 한 줄씩 펴 쓰는 이유는 `ctx.emit` 의 type 이
@@ -97,12 +126,27 @@ export async function hashIntegrityCheck(
   });
 
   // 네 걸음. 성한 왕복을 먼저 보여야 어긋남이 어긋남으로 보인다.
-  if (!(await pause())) return;
-  await ctx.emit({ type: 'split-paths' });
-  if (!(await pause())) return;
-  await ctx.emit({ type: 'deliver' });
-  if (!(await pause())) return;
-  await ctx.emit({ type: 'tamper' });
-  if (!(await pause())) return;
-  await ctx.emit({ type: 'detect' });
+  for (let i = 0; i < STEP_COUNT; i++) {
+    if (!(await pause())) return;
+    await playStep(i);
+  }
+
+  // 손으로 짚어 보는 루프. 끝까지 간 뒤 다시 누르면 처음으로 되감는다.
+  let cursor = STEP_COUNT;
+  for (;;) {
+    if (ctx.cancelled) return;
+    let ev: IntegrityInput;
+    try {
+      ev = await ctx.waitForInput<IntegrityInput>();
+    } catch {
+      return;
+    }
+    if (ev.type !== 'advance') continue;
+    if (cursor >= STEP_COUNT) {
+      await ctx.emit({ type: 'rewind' });
+      cursor = 0;
+    }
+    await playStep(cursor);
+    cursor += 1;
+  }
 }

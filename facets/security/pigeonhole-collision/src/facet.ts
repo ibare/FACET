@@ -118,6 +118,9 @@ export const pigeonholeCollisionFacet: FacetJson = {
           action: 'reset',
           label: { en: 'Replay', ko: '다시 보기' },
         },
+        // ReactiveMechanism 은 reset/speed 외의 action 을 dispatch 로 보내므로
+        // (supportedControls 의 '*') facet 고유 버튼이 그대로 통한다.
+        { widget: 'button', action: 'advance', label: { en: 'Step', ko: '한 걸음' } },
       ],
     },
   },

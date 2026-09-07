@@ -69,9 +69,19 @@ last_verified: 2026-09-07
   결정이다 (원칙 2).
 - **`ctx.emit` 의 type 은 리터럴로 쓴다** (C2). 걸음을 배열로 순회하지 말고 한
   줄씩 편다. `pause()` 헬퍼로 취소 검사와 `ctx.sleep` 을 묶으면 두 줄로 끝난다.
-- **control-bar 에는 다시 보기 하나만 둔다.** `{ widget: 'button', action: 'reset' }`
-  이고 라벨만 "다시 보기" 다 — `ReactiveMechanism.reset()` 이 끝에
-  `ensureStarted()` 를 부르므로 reset 이 곧 재생이다.
+- **control-bar 에는 다시 보기와 한 걸음, 둘만 둔다.**
+  - `action: 'reset'` — `ReactiveMechanism.reset()` 이 끝에 `ensureStarted()` 를
+    부르므로 reset 이 곧 재생이다. 놓친 사람을 위한 것이다.
+  - `action: 'advance'` — 자동 재생이 끝난 뒤 처음부터 한 걸음씩 짚어 볼 수 있게
+    한다. 곱씹으며 읽고 싶은 사람을 위한 것이다. `onControl` 이 reset/speed 외
+    액션을 `dispatch` 로 보내므로 (`supportedControls` 의 `'*'`) 코어 변경 없이
+    통한다. algorithm 은 자동 재생을 마친 뒤 `waitForInput` 루프에서 이것을 받고,
+    처음으로 돌아갈 때 `rewind` 를 발신한다.
+
+  둘 다 **눌러야 완성되는 조작이 아니다.** 자동 재생만 보고 지나가도 화면은 할
+  말을 마치고, 완료 상태 자체가 정보다. 그래서 뷰포트 진입 시 재생 같은 장치는
+  두지 않는다 — 읽는 흐름을 방해하고, 여러 조각이 박힌 글에서는 독자가 도달하기
+  전에 전부 끝나 있게 된다.
 - **`header` (title-block) 를 두지 않는다.** 제목은 글의 문단이 준다.
 - **`metrics` 를 두지 않는다.** 조각은 셀 것이 없으므로 `ctx.metric` 도 부르지 않는다.
 - **캔버스 폭은 `PIECE_CANVAS_W`** (`@ffacet/core/runtime`). 매직 넘버를 stage 마다

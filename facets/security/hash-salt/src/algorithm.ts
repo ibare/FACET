@@ -19,6 +19,7 @@
  *
  * 이벤트 (C2) — 전부 facet 로컬 (StandardEventType 미포함):
  *   - init              payload: { algorithmLabel, password, users, unsaltedHash }
+ *   - rewind payload: {}   손으로 짚기 시작할 때 화면을 되감는다
  *   - reveal-users      payload: {}   두 사람과 그들이 고른 같은 비밀번호
  *   - hash-unsalted     payload: {}   그냥 해싱하면 저장된 값도 같아진다
  *   - add-salt          payload: {}   각자 다른 소금이 앞에 붙는다
@@ -38,6 +39,12 @@ export type SaltedUser = {
   /** sha256(salt + password) 실측값. */
   hash: string;
 };
+
+/** 손으로 짚어 보는 입력. control-bar 의 advance 버튼이 보낸다. */
+export type SaltInput = { type: 'advance' } | { type: string };
+
+/** 자동 재생과 손으로 짚기가 공유하는 걸음 수. */
+const STEP_COUNT = 4;
 
 export type HashSaltFacetData = {
   type: 'hash-salt';
@@ -64,6 +71,28 @@ export async function hashSalt(
   const { algorithmLabel, password, unsaltedHash, users, stepMs } = ctx.data;
 
   /**
+   * 한 걸음을 실제로 발신한다. 자동 재생과 손으로 짚기가 같은 경로를 쓴다.
+   *
+   * 인덱스로 분기하되 emit 의 type 은 리터럴이다 (C2).
+   */
+  async function playStep(i: number): Promise<void> {
+    switch (i) {
+      case 0:
+        await ctx.emit({ type: 'reveal-users' });
+        break;
+      case 1:
+        await ctx.emit({ type: 'hash-unsalted' });
+        break;
+      case 2:
+        await ctx.emit({ type: 'add-salt' });
+        break;
+      default:
+        await ctx.emit({ type: 'hash-salted' });
+        break;
+    }
+  }
+
+  /**
    * 걸음 사이 머무름. 취소되면 false — 호출부가 즉시 빠져나가야 한다 (C8).
    *
    * 걸음을 배열로 순회하지 않고 한 줄씩 펴 쓰는 이유는 `ctx.emit` 의 type 이
@@ -81,12 +110,27 @@ export async function hashSalt(
   });
 
   // 네 걸음. 문제를 먼저 보이지 않으면 소금이 무엇을 푸는지 알 수 없다.
-  if (!(await pause())) return;
-  await ctx.emit({ type: 'reveal-users' });
-  if (!(await pause())) return;
-  await ctx.emit({ type: 'hash-unsalted' });
-  if (!(await pause())) return;
-  await ctx.emit({ type: 'add-salt' });
-  if (!(await pause())) return;
-  await ctx.emit({ type: 'hash-salted' });
+  for (let i = 0; i < STEP_COUNT; i++) {
+    if (!(await pause())) return;
+    await playStep(i);
+  }
+
+  // 손으로 짚어 보는 루프. 끝까지 간 뒤 다시 누르면 처음으로 되감는다.
+  let cursor = STEP_COUNT;
+  for (;;) {
+    if (ctx.cancelled) return;
+    let ev: SaltInput;
+    try {
+      ev = await ctx.waitForInput<SaltInput>();
+    } catch {
+      return;
+    }
+    if (ev.type !== 'advance') continue;
+    if (cursor >= STEP_COUNT) {
+      await ctx.emit({ type: 'rewind' });
+      cursor = 0;
+    }
+    await playStep(cursor);
+    cursor += 1;
+  }
 }

@@ -40,7 +40,7 @@ export const hashIntegrityCheckConcept: FacetConceptSource = {
 
     screen: {
       affordances: [
-        'The screen plays four steps on its own and stops. A single Replay button is the only control.',
+        'The screen plays four steps on its own and stops. Two buttons: Replay, and Step for walking the four moments one at a time. Neither is needed for the screen to finish what it has to say.',
         'The two payloads differ by one digit (Pay 100 / Pay 900), which makes the intent of the alteration legible without explanation.',
       'A footnote states what breaks the whole thing: if both came down the same route, the hash could have been swapped too.',
       ],

@@ -39,7 +39,7 @@ export const merkleTreeConcept: FacetConceptSource = {
 
     screen: {
       affordances: [
-        'The screen plays four steps on its own and stops. A single Replay button is the only control.',
+        'The screen plays four steps on its own and stops. Two buttons: Replay, and Step for walking the four moments one at a time. Neither is needed for the screen to finish what it has to say.',
         'A footnote gives the scale that matters: a thousand files means about ten steps from a leaf to the top, not a thousand.',
       ],
     },

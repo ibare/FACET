@@ -64,6 +64,14 @@ export const signatureKeyDirectionProjector: ProjectorFactory = (views, runtime)
           break;
         }
 
+        case 'rewind': {
+          // 손으로 짚기 시작 — 화면만 처음으로 돌린다. 데이터는 그대로다.
+          stage.reset();
+          stage.setBaseCaption(baseCaption());
+          stage.setNote(note());
+          break;
+        }
+
         case 'encryption-flow': {
           stage.showEncryption();
           stage.setCaption(

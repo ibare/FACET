@@ -40,7 +40,7 @@ export const signatureKeyDirectionConcept: FacetConceptSource = {
 
     screen: {
       affordances: [
-        'The screen plays four steps on its own and stops. A single Replay button is the only control.',
+        'The screen plays four steps on its own and stops. Two buttons: Replay, and Step for walking the four moments one at a time. Neither is needed for the screen to finish what it has to say.',
         'Nothing is computed and no values appear — this screen is about arrangement, not about numbers.',
       ],
     },

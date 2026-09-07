@@ -11,7 +11,9 @@
  * 견준 뒤, 각각의 출력을 나란히 놓고 다시 견준다. 차이만 그리면 무엇과 무엇의
  * 차이인지가 화면에서 사라진다.
  *
- * 네 걸음을 보인 뒤 정지한다. 학습자 입력을 받지 않는다.
+ * 네 걸음을 자동으로 보인 뒤 정지한다. 그 뒤에는 "한 걸음" 버튼으로 처음부터
+ * 하나씩 짚어 볼 수 있다 — 곱씹으며 읽고 싶은 사람을 위한 것이지 눌러야 완성되는
+ * 조작이 아니다. 자동 재생만 보고 지나가도 화면은 할 말을 마친다.
  *
  * 진행 동력은 ReactiveMechanism 이다. 조각에는 컨트롤바가 없어 두 가지가 필요한데
  * 둘 다 reactive 만 준다 — mount 시 스스로 시작하는 것 (init 의 ensureStarted) 과
@@ -28,6 +30,7 @@
  *                                  inputTotalBits, inputFlippedBits,
  *                                  outputBitsA, outputBitsB, outputFlipped,
  *                                  outputTotalBits, outputFlippedBits }
+ *   - rewind            payload: {}   손으로 짚기 시작할 때 화면을 처음으로 되감는다
  *   - reveal-inputs     payload: {}   두 입력과 그 비트를 나란히 놓는다
  *   - mark-input-diff   payload: {}   입력에서 다른 비트만 물들이고 센다
  *   - reveal-outputs    payload: {}   두 출력 비트를 나란히 놓는다
@@ -37,6 +40,12 @@
  */
 
 import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
+
+/** 손으로 짚어 보는 입력. control-bar 의 advance 버튼이 보낸다. */
+export type AvalancheInput = { type: 'advance' } | { type: string };
+
+/** 자동 재생과 손으로 짚기가 공유하는 걸음 수. */
+const STEP_COUNT = 4;
 
 export type HashAvalancheFacetData = {
   type: 'hash-avalanche';
@@ -117,6 +126,28 @@ export async function hashAvalanche(
   const outputFlipped = bitDiff(outputBitsA, outputBitsB);
 
   /**
+   * 한 걸음을 실제로 발신한다. 자동 재생과 손으로 짚기가 같은 경로를 쓴다.
+   *
+   * 인덱스로 분기하되 emit 의 type 은 리터럴이다 (C2).
+   */
+  async function playStep(i: number): Promise<void> {
+    switch (i) {
+      case 0:
+        await ctx.emit({ type: 'reveal-inputs' });
+        break;
+      case 1:
+        await ctx.emit({ type: 'mark-input-diff' });
+        break;
+      case 2:
+        await ctx.emit({ type: 'reveal-outputs' });
+        break;
+      default:
+        await ctx.emit({ type: 'mark-output-diff' });
+        break;
+    }
+  }
+
+  /**
    * 걸음 사이 머무름. 취소되면 false — 호출부가 즉시 빠져나가야 한다 (C8).
    *
    * 걸음을 배열로 순회하지 않고 한 줄씩 펴 쓰는 이유는 `ctx.emit` 의 type 이
@@ -148,12 +179,27 @@ export async function hashAvalanche(
   });
 
   // 네 걸음. 견줄 두 항을 먼저 놓고, 그 다음에 차이를 물들인다.
-  if (!(await pause())) return;
-  await ctx.emit({ type: 'reveal-inputs' });
-  if (!(await pause())) return;
-  await ctx.emit({ type: 'mark-input-diff' });
-  if (!(await pause())) return;
-  await ctx.emit({ type: 'reveal-outputs' });
-  if (!(await pause())) return;
-  await ctx.emit({ type: 'mark-output-diff' });
+  for (let i = 0; i < STEP_COUNT; i++) {
+    if (!(await pause())) return;
+    await playStep(i);
+  }
+
+  // 손으로 짚어 보는 루프. 끝까지 간 뒤 다시 누르면 처음으로 되감는다.
+  let cursor = STEP_COUNT;
+  for (;;) {
+    if (ctx.cancelled) return;
+    let ev: AvalancheInput;
+    try {
+      ev = await ctx.waitForInput<AvalancheInput>();
+    } catch {
+      return;
+    }
+    if (ev.type !== 'advance') continue;
+    if (cursor >= STEP_COUNT) {
+      await ctx.emit({ type: 'rewind' });
+      cursor = 0;
+    }
+    await playStep(cursor);
+    cursor += 1;
+  }
 }

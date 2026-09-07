@@ -44,7 +44,7 @@ export const hashAvalancheConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays four steps on its own and stops, so it says what it has to say without asking for a click.',
-        'A single Replay button is the only control. The bits filling in is part of the message, so a reader who arrived late can watch it again.',
+        'Two buttons: Replay, and Step for walking the four moments one at a time. Neither is needed for the screen to finish what it has to say. The bits filling in is part of the message, so a reader who arrived late can watch it again.',
         'The inputs are fixed (hello / hellp) and the hashes are real SHA-256 values, so the numbers quoted in the text can be quoted exactly.',
       ],
     },

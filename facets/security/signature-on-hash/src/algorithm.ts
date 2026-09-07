@@ -18,6 +18,7 @@
  *
  * 이벤트 (C2) — 전부 facet 로컬 (StandardEventType 미포함):
  *   - init           payload: { documentBytes, digestBytes, signatureBytes, ... }
+ *   - rewind payload: {}   손으로 짚기 시작할 때 화면을 되감는다
  *   - show-document  payload: {}   문서가 놓인다. 막대가 화면을 넘어간다
  *   - hash-it        payload: {}   해시로 접힌다
  *   - sign-it        payload: {}   개인키로 서명한다
@@ -27,6 +28,12 @@
  */
 
 import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
+
+/** 손으로 짚어 보는 입력. control-bar 의 advance 버튼이 보낸다. */
+export type SignHashInput = { type: 'advance' } | { type: string };
+
+/** 자동 재생과 손으로 짚기가 공유하는 걸음 수. */
+const STEP_COUNT = 4;
 
 export type SignatureOnHashFacetData = {
   type: 'signature-on-hash';
@@ -56,6 +63,28 @@ export async function signatureOnHash(
     ctx.data;
 
   /**
+   * 한 걸음을 실제로 발신한다. 자동 재생과 손으로 짚기가 같은 경로를 쓴다.
+   *
+   * 인덱스로 분기하되 emit 의 type 은 리터럴이다 (C2).
+   */
+  async function playStep(i: number): Promise<void> {
+    switch (i) {
+      case 0:
+        await ctx.emit({ type: 'show-document' });
+        break;
+      case 1:
+        await ctx.emit({ type: 'hash-it' });
+        break;
+      case 2:
+        await ctx.emit({ type: 'sign-it' });
+        break;
+      default:
+        await ctx.emit({ type: 'compare' });
+        break;
+    }
+  }
+
+  /**
    * 걸음 사이 머무름. 취소되면 false — 호출부가 즉시 빠져나가야 한다 (C8).
    *
    * 걸음을 배열로 순회하지 않고 한 줄씩 펴 쓰는 이유는 `ctx.emit` 의 type 이
@@ -73,12 +102,27 @@ export async function signatureOnHash(
   });
 
   // 네 걸음. 문서의 크기를 먼저 겪어야 32바이트가 작게 느껴진다.
-  if (!(await pause())) return;
-  await ctx.emit({ type: 'show-document' });
-  if (!(await pause())) return;
-  await ctx.emit({ type: 'hash-it' });
-  if (!(await pause())) return;
-  await ctx.emit({ type: 'sign-it' });
-  if (!(await pause())) return;
-  await ctx.emit({ type: 'compare' });
+  for (let i = 0; i < STEP_COUNT; i++) {
+    if (!(await pause())) return;
+    await playStep(i);
+  }
+
+  // 손으로 짚어 보는 루프. 끝까지 간 뒤 다시 누르면 처음으로 되감는다.
+  let cursor = STEP_COUNT;
+  for (;;) {
+    if (ctx.cancelled) return;
+    let ev: SignHashInput;
+    try {
+      ev = await ctx.waitForInput<SignHashInput>();
+    } catch {
+      return;
+    }
+    if (ev.type !== 'advance') continue;
+    if (cursor >= STEP_COUNT) {
+      await ctx.emit({ type: 'rewind' });
+      cursor = 0;
+    }
+    await playStep(cursor);
+    cursor += 1;
+  }
 }

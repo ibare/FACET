@@ -40,7 +40,7 @@ export const signatureOnHashConcept: FacetConceptSource = {
 
     screen: {
       affordances: [
-        'The screen plays four steps on its own and stops. A single Replay button is the only control.',
+        'The screen plays four steps on its own and stops. Two buttons: Replay, and Step for walking the four moments one at a time. Neither is needed for the screen to finish what it has to say.',
         'The bars are drawn to scale apart from the stated minimum, so the proportion carries the argument.',
       ],
     },
