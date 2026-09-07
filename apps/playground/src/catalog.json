@@ -787,7 +787,24 @@
             { "id": "vector-ops", "name": "벡터 연산" },
             { "id": "matrix-ops", "name": "행렬 연산" },
             { "id": "eigen", "name": "고유값" },
-            { "id": "svd", "name": "SVD" }
+            { "id": "svd", "name": "SVD" },
+            { "id": "vector-as-arrow", "name": "숫자쌍이 화살표가 된다", "kind": "piece", "origin": "vector-ops" },
+            { "id": "vector-add-tip-to-tail", "name": "꼬리를 머리에 잇는다", "kind": "piece", "origin": "vector-ops" },
+            { "id": "vector-scale", "name": "길이만 바뀐다", "kind": "piece", "origin": "vector-ops" },
+            { "id": "dot-product-shadow", "name": "그림자의 길이", "kind": "piece", "origin": "vector-ops" },
+            { "id": "vector-normalize", "name": "길이를 1로 맞춘다", "kind": "piece", "origin": "vector-ops" },
+            { "id": "cross-product-perpendicular", "name": "둘 다에 수직인 방향", "kind": "piece", "origin": "vector-ops" },
+            { "id": "matrix-as-transform", "name": "격자가 통째로 옮겨간다", "kind": "piece", "origin": "matrix-ops" },
+            { "id": "matrix-columns-are-basis", "name": "열은 기저가 간 자리", "kind": "piece", "origin": "matrix-ops" },
+            { "id": "matvec-as-combination", "name": "열들의 가중합", "kind": "piece", "origin": "matrix-ops" },
+            { "id": "matrix-product-chain", "name": "변환을 이어 붙인다", "kind": "piece", "origin": "matrix-ops" },
+            { "id": "determinant-area", "name": "넓이가 몇 배가 되는가", "kind": "piece", "origin": "matrix-ops" },
+            { "id": "determinant-zero-collapse", "name": "납작해지면 되돌릴 수 없다", "kind": "piece", "origin": "matrix-ops" },
+            { "id": "inverse-undoes", "name": "되돌리는 변환", "kind": "piece", "origin": "matrix-ops" },
+            { "id": "eigenvector-direction", "name": "방향이 바뀌지 않는 벡터", "kind": "piece", "origin": "eigen" },
+            { "id": "power-iteration-drift", "name": "거듭 곱하면 한쪽으로 쏠린다", "kind": "piece", "origin": "eigen" },
+            { "id": "svd-three-steps", "name": "회전·늘이기·회전으로 쪼갠다", "kind": "piece", "origin": "svd" },
+            { "id": "low-rank-approx", "name": "작은 것을 버리고 남는 모양", "kind": "piece", "origin": "svd" }
           ]
         },
         {
@@ -796,7 +813,14 @@
           "topics": [
             { "id": "distribution", "name": "확률 분포" },
             { "id": "bayes", "name": "베이즈 정리" },
-            { "id": "clt", "name": "중심 극한 정리" }
+            { "id": "clt", "name": "중심 극한 정리" },
+            { "id": "histogram-shape", "name": "표본을 쌓으면 모양이 생긴다", "kind": "piece", "origin": "distribution" },
+            { "id": "mean-and-spread", "name": "무게중심과 퍼진 정도", "kind": "piece", "origin": "distribution" },
+            { "id": "conditional-narrowing", "name": "조건은 세상을 좁힌다", "kind": "piece", "origin": "bayes" },
+            { "id": "bayes-update", "name": "증거를 받고 믿음을 고친다", "kind": "piece", "origin": "bayes" },
+            { "id": "base-rate", "name": "드문 것은 양성이어도 드물다", "kind": "piece", "origin": "bayes" },
+            { "id": "clt-bell", "name": "무엇을 뽑든 평균은 종을 그린다", "kind": "piece", "origin": "clt" },
+            { "id": "law-of-large-numbers", "name": "많이 뽑을수록 참값에 붙는다", "kind": "piece", "origin": "clt" }
           ]
         },
         {
@@ -806,7 +830,14 @@
             { "id": "derivative", "name": "미분" },
             { "id": "integral", "name": "적분" },
             { "id": "partial-derivative", "name": "편미분" },
-            { "id": "gradient", "name": "그래디언트" }
+            { "id": "gradient", "name": "그래디언트" },
+            { "id": "secant-to-tangent", "name": "두 점이 붙으면 접선이 된다", "kind": "piece", "origin": "derivative" },
+            { "id": "chain-rule-multiply", "name": "변화가 곱해진다", "kind": "piece", "origin": "derivative" },
+            { "id": "riemann-sum", "name": "잘게 쪼개 더한 넓이", "kind": "piece", "origin": "integral" },
+            { "id": "fundamental-theorem", "name": "미분과 적분은 서로를 되돌린다", "kind": "piece", "origin": "integral" },
+            { "id": "partial-slice", "name": "하나만 남기고 잘라 본다", "kind": "piece", "origin": "partial-derivative" },
+            { "id": "gradient-steepest", "name": "가장 가파른 쪽을 가리킨다", "kind": "piece", "origin": "gradient" },
+            { "id": "gradient-step", "name": "경사를 따라 한 걸음", "kind": "piece", "origin": "gradient" }
           ]
         },
         {
@@ -816,7 +847,18 @@
             { "id": "set", "name": "집합" },
             { "id": "graph-theory", "name": "그래프 이론" },
             { "id": "combinatorics", "name": "조합론" },
-            { "id": "number-theory", "name": "정수론" }
+            { "id": "number-theory", "name": "정수론" },
+            { "id": "set-operations", "name": "겹치고 합치고 덜어낸다", "kind": "piece", "origin": "set" },
+            { "id": "inclusion-exclusion", "name": "두 번 센 것을 뺀다", "kind": "piece", "origin": "set" },
+            { "id": "power-set", "name": "넣거나 빼거나, 2의 n제곱", "kind": "piece", "origin": "set" },
+            { "id": "handshake-lemma", "name": "간선 하나가 차수 둘을 만든다", "kind": "piece", "origin": "graph-theory" },
+            { "id": "bipartite-coloring", "name": "두 색으로 칠할 수 있는가", "kind": "piece", "origin": "graph-theory" },
+            { "id": "product-rule-tree", "name": "갈래마다 곱한다", "kind": "piece", "origin": "combinatorics" },
+            { "id": "permutation-vs-combination", "name": "순서를 따지는가 아닌가", "kind": "piece", "origin": "combinatorics" },
+            { "id": "pascal-triangle", "name": "위 둘을 더해 아래가 된다", "kind": "piece", "origin": "combinatorics" },
+            { "id": "modular-clock", "name": "수가 시계처럼 돈다", "kind": "piece", "origin": "number-theory" },
+            { "id": "euclid-gcd", "name": "큰 것에서 작은 것을 덜어낸다", "kind": "piece", "origin": "number-theory" },
+            { "id": "sieve-of-eratosthenes", "name": "배수를 지워 남는 것", "kind": "piece", "origin": "number-theory" }
           ]
         }
       ]
