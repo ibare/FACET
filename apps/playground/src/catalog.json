@@ -230,9 +230,9 @@
             { "id": "multiway-branch", "name": "여러 갈래 중 하나로", "kind": "piece", "origin": "branching" },
             { "id": "loop-back", "name": "같은 곳을 다시 밟는다", "kind": "piece", "origin": "loop" },
             { "id": "loop-termination", "name": "멈출 조건이 없으면 끝나지 않는다", "kind": "piece", "origin": "loop" },
-            { "id": "recursion-self-call", "name": "자기를 다시 부른다", "kind": "piece", "origin": "recursion-call" },
-            { "id": "call-stack-unwind", "name": "쌓였다가 되돌아온다", "kind": "piece", "origin": "recursion-call" },
-            { "id": "base-case", "name": "바닥에 닿아야 돌아온다", "kind": "piece", "origin": "recursion-call" },
+            { "id": "recursion-self-call", "name": "자기를 다시 부른다", "kind": "piece", "origin": "recursive-call" },
+            { "id": "call-stack-unwind", "name": "쌓였다가 되돌아온다", "kind": "piece", "origin": "recursive-call" },
+            { "id": "base-case", "name": "바닥에 닿아야 돌아온다", "kind": "piece", "origin": "recursive-call" },
             { "id": "exception-propagate", "name": "던지면 부른 자리를 거슬러 오른다", "kind": "piece", "origin": "exception" }
           ]
         },
@@ -245,10 +245,10 @@
             { "id": "type-coercion", "name": "타입 변환" },
             { "id": "scope", "name": "스코프" },
             { "id": "lifetime", "name": "라이프타임" },
-            { "id": "value-in-place", "name": "값이 자리에 직접 있다", "kind": "piece", "origin": "primitive-type" },
+            { "id": "value-in-place", "name": "값이 자리에 직접 있다", "kind": "piece", "origin": "primitive" },
             { "id": "reference-holds-address", "name": "자리에는 주소만 있다", "kind": "piece", "origin": "reference-type" },
             { "id": "aliasing", "name": "이름이 둘, 실체는 하나", "kind": "piece", "origin": "reference-type" },
-            { "id": "narrowing-loss", "name": "좁은 그릇으로 옮기면 넘친다", "kind": "piece", "origin": "type-conversion" },
+            { "id": "narrowing-loss", "name": "좁은 그릇으로 옮기면 넘친다", "kind": "piece", "origin": "type-coercion" },
             { "id": "shadowing", "name": "안쪽 이름이 바깥을 가린다", "kind": "piece", "origin": "scope" },
             { "id": "scope-exit", "name": "블록을 벗어나면 사라진다", "kind": "piece", "origin": "scope" },
             { "id": "dangling-reference", "name": "가리키던 것이 먼저 사라진다", "kind": "piece", "origin": "lifetime" }
@@ -264,7 +264,7 @@
             { "id": "higher-order", "name": "고차 함수" },
             { "id": "currying", "name": "커링" },
             { "id": "pass-by-value-vs-reference", "name": "복사해 넘기는가, 자리를 넘기는가", "kind": "piece", "origin": "argument-passing" },
-            { "id": "return-to-caller", "name": "부른 자리로 값을 들고 돌아온다", "kind": "piece", "origin": "return" },
+            { "id": "return-to-caller", "name": "부른 자리로 값을 들고 돌아온다", "kind": "piece", "origin": "return-value" },
             { "id": "closure-captures", "name": "함수가 바깥 변수를 데리고 다닌다", "kind": "piece", "origin": "closure" },
             { "id": "function-as-value", "name": "함수를 값처럼 넘긴다", "kind": "piece", "origin": "higher-order" },
             { "id": "currying-partial", "name": "인자를 하나씩 받아 함수를 남긴다", "kind": "piece", "origin": "currying" }
@@ -301,7 +301,7 @@
             { "id": "map-one-by-one", "name": "하나씩 바꾼다", "kind": "piece", "origin": "map-filter-reduce" },
             { "id": "filter-keep-some", "name": "걸러 낸다", "kind": "piece", "origin": "map-filter-reduce" },
             { "id": "reduce-fold", "name": "접어서 하나로", "kind": "piece", "origin": "map-filter-reduce" },
-            { "id": "monad-chain-in-box", "name": "상자에 담은 채로 이어 붙인다", "kind": "piece", "origin": "monad" }
+            { "id": "monad-chain-in-box", "name": "상자에 담은 채로 이어 붙인다", "kind": "piece", "origin": "monad-basics" }
           ]
         },
         {
