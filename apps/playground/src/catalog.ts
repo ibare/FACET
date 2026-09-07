@@ -4,6 +4,17 @@ export type Topic = {
   id: string;
   name: string;
   facetId?: string;
+  /**
+   * 'piece' 면 조각 — "이 토픽을 배우려면 무엇을 봐야 하는가" 를 도출해 얻은 항목.
+   * 조각은 개념 자체를 보여줄 뿐이고, 필요성·인과·순서는 글이 말한다.
+   * 없으면 원래부터 있던 주제 토픽.
+   */
+  kind?: 'piece';
+  /**
+   * 조각을 도출할 때 출발한 자리(토픽 또는 서브도메인 id).
+   * 기록일 뿐이며 소속을 뜻하지 않는다 — 한 조각은 여러 주제에서 불릴 수 있다.
+   */
+  origin?: string;
 };
 
 export type Subdomain = {
@@ -54,5 +65,11 @@ export function countImplementedTopics(): number {
 export function countAllTopics(): number {
   let n = 0;
   for (const d of catalog) for (const s of d.subdomains) n += s.topics.length;
+  return n;
+}
+
+export function countPieces(): number {
+  let n = 0;
+  for (const d of catalog) for (const s of d.subdomains) for (const t of s.topics) if (t.kind === 'piece') n++;
   return n;
 }

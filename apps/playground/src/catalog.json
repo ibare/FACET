@@ -692,13 +692,13 @@
           "name": "해시",
           "topics": [
             { "id": "sha", "name": "SHA" },
-            { "id": "hash-fixed-length", "name": "무엇을 넣든 같은 길이", "facetId": "facet:hashFixedLength" },
-            { "id": "hash-avalanche", "name": "눈사태 효과", "facetId": "facet:hashAvalanche" },
-            { "id": "pigeonhole-collision", "name": "충돌은 반드시 있다", "facetId": "facet:pigeonholeCollision" },
-            { "id": "hash-integrity", "name": "받은 것이 원본인지 확인", "facetId": "facet:hashIntegrityCheck" },
-            { "id": "hash-salt", "name": "같은 비밀번호, 다른 저장값", "facetId": "facet:hashSalt" },
-            { "id": "hash-chain", "name": "지난 기록을 고치면 드러난다", "facetId": "facet:hashChain" },
-            { "id": "merkle-tree", "name": "무엇이 바뀌었는지 찾기", "facetId": "facet:merkleTree" },
+            { "id": "hash-fixed-length", "name": "무엇을 넣든 같은 길이", "facetId": "facet:hashFixedLength", "kind": "piece", "origin": "hash" },
+            { "id": "hash-avalanche", "name": "눈사태 효과", "facetId": "facet:hashAvalanche", "kind": "piece", "origin": "hash" },
+            { "id": "pigeonhole-collision", "name": "충돌은 반드시 있다", "facetId": "facet:pigeonholeCollision", "kind": "piece", "origin": "hash" },
+            { "id": "hash-integrity", "name": "받은 것이 원본인지 확인", "facetId": "facet:hashIntegrityCheck", "kind": "piece", "origin": "hash" },
+            { "id": "hash-salt", "name": "같은 비밀번호, 다른 저장값", "facetId": "facet:hashSalt", "kind": "piece", "origin": "hash" },
+            { "id": "hash-chain", "name": "지난 기록을 고치면 드러난다", "facetId": "facet:hashChain", "kind": "piece", "origin": "hash" },
+            { "id": "merkle-tree", "name": "무엇이 바뀌었는지 찾기", "facetId": "facet:merkleTree", "kind": "piece", "origin": "hash" },
             { "id": "collision", "name": "충돌" },
             { "id": "mac", "name": "MAC" },
             { "id": "hmac", "name": "HMAC" }
@@ -708,8 +708,8 @@
           "id": "signature",
           "name": "디지털 서명",
           "topics": [
-            { "id": "signature-key-direction", "name": "두 키의 자리가 바뀐다", "facetId": "facet:signatureKeyDirection" },
-            { "id": "signature-on-hash", "name": "서명은 해시에 한다", "facetId": "facet:signatureOnHash" },
+            { "id": "signature-key-direction", "name": "두 키의 자리가 바뀐다", "facetId": "facet:signatureKeyDirection", "kind": "piece", "origin": "signature" },
+            { "id": "signature-on-hash", "name": "서명은 해시에 한다", "facetId": "facet:signatureOnHash", "kind": "piece", "origin": "signature" },
             { "id": "certificate", "name": "인증서" },
             { "id": "pki", "name": "PKI" },
             { "id": "auth-chain", "name": "인증 체인" }

@@ -18,12 +18,14 @@ import {
   PaintBrush,
   MathOperations,
   Atom,
+  PuzzlePiece,
 } from '@phosphor-icons/react';
 import type { Icon as PhIcon } from '@phosphor-icons/react';
 import {
   catalog,
   countAllTopics,
   countImplementedTopics,
+  countPieces,
   type Domain,
   type Subdomain,
   type Topic,
@@ -113,6 +115,7 @@ function countSubdomainImplemented(s: Subdomain): number {
 export function IndexPage() {
   const total = countAllTopics();
   const ready = countImplementedTopics();
+  const pieces = countPieces();
 
   return (
     <div className="min-h-screen">
@@ -148,6 +151,11 @@ export function IndexPage() {
               <Lock weight="duotone" className="h-3.5 w-3.5" />
               <span className="font-medium">{total - ready}</span>
               <span className="text-fg-subtle">개 예정</span>
+            </div>
+            <div className="flex items-center gap-2 rounded-full bg-surface-raised px-3 py-1.5 text-fg-muted ring-1 ring-border">
+              <PuzzlePiece weight="duotone" className="h-3.5 w-3.5" />
+              <span className="font-medium">{pieces}</span>
+              <span className="text-fg-subtle">개 조각</span>
             </div>
           </div>
         </header>
@@ -244,6 +252,11 @@ function SubdomainItem({ subdomain, accent }: { subdomain: Subdomain; accent: Ac
 }
 
 function TopicTile({ topic, accent }: { topic: Topic; accent: AccentTokens }) {
+  // 조각은 주제 토픽과 한 목록에 섞여 있다. 아이콘으로 갈라 둔다 —
+  // 주제는 그 자체가 배울 대상이고, 조각은 그것을 배우다 마주치는 개념이다.
+  const isPiece = topic.kind === 'piece';
+  const Mark = isPiece ? PuzzlePiece : Sparkle;
+
   if (topic.facetId) {
     return (
       <Link
@@ -251,7 +264,7 @@ function TopicTile({ topic, accent }: { topic: Topic; accent: AccentTokens }) {
         className={`group/tile relative flex items-center justify-between gap-2 overflow-hidden rounded-lg bg-surface-raised px-3 py-2.5 ring-1 ring-border transition hover:bg-surface-raised-hover hover:ring-border-strong focus-visible:outline-none focus-visible:ring-2 ${accent.ringSoft}`}
       >
         <div className="flex min-w-0 items-center gap-2">
-          <Sparkle weight="fill" className={`h-3 w-3 shrink-0 ${accent.text}`} />
+          <Mark weight={isPiece ? 'duotone' : 'fill'} className={`h-3 w-3 shrink-0 ${accent.text}`} />
           <span className="truncate text-sm text-fg">{topic.name}</span>
         </div>
         <ArrowRight
@@ -265,10 +278,16 @@ function TopicTile({ topic, accent }: { topic: Topic; accent: AccentTokens }) {
   return (
     <div className="flex cursor-not-allowed items-center justify-between gap-2 rounded-lg bg-surface px-3 py-2.5 ring-1 ring-border opacity-70">
       <div className="flex min-w-0 items-center gap-2">
-        <Lock weight="duotone" className="h-3 w-3 shrink-0 text-fg-subtle" />
+        {isPiece ? (
+          <PuzzlePiece weight="duotone" className="h-3 w-3 shrink-0 text-fg-subtle" />
+        ) : (
+          <Lock weight="duotone" className="h-3 w-3 shrink-0 text-fg-subtle" />
+        )}
         <span className="truncate text-sm text-fg-muted">{topic.name}</span>
       </div>
-      <span className="shrink-0 text-[10px] uppercase tracking-wider text-fg-subtle">soon</span>
+      <span className="shrink-0 text-[10px] uppercase tracking-wider text-fg-subtle">
+        {isPiece ? 'piece' : 'soon'}
+      </span>
     </div>
   );
 }
