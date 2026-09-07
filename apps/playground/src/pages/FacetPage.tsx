@@ -23,7 +23,7 @@ type LoadState =
 export function FacetPage() {
   const { id } = useParams<{ id: string }>();
   const facetId = id ? decodeURIComponent(id) : '';
-  const { locale, theme } = usePreferences();
+  const { locale, theme, messagesEpoch } = usePreferences();
   const location = facetId ? findTopicByFacetId(facetId) : null;
 
   const [state, setState] = useState<LoadState>({ kind: 'loading' });
@@ -77,7 +77,8 @@ export function FacetPage() {
       extensions: [StarterKit, FacetExtension.configure({ locale, theme })],
       content: html,
     },
-    [html, locale, theme],
+    // messagesEpoch — 문구 번들이 도착하면 다시 마운트해 라벨을 새로 그린다.
+    [html, locale, theme, messagesEpoch],
   );
 
   const title = useMemo(() => {
