@@ -37,7 +37,8 @@ export const signatureOnHashFacet: FacetJson = {
     documentBytes: 3700000,
     digestBytes: 32,
     signatureBytes: 64,
-    stepMs: 950,
+    // 접힘 운동(FOLD_MS)이 한 걸음 안에서 끝나야 한다.
+    stepMs: 1100,
   },
   shuffleOnReset: false,
   layout: {

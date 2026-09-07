@@ -57,7 +57,8 @@ export const merkleTreeFacet: FacetJson = {
       root: '9e95ed8cc53f94ab94ddc0b61572409dd4ab95416e66a9129e4397dac7dd92dd',
     },
     changedLeaf: 1,
-    stepMs: 950,
+    // 두 층이 이어 오르는 combine-up 이 가장 긴 걸음이라 그것에 맞춘다.
+    stepMs: 1300,
   },
   shuffleOnReset: false,
   layout: {

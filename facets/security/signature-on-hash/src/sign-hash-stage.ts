@@ -1,12 +1,15 @@
 /**
  * sign-hash-stage View — 해시에 서명하기 단일 캔버스.
  *
- * 세로로 내려오는 세 마디다. 문서 막대는 화면 폭을 넘어 잘리고, 해시는 점만
- * 하고, 서명은 그보다 조금 크다. 비율 자체가 논증이라 막대 길이를 눈속임하지
- * 않는다 — 32바이트를 억지로 키우면 "작다" 는 말이 사라진다.
+ * 이 조각의 동사는 **접힌다** 이므로, 문서 막대가 실제로 줄어들며 내려가야 한다
+ * (S-piece). 막대 셋을 순서대로 나타나게 하면 "접힌다" 가 "크기 목록" 이 된다.
  *
- * 다만 32와 64를 구분할 수는 있어야 해서, 작은 두 막대에만 최소 폭을 준다.
- * 그 사실은 각주가 밝힌다.
+ * 원본은 제자리에 남고 복제본이 줄어들며 내려간다 — 문서가 사라져 해시가 되는
+ * 게 아니라, 문서를 재료로 해시가 새로 생기기 때문이다. 서명 단계도 같은
+ * 운동이되 이번엔 늘어난다 (32B → 64B).
+ *
+ * 비율 자체가 논증이라 막대 길이를 눈속임하지 않는다. 다만 32와 64를 구분할
+ * 수는 있어야 해서 작은 두 막대에만 최소 폭을 주고, 그 사실은 각주가 밝힌다.
  *
  * 색 토큰 (S-view 결정 트리):
  *   - 문서 — palette.textMuted
@@ -35,6 +38,9 @@ const NOTE_Y = 236;
 
 /** 작은 두 막대의 최소 폭. 32B 와 64B 를 구분하려면 0px 로 둘 수 없다. */
 const MIN_BAR_W = 6;
+
+/** 막대 하나가 다음 마디로 접혀 내려가는 시간 (ms). */
+const FOLD_MS = 520;
 
 type InitPayload = {
   hashLabel: string;
@@ -95,11 +101,61 @@ export const signHashStageView: View = {
     });
     const rowsGroup = el('g');
     const arrowsGroup = el('g');
-    svg.append(captionBase, captionEvent, arrowsGroup, rowsGroup, note);
+    /** 접혀 내려가는 중인 복제본들. reset 때 통째로 비운다. */
+    const foldingGroup = el('g');
+    svg.append(captionBase, captionEvent, arrowsGroup, rowsGroup, foldingGroup, note);
 
-    type Row = { group: SVGGElement; bar: SVGRectElement; size: SVGTextElement };
+    type Row = { group: SVGGElement; bar: SVGRectElement; size: SVGTextElement; width: number; color: string };
     let rows: Row[] = [];
     let arrows: SVGGElement[] = [];
+
+    const timers = new Set<ReturnType<typeof setTimeout>>();
+    function later(fn: () => void, ms: number): void {
+      const id = setTimeout(() => {
+        timers.delete(id);
+        fn();
+      }, ms);
+      timers.add(id);
+    }
+    function clearFolding(): void {
+      for (const id of timers) clearTimeout(id);
+      timers.clear();
+      foldingGroup.textContent = '';
+    }
+
+    /**
+     * 한 마디를 복제해 다음 마디 자리로 접어 내린다.
+     *
+     * 왼쪽 끝을 고정한 채 가로로만 줄여야 "접힌다" 로 읽힌다. 원본은 남고
+     * 복제본만 움직인다 — 위가 사라져 아래가 되는 게 아니라 위를 재료로
+     * 아래가 생기기 때문이다.
+     */
+    function fold(from: number, to: number, onArrive: () => void): void {
+      const src = rows[from];
+      const dst = rows[to];
+      if (!src || !dst) return;
+      const yFrom = ROW_Y[from] ?? 0;
+      const yTo = ROW_Y[to] ?? 0;
+      const ghost = el('rect', {
+        x: BAR_X,
+        y: yFrom,
+        width: src.width,
+        height: BAR_H,
+        rx: 3,
+        fill: src.color,
+      });
+      ghost.style.transformOrigin = `${BAR_X}px ${yFrom}px`;
+      ghost.style.transition = `transform ${FOLD_MS}ms ease-in-out, fill ${FOLD_MS}ms ease-in-out`;
+      foldingGroup.appendChild(ghost);
+      later(() => {
+        ghost.style.transform = `translate(0px, ${yTo - yFrom}px) scaleX(${dst.width / src.width})`;
+        ghost.setAttribute('fill', dst.color);
+      }, 16);
+      later(() => {
+        ghost.remove();
+        onArrive();
+      }, FOLD_MS + 16);
+    }
 
     function buildRow(i: number, label: string, width: number, color: string, size: string): Row {
       const y = ROW_Y[i] ?? 0;
@@ -128,7 +184,7 @@ export const signHashStageView: View = {
       group.style.opacity = '0';
       group.style.transition = 'opacity 240ms ease-out';
       rowsGroup.appendChild(group);
-      return { group, bar, size: sizeText };
+      return { group, bar, size: sizeText, width, color };
     }
 
     function buildArrow(i: number, label: string): SVGGElement {
@@ -175,10 +231,12 @@ export const signHashStageView: View = {
 
     return {
       destroy() {
+        clearFolding();
         if (svg.parentNode) svg.parentNode.removeChild(svg);
       },
 
       reset() {
+        clearFolding();
         captionEvent.textContent = '';
         for (const r of rows) r.group.style.opacity = '0';
         for (const a of arrows) a.style.opacity = '0';
@@ -188,6 +246,7 @@ export const signHashStageView: View = {
         p: InitPayload,
         labels: { document: string; digest: string; signature: string; bytes: (n: number) => string },
       ) {
+        clearFolding();
         build(p, labels);
         captionEvent.textContent = '';
       },
@@ -209,18 +268,24 @@ export const signHashStageView: View = {
         if (r) r.group.style.opacity = '1';
       },
 
+      /** 문서가 접혀 해시가 된다. */
       hashIt() {
         const a = arrows[0];
-        const r = rows[1];
         if (a) a.style.opacity = '1';
-        if (r) r.group.style.opacity = '1';
+        fold(0, 1, () => {
+          const r = rows[1];
+          if (r) r.group.style.opacity = '1';
+        });
       },
 
+      /** 해시가 서명이 된다. 같은 운동이되 이번엔 늘어난다. */
       signIt() {
         const a = arrows[1];
-        const r = rows[2];
         if (a) a.style.opacity = '1';
-        if (r) r.group.style.opacity = '1';
+        fold(1, 2, () => {
+          const r = rows[2];
+          if (r) r.group.style.opacity = '1';
+        });
       },
 
       /** 서명 크기가 문서 크기와 무관함을 짚는다. */

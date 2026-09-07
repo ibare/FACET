@@ -63,7 +63,8 @@ export const hashFixedLengthFacet: FacetJson = {
         hash: '5cae16c80af2cdd75771050bb43313674050b21782a8cc8abd1b78275152be51',
       },
     ],
-    stepMs: 950,
+    // 네 줄이 접혀 건너가는 reveal-outputs 가 가장 긴 걸음이라 그것에 맞춘다.
+    stepMs: 1200,
   },
   shuffleOnReset: false,
   layout: {

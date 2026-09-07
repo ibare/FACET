@@ -67,7 +67,8 @@ export const pigeonholeCollisionFacet: FacetJson = {
       { input: 'ap', slot: 15 },
     ],
     overflow: { input: 'ag', slot: 6 },
-    stepMs: 1000,
+    // 16칸이 순차로 내려가는 fill-slots 가 가장 긴 걸음이라 그것에 맞춘다.
+    stepMs: 1400,
   },
   shuffleOnReset: false,
   layout: {

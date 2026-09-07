@@ -1,6 +1,13 @@
 /**
  * fixed-length-stage View — 고정 길이 출력 단일 캔버스.
  *
+ * 이 조각의 동사는 **접힌다** 이므로, 길이가 제각각인 입력이 실제로 같은 폭으로
+ * 줄어들며 오른쪽으로 건너가야 한다 (S-piece). 상자 넷을 순서대로 나타나게 하면
+ * "무엇을 넣든 같은 길이" 가 "상자 넷이 나란하다" 로 약해진다.
+ *
+ * 네 줄이 동시에 접히는 것이 요점이다 — 출발 폭은 넷 다 다른데 도착 폭이 하나로
+ * 모이는 장면이 이 조각의 주장이다.
+ *
  * 두 열로 대비한다:
  *   - 왼쪽: 입력 문자열 그대로. 길이가 제각각이고 가장 긴 것은 잘려 나간다
  *   - 오른쪽: 해시 상자. 넷이 정확히 같은 폭이고, 마지막 걸음에서 좌우 안내선이
@@ -51,6 +58,13 @@ const ROW_STEP_MS = 90;
 
 /** 해시 상자에 들어가는 hex 글자 수. 상자 폭에 맞춰 자른다. */
 const HEX_HEAD = 26;
+
+/** 입력이 상자 폭으로 접혀 건너가는 시간 (ms). */
+const FOLD_MS = 560;
+/** mono 12px 한 글자의 대략적 폭. 접힘 출발 폭을 재는 데 쓴다. */
+const CHAR_W = 7.2;
+/** 빈 입력도 접히는 것이 보여야 하므로 출발 폭에 하한을 둔다. */
+const MIN_SRC_W = 10;
 
 type Row = { input: string; bytes: number; hash: string };
 type InitPayload = { algorithmLabel: string; hashBits: number; rows: Row[] };
@@ -119,6 +133,8 @@ export const fixedLengthStageView: View = {
     });
     const note = text(W / 2, NOTE_Y, { fill: palette.textMuted, size: fontSizes.xs });
 
+    /** 접혀 건너가는 중인 복제본들. reset 때 통째로 비운다. */
+    const foldingGroup = el('g');
     const inputsGroup = el('g', { 'clip-path': 'url(#fixedLengthInputClip)' });
     const bytesGroup = el('g');
     const outputsGroup = el('g');
@@ -131,6 +147,7 @@ export const fixedLengthStageView: View = {
       inputsGroup,
       bytesGroup,
       outputsGroup,
+      foldingGroup,
       guidesGroup,
       uniformLabel,
       note,
@@ -144,6 +161,8 @@ export const fixedLengthStageView: View = {
       hex: SVGTextElement;
       /** 상자와 hex 를 묶은 그룹. 한 번에 나타내고 감추기 위해 잡아 둔다. */
       outRow: SVGGElement;
+      /** 접힘이 출발하는 폭. 입력 글자 수에서 잰다. */
+      srcW: number;
     };
     let rowNodes: RowNodes[] = [];
     let guides: SVGLineElement[] = [];
@@ -159,6 +178,38 @@ export const fixedLengthStageView: View = {
     function clearTimers(): void {
       for (const id of timers) clearTimeout(id);
       timers.clear();
+      foldingGroup.textContent = '';
+    }
+
+    /**
+     * 한 입력을 복제해 상자 폭으로 접으며 오른쪽으로 보낸다.
+     *
+     * 출발 폭은 글자 수에서 재고 도착 폭은 넷 다 BOX_W 로 같다 — 그 수렴이
+     * 이 조각의 주장이라, 도착점을 눈속임하지 않는다.
+     */
+    function foldToBox(index: number, srcW: number, delayMs: number, onArrive: () => void): void {
+      const y = ROW_Y0 + index * ROW_PITCH;
+      const from = Math.max(MIN_SRC_W, srcW);
+      const ghost = el('rect', {
+        x: INPUT_X,
+        y,
+        width: from,
+        height: BOX_H,
+        rx: 3,
+        fill: palette.bgSubtle,
+      });
+      ghost.style.transformOrigin = `${INPUT_X}px ${y}px`;
+      ghost.style.transition = `transform ${FOLD_MS}ms ease-in-out`;
+      ghost.style.opacity = '0';
+      foldingGroup.appendChild(ghost);
+      later(() => {
+        ghost.style.opacity = '1';
+        ghost.style.transform = `translate(${BOX_X - INPUT_X}px, 0px) scaleX(${BOX_W / from})`;
+      }, delayMs + 16);
+      later(() => {
+        ghost.remove();
+        onArrive();
+      }, delayMs + FOLD_MS + 16);
     }
 
     function buildRows(rows: Row[], emptyLabel: string): void {
@@ -228,7 +279,7 @@ export const fixedLengthStageView: View = {
         outRow.style.transition = 'opacity 200ms ease-out';
         outputsGroup.appendChild(outRow);
 
-        rowNodes.push({ input, bytes, arrow, box, hex, outRow });
+        rowNodes.push({ input, bytes, arrow, box, hex, outRow, srcW: (r.input === '' ? emptyLabel : r.input).length * CHAR_W });
       });
 
       // 출력 상자의 좌우 끝을 짚는 안내선. 마지막 걸음에서만 나타난다.
@@ -307,12 +358,13 @@ export const fixedLengthStageView: View = {
         });
       },
 
+      /** 네 줄이 동시에 접힌다. 출발 폭은 제각각인데 도착 폭이 하나로 모인다. */
       revealOutputs() {
         rowNodes.forEach((r, i) => {
-          later(() => {
-            r.arrow.style.opacity = '1';
+          r.arrow.style.opacity = '1';
+          foldToBox(i, r.srcW, i * ROW_STEP_MS, () => {
             r.outRow.style.opacity = '1';
-          }, i * ROW_STEP_MS);
+          });
         });
       },
 

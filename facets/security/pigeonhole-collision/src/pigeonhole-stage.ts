@@ -1,6 +1,10 @@
 /**
  * pigeonhole-stage View — 비둘기집 충돌 단일 캔버스.
  *
+ * 이 조각의 동사는 **들어간다 · 겹친다** 이므로, 입력이 실제로 자리로 내려가야
+ * 한다 (S-piece). 자리에 글자가 나타나기만 하면 "들어간다" 가 "생긴다" 가 되고,
+ * 마지막 입력이 남의 자리에 앉는 장면 — 이 조각의 전부 — 이 사라진다.
+ *
  * 화면 구성 (위에서 아래로):
  *   - 캡션 (주장 한 줄 + 결과 한 줄)
  *   - 대기 중인 입력 칩들. 마지막 하나는 자리 수보다 하나 많은 그 입력이다
@@ -48,6 +52,8 @@ const NOTE2_Y = 218;
 
 /** 자리를 하나씩 채우는 간격 (ms). 채우는 동안 수가 세어지는 느낌을 준다. */
 const FILL_STEP_MS = 55;
+/** 칩 하나가 자리까지 내려가는 시간 (ms). */
+const DROP_MS = 340;
 
 type Entry = { input: string; slot: number };
 type InitPayload = { slotCount: number; fillers: Entry[]; overflow: Entry };
@@ -97,10 +103,24 @@ export const pigeonholeStageView: View = {
     const note2 = text(W / 2, NOTE2_Y, { fill: palette.textMuted, size: fontSizes.xs });
     const chipsGroup = el('g');
     const slotsGroup = el('g');
-    svg.append(captionBase, captionEvent, chipsGroup, arrow, slotsGroup, note, note2);
+    /** 내려가는 중인 복제본들. reset 때 통째로 비운다. */
+    const droppingGroup = el('g');
+    svg.append(captionBase, captionEvent, chipsGroup, arrow, slotsGroup, droppingGroup, note, note2);
 
-    type Chip = { group: SVGGElement; box: SVGRectElement; label: SVGTextElement };
-    type Slot = { box: SVGRectElement; label: SVGTextElement; occupant: SVGTextElement };
+    type Chip = {
+      group: SVGGElement;
+      box: SVGRectElement;
+      label: SVGTextElement;
+      /** 칩 왼쪽 x. 자리까지 내려가는 거리를 재는 데 쓴다. */
+      x: number;
+    };
+    type Slot = {
+      box: SVGRectElement;
+      label: SVGTextElement;
+      occupant: SVGTextElement;
+      /** 자리 왼쪽 x. */
+      x: number;
+    };
 
     let chips: Chip[] = [];
     let slots: Slot[] = [];
@@ -117,6 +137,56 @@ export const pigeonholeStageView: View = {
     function clearTimers(): void {
       for (const id of timers) clearTimeout(id);
       timers.clear();
+      droppingGroup.textContent = '';
+    }
+
+    /**
+     * 칩 하나를 복제해 자리까지 내려보낸다.
+     *
+     * 대기열의 칩은 자리에 남고 복제본만 움직인다 — 입력 목록이 사라지는 게
+     * 아니라 그 입력이 어느 자리로 갔는지를 보이는 것이기 때문이다.
+     */
+    function drop(
+      chipIndex: number,
+      slotIndex: number,
+      delayMs: number,
+      onArrive: () => void,
+      color?: string,
+    ): void {
+      const chip = chips[chipIndex];
+      const slot = slots[slotIndex];
+      if (!chip || !slot) return;
+      const ghost = el('rect', {
+        x: chip.x,
+        y: CHIP_Y,
+        width: CHIP_W,
+        height: CHIP_H,
+        rx: 3,
+        fill: color ?? FILLED,
+      });
+      const text = el('text', {
+        x: chip.x + CHIP_W / 2,
+        y: CHIP_Y + 13,
+        'text-anchor': 'middle',
+        fill: palette.textInverse,
+        'font-family': fonts.mono,
+        'font-size': fontSizes.xs,
+      });
+      text.textContent = chip.label.textContent ?? '';
+      const g = el('g');
+      g.append(ghost, text);
+      g.style.transition = `transform ${DROP_MS}ms cubic-bezier(0.4, 0.1, 0.3, 1)`;
+      g.style.opacity = '0';
+      droppingGroup.appendChild(g);
+      later(() => {
+        g.style.opacity = '1';
+        const dx = slot.x + (SLOT_W - CHIP_W) / 2 - chip.x;
+        g.style.transform = `translate(${dx}px, ${SLOT_Y - CHIP_Y + 5}px)`;
+      }, delayMs + 16);
+      later(() => {
+        g.remove();
+        onArrive();
+      }, delayMs + DROP_MS + 16);
     }
 
     function buildChips(entries: Entry[], overflow: Entry): void {
@@ -146,7 +216,7 @@ export const pigeonholeStageView: View = {
         g.style.opacity = '0';
         g.style.transition = 'opacity 200ms ease-out';
         chipsGroup.appendChild(g);
-        chips.push({ group: g, box, label });
+        chips.push({ group: g, box, label, x: left + i * pitch });
       });
     }
 
@@ -179,7 +249,7 @@ export const pigeonholeStageView: View = {
         });
         label.textContent = String(i);
         slotsGroup.append(box, occupant, label);
-        slots.push({ box, label, occupant });
+        slots.push({ box, label, occupant, x: left + i * pitch });
       }
       slotsGroup.style.opacity = '0';
       slotsGroup.style.transition = 'opacity 220ms ease-out';
@@ -242,11 +312,12 @@ export const pigeonholeStageView: View = {
         });
       },
 
-      /** 자리를 하나씩 채운다. 다 차는 것을 봐야 다음 걸음이 논증이 된다. */
+      /** 입력이 하나씩 자리로 내려간다. 다 차는 것을 봐야 다음 걸음이 논증이 된다. */
       fillSlots() {
-        if (!snapshot) return;
-        snapshot.fillers.forEach((e, i) => {
-          later(() => {
+        const snap = snapshot;
+        if (!snap) return;
+        snap.fillers.forEach((e, i) => {
+          drop(i, e.slot, i * FILL_STEP_MS, () => {
             const slot = slots[e.slot];
             const chip = chips[i];
             if (!slot || !chip) return;
@@ -254,7 +325,7 @@ export const pigeonholeStageView: View = {
             slot.occupant.textContent = e.input;
             chip.box.setAttribute('fill', FILLED);
             chip.label.setAttribute('fill', palette.textInverse);
-          }, i * FILL_STEP_MS);
+          });
         });
       },
 
@@ -267,14 +338,23 @@ export const pigeonholeStageView: View = {
         chip.label.setAttribute('fill', palette.textInverse);
       },
 
-      /** 갈 곳이 없다 — 이미 누가 앉은 자리에 겹쳐 앉는다. */
+      /** 갈 곳이 없다 — 다른 것들과 똑같이 내려가는데 이미 누가 앉은 자리다. */
       placeOverflow() {
-        if (!snapshot) return;
-        const slot = slots[snapshot.overflow.slot];
-        if (!slot) return;
-        slot.box.setAttribute('stroke', HOT);
-        slot.occupant.textContent = `${slot.occupant.textContent} ${snapshot.overflow.input}`;
-        slot.occupant.setAttribute('font-size', '9px');
+        const snap = snapshot;
+        if (!snap) return;
+        drop(
+          chips.length - 1,
+          snap.overflow.slot,
+          0,
+          () => {
+            const slot = slots[snap.overflow.slot];
+            if (!slot) return;
+            slot.box.setAttribute('stroke', HOT);
+            slot.occupant.textContent = `${slot.occupant.textContent} ${snap.overflow.input}`;
+            slot.occupant.setAttribute('font-size', '9px');
+          },
+          HOT,
+        );
       },
     };
   },
