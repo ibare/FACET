@@ -291,4 +291,64 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:ipRouting', () =>
     import('@ffacet/algorithm-ip-routing').then((m) => m.registerIpRouting()),
   );
+  registerFacetLoader('facet:compareAndSwap', () =>
+    import('@ffacet/algorithm-compare-and-swap').then((m) => m.registerCompareAndSwap()),
+  );
+  registerFacetLoader('facet:sortStability', () =>
+    import('@ffacet/algorithm-sort-stability').then((m) => m.registerSortStability()),
+  );
+  registerFacetLoader('facet:inPlaceVsExtra', () =>
+    import('@ffacet/algorithm-in-place-vs-extra').then((m) => m.registerInPlaceVsExtra()),
+  );
+  registerFacetLoader('facet:bubbleAdjacentSwap', () =>
+    import('@ffacet/algorithm-bubble-adjacent-swap').then((m) => m.registerBubbleAdjacentSwap()),
+  );
+  registerFacetLoader('facet:selectMinEachPass', () =>
+    import('@ffacet/algorithm-select-min-each-pass').then((m) => m.registerSelectMinEachPass()),
+  );
+  registerFacetLoader('facet:insertIntoSortedPart', () =>
+    import('@ffacet/algorithm-insert-into-sorted-part').then((m) => m.registerInsertIntoSortedPart()),
+  );
+  registerFacetLoader('facet:splitUntilOne', () =>
+    import('@ffacet/algorithm-split-until-one').then((m) => m.registerSplitUntilOne()),
+  );
+  registerFacetLoader('facet:mergeTwoSorted', () =>
+    import('@ffacet/algorithm-merge-two-sorted').then((m) => m.registerMergeTwoSorted()),
+  );
+  registerFacetLoader('facet:partitionAroundPivot', () =>
+    import('@ffacet/algorithm-partition-around-pivot').then((m) => m.registerPartitionAroundPivot()),
+  );
+  registerFacetLoader('facet:pivotChoiceMatters', () =>
+    import('@ffacet/algorithm-pivot-choice-matters').then((m) => m.registerPivotChoiceMatters()),
+  );
+  registerFacetLoader('facet:heapSortExtract', () =>
+    import('@ffacet/algorithm-heap-sort-extract').then((m) => m.registerHeapSortExtract()),
+  );
+  registerFacetLoader('facet:countThenPlace', () =>
+    import('@ffacet/algorithm-count-then-place').then((m) => m.registerCountThenPlace()),
+  );
+  registerFacetLoader('facet:digitByDigit', () =>
+    import('@ffacet/algorithm-digit-by-digit').then((m) => m.registerDigitByDigit()),
+  );
+  registerFacetLoader('facet:gapShrink', () =>
+    import('@ffacet/algorithm-gap-shrink').then((m) => m.registerGapShrink()),
+  );
+  registerFacetLoader('facet:scanUntilFound', () =>
+    import('@ffacet/algorithm-scan-until-found').then((m) => m.registerScanUntilFound()),
+  );
+  registerFacetLoader('facet:halveTheRange', () =>
+    import('@ffacet/algorithm-halve-the-range').then((m) => m.registerHalveTheRange()),
+  );
+  registerFacetLoader('facet:requiresSorted', () =>
+    import('@ffacet/algorithm-requires-sorted').then((m) => m.registerRequiresSorted()),
+  );
+  registerFacetLoader('facet:guessByValue', () =>
+    import('@ffacet/algorithm-guess-by-value').then((m) => m.registerGuessByValue()),
+  );
+  registerFacetLoader('facet:divideConquerCombine', () =>
+    import('@ffacet/algorithm-divide-conquer-combine').then((m) => m.registerDivideConquerCombine()),
+  );
+  registerFacetLoader('facet:overlappingSubproblems', () =>
+    import('@ffacet/algorithm-overlapping-subproblems').then((m) => m.registerOverlappingSubproblems()),
+  );
 }

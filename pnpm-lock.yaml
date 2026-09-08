@@ -197,6 +197,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/bubble-adjacent-swap:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/bubble-sort:
     dependencies:
       '@ffacet/core':
@@ -222,6 +228,18 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/compare-and-swap:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/count-then-place:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/depth-doubles-count:
     dependencies:
       '@ffacet/core':
@@ -229,6 +247,18 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/deque-both-ends:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/digit-by-digit:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/divide-conquer-combine:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -246,7 +276,25 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/gap-shrink:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/grow-and-copy:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/guess-by-value:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/halve-the-range:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -276,6 +324,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/heap-sort-extract:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/height-balance-check:
     dependencies:
       '@ffacet/core':
@@ -288,7 +342,19 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/in-place-vs-extra:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/index-address-calc:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/insert-into-sorted-part:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -318,6 +384,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/merge-two-sorted:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/node-holds-many:
     dependencies:
       '@ffacet/core':
@@ -342,13 +414,31 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/overlapping-subproblems:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/parent-two-children:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/partition-around-pivot:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/path-compression:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/pivot-choice-matters:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -391,7 +481,25 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/requires-sorted:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/rotate-to-balance:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/scan-until-found:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/select-min-each-pass:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -422,6 +530,18 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/sift-up:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/sort-stability:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/split-until-one:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -627,6 +747,9 @@ importers:
       '@ffacet/algorithm-bst-inorder-sorted':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bst-inorder-sorted
+      '@ffacet/algorithm-bubble-adjacent-swap':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/bubble-adjacent-swap
       '@ffacet/algorithm-bubble-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bubble-sort
@@ -639,27 +762,48 @@ importers:
       '@ffacet/algorithm-circular-buffer-wrap':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/circular-buffer-wrap
+      '@ffacet/algorithm-compare-and-swap':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/compare-and-swap
       '@ffacet/algorithm-conditional-statement':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/conditional-statement
       '@ffacet/algorithm-context-switching':
         specifier: workspace:*
         version: link:../../facets/os/context-switching
+      '@ffacet/algorithm-count-then-place':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/count-then-place
       '@ffacet/algorithm-depth-doubles-count':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/depth-doubles-count
       '@ffacet/algorithm-deque-both-ends':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/deque-both-ends
+      '@ffacet/algorithm-digit-by-digit':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/digit-by-digit
+      '@ffacet/algorithm-divide-conquer-combine':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/divide-conquer-combine
       '@ffacet/algorithm-enqueue-dequeue-ends':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/enqueue-dequeue-ends
       '@ffacet/algorithm-find-root':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/find-root
+      '@ffacet/algorithm-gap-shrink':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/gap-shrink
       '@ffacet/algorithm-grow-and-copy':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/grow-and-copy
+      '@ffacet/algorithm-guess-by-value':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/guess-by-value
+      '@ffacet/algorithm-halve-the-range':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/halve-the-range
       '@ffacet/algorithm-hash-avalanche':
         specifier: workspace:*
         version: link:../../facets/security/hash-avalanche
@@ -687,15 +831,24 @@ importers:
       '@ffacet/algorithm-heap-property':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/heap-property
+      '@ffacet/algorithm-heap-sort-extract':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/heap-sort-extract
       '@ffacet/algorithm-height-balance-check':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/height-balance-check
       '@ffacet/algorithm-height-stays-low':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/height-stays-low
+      '@ffacet/algorithm-in-place-vs-extra':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/in-place-vs-extra
       '@ffacet/algorithm-index-address-calc':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/index-address-calc
+      '@ffacet/algorithm-insert-into-sorted-part':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/insert-into-sorted-part
       '@ffacet/algorithm-ip-routing':
         specifier: workspace:*
         version: link:../../facets/network/ip-routing
@@ -717,6 +870,9 @@ importers:
       '@ffacet/algorithm-matrix-transform-2d':
         specifier: workspace:*
         version: link:../../facets/graphics/matrix-transform-2d
+      '@ffacet/algorithm-merge-two-sorted':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/merge-two-sorted
       '@ffacet/algorithm-merkle-tree':
         specifier: workspace:*
         version: link:../../facets/security/merkle-tree
@@ -735,15 +891,24 @@ importers:
       '@ffacet/algorithm-out-of-bounds':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/out-of-bounds
+      '@ffacet/algorithm-overlapping-subproblems':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/overlapping-subproblems
       '@ffacet/algorithm-parent-two-children':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/parent-two-children
+      '@ffacet/algorithm-partition-around-pivot':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/partition-around-pivot
       '@ffacet/algorithm-path-compression':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/path-compression
       '@ffacet/algorithm-pigeonhole-collision':
         specifier: workspace:*
         version: link:../../facets/security/pigeonhole-collision
+      '@ffacet/algorithm-pivot-choice-matters':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/pivot-choice-matters
       '@ffacet/algorithm-push-pop-top':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/push-pop-top
@@ -762,9 +927,18 @@ importers:
       '@ffacet/algorithm-relink-insert':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/relink-insert
+      '@ffacet/algorithm-requires-sorted':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/requires-sorted
       '@ffacet/algorithm-rotate-to-balance':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/rotate-to-balance
+      '@ffacet/algorithm-scan-until-found':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/scan-until-found
+      '@ffacet/algorithm-select-min-each-pass':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/select-min-each-pass
       '@ffacet/algorithm-share-prefix-path':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/share-prefix-path
@@ -786,6 +960,12 @@ importers:
       '@ffacet/algorithm-signature-on-hash':
         specifier: workspace:*
         version: link:../../facets/security/signature-on-hash
+      '@ffacet/algorithm-sort-stability':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/sort-stability
+      '@ffacet/algorithm-split-until-one':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/split-until-one
       '@ffacet/algorithm-split-when-full':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/split-when-full
