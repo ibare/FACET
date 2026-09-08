@@ -17,7 +17,7 @@ import type { Theme } from '../views/design-tokens.js';
 import type { ProjectorViews } from './projector.js';
 import { CoroutineMechanism, ReactiveMechanism, type Mechanism, type MechanismHooks } from './mechanism.js';
 import type { ReactiveContext } from './context.js';
-import { buildLayout, mountBlocks } from './layout-builder.js';
+import { buildLayout, defaultLayout, mountBlocks } from './layout-builder.js';
 import {
   getAlgorithm,
   getAlgorithmComputeResult,
@@ -158,7 +158,10 @@ export function runFacet(
 
   // 5. 초기 데이터 준비 — view 와 mechanism 이 동일 객체를 공유.
   const initialDataClone = deepClone(json.initialData) as Record<string, unknown>;
-  const built = buildLayout({ layout: json.layout, blocks: enrichedBlocks });
+  const built = buildLayout({
+    layout: json.layout ?? defaultLayout(enrichedBlocks),
+    blocks: enrichedBlocks,
+  });
 
   mountEl.textContent = '';
   mountEl.appendChild(built.root);

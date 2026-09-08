@@ -127,7 +127,14 @@ export type FacetJson = {
    * reactive facet 은 mechanism 이 mount 시 스스로 돌기 시작하므로 이 값과 무관하다.
    */
   autoStart?: boolean;
-  layout: LayoutNode;
+  /**
+   * 블록 배치. 생략하면 러너가 `column · gap 8 · blocks 키 순서` 로 만든다.
+   *
+   * 조각처럼 stage 와 controls 뿐인 facet 은 적을 것이 하나뿐이라, 필수로 두면
+   * 같은 것을 facet 마다 다시 적게 되고 실제로 gap 이 4 와 8 로 갈렸다.
+   * 완결형처럼 배치가 정말 다른 facet 만 적는다.
+   */
+  layout?: LayoutNode;
   blocks: Record<string, BlockSpec>;
   /**
    * 이 facet 이 화면에 그리는 문자 리소스.

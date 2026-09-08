@@ -28,6 +28,11 @@ export type ViewMountParams = {
    * 미주입 시 View 는 사용자 입력을 받지 않는 정적 표시 모드로 작동.
    */
   dispatch?: (event: { type: string; payload?: unknown }) => void;
+  /**
+   * 러너가 만들어 준 SVG 캔버스. `View.canvas` 를 선언한 view 에만 주어지며,
+   * 그 경우 CanvasView 의 mount 시그니처가 필수로 받는다.
+   */
+  canvas?: SVGSVGElement;
 };
 
 export type ViewInstance = {
@@ -37,9 +42,42 @@ export type ViewInstance = {
   [methodName: string]: unknown;
 };
 
-export type View = {
+/**
+ * SVG 캔버스를 쓰는 view 가 자기 요구를 선언하는 자리.
+ *
+ * 선언하면 러너가 SVG 요소를 만들어 `params.canvas` 로 넘긴다. view 는 그 안에만
+ * 그린다. 껍데기(viewBox·폭·정렬·display)를 view 마다 다시 만들면 서로 갈리고,
+ * 실제로 갈렸다 — 한 조각은 width 를 CSS 로만 줘서 flex 슬롯 안에서 브라우저가
+ * SVG 의 기본 intrinsic 폭 300px 로 떨어뜨렸고 그림이 절반으로 눌렸다.
+ */
+export type ViewCanvasSpec = {
+  /** viewBox 가로. 생략하면 PIECE_CANVAS_W. */
+  width?: number;
+  /** viewBox 세로. 내용이 정한다. */
+  height: number;
+  /**
+   * 'fill'      컨테이너 폭을 채우되 width 를 넘지 않는다 (기본)
+   * 'intrinsic' 픽셀 크기를 지킨다. 조연 패널에서 커지면 안 되는 view 용
+   *             (conveyor-queue 가 그 사정을 주석으로 남겨 두었다)
+   */
+  fit?: 'fill' | 'intrinsic';
+};
+
+/** SVG 를 쓰지 않는 view — 컨테이너만 받는다 (control-bar · title-block 등). */
+export type PlainView = {
   /** 컨테이너 DOM 에 위젯 마운트 */
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance;
 };
+
+/** SVG 캔버스를 쓰는 view — 러너가 만든 캔버스를 받는다. */
+export type CanvasView = {
+  canvas: ViewCanvasSpec;
+  mount(
+    container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance;
+};
+
+export type View = PlainView | CanvasView;
 
 export type ViewConstructor = View;

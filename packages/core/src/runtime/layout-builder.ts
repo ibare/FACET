@@ -3,8 +3,45 @@
  */
 
 import type { LayoutNode, BlockSpec } from '../types/facet-json.js';
-import type { ViewInstance, ViewMountParams } from '../views/types.js';
+import type { ViewCanvasSpec, ViewInstance, ViewMountParams } from '../views/types.js';
 import { getView } from '../views/index.js';
+import { PIECE_CANVAS_W } from '../views/design-tokens.js';
+
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+/**
+ * view 가 선언한 캔버스를 만든다.
+ *
+ * 폭은 **속성**으로 준다. `.facet-block` 슬롯은 flex column + min-width:0 이라
+ * 부모 폭이 내용으로 정해지는 경우가 있고, 그때 CSS width:100% 는 순환이 되어
+ * 브라우저가 SVG 의 기본 intrinsic 폭 300px 로 떨어뜨린다 (S-view).
+ */
+function createCanvas(spec: ViewCanvasSpec): SVGSVGElement {
+  const w = spec.width ?? PIECE_CANVAS_W;
+  const svg = document.createElementNS(SVG_NS, 'svg');
+  svg.setAttribute('viewBox', `0 0 ${w} ${spec.height}`);
+  if (spec.fit === 'intrinsic') {
+    svg.setAttribute('width', String(w));
+    svg.setAttribute('height', String(spec.height));
+    svg.style.maxWidth = '100%';
+  } else {
+    svg.setAttribute('width', '100%');
+    svg.style.maxWidth = `${w}px`;
+  }
+  svg.style.height = 'auto';
+  svg.style.display = 'block';
+  svg.style.margin = '0 auto';
+  return svg;
+}
+
+/** blocks 만 있고 layout 선언이 없을 때 쓰는 기본 배치. */
+export function defaultLayout(blocks: Record<string, BlockSpec>): LayoutNode {
+  return {
+    type: 'column',
+    gap: 8,
+    children: Object.keys(blocks).map((ref) => ({ ref })),
+  };
+}
 
 export type BuiltLayout = {
   /** 레이아웃 루트 DOM */
@@ -114,6 +151,13 @@ export function mountBlocks(params: MountBlocksParams): MountedBlocks {
       // FacetJson.messages 저작 문안을 보지 못한다 (C10 조회 1층 유실).
       t: params.mountParams?.t,
     };
+    if ('canvas' in view) {
+      // 껍데기는 여기서 한 번만 만든다. view 는 그 안에만 그린다.
+      const canvas = createCanvas(view.canvas);
+      mount.appendChild(canvas);
+      result[ref] = view.mount(mount, { ...mountParams, canvas });
+      continue;
+    }
     result[ref] = view.mount(mount, mountParams);
   }
   return result;
