@@ -29,6 +29,23 @@ function delay(ms: number): Promise<void> {
   return new Promise((res) => setTimeout(res, ms));
 }
 
+/**
+ * 조건이 참이 될 때까지 기다린다.
+ *
+ * 벽시계로 "400ms 면 끝났겠지" 하고 재면 머신이 바쁠 때 실패한다. 재는 것이
+ * 시간이 아니라 결과라면 결과를 기다려야 한다.
+ */
+async function waitFor(
+  probe: () => boolean,
+  timeoutMs = 3000,
+): Promise<void> {
+  const started = Date.now();
+  while (!probe()) {
+    if (Date.now() - started > timeoutMs) return;
+    await delay(10);
+  }
+}
+
 describe('runFacet — counter 더미', () => {
   beforeEach(() => {
     clearRegistry();
@@ -131,7 +148,9 @@ describe('runFacet — counter 더미', () => {
     // resume
     handle.setSpeed(20);
     handle.start();
-    await delay(800);
+    await waitFor(
+      () => mount.querySelector('.facet-text-display__value')?.textContent === '완료',
+    );
     const valueAfter = mount.querySelector('.facet-text-display__value')?.textContent;
     expect(valueAfter).toBe('완료');
     handle.destroy();
@@ -150,7 +169,9 @@ describe('runFacet — counter 더미', () => {
     expect(slowVal).toBeLessThanOrEqual(3);
     // 속도 즉시 변경
     handle.setSpeed(20);
-    await delay(400);
+    await waitFor(
+      () => mount.querySelector('.facet-text-display__value')?.textContent === '완료',
+    );
     const fastVal = mount.querySelector('.facet-text-display__value')?.textContent;
     // 빨라진 속도로 끝까지 진행
     expect(fastVal).toBe('완료');
