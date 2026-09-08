@@ -16,15 +16,24 @@ const SVG_NS = 'http://www.w3.org/2000/svg';
 const W = PIECE_CANVAS_W;
 const CELL_MAX_W = 72;
 const CELL_H = 40;
+/**
+ * 상자와 키 칸 사이의 물림. **네 변에 고르게** 준다.
+ *
+ * 가로에만 주고 세로를 0 으로 두면 키 칸이 상자 테두리를 그대로 덮는다 —
+ * 각진 칸 모서리가 둥근 상자 모서리를 자르고, 칸의 선과 상자의 선이 같은
+ * 자리에 겹쳐 두께가 어긋나 보인다.
+ */
 const NODE_PAD = 10;
+/** 상자의 높이. 키 칸이 위아래로도 NODE_PAD 만큼 안에 들어앉는다. */
+const NODE_H = CELL_H + NODE_PAD * 2;
 const SIDE_MIN = 24;
 const INTER_NODE_GAP = 20;
 const TOP_PAD = 48;
 const ROOT_Y = TOP_PAD;
 const ROW_GAP = 64;
-const CHILDREN_Y = ROOT_Y + CELL_H + ROW_GAP;
+const CHILDREN_Y = ROOT_Y + NODE_H + ROW_GAP;
 const CAPTION_PAD = 30;
-const CAPTION_Y = CHILDREN_Y + CELL_H + CAPTION_PAD;
+const CAPTION_Y = CHILDREN_Y + NODE_H + CAPTION_PAD;
 const BOTTOM_PAD = 14;
 export const STAGE_H = CAPTION_Y + BOTTOM_PAD;
 
@@ -248,7 +257,7 @@ export const nodeHoldsManyStageView: CanvasView = {
           x: rect.x,
           y: rect.y,
           width: rect.w,
-          height: CELL_H,
+          height: NODE_H,
           rx: radii.md,
           fill: 'none',
           stroke: colors.border,
@@ -262,7 +271,7 @@ export const nodeHoldsManyStageView: CanvasView = {
         node.keys.forEach((key, i) => {
           const cellRect = el('rect', {
             x: rect.x + NODE_PAD + i * cellW,
-            y: rect.y,
+            y: rect.y + NODE_PAD,
             width: cellW,
             height: CELL_H,
             fill: colors.itemDefault,
@@ -271,7 +280,7 @@ export const nodeHoldsManyStageView: CanvasView = {
           });
           const cellText = el('text', {
             x: rect.x + NODE_PAD + i * cellW + cellW / 2,
-            y: rect.y + CELL_H / 2 + 5,
+            y: rect.y + NODE_PAD + CELL_H / 2 + 5,
             'text-anchor': 'middle',
             'font-size': fontSizes.md,
             'font-family': fonts.mono,
@@ -293,7 +302,7 @@ export const nodeHoldsManyStageView: CanvasView = {
       childIds.forEach((id, gapIndex) => {
         const childRect = childRects[id]!;
         const x1 = gapX(rootRect, gapIndex, cellW);
-        const y1 = rootRect.y + CELL_H;
+        const y1 = rootRect.y + NODE_H;
         const x2 = childRect.x + childRect.w / 2;
         const y2 = childRect.y;
         const edge = el('line', {
@@ -352,7 +361,7 @@ export const nodeHoldsManyStageView: CanvasView = {
         const { nodeId, gapIndex, childId } = p;
         setEdgeState(gapIndex, 'active');
         const fromRect = rectOf(nodeId);
-        await moveCursor(gapX(fromRect, gapIndex, cellW), fromRect.y + CELL_H + GAP_DROP, DESCEND_MS);
+        await moveCursor(gapX(fromRect, gapIndex, cellW), fromRect.y + NODE_H + GAP_DROP, DESCEND_MS);
         setCaption(t('caption.descend', 'goes down one level'));
         if (!childId) return;
         const toRect = rectOf(childId);

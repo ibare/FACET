@@ -162,17 +162,18 @@ function rotateLeft(
     throw new Error(`rotateLeft: pivot 의 오른쪽 자식 "${pivot.right}" 을 찾을 수 없음`);
   }
 
+  // 부모는 **손대기 전에** 찾는다. newRoot.left 에 pivot 을 걸어 놓고 나서
+  // "pivot 을 가리키는 노드" 를 찾으면 방금 그렇게 만든 newRoot 자신이 잡히고,
+  // 이어지는 재부착이 newRoot.left = newRoot.id 가 되어 자기를 가리키는 고리가
+  // 생긴다. 그러면 높이를 세는 재귀가 끝나지 않는다.
+  const parent = [...byId.values()].find(
+    (n) => n.id !== newRoot.id && (n.left === pivotId || n.right === pivotId),
+  );
+
   const movedId = newRoot.left;
   pivot.right = movedId;
   newRoot.left = pivot.id;
 
-  let parent: RotateNode | undefined;
-  for (const n of byId.values()) {
-    if (n.left === pivotId || n.right === pivotId) {
-      parent = n;
-      break;
-    }
-  }
   if (parent) {
     if (parent.left === pivotId) parent.left = newRoot.id;
     else parent.right = newRoot.id;
@@ -182,10 +183,10 @@ function rotateLeft(
   return { nodes: [...byId.values()], rootId: nextRootId, newRootId: newRoot.id, movedId };
 }
 
-/** 취소 검사와 `ctx.sleep` 을 묶는다. cancel 되면 false. */
 /** 걸음과 걸음 사이의 문. `false` 면 취소된 것이다. */
 type Gate = () => Promise<boolean>;
 
+/** 취소 검사와 `ctx.sleep` 을 묶는다. 취소되면 false. */
 async function pause(ctx: ReactiveContext, ms: number): Promise<boolean> {
   if (ctx.cancelled) return false;
   return ctx.sleep(ms);
