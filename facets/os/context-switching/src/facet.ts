@@ -65,18 +65,6 @@ export const contextSwitchingFacet: FacetJson = {
     ],
   },
   messages: {
-    'caption.base': {
-      en: 'Context switching — on a single CPU stage one flow\'s whole register set is lifted out into its own holder, the other flow\'s set is placed back into those same slots, and each resumes exactly where it stopped.',
-      ko: '컨텍스트 스위칭 — 단 하나의 CPU 무대 위에서 한 흐름의 상태 일습이 자기 보관소로 떠내지고, 다른 흐름의 상태 일습이 그 자리에 되돌려 들어가, 두 흐름이 멈춘 지점에서 정확히 이어 실행된다.',
-      ja: 'コンテキストスイッチ — ただ一つの CPU 舞台の上で、ある流れのレジスタ一式が自分の保管所へ持ち上げられ、もう一方の流れの一式が同じ場所へ戻され、それぞれが止まったところから正確に再開する。',
-      zh: '上下文切换 — 在唯一的 CPU 舞台上，一个流的整套寄存器被抬进自己的保管处，另一个流的那一套被放回同样的位置，于是各自从停下的地方精确接续。',
-      ar: 'تبديل السياق — على مسرح معالج واحد تُرفع مجموعة سجلات تدفق كاملة إلى حافظتها الخاصة، ويُعاد طقم التدفق الآخر إلى الخانات نفسها، فيستأنف كل منهما من حيث توقّف بالضبط.',
-      es: 'Cambio de contexto: en un único escenario de CPU, todo el juego de registros de un flujo se levanta hacia su propia guarda, el del otro flujo se coloca de nuevo en esas mismas ranuras, y cada uno reanuda exactamente donde paró.',
-      fr: 'Changement de contexte — sur une seule scène CPU, tout le jeu de registres d\'un flux est soulevé vers son propre dépôt, celui de l\'autre flux est replacé dans ces mêmes emplacements, et chacun reprend exactement là où il s\'était arrêté.',
-      hi: 'संदर्भ परिवर्तन — एक ही CPU मंच पर एक प्रवाह का पूरा रजिस्टर-समूह अपने संग्राहक में उठा लिया जाता है, दूसरे प्रवाह का समूह उन्हीं खानों में वापस रखा जाता है, और हर एक ठीक वहीं से चलता रहता है जहाँ रुका था।',
-      id: 'Alih konteks — di satu panggung CPU, seluruh set register sebuah alur diangkat ke penyimpannya sendiri, set alur yang lain dikembalikan ke slot yang sama, dan masing-masing melanjutkan tepat dari tempatnya berhenti.',
-      pt: 'Troca de contexto — num único palco de CPU, todo o conjunto de registradores de um fluxo é erguido para a sua própria guarda, o do outro fluxo é recolocado nessas mesmas ranhuras, e cada um retoma exatamente onde parou.',
-    },
     'caption.holderThicker': {
       en: 'The holders got thicker — there is more to carry across.',
       ko: '보관소가 두꺼워졌다 — 옮길 묶음이 늘어난다.',

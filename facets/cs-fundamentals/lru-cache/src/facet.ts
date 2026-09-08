@@ -48,18 +48,6 @@ export const lruCacheFacet: FacetJson = {
     ],
   },
   messages: {
-    'caption.base': {
-      en: 'An LRU cache shares one set of nodes between a hash map (key → node) and a doubly linked list (recency order) — every call drags a node to the MRU end, and on overflow the LRU end vanishes from both areas at once.',
-      ko: 'LRU 캐시는 hash map (키 → 노드) 과 doubly linked list (사용 순서) 를 같은 노드로 공유한다 — 모든 호출이 노드를 MRU 끝으로 끌어올리고, 용량 초과면 LRU 끝이 두 영역에서 동시에 사라진다.',
-      ja: 'LRU キャッシュは hash map (キー → ノード) と doubly linked list (使用順) が同じノードを共有する — あらゆる呼び出しがノードを MRU 端へ引き上げ、あふれれば LRU 端が両方の領域から同時に消える。',
-      zh: 'LRU 缓存让 hash map (键 → 节点) 与 doubly linked list (使用顺序) 共享同一批节点 — 每次调用都把节点拖到 MRU 端，一旦溢出，LRU 端就同时从两个区域消失。',
-      ar: 'تتشارك ذاكرة LRU مجموعة عقد واحدة بين hash map (مفتاح ← عقدة) و doubly linked list (ترتيب الاستخدام) — كل استدعاء يسحب عقدة إلى طرف MRU، وعند الفيض يختفي طرف LRU من المنطقتين دفعة واحدة.',
-      es: 'Una caché LRU comparte un mismo conjunto de nodos entre un hash map (clave → nodo) y una doubly linked list (orden de uso): cada llamada arrastra un nodo al extremo MRU y, al desbordar, el extremo LRU desaparece de ambas zonas a la vez.',
-      fr: 'Un cache LRU partage un même ensemble de nœuds entre un hash map (clé → nœud) et une doubly linked list (ordre d\'utilisation) — chaque appel tire un nœud vers l\'extrémité MRU, et en cas de dépassement l\'extrémité LRU disparaît des deux zones d\'un coup.',
-      hi: 'LRU कैश एक ही नोड-समूह को hash map (कुंजी → नोड) और doubly linked list (उपयोग क्रम) के बीच साझा करता है — हर कॉल किसी नोड को MRU छोर तक खींचती है, और भर जाने पर LRU छोर दोनों क्षेत्रों से एक साथ लुप्त हो जाता है।',
-      id: 'Cache LRU berbagi satu himpunan simpul antara hash map (kunci → simpul) dan doubly linked list (urutan pemakaian) — setiap panggilan menyeret simpul ke ujung MRU, dan saat meluap ujung LRU lenyap dari kedua area sekaligus.',
-      pt: 'Um cache LRU compartilha um mesmo conjunto de nós entre um hash map (chave → nó) e uma doubly linked list (ordem de uso) — cada chamada arrasta um nó para a ponta MRU e, ao transbordar, a ponta LRU some das duas áreas de uma vez.',
-    },
     'caption.evict': {
       en: 'Over capacity — {key} at the LRU end disappears from both areas together.',
       ko: '용량 초과 — LRU 끝의 {key} 가 두 영역에서 함께 사라진다.',

@@ -53,10 +53,6 @@ const STAGE_CY = STAGE_Y + NODE_H / 2;
 
 const CAPTION_Y = 30;
 const TALLY_Y = 250;
-const NOTE_Y = 274;
-const NOTE_LINE_H = 16;
-const NOTE_MAX_LINES = 3;
-const NOTE_MAX_W = W - 40;
 
 const ENTER_MS = 380;
 const DETACH_MS = 300;
@@ -74,7 +70,6 @@ export type RelinkStageSpec = {
   /** 화살표를 떼어 낼 노드의 id. */
   insertAfter: string;
   /** 전제 각주. 저작자 문안이라 projector 가 해석해 넘긴다. */
-  note: string;
 };
 
 type P = { x: number; y: number };
@@ -120,28 +115,7 @@ function easeInOut(t: number): number {
   return t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
 }
 
-/** 글자 폭 어림 — CJK 는 한 칸, 라틴은 반 칸 남짓. 각주 줄바꿈에만 쓴다. */
-function approxWidth(s: string, size: number): number {
-  let w = 0;
-  for (const ch of s) w += ch.charCodeAt(0) > 0x2e7f ? size : size * 0.53;
-  return w;
-}
 
-function wrapLines(s: string, size: number, maxW: number, maxLines: number): string[] {
-  const lines: string[] = [];
-  let cur = '';
-  for (const word of s.split(' ')) {
-    const merged = cur === '' ? word : `${cur} ${word}`;
-    if (cur !== '' && approxWidth(merged, size) > maxW) {
-      lines.push(cur);
-      cur = word;
-    } else {
-      cur = merged;
-    }
-  }
-  if (cur !== '') lines.push(cur);
-  return lines.slice(0, maxLines);
-}
 
 const now = (): number =>
   typeof performance !== 'undefined' && typeof performance.now === 'function'
@@ -477,23 +451,6 @@ export const relinkStageView: View = {
 
       traceDot = el('circle', { cx: 0, cy: 0, r: 5, fill: colors.success, opacity: 0 });
       markLayer.appendChild(traceDot);
-
-      const noteSize = parseInt(fontSizes.xs, 10);
-      wrapLines(next.note, noteSize, NOTE_MAX_W, NOTE_MAX_LINES).forEach((line, i) => {
-        markLayer.appendChild(
-          textEl(
-            {
-              x: W / 2,
-              y: NOTE_Y + i * NOTE_LINE_H,
-              'text-anchor': 'middle',
-              'font-family': fonts.body,
-              'font-size': fontSizes.xs,
-              fill: colors.textMuted,
-            },
-            line,
-          ),
-        );
-      });
 
       resetVisual();
       setCaption('');

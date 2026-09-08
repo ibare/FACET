@@ -44,18 +44,6 @@ export const linkedListFacet: FacetJson = {
     ],
   },
   messages: {
-    'caption.base': {
-      en: 'In a linked list every node holds a single finger pointing only at its own next — inserting or removing is not moving cards around but cutting and retying two or three fingers.',
-      ko: '연결 리스트는 노드 각각이 자기 다음 한 명만 가리키는 단 하나의 손가락을 갖는다 — 끼우거나 빼는 일은 카드를 옮기는 게 아니라 두세 개의 손가락을 끊고 다시 잇는 일이다.',
-      ja: '連結リストではどのノードも自分の次だけを指す指を一本ずつ持つ — 挿入や削除はカードを動かすことではなく、二、三本の指を切ってつなぎ直すことだ。',
-      zh: '链表里每个节点只有一根手指，指向自己的下一个 — 插入或删除不是搬动卡片，而是剪断并重新系上两三根手指。',
-      ar: 'في القائمة المترابطة تحمل كل عقدة إصبعًا واحدًا يشير إلى تاليها فقط — والإدراج أو الحذف ليس تحريكًا للبطاقات بل قطع إصبعين أو ثلاثة وإعادة ربطها.',
-      es: 'En una lista enlazada cada nodo tiene un solo dedo que apunta únicamente a su siguiente: insertar o eliminar no es mover tarjetas, sino cortar y volver a atar dos o tres dedos.',
-      fr: 'Dans une liste chaînée, chaque nœud tient un seul doigt pointant uniquement vers son suivant — insérer ou supprimer, ce n\'est pas déplacer des cartes mais couper et renouer deux ou trois doigts.',
-      hi: 'संबद्ध सूची में हर नोड के पास एक ही उंगली होती है जो केवल अपने अगले की ओर इशारा करती है — डालना या हटाना कार्ड सरकाना नहीं, बल्कि दो-तीन उंगलियाँ काटकर फिर से बाँधना है।',
-      id: 'Pada senarai berantai setiap simpul memegang satu jari yang menunjuk hanya ke penerusnya — menyisipkan atau menghapus bukan memindahkan kartu, melainkan memotong dan mengikat ulang dua tiga jari.',
-      pt: 'Numa lista ligada cada nó tem um único dedo apontando só para o seu próximo — inserir ou remover não é mover cartas, mas cortar e reatar dois ou três dedos.',
-    },
     'caption.emptyList': {
       en: 'The list is empty.',
       ko: '리스트가 비어 있다.',

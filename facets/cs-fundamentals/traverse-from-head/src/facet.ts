@@ -44,10 +44,6 @@ export const traverseFromHeadFacet: FacetJson = {
     },
   },
   messages: {
-    'caption.intro': {
-      en: 'The list knows only where its head is.',
-      ko: '목록이 아는 것은 head 가 어디인지뿐이다.',
-    },
     'caption.want': {
       en: 'We need the node at index {i}.',
       ko: '필요한 것은 인덱스 {i} 의 노드다.',
@@ -71,14 +67,6 @@ export const traverseFromHeadFacet: FacetJson = {
     'label.target': {
       en: 'want this one',
       ko: '찾을 것',
-    },
-    'label.noteArray': {
-      en: 'An array would reach any element with one address calculation.',
-      ko: '배열이라면 주소 한 번의 셈으로 닿는다.',
-    },
-    'label.noteScattered': {
-      en: 'Here the addresses are scattered — nothing to compute, so you follow.',
-      ko: '여기서는 주소가 흩어져 있어 셀 수 없고, 따라가는 수밖에 없다.',
     },
   },
 };

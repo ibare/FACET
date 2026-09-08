@@ -60,18 +60,6 @@ export const cachingCdnFacet: FacetJson = {
     ],
   },
   messages: {
-    'caption.base': {
-      en: 'A CDN is the system-level behaviour of edges worldwide taking requests from nearby clients — answering short when they hold the answer, and travelling up the hierarchy to fetch and keep it when they do not.',
-      ko: 'CDN 은 전 세계 엣지가 가까운 클라이언트의 요청을 받아 가진 답이면 짧게, 없으면 위 계층까지 다녀와 채워두는 시스템 차원의 행위다.',
-      ja: 'CDN とは、世界中のエッジが近くのクライアントの要求を受け、答えを持っていれば短く返し、なければ上位階層まで取りに行って蓄えておくという、システム規模の振る舞いである。',
-      zh: 'CDN 是一种系统级行为：遍布全球的边缘节点接收就近客户端的请求，有答案就就近返回，没有就沿层级上溯取回并顺手缓存下来。',
-      ar: 'شبكة توصيل المحتوى سلوك على مستوى النظام: حواف منتشرة في العالم تستقبل طلبات العملاء القريبين، فتردّ سريعًا إن كانت تملك الجواب، وإلا صعدت في التسلسل لتجلبه وتحتفظ به.',
-      es: 'Una CDN es el comportamiento a escala de sistema de edges repartidos por el mundo que atienden a clientes cercanos: responden corto si tienen la respuesta y, si no, suben por la jerarquía a buscarla y la guardan.',
-      fr: 'Un CDN est le comportement à l\'échelle du système d\'edges répartis dans le monde qui reçoivent les requêtes des clients proches : réponse courte s\'ils ont la réponse, sinon remontée dans la hiérarchie pour la chercher et la conserver.',
-      hi: 'सीडीएन एक प्रणाली-स्तरीय व्यवहार है: दुनिया भर में फैले एज पास के क्लाइंट के अनुरोध लेते हैं — उत्तर हो तो तुरंत देते हैं, न हो तो पदानुक्रम में ऊपर जाकर लाते और रख लेते हैं।',
-      id: 'CDN adalah perilaku tingkat sistem: edge yang tersebar di seluruh dunia menerima permintaan klien terdekat — menjawab singkat bila punya jawabannya, dan bila tidak, naik ke hierarki untuk mengambil lalu menyimpannya.',
-      pt: 'Uma CDN é o comportamento em escala de sistema de edges espalhados pelo mundo que atendem clientes próximos: respondem curto se têm a resposta e, se não, sobem a hierarquia para buscá-la e guardá-la.',
-    },
     'caption.coldStart': {
       en: 'Every edge on the map is grey — starting from an empty cache.',
       ko: '지도 위 엣지가 모두 회색 — 빈 캐시 상태에서 시작.',

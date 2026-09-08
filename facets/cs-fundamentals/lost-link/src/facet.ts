@@ -45,10 +45,6 @@ export const lostLinkFacet: FacetJson = {
     },
   },
   messages: {
-    'caption.start': {
-      en: 'Every node is reachable from head.',
-      ko: '모든 노드가 head 에서 닿는다.',
-    },
     'caption.staged': {
       en: 'New node {node}({value}) is ready. Nothing points to it yet.',
       ko: '새 노드 {node}({value}) 를 준비했다. 아직 아무도 가리키지 않는다.',
@@ -92,10 +88,6 @@ export const lostLinkFacet: FacetJson = {
     'label.unreachable': {
       en: 'still in memory, no way in',
       ko: '메모리에 남았지만 들어갈 길이 없다',
-    },
-    'label.note': {
-      en: 'Dropping below the line means unreachable, not moved.',
-      ko: '선 아래로 내려간 것은 자리를 옮긴 것이 아니라 닿을 수 없다는 뜻이다.',
     },
   },
 };

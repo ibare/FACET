@@ -25,10 +25,10 @@
  * 여섯 번째쯤에서 이미 겹친다 (사전순 'aa'부터라면 일곱 번째 'ag'). 이 인위성은
  * 감출 것이 아니라 밝힐 전제다 — 비둘기집 원리의 정확한 서술이 "아무리 고르게
  * 나눠도" 이기 때문이다. 가장 잘 나눠 담은 경우에조차 실패한다는 것이 논증이고,
- * 그 사실을 label.noteArrangement 가 화면에서 말한다.
+ * 그 전제는 글이 밝힌다.
  *
  * 16칸은 축척이다. 실제 SHA-256 은 2^256 칸이며 수가 클수록 겹치기까지 오래
- * 걸릴 뿐 셈은 같다 — 그 사실을 화면 각주 (label.note) 가 밝힌다.
+ * 걸릴 뿐 셈은 같다.
  *
  * title / description / messages 는 en·ko 만 채웠다 (조각 방식 1차 시험).
  */
@@ -78,10 +78,6 @@ export const pigeonholeCollisionFacet: FacetJson = {
     children: [{ ref: 'stage', padding: '8px 0' }, { ref: 'controls' }],
   },
   messages: {
-    'caption.base': {
-      en: 'There are only so many places an output can land, so two inputs must eventually share one.',
-      ko: '출력이 앉을 자리는 정해진 수뿐이라, 언젠가 두 입력이 한 자리를 나눠 갖게 된다.',
-    },
     'caption.filled': {
       en: 'Spread as evenly as possible — one per place — all {count} are taken.',
       ko: '가장 고르게 나눠도 — 자리마다 하나씩 — {count} 자리가 모두 찬다.',
@@ -97,14 +93,6 @@ export const pigeonholeCollisionFacet: FacetJson = {
     'label.places': {
       en: '{count} places',
       ko: '자리 {count} 개',
-    },
-    'label.noteScale': {
-      en: 'Shown with 16 places. SHA-256 has 2^256 — a larger number, the same counting.',
-      ko: '여기서는 자리를 16개로 줄였다. SHA-256 은 2^256 개다 — 수가 클 뿐 셈은 같다.',
-    },
-    'label.noteArrangement': {
-      en: 'This is the luckiest arrangement — one per place. In practice a collision shows up around the sixth input.',
-      ko: '이 배치는 가장 운 좋은 경우다 — 자리마다 하나씩. 실제로는 여섯 번째쯤에서 이미 겹친다.',
     },
   },
   blocks: {

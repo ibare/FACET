@@ -56,20 +56,9 @@ export const hashChainProjector: ProjectorFactory = (views, runtime) => {
   const tr: Translate = runtime?.t ?? makeTranslator();
   const stage = views.stage as unknown as ChainStage | undefined;
 
-  const baseCaption = (): string =>
-    tr('caption.base', 'Each entry carries the hash of the one before it.');
-
-  const note = (): string =>
-    tr(
-      'label.note',
-      'Rewriting one entry means rewriting every entry after it — and anyone holding the last hash would still notice.',
-    );
-
   return {
     onInit() {
       if (!stage) return;
-      stage.setBaseCaption(baseCaption());
-      stage.setNote(note());
     },
 
     async onEvent(event) {
@@ -81,16 +70,12 @@ export const hashChainProjector: ProjectorFactory = (views, runtime) => {
             prev: tr('label.prev', 'prev'),
             hash: tr('label.hash', 'hash'),
           });
-          stage.setBaseCaption(baseCaption());
-          stage.setNote(note());
           break;
         }
 
         case 'rewind': {
           // 손으로 짚기 시작 — 화면만 처음으로 돌린다. 데이터는 그대로다.
           stage.reset();
-          stage.setBaseCaption(baseCaption());
-          stage.setNote(note());
           break;
         }
 
@@ -135,8 +120,6 @@ export const hashChainProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
-      stage.setNote(note());
     },
   };
 };

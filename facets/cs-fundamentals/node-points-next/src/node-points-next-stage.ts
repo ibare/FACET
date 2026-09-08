@@ -49,8 +49,6 @@ const SLOT_Y = 222;
 const HEAD_Y = 30;
 const SEAL_Y = 262;
 const CAPTION_Y = 282;
-const NOTE_Y = 296;
-const NOTE2_Y = 310;
 const ARROW_TIP_Y = NODE_Y - 2;
 const ARROW_BASE_Y = NODE_Y - 12;
 const CELL_MID_Y = NODE_Y + 26;
@@ -106,8 +104,6 @@ export type NodePointsNextStageInit = {
    * 모았다. 러너 쪽이 고쳐지면 이 필드들은 지워도 된다.
    */
   orderLabel: string;
-  note: string;
-  note2: string;
 };
 
 type Placed = NodePointsNextStageNode & { x: number; group: SVGGElement };
@@ -249,8 +245,6 @@ export const nodePointsNextStageView: View = {
     const gWords = el(svg, 'g', {});
 
     const captionText = put(gWords, '', W / 2, CAPTION_Y, { size: fontSizes.md });
-    const noteText = put(gWords, '', W / 2, NOTE_Y, { size: fontSizes.xs, fill: c.textMuted });
-    const note2Text = put(gWords, '', W / 2, NOTE2_Y, { size: fontSizes.xs, fill: c.textMuted });
 
     let spec: NodePointsNextStageInit | null = null;
     let placed: Placed[] = [];
@@ -486,8 +480,6 @@ export const nodePointsNextStageView: View = {
         }
       }
 
-      noteText.textContent = init.note;
-      note2Text.textContent = init.note2;
     }
 
     // ── 걸음 ──────────────────────────────────────────────────────────

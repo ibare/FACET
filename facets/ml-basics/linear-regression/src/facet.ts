@@ -73,18 +73,6 @@ export const linearRegressionFacet: FacetJson = {
     ],
   },
   messages: {
-    'caption.base': {
-      en: 'Linear regression threads one straight line through a cloud of points, turning each residual into the area of a square, and nudges the line a step at a time so the total of those areas shrinks.',
-      ko: '선형 회귀는 점 무리에 직선 한 줄을 끼우되, 잔차의 제곱을 면적으로 환원해 그 면적의 합이 가장 작아지도록 직선을 매 반복마다 한 걸음씩 회전·이동시키는 학습 운동이다.',
-      ja: '線形回帰は点の群れに一本の直線を通し、残差それぞれを正方形の面積に置き換え、その面積の合計が縮むように直線を一歩ずつ動かしていく学習の運動だ。',
-      zh: '线性回归在点群中穿过一条直线，把每个残差换算成一个正方形的面积，并一步一步地挪动直线，让这些面积的总和不断变小。',
-      ar: 'يمرّر الانحدار الخطي خطًا مستقيمًا واحدًا عبر سحابة من النقاط، ويحوّل كل باقٍ إلى مساحة مربع، ثم يزحزح الخط خطوة تلو خطوة حتى يتقلّص مجموع تلك المساحات.',
-      es: 'La regresión lineal pasa una sola recta por una nube de puntos, convierte cada residuo en el área de un cuadrado y va empujando la recta paso a paso para que la suma de esas áreas se encoja.',
-      fr: 'La régression linéaire fait passer une seule droite dans un nuage de points, transforme chaque résidu en l\'aire d\'un carré, et déplace la droite pas à pas pour que la somme de ces aires diminue.',
-      hi: 'रैखिक प्रतिगमन बिंदुओं के झुंड में एक ही सीधी रेखा पिरोता है, हर अवशेष को एक वर्ग के क्षेत्रफल में बदलता है, और रेखा को कदम-दर-कदम सरकाता है ताकि उन क्षेत्रफलों का योग घटता जाए।',
-      id: 'Regresi linear menembuskan satu garis lurus melalui gugus titik, mengubah tiap residu menjadi luas sebuah persegi, lalu menyenggol garis itu selangkah demi selangkah agar jumlah luas tersebut mengecil.',
-      pt: 'A regressão linear passa uma única reta por uma nuvem de pontos, transforma cada resíduo na área de um quadrado e empurra a reta passo a passo para que a soma dessas áreas encolha.',
-    },
     'caption.converged': {
       en: 'Converged — it will not shrink any further.',
       ko: '수렴 — 더 줄지 않는다.',

@@ -59,7 +59,6 @@ type SlotState = 'filled' | 'empty' | 'retired';
 /** projector 가 넘겨 주는 붙박이 문안. */
 export type ShiftOnRemoveStageText = {
   /** 전제를 밝히는 각주. */
-  note: string;
   /** 더 쓰이지 않는 꼬리 칸에 붙는 표시. */
   unused: string;
 };
@@ -185,7 +184,6 @@ export const shiftOnRemoveStageView: View = {
         unusedTags = [];
         chips = [];
         unusedText = text.unused;
-        note.textContent = text.note;
         caption.textContent = '';
 
         const n = values.length;

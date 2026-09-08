@@ -37,9 +37,6 @@ export const traverseFromHeadProjector: ProjectorFactory = (
   const stage = views.stage as unknown as TraverseStage;
   const tr = runtime?.t ?? makeTranslator();
 
-  const introCaption = (): string =>
-    tr('caption.intro', 'The list knows only where its head is.');
-
   return {
     onInit(initialData: unknown) {
       const data = (initialData ?? {}) as { values?: unknown; targetIndex?: unknown };
@@ -48,7 +45,6 @@ export const traverseFromHeadProjector: ProjectorFactory = (
         ? raw.filter((v): v is number => typeof v === 'number')
         : [];
       stage.setData?.(values, num(data.targetIndex, 0));
-      stage.setCaption?.(introCaption());
     },
 
     async onEvent(event: FacetRuntimeEvent) {
@@ -97,7 +93,6 @@ export const traverseFromHeadProjector: ProjectorFactory = (
         }
         case 'rewind': {
           stage.rewind?.();
-          stage.setCaption?.(introCaption());
           break;
         }
         default:
@@ -108,7 +103,6 @@ export const traverseFromHeadProjector: ProjectorFactory = (
 
     onReset() {
       stage.rewind?.();
-      stage.setCaption?.(introCaption());
     },
   };
 };

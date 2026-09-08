@@ -151,17 +151,6 @@ export const matrixTransformStageView: View = {
     svg.appendChild(defs);
 
     // ── 캡션 (상단) ─────────────────────────────────────────────────────────
-    const captionText = el('text', {
-      x: W / 2,
-      y: 26,
-      'text-anchor': 'middle',
-      'font-size': fontSizes.md,
-      'font-weight': '600',
-      fill: colors.text,
-    });
-    captionText.textContent = tr('label.caption', 'A linear map sending the plane to the plane — where the two basis vectors land is exactly the two columns');
-    svg.appendChild(captionText);
-
     const eventCaption = el('text', {
       x: W / 2,
       y: 44,

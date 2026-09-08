@@ -76,12 +76,6 @@ export const indexAddressCalcProjector: ProjectorFactory = (
       const d = initialData as { base?: unknown; unit?: unknown } | undefined;
       base = num(d?.base) ?? 0;
       unit = num(d?.unit) ?? 0;
-      stage?.setNote?.(
-        tr('label.note', 'Declared, not measured: int32 elements ({unit} bytes) based at {base}.', {
-          unit,
-          base: hex(base),
-        }),
-      );
       stage?.setCaption?.('');
     },
 

@@ -74,10 +74,6 @@ export const hashFixedLengthFacet: FacetJson = {
     children: [{ ref: 'stage', padding: '8px 0' }, { ref: 'controls' }],
   },
   messages: {
-    'caption.base': {
-      en: 'However long the input is, the output is always the same length.',
-      ko: '입력이 아무리 길어도 출력의 길이는 언제나 같다.',
-    },
     'caption.inputsVary': {
       en: 'The inputs run from nothing to {bytes} bytes.',
       ko: '입력은 빈 것부터 {bytes} 바이트까지 제각각이다.',
@@ -101,10 +97,6 @@ export const hashFixedLengthFacet: FacetJson = {
     'label.always': {
       en: 'always {bits} bits',
       ko: '언제나 {bits} 비트',
-    },
-    'label.note': {
-      en: 'Even an empty input has a digest, and a 3.7 MB file gives the same 64 characters.',
-      ko: '빈 입력에도 해시가 있고, 3.7MB 파일을 넣어도 같은 64자가 나온다.',
     },
   },
   blocks: {

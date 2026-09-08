@@ -95,7 +95,6 @@ export type GrowAndCopyStageInit = {
   /** projector 가 해석해 넘긴 크기 표기. */
   meta: string;
   /** projector 가 해석해 넘긴 전제 각주. */
-  notes: string[];
 };
 
 const tf = (x: number, y: number, sx = 1, sy = 1): string =>
@@ -131,18 +130,6 @@ export const growAndCopyStageView: View = {
     captionEl.style.lineHeight = '1.45';
     captionEl.style.color = colors.text;
     root.appendChild(captionEl);
-
-    const notesEl = document.createElement('div');
-    notesEl.className = 'facet-grow-and-copy__notes';
-    notesEl.style.display = 'flex';
-    notesEl.style.flexDirection = 'column';
-    notesEl.style.gap = space.xs;
-    notesEl.style.maxWidth = `${W}px`;
-    notesEl.style.textAlign = 'center';
-    notesEl.style.fontSize = fontSizes.xs;
-    notesEl.style.lineHeight = '1.4';
-    notesEl.style.color = colors.textMuted;
-    root.appendChild(notesEl);
 
     container.appendChild(root);
 
@@ -371,12 +358,6 @@ export const growAndCopyStageView: View = {
       chipLayer = node('g');
       svg.appendChild(chipLayer);
 
-      notesEl.textContent = '';
-      for (const text of data.notes) {
-        const line = document.createElement('div');
-        line.textContent = text;
-        notesEl.appendChild(line);
-      }
     };
 
     return {

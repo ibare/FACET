@@ -38,18 +38,6 @@ export const stackFacet: FacetJson = {
     ],
   },
   messages: {
-    'caption.base': {
-      en: 'A stack hands back the most recently added element first — every change happens at one single place, the top.',
-      ko: '스택은 가장 최근에 들어온 원소를 가장 먼저 꺼내는 자료구조다 — 모든 변화는 꼭대기 한 자리에서만 일어난다.',
-      ja: 'スタックは最後に入った要素を最初に返す — すべての変化は頂上という一箇所だけで起こる。',
-      zh: '栈总是最先取出最后放入的元素 — 所有变化都只发生在顶部这一个位置。',
-      ar: 'تعيد المكدسة أحدث عنصر أُضيف أولاً — كل تغيير يحدث في موضع واحد فقط، وهو القمة.',
-      es: 'Una pila devuelve primero el elemento añadido más recientemente: todo cambio ocurre en un solo sitio, la cima.',
-      fr: 'Une pile rend d\'abord l\'élément ajouté en dernier — tout changement se produit en un seul endroit, le sommet.',
-      hi: 'स्टैक सबसे हाल में जोड़ा गया तत्व पहले लौटाता है — हर बदलाव केवल एक जगह, शीर्ष पर होता है।',
-      id: 'Tumpukan mengembalikan elemen yang paling baru ditambahkan lebih dulu — setiap perubahan terjadi di satu tempat saja, yaitu puncak.',
-      pt: 'Uma pilha devolve primeiro o elemento adicionado mais recentemente — toda mudança acontece num único lugar, o topo.',
-    },
     'caption.feedInput': {
       en: 'Boxes are waiting on the input track — they will be stacked on top one by one.',
       ko: '입력 트랙에 박스가 대기 중 — 차례로 꼭대기에 쌓인다',

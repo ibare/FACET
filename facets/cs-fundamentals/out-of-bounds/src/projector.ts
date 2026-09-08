@@ -57,8 +57,6 @@ export const outOfBoundsProjector: ProjectorFactory = (
    */
   const captionOf = (key: string, vars: Record<string, string | number>): string => {
     switch (key) {
-      case 'caption.start':
-        return tr('caption.start', 'An index is a number. The machine has to turn it into a place.');
       case 'caption.compute':
         return tr(
           'caption.compute',
@@ -118,7 +116,6 @@ export const outOfBoundsProjector: ProjectorFactory = (
       neighborValue: asNumber(d.neighborValue, 0),
     };
     stage?.init(shadow);
-    stage?.setCaption(captionOf('caption.start', {}));
   };
 
   return {
@@ -174,7 +171,6 @@ export const outOfBoundsProjector: ProjectorFactory = (
         case 'rewind': {
           stage?.resetStage();
           if (shadow) stage?.init(shadow);
-          stage?.setCaption(captionOf('caption.start', {}));
           return;
         }
 
@@ -193,7 +189,6 @@ export const outOfBoundsProjector: ProjectorFactory = (
       stage?.resetStage();
       if (shadow) {
         stage?.init(shadow);
-        stage?.setCaption(captionOf('caption.start', {}));
       }
     },
   };

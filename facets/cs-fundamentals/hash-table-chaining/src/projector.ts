@@ -107,19 +107,12 @@ function indexFromTarget(target: unknown): number | null {
 
 export const hashTableProjector: ProjectorFactory = (views, runtime) => {
   const tr: Translate = runtime?.t ?? makeTranslator();
-  /** 상시 캡션. 두 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
-  const baseCaption = (): string =>
-    tr(
-      'caption.base',
-      'A hash table lays out a row of identical slots and a function box throws each key into the one slot it picks — when two land on the same slot, a chain grows there.',
-    );
   const stage = views.stage as unknown as HashTableStage | undefined;
 
   return {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
     },
 
     async onEvent(event) {
@@ -410,7 +403,6 @@ export const hashTableProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
     },
   };
 };

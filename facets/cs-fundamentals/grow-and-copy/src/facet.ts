@@ -43,10 +43,6 @@ export const growAndCopyFacet: FacetJson = {
     controls: { type: 'control-bar', controls: [CONTROL.replay, CONTROL.advance] },
   },
   messages: {
-    'caption.start': {
-      en: 'A block of {capacity} holds {size} values. It is full.',
-      ko: '{capacity}칸짜리 자리에 값이 {size}개 들어 있다. 꽉 찼다.',
-    },
     'caption.blocked': {
       en: 'One more value arrives: {value}. Every one of the {capacity} slots is taken, and the block cannot stretch.',
       ko: '값이 하나 더 온다 — {value}. {capacity}칸이 모두 찼고, 자리는 늘어나지 않는다.',
@@ -74,14 +70,6 @@ export const growAndCopyFacet: FacetJson = {
     'label.meta': {
       en: '{bytes} bytes / {capacity} slots',
       ko: '{bytes}바이트 / {capacity}칸',
-    },
-    'label.note1': {
-      en: 'How much a block grows is an implementation choice. This one doubles; growable arrays in the wild commonly use 1.5x or 2x.',
-      ko: '얼마나 키울지는 구현이 정한다. 여기서는 두 배로 잡았고, 실제 가변 배열은 대개 1.5배나 2배를 쓴다.',
-    },
-    'label.note2': {
-      en: 'The addresses are illustrative. A new block lands wherever the allocator has room, not at a tidy round number.',
-      ko: '주소는 설명을 위해 고른 값이다. 새 자리는 할당기가 빈 곳을 찾는 대로 잡히지 0x2000 같은 반듯한 수로 떨어지지 않는다.',
     },
   },
 };

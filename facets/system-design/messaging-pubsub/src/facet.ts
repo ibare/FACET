@@ -81,18 +81,6 @@ export const messagingPubsubFacet: FacetJson = {
       id: 'berhenti langganan {topic}',
       pt: 'cancelar {topic}',
     },
-    'caption.base': {
-      en: 'Pub/Sub lets publishers and subscribers know only the broker\'s topic label instead of each other\'s identity — one publish fans out to every subscriber as copies, making many-to-many asynchronous messaging work.',
-      ko: 'Pub/Sub 은 발행자와 구독자가 서로의 신원 대신 broker 의 토픽 라벨만 매개로 — 한 발행이 모든 구독자에게 사본으로 펼쳐지는 다대다 비동기 메시징을 성립시킨다.',
-      ja: 'Pub/Sub は発行者と購読者が互いの正体ではなく broker のトピックラベルだけを知る仕組み — 一度の発行が全購読者へ複製として広がり、多対多の非同期メッセージングが成立する。',
-      zh: 'Pub/Sub 让发布者和订阅者只知道 broker 的主题标签，而不知道彼此的身份 — 一次发布以副本形式扇出给每个订阅者，从而成就多对多的异步消息传递。',
-      ar: 'يجعل Pub/Sub الناشرين والمشتركين يعرفون لافتة الموضوع لدى الوسيط فقط بدل هوية بعضهم — فنشرة واحدة تتفرّع نسخًا إلى كل مشترك، وبذلك تقوم مراسلة غير متزامنة من كثير إلى كثير.',
-      es: 'Pub/Sub hace que publicadores y suscriptores conozcan solo la etiqueta de tema del broker en vez de la identidad del otro: una sola publicación se abre en copias hacia cada suscriptor y así funciona la mensajería asíncrona de muchos a muchos.',
-      fr: 'Pub/Sub fait que éditeurs et abonnés ne connaissent que l\'étiquette de sujet du broker au lieu de l\'identité de l\'autre — une seule publication se diffuse en copies vers chaque abonné, faisant fonctionner la messagerie asynchrone plusieurs-à-plusieurs.',
-      hi: 'Pub/Sub में प्रकाशक और अभिदाता एक-दूसरे की पहचान के बजाय केवल broker का विषय-लेबल जानते हैं — एक प्रकाशन हर अभिदाता तक प्रतियों के रूप में फैलता है, और यों बहु-से-बहु अतुल्यकालिक संदेशन चलता है।',
-      id: 'Pub/Sub membuat penerbit dan pelanggan hanya tahu label topik pada broker alih-alih identitas satu sama lain — satu penerbitan menyebar sebagai salinan ke setiap pelanggan, sehingga pesan asinkron banyak-ke-banyak bekerja.',
-      pt: 'O Pub/Sub faz publicadores e assinantes conhecerem apenas o rótulo de tópico do broker em vez da identidade um do outro — uma única publicação se espalha em cópias para cada assinante, e assim funciona a mensageria assíncrona de muitos para muitos.',
-    },
     'caption.handover': {
       en: 'Your turn — type a publisher, topic and subscriber, then press publish, subscribe or unsubscribe.',
       ko: '이제 직접 — 발행자·토픽·구독자를 입력하고 publish / subscribe / unsubscribe 를 눌러 보세요.',

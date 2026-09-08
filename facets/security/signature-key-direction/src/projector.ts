@@ -24,15 +24,6 @@ export const signatureKeyDirectionProjector: ProjectorFactory = (views, runtime)
   const tr: Translate = runtime?.t ?? makeTranslator();
   const stage = views.stage as unknown as KeyDirectionStage | undefined;
 
-  const baseCaption = (): string =>
-    tr('caption.base', 'The same key pair, used in opposite directions.');
-
-  const note = (): string =>
-    tr(
-      'label.note',
-      'Encryption narrows who can read; signing narrows who could have made it. The private key stands wherever the narrowing happens.',
-    );
-
   const labels = (): Record<string, string> => ({
     encryption: tr('label.encryption', 'encrypting'),
     signature: tr('label.signature', 'signing'),
@@ -49,8 +40,6 @@ export const signatureKeyDirectionProjector: ProjectorFactory = (views, runtime)
   return {
     onInit() {
       if (!stage) return;
-      stage.setBaseCaption(baseCaption());
-      stage.setNote(note());
     },
 
     async onEvent(event) {
@@ -59,16 +48,12 @@ export const signatureKeyDirectionProjector: ProjectorFactory = (views, runtime)
       switch (event.type) {
         case 'init': {
           stage.init(labels());
-          stage.setBaseCaption(baseCaption());
-          stage.setNote(note());
           break;
         }
 
         case 'rewind': {
           // 손으로 짚기 시작 — 화면만 처음으로 돌린다. 데이터는 그대로다.
           stage.reset();
-          stage.setBaseCaption(baseCaption());
-          stage.setNote(note());
           break;
         }
 
@@ -115,8 +100,6 @@ export const signatureKeyDirectionProjector: ProjectorFactory = (views, runtime)
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
-      stage.setNote(note());
     },
   };
 };

@@ -53,7 +53,6 @@ const HOVER_Y = 34;
 const INDEX_LABEL_Y = ROW_Y + SLOT_H + 18;
 const COUNTER_Y = 58;
 const CAPTION_Y = 218;
-const NOTE_Y = 246;
 
 /** 한 칸 미는 데 걸리는 시간. */
 const MOVE_MS = 360;
@@ -319,14 +318,6 @@ export const shiftOnInsertStageView: View = {
       captionEl = text(W / 2, CAPTION_Y, fontSizes.md, colors.text, 'middle');
       svg.appendChild(captionEl);
       setCaption('');
-
-      // 전제를 감추지 않는다 (S-piece).
-      const note = text(W / 2, NOTE_Y, fontSizes.xs, colors.textMuted, 'middle');
-      note.textContent = tr(
-        'label.note',
-        'Capacity 6 with one free slot at the end. A full array must grow first.',
-      );
-      svg.appendChild(note);
     };
 
     return {

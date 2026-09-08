@@ -69,18 +69,6 @@ export const arrayFacet: FacetJson = {
       id: 'Diletakkan di ujung — tidak ada yang perlu bergeser',
       pt: 'Colocado no fim — nada precisou se deslocar',
     },
-    'caption.base': {
-      en: 'An array packs equal-width cells side by side with no gaps and calls each one by a number counted from 0 — know the number and you arrive in one step, but touch the middle and the neighbours shift along.',
-      ko: '배열은 같은 너비의 칸을 옆자리끼리 빈틈 없이 붙여 놓고 0 부터 매긴 번호로 호명한다 — 번호만 알면 한 번에, 가운데를 건드리면 옆 칸이 줄줄이 밀린다.',
-      ja: '配列は同じ幅のマスを隙間なく並べ、0 から数えた番号で一つずつ呼び出す — 番号さえ分かれば一歩で届くが、真ん中に触れると隣が次々とずれていく。',
-      zh: '数组把等宽的格子紧挨着排开，用从 0 开始的编号逐个称呼 — 知道编号就能一步抵达，但一碰中间，后面的格子就会接连挪位。',
-      ar: 'يرصّ المصفوف خلايا متساوية العرض جنبًا إلى جنب بلا فجوات وينادي كل واحدة برقم يبدأ من صفر — إن عرفت الرقم وصلت بخطوة واحدة، لكن إن مسست الوسط انزاحت الجارات واحدة تلو الأخرى.',
-      es: 'Un arreglo coloca celdas de igual ancho una junto a otra sin huecos y llama a cada una por un número contado desde 0: si conoces el número llegas en un paso, pero si tocas el medio las vecinas se desplazan en cadena.',
-      fr: 'Un tableau range des cases de même largeur côte à côte sans espace et appelle chacune par un numéro compté depuis 0 — connaître le numéro suffit pour arriver en une étape, mais toucher le milieu fait décaler les voisines de proche en proche.',
-      hi: 'सरणी समान चौड़ाई की कोठरियों को बिना अंतराल के साथ-साथ रखती है और हर एक को 0 से गिने गए क्रमांक से पुकारती है — क्रमांक पता हो तो एक ही कदम में पहुँच जाते हैं, पर बीच को छेड़ें तो पड़ोसी एक-एक कर खिसकते जाते हैं।',
-      id: 'Array menata sel selebar sama berdampingan tanpa celah dan memanggil tiap sel dengan nomor yang dihitung dari 0 — tahu nomornya berarti sampai dalam satu langkah, tetapi menyentuh bagian tengah membuat tetangganya bergeser beruntun.',
-      pt: 'Um arranjo encaixa células de igual largura lado a lado sem folgas e chama cada uma por um número contado a partir de 0 — sabendo o número você chega num passo, mas mexer no meio faz as vizinhas se deslocarem em cadeia.',
-    },
     'caption.handover': {
       en: 'Your turn — type an index and a value, then press Read, Write, Insert, Remove, Append or Search.',
       ko: '이제 직접 — 인덱스와 값을 입력하고 호명·쓰기·삽입·삭제·뒤에 추가·검색을 눌러보세요',

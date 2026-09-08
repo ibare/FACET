@@ -75,19 +75,12 @@ function indexFromTarget(target: unknown): number | null {
 
 export const arrayProjector: ProjectorFactory = (views, runtime) => {
   const tr: Translate = runtime?.t ?? makeTranslator();
-  /** 상시 캡션. 두 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
-  const baseCaption = (): string =>
-    tr(
-      'caption.base',
-      'An array packs equal-width cells side by side with no gaps and calls each one by a number counted from 0 — know the number and you arrive in one step, but touch the middle and the neighbours shift along.',
-    );
   const stage = views.stage as unknown as ArrayStage | undefined;
 
   return {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
     },
 
     async onEvent(event) {
@@ -284,7 +277,6 @@ export const arrayProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
     },
   };
 };

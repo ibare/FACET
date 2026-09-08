@@ -37,7 +37,6 @@ type StackStage = {
  * View 고정 라벨은 View 가 params.locale 로 직접 해석한다 (S-view).
  */
 const K = {
-  base: 'caption.base',
   feedInput: 'caption.feedInput',
   push: 'caption.push',
   pop: 'caption.pop',
@@ -62,9 +61,6 @@ export const stackProjector: ProjectorFactory = (views, runtime) => {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(
-        tr(K.base, 'A stack hands back the most recently added element first — every change happens at one single place, the top.'),
-      );
     },
 
     async onEvent(event) {
@@ -154,9 +150,6 @@ export const stackProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(
-        tr(K.base, 'A stack hands back the most recently added element first — every change happens at one single place, the top.'),
-      );
     },
   };
 };

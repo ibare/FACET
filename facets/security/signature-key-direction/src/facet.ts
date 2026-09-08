@@ -42,10 +42,6 @@ export const signatureKeyDirectionFacet: FacetJson = {
     children: [{ ref: 'stage', padding: '8px 0' }, { ref: 'controls' }],
   },
   messages: {
-    'caption.base': {
-      en: 'The same key pair, used in opposite directions.',
-      ko: '같은 키 한 쌍을, 반대 방향으로 쓴다.',
-    },
     'caption.encryption': {
       en: 'Anyone can seal it; only the owner can open it.',
       ko: '누구나 잠글 수 있고, 주인만 열 수 있다.',
@@ -72,10 +68,6 @@ export const signatureKeyDirectionFacet: FacetJson = {
     'label.signed': { en: 'signature', ko: '서명' },
     'label.reads': { en: 'reads', ko: '읽는다' },
     'label.verifies': { en: 'verifies', ko: '확인한다' },
-    'label.note': {
-      en: 'Encryption narrows who can read; signing narrows who could have made it. The private key stands wherever the narrowing happens.',
-      ko: '암호화는 읽을 수 있는 사람을 좁히고, 서명은 만들 수 있었던 사람을 좁힌다. 개인키는 좁히는 자리에 선다.',
-    },
   },
   blocks: {
     stage: { type: 'key-direction-stage' },

@@ -12,8 +12,7 @@
  * 자체 ms 상수를 갖고 있어, opts.duration 은 보조적으로만 전달).
  */
 
-import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
-import { makeTranslator } from '@ffacet/core/runtime';
+import type { ProjectorFactory } from '@ffacet/core/runtime';
 
 type PubsubStage = {
   reset(): void;
@@ -53,20 +52,12 @@ type PubsubStage = {
 
 
 export const messagingPubsubProjector: ProjectorFactory = (views, runtime) => {
-  const tr: Translate = runtime?.t ?? makeTranslator();
-  /** 상시 캡션. 여러 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
-  const baseCaption = (): string =>
-    tr(
-      'caption.base',
-      "Pub/Sub lets publishers and subscribers know only the broker's topic label instead of each other's identity — one publish fans out to every subscriber as copies, making many-to-many asynchronous messaging work.",
-    );
   const stage = views.stage as unknown as PubsubStage | undefined;
 
   return {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
     },
 
     async onEvent(event) {
@@ -189,7 +180,6 @@ export const messagingPubsubProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
     },
   };
 };

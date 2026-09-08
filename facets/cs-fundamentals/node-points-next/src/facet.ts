@@ -61,13 +61,5 @@ export const nodePointsNextFacet: FacetJson = {
       ko: '쥔 주소를 따라가면 순서가 드러난다 — 12, 5, 8. 메모리에 놓인 차례가 아니다.',
     },
     'label.order': { en: 'order', ko: '순서' },
-    'label.note': {
-      en: 'A node is {bytes} bytes here — {vb} for the int32 value, {ab} for the address.',
-      ko: '여기서 노드 하나는 {bytes}바이트다 — int32 값 {vb} + 주소 {ab}.',
-    },
-    'label.note2': {
-      en: 'The cells are drawn far wider than that; only the gaps keep the real byte ratio.',
-      ko: '화면의 칸은 그보다 훨씬 넓다. 칸 사이 빈 자리만 실제 바이트 간격의 비를 지킨다.',
-    },
   },
 };

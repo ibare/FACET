@@ -24,7 +24,6 @@ import {
   fontSizes,
   fonts,
   getColors,
-  makeTranslator,
   shiftLightness,
   type View,
   type ViewInstance,
@@ -74,7 +73,6 @@ const PROBE_TIP_Y = 148;
 const PROBE_PARK = -110;
 
 const CAPTION_Y = 306;
-const NOTE_Y = 326;
 
 // ── 시간 ──────────────────────────────────────────────────────────────────
 const FLY_MS = 300;
@@ -138,7 +136,6 @@ type BlockEl = {
 export const pushPopTopStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
     const colors = getColors(params.theme);
-    const tr = params.t ?? makeTranslator(params.locale);
     const seed = categorical(CAP, 'vivid');
 
     const rawValues = (params.initialData as { pushes?: unknown } | undefined)?.pushes;
@@ -329,16 +326,6 @@ export const pushPopTopStageView: View = {
       'font-size': fontSizes.md, fill: colors.text,
     });
     svg.appendChild(caption);
-
-    const note = el('text', {
-      x: W / 2, y: NOTE_Y, 'text-anchor': 'middle',
-      'font-size': fontSizes.xs, fill: colors.textMuted,
-    });
-    note.textContent = tr(
-      'label.note',
-      'The well is drawn three slots deep. What makes it a stack is not the depth but the single opening.',
-    );
-    svg.appendChild(note);
 
     container.appendChild(svg);
 

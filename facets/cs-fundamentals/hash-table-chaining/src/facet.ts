@@ -58,18 +58,6 @@ export const hashTableFacet: FacetJson = {
       id: 'Tabelnya mulai sesak — segera perlu diperbesar.',
       pt: 'A tabela está ficando apertada — em breve precisará crescer.',
     },
-    'caption.base': {
-      en: 'A hash table lays out a row of identical slots and a function box throws each key into the one slot it picks — when two land on the same slot, a chain grows there.',
-      ko: '해시 테이블은 같은 모양의 칸을 여러 개 늘어놓고 함수 박스가 키마다 한 자리를 정해 던진다 — 같은 자리에 둘이 떨어지면 그 자리에 사슬을 늘인다.',
-      ja: 'ハッシュテーブルは同じ形のマスを一列に並べ、関数の箱がキーごとに一つのマスを決めて投げ入れる — 同じマスに二つ落ちれば、そこに鎖が伸びる。',
-      zh: '哈希表把同样的槽排成一行，函数盒子为每个键挑出一个槽并把它扔进去 — 两个落在同一槽里时，那里就长出一条链。',
-      ar: 'يصفّ جدول التقطيع خانات متماثلة في صف، ويرمي صندوق الدالة كل مفتاح في الخانة التي يختارها — وحين يقع اثنان في الخانة نفسها تنمو هناك سلسلة.',
-      es: 'Una tabla hash dispone una fila de casillas idénticas y una caja-función lanza cada clave a la casilla que elige: cuando dos caen en la misma, allí crece una cadena.',
-      fr: 'Une table de hachage aligne une rangée de cases identiques et une boîte-fonction jette chaque clé dans la case qu\'elle choisit — quand deux tombent dans la même, une chaîne y pousse.',
-      hi: 'हैश तालिका एक जैसी खानों की पंक्ति बिछाती है और फ़ंक्शन-बक्सा हर कुंजी को अपनी चुनी हुई एक खान में फेंकता है — दो एक ही खान में गिरें तो वहाँ एक शृंखला उग आती है।',
-      id: 'Tabel hash menjajarkan sederet slot serupa dan kotak fungsi melempar setiap kunci ke satu slot yang dipilihnya — ketika dua jatuh di slot yang sama, di sana tumbuh sebuah rantai.',
-      pt: 'Uma tabela hash dispõe uma fila de casas idênticas e uma caixa-função lança cada chave na casa que escolhe — quando duas caem na mesma, ali cresce uma corrente.',
-    },
     'caption.collision': {
       en: 'Two landed on the same slot — the chain grows by one.',
       ko: '같은 자리에 둘이 떨어졌다 — 사슬이 한 칸 자란다.',

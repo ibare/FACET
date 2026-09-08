@@ -93,10 +93,6 @@ export const hashChainFacet: FacetJson = {
     children: [{ ref: 'stage', padding: '8px 0' }, { ref: 'controls' }],
   },
   messages: {
-    'caption.base': {
-      en: 'Each entry carries the hash of the one before it.',
-      ko: '칸마다 자기 앞 칸의 해시를 품고 있다.',
-    },
     'caption.linked': {
       en: 'Every entry holds the hash of the one before it.',
       ko: '모든 칸이 앞 칸의 해시를 쥐고 있다.',
@@ -115,10 +111,6 @@ export const hashChainFacet: FacetJson = {
     },
     'label.prev': { en: 'prev', ko: '앞' },
     'label.hash': { en: 'hash', ko: '해시' },
-    'label.note': {
-      en: 'Rewriting one entry means rewriting every entry after it — and anyone holding the last hash would still notice.',
-      ko: '한 칸을 고치려면 그 뒤를 전부 다시 써야 한다 — 마지막 해시를 따로 가진 사람에게는 그래도 드러난다.',
-    },
   },
   blocks: {
     stage: { type: 'chain-stage' },

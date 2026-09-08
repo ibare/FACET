@@ -68,20 +68,9 @@ export const signatureOnHashProjector: ProjectorFactory = (views, runtime) => {
   const tr: Translate = runtime?.t ?? makeTranslator();
   const stage = views.stage as unknown as SignHashStage | undefined;
 
-  const baseCaption = (): string =>
-    tr('caption.base', 'The signature is made on the digest, not on the document.');
-
-  const note = (): string =>
-    tr(
-      'label.note',
-      'Drawn to scale except the two small bars, which would be invisible. RSA cannot sign anything larger than its key at all.',
-    );
-
   return {
     onInit() {
       if (!stage) return;
-      stage.setBaseCaption(baseCaption());
-      stage.setNote(note());
     },
 
     async onEvent(event) {
@@ -95,16 +84,12 @@ export const signatureOnHashProjector: ProjectorFactory = (views, runtime) => {
             signature: tr('label.signature', 'signature'),
             bytes: formatBytes,
           });
-          stage.setBaseCaption(baseCaption());
-          stage.setNote(note());
           break;
         }
 
         case 'rewind': {
           // 손으로 짚기 시작 — 화면만 처음으로 돌린다. 데이터는 그대로다.
           stage.reset();
-          stage.setBaseCaption(baseCaption());
-          stage.setNote(note());
           break;
         }
 
@@ -147,8 +132,6 @@ export const signatureOnHashProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
-      stage.setNote(note());
     },
   };
 };

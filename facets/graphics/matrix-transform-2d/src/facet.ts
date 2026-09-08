@@ -261,18 +261,6 @@ export const matrixTransform2dFacet: FacetJson = {
       id: 'Visualisasi transformasi matriks 2D',
       pt: 'Visualização de transformação matricial 2D',
     },
-    'label.caption': {
-      en: 'A linear map sending the plane to the plane — where the two basis vectors land is exactly the two columns',
-      ko: '평면을 평면으로 보내는 선형 사상 — 두 기저의 도착지가 곧 두 열',
-      ja: '平面を平面へ送る線形写像 — 二つの基底の行き先が、そのまま二つの列だ',
-      zh: '把平面送往平面的线性映射 — 两个基向量的落点就是那两列',
-      ar: 'تطبيق خطي يرسل المستوي إلى المستوي — حيث يستقر المتجهان الأساسيان هو بالضبط العمودان',
-      es: 'Una aplicación lineal que envía el plano al plano: donde aterrizan los dos vectores base son exactamente las dos columnas',
-      fr: 'Une application linéaire qui envoie le plan sur le plan — là où atterrissent les deux vecteurs de base, ce sont exactement les deux colonnes',
-      hi: 'तल को तल पर भेजने वाला रैखिक प्रतिचित्रण — दोनों आधार सदिश जहाँ उतरते हैं, वही दोनों स्तंभ हैं',
-      id: 'Pemetaan linear yang mengirim bidang ke bidang — tempat kedua vektor basis mendarat itulah kedua kolomnya',
-      pt: 'Uma aplicação linear que leva o plano ao plano — onde os dois vetores da base aterrissam são exatamente as duas colunas',
-    },
     'label.cellPanel': {
       en: 'matrix cells — one cell = one coordinate',
       ko: '행렬 셀 — 한 칸 = 한 좌표',

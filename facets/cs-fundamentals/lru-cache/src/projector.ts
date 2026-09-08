@@ -12,8 +12,7 @@
  * 운동 시간 (ms) 은 기획 §3 / §9 기준 + runtime.getSpeed() 로 보정.
  */
 
-import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
-import { makeTranslator } from '@ffacet/core/runtime';
+import type { ProjectorFactory } from '@ffacet/core/runtime';
 
 type LruCacheStage = {
   reset(): void;
@@ -71,20 +70,12 @@ type LruCacheStage = {
 };
 
 export const lruCacheProjector: ProjectorFactory = (views, runtime) => {
-  const tr: Translate = runtime?.t ?? makeTranslator();
-  /** 상시 캡션. 두 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
-  const baseCaption = (): string =>
-    tr(
-      'caption.base',
-      'An LRU cache shares one set of nodes between a hash map (key → node) and a doubly linked list (recency order) — every call drags a node to the MRU end, and on overflow the LRU end vanishes from both areas at once.',
-    );
   const stage = views.stage as unknown as LruCacheStage | undefined;
 
   return {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
     },
 
     async onEvent(event) {
@@ -229,7 +220,6 @@ export const lruCacheProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
     },
   };
 };

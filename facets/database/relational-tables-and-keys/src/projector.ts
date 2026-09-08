@@ -14,8 +14,7 @@
  * invalid-input 만 stage 메서드로 번역한다.
  */
 
-import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
-import { makeTranslator } from '@ffacet/core/runtime';
+import type { ProjectorFactory } from '@ffacet/core/runtime';
 
 type ColumnPayload = {
   id: string;
@@ -77,20 +76,12 @@ type TablesStage = {
 
 
 export const relationalTablesAndKeysProjector: ProjectorFactory = (views, runtime) => {
-  const tr: Translate = runtime?.t ?? makeTranslator();
-  /** 상시 캡션. 여러 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
-  const baseCaption = (): string =>
-    tr(
-      'caption.base',
-      'A table is a named grid gathering rows of the same shape; a primary key identifies one row uniquely, and a foreign key points at a primary key value in another grid, binding the two into one structure.',
-    );
   const stage = views.stage as unknown as TablesStage | undefined;
 
   return {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
     },
 
     async onEvent(event) {
@@ -183,7 +174,6 @@ export const relationalTablesAndKeysProjector: ProjectorFactory = (views, runtim
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
     },
   };
 };

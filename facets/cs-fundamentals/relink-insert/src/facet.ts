@@ -73,9 +73,5 @@ export const relinkInsertFacet: FacetJson = {
       ko: '고쳐 쓴 화살표 {rewires}개 · 옮긴 상자 {moves}개',
     },
     // 전제 각주 — 아래 줄은 그림의 사정이지 자료구조의 사정이 아니다 (S-piece).
-    'label.note': {
-      en: 'The new box is drawn on a lower row on purpose: where a node sits means nothing. Only the arrows say what comes next.',
-      ko: '새 상자를 아래 줄에 그린 것은 일부러다. 노드가 어디 놓였는지는 아무 뜻이 없고, 다음이 무엇인지 말하는 것은 화살표뿐이다.',
-    },
   },
 };

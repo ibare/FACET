@@ -68,10 +68,6 @@ export const merkleTreeFacet: FacetJson = {
     children: [{ ref: 'stage', padding: '8px 0' }, { ref: 'controls' }],
   },
   messages: {
-    'caption.base': {
-      en: 'Hashes folded in pairs leave one value at the top.',
-      ko: '해시를 둘씩 접어 올리면 꼭대기에 값 하나가 남는다.',
-    },
     'caption.leaves': {
       en: 'Each file gets its own hash.',
       ko: '파일마다 자기 해시를 갖는다.',
@@ -87,10 +83,6 @@ export const merkleTreeFacet: FacetJson = {
     'caption.pathOnly': {
       en: 'Only the path up to the top changes — the other branch is untouched.',
       ko: '꼭대기까지 한 줄만 갈린다 — 다른 가지는 손대지 않은 그대로다.',
-    },
-    'label.note': {
-      en: 'With a thousand files the path from a leaf to the top is about ten steps, not a thousand.',
-      ko: '파일이 천 개여도 잎에서 꼭대기까지는 천 걸음이 아니라 열 걸음쯤이다.',
     },
   },
   blocks: {

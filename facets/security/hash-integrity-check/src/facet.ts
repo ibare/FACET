@@ -57,10 +57,6 @@ export const hashIntegrityCheckFacet: FacetJson = {
     children: [{ ref: 'stage', padding: '8px 0' }, { ref: 'controls' }],
   },
   messages: {
-    'caption.base': {
-      en: 'The file and its hash travel by different routes.',
-      ko: '파일과 그 해시는 서로 다른 경로로 온다.',
-    },
     'caption.split': {
       en: 'Two routes leave the origin — the file, and its hash.',
       ko: '원본에서 두 경로가 갈라진다 — 파일과 그 해시.',
@@ -86,10 +82,6 @@ export const hashIntegrityCheckFacet: FacetJson = {
     'label.match': { en: '✓', ko: '✓' },
     'label.mismatch': { en: '✗', ko: '✗' },
     'label.scissors': { en: '✂', ko: '✂' },
-    'label.note': {
-      en: 'If both came down the same route, whoever changed the file could have changed the hash too.',
-      ko: '둘이 같은 경로로 왔다면, 파일을 고친 쪽이 해시도 함께 고쳤을 것이다.',
-    },
   },
   blocks: {
     stage: { type: 'integrity-stage' },

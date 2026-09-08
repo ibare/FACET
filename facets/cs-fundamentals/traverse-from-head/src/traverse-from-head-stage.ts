@@ -67,8 +67,6 @@ const CHIP_H = 20;
 const NOSE_Y = RAIL_Y - CHIP_H / 2 - 8;
 
 const CAPTION_Y = 26;
-const NOTE_Y1 = 240;
-const NOTE_Y2 = 256;
 const SIDE_PAD = 22;
 
 const MARK_MS = 220;
@@ -202,25 +200,7 @@ export const traverseFromHeadStageView: View = {
     });
     counter.style.fontFamily = fonts.mono;
 
-    const note = (y: number, text: string): SVGTextElement => {
-      const el = svg('text', {
-        x: SIDE_PAD,
-        y,
-        'text-anchor': 'start',
-        'font-size': fontSizes.xs,
-        fill: colors.textMuted,
-      });
-      el.style.fontFamily = fonts.body;
-      el.textContent = text;
-      return el;
-    };
-    // 전제를 감추지 않는다 (S-piece) — 왜 흩뿌려 그렸는지 화면이 말한다.
-    canvas.append(
-      caption,
-      counter,
-      note(NOTE_Y1, tr('label.noteArray', 'An array would reach any element with one address calculation.')),
-      note(NOTE_Y2, tr('label.noteScattered', 'Here the addresses are scattered — nothing to compute, so you follow.')),
-    );
+    canvas.append(caption, counter);
 
     root.appendChild(canvas);
     container.appendChild(root);

@@ -85,18 +85,6 @@ export const tokenizationFacet: FacetJson = {
     ],
   },
   messages: {
-    'caption.base': {
-      en: 'Tokenization is the first stage of a compiler. It reads the source a character at a time from left to right and cuts it into the smallest units that carry meaning — taking the longest run it can, and leaving whitespace and comments as nothing but traces.',
-      ko: '토큰화는 컴파일러의 첫 단계다. 사람이 쓴 소스 문자열을 좌에서 우로 한 글자씩 읽어 의미 있는 최소 단위로 끊는다. 더 길게 묶을 수 있으면 더 길게 묶고, 공백과 주석은 흔적으로만 남는다.',
-      ja: 'トークン化はコンパイラの最初の段階だ。人が書いたソースの文字列を左から右へ一文字ずつ読み、意味を担う最小の単位へ切り分ける。より長くまとめられるならまとめ、空白とコメントは痕跡としてしか残らない。',
-      zh: '词法切分是编译器的第一步。它把人写下的源码从左到右一次读一个字符，切成携带意义的最小单位；能连多长就连多长，而空白和注释只留下痕迹。',
-      ar: 'التقطيع إلى رموز هو أول مراحل المترجم. يقرأ الشيفرة التي كتبها الإنسان حرفًا حرفًا من اليسار إلى اليمين ويقطّعها إلى أصغر وحدات تحمل معنى — آخذًا أطول امتداد ممكن، ولا تبقى المسافات والتعليقات إلا أثرًا.',
-      es: 'La tokenización es la primera etapa de un compilador. Lee el código escrito por una persona carácter a carácter, de izquierda a derecha, y lo corta en las unidades más pequeñas que llevan significado, tomando la tirada más larga posible; los espacios y comentarios quedan solo como rastros.',
-      fr: 'La tokenisation est la première étape d\'un compilateur. Elle lit la source écrite par un humain caractère par caractère, de gauche à droite, et la découpe en les plus petites unités porteuses de sens — en prenant la plus longue tirade possible ; espaces et commentaires ne restent que comme traces.',
-      hi: 'टोकनीकरण संकलक का पहला चरण है। यह मनुष्य के लिखे स्रोत को बाएँ से दाएँ एक-एक अक्षर पढ़कर अर्थ धारण करने वाली सबसे छोटी इकाइयों में काटता है — जितना लंबा जोड़ सके जोड़ता है, और रिक्ति व टिप्पणियाँ केवल निशान भर रह जाती हैं।',
-      id: 'Tokenisasi adalah tahap pertama kompilator. Ia membaca sumber tulisan manusia satu karakter setiap kali dari kiri ke kanan dan memotongnya menjadi unit terkecil yang bermakna — mengambil rentetan terpanjang yang bisa, sementara spasi dan komentar hanya tersisa sebagai jejak.',
-      pt: 'A tokenização é a primeira etapa de um compilador. Ela lê a fonte escrita por uma pessoa um caractere por vez, da esquerda para a direita, e a corta nas menores unidades que carregam significado — pegando a maior tirada possível, e espaços e comentários ficam apenas como rastros.',
-    },
     'caption.comment': {
       en: 'A comment never becomes a token — it stays as a trace.',
       ko: '주석은 토큰이 되지 못해 흔적으로만 남는다.',

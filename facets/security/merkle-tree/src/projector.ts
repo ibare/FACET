@@ -60,20 +60,9 @@ export const merkleTreeProjector: ProjectorFactory = (views, runtime) => {
   const tr: Translate = runtime?.t ?? makeTranslator();
   const stage = views.stage as unknown as MerkleStage | undefined;
 
-  const baseCaption = (): string =>
-    tr('caption.base', 'Hashes folded in pairs leave one value at the top.');
-
-  const note = (): string =>
-    tr(
-      'label.note',
-      'With a thousand files the path from a leaf to the top is about ten steps, not a thousand.',
-    );
-
   return {
     onInit() {
       if (!stage) return;
-      stage.setBaseCaption(baseCaption());
-      stage.setNote(note());
     },
 
     async onEvent(event) {
@@ -82,16 +71,12 @@ export const merkleTreeProjector: ProjectorFactory = (views, runtime) => {
       switch (event.type) {
         case 'init': {
           stage.init(narrowInit(event.payload));
-          stage.setBaseCaption(baseCaption());
-          stage.setNote(note());
           break;
         }
 
         case 'rewind': {
           // 손으로 짚기 시작 — 화면만 처음으로 돌린다. 데이터는 그대로다.
           stage.reset();
-          stage.setBaseCaption(baseCaption());
-          stage.setNote(note());
           break;
         }
 
@@ -134,8 +119,6 @@ export const merkleTreeProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
-      stage.setNote(note());
     },
   };
 };

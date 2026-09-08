@@ -69,20 +69,6 @@ export const hashAvalancheProjector: ProjectorFactory = (views, runtime) => {
   const tr: Translate = runtime?.t ?? makeTranslator();
   const stage = views.stage as unknown as AvalancheStage | undefined;
 
-  /** 이 화면이 값을 계산하지 않는다는 전제를 밝히는 각주 (S-piece). */
-  const note = (): string =>
-    tr(
-      'label.note',
-      'The digests are real SHA-256 values, declared rather than computed — this screen takes no input.',
-    );
-
-  /** 상시 캡션. init 과 reset 두 곳에서 쓰이므로 en 원본은 여기 한 번만 둔다. */
-  const baseCaption = (): string =>
-    tr(
-      'caption.base',
-      'A hash turns a tiny change of the input into a completely different output.',
-    );
-
   // init 이 준 수치. 각 층의 카운트 문안이 이 값으로 만들어진다.
   let algorithmLabel = '';
   let inputTotalBits = 0;
@@ -93,8 +79,6 @@ export const hashAvalancheProjector: ProjectorFactory = (views, runtime) => {
   return {
     onInit() {
       if (!stage) return;
-      stage.setBaseCaption(baseCaption());
-      stage.setNote(note());
     },
 
     async onEvent(event) {
@@ -109,16 +93,12 @@ export const hashAvalancheProjector: ProjectorFactory = (views, runtime) => {
           outputTotalBits = num(p.outputTotalBits);
           outputFlippedBits = num(p.outputFlippedBits);
           stage.init(narrowInit(p));
-          stage.setBaseCaption(baseCaption());
-          stage.setNote(note());
           break;
         }
 
         case 'rewind': {
           // 손으로 짚기 시작 — 화면만 처음으로 돌린다. 데이터는 그대로다.
           stage.reset();
-          stage.setBaseCaption(baseCaption());
-          stage.setNote(note());
           break;
         }
 
@@ -174,8 +154,6 @@ export const hashAvalancheProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
-      stage.setNote(note());
     },
   };
 };

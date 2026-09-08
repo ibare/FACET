@@ -47,23 +47,9 @@ export const hashSaltProjector: ProjectorFactory = (views, runtime) => {
   const tr: Translate = runtime?.t ?? makeTranslator();
   const stage = views.stage as unknown as SaltStage | undefined;
 
-  const baseCaption = (): string =>
-    tr(
-      'caption.base',
-      'Two people picked the same password, but what gets stored is not the same.',
-    );
-
-  const note = (): string =>
-    tr(
-      'label.note',
-      'The salt is stored in the clear next to the hash — it is not a secret, only a way to make every stored value unique.',
-    );
-
   return {
     onInit() {
       if (!stage) return;
-      stage.setBaseCaption(baseCaption());
-      stage.setNote(note());
     },
 
     async onEvent(event) {
@@ -76,16 +62,12 @@ export const hashSaltProjector: ProjectorFactory = (views, runtime) => {
             salt: tr('label.salt', 'salt'),
             stored: tr('label.stored', 'what gets stored'),
           });
-          stage.setBaseCaption(baseCaption());
-          stage.setNote(note());
           break;
         }
 
         case 'rewind': {
           // 손으로 짚기 시작 — 화면만 처음으로 돌린다. 데이터는 그대로다.
           stage.reset();
-          stage.setBaseCaption(baseCaption());
-          stage.setNote(note());
           break;
         }
 
@@ -133,8 +115,6 @@ export const hashSaltProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
-      stage.setNote(note());
     },
   };
 };

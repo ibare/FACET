@@ -49,13 +49,6 @@ export const hashFixedLengthProjector: ProjectorFactory = (views, runtime) => {
   const tr: Translate = runtime?.t ?? makeTranslator();
   const stage = views.stage as unknown as FixedLengthStage | undefined;
 
-  /** 상시 캡션. init 과 reset 두 곳에서 쓰이므로 en 원본은 여기 한 번만 둔다. */
-  const baseCaption = (): string =>
-    tr(
-      'caption.base',
-      'However long the input is, the output is always the same length.',
-    );
-
   const emptyLabel = (): string => tr('label.empty', '(nothing)');
 
   let algorithmLabel = '';
@@ -64,16 +57,9 @@ export const hashFixedLengthProjector: ProjectorFactory = (views, runtime) => {
 
   function applyChrome(): void {
     if (!stage) return;
-    stage.setBaseCaption(baseCaption());
     stage.setHeaders(
       tr('label.inputColumn', 'input'),
       tr('label.outputColumn', '{algorithm} output', { algorithm: algorithmLabel }),
-    );
-    stage.setNote(
-      tr(
-        'label.note',
-        'Even an empty input has a digest, and a 3.7 MB file gives the same 64 characters.',
-      ),
     );
   }
 

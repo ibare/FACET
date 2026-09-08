@@ -50,8 +50,6 @@ const BRACKET_Y = 194;
 const RANGE_Y = 210;
 const CAPTION_Y = 240;
 const CAPTION_LINE_H = 18;
-const NOTE_Y1 = 284;
-const NOTE_Y2 = 299;
 
 const GUARD_W = 10;
 const GUARD_TOP = 50;
@@ -469,36 +467,6 @@ export const outOfBoundsStageView: View = {
         fill: colors.text,
       });
       svg.appendChild(captionText);
-
-      // 전제를 밝히는 각주. 이 배치는 그림의 가정이며, 그 사실 자체가 개념의
-      // 절반이다 — 무엇이 뒤에 놓이는지 알 수 없으니 결과도 정해지지 않는다.
-      const note1 = el('text', {
-        x: W / 2,
-        y: NOTE_Y1,
-        'text-anchor': 'middle',
-        'font-family': fonts.body,
-        'font-size': fontSizes.xs,
-        fill: colors.textMuted,
-      });
-      note1.textContent = tr(
-        'label.note1',
-        'The addresses and this layout are an assumption of the drawing.',
-      );
-      svg.appendChild(note1);
-
-      const note2 = el('text', {
-        x: W / 2,
-        y: NOTE_Y2,
-        'text-anchor': 'middle',
-        'font-family': fonts.body,
-        'font-size': fontSizes.xs,
-        fill: colors.textMuted,
-      });
-      note2.textContent = tr(
-        'label.note2',
-        'What sits right after an array is up to the compiler, so the result of the read is not defined.',
-      );
-      svg.appendChild(note2);
     }
 
     if (params.initialData) {

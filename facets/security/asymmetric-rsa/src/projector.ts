@@ -12,8 +12,7 @@
  * projector 는 init / 시퀀스 사건들 / 상태 변경 사건만 stage 메서드로 번역한다.
  */
 
-import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
-import { makeTranslator } from '@ffacet/core/runtime';
+import type { ProjectorFactory } from '@ffacet/core/runtime';
 
 type RsaStage = {
   reset(): void;
@@ -58,21 +57,13 @@ type RsaStage = {
 };
 
 
-export const asymmetricRsaProjector: ProjectorFactory = (views, runtime) => {
-  const tr: Translate = runtime?.t ?? makeTranslator();
-  /** 상시 캡션. 여러 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
-  const baseCaption = (): string =>
-    tr(
-      'caption.base',
-      'RSA locks and unlocks a message with a pair of keys born from two large primes. The public padlock anyone holds can only lock, and only the private key its owner keeps can open it.',
-    );
+export const asymmetricRsaProjector: ProjectorFactory = (views) => {
   const stage = views.stage as unknown as RsaStage | undefined;
 
   return {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
     },
 
     async onEvent(event) {
@@ -233,7 +224,6 @@ export const asymmetricRsaProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
     },
   };
 };

@@ -70,15 +70,6 @@ export const hashIntegrityCheckProjector: ProjectorFactory = (views, runtime) =>
   const tr: Translate = runtime?.t ?? makeTranslator();
   const stage = views.stage as unknown as IntegrityStage | undefined;
 
-  const baseCaption = (): string =>
-    tr('caption.base', 'The file and its hash travel by different routes.');
-
-  const note = (): string =>
-    tr(
-      'label.note',
-      'If both came down the same route, whoever changed the file could have changed the hash too.',
-    );
-
   const labels = (): Labels => ({
     origin: tr('label.origin', 'origin'),
     target: tr('label.target', 'you'),
@@ -91,8 +82,6 @@ export const hashIntegrityCheckProjector: ProjectorFactory = (views, runtime) =>
   return {
     onInit() {
       if (!stage) return;
-      stage.setBaseCaption(baseCaption());
-      stage.setNote(note());
     },
 
     async onEvent(event) {
@@ -101,16 +90,12 @@ export const hashIntegrityCheckProjector: ProjectorFactory = (views, runtime) =>
       switch (event.type) {
         case 'init': {
           stage.init(narrowInit(event.payload), labels());
-          stage.setBaseCaption(baseCaption());
-          stage.setNote(note());
           break;
         }
 
         case 'rewind': {
           // 손으로 짚기 시작 — 화면만 처음으로 돌린다. 데이터는 그대로다.
           stage.reset();
-          stage.setBaseCaption(baseCaption());
-          stage.setNote(note());
           break;
         }
 
@@ -155,8 +140,6 @@ export const hashIntegrityCheckProjector: ProjectorFactory = (views, runtime) =>
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
-      stage.setNote(note());
     },
   };
 };

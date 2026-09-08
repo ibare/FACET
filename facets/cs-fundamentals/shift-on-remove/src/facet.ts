@@ -61,9 +61,5 @@ export const shiftOnRemoveFacet: FacetJson = {
     },
     'label.used': { en: 'in use: {n}', ko: '쓰는 칸 {n}' },
     'label.unused': { en: 'unused', ko: '안 씀' },
-    'label.note': {
-      en: 'Only 5 slots are drawn; in general (length - index - 1) values move.',
-      ko: '여기서는 칸을 5개로 줄였다. 옮김은 늘 (길이 - 인덱스 - 1)번이다.',
-    },
   },
 };

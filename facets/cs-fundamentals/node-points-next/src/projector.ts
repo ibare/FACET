@@ -25,8 +25,6 @@ type Stage = {
     valueBytes: number;
     addressBytes: number;
     orderLabel: string;
-    note: string;
-    note2: string;
   }): void;
   rewind?(): void;
   setCaption?(text: string): void;
@@ -109,16 +107,6 @@ export const nodePointsNextProjector: ProjectorFactory = (
         valueBytes,
         addressBytes,
         orderLabel: tr('label.order', 'order'),
-        // 전제를 각주로 밝힌다 (S-piece) — 칸은 실제 바이트 비율보다 넓게 그렸다.
-        note: tr(
-          'label.note',
-          'A node is {bytes} bytes here — {vb} for the int32 value, {ab} for the address.',
-          { bytes: nodeBytes, vb: valueBytes, ab: addressBytes },
-        ),
-        note2: tr(
-          'label.note2',
-          'The cells are drawn far wider than that; only the gaps keep the real byte ratio.',
-        ),
       });
     },
 

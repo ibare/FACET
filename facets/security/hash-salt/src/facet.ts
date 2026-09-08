@@ -60,10 +60,6 @@ export const hashSaltFacet: FacetJson = {
     children: [{ ref: 'stage', padding: '8px 0' }, { ref: 'controls' }],
   },
   messages: {
-    'caption.base': {
-      en: 'Two people picked the same password, but what gets stored is not the same.',
-      ko: '두 사람이 같은 비밀번호를 골랐는데, 저장되는 값은 같지 않다.',
-    },
     'caption.samePassword': {
       en: 'Both chose the same password.',
       ko: '둘이 같은 비밀번호를 골랐다.',
@@ -85,10 +81,6 @@ export const hashSaltFacet: FacetJson = {
     'label.stored': { en: 'what gets stored', ko: '저장되는 값' },
     'label.identical': { en: 'identical', ko: '똑같다' },
     'label.different': { en: 'different', ko: '갈렸다' },
-    'label.note': {
-      en: 'The salt is stored in the clear next to the hash — it is not a secret, only a way to make every stored value unique.',
-      ko: '소금은 해시 옆에 그대로 저장된다 — 비밀이 아니라 저장값을 저마다 다르게 만드는 장치다.',
-    },
   },
   blocks: {
     stage: { type: 'salt-stage' },

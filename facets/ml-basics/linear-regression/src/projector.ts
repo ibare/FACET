@@ -10,8 +10,7 @@
  *   5. 수렴 깃발 + 손실 곡선 — 운동의 정지에 사건성을 부여.
  */
 
-import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
-import { makeTranslator } from '@ffacet/core/runtime';
+import type { ProjectorFactory } from '@ffacet/core/runtime';
 import type { Point, LrSegment } from './algorithm.js';
 
 type LinRegStage = {
@@ -54,21 +53,13 @@ type LinRegStage = {
 };
 
 
-export const linearRegressionProjector: ProjectorFactory = (views, runtime) => {
-  const tr: Translate = runtime?.t ?? makeTranslator();
-  /** 상시 캡션. 여러 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
-  const baseCaption = (): string =>
-    tr(
-      'caption.base',
-      'Linear regression threads one straight line through a cloud of points, turning each residual into the area of a square, and nudges the line a step at a time so the total of those areas shrinks.',
-    );
+export const linearRegressionProjector: ProjectorFactory = (views) => {
   const stage = views.stage as unknown as LinRegStage | undefined;
 
   return {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
     },
 
     async onEvent(event) {
@@ -198,7 +189,6 @@ export const linearRegressionProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
       stage.signalReset();
     },
   };

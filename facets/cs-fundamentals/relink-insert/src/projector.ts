@@ -23,7 +23,6 @@ type RelinkStage = {
     nodes: { id: string; value: number }[];
     incoming: { id: string; value: number };
     insertAfter: string;
-    note: string;
   }): void;
   showChain?(text: string): void;
   stageNode?(text: string): Promise<void>;
@@ -111,11 +110,6 @@ export const relinkInsertProjector: ProjectorFactory = (
         nodes,
         incoming,
         insertAfter,
-        // 전제를 화면이 스스로 말한다 (S-piece). 아래 줄은 그림의 사정일 뿐이다.
-        note: tr(
-          'label.note',
-          'The new box is drawn on a lower row on purpose: where a node sits means nothing. Only the arrows say what comes next.',
-        ),
       });
     },
 

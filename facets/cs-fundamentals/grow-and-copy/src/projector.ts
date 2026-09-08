@@ -23,7 +23,6 @@ type GrowAndCopyStage = {
     capacity: number;
     values: number[];
     meta: string;
-    notes: string[];
   }): void;
   rewind?(): void;
   setCaption?(text: string): void;
@@ -51,14 +50,6 @@ export const growAndCopyProjector: ProjectorFactory = (
   const tr: Translate = runtime?.t ?? makeTranslator();
 
   // 처음 장면의 캡션은 되감을 때 다시 쓰이므로 한 곳에서만 짓는다 (C10 PREFER).
-  let startCapacity = 0;
-  let startSize = 0;
-  const startCaption = (): string =>
-    tr(
-      'caption.start',
-      'A block of {capacity} holds {size} values. It is full.',
-      { capacity: startCapacity, size: startSize },
-    );
 
   const meta = (bytes: number, capacity: number): string =>
     tr('label.meta', '{bytes} bytes / {capacity} slots', { bytes, capacity });
@@ -79,26 +70,13 @@ export const growAndCopyProjector: ProjectorFactory = (
       const capacity = num(d?.oldCapacity, 0);
       const values = numbers(d?.values);
       const elementBytes = num(d?.elementBytes, 0);
-      startCapacity = capacity;
-      startSize = values.length;
 
       stage?.init?.({
         address: str(d?.oldAddress, ''),
         capacity,
         values,
         meta: meta(capacity * elementBytes, capacity),
-        notes: [
-          tr(
-            'label.note1',
-            'How much a block grows is an implementation choice. This one doubles; growable arrays in the wild commonly use 1.5x or 2x.',
-          ),
-          tr(
-            'label.note2',
-            'The addresses are illustrative. A new block lands wherever the allocator has room, not at a tidy round number.',
-          ),
-        ],
       });
-      stage?.setCaption?.(startCaption());
     },
 
     async onEvent(event: FacetRuntimeEvent): Promise<void> {
@@ -202,7 +180,6 @@ export const growAndCopyProjector: ProjectorFactory = (
 
         case 'rewind': {
           stage?.rewind?.();
-          stage?.setCaption?.(startCaption());
           return;
         }
 

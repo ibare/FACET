@@ -12,8 +12,7 @@
  *   7. 컨텍스트 양의 차이 — 보관소 부피의 토글.
  */
 
-import type { ProjectorFactory, Translate } from '@ffacet/core/runtime';
-import { makeTranslator } from '@ffacet/core/runtime';
+import type { ProjectorFactory } from '@ffacet/core/runtime';
 import type { Flow, TriggerKind, Mode } from './algorithm.js';
 
 type CtxStage = {
@@ -58,21 +57,13 @@ function asMode(v: unknown): Mode {
   return v === 'process' ? 'process' : 'thread';
 }
 
-export const contextSwitchingProjector: ProjectorFactory = (views, runtime) => {
-  const tr: Translate = runtime?.t ?? makeTranslator();
-  /** 상시 캡션. 여러 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
-  const baseCaption = (): string =>
-    tr(
-      'caption.base',
-      "Context switching — on a single CPU stage one flow's whole register set is lifted out into its own holder, the other flow's set is placed back into those same slots, and each resumes exactly where it stopped.",
-    );
+export const contextSwitchingProjector: ProjectorFactory = (views) => {
   const stage = views.stage as unknown as CtxStage | undefined;
 
   return {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
     },
 
     async onEvent(event) {
@@ -197,7 +188,6 @@ export const contextSwitchingProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
       stage.signalReset();
     },
   };

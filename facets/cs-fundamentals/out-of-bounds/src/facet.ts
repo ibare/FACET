@@ -50,10 +50,6 @@ export const outOfBoundsFacet: FacetJson = {
   },
 
   messages: {
-    'caption.start': {
-      en: 'An index is a number. The machine has to turn it into a place.',
-      ko: '번호는 숫자일 뿐이다. 기계는 그것을 자리로 바꿔야 한다.',
-    },
     'caption.compute': {
       en: 'The index becomes an address: {base} + {i} × {stride} = {addr}.',
       ko: '번호가 주소가 된다: {base} + {i} × {stride} = {addr}.',
@@ -93,13 +89,5 @@ export const outOfBoundsFacet: FacetJson = {
     },
     // 전제를 밝히는 각주 (S-piece). 이 배치는 그림의 가정이고, 그 사실이 곧
     // 경계 밖 접근의 결과가 정해져 있지 않다는 말이기도 하다.
-    'label.note1': {
-      en: 'The addresses and this layout are an assumption of the drawing.',
-      ko: '여기 쓰인 주소와 배치는 이 그림의 가정이다.',
-    },
-    'label.note2': {
-      en: 'What sits right after an array is up to the compiler, so the result of the read is not defined.',
-      ko: '배열 바로 뒤에 무엇이 놓이는지는 컴파일러가 정하므로, 이 읽기의 결과는 정해져 있지 않다.',
-    },
   },
 };

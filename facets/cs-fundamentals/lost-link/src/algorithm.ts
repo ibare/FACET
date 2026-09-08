@@ -167,7 +167,7 @@ export const lostLink = async (ctx: FacetContext<LostLinkData>): Promise<void> =
       return;
     }
     if (rctx.cancelled) return;
-    await rctx.emit({ type: 'rewind', payload: { textKey: 'caption.start' } });
+    await rctx.emit({ type: 'rewind' });
     try {
       await rctx.waitForInput();
     } catch {

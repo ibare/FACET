@@ -71,9 +71,5 @@ export const pushPopTopFacet: FacetJson = {
       en: 'Last in, first out — the order out is the order in, reversed.',
       ko: '마지막에 들어온 것이 먼저 나온다. 나간 차례는 들어온 차례를 뒤집은 것이다.',
     },
-    'label.note': {
-      en: 'The well is drawn three slots deep. What makes it a stack is not the depth but the single opening.',
-      ko: '통은 세 칸만 그렸다. 스택을 스택이게 하는 것은 깊이가 아니라 문이 하나라는 점이다.',
-    },
   },
 };

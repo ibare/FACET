@@ -49,19 +49,12 @@ function indexFromTarget(target: unknown): number | null {
 
 export const linkedListProjector: ProjectorFactory = (views, runtime) => {
   const tr: Translate = runtime?.t ?? makeTranslator();
-  /** 상시 캡션. 두 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
-  const baseCaption = (): string =>
-    tr(
-      'caption.base',
-      'In a linked list every node holds a single finger pointing only at its own next — inserting or removing is not moving cards around but cutting and retying two or three fingers.',
-    );
   const stage = views.stage as unknown as LinkedListStage | undefined;
 
   return {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
     },
 
     async onEvent(event) {
@@ -176,7 +169,6 @@ export const linkedListProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
     },
   };
 };

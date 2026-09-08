@@ -78,18 +78,6 @@ export const asymmetricRsaFacet: FacetJson = {
       id: 'Alice menyegel amplop dengan gembok publik.',
       pt: 'Alice selou o envelope com o cadeado público.',
     },
-    'caption.base': {
-      en: 'RSA locks and unlocks a message with a pair of keys born from two large primes. The public padlock anyone holds can only lock, and only the private key its owner keeps can open it.',
-      ko: 'RSA 는 두 큰 소수에서 태어난 한 짝의 키로 메시지를 잠그고 푼다. 누구나 가진 공개 자물쇠로는 잠그기만 할 수 있고, 주인만 가진 비밀 열쇠로만 풀 수 있다.',
-      ja: 'RSA は二つの大きな素数から生まれた一対の鍵でメッセージを施錠・解錠する。誰もが持てる公開錠は施錠しかできず、持ち主だけが持つ秘密鍵でしか開けられない。',
-      zh: 'RSA 用一对由两个大素数所生的密钥来锁上和解开消息。人人都能拥有的公开锁只能上锁，只有主人保管的私钥才能打开。',
-      ar: 'يقفل RSA الرسالة ويفتحها بزوج مفاتيح وُلد من عددين أوليين كبيرين. القفل العام الذي يحمله الجميع لا يقفل إلا إقفالًا، ولا يفتحه إلا المفتاح الخاص الذي يحتفظ به صاحبه.',
-      es: 'RSA cierra y abre un mensaje con un par de claves nacidas de dos primos grandes. El candado público, que cualquiera puede tener, solo cierra; solo la llave privada que guarda su dueño puede abrirlo.',
-      fr: 'RSA verrouille et déverrouille un message avec une paire de clés nées de deux grands nombres premiers. Le cadenas public, que chacun peut détenir, ne fait que verrouiller ; seule la clé privée gardée par son propriétaire peut l\'ouvrir.',
-      hi: 'RSA दो बड़ी अभाज्य संख्याओं से जन्मी कुंजियों की एक जोड़ी से संदेश पर ताला लगाती और खोलती है। सबके पास रह सकने वाला सार्वजनिक ताला केवल बंद कर सकता है, और उसे केवल मालिक की निजी कुंजी ही खोल सकती है।',
-      id: 'RSA mengunci dan membuka pesan dengan sepasang kunci yang lahir dari dua bilangan prima besar. Gembok publik yang bisa dipegang siapa pun hanya dapat mengunci, dan hanya kunci privat milik pemiliknya yang dapat membukanya.',
-      pt: 'O RSA tranca e destranca uma mensagem com um par de chaves nascidas de dois primos grandes. O cadeado público, que qualquer um pode ter, só tranca; só a chave privada guardada pelo dono consegue abri-lo.',
-    },
     'caption.bobUnlocks': {
       en: 'Bob\'s private key opened the envelope and the plaintext came back.',
       ko: 'Bob 의 비밀 열쇠가 봉투를 열고 평문이 돌아왔다.',

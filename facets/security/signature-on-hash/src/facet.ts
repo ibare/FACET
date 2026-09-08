@@ -48,10 +48,6 @@ export const signatureOnHashFacet: FacetJson = {
     children: [{ ref: 'stage', padding: '8px 0' }, { ref: 'controls' }],
   },
   messages: {
-    'caption.base': {
-      en: 'The signature is made on the digest, not on the document.',
-      ko: '서명은 문서가 아니라 그 해시에 한다.',
-    },
     'caption.document': {
       en: 'The document can be any size at all.',
       ko: '문서는 얼마든지 커질 수 있다.',
@@ -71,10 +67,6 @@ export const signatureOnHashFacet: FacetJson = {
     'label.document': { en: 'document', ko: '문서' },
     'label.digest': { en: 'digest', ko: '해시' },
     'label.signature': { en: 'signature', ko: '서명' },
-    'label.note': {
-      en: 'Drawn to scale except the two small bars, which would be invisible. RSA cannot sign anything larger than its key at all.',
-      ko: '작은 두 막대만 빼고 실제 비율이다 — 그대로 그리면 보이지 않는다. RSA 는 애초에 키보다 큰 것을 직접 서명할 수 없다.',
-    },
   },
   blocks: {
     stage: { type: 'sign-hash-stage' },

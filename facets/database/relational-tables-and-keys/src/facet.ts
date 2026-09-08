@@ -134,18 +134,6 @@ export const relationalTablesAndKeysFacet: FacetJson = {
       id: '{alt} juga kunci kandidat — kali ini {pk} yang jadi kunci primer.',
       pt: '{alt} também era chave candidata — desta vez {pk} é a chave primária.',
     },
-    'caption.base': {
-      en: 'A table is a named grid gathering rows of the same shape; a primary key identifies one row uniquely, and a foreign key points at a primary key value in another grid, binding the two into one structure.',
-      ko: '테이블은 같은 형태의 행을 모은 이름 붙은 격자이고, 기본키가 한 행을 유일하게 식별하며 외래키가 다른 격자의 기본키 값을 가리켜 두 격자를 한 구조로 엮는다.',
-      ja: 'テーブルは同じ形の行を集めた名前つきの格子であり、主キーが一行を一意に定め、外部キーが別の格子の主キー値を指して二つを一つの構造に結び合わせる。',
-      zh: '表是一张有名字的格子，收拢形状相同的行；主键唯一地确定一行，外键指向另一张格子的主键值，把两者绑成一个结构。',
-      ar: 'الجدول شبكة مسمّاة تجمع صفوفًا متماثلة الشكل؛ المفتاح الأساسي يحدد صفًا واحدًا تحديدًا فريدًا، والمفتاح الأجنبي يشير إلى قيمة مفتاح أساسي في شبكة أخرى فيربط الاثنتين في بنية واحدة.',
-      es: 'Una tabla es una cuadrícula con nombre que reúne filas de la misma forma; una clave primaria identifica una fila de manera única y una clave foránea apunta al valor de una clave primaria de otra cuadrícula, ligando ambas en una sola estructura.',
-      fr: 'Une table est une grille nommée rassemblant des lignes de même forme ; une clé primaire identifie une ligne de façon unique, et une clé étrangère pointe vers une valeur de clé primaire d\'une autre grille, liant les deux en une seule structure.',
-      hi: 'तालिका एक नामित जाली है जो एक ही आकार की पंक्तियाँ समेटती है; प्राथमिक कुंजी एक पंक्ति को विशिष्ट रूप से पहचानती है, और विदेशी कुंजी दूसरी जाली के प्राथमिक कुंजी मान की ओर इशारा कर दोनों को एक संरचना में बाँधती है।',
-      id: 'Tabel adalah kisi bernama yang mengumpulkan baris-baris berbentuk sama; kunci primer mengenali satu baris secara unik, dan kunci asing menunjuk nilai kunci primer di kisi lain, mengikat keduanya menjadi satu struktur.',
-      pt: 'Uma tabela é uma grade nomeada que reúne linhas de mesma forma; uma chave primária identifica uma linha de modo único, e uma chave estrangeira aponta para um valor de chave primária de outra grade, ligando as duas numa só estrutura.',
-    },
     'caption.fkDangling': {
       en: 'There is no row for foreign key {value} to point at.',
       ko: '외래키 값 {value} 을 가리킬 행이 없다.',

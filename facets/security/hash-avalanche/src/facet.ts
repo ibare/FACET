@@ -58,10 +58,6 @@ export const hashAvalancheFacet: FacetJson = {
     children: [{ ref: 'stage', padding: '8px 0' }, { ref: 'controls' }],
   },
   messages: {
-    'caption.base': {
-      en: 'A hash turns a tiny change of the input into a completely different output.',
-      ko: '해시는 입력이 조금만 달라져도 출력이 통째로 달라진다.',
-    },
     'caption.result': {
       en: 'Only {inputFlipped} of {inputTotal} input bits differ, but {outputFlipped} of {outputTotal} output bits do.',
       ko: '입력은 {inputTotal} 비트 중 {inputFlipped} 비트만 달랐는데, 출력은 {outputTotal} 비트 중 {outputFlipped} 비트가 다르다.',
@@ -73,10 +69,6 @@ export const hashAvalancheFacet: FacetJson = {
     'label.through': {
       en: '↓  {algorithm}  ↓',
       ko: '↓  {algorithm}  ↓',
-    },
-    'label.note': {
-      en: 'The digests are real SHA-256 values, declared rather than computed — this screen takes no input.',
-      ko: '해시는 미리 계산해 선언한 실측 SHA-256 이다 — 이 화면은 입력을 받지 않는다.',
     },
   },
   blocks: {

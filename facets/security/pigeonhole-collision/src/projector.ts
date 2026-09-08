@@ -52,33 +52,6 @@ export const pigeonholeCollisionProjector: ProjectorFactory = (views, runtime) =
   const tr: Translate = runtime?.t ?? makeTranslator();
   const stage = views.stage as unknown as PigeonholeStage | undefined;
 
-  /** 상시 캡션. init 과 reset 두 곳에서 쓰이므로 en 원본은 여기 한 번만 둔다. */
-  const baseCaption = (): string =>
-    tr(
-      'caption.base',
-      'There are only so many places an output can land, so two inputs must eventually share one.',
-    );
-
-  /** 축척을 밝히는 각주. 줄여 보이는 것이지 실제 크기가 아니다. */
-  const noteScale = (): string =>
-    tr(
-      'label.noteScale',
-      'Shown with 16 places. SHA-256 has 2^256 — a larger number, the same counting.',
-    );
-
-  /**
-   * 이 배치가 최선의 경우임을 밝히는 각주.
-   *
-   * 자리마다 정확히 하나씩 앉는 일은 실제로는 백만 번에 한 번쯤 일어난다.
-   * 감추면 화면이 "해시는 고르게 퍼진다" 는 거짓을 말하게 되고, 밝히면 논증이
-   * 오히려 강해진다 — 가장 잘 나눠 담아도 실패한다는 뜻이 되므로.
-   */
-  const noteArrangement = (): string =>
-    tr(
-      'label.noteArrangement',
-      'This is the luckiest arrangement — one per place. In practice a collision shows up around the sixth input.',
-    );
-
   let slotCount = 0;
   let occupantInput = '';
   let overflowInput = '';
@@ -86,8 +59,6 @@ export const pigeonholeCollisionProjector: ProjectorFactory = (views, runtime) =
   return {
     onInit() {
       if (!stage) return;
-      stage.setBaseCaption(baseCaption());
-      stage.setNote(noteScale(), noteArrangement());
     },
 
     async onEvent(event) {
@@ -101,16 +72,12 @@ export const pigeonholeCollisionProjector: ProjectorFactory = (views, runtime) =
           occupantInput =
             init.fillers.find((f) => f.slot === init.overflow.slot)?.input ?? '';
           stage.init(init);
-          stage.setBaseCaption(baseCaption());
-          stage.setNote(noteScale(), noteArrangement());
           break;
         }
 
         case 'rewind': {
           // 손으로 짚기 시작 — 화면만 처음으로 돌린다. 데이터는 그대로다.
           stage.reset();
-          stage.setBaseCaption(baseCaption());
-          stage.setNote(noteScale(), noteArrangement());
           break;
         }
 
@@ -164,8 +131,6 @@ export const pigeonholeCollisionProjector: ProjectorFactory = (views, runtime) =
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
-      stage.setNote(noteScale(), noteArrangement());
     },
   };
 };

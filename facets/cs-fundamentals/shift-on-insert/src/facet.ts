@@ -66,9 +66,5 @@ export const shiftOnInsertFacet: FacetJson = {
       en: 'moved: {n}',
       ko: '옮긴 횟수: {n}',
     },
-    'label.note': {
-      en: 'Capacity 6 with one free slot at the end. A full array must grow first.',
-      ko: '용량은 6, 끝 칸 하나가 비어 있어 밀 자리가 있다. 꽉 찬 배열은 먼저 늘려야 한다.',
-    },
   },
 };

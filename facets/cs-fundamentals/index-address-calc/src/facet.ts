@@ -67,9 +67,5 @@ export const indexAddressCalcFacet: FacetJson = {
       en: 'Any index, the same one calculation. Nothing in between is read.',
       ko: '어느 번호를 넣어도 셈은 똑같이 한 번. 사이의 칸은 읽지 않는다.',
     },
-    'label.note': {
-      en: 'Declared, not measured: int32 elements ({unit} bytes) based at {base}.',
-      ko: '전제 — 원소는 int32({unit}바이트), 기준 주소는 {base}. 재지 않고 선언한 값이다.',
-    },
   },
 };

@@ -322,18 +322,6 @@ export const conditionalStatementFacet: FacetJson = {
       id: 'Peragaan otomatis — jalurnya berubah mengikuti nilai.',
       pt: 'Autodemonstração — o caminho muda com o valor.',
     },
-    'caption.base': {
-      en: 'A conditional is the promise that when running code reaches a fork it reads whether the current value is true or false, passes through exactly one branch, and then gathers back into a single line.',
-      ko: '조건문은 흐르던 코드가 갈림길에 도착했을 때, 지금의 값이 참인지 거짓인지를 보고 단 한 길만 골라 통과한 뒤 다시 한 줄로 모이는 약속이다.',
-      ja: '条件分岐とは、流れていたコードが分かれ道に着いたとき、いまの値が真か偽かを見てただ一つの道だけを通り抜け、そのあと再び一本の線に集まるという約束だ。',
-      zh: '条件语句是这样一个约定: 流动的代码走到岔路口时，看当前的值是真是假，只穿过其中一条路，随后再重新汇成一条线。',
-      ar: 'الشرط وعدٌ بأن الشيفرة الجارية حين تبلغ مفترقًا تقرأ إن كانت القيمة الحالية صحيحة أم خاطئة، فتعبر فرعًا واحدًا فقط، ثم تتجمّع ثانية في سطر واحد.',
-      es: 'Una condicional es la promesa de que, al llegar el código a una bifurcación, lee si el valor actual es verdadero o falso, pasa por exactamente una rama y después vuelve a reunirse en una sola línea.',
-      fr: 'Une conditionnelle est la promesse que, lorsque le code arrive à une bifurcation, il lit si la valeur courante est vraie ou fausse, passe par exactement une branche, puis se rassemble de nouveau en une seule ligne.',
-      hi: 'शर्त यह वादा है कि चलता हुआ कोड जब दोराहे पर पहुँचता है तो देखता है कि वर्तमान मान सत्य है या असत्य, ठीक एक ही शाखा से गुज़रता है, और फिर वापस एक ही रेखा में मिल जाता है।',
-      id: 'Percabangan adalah janji bahwa ketika kode yang berjalan tiba di persimpangan, ia membaca apakah nilai kini benar atau salah, melewati tepat satu cabang, lalu berkumpul lagi menjadi satu baris.',
-      pt: 'Uma condicional é a promessa de que, quando o código em execução chega a uma bifurcação, ele lê se o valor atual é verdadeiro ou falso, passa por exatamente um ramo e depois se reúne de novo numa só linha.',
-    },
     'caption.demoEnd': {
       en: 'Self-demonstration finished.',
       ko: '자동 시연 종료.',

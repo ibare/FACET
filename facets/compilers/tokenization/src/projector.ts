@@ -16,8 +16,7 @@
  * runner 가 자동 wire-up 하므로 projector 는 view 메서드 호출만 담당한다.
  */
 
-import type { LocaleStr, ProjectorFactory, Translate } from '@ffacet/core/runtime';
-import { makeTranslator } from '@ffacet/core/runtime';
+import type { LocaleStr, ProjectorFactory } from '@ffacet/core/runtime';
 import type {
   KindPalette,
   SwallowKind,
@@ -72,13 +71,6 @@ type StageView = {
 
 
 export const tokenizationProjector: ProjectorFactory = (views, runtime) => {
-  const tr: Translate = runtime?.t ?? makeTranslator();
-  /** 상시 캡션. 여러 곳에서 쓰이므로 en 원본 리터럴은 여기 한 번만 둔다. */
-  const baseCaption = (): string =>
-    tr(
-      'caption.base',
-      'Tokenization is the first stage of a compiler. It reads the source a character at a time from left to right and cuts it into the smallest units that carry meaning — taking the longest run it can, and leaving whitespace and comments as nothing but traces.',
-    );
   const stage = views.stage as unknown as StageView | undefined;
 
   function speedDiv(): number {
@@ -89,7 +81,6 @@ export const tokenizationProjector: ProjectorFactory = (views, runtime) => {
     onInit(_initialData) {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
     },
 
     async onEvent(event) {
@@ -242,7 +233,6 @@ export const tokenizationProjector: ProjectorFactory = (views, runtime) => {
     onReset() {
       if (!stage) return;
       stage.reset();
-      stage.setBaseCaption(baseCaption());
     },
   };
 };

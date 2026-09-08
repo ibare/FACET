@@ -19,7 +19,7 @@ import {
 
 /** 이 projector 가 무대에 요구하는 표면. */
 type ShiftStage = {
-  init(values: number[], usedText: string, text: { note: string; unused: string }): void;
+  init(values: number[], usedText: string, text: { unused: string }): void;
   setCaption(text: string): void;
   lift(index: number): Promise<void>;
   pull(from: number, to: number): Promise<void>;
@@ -43,10 +43,6 @@ export const shiftOnRemoveProjector: ProjectorFactory = (views, runtime): Projec
   /** 처음 상태를 놓는다. mount · reset · rewind 가 같은 자리에서 시작하도록 한 곳에 둔다. */
   const seed = (): void => {
     stage.init(values, usedText(values.length), {
-      note: tr(
-        'label.note',
-        'Only 5 slots are drawn; in general (length - index - 1) values move.',
-      ),
       unused: tr('label.unused', 'unused'),
     });
   };

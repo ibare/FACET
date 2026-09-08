@@ -66,8 +66,6 @@ export const lostLinkProjector: ProjectorFactory = (
    */
   function captionFor(key: string, vars: Record<string, string | number>): string {
     switch (key) {
-      case 'caption.start':
-        return tr('caption.start', 'Every node is reachable from head.', vars);
       case 'caption.staged':
         return tr('caption.staged', 'New node {node}({value}) is ready. Nothing points to it yet.', vars);
       case 'caption.wrongMove':
@@ -119,10 +117,6 @@ export const lostLinkProjector: ProjectorFactory = (
         tr('label.reachable', 'reachable from head'),
         tr('label.unreachable', 'still in memory, no way in'),
       );
-      stage?.setNote?.(
-        tr('label.note', 'Dropping below the line means unreachable, not moved.'),
-      );
-      stage?.setCaption?.(captionFor('caption.start', {}));
     },
 
     async onEvent(event: FacetRuntimeEvent): Promise<void> {

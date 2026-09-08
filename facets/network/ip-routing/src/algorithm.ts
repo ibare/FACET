@@ -201,13 +201,6 @@ export async function ipRouting(ctxBase: FacetContext<IpRoutingData>): Promise<v
       ttlWarnThreshold: data.ttlWarnThreshold,
     },
   });
-  await ctx.emit({
-    type: 'caption',
-    payload: {
-      textKey: 'caption.intro',
-      kind: 'concept',
-    },
-  });
   await ctx.emit({ type: 'phase', payload: { phase: 'demo' }, silent: true });
 
   /** ms sleep with cancel + interrupt detection. 반환: 입력이 들어오면 그 입력. */
