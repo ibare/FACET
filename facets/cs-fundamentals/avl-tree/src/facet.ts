@@ -42,9 +42,10 @@ export const avlTreeFacet: FacetJson = {
   projector: 'module:avlTreeProjector',
   initialData: {
     type: 'avl-tree',
-    // 시연에서 네 경우 중 셋이 나오는 순서다.
+    // 시연에서 네 경우 중 셋이 나오는 순서다. 단일 셋에 이중 하나.
     //   10·20·30  → RR (단일)
-    //   40·50     → 균형 유지
+    //   40        → 균형 유지
+    //   50        → RR (단일) — 30 이 −2 가 되어 한 번 더 돈다
     //   25        → RL (이중) ← 조각에 없던 걸음
     //   5·1       → LL (단일)
     seed: [10, 20, 30, 40, 50, 25, 5, 1],

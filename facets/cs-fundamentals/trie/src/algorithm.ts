@@ -36,10 +36,12 @@
  *
  * ── 메트릭 (facet.ts 의 metrics[].name 과 일치 — C5)
  *
- *   word-count · node-count · step-count
+ *   word-count · step-count
  *
- * `node-count` 가 이 화면의 조용한 논증이다 — 낱말을 넣을수록 자리는 그보다
- * 훨씬 덜 는다. 접두사를 공유하기 때문이다.
+ * 낱말을 넣을수록 자리는 그보다 훨씬 덜 는다 — 접두사를 공유하기 때문이다.
+ * 이것이 이 화면의 조용한 논증인데, 메트릭이 아니라 `done` 의 `nodes` 를 받은
+ * 크기 HUD 가 맡는다. 낱말 수와 자리 수를 **한 줄에 나란히** 놓아야 둘이 같이
+ * 늘지 않는다는 것이 보이고, 따로 떨어진 카운터로는 그 대비가 서지 않는다.
  */
 
 import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
