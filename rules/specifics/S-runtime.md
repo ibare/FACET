@@ -25,6 +25,17 @@ last_verified: 2026-09-05
 - `ctx.emit` 내부는 다음 순서를 지킨다 (현재 주체: `CoroutineMechanism.createContext` 의 `emit`): (1) paused/idle → 다음 신호 대기 → (2) `projector.onEvent` → (3) `silent` 이면 즉시 return → (4) stepping 이면 paused 로 전이 / playing 이면 속도 비례 지연.
 - `silent` 이벤트는 **BASE_DELAY 를 쓰지 않는다**. step boundary 도 아니다.
 - `CoroutineMechanism.reset()` 은 다음 순서로 수행한다: `cancelled = true` → 진행 중인 실행 완료 대기 → `cancelled = false` 복귀 → 데이터 in-place 복원 (참조 유지) → `metricsState.clear` → `hooks.onMetricsReset` → `hooks.onComplete(false)` → `hooks.onRunningChange(false)` → `projector.onReset?()` → `projector.onInit?(data)` → `setMode('idle')`. 이 순서는 "reset 후 즉시 재생 시 올바른 초기 상태" 를 보장.
+- `ReactiveMechanism.reset()` 도 같은 뼈대를 따르되 **끝에 `ensureStarted()` 를 부른다**:
+  `cancelled = true` → 진행 중 실행 완료 대기 → `cancelled = false` → 입력 큐 비움 →
+  데이터 in-place 복원 → `metricsState.clear` → `hooks.onMetricsReset` →
+  `hooks.onComplete(false)` → `projector.onReset?()` → **`projector.onInit?(data)`** →
+  `ensureStarted()`.
+  - 그래서 reactive facet 에서 **되돌리는 일이 곧 다시 재생하는 일**이다 (S-piece 의
+    `CONTROL.replay`). 조각이 `advance` 로 굴리는 되감기(`rewind` 이벤트)와는 다른
+    경로다 — 그쪽은 algorithm 이 스스로 발신하고 mechanism 을 타지 않는다.
+  - `onInit` 이 다시 불린다는 것이 요점이다. projector 가 `onInit` 에서 stage 를
+    처음부터 그리므로, `onReset` 에서 굳이 지우고 `onInit` 에서 다시 그리는 두 벌을
+    둘 필요가 없다. 이 사실이 문서에 없어 조각 하나가 코드를 읽고 알아냈다.
 - `shuffleOnReset: true` 인 facet 은 **mount 시점과 reset 시점 모두** initialData 의 최상위 배열 필드를 Fisher-Yates 로 셔플한다. 셔플 주체는 `CoroutineMechanism`.
 - `registerView` / `registerAlgorithm` / `registerProjector` / `registerFacets` 는 중복 키를 **조용히 덮어쓴다** (Map.set). 이 동작은 의도적이며 변경 시 영향 범위가 크므로 건드리지 않는다.
 - `stripPrefix(ref, 'module')` / `stripPrefix(ref, 'ir')` 로 참조 문자열의 prefix 를 제거한 뒤 레지스트리 조회.

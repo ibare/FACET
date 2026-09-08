@@ -21,6 +21,18 @@ last_verified: 2026-09-05
 - 폰트 크기 / 여백은 `fontSizes` / `space` / `radii` 토큰을 경유한다.
 - **화면에 그리는 문자열은 `params.t` 로 조회한다** (`t(key, 'en 원본', vars?)`). 러너가 `FacetJson.messages` 오버라이드를 얹은 조회기를 주입하므로, View 가 스스로 `makeTranslator` 를 부르면 저작자 문안을 보지 못한다. 러너 밖 mount 를 위한 fallback 은 `params.t ?? makeTranslator(params.locale)` 형태로만 둔다. 자세한 규약은 C10.
 - `FacetJson` 이 `LocaleStr` 로 주는 값 (`cfg.label`, `placeholder` 등) 은 `resolveLocale(value, params.locale)` 로 해석한다. 저작자가 준 값이 있으면 프레임워크 기본 라벨보다 우선한다.
+- **`destroy()` 는 관찰 가능한 뒷일을 남기지 않는다.** 그리고 **남기지 않는다고
+  적은 주석은 사실이어야 한다.**
+  - 스스로 다음 회차를 예약하는 루프(`setTimeout(tick, 16)` 꼴, rAF 루프)는
+    반드시 멈춘다. `destroyed` 플래그 하나와 타이머 집합이면 된다 — `find-root`
+    와 `path-compression` 의 `later()` / `clearRaf()` 가 그 본이다.
+  - 한 번만 걸고 끝나는 유한 타이머는, 깨어나서 이미 떨어져 나간 자기 노드만
+    건드린다면 두어도 된다. 러너는 마운트마다 새 캔버스를 만들므로 옛 타이머가
+    새 화면에 닿을 길이 없다.
+  - **다만 "타이머 없음" 이라 적어 놓고 타이머가 있으면 안 된다.** 조각 열에서
+    둘이 그랬다. 그 주석 한 줄이 다음 사람의 점검을 막는다 — 거두지 않기로 했다면
+    무엇을 왜 두는지를 적는다.
+
 - **SVG 캔버스를 쓰는 view 는 `CanvasView` 로 선언한다. 껍데기를 손수 만들지 않는다.** `canvas: { width?, height, fit? }` 를 선언하면 러너가 SVG 요소를 만들어 `params.canvas` 로 넘긴다. mount 시그니처가 그것을 필수로 받으므로 받고도 안 쓰는 일이 없다.
   - 껍데기를 view 마다 만들면 갈린다. 실제로 38곳이 갈렸고, 그중 하나가 폭을 CSS 로만 줘서 flex 슬롯 안에서 브라우저의 기본 intrinsic 폭 **300px** 로 떨어져 그림이 절반 아래로 눌렸다.
   - **컨테이너를 비우면 그 캔버스가 떨어져 나간다.** 러너의 `mountView` 는
