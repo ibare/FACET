@@ -44,6 +44,12 @@ export const merkleTreeConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The article claims one changed leaf can be located without rehashing everything. The path from that leaf to the root, and the untouched siblings beside it, is the claim.',
+      'The reader needs to see why a proof is short — only the siblings along one path are needed.',
+    ],
+
+
     avoidWhen: [
       'The article is about a hash chain or an append-only log. That shape spreads a change forward instead of confining it to a path.',
       'The subject is a binary search tree or any ordered structure. Nothing here is sorted and no lookup by key happens.',

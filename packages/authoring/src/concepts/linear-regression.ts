@@ -50,6 +50,12 @@ export const linearRegressionConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The reader should see that the line is chosen, not derived — moving slope and intercept and watching the error shrink is what "fitting" means.',
+      'The article is about why squared distances rather than plain ones, which needs the reader to see one far point dominate.',
+    ],
+
+
     avoidWhen: [
       'The article is about multiple regression or higher-dimensional features. There are two parameters here precisely so the loss surface can be drawn as a map.',
       'The subject is classification or logistic regression. The residual squares assume a continuous target.',

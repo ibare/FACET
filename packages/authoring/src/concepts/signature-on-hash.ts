@@ -45,6 +45,12 @@ export const signatureOnHashConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The article says a signature is a fixed size regardless of the document. That only makes sense once the reader sees the digest standing in for the document.',
+      'The reader wonders why a document is not signed directly, and the answer is a size and cost that no longer depends on the document.',
+    ],
+
+
     avoidWhen: [
       'The article is about which key signs and which verifies. That is direction, and it has its own screen.',
       'The subject is hash output length in general. This screen assumes fixed-length digests rather than demonstrating them.',

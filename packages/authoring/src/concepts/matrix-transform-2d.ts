@@ -52,6 +52,12 @@ export const matrixTransform2dConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The reader has been told the columns of a matrix are where the basis vectors land, and it has not become concrete. Moving the columns and watching everything follow is what makes it concrete.',
+      'The article is about linearity itself — that the grid stays a grid, evenly spaced and parallel, no matter what the matrix is.',
+    ],
+
+
     avoidWhen: [
       'The article is about 3D transforms or homogeneous coordinates. This plane is 2x2 and has no translation — the origin is fixed by construction.',
       'The subject is affine transformation including translation. Moving the origin is exactly what this cannot do.',

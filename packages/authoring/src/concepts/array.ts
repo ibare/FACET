@@ -55,6 +55,12 @@ export const arrayConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The prose says an index reaches any cell in one step, and the reader is likely to picture a search. This shows the address being computed rather than looked for.',
+      'The reader needs to feel why an insert in the middle costs more than an append — the shifting has to be watched, not asserted.',
+    ],
+
+
     avoidWhen: [
       'The article is about a linked structure where insertion costs nothing to shift. The shifting here is the point and would argue the opposite case.',
       'The subject is a hash map or dictionary. Both are indexed, but by a computed address rather than by position, and nothing on this screen represents a hash function.',

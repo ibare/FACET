@@ -50,6 +50,12 @@ export const bstConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The reader should feel that one comparison throws away half the tree. Driving searches and watching the discarded subtree fade is what turns that from a formula into a habit.',
+      'The article is about how the insertion order decides the shape. That needs the reader to type their own sequences and compare the results.',
+    ],
+
+
     avoidWhen: [
       'The article is about a self-balancing tree (AVL, red-black). This one never rotates, and its tilt gauge only reports the damage rather than repairing it.',
       'The subject is a heap. A heap is also a binary tree but orders parent against children, not left against right — the fold gesture here does not apply.',

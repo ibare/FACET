@@ -54,6 +54,12 @@ export const hashTableChainingConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The reader should find out what a collision actually costs — insert keys that land on the same slot and watch the chain grow, then look up through it.',
+      'The article is about the gap between average and worst case. Driving enough keys into one bucket is how that gap becomes visible rather than quoted.',
+    ],
+
+
     avoidWhen: [
       'The article is about open addressing (linear probing, quadratic probing, double hashing). Those are named in the side panel for contrast but never animated here.',
       'The subject is a cryptographic hash. The function box here exists to spread keys across slots, and nothing on screen speaks to collision resistance.',

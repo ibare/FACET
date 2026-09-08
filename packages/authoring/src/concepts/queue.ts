@@ -68,6 +68,12 @@ export const queueFifoConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The article needs the plainest possible statement that arrival order is departure order, with both ends visible at once.',
+      'The reader is about to meet something that uses a queue as its engine — a traversal, a scheduler, a buffer — and needs the order guarantee settled first.',
+    ],
+
+
     avoidWhen: [
       'The article is about a priority queue. Departure is decided by priority, not arrival, and the internals are a heap — this belt metaphor actively misleads.',
       'The point is the index wrap-around of a circular queue. This visualization is a straight belt and never shows the tail joining the head.',

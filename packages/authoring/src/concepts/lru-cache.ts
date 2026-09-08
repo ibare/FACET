@@ -51,6 +51,12 @@ export const lruCacheConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The article is about why a cache needs to know recency at all. Driving lookups and watching the untouched entry drift toward eviction is the argument.',
+      'The reader should see why one structure is not enough — the map answers "is it here" and the list answers "who goes first", and both are needed at once.',
+    ],
+
+
     avoidWhen: [
       'The article is about a different eviction policy (LFU, FIFO, random). The recency order shown here is exactly what those replace.',
       'The subject is a CDN or distributed cache. Those are about placement across machines; this is one cache\'s internal bookkeeping.',

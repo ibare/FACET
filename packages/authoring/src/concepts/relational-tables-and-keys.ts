@@ -50,6 +50,12 @@ export const relationalTablesAndKeysConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The reader treats a foreign key as a note rather than a binding. Following the value from one grid into another is what makes it a binding.',
+      'The article is about why a primary key must be unique, which shows the moment a duplicate makes a row unidentifiable.',
+    ],
+
+
     avoidWhen: [
       'The article is about SQL query syntax or the join algorithms underneath. This shows what a relationship is, not how a query engine resolves one.',
       'The subject is normalization forms. The tables here are given in their final shape and never decompose.',

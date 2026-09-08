@@ -51,6 +51,12 @@ export const cachingCdnConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The reader treats a cache as a single box. Watching a request travel past the near tier to an upstream one, and the copy staying behind on the way back, is what makes the tiers real.',
+      'The article distinguishes a hit from a miss in cost, not in outcome. The two paths have to be walked to see the difference.',
+    ],
+
+
     avoidWhen: [
       'The article is about an eviction policy — which entry a cache discards when full. This screen shows placement across a hierarchy and never fills an edge to capacity.',
       'The subject is DNS resolution or anycast routing. Those decide which edge a client reaches, and that choice is assumed here rather than shown.',

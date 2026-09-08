@@ -51,6 +51,12 @@ export const messagingPubsubConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The reader still pictures a sender choosing a receiver. Watching a message addressed to a topic and copied to every subscriber is what removes the receiver from the sender\'s view.',
+      'The article is about adding a consumer without touching the producer, which only shows when a new subscriber starts receiving mid-flow.',
+    ],
+
+
     avoidWhen: [
       'The article is about message durability, replay, or consumer offsets. This broker holds no log — a message that finds no subscriber is simply gone.',
       'The subject is point-to-point queuing where each message goes to exactly one consumer. The fan-out here is the opposite behaviour.',

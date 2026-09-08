@@ -49,6 +49,12 @@ export const pigeonholeCollisionConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The prose asserts collisions are unavoidable and the reader hears it as "rare". This settles it by counting rather than by exhibiting an example.',
+      'The article is about to distinguish existence from difficulty, and the existence half has to be beyond doubt first.',
+    ],
+
+
     avoidWhen: [
       'The article is about how sensitive a hash is to input changes. That is a different property and a different screen.',
       'The point is how expensive it is to find a collision — birthday bounds, 2^128 work. This shows that collisions exist, never how hard they are to find.',

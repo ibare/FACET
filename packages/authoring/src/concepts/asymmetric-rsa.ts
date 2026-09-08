@@ -51,6 +51,12 @@ export const asymmetricRsaConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The reader keeps collapsing the two keys into "a password". Watching one key lock and the other one open — and neither do the other job — is what separates them.',
+      'The article is about why a key can be published at all. That only lands when the published one visibly cannot open anything.',
+    ],
+
+
     avoidWhen: [
       'The article is about digital signatures. Signing inverts the roles of the two keys, and this screen only shows the encryption direction.',
       'The subject is TLS or certificate chains. Those use this idea but are about establishing trust between parties, which nothing here represents.',

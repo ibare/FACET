@@ -53,6 +53,12 @@ export const linkedListSinglyConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The article contrasts links with contiguous storage, and the reader needs to feel that reaching the tenth node means walking ten.',
+      'The reader should see what an insert costs here — relinking two references, with no shifting anywhere.',
+    ],
+
+
     avoidWhen: [
       'The article is about a doubly linked list. Every node here holds exactly one finger, and backwards traversal is precisely what this visualization cannot show.',
       'The subject is a circular list. The chain here ends, and nothing loops back to the head.',

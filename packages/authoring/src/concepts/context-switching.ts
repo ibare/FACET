@@ -52,6 +52,12 @@ export const contextSwitchingConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The prose says a switch "costs something" and the reader hears it as vague. Watching the registers be copied out and another set copied in makes the cost concrete.',
+      'The reader should understand what a process control block holds, which only means something while a switch is in progress.',
+    ],
+
+
     avoidWhen: [
       'The article is about scheduling policy — which flow runs next and why. The order here is fixed; this shows the mechanism of switching, not the choice.',
       'The subject is parallelism across cores. There is one stage, and that single occupancy is the premise.',

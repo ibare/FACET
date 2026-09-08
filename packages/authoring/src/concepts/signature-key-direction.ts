@@ -45,6 +45,12 @@ export const signatureKeyDirectionConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The reader has learned that the public key encrypts, and now the article says the private key signs. The same pair running in the opposite direction is the whole resolution.',
+      'The prose needs to establish that signing is not encryption before it can explain what a signature proves.',
+    ],
+
+
     avoidWhen: [
       'The article explains how RSA produces a key pair from two primes. That construction has its own screen; this one takes the pair as given.',
       'The subject is what gets signed and why it is small. That is the digest question and a separate screen.',

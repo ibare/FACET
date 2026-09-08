@@ -53,6 +53,12 @@ export const bubbleSortConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The article is a first encounter with sorting and needs the plainest possible mechanism — only adjacent pairs, nothing else.',
+      'The reader should see why the largest value is guaranteed to be settled after one pass, which is the invariant every later sort argument builds on.',
+    ],
+
+
     avoidWhen: [
       'The article is about an efficient sort (merge, quick, heap). This one exists to show the quadratic pattern, and its pass structure does not carry over to divide-and-conquer.',
       'The point is sorting stability or comparator design. Those are properties of the algorithm rather than anything this screen distinguishes.',

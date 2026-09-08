@@ -46,6 +46,12 @@ export const hashChainConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The article claims an append-only log is tamper-evident, and the reader wants to know what stops an edit. The mismatch spreading to the end is what stops it.',
+      'The reader should see that breaking one link is not a local problem — everything after it stops verifying.',
+    ],
+
+
     avoidWhen: [
       'The article is about consensus or mining. Making recomputation expensive is a separate mechanism layered on top of this one.',
       'The subject is a Merkle tree. Both fold hashes, but a tree localises a change to one path while a chain propagates it forward.',

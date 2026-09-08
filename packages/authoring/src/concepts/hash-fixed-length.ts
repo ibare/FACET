@@ -48,6 +48,12 @@ export const hashFixedLengthConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The reader has just met hashing and assumes a bigger input means a bigger digest. Feeding wildly different sizes into the same-width output settles that immediately.',
+      'The prose is about to argue something that depends on the output being bounded — storage cost, signature size, index width — and that premise needs to be visible first.',
+    ],
+
+
     avoidWhen: [
       'The article is about compression. A hash is the same size going out but cannot be unpacked, and treating it as compression is exactly the misreading to avoid.',
       'The point is that a hash cannot be reversed. Losing length is related but this screen never shows the one-way direction itself.',

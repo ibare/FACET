@@ -49,6 +49,12 @@ export const hashAvalancheConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The prose says a hash is sensitive to input, and the reader expects a small change to give a similar digest. Half the bits flipping at once corrects that expectation in one look.',
+      'The article is about why you cannot infer anything about an input from a digest close to another digest.',
+    ],
+
+
     avoidWhen: [
       'The article is about hash collisions or the pigeonhole argument. That is about two inputs sharing one output, which this screen never shows.',
       'The subject is the internal construction of a hash function — rounds, compression, Merkle-Damgard. Nothing here opens the box.',

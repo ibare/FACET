@@ -51,6 +51,12 @@ export const bfsConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The prose claims the traversal finds the shortest path, and the reader wants to know why. The frontier expanding one ring at a time is the reason, and it has to be seen expanding.',
+      'The reader needs to know what the queue is actually for here — it is the frontier, and its contents at each moment explain the visiting order.',
+    ],
+
+
     avoidWhen: [
       'The article is about weighted shortest paths (Dijkstra, A*). This traversal treats every edge as cost 1 and its layer structure would misrepresent them.',
       'The subject is depth-first traversal or backtracking. The wavefront here is the opposite shape and would work against the explanation.',

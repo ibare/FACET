@@ -51,6 +51,12 @@ export const tokenizationConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The article is about the longest match rule, which only shows when a shorter token would also have been valid and loses.',
+      'The reader should see that this stage neither understands nor validates — it only cuts, and the pieces mean nothing yet.',
+    ],
+
+
     avoidWhen: [
       'The article is about parsing, grammars, or syntax trees. This stage produces a flat sequence of tokens and has no structure above them.',
       'The subject is regular expressions as a language feature. The scanner uses that idea internally but nothing on screen represents a pattern.',

@@ -63,6 +63,12 @@ export const stackConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The reader should drive push and pop themselves until the order becomes an expectation rather than a rule they recite.',
+      'The article is about what happens at the edges — popping an empty stack, pushing a full one — which needs the reader to try it.',
+    ],
+
+
     avoidWhen: [
       'The article is about a deque or a double-ended structure. The entire point of this visualization is that there is exactly one active site.',
       'The article needs the reader to sit back and watch a run unfold on its own. This facet only advances when clicked.',

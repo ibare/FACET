@@ -50,6 +50,12 @@ export const conditionalStatementConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The reader is new enough to think every branch runs. Seeing exactly one path taken and the rest skipped is the point.',
+      'The article is about why the order of conditions matters — the first match wins, and later conditions are never even evaluated.',
+    ],
+
+
     avoidWhen: [
       'The article is about switch statements or pattern matching. Those dispatch on a value rather than evaluating conditions in order, and the top-down chain here would misrepresent them.',
       'The subject is loops or recursion. The flow here forks once and rejoins; nothing returns to an earlier point.',

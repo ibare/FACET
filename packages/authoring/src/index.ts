@@ -7,11 +7,17 @@
  *   1. 글에 들어갈 시각화 선택
  *      → `surface` (definition + exemplarKeywords). 호스트가 임베딩해
  *        글 ↔ 개념 매칭에 쓴다. `definitionHash` 로 바뀐 것만 재임베딩한다.
- *        `briefing.avoidWhen` 은 그 검색이 만드는 오검출을 되돌린다.
+ *        `briefing.avoidWhen` 은 그 검색이 만드는 오검출을 되돌리고,
+ *        `briefing.useWhen` 은 **같은 개념에 화면이 둘 있을 때** 어느 쪽인지를
+ *        가린다. definition 이 겹치는 둘 사이에서 검색은 답을 낼 수 없다.
  *
  *   2. 선택된 시각화의 내용을 writer 에게 전달
  *      → `briefing` (observable / screen / avoidWhen / contrastWith).
  *        선택이 끝난 뒤에만 쓰인다.
+ *
+ * 어느 필드도 FACET 의 내부 분류 어휘를 담지 않는다. 소비자는 여러 시각화
+ * 제공자를 함께 다루므로 이쪽 사정을 알 이유가 없고, 알아야 하는 구조라면
+ * 그것은 이쪽이 표현을 덜 한 것이다.
  *
  * 이 패키지는 어떤 워크스페이스 패키지도 import 하지 않는다. 소비자가 브라우저
  * 런타임이 아니라 호스트의 LLM 서버라서, 개념 메타를 읽는 대가로 View /

@@ -44,6 +44,12 @@ export const hashSaltConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The article explains why a leaked password database is not equally bad for every account. Two identical passwords storing two unrelated values is the reason.',
+      'The reader needs to see what a precomputed table cannot do once a per-account value is in the way.',
+    ],
+
+
     avoidWhen: [
       'The article is about how expensive it should be to test one password guess. That is work factor — bcrypt, scrypt, Argon2 — and salting does nothing for it.',
       'The subject is encryption of a password rather than hashing. Storing something you can decrypt is a different design with different failure modes.',

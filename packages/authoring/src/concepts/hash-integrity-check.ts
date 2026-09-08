@@ -46,6 +46,12 @@ export const hashIntegrityCheckConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The article tells the reader to verify a download and the reader does not see what verifying protects against. The two separate routes are the answer.',
+      'The prose needs to establish that publishing the hash on the same channel as the file protects nothing.',
+    ],
+
+
     avoidWhen: [
       'The article is about why the hash changes so completely. That property has its own screen; this one uses it rather than explaining it.',
       'The subject is digital signatures or certificates. Those establish who vouched for the hash, which nothing here shows.',

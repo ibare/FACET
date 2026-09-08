@@ -50,6 +50,12 @@ export const ipRoutingConcept: FacetConceptSource = {
       ],
     },
 
+    useWhen: [
+      'The reader imagines a router knowing the whole path. Watching each hop consult only its own table and forget the packet is what breaks that picture.',
+      'The article is about longest-prefix match, which only means something when several entries match at once and one has to win.',
+    ],
+
+
     avoidWhen: [
       'The article is about routing protocols (BGP, OSPF, RIP) — how tables come to hold what they hold. The tables here are given and never change.',
       'The subject is NAT, firewalls, or packet inspection. Nothing here rewrites or examines a packet beyond its destination.',
