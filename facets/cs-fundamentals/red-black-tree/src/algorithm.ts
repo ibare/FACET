@@ -274,7 +274,10 @@ export async function redBlackTree(ctx: FacetContext<RedBlackTreeData>): Promise
       ctx.metric('compare-count', 'inc');
       if (!(await pause())) return false;
       if (cmp === 'eq') {
-        await rc.emit({ type: 'miss', payload: { key } });
+        // 여기서 `miss` 를 보내면 안 된다. 바로 위 compare(eq) 가 이미 "이 키는
+        // 여기 있다" 고 말했는데 miss 는 "나무에 없다" 로 옮겨져, 화면이 한
+        // 걸음 사이에 서로 어긋나는 두 말을 한다. 이미 있다는 것은 compare 가
+        // 말했으므로 여기서는 더 보탤 것이 없다.
         return pause();
       }
       parentId = cur;
