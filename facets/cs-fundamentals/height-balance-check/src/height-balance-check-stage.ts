@@ -30,7 +30,14 @@ const NODE_R = 17;
 const GHOST_R = 8;
 const GHOST_DX = 34;
 const GHOST_DY = 54;
-const BOTTOM_PAD = 40;
+/**
+ * 마지막 층 아래로 남기는 자리.
+ *
+ * 노드 반지름만으로는 모자란다 — 잎 아래에도 유령 자리(없는 자식)가
+ * `GHOST_DY` 만큼 내려가 붙고 거기서 높이 0 이 올라오기 때문이다. 그 자리와
+ * 배지까지 담아야 한다.
+ */
+const BOTTOM_PAD = 90;
 const RISE_MS = 420;
 const MERGE_MS = 180;
 
@@ -71,7 +78,9 @@ function svgEl<K extends keyof SVGElementTagNameMap>(
 }
 
 export const heightBalanceCheckStageView: CanvasView = {
-  canvas: { height: 400 },
+  // mount 에서 나무의 실제 깊이로 viewBox 를 다시 잰다. 이 값은 그 전까지의
+  // 자리표일 뿐이지만, 다시 잰 값보다 짧으면 첫 프레임이 눌려 보인다.
+  canvas: { height: 450 },
   mount(
     _container: HTMLElement,
     params: ViewMountParams & { canvas: SVGSVGElement },
