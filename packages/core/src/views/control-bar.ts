@@ -79,6 +79,12 @@ const K = {
   pause: 'view.controlBar.pause',
   reset: 'view.controlBar.reset',
   speed: 'view.controlBar.speed',
+  replay: 'view.controlBar.replay',
+  advance: 'view.controlBar.advance',
+  autoDemo: 'view.controlBar.auto-demo',
+  search: 'view.controlBar.search',
+  insert: 'view.controlBar.insert',
+  remove: 'view.controlBar.remove',
 } as const;
 
 function buttonLabels(tr: Translate): Record<ButtonId, string> {
@@ -87,6 +93,25 @@ function buttonLabels(tr: Translate): Record<ButtonId, string> {
     step: tr(K.step, '⏭ Step'),
     pause: tr(K.pause, '⏸ Pause'),
     reset: tr(K.reset, '↺ Reset'),
+  };
+}
+
+/**
+ * 표준 넷 밖의 컨트롤 라벨. 액션명으로 색인한다.
+ *
+ * en 원본이 여기 있어야 하는 이유: `makeTranslator` 는 SOURCE_LOCALE('en') 이면
+ * 번들을 보지 않는다 — en 의 정본은 코드이고 `messages/en.json` 은 그것을
+ * `gen-messages` 로 추출한 산출물이다. 원본 없이 키만 두면 en 에서 fallback
+ * (액션명)이 그대로 화면에 찍힌다.
+ */
+function extraLabels(tr: Translate): Record<string, string> {
+  return {
+    replay: tr(K.replay, '↻ Replay'),
+    advance: tr(K.advance, '⏭ Step'),
+    'auto-demo': tr(K.autoDemo, '▶ Auto demo'),
+    search: tr(K.search, 'Search'),
+    insert: tr(K.insert, 'Insert'),
+    remove: tr(K.remove, 'Remove'),
   };
 }
 
@@ -101,6 +126,7 @@ export const controlBarView: View = {
     const colors = getColors(params.theme);
     const tr = params.t ?? makeTranslator(params.locale);
     const btnLabels = buttonLabels(tr);
+    const extra = extraLabels(tr);
     const speedText = tr(K.speed, 'Speed');
 
     const root = document.createElement('div');
@@ -170,7 +196,10 @@ export const controlBarView: View = {
      */
     function labelFor(c: ControlSpec, fallback: string): string {
       if (c.label !== undefined) return resolveLocale(c.label, params.locale);
-      if (typeof c.labelKey === 'string') return tr(c.labelKey, fallback);
+      if (typeof c.labelKey === 'string') {
+        const seg = c.labelKey.slice(c.labelKey.lastIndexOf('.') + 1);
+        return extra[seg] ?? tr(c.labelKey, fallback);
+      }
       return fallback;
     }
 
@@ -188,7 +217,7 @@ export const controlBarView: View = {
         } else {
           // facet 고유 button — onAction 채널로 통과. 라벨은 label → labelKey →
           // view.controlBar.<action> → action 명 순으로 정해진다.
-          const label = labelFor(c, tr(`view.controlBar.${action}`, action));
+          const label = labelFor(c, extra[action] ?? tr(`view.controlBar.${action}`, action));
           const btn = makeButton(action, label, colors);
           btn.addEventListener('click', () => {
             const payload = { ...inputState };
