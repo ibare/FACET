@@ -28,7 +28,7 @@ import {
   fontSizes,
   getColors,
   type Palette,
-  type View,
+  type CanvasView,
   type ViewInstance,
   type ViewMountParams,
 } from '@ffacet/core/runtime';
@@ -158,21 +158,18 @@ function wrapCaption(text: string): string[] {
   return lines.slice(0, 2);
 }
 
-export const lostLinkStageView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const lostLinkStageView: CanvasView = {
+  canvas: { height: H },
+  mount(
+    _container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     const colors: Palette = getColors(params.theme);
 
-    const svg = svgEl('svg', {
-      viewBox: `0 0 ${W} ${H}`,
-      width: '100%',
-      preserveAspectRatio: 'xMidYMid meet',
-      role: 'img',
-    });
-    svg.style.display = 'block';
-    svg.style.maxWidth = `${W}px`;
-    svg.style.margin = '0 auto';
+    const svg = params.canvas;
+    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    svg.setAttribute('role', 'img');
     svg.style.fontFamily = fonts.body;
-    container.appendChild(svg);
 
     let nodes: NodeBox[] = [];
     let links: Link[] = [];

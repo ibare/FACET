@@ -52,11 +52,6 @@ export const hashAvalancheFacet: FacetJson = {
     stepMs: 900,
   },
   shuffleOnReset: false,
-  layout: {
-    type: 'column',
-    gap: 8,
-    children: [{ ref: 'stage', padding: '8px 0' }, { ref: 'controls' }],
-  },
   messages: {
     'caption.result': {
       en: 'Only {inputFlipped} of {inputTotal} input bits differ, but {outputFlipped} of {outputTotal} output bits do.',

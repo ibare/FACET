@@ -28,7 +28,7 @@
  */
 
 import { PIECE_CANVAS_W, fonts, fontSizes, getColors } from '@ffacet/core/runtime';
-import type { Palette, View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import type { Palette, CanvasView, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
 
 const NS = 'http://www.w3.org/2000/svg';
 
@@ -158,20 +158,18 @@ function arcSplit(a: Arc, t: number): { d: string; end: Pt } {
   };
 }
 
-export const nodePointsNextStageView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const nodePointsNextStageView: CanvasView = {
+  canvas: { height: H },
+  mount(
+    _container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     const c: Palette = getColors(params.theme);
 
     let destroyed = false;
     const frames = new Set<number>();
 
-    const svg = document.createElementNS(NS, 'svg');
-    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    svg.setAttribute('width', '100%');
-    svg.style.display = 'block';
-    svg.style.maxWidth = `${W}px`;
-    svg.style.margin = '0 auto';
-    container.appendChild(svg);
+    const svg = params.canvas;
 
     function el<K extends keyof SVGElementTagNameMap>(
       parent: Element,

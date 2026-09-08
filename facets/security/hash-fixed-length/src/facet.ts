@@ -68,11 +68,6 @@ export const hashFixedLengthFacet: FacetJson = {
     stepMs: 1200,
   },
   shuffleOnReset: false,
-  layout: {
-    type: 'column',
-    gap: 8,
-    children: [{ ref: 'stage', padding: '8px 0' }, { ref: 'controls' }],
-  },
   messages: {
     'caption.inputsVary': {
       en: 'The inputs run from nothing to {bytes} bytes.',

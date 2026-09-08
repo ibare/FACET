@@ -58,7 +58,14 @@ export {
 } from '../views/design-tokens.js';
 export type { Theme, Palette, CategoricalTone } from '../views/design-tokens.js';
 export { CONTROL, CONTROL_SET } from '../views/control-presets.js';
-export type { View, ViewInstance, ViewMountParams } from '../views/types.js';
+export type {
+  CanvasView,
+  PlainView,
+  View,
+  ViewCanvasSpec,
+  ViewInstance,
+  ViewMountParams,
+} from '../views/types.js';
 export type { BarItemState, BarChartFeature } from '../views/bar-chart.js';
 export type { GraphData, GraphPositions, GraphNodeState, GraphEdgeState, GraphLayoutFeature } from '../views/graph-layout.js';
 export type { ConveyorQueueFeature, ConveyorQueueItem } from '../views/conveyor-queue.js';

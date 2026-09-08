@@ -31,7 +31,7 @@ import {
   getColors,
   makeTranslator,
   PIECE_CANVAS_W,
-  type View,
+  type CanvasView,
   type ViewInstance,
   type ViewMountParams,
 } from '@ffacet/core/runtime';
@@ -119,8 +119,12 @@ type NodeParts = {
   rect: SVGRectElement;
 };
 
-export const traverseFromHeadStageView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const traverseFromHeadStageView: CanvasView = {
+  canvas: { height: H },
+  mount(
+    container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     container.textContent = '';
     const colors = getColors(params.theme);
     const tr = params.t ?? makeTranslator(params.locale);
@@ -145,15 +149,10 @@ export const traverseFromHeadStageView: View = {
     root.style.width = '100%';
     root.style.fontFamily = fonts.body;
 
-    const canvas = svg('svg', {
-      viewBox: `0 0 ${W} ${H}`,
-      role: 'img',
-      preserveAspectRatio: 'xMidYMid meet',
-    });
-    canvas.style.width = '100%';
-    canvas.style.maxWidth = `${W}px`;
-    canvas.style.height = 'auto';
-    canvas.style.display = 'block';
+    // 러너가 슬롯에 붙여 준 캔버스를 root 안으로 옮긴다.
+    const canvas = params.canvas;
+    canvas.setAttribute('role', 'img');
+    canvas.setAttribute('preserveAspectRatio', 'xMidYMid meet');
 
     // ── 화살촉. 지나온 링크는 다른 촉을 쓴다 (marker 는 색을 물려받지 못한다).
     const defs = svg('defs');

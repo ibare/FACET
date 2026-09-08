@@ -54,11 +54,6 @@ export const hashSaltFacet: FacetJson = {
     stepMs: 1000,
   },
   shuffleOnReset: false,
-  layout: {
-    type: 'column',
-    gap: 8,
-    children: [{ ref: 'stage', padding: '8px 0' }, { ref: 'controls' }],
-  },
   messages: {
     'caption.samePassword': {
       en: 'Both chose the same password.',

@@ -21,7 +21,7 @@ import {
   fontSizes,
   radii,
   PIECE_CANVAS_W,
-  type View,
+  type CanvasView,
   type ViewInstance,
   type ViewMountParams,
 } from '@ffacet/core/runtime';
@@ -77,17 +77,16 @@ function el<K extends keyof SVGElementTagNameMap>(
   return node;
 }
 
-export const shiftOnRemoveStageView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const shiftOnRemoveStageView: CanvasView = {
+  canvas: { height: CANVAS_H },
+  mount(
+    container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     const c = getColors(params.theme);
     const rx = Number.parseInt(radii.md, 10);
 
-    const svg = el('svg', { viewBox: `0 0 ${PIECE_CANVAS_W} ${CANVAS_H}`, width: '100%' });
-    svg.style.display = 'block';
-    svg.style.width = '100%';
-    svg.style.height = 'auto';
-    svg.style.maxWidth = `${PIECE_CANVAS_W}px`;
-    svg.style.setProperty('margin-inline', 'auto');
+    const svg = params.canvas;
 
     const slotsLayer = el('g', {});
     const bracketLayer = el('g', {});
@@ -125,7 +124,6 @@ export const shiftOnRemoveStageView: View = {
     bracketLayer.append(bar, tickL, tickR, usedLabel);
 
     svg.append(slotsLayer, bracketLayer, chipsLayer, caption, note);
-    container.appendChild(svg);
 
     let slots: SVGRectElement[] = [];
     let indexLabels: SVGTextElement[] = [];

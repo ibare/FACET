@@ -22,7 +22,7 @@
  *   - 캡션 — palette.text
  */
 
-import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import type { CanvasView, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
 import { getColors, fonts, fontSizes, PIECE_CANVAS_W } from '@ffacet/core/runtime';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -88,19 +88,19 @@ type Grid = {
   cells: SVGRectElement[];
 };
 
-export const avalancheStageView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const avalancheStageView: CanvasView = {
+  canvas: { height: H },
+  mount(
+    _container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     const palette = getColors(params.theme);
 
     const BIT_ON = palette.textMuted;
     const BIT_OFF = palette.bgSubtle;
     const BIT_DIFF = palette.accent;
 
-    const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, width: '100%', role: 'img' });
-    svg.style.maxWidth = `${W}px`;
-    svg.style.display = 'block';
-    svg.style.margin = '0 auto';
-    container.appendChild(svg);
+    const svg = params.canvas;
 
     function text(
       x: number,

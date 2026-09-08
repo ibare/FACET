@@ -31,11 +31,6 @@ export const relinkInsertFacet: FacetJson = {
     // 걸음 사이에 읽을 시간을 준다. 조각은 지나가는 사람이 보는 그림이다.
     stepMs: 1200,
   },
-  layout: {
-    type: 'column',
-    gap: 4,
-    children: [{ ref: 'stage' }, { ref: 'controls' }],
-  },
   blocks: {
     stage: { type: 'relink-insert-stage' },
     controls: {

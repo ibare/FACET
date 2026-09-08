@@ -72,11 +72,6 @@ export const pigeonholeCollisionFacet: FacetJson = {
     stepMs: 1400,
   },
   shuffleOnReset: false,
-  layout: {
-    type: 'column',
-    gap: 8,
-    children: [{ ref: 'stage', padding: '8px 0' }, { ref: 'controls' }],
-  },
   messages: {
     'caption.filled': {
       en: 'Spread as evenly as possible — one per place — all {count} are taken.',

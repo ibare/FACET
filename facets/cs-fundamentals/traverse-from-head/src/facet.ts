@@ -31,11 +31,6 @@ export const traverseFromHeadFacet: FacetJson = {
     /** 걸음 사이 읽을 시간. */
     stepMs: 900,
   },
-  layout: {
-    type: 'column',
-    gap: 8,
-    children: [{ ref: 'stage' }, { ref: 'controls' }],
-  },
   blocks: {
     stage: { type: 'traverse-from-head-stage' },
     controls: {

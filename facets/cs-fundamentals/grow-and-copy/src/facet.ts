@@ -33,11 +33,6 @@ export const growAndCopyFacet: FacetJson = {
     newCapacity: 8,
     incoming: 4,
   },
-  layout: {
-    type: 'column',
-    gap: 4,
-    children: [{ ref: 'stage' }, { ref: 'controls' }],
-  },
   blocks: {
     stage: { type: 'grow-and-copy-stage' },
     controls: { type: 'control-bar', controls: [CONTROL.replay, CONTROL.advance] },

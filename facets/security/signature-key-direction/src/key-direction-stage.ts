@@ -17,7 +17,7 @@
  *   - 교차선과 "한 사람" 표시 — palette.accent
  */
 
-import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import type { CanvasView, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
 import { getColors, fonts, fontSizes, categorical, PIECE_CANVAS_W } from '@ffacet/core/runtime';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -61,19 +61,19 @@ function el<K extends keyof SVGElementTagNameMap>(
   return node;
 }
 
-export const keyDirectionStageView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const keyDirectionStageView: CanvasView = {
+  canvas: { height: H },
+  mount(
+    _container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     const palette = getColors(params.theme);
     const cat = categorical(8, 'vivid');
     const LOCK = cat[3] ?? palette.primary;
     const KEY = cat[6] ?? palette.accent;
     const HOT = palette.accent;
 
-    const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, width: '100%', role: 'img' });
-    svg.style.maxWidth = `${W}px`;
-    svg.style.display = 'block';
-    svg.style.margin = '0 auto';
-    container.appendChild(svg);
+    const svg = params.canvas;
 
     function text(
       x: number,

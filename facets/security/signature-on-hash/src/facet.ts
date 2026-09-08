@@ -42,11 +42,6 @@ export const signatureOnHashFacet: FacetJson = {
     stepMs: 1100,
   },
   shuffleOnReset: false,
-  layout: {
-    type: 'column',
-    gap: 8,
-    children: [{ ref: 'stage', padding: '8px 0' }, { ref: 'controls' }],
-  },
   messages: {
     'caption.document': {
       en: 'The document can be any size at all.',

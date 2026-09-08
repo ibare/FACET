@@ -33,11 +33,6 @@ export const indexAddressCalcFacet: FacetJson = {
     probeB: 5,
     stepMs: 520,
   },
-  layout: {
-    type: 'column',
-    gap: 4,
-    children: [{ ref: 'stage' }, { ref: 'controls' }],
-  },
   blocks: {
     stage: { type: 'address-calc-stage' },
     controls: { type: 'control-bar', controls: [CONTROL.replay, CONTROL.advance] },

@@ -38,11 +38,6 @@ export const nodePointsNextFacet: FacetJson = {
       { addr: '0x0180', value: 8, next: null },
     ],
   },
-  layout: {
-    type: 'column',
-    gap: 4,
-    children: [{ ref: 'stage' }, { ref: 'controls' }],
-  },
   blocks: {
     stage: { type: 'node-points-next-stage' },
     controls: { type: 'control-bar', controls: [CONTROL.replay, CONTROL.advance] },

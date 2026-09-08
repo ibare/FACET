@@ -37,12 +37,6 @@ export const outOfBoundsFacet: FacetJson = {
     stepMs: 780,
   },
 
-  layout: {
-    type: 'column',
-    gap: 8,
-    align: 'center',
-    children: [{ ref: 'stage' }, { ref: 'controls' }],
-  },
 
   blocks: {
     stage: { type: 'out-of-bounds-stage' },

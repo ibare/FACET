@@ -21,7 +21,7 @@ import {
   fontSizes,
   PIECE_CANVAS_W,
   type Palette,
-  type View,
+  type CanvasView,
   type ViewInstance,
   type ViewMountParams,
 } from '@ffacet/core/runtime';
@@ -117,20 +117,15 @@ function quad(t: number, p0: number, p1: number, p2: number): number {
   return u * u * p0 + 2 * u * t * p1 + t * t * p2;
 }
 
-export const addressCalcStageView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const addressCalcStageView: CanvasView = {
+  canvas: { height: H },
+  mount(
+    _container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     const colors: Palette = getColors(params.theme);
 
-    const wrap = document.createElement('div');
-    wrap.style.display = 'flex';
-    wrap.style.justifyContent = 'center';
-    wrap.style.width = '100%';
-
-    const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, width: '100%' });
-    svg.style.maxWidth = `${W}px`;
-    svg.style.display = 'block';
-    wrap.appendChild(svg);
-    container.appendChild(wrap);
+    const svg = params.canvas;
 
     const gCells = el('g', {});
     const gRail = el('g', {});
@@ -461,7 +456,7 @@ export const addressCalcStageView: View = {
       destroy() {
         for (const handle of [...pending]) handle.cancel();
         pending.clear();
-        wrap.remove();
+        svg.replaceChildren();
       },
     };
   },

@@ -3,7 +3,14 @@
  * @ffacet/core 에 내장된 표준 뷰들을 자동 등록.
  */
 
-import type { View, ViewInstance, ViewMountParams } from './types.js';
+import type {
+  CanvasView,
+  PlainView,
+  View,
+  ViewCanvasSpec,
+  ViewInstance,
+  ViewMountParams,
+} from './types.js';
 import { titleBlockView } from './title-block.js';
 import { textDisplayView } from './text-display.js';
 import { controlBarView } from './control-bar.js';
@@ -57,7 +64,7 @@ export function registerBuiltinViews(): void {
 // 기본 뷰는 import 시 자동 등록
 registerBuiltinViews();
 
-export type { View, ViewInstance, ViewMountParams };
+export type { CanvasView, PlainView, View, ViewCanvasSpec, ViewInstance, ViewMountParams };
 export {
   titleBlockView,
   textDisplayView,

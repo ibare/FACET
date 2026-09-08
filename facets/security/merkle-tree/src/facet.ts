@@ -62,11 +62,6 @@ export const merkleTreeFacet: FacetJson = {
     stepMs: 1300,
   },
   shuffleOnReset: false,
-  layout: {
-    type: 'column',
-    gap: 8,
-    children: [{ ref: 'stage', padding: '8px 0' }, { ref: 'controls' }],
-  },
   messages: {
     'caption.leaves': {
       en: 'Each file gets its own hash.',

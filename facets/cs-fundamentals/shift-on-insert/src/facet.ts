@@ -31,12 +31,6 @@ export const shiftOnInsertFacet: FacetJson = {
     /** 걸음 사이에 읽을 시간 (S-piece — 간격도 저작 결정이다). */
     stepMs: 700,
   },
-  layout: {
-    type: 'column',
-    gap: 8,
-    align: 'stretch',
-    children: [{ ref: 'stage' }, { ref: 'controls' }],
-  },
   blocks: {
     stage: { type: 'shift-on-insert-stage' },
     controls: { type: 'control-bar', controls: CONTROL_SET.piece },

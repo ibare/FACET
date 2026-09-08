@@ -32,11 +32,6 @@ export const lostLinkFacet: FacetJson = {
     insertAfter: 'A',
     stepMs: 850,
   },
-  layout: {
-    type: 'column',
-    gap: 4,
-    children: [{ ref: 'stage' }, { ref: 'controls' }],
-  },
   blocks: {
     stage: { type: 'lost-link-stage' },
     controls: {

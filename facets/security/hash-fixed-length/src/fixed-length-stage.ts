@@ -25,7 +25,7 @@
  *   - 각주 — palette.textMuted
  */
 
-import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import type { CanvasView, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
 import { getColors, fonts, fontSizes, PIECE_CANVAS_W } from '@ffacet/core/runtime';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -78,16 +78,16 @@ function el<K extends keyof SVGElementTagNameMap>(
   return node;
 }
 
-export const fixedLengthStageView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const fixedLengthStageView: CanvasView = {
+  canvas: { height: H },
+  mount(
+    _container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     const palette = getColors(params.theme);
     const HOT = palette.accent;
 
-    const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, width: '100%', role: 'img' });
-    svg.style.maxWidth = `${W}px`;
-    svg.style.display = 'block';
-    svg.style.margin = '0 auto';
-    container.appendChild(svg);
+    const svg = params.canvas;
 
     // 입력 열을 넘치는 글자에서 끊는 클립. 잘림 자체가 "더 길다" 는 표시다.
     const defs = el('defs');

@@ -34,11 +34,6 @@ export const pushPopTopFacet: FacetJson = {
     /** 곱씹어야 하는 걸음 (막힘 · 길이 열림) 뒤에 더 머무는 시간. */
     holdMs: 900,
   },
-  layout: {
-    type: 'column',
-    gap: 8,
-    children: [{ ref: 'stage' }, { ref: 'controls' }],
-  },
   blocks: {
     stage: { type: 'push-pop-top-stage' },
     controls: {

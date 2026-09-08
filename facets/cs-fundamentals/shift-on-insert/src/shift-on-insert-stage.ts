@@ -27,7 +27,7 @@ import {
   lightColors,
   makeTranslator,
   type Palette,
-  type View,
+  type CanvasView,
   type ViewInstance,
   type ViewMountParams,
 } from '@ffacet/core/runtime';
@@ -79,20 +79,17 @@ export type ShiftStageData = {
   incoming: number;
 };
 
-export const shiftOnInsertStageView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const shiftOnInsertStageView: CanvasView = {
+  canvas: { height: H },
+  mount(
+    container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     container.textContent = '';
     const colors: Palette = getColors(params.theme);
     const tr = params.t ?? makeTranslator(params.locale);
 
-    const svg = document.createElementNS(SVG_NS, 'svg');
-    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    svg.setAttribute('width', '100%');
-    svg.style.display = 'block';
-    svg.style.maxWidth = `${W}px`;
-    svg.style.margin = '0 auto';
-    svg.style.fontFamily = fonts.body;
-    container.appendChild(svg);
+    const svg = params.canvas;
 
     // ── 시간 관리. reset 이 애니메이션 도중에 들어와도 걸린 promise 를 풀어 주고,
     //    세대(gen) 가 바뀐 뒤의 뒷처리는 화면에 손대지 않는다.

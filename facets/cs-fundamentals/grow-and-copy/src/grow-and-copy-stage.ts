@@ -19,7 +19,7 @@ import {
   fontSizes,
   space,
   PIECE_CANVAS_W,
-  type View,
+  type CanvasView,
   type ViewInstance,
   type ViewMountParams,
 } from '@ffacet/core/runtime';
@@ -100,8 +100,12 @@ export type GrowAndCopyStageInit = {
 const tf = (x: number, y: number, sx = 1, sy = 1): string =>
   `translate(${x}px, ${y}px) scale(${sx}, ${sy})`;
 
-export const growAndCopyStageView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const growAndCopyStageView: CanvasView = {
+  canvas: { height: H },
+  mount(
+    container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     container.textContent = '';
     const colors = getColors(params.theme);
 
@@ -114,11 +118,8 @@ export const growAndCopyStageView: View = {
     root.style.width = '100%';
     root.style.fontFamily = fonts.body;
 
-    const svg = document.createElementNS(SVG_NS, 'svg');
-    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    svg.setAttribute('width', '100%');
-    svg.style.maxWidth = `${W}px`;
-    svg.style.display = 'block';
+    // 러너가 슬롯에 붙여 준 캔버스를 root 안으로 옮긴다 — 아래에 캡션 DOM 이 붙는다.
+    const svg = params.canvas;
     root.appendChild(svg);
 
     const captionEl = document.createElement('div');

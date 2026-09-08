@@ -51,11 +51,6 @@ export const hashIntegrityCheckFacet: FacetJson = {
     stepMs: 1500,
   },
   shuffleOnReset: false,
-  layout: {
-    type: 'column',
-    gap: 8,
-    children: [{ ref: 'stage', padding: '8px 0' }, { ref: 'controls' }],
-  },
   messages: {
     'caption.split': {
       en: 'Two routes leave the origin — the file, and its hash.',

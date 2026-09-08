@@ -25,7 +25,7 @@ import {
   fonts,
   getColors,
   shiftLightness,
-  type View,
+  type CanvasView,
   type ViewInstance,
   type ViewMountParams,
 } from '@ffacet/core/runtime';
@@ -133,8 +133,12 @@ type BlockEl = {
   slot: number;
 };
 
-export const pushPopTopStageView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const pushPopTopStageView: CanvasView = {
+  canvas: { height: H },
+  mount(
+    _container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     const colors = getColors(params.theme);
     const seed = categorical(CAP, 'vivid');
 
@@ -144,14 +148,8 @@ export const pushPopTopStageView: View = {
       ? rawValues.filter((v): v is number => typeof v === 'number').slice(0, CAP)
       : [];
 
-    const svg = el('svg', {
-      viewBox: `0 0 ${W} ${H}`,
-      width: '100%',
-      role: 'img',
-    });
-    svg.style.display = 'block';
-    svg.style.maxWidth = `${W}px`;
-    svg.style.margin = '0 auto';
+    const svg = params.canvas;
+    svg.setAttribute('role', 'img');
     svg.style.fontFamily = fonts.body;
 
     // ── 기록줄 ──────────────────────────────────────────────────────────
@@ -327,7 +325,6 @@ export const pushPopTopStageView: View = {
     });
     svg.appendChild(caption);
 
-    container.appendChild(svg);
 
     // ── 시간 · 운동 ──────────────────────────────────────────────────────
     let disposed = false;

@@ -30,11 +30,6 @@ export const shiftOnRemoveFacet: FacetJson = {
     removeIndex: 1,
     stepMs: 900,
   },
-  layout: {
-    type: 'column',
-    gap: 8,
-    children: [{ ref: 'stage' }, { ref: 'controls' }],
-  },
   blocks: {
     stage: { type: 'shift-on-remove-stage' },
     controls: {

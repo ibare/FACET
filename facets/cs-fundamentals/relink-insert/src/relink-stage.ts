@@ -23,7 +23,7 @@ import {
   fonts,
   fontSizes,
   getColors,
-  type View,
+  type CanvasView,
   type ViewInstance,
   type ViewMountParams,
 } from '@ffacet/core/runtime';
@@ -133,21 +133,16 @@ const unschedule = (id: number): void => {
   else window.clearTimeout(id);
 };
 
-export const relinkStageView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const relinkStageView: CanvasView = {
+  canvas: { height: H },
+  mount(
+    _container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     const colors = getColors(params.theme);
 
-    container.style.display = 'flex';
-    container.style.justifyContent = 'center';
 
-    const svg = el('svg', {
-      viewBox: `0 0 ${W} ${H}`,
-      width: '100%',
-    });
-    svg.style.width = '100%';
-    svg.style.maxWidth = `${W}px`;
-    svg.style.height = 'auto';
-    container.appendChild(svg);
+    const svg = params.canvas;
 
     const edgeLayer = el('g', {});
     const nodeLayer = el('g', {});
