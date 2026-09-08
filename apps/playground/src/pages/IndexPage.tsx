@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import * as Accordion from '@radix-ui/react-accordion';
 import {
   CaretDown,
@@ -304,11 +304,15 @@ function TopicTile({ topic, accent }: { topic: Topic; accent: AccentTokens }) {
   // 주제는 그 자체가 배울 대상이고, 조각은 그것을 배우다 마주치는 개념이다.
   const isPiece = topic.kind === 'piece';
   const Mark = isPiece ? PuzzlePiece : Sparkle;
+  const here = useLocation();
 
   if (topic.facetId) {
     return (
       <Link
         to={`/facet/${encodeURIComponent(topic.facetId)}`}
+        // 지금 자리를 실어 보내면 App 이 이 목록을 배경으로 깔고 모달을 얹는다.
+        // 새 탭·주소 직접 입력으로 들어오면 state 가 없어 독자 페이지가 뜬다.
+        state={{ background: here }}
         title={topic.desc}
         className={`group/tile relative flex items-center justify-between gap-2 overflow-hidden rounded-lg bg-surface-raised px-3 py-2.5 ring-1 ring-border transition hover:bg-surface-raised-hover hover:ring-border-strong focus-visible:outline-none focus-visible:ring-2 ${accent.ringSoft}`}
       >

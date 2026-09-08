@@ -1,90 +1,22 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Warning } from '@phosphor-icons/react';
-import { EditorContent, useEditor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import { FacetExtension, renderFacetMarkdown } from '@ffacet/host-tiptap';
-import {
-  getDescription,
-  hasFacetLoader,
-  loadFacet,
-  resolveLocale,
-  type FacetJson,
-} from '@ffacet/core/runtime';
-import { findTopicByFacetId } from '../catalog.js';
-import { usePreferences } from '../preferences.js';
-import { PreferencesToolbar } from '../components/PreferencesToolbar.js';
+/**
+ * 조각의 독자 페이지.
+ *
+ * 주소를 복사해 새 탭에서 열거나, 목록을 거치지 않고 바로 들어왔을 때의 자리다.
+ * 목록에서 카드를 눌러 들어올 때는 모달이 뜨고 이 페이지는 그려지지 않는다
+ * (App 의 배경 위치 참조). 알맹이는 둘이 같은 것을 쓴다.
+ */
 
-type LoadState =
-  | { kind: 'loading' }
-  | { kind: 'ready'; facet: FacetJson; html: string }
-  | { kind: 'error'; message: string };
+import { Link, useParams } from 'react-router-dom';
+import { ArrowLeft } from '@phosphor-icons/react';
+import { findTopicByFacetId } from '../catalog.js';
+import { PreferencesToolbar } from '../components/PreferencesToolbar.js';
+import { useFacetDocument, FacetDocumentBody } from '../facet-document.js';
 
 export function FacetPage() {
   const { id } = useParams<{ id: string }>();
   const facetId = id ? decodeURIComponent(id) : '';
-  const { locale, theme, messagesEpoch } = usePreferences();
   const location = facetId ? findTopicByFacetId(facetId) : null;
-
-  const [state, setState] = useState<LoadState>({ kind: 'loading' });
-
-  useEffect(() => {
-    if (!facetId) {
-      setState({ kind: 'error', message: 'facet id 가 비었다' });
-      return;
-    }
-    let cancelled = false;
-    setState({ kind: 'loading' });
-
-    if (!hasFacetLoader(facetId)) {
-      setState({
-        kind: 'error',
-        message: `등록되지 않은 facet: "${facetId}". registerFacetLoader 누락.`,
-      });
-      return;
-    }
-
-    void loadFacet(facetId).then(
-      (facet) => {
-        if (cancelled) return;
-        if (!facet) {
-          setState({ kind: 'error', message: `facet 로드 실패: ${facetId}` });
-          return;
-        }
-        const md = getDescription(facetId);
-        const body = md ?? `*(설명 없음)*\n\n{${facetId}}`;
-        const html = renderFacetMarkdown(body);
-        setState({ kind: 'ready', facet, html });
-      },
-      (err: unknown) => {
-        if (cancelled) return;
-        const msg = err instanceof Error ? err.message : String(err);
-        setState({ kind: 'error', message: msg });
-      },
-    );
-
-    return () => {
-      cancelled = true;
-    };
-  }, [facetId]);
-
-  const html = state.kind === 'ready' ? state.html : '';
-  // locale/theme 가 바뀌면 facet NodeView 가 새 옵션으로 다시 마운트되도록
-  // editor 자체를 재생성한다(deps 에 포함). FacetExtension.configure 로 옵션 주입.
-  const editor = useEditor(
-    {
-      editable: false,
-      extensions: [StarterKit, FacetExtension.configure({ locale, theme })],
-      content: html,
-    },
-    // messagesEpoch — 문구 번들이 도착하면 다시 마운트해 라벨을 새로 그린다.
-    [html, locale, theme, messagesEpoch],
-  );
-
-  const title = useMemo(() => {
-    if (state.kind !== 'ready') return '';
-    return resolveLocale(state.facet.title, locale);
-  }, [state, locale]);
+  const doc = useFacetDocument(facetId);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -107,7 +39,7 @@ export function FacetPage() {
                   <span>{location.subdomain.name}</span>
                 </div>
                 <h1 className="mt-0.5 truncate text-lg font-semibold text-fg">
-                  {title || location.topic.name}
+                  {doc.title || location.topic.name}
                 </h1>
               </>
             ) : (
@@ -121,33 +53,15 @@ export function FacetPage() {
 
       <main className="flex-1 px-6 py-8">
         <div className="mx-auto max-w-4xl">
-          {state.kind === 'loading' && (
-            <div className="rounded-2xl bg-surface-raised p-8 text-center text-sm text-fg-muted ring-1 ring-border">
-              로딩…
+          {doc.state.kind === 'ready' ? (
+            <div className="rounded-2xl bg-surface-raised p-6 ring-1 ring-border sm:p-10">
+              <FacetDocumentBody doc={doc} />
             </div>
-          )}
-          {state.kind === 'error' && (
-            <ErrorBox title="시각화 로드 실패" detail={state.message} />
-          )}
-          {state.kind === 'ready' && (
-            <article className="facet-doc rounded-2xl bg-surface-raised p-6 ring-1 ring-border sm:p-10">
-              <EditorContent editor={editor} />
-            </article>
+          ) : (
+            <FacetDocumentBody doc={doc} />
           )}
         </div>
       </main>
-    </div>
-  );
-}
-
-function ErrorBox({ title, detail }: { title: string; detail: string }) {
-  return (
-    <div className="rounded-2xl bg-rose-100 p-6 ring-1 ring-rose-300 dark:bg-rose-500/10 dark:ring-rose-400/30">
-      <div className="flex items-center gap-2 text-rose-700 dark:text-rose-200">
-        <Warning weight="duotone" className="h-5 w-5" />
-        <span className="font-semibold">{title}</span>
-      </div>
-      <p className="mt-2 text-sm text-rose-700/80 dark:text-rose-100/80">{detail}</p>
     </div>
   );
 }
