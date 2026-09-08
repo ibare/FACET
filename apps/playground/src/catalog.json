@@ -18,7 +18,7 @@
             { "id": "queue", "name": "큐", "facetId": "facet:queueFifo" },
             { "id": "hash-table", "name": "해시 테이블", "facetId": "facet:hashTableChaining" },
             { "id": "bst", "name": "이진 탐색 트리", "facetId": "facet:bst" },
-            { "id": "avl-tree", "name": "AVL 트리" },
+            { "id": "avl-tree", "name": "AVL 트리", "facetId": "facet:avlTree" },
             { "id": "red-black-tree", "name": "Red-Black 트리" },
             { "id": "b-tree", "name": "B-Tree", "facetId": "facet:bTree" },
             { "id": "trie", "name": "Trie", "facetId": "facet:trie" },

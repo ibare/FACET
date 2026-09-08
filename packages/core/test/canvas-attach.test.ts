@@ -21,6 +21,7 @@ const MODULES: Array<[string, () => Promise<Record<string, unknown>>]> = [
   ['facets/cs-fundamentals/adjacency-list-vs-matrix/src/adjacency-list-vs-matrix-stage.ts', () => import('../../../facets/cs-fundamentals/adjacency-list-vs-matrix/src/adjacency-list-vs-matrix-stage.js')],
   ['facets/cs-fundamentals/array-as-tree/src/array-as-tree-stage.ts', () => import('../../../facets/cs-fundamentals/array-as-tree/src/array-as-tree-stage.js')],
   ['facets/cs-fundamentals/array/src/array-stage.ts', () => import('../../../facets/cs-fundamentals/array/src/array-stage.js')],
+  ['facets/cs-fundamentals/avl-tree/src/avl-tree-stage.ts', () => import('../../../facets/cs-fundamentals/avl-tree/src/avl-tree-stage.js')],
   ['facets/cs-fundamentals/b-tree/src/b-tree-stage.ts', () => import('../../../facets/cs-fundamentals/b-tree/src/b-tree-stage.js')],
   ['facets/cs-fundamentals/black-height-equal/src/black-height-equal-stage.ts', () => import('../../../facets/cs-fundamentals/black-height-equal/src/black-height-equal-stage.js')],
   ['facets/cs-fundamentals/bst-compare-and-go/src/bst-compare-and-go-stage.ts', () => import('../../../facets/cs-fundamentals/bst-compare-and-go/src/bst-compare-and-go-stage.js')],
