@@ -92,7 +92,7 @@ export const loadFactorRehashProjector: ProjectorFactory = (
 
     onEvent(event: FacetRuntimeEvent): void {
       switch (event.type) {
-        case 'insert': {
+        case 'seat': {
           const p = event.payload as {
             key?: unknown;
             masked?: unknown;

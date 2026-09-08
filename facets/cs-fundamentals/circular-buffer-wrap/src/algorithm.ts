@@ -145,10 +145,28 @@ export const circularBufferWrap = async (
 
   await runPass(ctx, bySleep);
 
+  /**
+   * 되감은 누름이 곧 첫 걸음이다 — 첫 문만 그냥 통과시킨다.
+   *
+   * runPass 는 문을 emit 앞에 두므로, 되감기 직후 그대로 넘기면 사람이 한 번
+   * 더 눌러야 첫 걸음이 나온다. 눌렀는데 되감기만 하고 멈추면 반응이 없는
+   * 것으로 읽힌다.
+   */
+  const openFirst = (gate: Gate): Gate => {
+    let opened = false;
+    return async () => {
+      if (!opened) {
+        opened = true;
+        return !ctx.cancelled;
+      }
+      return gate();
+    };
+  };
+
   for (;;) {
     if (ctx.cancelled) return;
     if (!(await byAdvance())) return;
     await ctx.emit({ type: 'rewind' });
-    await runPass(ctx, byAdvance);
+    await runPass(ctx, openFirst(byAdvance));
   }
 };

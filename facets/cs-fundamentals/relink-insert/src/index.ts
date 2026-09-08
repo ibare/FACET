@@ -31,11 +31,11 @@ export { relinkInsertFacet } from './facet.js';
 export { relinkInsertDescription } from './description.js';
 
 export function registerRelinkInsert(): void {
-  registerAlgorithm<RelinkInsertData>('relink-insert', relinkInsertAlgorithm, {
+  registerAlgorithm<RelinkInsertData>('relinkInsert', relinkInsertAlgorithm, {
     // 컨트롤바 없이도 mount 시 스스로 재생하고, 걸음 간격을 스스로 정한다 (S-piece).
     mechanismKind: 'reactive',
   });
-  registerProjector('relink-insert', relinkInsertProjector);
+  registerProjector('relinkInsertProjector', relinkInsertProjector);
   for (const ir of relinkInsertIRs) registerIR(ir.id, ir);
   registerView('relink-insert-stage', relinkStageView);
   registerFacets([relinkInsertFacet]);

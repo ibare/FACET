@@ -166,11 +166,29 @@ export const openAddressingProbe = async (
 
   if (!(await runSequence(ctx, autoGate))) return;
 
+  /**
+   * 되감은 누름이 곧 첫 걸음이다 — 첫 문만 그냥 통과시킨다.
+   *
+   * runSequence 는 문을 emit 앞에 두므로, 되감기 직후 그대로 넘기면 사람이
+   * 한 번 더 눌러야 첫 걸음이 나온다. 눌렀는데 표만 비고 멈추면 반응이 없는
+   * 것으로 읽힌다.
+   */
+  const openFirst = (gate: Gate): Gate => {
+    let opened = false;
+    return async () => {
+      if (!opened) {
+        opened = true;
+        return !ctx.cancelled;
+      }
+      return gate();
+    };
+  };
+
   // 자동 재생은 끝났다. 곱씹으며 짚어 보려는 사람을 기다린다 (S-piece) —
-  // 첫 누름이 표를 비우고, 그 다음 누름부터 한 걸음씩 나아간다.
+  // 누르면 표를 비우고 그 자리에서 첫 걸음까지 보인다.
   for (;;) {
     if (!(await pressGate())) return;
     await ctx.emit({ type: 'rewind' });
-    if (!(await runSequence(ctx, pressGate))) return;
+    if (!(await runSequence(ctx, openFirst(pressGate)))) return;
   }
 };

@@ -20,7 +20,7 @@ export const depthDoublesCountFacet: FacetJson = {
     ko: '한 층 내려갈 때마다 트리가 담을 수 있는 자리가 두 배가 된다.',
   },
   algorithm: 'module:depthDoublesCount',
-  projector: 'module:depthDoublesCount',
+  projector: 'module:depthDoublesCountProjector',
   initialData: {
     type: 'depth-doubles-count',
     /** 0층부터 9층까지. 합이 2^10 - 1 = 1023 이 되는 깊이다. */

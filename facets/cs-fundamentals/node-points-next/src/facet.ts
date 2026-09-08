@@ -21,7 +21,7 @@ export const nodePointsNextFacet: FacetJson = {
     ko: '노드는 메모리에 흩어져 있지만 순서가 있다. 그 순서를 만드는 것은 노드가 값 옆에 쥐고 있는 주소다.',
   },
   algorithm: 'module:nodePointsNext',
-  projector: 'module:nodePointsNext',
+  projector: 'module:nodePointsNextProjector',
   initialData: {
     type: 'node-points-next',
     /** 걸음 간격. 한 걸음마다 읽을 시간을 준다. */

@@ -23,6 +23,12 @@ last_verified: 2026-09-05
 - `description.ts` 본문에 `{facet:<Name>}` 가 나오면 그 `<Name>` 은 **같은 패키지의** `facet.ts::id` 와 정확히 일치해야 한다. 다른 facet 을 참조하려면 그 facet 의 id 를 그대로 쓴다.
 - IR id (`bubblesort-imperative` 같은) 는 kebab-case. `registerIR(ir.id, ir)` 와 `code-view.ir: 'ir:<id>'` 가 일치해야 한다.
 - Transpiler id 는 언어 이름 단일 소문자 (`python`, `java`, `javascript` 등).
+- **`registerAlgorithm` / `registerProjector` 의 이름은 lowerCamelCase 단일 세그먼트**이며,
+  projector 는 `<name>Projector` 로 끝난다. 둘이 같은 이름을 쓰면 (`'depthDoublesCount'`
+  가 알고리즘이자 projector) 레지스트리가 갈라져 있어 동작은 하지만 `module:` 참조만
+  보고는 어느 쪽인지 알 수 없다. **view 이름만 kebab-case** (`<디렉터리명>-stage`) 다 —
+  DOM 쪽 어휘와 붙어 있어서다. 조각 스물에서 넷이 이 셋을 뒤섞어 kebab 으로 등록하거나
+  `Projector` 접미를 빠뜨렸다.
 
 ## facet id 명명 규칙
 

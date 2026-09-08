@@ -34,7 +34,7 @@ export function registerDepthDoublesCount(): void {
   registerAlgorithm<DepthDoublesCountData>('depthDoublesCount', depthDoublesCountAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('depthDoublesCount', depthDoublesCountProjector);
+  registerProjector('depthDoublesCountProjector', depthDoublesCountProjector);
   for (const ir of depthDoublesCountIRs) registerIR(ir.id, ir);
   registerView('depth-doubles-count-stage', depthDoublesCountStageView);
   registerFacets([depthDoublesCountFacet]);

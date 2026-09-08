@@ -80,6 +80,24 @@ export const dequeBothEnds = async (ctx: FacetContext<DequeBothEndsData>): Promi
     return !rc.cancelled;
   };
 
+  /**
+   * 되감은 누름이 곧 첫 걸음이다 — 첫 문만 그냥 통과시킨다.
+   *
+   * playSteps 는 문을 emit 앞에 두므로, 되감기 직후 그대로 넘기면 사람이
+   * 한 번 더 눌러야 첫 걸음이 나온다. 눌렀는데 되감기만 하고 멈추면 반응이
+   * 없는 것으로 읽힌다.
+   */
+  const openFirst = (gate: Gate): Gate => {
+    let opened = false;
+    return async () => {
+      if (!opened) {
+        opened = true;
+        return !rc.cancelled;
+      }
+      return gate();
+    };
+  };
+
   if (!(await playSteps(ctx, bySleep))) return;
 
   // 자동 재생은 끝났다. 이제 `advance` 를 누를 때마다 처음으로 되감고
@@ -89,6 +107,6 @@ export const dequeBothEnds = async (ctx: FacetContext<DequeBothEndsData>): Promi
     await rc.waitForInput();
     if (rc.cancelled) return;
     await ctx.emit({ type: 'rewind' });
-    if (!(await playSteps(ctx, byPress))) return;
+    if (!(await playSteps(ctx, openFirst(byPress)))) return;
   }
 };

@@ -12,7 +12,7 @@
  *   9      끝
  *
  * ── 이벤트 (전부 이 facet 고유 확장. silent 없음 — 모두 시각 변화가 있다) ──
- *   insert  { key: string; masked: number; slot: number; buckets: number; count: number }
+ *   seat    { key: string; masked: number; slot: number; buckets: number; count: number }
  *           target `index:<slot>`. 새 키가 옛 판의 slot 에 앉고 적재율이 오른다.
  *   grow    { buckets: number; count: number }
  *           판이 buckets 칸으로 열린다. 적재율의 분모가 바뀐다.
@@ -80,7 +80,7 @@ async function play(ctx: ReactiveContext<LoadFactorRehashData>, gate: Gate): Pro
   const count = data.keys.length;
 
   await ctx.emit({
-    type: 'insert',
+    type: 'seat',
     target: `index:${incoming.slotSmall}`,
     payload: {
       key: incoming.key,

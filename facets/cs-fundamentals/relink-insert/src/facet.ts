@@ -17,8 +17,8 @@ export const relinkInsertFacet: FacetJson = {
     en: 'Inserting into a linked list rewrites arrows, not positions.',
     ko: '연결 리스트의 삽입은 자리가 아니라 화살표를 고쳐 쓴다.',
   },
-  algorithm: 'module:relink-insert',
-  projector: 'module:relink-insert',
+  algorithm: 'module:relinkInsert',
+  projector: 'module:relinkInsertProjector',
   initialData: {
     type: 'relink-insert',
     nodes: [

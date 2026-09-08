@@ -18,8 +18,8 @@ export const hashToBucketFacet: FacetJson = {
     en: 'A hash function folds any key into one integer, and the remainder folds that integer into one of a fixed number of slots.',
     ko: '해시 함수가 어떤 키든 하나의 정수로 접고, 나머지 연산이 그 정수를 정해진 개수의 자리 중 하나로 다시 접는다.',
   },
-  algorithm: 'module:hash-to-bucket',
-  projector: 'module:hash-to-bucket',
+  algorithm: 'module:hashToBucket',
+  projector: 'module:hashToBucketProjector',
   initialData: {
     type: 'hash-to-bucket',
     // 길이 4 · 3 · 5 · 6. "banana" 는 hashCode 가 음수라 부호 비트를 떨어뜨리는

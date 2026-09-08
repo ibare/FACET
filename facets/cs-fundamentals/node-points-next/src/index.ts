@@ -37,7 +37,7 @@ export function registerNodePointsNext(): void {
     // 조각은 mount 시 스스로 시작하고 걸음 간격을 스스로 정한다 (S-piece).
     mechanismKind: 'reactive',
   });
-  registerProjector('nodePointsNext', nodePointsNextProjector);
+  registerProjector('nodePointsNextProjector', nodePointsNextProjector);
   for (const ir of nodePointsNextIRs) registerIR(ir.id, ir);
   registerView('node-points-next-stage', nodePointsNextStageView);
   registerFacets([nodePointsNextFacet]);

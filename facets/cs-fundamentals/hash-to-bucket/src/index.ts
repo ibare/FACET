@@ -32,11 +32,11 @@ export {
 export type { HashToBucketData };
 
 export function registerHashToBucket(): void {
-  registerAlgorithm<HashToBucketData>('hash-to-bucket', hashToBucketAlgorithm, {
+  registerAlgorithm<HashToBucketData>('hashToBucket', hashToBucketAlgorithm, {
     // 조각은 mount 되면 스스로 시작하고 걸음 간격을 스스로 정한다 (S-piece).
     mechanismKind: 'reactive',
   });
-  registerProjector('hash-to-bucket', hashToBucketProjector);
+  registerProjector('hashToBucketProjector', hashToBucketProjector);
   for (const ir of hashToBucketIRs) registerIR(ir.id, ir);
   registerView('hash-to-bucket-stage', hashToBucketStageView);
   registerFacets([hashToBucketFacet]);
