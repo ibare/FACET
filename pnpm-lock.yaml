@@ -143,7 +143,31 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/view-code
 
+  facets/cs-fundamentals/black-height-equal:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/bst:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/bst-compare-and-go:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/bst-degenerate:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/bst-inorder-sorted:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -210,6 +234,18 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/height-balance-check:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/height-stays-low:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/index-address-calc:
     dependencies:
       '@ffacet/core':
@@ -235,6 +271,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/lru-cache:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/node-holds-many:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -283,7 +325,19 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/view-code
 
+  facets/cs-fundamentals/recolor-then-rotate:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/relink-insert:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/rotate-to-balance:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -296,6 +350,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/shift-on-remove:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/split-when-full:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -444,9 +504,21 @@ importers:
       '@ffacet/algorithm-bfs':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bfs
+      '@ffacet/algorithm-black-height-equal':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/black-height-equal
       '@ffacet/algorithm-bst':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bst
+      '@ffacet/algorithm-bst-compare-and-go':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/bst-compare-and-go
+      '@ffacet/algorithm-bst-degenerate':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/bst-degenerate
+      '@ffacet/algorithm-bst-inorder-sorted':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/bst-inorder-sorted
       '@ffacet/algorithm-bubble-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bubble-sort
@@ -498,6 +570,12 @@ importers:
       '@ffacet/algorithm-hash-to-bucket':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/hash-to-bucket
+      '@ffacet/algorithm-height-balance-check':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/height-balance-check
+      '@ffacet/algorithm-height-stays-low':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/height-stays-low
       '@ffacet/algorithm-index-address-calc':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/index-address-calc
@@ -528,6 +606,9 @@ importers:
       '@ffacet/algorithm-messaging-pubsub':
         specifier: workspace:*
         version: link:../../facets/system-design/messaging-pubsub
+      '@ffacet/algorithm-node-holds-many':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/node-holds-many
       '@ffacet/algorithm-node-points-next':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/node-points-next
@@ -549,12 +630,18 @@ importers:
       '@ffacet/algorithm-queue-fifo':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/queue-fifo
+      '@ffacet/algorithm-recolor-then-rotate':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/recolor-then-rotate
       '@ffacet/algorithm-relational-tables-and-keys':
         specifier: workspace:*
         version: link:../../facets/database/relational-tables-and-keys
       '@ffacet/algorithm-relink-insert':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/relink-insert
+      '@ffacet/algorithm-rotate-to-balance':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/rotate-to-balance
       '@ffacet/algorithm-shift-on-insert':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/shift-on-insert
@@ -567,6 +654,9 @@ importers:
       '@ffacet/algorithm-signature-on-hash':
         specifier: workspace:*
         version: link:../../facets/security/signature-on-hash
+      '@ffacet/algorithm-split-when-full':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/split-when-full
       '@ffacet/algorithm-stack':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/stack

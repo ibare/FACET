@@ -160,6 +160,36 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:depthDoublesCount', () =>
     import('@ffacet/algorithm-depth-doubles-count').then((m) => m.registerDepthDoublesCount()),
   );
+  registerFacetLoader('facet:bstCompareAndGo', () =>
+    import('@ffacet/algorithm-bst-compare-and-go').then((m) => m.registerBstCompareAndGo()),
+  );
+  registerFacetLoader('facet:bstInorderSorted', () =>
+    import('@ffacet/algorithm-bst-inorder-sorted').then((m) => m.registerBstInorderSorted()),
+  );
+  registerFacetLoader('facet:bstDegenerate', () =>
+    import('@ffacet/algorithm-bst-degenerate').then((m) => m.registerBstDegenerate()),
+  );
+  registerFacetLoader('facet:heightBalanceCheck', () =>
+    import('@ffacet/algorithm-height-balance-check').then((m) => m.registerHeightBalanceCheck()),
+  );
+  registerFacetLoader('facet:rotateToBalance', () =>
+    import('@ffacet/algorithm-rotate-to-balance').then((m) => m.registerRotateToBalance()),
+  );
+  registerFacetLoader('facet:recolorThenRotate', () =>
+    import('@ffacet/algorithm-recolor-then-rotate').then((m) => m.registerRecolorThenRotate()),
+  );
+  registerFacetLoader('facet:blackHeightEqual', () =>
+    import('@ffacet/algorithm-black-height-equal').then((m) => m.registerBlackHeightEqual()),
+  );
+  registerFacetLoader('facet:nodeHoldsMany', () =>
+    import('@ffacet/algorithm-node-holds-many').then((m) => m.registerNodeHoldsMany()),
+  );
+  registerFacetLoader('facet:splitWhenFull', () =>
+    import('@ffacet/algorithm-split-when-full').then((m) => m.registerSplitWhenFull()),
+  );
+  registerFacetLoader('facet:heightStaysLow', () =>
+    import('@ffacet/algorithm-height-stays-low').then((m) => m.registerHeightStaysLow()),
+  );
 
   // 자료구조 출처의 조각 열 (배열 5 · 연결 리스트 4 · 스택 1)
   registerFacetLoader('facet:indexAddressCalc', () =>
