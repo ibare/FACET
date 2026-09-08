@@ -162,6 +162,36 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/view-code
 
+  facets/cs-fundamentals/chaining-bucket:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/circular-buffer-wrap:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/depth-doubles-count:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/deque-both-ends:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/enqueue-dequeue-ends:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/grow-and-copy:
     dependencies:
       '@ffacet/core':
@@ -174,6 +204,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/hash-to-bucket:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/index-address-calc:
     dependencies:
       '@ffacet/core':
@@ -181,6 +217,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/linked-list-singly:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/load-factor-rehash:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -204,7 +246,19 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/open-addressing-probe:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/out-of-bounds:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/parent-two-children:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -248,6 +302,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/stack:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/traversal-order:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
