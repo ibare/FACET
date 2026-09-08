@@ -81,10 +81,12 @@ export type ShiftStageData = {
 export const shiftOnInsertStageView: CanvasView = {
   canvas: { height: H },
   mount(
-    container: HTMLElement,
+    _container: HTMLElement,
     params: ViewMountParams & { canvas: SVGSVGElement },
   ): ViewInstance {
-    container.textContent = '';
+    // 컨테이너가 아니라 캔버스 안을 비운다 — 러너가 이미 컨테이너에 캔버스를
+    // 붙여 놓았으므로, 컨테이너를 비우면 그 캔버스가 떨어져 나가 화면이 빈다.
+    params.canvas.textContent = '';
     const colors: Palette = getColors(params.theme);
     const tr = params.t ?? makeTranslator(params.locale);
 

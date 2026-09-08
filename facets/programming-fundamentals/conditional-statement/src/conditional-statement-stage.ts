@@ -191,7 +191,7 @@ type Layout = {
 export const conditionalFlowchartView: CanvasView = {
   canvas: { width: W, height: H },
   mount(
-    container: HTMLElement,
+    _container: HTMLElement,
     params: ViewMountParams & { canvas: SVGSVGElement },
   ): ViewInstance {
     const tr = params.t ?? makeTranslator(params.locale);
@@ -202,7 +202,9 @@ export const conditionalFlowchartView: CanvasView = {
     const TRUE_TONE = cat[2]!; // 초록 계열 — 결과 칩 (참).
     const FALSE_TONE = cat[5]!; // 회보라 계열 — 결과 칩 (거짓).
 
-    container.innerHTML = '';
+    // 컨테이너가 아니라 캔버스 안을 비운다 — 러너가 이미 컨테이너에 캔버스를
+    // 붙여 놓았으므로, 컨테이너를 비우면 그 캔버스가 떨어져 나가 화면이 빈다.
+    params.canvas.textContent = '';
 
     const svg = params.canvas;
 

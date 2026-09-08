@@ -23,6 +23,18 @@ last_verified: 2026-09-05
 - `FacetJson` 이 `LocaleStr` 로 주는 값 (`cfg.label`, `placeholder` 등) 은 `resolveLocale(value, params.locale)` 로 해석한다. 저작자가 준 값이 있으면 프레임워크 기본 라벨보다 우선한다.
 - **SVG 캔버스를 쓰는 view 는 `CanvasView` 로 선언한다. 껍데기를 손수 만들지 않는다.** `canvas: { width?, height, fit? }` 를 선언하면 러너가 SVG 요소를 만들어 `params.canvas` 로 넘긴다. mount 시그니처가 그것을 필수로 받으므로 받고도 안 쓰는 일이 없다.
   - 껍데기를 view 마다 만들면 갈린다. 실제로 38곳이 갈렸고, 그중 하나가 폭을 CSS 로만 줘서 flex 슬롯 안에서 브라우저의 기본 intrinsic 폭 **300px** 로 떨어져 그림이 절반 아래로 눌렸다.
+  - **컨테이너를 비우면 그 캔버스가 떨어져 나간다.** 러너의 `mountView` 는
+    캔버스를 컨테이너에 **먼저** 붙이고 `mount` 를 부른다. mount 첫 줄에
+    `container.textContent = ''` 를 두는 것은 오래된 습관인데 (빈 컨테이너를
+    준다는 옛 계약), 지금은 그 한 줄이 화면을 통째로 지운다. 타입도 통과하고
+    예외도 안 나고 그림만 안 보인다.
+    - 비우고 싶으면 **캔버스 안쪽**을 비운다 — `params.canvas.textContent = ''`.
+    - 컨테이너에 제 껍데기(`root` div 등)를 두는 view 라면, 비운 뒤 캔버스를
+      그 안에 되붙인다.
+    - CanvasView 로 옮길 때 열하나가 이 함정에 빠졌고 **일곱은 발견되지 않은 채
+      커밋됐다.** 그래서 `packages/core/test/canvas-attach.test.ts` 가 CanvasView
+      전수를 마운트해 캔버스가 남아 있는지 잰다. 새 CanvasView 를 만들면 그
+      목록에 한 줄 보탠다.
   - 정책은 view 가 고른다 — `fit: 'fill'`(기본) · `'intrinsic'`(조연 패널에서 커지면 안 될 때) · `'stretch'`(컨테이너를 채울 때). 구현은 러너가 한다.
   - `canvas.height` 는 초기값이다. 내용이나 블록 설정으로 크기가 정해지는 view 는 mount 에서 `params.canvas.setAttribute('viewBox', …)` 로 갱신한다.
   - SVG 를 하나 쓰지 않는 view 는 해당 없다 (`snapshot-strip` 은 항목마다 따로 만든다). 그런 view 는 `PlainView` 로 둔다.
