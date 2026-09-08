@@ -21,7 +21,7 @@
             { "id": "avl-tree", "name": "AVL 트리" },
             { "id": "red-black-tree", "name": "Red-Black 트리" },
             { "id": "b-tree", "name": "B-Tree" },
-            { "id": "trie", "name": "Trie" },
+            { "id": "trie", "name": "Trie", "facetId": "facet:trie" },
             { "id": "heap", "name": "힙", "facetId": "facet:heapBinary" },
             { "id": "union-find", "name": "유니온-파인드", "facetId": "facet:unionFind" },
             { "id": "index-address-calc", "name": "주소 계산", "desc": "번호로 자리를 셈한다", "facetId": "facet:indexAddressCalc", "kind": "piece", "origin": "array" },

@@ -62,6 +62,7 @@ const MODULES: Array<[string, () => Promise<Record<string, unknown>>]> = [
   ['facets/cs-fundamentals/stack/src/stack-stage.ts', () => import('../../../facets/cs-fundamentals/stack/src/stack-stage.js')],
   ['facets/cs-fundamentals/traversal-order/src/traversal-order-stage.ts', () => import('../../../facets/cs-fundamentals/traversal-order/src/traversal-order-stage.js')],
   ['facets/cs-fundamentals/traverse-from-head/src/traverse-from-head-stage.ts', () => import('../../../facets/cs-fundamentals/traverse-from-head/src/traverse-from-head-stage.js')],
+  ['facets/cs-fundamentals/trie/src/trie-stage.ts', () => import('../../../facets/cs-fundamentals/trie/src/trie-stage.js')],
   ['facets/cs-fundamentals/union-by-rank/src/union-by-rank-stage.ts', () => import('../../../facets/cs-fundamentals/union-by-rank/src/union-by-rank-stage.js')],
   ['facets/cs-fundamentals/union-find/src/union-find-stage.ts', () => import('../../../facets/cs-fundamentals/union-find/src/union-find-stage.js')],
   ['facets/cs-fundamentals/walk-per-character/src/walk-per-character-stage.ts', () => import('../../../facets/cs-fundamentals/walk-per-character/src/walk-per-character-stage.js')],

@@ -57,6 +57,9 @@ function inferType(e: IRExpr, syms: SymTable): IRType {
     }
     case 'index': {
       const arrT = inferType(e.arr, syms);
+      // 문자열의 한 글자. IR 에 char 타입이 없어 string 으로 본다 —
+      // 자바에서는 charAt 이 char 를 주지만 여기서는 그 구분이 쓰이지 않는다.
+      if (arrT.kind === 'string') return { kind: 'string' };
       if (arrT.kind !== 'list') {
         throw new Error(`[transpiler-java] 비-리스트 타입에 인덱스 접근: ${arrT.kind}`);
       }
@@ -90,7 +93,7 @@ export const javaTranspiler: Transpiler = {
     let tmpCounter = 0;
     const nextTmp = () => `tmp${++tmpCounter}`;
 
-    function emitExpr(e: IRExpr): string {
+    function emitExpr(e: IRExpr, syms: SymTable): string {
       switch (e.kind) {
         case 'lit':
           if (typeof e.value === 'boolean') return e.value ? 'true' : 'false';
@@ -98,24 +101,32 @@ export const javaTranspiler: Transpiler = {
           return String(e.value);
         case 'var':
           return e.name;
-        case 'index':
-          return `${emitExpr(e.arr)}[${emitExpr(e.idx)}]`;
-        case 'len':
-          return `${emitExpr(e.of)}.length`;
+        case 'index': {
+          // 자바는 문자열을 대괄호로 못 짚는다. 배열만 `[i]` 고 문자열은
+          // `charAt(i)` 다 — 이것을 가리지 않으면 컴파일되지 않는 코드가 나온다.
+          const arr = emitExpr(e.arr, syms);
+          const i = emitExpr(e.idx, syms);
+          return inferType(e.arr, syms).kind === 'string' ? `${arr}.charAt(${i})` : `${arr}[${i}]`;
+        }
+        case 'len': {
+          // 배열은 필드 `length`, 문자열은 메서드 `length()` 다.
+          const of = emitExpr(e.of, syms);
+          return inferType(e.of, syms).kind === 'string' ? `${of}.length()` : `${of}.length`;
+        }
         case 'binop': {
-          const ls = isBinop(e.l) ? `(${emitExpr(e.l)})` : emitExpr(e.l);
-          const rs = isBinop(e.r) ? `(${emitExpr(e.r)})` : emitExpr(e.r);
+          const ls = isBinop(e.l) ? `(${emitExpr(e.l, syms)})` : emitExpr(e.l, syms);
+          const rs = isBinop(e.r) ? `(${emitExpr(e.r, syms)})` : emitExpr(e.r, syms);
           // '//' 는 정수 나눗셈이다. 이 언어는 정수끼리의 '/' 가 이미 정수
           // 나눗셈이라 그대로 낸다.
           if (e.op === '//') return `${ls} / ${rs}`;
           return `${ls} ${e.op} ${rs}`;
         }
         case 'unop': {
-          const x = isBinop(e.x) ? `(${emitExpr(e.x)})` : emitExpr(e.x);
+          const x = isBinop(e.x) ? `(${emitExpr(e.x, syms)})` : emitExpr(e.x, syms);
           return `${e.op}${x}`;
         }
         case 'call':
-          return `${e.fn}(${e.args.map(emitExpr).join(', ')})`;
+          return `${e.fn}(${e.args.map((a) => emitExpr(a, syms)).join(', ')})`;
       }
     }
 
@@ -128,18 +139,18 @@ export const javaTranspiler: Transpiler = {
         case 'var':
           syms.set(s.name, s.type);
           lines.push({
-            code: `${ind}${javaType(s.type)} ${s.name} = ${emitExpr(s.init)};`,
+            code: `${ind}${javaType(s.type)} ${s.name} = ${emitExpr(s.init, syms)};`,
             phase: s.phase ?? null,
           });
           return;
         case 'assign':
           lines.push({
-            code: `${ind}${emitExpr(s.target)} = ${emitExpr(s.expr)};`,
+            code: `${ind}${emitExpr(s.target, syms)} = ${emitExpr(s.expr, syms)};`,
             phase: s.phase ?? null,
           });
           return;
         case 'if': {
-          lines.push({ code: `${ind}if (${emitExpr(s.cond)}) {`, phase: s.phase ?? null });
+          lines.push({ code: `${ind}if (${emitExpr(s.cond, syms)}) {`, phase: s.phase ?? null });
           const inner = new Map(syms);
           for (const c of s.then) emitStmt(c, level + 1, inner);
           if (s.else && s.else.length > 0) {
@@ -153,7 +164,7 @@ export const javaTranspiler: Transpiler = {
         case 'for-range': {
           const cmp = s.inclusive ? '<=' : '<';
           lines.push({
-            code: `${ind}for (int ${s.var} = ${emitExpr(s.from)}; ${s.var} ${cmp} ${emitExpr(s.to)}; ${s.var}++) {`,
+            code: `${ind}for (int ${s.var} = ${emitExpr(s.from, syms)}; ${s.var} ${cmp} ${emitExpr(s.to, syms)}; ${s.var}++) {`,
             phase: s.phase ?? null,
           });
           const inner: SymTable = new Map(syms);
@@ -163,15 +174,15 @@ export const javaTranspiler: Transpiler = {
           return;
         }
         case 'while': {
-          lines.push({ code: `${ind}while (${emitExpr(s.cond)}) {`, phase: s.phase ?? null });
+          lines.push({ code: `${ind}while (${emitExpr(s.cond, syms)}) {`, phase: s.phase ?? null });
           const inner = new Map(syms);
           for (const c of s.body) emitStmt(c, level + 1, inner);
           lines.push({ code: `${ind}}`, phase: null });
           return;
         }
         case 'swap': {
-          const aS = emitExpr(s.a);
-          const bS = emitExpr(s.b);
+          const aS = emitExpr(s.a, syms);
+          const bS = emitExpr(s.b, syms);
           const elemT = javaType(inferType(s.a, syms));
           const tmp = nextTmp();
           const phase = s.phase ?? null;
@@ -182,7 +193,7 @@ export const javaTranspiler: Transpiler = {
         }
         case 'return':
           lines.push({
-            code: s.expr ? `${ind}return ${emitExpr(s.expr)};` : `${ind}return;`,
+            code: s.expr ? `${ind}return ${emitExpr(s.expr, syms)};` : `${ind}return;`,
             phase: s.phase ?? null,
           });
           return;
@@ -193,7 +204,7 @@ export const javaTranspiler: Transpiler = {
           lines.push({ code: `${ind}continue;`, phase: s.phase ?? null });
           return;
         case 'expr-stmt':
-          lines.push({ code: `${ind}${emitExpr(s.expr)};`, phase: s.phase ?? null });
+          lines.push({ code: `${ind}${emitExpr(s.expr, syms)};`, phase: s.phase ?? null });
           return;
       }
     }

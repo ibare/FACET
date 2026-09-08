@@ -433,6 +433,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/trie:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/union-by-rank:
     dependencies:
       '@ffacet/core':
@@ -768,6 +774,9 @@ importers:
       '@ffacet/algorithm-traverse-from-head':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/traverse-from-head
+      '@ffacet/algorithm-trie':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/trie
       '@ffacet/algorithm-union-by-rank':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/union-by-rank
