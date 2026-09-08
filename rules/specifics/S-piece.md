@@ -92,6 +92,20 @@ last_verified: 2026-09-07
 - **`metrics` 를 두지 않는다.** 조각은 셀 것이 없으므로 `ctx.metric` 도 부르지 않는다.
 - **캔버스 폭은 `PIECE_CANVAS_W`** (`@ffacet/core/runtime`). 매직 넘버를 stage 마다
   적지 않는다. 세로는 내용이 정한다.
+- **그 폭을 채운다.** 요소 크기를 상수로 못박고 남는 폭을 좌우 여백으로 버리지
+  않는다. 크기는 캔버스에서 역산하고 상수로는 **상한**만 둔다.
+
+  ```ts
+  const CELL_MAX_W = 96;
+  const SIDE_MIN = 26;
+  cellW = Math.min(CELL_MAX_W, Math.floor((W - SIDE_MIN * 2) / cellCount));
+  originX = Math.round((W - cellCount * cellW) / 2);
+  ```
+
+  `outOfBounds` 가 칸 폭을 70 으로 못박아 620 중 420(68%)만 쓰고 좌우로 100 씩
+  버렸다. 화면에서 그림이 가운데 쪼그라들어 보인다. 가로가 본질이 아닌 조각
+  (`pushPopTop` 처럼 세로 운동이 전부인 것) 은 예외지만, 그때도 남는 폭은
+  선택이어야지 상수를 못박은 결과여서는 안 된다.
 - **화면에 쓰는 값은 실측한다.** 해시·크기·바이트 수를 지어내지 않는다. 앞머리만
   실측하고 뒤를 채우는 것도 금지다 — 화면에 안 보여도 선언은 사실이어야 한다.
 - **전제를 각주로 밝히고 `label.note` 또는 `label.note*` 키로 선언한다.** 축척을

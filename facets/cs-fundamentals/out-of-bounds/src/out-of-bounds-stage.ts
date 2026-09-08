@@ -29,7 +29,10 @@ import {
 const W = PIECE_CANVAS_W;
 const H = 312;
 
-const CELL_W = 70;
+// 칸 폭은 캔버스에서 역산한다. 고정해 두면 남는 폭이 좌우 여백으로 버려져
+// 그림이 캔버스 가운데 쪼그라든다 — 70 으로 못박았을 때 620 중 420(68%)만 썼다.
+const CELL_MAX_W = 96;
+const SIDE_MIN = 26;
 const CELL_H = 52;
 const CELL_TOP = 112;
 const CELL_BOTTOM = CELL_TOP + CELL_H;
@@ -149,6 +152,7 @@ export const outOfBoundsStageView: View = {
     // ── 가변 상태.
     let init: OutOfBoundsStageInit | null = null;
     let originX = 0;
+    let cellW = CELL_MAX_W;
     let edgeX = 0;
     let cellCount = 0;
     let arrayLen = 0;
@@ -169,7 +173,7 @@ export const outOfBoundsStageView: View = {
     let exprTail: SVGTSpanElement | null = null;
     let captionText: SVGTextElement | null = null;
 
-    const cellCenter = (index: number): number => originX + index * CELL_W + CELL_W / 2;
+    const cellCenter = (index: number): number => originX + index * cellW + cellW / 2;
 
     const pillWidth = (label: string): number =>
       Math.max(PILL_MIN_W, Math.round(label.length * MONO_CHAR_W + 18));
@@ -281,8 +285,9 @@ export const outOfBoundsStageView: View = {
       arrayLen = d.values.length;
       cellCount = arrayLen + 1;
       cellStates = new Array<CellState>(cellCount).fill('rest');
-      originX = Math.round((W - cellCount * CELL_W) / 2);
-      edgeX = originX + arrayLen * CELL_W;
+      cellW = Math.min(CELL_MAX_W, Math.floor((W - SIDE_MIN * 2) / cellCount));
+      originX = Math.round((W - cellCount * cellW) / 2);
+      edgeX = originX + arrayLen * cellW;
 
       // 주소 셈 한 줄. 인덱스가 정해지기 전에는 i 로 서 있다.
       const expr = el('text', {
@@ -302,11 +307,11 @@ export const outOfBoundsStageView: View = {
 
       // 메모리 띠. 칸 사이에 틈이 없다 — 배열의 끝과 이웃은 맞붙어 있다.
       for (let i = 0; i < cellCount; i += 1) {
-        const x = originX + i * CELL_W;
+        const x = originX + i * cellW;
         const inside = i < arrayLen;
 
         const addr = el('text', {
-          x: x + CELL_W / 2,
+          x: x + cellW / 2,
           y: ADDR_Y,
           'text-anchor': 'middle',
           'font-family': fonts.mono,
@@ -319,7 +324,7 @@ export const outOfBoundsStageView: View = {
         const rect = el('rect', {
           x,
           y: CELL_TOP,
-          width: CELL_W,
+          width: cellW,
           height: CELL_H,
           fill: inside ? colors.bgSubtle : colors.bg,
           stroke: colors.border,
@@ -329,7 +334,7 @@ export const outOfBoundsStageView: View = {
         cellRects.push(rect);
 
         const value = el('text', {
-          x: x + CELL_W / 2,
+          x: x + cellW / 2,
           y: VALUE_Y,
           'text-anchor': 'middle',
           'font-family': fonts.mono,
@@ -341,7 +346,7 @@ export const outOfBoundsStageView: View = {
         cellValues.push(value);
 
         const label = el('text', {
-          x: x + CELL_W / 2,
+          x: x + cellW / 2,
           y: INDEX_Y,
           'text-anchor': 'middle',
           'font-family': fonts.mono,
