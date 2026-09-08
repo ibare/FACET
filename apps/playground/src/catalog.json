@@ -22,7 +22,7 @@
             { "id": "red-black-tree", "name": "Red-Black 트리" },
             { "id": "b-tree", "name": "B-Tree" },
             { "id": "trie", "name": "Trie" },
-            { "id": "heap", "name": "힙" },
+            { "id": "heap", "name": "힙", "facetId": "facet:heapBinary" },
             { "id": "union-find", "name": "유니온-파인드" },
             { "id": "index-address-calc", "name": "주소 계산", "desc": "번호로 자리를 셈한다", "facetId": "facet:indexAddressCalc", "kind": "piece", "origin": "array" },
             { "id": "shift-on-insert", "name": "삽입 이동", "desc": "가운데에 넣으면 뒤가 밀린다", "facetId": "facet:shiftOnInsert", "kind": "piece", "origin": "array" },

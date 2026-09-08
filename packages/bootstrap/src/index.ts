@@ -220,6 +220,9 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:pathCompression', () =>
     import('@ffacet/algorithm-path-compression').then((m) => m.registerPathCompression()),
   );
+  registerFacetLoader('facet:heapBinary', () =>
+    import('@ffacet/algorithm-heap-binary').then((m) => m.registerHeapBinary()),
+  );
 
   // 자료구조 출처의 조각 열 (배열 5 · 연결 리스트 4 · 스택 1)
   registerFacetLoader('facet:indexAddressCalc', () =>

@@ -30,6 +30,7 @@ function isBinop(e: IRExpr): boolean {
 function pyOp(op: IRBinOp): string {
   if (op === '&&') return 'and';
   if (op === '||') return 'or';
+  // '//' 는 파이썬의 정수 나눗셈 표기 그대로다. '/' 는 실수를 준다.
   return op;
 }
 

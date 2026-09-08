@@ -34,6 +34,7 @@ const MODULES: Array<[string, () => Promise<Record<string, unknown>>]> = [
   ['facets/cs-fundamentals/grow-and-copy/src/grow-and-copy-stage.ts', () => import('../../../facets/cs-fundamentals/grow-and-copy/src/grow-and-copy-stage.js')],
   ['facets/cs-fundamentals/hash-table-chaining/src/hash-table-stage.ts', () => import('../../../facets/cs-fundamentals/hash-table-chaining/src/hash-table-stage.js')],
   ['facets/cs-fundamentals/hash-to-bucket/src/hash-to-bucket-stage.ts', () => import('../../../facets/cs-fundamentals/hash-to-bucket/src/hash-to-bucket-stage.js')],
+  ['facets/cs-fundamentals/heap-binary/src/heap-binary-stage.ts', () => import('../../../facets/cs-fundamentals/heap-binary/src/heap-binary-stage.js')],
   ['facets/cs-fundamentals/heap-property/src/heap-property-stage.ts', () => import('../../../facets/cs-fundamentals/heap-property/src/heap-property-stage.js')],
   ['facets/cs-fundamentals/height-balance-check/src/height-balance-check-stage.ts', () => import('../../../facets/cs-fundamentals/height-balance-check/src/height-balance-check-stage.js')],
   ['facets/cs-fundamentals/height-stays-low/src/height-stays-low-stage.ts', () => import('../../../facets/cs-fundamentals/height-stays-low/src/height-stays-low-stage.js')],

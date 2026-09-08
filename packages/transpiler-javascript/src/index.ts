@@ -50,6 +50,9 @@ export const javascriptTranspiler: Transpiler = {
         case 'binop': {
           const ls = isBinop(e.l) ? `(${emitExpr(e.l)})` : emitExpr(e.l);
           const rs = isBinop(e.r) ? `(${emitExpr(e.r)})` : emitExpr(e.r);
+          // '//' 는 정수 나눗셈이다. 이 언어에는 그런 연산자가 없고 '//' 를
+          // 그대로 내면 주석이 되어 뒤가 통째로 사라진다.
+          if (e.op === '//') return `Math.floor(${ls} / ${rs})`;
           return `${ls} ${e.op} ${rs}`;
         }
         case 'unop': {

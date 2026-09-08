@@ -252,6 +252,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/heap-binary:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/heap-property:
     dependencies:
       '@ffacet/core':
@@ -639,6 +645,9 @@ importers:
       '@ffacet/algorithm-hash-to-bucket':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/hash-to-bucket
+      '@ffacet/algorithm-heap-binary':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/heap-binary
       '@ffacet/algorithm-heap-property':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/heap-property

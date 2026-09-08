@@ -105,6 +105,9 @@ export const javaTranspiler: Transpiler = {
         case 'binop': {
           const ls = isBinop(e.l) ? `(${emitExpr(e.l)})` : emitExpr(e.l);
           const rs = isBinop(e.r) ? `(${emitExpr(e.r)})` : emitExpr(e.r);
+          // '//' 는 정수 나눗셈이다. 이 언어는 정수끼리의 '/' 가 이미 정수
+          // 나눗셈이라 그대로 낸다.
+          if (e.op === '//') return `${ls} / ${rs}`;
           return `${ls} ${e.op} ${rs}`;
         }
         case 'unop': {

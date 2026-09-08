@@ -40,6 +40,7 @@ const MODULES: Array<[string, () => Promise<Record<string, unknown>>]> = [
   ['facets/cs-fundamentals/grow-and-copy/src/index.ts', () => import('../../../facets/cs-fundamentals/grow-and-copy/src/index.js')],
   ['facets/cs-fundamentals/hash-table-chaining/src/index.ts', () => import('../../../facets/cs-fundamentals/hash-table-chaining/src/index.js')],
   ['facets/cs-fundamentals/hash-to-bucket/src/index.ts', () => import('../../../facets/cs-fundamentals/hash-to-bucket/src/index.js')],
+  ['facets/cs-fundamentals/heap-binary/src/index.ts', () => import('../../../facets/cs-fundamentals/heap-binary/src/index.js')],
   ['facets/cs-fundamentals/heap-property/src/index.ts', () => import('../../../facets/cs-fundamentals/heap-property/src/index.js')],
   ['facets/cs-fundamentals/height-balance-check/src/index.ts', () => import('../../../facets/cs-fundamentals/height-balance-check/src/index.js')],
   ['facets/cs-fundamentals/height-stays-low/src/index.ts', () => import('../../../facets/cs-fundamentals/height-stays-low/src/index.js')],

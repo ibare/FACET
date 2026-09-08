@@ -80,6 +80,7 @@
     "@ffacet/algorithm-hash-salt": "workspace:*",
     "@ffacet/algorithm-hash-table-chaining": "workspace:*",
     "@ffacet/algorithm-hash-to-bucket": "workspace:*",
+    "@ffacet/algorithm-heap-binary": "workspace:*",
     "@ffacet/algorithm-heap-property": "workspace:*",
     "@ffacet/algorithm-height-balance-check": "workspace:*",
     "@ffacet/algorithm-height-stays-low": "workspace:*",
