@@ -70,15 +70,31 @@ export type Palette = {
   itemActive: string;
 
   /**
-   * state 타일 위에 얹는 글자색.
+   * 테마를 따라 뒤집지 않는 잉크. 고정 타일 위에 쓴다.
    *
-   * `itemComparing` · `itemSwapping` · `itemPivot` · `itemActive` 는 두 팔레트에서
-   * **값이 같다**. 그 위에 `textInverse` 를 쓰면 라이트에서 흰 글자, 다크에서 검은
-   * 글자가 되어 한쪽이 반드시 틀린다 — `#facc15` 위 `#ffffff` 는 대비 1.6:1 이다.
-   * 그래서 이 잉크는 테마를 따라 뒤집히지 않는다.
+   * ── 무엇 위에 무엇을 얹는가 (실측값으로 정해진다)
    *
-   * 타일이 테마를 따라 뒤집히는 경우(`itemSorted` 등)에는 쓰지 않는다. 그때는
-   * `textInverse` 가 맞다.
+   * | 타일                                    | light   | dark    | 잉크           |
+   * | --------------------------------------- | ------- | ------- | -------------- |
+   * | itemComparing / itemActive              | #ed7055 | #ed7055 | `stateInk`     |
+   * | itemSwapping                            | #e63946 | #e63946 | `stateInk`     |
+   * | itemPivot / accent                      | #facc15 | #facc15 | `stateInk`     |
+   * | danger                                  | #dc2626 | #dc2626 | `stateInk`     |
+   * | primary                                 | #171717 | #fafafa | `textInverse`  |
+   * | itemSorted                              | #444444 | #fafafa | `textInverse`  |
+   * | itemDefault                             | #ffffff | #0a0a0a | `text`         |
+   * | (타일 없음 — 캔버스 배경 `bg`)          | #ffffff | #0a0a0a | `text`         |
+   *
+   * 규칙은 하나다. **타일이 테마를 따라 뒤집으면 잉크도 뒤집고(`textInverse`),
+   * 타일이 고정이면 잉크도 고정한다(`stateInk`).** 그리고 `itemDefault` 는
+   * 배경과 값이 완전히 같아 사실상 타일이 아니다 — 그 위는 `text` 다.
+   *
+   * 틀리면 글자가 사라진다. 예외 없이 대비 1:1 이 된다:
+   * `#facc15` 위 `#ffffff` 는 1.6:1, `itemDefault` 위 `textInverse` 는 양 테마에서
+   * 같은 색, `primary` 위 `stateInk` 는 light 에서 같은 색.
+   *
+   * `success` 는 강조가 아니다 — `text` 와 값이 완전히 같아 배경 위에서 아무
+   * 변화도 만들지 않는다. 강조가 필요하면 `accent` 나 `danger` 를 쓴다.
    */
   stateInk: string;
 
