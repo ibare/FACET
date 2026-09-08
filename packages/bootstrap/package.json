@@ -120,6 +120,7 @@
     "@ffacet/algorithm-traversal-order": "workspace:*",
     "@ffacet/algorithm-traverse-from-head": "workspace:*",
     "@ffacet/algorithm-union-by-rank": "workspace:*",
+    "@ffacet/algorithm-union-find": "workspace:*",
     "@ffacet/algorithm-walk-per-character": "workspace:*",
     "@ffacet/core": "workspace:*",
     "@ffacet/transpiler-cpp": "workspace:*",

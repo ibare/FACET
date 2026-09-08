@@ -63,6 +63,7 @@ const MODULES: Array<[string, () => Promise<Record<string, unknown>>]> = [
   ['facets/cs-fundamentals/traversal-order/src/traversal-order-stage.ts', () => import('../../../facets/cs-fundamentals/traversal-order/src/traversal-order-stage.js')],
   ['facets/cs-fundamentals/traverse-from-head/src/traverse-from-head-stage.ts', () => import('../../../facets/cs-fundamentals/traverse-from-head/src/traverse-from-head-stage.js')],
   ['facets/cs-fundamentals/union-by-rank/src/union-by-rank-stage.ts', () => import('../../../facets/cs-fundamentals/union-by-rank/src/union-by-rank-stage.js')],
+  ['facets/cs-fundamentals/union-find/src/union-find-stage.ts', () => import('../../../facets/cs-fundamentals/union-find/src/union-find-stage.js')],
   ['facets/cs-fundamentals/walk-per-character/src/walk-per-character-stage.ts', () => import('../../../facets/cs-fundamentals/walk-per-character/src/walk-per-character-stage.js')],
   ['facets/database/relational-tables-and-keys/src/tables-stage.ts', () => import('../../../facets/database/relational-tables-and-keys/src/tables-stage.js')],
   ['facets/graphics/matrix-transform-2d/src/matrix-transform-stage.ts', () => import('../../../facets/graphics/matrix-transform-2d/src/matrix-transform-stage.js')],

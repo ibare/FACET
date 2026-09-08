@@ -439,6 +439,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/union-find:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/walk-per-character:
     dependencies:
       '@ffacet/core':
@@ -765,6 +771,9 @@ importers:
       '@ffacet/algorithm-union-by-rank':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/union-by-rank
+      '@ffacet/algorithm-union-find':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/union-find
       '@ffacet/algorithm-walk-per-character':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/walk-per-character

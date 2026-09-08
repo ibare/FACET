@@ -223,6 +223,9 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:heapBinary', () =>
     import('@ffacet/algorithm-heap-binary').then((m) => m.registerHeapBinary()),
   );
+  registerFacetLoader('facet:unionFind', () =>
+    import('@ffacet/algorithm-union-find').then((m) => m.registerUnionFind()),
+  );
 
   // 자료구조 출처의 조각 열 (배열 5 · 연결 리스트 4 · 스택 1)
   registerFacetLoader('facet:indexAddressCalc', () =>
