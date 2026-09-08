@@ -16,7 +16,7 @@
 import { describe, expect, it } from 'vitest';
 import { runFacet, clearRegistry } from '../src/runtime/index.js';
 import type { FacetJson } from '../src/types/facet-json.js';
-import type { RunHandle } from '../src/runtime/runner.js';
+import type { FacetRunHandle } from '../src/runtime/runner.js';
 
 const MODULES: Array<[string, () => Promise<Record<string, unknown>>]> = [
   ['facets/compilers/tokenization/src/index.ts', () => import('../../../facets/compilers/tokenization/src/index.js')],
@@ -111,11 +111,11 @@ function facetsOf(mod: Record<string, unknown>): FacetJson[] {
 describe('facet 세로 고정', () => {
   it('마운트한 뒤 viewBox 높이가 바뀌지 않는다', async () => {
     clearRegistry();
-    const handles: RunHandle[] = [];
+    const handles: FacetRunHandle[] = [];
     const mounted: Array<[string, HTMLElement]> = [];
     const orig = console.error;
     console.error = () => {};
-    for (const [name, load] of MODULES) {
+    for (const [, load] of MODULES) {
       const mod = await load();
       for (const [k, v] of Object.entries(mod)) {
         if (k.startsWith('register') && typeof v === 'function') (v as () => void)();

@@ -115,7 +115,7 @@ describe('CanvasView 캔버스 부착', () => {
         const container = document.createElement('div');
         document.body.appendChild(container);
         try {
-          mountView(view, container, { locale: 'en', theme: 'light' });
+          mountView(view, container, { config: {}, locale: 'en', theme: 'light' });
         } catch {
           // config 없이 부르면 던지는 view 가 있다. 그건 이 테스트의 관심사가
           // 아니다 — 던졌다면 캔버스를 떼어낼 기회도 없었다.

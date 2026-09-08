@@ -17,7 +17,7 @@
 import { describe, expect, it } from 'vitest';
 import { runFacet, clearRegistry } from '../src/runtime/index.js';
 import type { FacetJson } from '../src/types/facet-json.js';
-import type { RunHandle } from '../src/runtime/runner.js';
+import type { FacetRunHandle } from '../src/runtime/runner.js';
 
 const MODULES: Array<[string, () => Promise<Record<string, unknown>>]> = [
   ['facets/compilers/tokenization/src/index.ts', () => import('../../../facets/compilers/tokenization/src/index.js')],
@@ -121,7 +121,7 @@ describe('facet 첫 걸음', () => {
       errors.push(args.map((a) => (a instanceof Error ? `${a.name}: ${a.message}` : String(a))).join(' '));
     };
 
-    const handles: RunHandle[] = [];
+    const handles: FacetRunHandle[] = [];
     const blank: string[] = [];
 
     try {
