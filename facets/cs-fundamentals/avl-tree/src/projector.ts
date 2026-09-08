@@ -9,6 +9,11 @@
 import { makeTranslator, type ProjectorFactory, type Translate } from '@ffacet/core/runtime';
 import type { AvlTreeStage, StageNode } from './avl-tree-stage.js';
 
+type CodePanel = {
+  highlightPhase(phase: string | null): void;
+  clearHighlight(): void;
+};
+
 type TextDisplay = { setText(text: string): void; reset?(): void };
 
 function rec(v: unknown): Record<string, unknown> | null {
@@ -34,11 +39,13 @@ export const avlTreeProjector: ProjectorFactory = (views, runtime) => {
   const stage = views.stage as unknown as AvlTreeStage;
   const heightHud = views.heightHud as unknown as TextDisplay | undefined;
   const rotationHud = views.rotationHud as unknown as TextDisplay | undefined;
+  const codePanel = views.codePanel as unknown as CodePanel | undefined;
   const t: Translate = runtime?.t ?? makeTranslator();
 
   const clear = (): void => {
     heightHud?.setText('—');
     rotationHud?.setText('—');
+    codePanel?.clearHighlight();
   };
 
   return {
@@ -54,6 +61,16 @@ export const avlTreeProjector: ProjectorFactory = (views, runtime) => {
 
     onEvent(event) {
       switch (event.type) {
+        // phase 는 silent 다 — 걸음의 경계가 아니라는 뜻이지, 여기 오지 않는다는
+        // 뜻이 아니다. mechanism 은 projector 갱신을 마친 뒤에야 silent 를 보고
+        // 후처리를 건너뛴다. 코드 패널의 줄은 이 이벤트로만 짚힌다 (C3).
+        case 'phase': {
+          const p = rec(event.payload);
+          const name = p && typeof p.phase === 'string' ? p.phase : null;
+          codePanel?.highlightPhase(name);
+          return;
+        }
+
         case 'state-changed': {
           const p = rec(event.payload);
           if (!p) return;
@@ -146,6 +163,7 @@ export const avlTreeProjector: ProjectorFactory = (views, runtime) => {
         }
 
         case 'done': {
+          codePanel?.clearHighlight();
           const p = rec(event.payload);
           if (!p) return;
           const keys = typeof p.keys === 'number' ? p.keys : 0;
@@ -160,7 +178,7 @@ export const avlTreeProjector: ProjectorFactory = (views, runtime) => {
         }
 
         default:
-          // phase 는 silent 라 여기 오지 않는다. 그 밖의 어휘는 무시한다.
+          // 다루지 않는 어휘는 무시한다.
           return;
       }
     },

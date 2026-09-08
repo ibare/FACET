@@ -20,6 +20,11 @@ type SortedOutPayload = { value: number; slot: number };
 type OverflowPayload = { attempted: number; capacity: number };
 type StatePayload = { values: number[]; sorted: number[] };
 
+type CodePanel = {
+  highlightPhase(phase: string | null): void;
+  clearHighlight(): void;
+};
+
 function rec(v: unknown): Record<string, unknown> | null {
   return typeof v === 'object' && v !== null ? (v as Record<string, unknown>) : null;
 }
@@ -85,6 +90,7 @@ function readState(p: unknown): StatePayload | null {
 
 export const heapBinaryProjector: ProjectorFactory = (views, runtime) => {
   const stage = views.stage as unknown as HeapBinaryStage;
+  const codePanel = views.codePanel as unknown as CodePanel | undefined;
   const t: Translate = runtime?.t ?? makeTranslator();
 
   /** 배열의 그림자. `state-changed` 로 갱신하고 맞바꿈은 여기서 반영한다. */
@@ -98,6 +104,7 @@ export const heapBinaryProjector: ProjectorFactory = (views, runtime) => {
       values = [];
       sorted = [];
       draw();
+      codePanel?.clearHighlight();
       stage.caption(t('caption.start', 'Building a heap — each value climbs to its place.'));
     },
 
@@ -105,11 +112,22 @@ export const heapBinaryProjector: ProjectorFactory = (views, runtime) => {
       values = [];
       sorted = [];
       draw();
+      codePanel?.clearHighlight();
       stage.caption(t('caption.start', 'Building a heap — each value climbs to its place.'));
     },
 
     onEvent(event) {
       switch (event.type) {
+        // phase 는 silent 다 — 걸음의 경계가 아니라는 뜻이지, 여기 오지 않는다는
+        // 뜻이 아니다. mechanism 은 projector 갱신을 마친 뒤에야 silent 를 보고
+        // 후처리를 건너뛴다. 코드 패널의 줄은 이 이벤트로만 짚힌다 (C3).
+        case 'phase': {
+          const p = rec(event.payload);
+          const name = p && typeof p.phase === 'string' ? p.phase : null;
+          codePanel?.highlightPhase(name);
+          return;
+        }
+
         case 'state-changed': {
           const s = readState(event.payload);
           if (!s) return;
@@ -211,12 +229,13 @@ export const heapBinaryProjector: ProjectorFactory = (views, runtime) => {
         }
 
         case 'done': {
+          codePanel?.clearHighlight();
           stage.caption(t('caption.done', 'Your turn — insert, extract, heapify or sort.'));
           return;
         }
 
         default:
-          // phase 는 silent 라 여기 오지 않는다. 그 밖의 어휘는 무시한다.
+          // 다루지 않는 어휘는 무시한다.
           return;
       }
     },
