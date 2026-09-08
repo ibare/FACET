@@ -173,6 +173,18 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/bottom-up-table:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/bound-and-cut:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/bst:
     dependencies:
       '@ffacet/core':
@@ -282,6 +294,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/greedy-can-fail:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/grow-and-copy:
     dependencies:
       '@ffacet/core':
@@ -384,6 +402,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/memo-write-once:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/merge-two-sorted:
     dependencies:
       '@ffacet/core':
@@ -439,6 +463,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/pivot-choice-matters:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/prune-branch:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -559,6 +589,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/take-best-now:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/traversal-order:
     dependencies:
       '@ffacet/core':
@@ -572,6 +608,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/trie:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/try-and-undo:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -735,6 +777,12 @@ importers:
       '@ffacet/algorithm-black-height-equal':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/black-height-equal
+      '@ffacet/algorithm-bottom-up-table':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/bottom-up-table
+      '@ffacet/algorithm-bound-and-cut':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/bound-and-cut
       '@ffacet/algorithm-bst':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bst
@@ -795,6 +843,9 @@ importers:
       '@ffacet/algorithm-gap-shrink':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/gap-shrink
+      '@ffacet/algorithm-greedy-can-fail':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/greedy-can-fail
       '@ffacet/algorithm-grow-and-copy':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/grow-and-copy
@@ -870,6 +921,9 @@ importers:
       '@ffacet/algorithm-matrix-transform-2d':
         specifier: workspace:*
         version: link:../../facets/graphics/matrix-transform-2d
+      '@ffacet/algorithm-memo-write-once':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/memo-write-once
       '@ffacet/algorithm-merge-two-sorted':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/merge-two-sorted
@@ -909,6 +963,9 @@ importers:
       '@ffacet/algorithm-pivot-choice-matters':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/pivot-choice-matters
+      '@ffacet/algorithm-prune-branch':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/prune-branch
       '@ffacet/algorithm-push-pop-top':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/push-pop-top
@@ -972,6 +1029,9 @@ importers:
       '@ffacet/algorithm-stack':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/stack
+      '@ffacet/algorithm-take-best-now':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/take-best-now
       '@ffacet/algorithm-tokenization':
         specifier: workspace:*
         version: link:../../facets/compilers/tokenization
@@ -984,6 +1044,9 @@ importers:
       '@ffacet/algorithm-trie':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/trie
+      '@ffacet/algorithm-try-and-undo':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/try-and-undo
       '@ffacet/algorithm-union-by-rank':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/union-by-rank

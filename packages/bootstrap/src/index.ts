@@ -351,4 +351,25 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:overlappingSubproblems', () =>
     import('@ffacet/algorithm-overlapping-subproblems').then((m) => m.registerOverlappingSubproblems()),
   );
+  registerFacetLoader('facet:memoWriteOnce', () =>
+    import('@ffacet/algorithm-memo-write-once').then((m) => m.registerMemoWriteOnce()),
+  );
+  registerFacetLoader('facet:bottomUpTable', () =>
+    import('@ffacet/algorithm-bottom-up-table').then((m) => m.registerBottomUpTable()),
+  );
+  registerFacetLoader('facet:takeBestNow', () =>
+    import('@ffacet/algorithm-take-best-now').then((m) => m.registerTakeBestNow()),
+  );
+  registerFacetLoader('facet:greedyCanFail', () =>
+    import('@ffacet/algorithm-greedy-can-fail').then((m) => m.registerGreedyCanFail()),
+  );
+  registerFacetLoader('facet:tryAndUndo', () =>
+    import('@ffacet/algorithm-try-and-undo').then((m) => m.registerTryAndUndo()),
+  );
+  registerFacetLoader('facet:pruneBranch', () =>
+    import('@ffacet/algorithm-prune-branch').then((m) => m.registerPruneBranch()),
+  );
+  registerFacetLoader('facet:boundAndCut', () =>
+    import('@ffacet/algorithm-bound-and-cut').then((m) => m.registerBoundAndCut()),
+  );
 }

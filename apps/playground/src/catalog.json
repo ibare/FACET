@@ -108,13 +108,13 @@
             { "id": "guess-by-value", "name": "보간 추정", "desc": "값을 보고 어디쯤인지 짐작한다", "facetId": "facet:guessByValue", "kind": "piece", "origin": "interpolation-search" },
             { "id": "divide-conquer-combine", "name": "분할 정복", "desc": "쪼개고 풀고 합친다", "facetId": "facet:divideConquerCombine", "kind": "piece", "origin": "divide-and-conquer" },
             { "id": "overlapping-subproblems", "name": "중복 부분 문제", "desc": "같은 것을 여러 번 푼다", "facetId": "facet:overlappingSubproblems", "kind": "piece", "origin": "dynamic-programming" },
-            { "id": "memo-write-once", "name": "메모이제이션", "desc": "한 번 푼 것을 적어 둔다", "kind": "piece", "origin": "dynamic-programming" },
-            { "id": "bottom-up-table", "name": "상향식 표 채우기", "desc": "작은 것부터 표를 채운다", "kind": "piece", "origin": "dynamic-programming" },
-            { "id": "take-best-now", "name": "그리디 선택", "desc": "지금 가장 좋아 보이는 것을 집는다", "kind": "piece", "origin": "greedy" },
-            { "id": "greedy-can-fail", "name": "그리디의 한계", "desc": "눈앞의 최선이 끝의 최선은 아니다", "kind": "piece", "origin": "greedy" },
-            { "id": "try-and-undo", "name": "백트래킹", "desc": "가 보고 아니면 되돌린다", "kind": "piece", "origin": "backtracking" },
-            { "id": "prune-branch", "name": "가지치기", "desc": "가망이 없으면 가지를 접는다", "kind": "piece", "origin": "backtracking" },
-            { "id": "bound-and-cut", "name": "한계 기반 가지치기", "desc": "한계를 재어 가지를 자른다", "kind": "piece", "origin": "branch-and-bound" }
+            { "id": "memo-write-once", "name": "메모이제이션", "desc": "한 번 푼 것을 적어 둔다", "facetId": "facet:memoWriteOnce", "kind": "piece", "origin": "dynamic-programming" },
+            { "id": "bottom-up-table", "name": "상향식 표 채우기", "desc": "작은 것부터 표를 채운다", "facetId": "facet:bottomUpTable", "kind": "piece", "origin": "dynamic-programming" },
+            { "id": "take-best-now", "name": "그리디 선택", "desc": "지금 가장 좋아 보이는 것을 집는다", "facetId": "facet:takeBestNow", "kind": "piece", "origin": "greedy" },
+            { "id": "greedy-can-fail", "name": "그리디의 한계", "desc": "눈앞의 최선이 끝의 최선은 아니다", "facetId": "facet:greedyCanFail", "kind": "piece", "origin": "greedy" },
+            { "id": "try-and-undo", "name": "백트래킹", "desc": "가 보고 아니면 되돌린다", "facetId": "facet:tryAndUndo", "kind": "piece", "origin": "backtracking" },
+            { "id": "prune-branch", "name": "가지치기", "desc": "가망이 없으면 가지를 접는다", "facetId": "facet:pruneBranch", "kind": "piece", "origin": "backtracking" },
+            { "id": "bound-and-cut", "name": "한계 기반 가지치기", "desc": "한계를 재어 가지를 자른다", "facetId": "facet:boundAndCut", "kind": "piece", "origin": "branch-and-bound" }
           ]
         },
         {
