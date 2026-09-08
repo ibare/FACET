@@ -158,6 +158,12 @@ export async function arrayAsTreeAlgorithm(ctx: FacetContext<ArrayAsTreeData>): 
   // 재생이 끝난 뒤 advance 로 처음부터 한 걸음씩 다시 짚어 본다. pointer 가
   // 0 이면 항상 먼저 되감고 첫 걸음을 보인다 — 처음 누름과 한 바퀴를 돈 뒤의
   // 다음 누름이 같은 규칙을 따른다 (S-piece).
+  //
+  // 이 조각은 되감기가 독립 이벤트가 아니라 `jump` 의 `rewind` 플래그다. 그래서
+  // `stepZero(true)` 하나가 "화면을 비우고 커서를 뿌리로 되돌리는 일" 까지만
+  // 하고 멈춘다 — 커서는 자동 재생이 끝난 자리에서 뿌리로 돌아오지만 그 뒤로
+  // 나아가지 않아, 눌러도 걸음이 오지 않은 것으로 읽힌다. 되감은 김에 첫
+  // 걸음(왼쪽 자식으로 내려가기)까지 이어 보인다.
   let pointer = 0;
   while (!ctx.cancelled) {
     let input: ReactiveInputEvent;
@@ -171,7 +177,9 @@ export async function arrayAsTreeAlgorithm(ctx: FacetContext<ArrayAsTreeData>): 
 
     if (pointer === 0) {
       await stepZero(true);
-      pointer = 1;
+      if (ctx.cancelled) return;
+      await steps[1]!();
+      pointer = 2;
       continue;
     }
     await steps[pointer]!();

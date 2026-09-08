@@ -135,9 +135,9 @@ function computeSteps(root: TrieNode, queries: string[]): Step[] {
 
 /**
  * 한 걸음 앞의 문(gate). 자동 재생이면 `stepMs` 만큼 읽을 시간을 두고,
- * 수동(advance) 이면 사용자 입력을 기다린다. `skipOnce` 가 true 인 첫 호출은
- * 곧바로 통과한다 — 되감기를 일으킨 그 누름이 곧 첫 걸음을 보이는 누름이기도
- * 하기 때문이다.
+ * 수동(advance) 이면 사용자 입력을 기다린다. `free` 에 남은 수만큼의 첫
+ * 호출들은 기다리지 않고 곧바로 통과한다 — 되감기를 일으킨 그 누름이 곧 첫
+ * 걸음을 보이는 누름이기도 하기 때문이다 (S-piece).
  *
  * @returns 정상 통과 시 true, 취소로 깨어났으면 false.
  */
@@ -145,11 +145,11 @@ async function gate(
   ctx: ReactiveContext<WalkPerCharacterData>,
   mode: 'auto' | 'manual',
   stepMs: number,
-  skipOnce: { value: boolean },
+  free: { value: number },
 ): Promise<boolean> {
   if (ctx.cancelled) return false;
-  if (skipOnce.value) {
-    skipOnce.value = false;
+  if (free.value > 0) {
+    free.value -= 1;
     return true;
   }
   if (mode === 'auto') {
@@ -167,17 +167,21 @@ async function gate(
   }
 }
 
-/** 걸음표를 순서대로 밟으며 리터럴 type 으로 emit 한다 (C2). */
+/**
+ * 걸음표를 순서대로 밟으며 리터럴 type 으로 emit 한다 (C2).
+ *
+ * `freeGates` 는 기다리지 않고 통과시킬 앞쪽 문의 수다.
+ */
 async function runSteps(
   ctx: ReactiveContext<WalkPerCharacterData>,
   steps: Step[],
   mode: 'auto' | 'manual',
   stepMs: number,
-  skipFirstGate: boolean,
+  freeGates: number,
 ): Promise<boolean> {
-  const skipOnce = { value: skipFirstGate };
+  const free = { value: freeGates };
   for (const step of steps) {
-    const ok = await gate(ctx, mode, stepMs, skipOnce);
+    const ok = await gate(ctx, mode, stepMs, free);
     if (!ok) return false;
     switch (step.kind) {
       case 'search-begin':
@@ -224,13 +228,17 @@ export async function walkPerCharacterAlgorithm(ctx: FacetContext<WalkPerCharact
   const root = buildTrie(words);
   const steps = computeSteps(root, queries);
 
-  const finishedAuto = await runSteps(rc, steps, 'auto', stepMs, false);
+  const finishedAuto = await runSteps(rc, steps, 'auto', stepMs, 0);
   if (!finishedAuto) return;
 
   // 자동 재생 종료 — 이후로는 advance 로만 처음부터 다시 훑는다.
-  // 자동 재생 뒤 처음 누르는 advance 는 되감고 첫 걸음까지 보인다(S-piece) —
-  // 그 누름 자체가 아래 runSteps 의 skipFirstGate 로 전달되어 첫 문을 그냥
-  // 통과시킨다.
+  //
+  // 자동 재생 뒤 처음 누르는 advance 는 되감고 첫 걸음까지 보인다 (S-piece).
+  // 이 조각은 되감기가 독립 이벤트가 아니라 걸음표 첫 줄인 `search-begin` 이
+  // 겸한다 — 커서를 뿌리로 되돌리고 이전 강조를 지우는 일이 곧 되감기다.
+  // 그래서 문을 둘 열어 준다: 하나는 되감기(`search-begin`), 하나는 첫
+  // 걸음(`step-down`). 하나만 열면 되감기에서 멈춰, 눌러도 반응이 없는 것으로
+  // 읽힌다.
   while (true) {
     if (rc.cancelled) return;
     let ev: ReactiveInputEvent;
@@ -240,7 +248,7 @@ export async function walkPerCharacterAlgorithm(ctx: FacetContext<WalkPerCharact
       return;
     }
     if (ev.type !== 'advance') continue;
-    const finishedManual = await runSteps(rc, steps, 'manual', stepMs, true);
+    const finishedManual = await runSteps(rc, steps, 'manual', stepMs, 2);
     if (!finishedManual) return;
   }
 }

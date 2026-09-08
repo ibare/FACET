@@ -108,10 +108,20 @@ export const traverseFromHead = async (
   // 자동 재생 — 걸음마다 읽을 시간을 두고 스스로 나아간다.
   await play(rc, () => rc.sleep(stepMs));
 
-  // 그 뒤로는 곱씹는 사람을 위해 한 걸음씩. 첫 누름은 처음으로 되돌리는 데 쓴다.
+  // 그 뒤로는 곱씹는 사람을 위해 한 걸음씩. 첫 누름은 처음으로 되돌리고 첫
+  // 걸음까지 보인다 — 되감기만 하고 멈추면 눌러도 반응이 없는 것으로 읽힌다
+  // (S-piece). play 는 문을 emit 앞에 두는 짜임이라, 되감은 직후의 첫 문
+  // 하나만 그냥 통과시켜 그 누름이 첫 걸음까지 닿게 한다.
   while (!rc.cancelled) {
     if (!(await waitForAdvance(rc))) return;
     await rc.emit({ type: 'rewind' });
-    await play(rc, () => waitForAdvance(rc));
+    let freeGate = true;
+    await play(rc, () => {
+      if (freeGate) {
+        freeGate = false;
+        return Promise.resolve(!rc.cancelled);
+      }
+      return waitForAdvance(rc);
+    });
   }
 };

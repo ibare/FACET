@@ -168,12 +168,10 @@ export const lostLink = async (ctx: FacetContext<LostLinkData>): Promise<void> =
     }
     if (rctx.cancelled) return;
     await rctx.emit({ type: 'rewind' });
-    try {
-      await rctx.waitForInput();
-    } catch {
-      return;
-    }
-    if (rctx.cancelled) return;
+    // 되감은 뒤에 또 한 번 누르기를 기다리지 않는다. 되감기만 하고 멈추면
+    // 눌러도 반응이 없는 것으로 읽히므로, 그 누름 하나로 첫 걸음까지 보인다
+    // (S-piece). playScript 는 emit 을 먼저 하고 문을 뒤에 두는 짜임이라
+    // 곧바로 부르면 첫 걸음이 딸려 나온다.
     if (!(await playScript(rctx, byInput))) return;
   }
 };

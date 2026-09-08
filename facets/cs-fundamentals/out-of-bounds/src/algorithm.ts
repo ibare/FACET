@@ -231,8 +231,11 @@ export const outOfBounds = async (ctx: FacetContext<OutOfBoundsData>): Promise<v
     if (input.type !== 'advance') continue;
 
     if (cursor >= STEP_COUNT) {
+      // 되감기만 발신하고 멈추면 눌러도 아무 일이 없는 것으로 읽힌다. 되감은
+      // 김에 첫 걸음까지 이어 보인다 (S-piece).
       await rc.emit({ type: 'rewind' });
-      cursor = 0;
+      await emitStep(rc, STEP.computeSafe);
+      cursor = STEP.computeSafe + 1;
       continue;
     }
 

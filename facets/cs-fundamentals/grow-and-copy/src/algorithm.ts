@@ -61,10 +61,21 @@ export const growAndCopy = async (ctx: FacetContext<GrowAndCopyData>): Promise<v
   /** 자동 재생을 마친 뒤에는 걸음마다 사용자의 `advance` 를 기다린다. */
   let manual = false;
 
+  /**
+   * 되감은 직후의 첫 문만 그냥 통과시킨다. 되감기를 일으킨 그 누름이 곧 첫
+   * 걸음을 보이는 누름이기도 하기 때문이다 — 되감기만 하고 문 앞에 서면
+   * 눌러도 반응이 없는 것으로 읽힌다 (S-piece).
+   */
+  let freeGate = false;
+
   /** 취소 검사 + 다음 걸음까지의 간격. false 면 알고리즘을 접는다. */
   const pause = async (): Promise<boolean> => {
     if (rc.cancelled) return false;
     if (!manual) return rc.sleep(stepMs);
+    if (freeGate) {
+      freeGate = false;
+      return true;
+    }
     for (;;) {
       const input = await rc.waitForInput();
       if (rc.cancelled) return false;
@@ -147,13 +158,14 @@ export const growAndCopy = async (ctx: FacetContext<GrowAndCopyData>): Promise<v
     if (!(await play())) return;
 
     // 자동 재생이 끝났다. 이제부터는 눌린 만큼만 나아간다 — 첫 누름은 처음으로
-    // 되감고, 그 뒤로는 한 걸음씩 (S-piece: CONTROL.advance).
+    // 되감고 첫 걸음까지 보이며, 그 뒤로는 한 걸음씩 (S-piece: CONTROL.advance).
     for (;;) {
       const input = await rc.waitForInput();
       if (rc.cancelled) return;
       if (input.type !== 'advance') continue;
       manual = true;
       await rc.emit({ type: 'rewind' });
+      freeGate = true;
       if (!(await play())) return;
     }
   } catch {
