@@ -190,6 +190,36 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:heightStaysLow', () =>
     import('@ffacet/algorithm-height-stays-low').then((m) => m.registerHeightStaysLow()),
   );
+  registerFacetLoader('facet:sharePrefixPath', () =>
+    import('@ffacet/algorithm-share-prefix-path').then((m) => m.registerSharePrefixPath()),
+  );
+  registerFacetLoader('facet:walkPerCharacter', () =>
+    import('@ffacet/algorithm-walk-per-character').then((m) => m.registerWalkPerCharacter()),
+  );
+  registerFacetLoader('facet:heapProperty', () =>
+    import('@ffacet/algorithm-heap-property').then((m) => m.registerHeapProperty()),
+  );
+  registerFacetLoader('facet:siftUp', () =>
+    import('@ffacet/algorithm-sift-up').then((m) => m.registerSiftUp()),
+  );
+  registerFacetLoader('facet:siftDown', () =>
+    import('@ffacet/algorithm-sift-down').then((m) => m.registerSiftDown()),
+  );
+  registerFacetLoader('facet:arrayAsTree', () =>
+    import('@ffacet/algorithm-array-as-tree').then((m) => m.registerArrayAsTree()),
+  );
+  registerFacetLoader('facet:adjacencyListVsMatrix', () =>
+    import('@ffacet/algorithm-adjacency-list-vs-matrix').then((m) => m.registerAdjacencyListVsMatrix()),
+  );
+  registerFacetLoader('facet:findRoot', () =>
+    import('@ffacet/algorithm-find-root').then((m) => m.registerFindRoot()),
+  );
+  registerFacetLoader('facet:unionByRank', () =>
+    import('@ffacet/algorithm-union-by-rank').then((m) => m.registerUnionByRank()),
+  );
+  registerFacetLoader('facet:pathCompression', () =>
+    import('@ffacet/algorithm-path-compression').then((m) => m.registerPathCompression()),
+  );
 
   // 자료구조 출처의 조각 열 (배열 5 · 연결 리스트 4 · 스택 1)
   registerFacetLoader('facet:indexAddressCalc', () =>

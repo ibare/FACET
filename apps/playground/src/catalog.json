@@ -57,16 +57,16 @@
             { "id": "node-holds-many", "name": "다분기 노드", "desc": "한 자리에 여럿을 담는다", "facetId": "facet:nodeHoldsMany", "kind": "piece", "origin": "b-tree" },
             { "id": "split-when-full", "name": "노드 분할", "desc": "차면 가운데를 위로 올리며 쪼갠다", "facetId": "facet:splitWhenFull", "kind": "piece", "origin": "b-tree" },
             { "id": "height-stays-low", "name": "낮은 트리 높이", "desc": "가지가 넓어 키가 낮다", "facetId": "facet:heightStaysLow", "kind": "piece", "origin": "b-tree" },
-            { "id": "share-prefix-path", "name": "접두사 공유", "desc": "같은 앞글자는 같은 길을 쓴다", "kind": "piece", "origin": "trie" },
-            { "id": "walk-per-character", "name": "글자 단위 탐색", "desc": "글자마다 한 칸씩 내려간다", "kind": "piece", "origin": "trie" },
-            { "id": "heap-property", "name": "힙 성질", "desc": "부모가 자식보다 앞선다", "kind": "piece", "origin": "heap" },
-            { "id": "sift-up", "name": "상향 재배치", "desc": "넣고 위로 올라가며 자리 잡는다", "kind": "piece", "origin": "heap" },
-            { "id": "sift-down", "name": "하향 재배치", "desc": "꼭대기를 빼고 아래로 내려가며 메운다", "kind": "piece", "origin": "heap" },
-            { "id": "array-as-tree", "name": "배열 기반 트리", "desc": "배열 번호로 부모와 자식을 셈한다", "kind": "piece", "origin": "heap" },
-            { "id": "adjacency-list-vs-matrix", "name": "인접 리스트와 인접 행렬", "desc": "이웃을 목록으로 두는가, 표로 두는가", "kind": "piece", "origin": "graph" },
-            { "id": "find-root", "name": "find", "desc": "뿌리를 찾아 올라간다", "kind": "piece", "origin": "union-find" },
-            { "id": "union-by-rank", "name": "랭크 기반 합집합", "desc": "작은 나무를 큰 나무에 붙인다", "kind": "piece", "origin": "union-find" },
-            { "id": "path-compression", "name": "경로 압축", "desc": "올라간 김에 길을 줄인다", "kind": "piece", "origin": "union-find" }
+            { "id": "share-prefix-path", "name": "접두사 공유", "desc": "같은 앞글자는 같은 길을 쓴다", "facetId": "facet:sharePrefixPath", "kind": "piece", "origin": "trie" },
+            { "id": "walk-per-character", "name": "글자 단위 탐색", "desc": "글자마다 한 칸씩 내려간다", "facetId": "facet:walkPerCharacter", "kind": "piece", "origin": "trie" },
+            { "id": "heap-property", "name": "힙 성질", "desc": "부모가 자식보다 앞선다", "facetId": "facet:heapProperty", "kind": "piece", "origin": "heap" },
+            { "id": "sift-up", "name": "상향 재배치", "desc": "넣고 위로 올라가며 자리 잡는다", "facetId": "facet:siftUp", "kind": "piece", "origin": "heap" },
+            { "id": "sift-down", "name": "하향 재배치", "desc": "꼭대기를 빼고 아래로 내려가며 메운다", "facetId": "facet:siftDown", "kind": "piece", "origin": "heap" },
+            { "id": "array-as-tree", "name": "배열 기반 트리", "desc": "배열 번호로 부모와 자식을 셈한다", "facetId": "facet:arrayAsTree", "kind": "piece", "origin": "heap" },
+            { "id": "adjacency-list-vs-matrix", "name": "인접 리스트와 인접 행렬", "desc": "이웃을 목록으로 두는가, 표로 두는가", "facetId": "facet:adjacencyListVsMatrix", "kind": "piece", "origin": "graph" },
+            { "id": "find-root", "name": "find", "desc": "뿌리를 찾아 올라간다", "facetId": "facet:findRoot", "kind": "piece", "origin": "union-find" },
+            { "id": "union-by-rank", "name": "랭크 기반 합집합", "desc": "작은 나무를 큰 나무에 붙인다", "facetId": "facet:unionByRank", "kind": "piece", "origin": "union-find" },
+            { "id": "path-compression", "name": "경로 압축", "desc": "올라간 김에 길을 줄인다", "facetId": "facet:pathCompression", "kind": "piece", "origin": "union-find" }
           ]
         },
         {

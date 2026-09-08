@@ -124,7 +124,19 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/adjacency-list-vs-matrix:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/array:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/array-as-tree:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -216,6 +228,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/find-root:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/grow-and-copy:
     dependencies:
       '@ffacet/core':
@@ -229,6 +247,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/hash-to-bucket:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/heap-property:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -306,6 +330,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/path-compression:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/push-pop-top:
     dependencies:
       '@ffacet/core':
@@ -343,6 +373,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/share-prefix-path:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/shift-on-insert:
     dependencies:
       '@ffacet/core':
@@ -350,6 +386,18 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/shift-on-remove:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/sift-down:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/sift-up:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -374,6 +422,18 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/traverse-from-head:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/union-by-rank:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/walk-per-character:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -495,9 +555,15 @@ importers:
 
   packages/bootstrap:
     devDependencies:
+      '@ffacet/algorithm-adjacency-list-vs-matrix':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/adjacency-list-vs-matrix
       '@ffacet/algorithm-array':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/array
+      '@ffacet/algorithm-array-as-tree':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/array-as-tree
       '@ffacet/algorithm-asymmetric-rsa':
         specifier: workspace:*
         version: link:../../facets/security/asymmetric-rsa
@@ -546,6 +612,9 @@ importers:
       '@ffacet/algorithm-enqueue-dequeue-ends':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/enqueue-dequeue-ends
+      '@ffacet/algorithm-find-root':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/find-root
       '@ffacet/algorithm-grow-and-copy':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/grow-and-copy
@@ -570,6 +639,9 @@ importers:
       '@ffacet/algorithm-hash-to-bucket':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/hash-to-bucket
+      '@ffacet/algorithm-heap-property':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/heap-property
       '@ffacet/algorithm-height-balance-check':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/height-balance-check
@@ -621,6 +693,9 @@ importers:
       '@ffacet/algorithm-parent-two-children':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/parent-two-children
+      '@ffacet/algorithm-path-compression':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/path-compression
       '@ffacet/algorithm-pigeonhole-collision':
         specifier: workspace:*
         version: link:../../facets/security/pigeonhole-collision
@@ -642,12 +717,21 @@ importers:
       '@ffacet/algorithm-rotate-to-balance':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/rotate-to-balance
+      '@ffacet/algorithm-share-prefix-path':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/share-prefix-path
       '@ffacet/algorithm-shift-on-insert':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/shift-on-insert
       '@ffacet/algorithm-shift-on-remove':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/shift-on-remove
+      '@ffacet/algorithm-sift-down':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/sift-down
+      '@ffacet/algorithm-sift-up':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/sift-up
       '@ffacet/algorithm-signature-key-direction':
         specifier: workspace:*
         version: link:../../facets/security/signature-key-direction
@@ -669,6 +753,12 @@ importers:
       '@ffacet/algorithm-traverse-from-head':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/traverse-from-head
+      '@ffacet/algorithm-union-by-rank':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/union-by-rank
+      '@ffacet/algorithm-walk-per-character':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/walk-per-character
       '@ffacet/core':
         specifier: workspace:*
         version: link:../core
