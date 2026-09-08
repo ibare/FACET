@@ -41,8 +41,6 @@ const H = 580;
 
 // ── 영역 좌표 ───────────────────────────────────────────────────────────
 const TITLE_Y = 22;
-const CONCEPT_Y0 = 42;
-const CONCEPT_LINE_H = 16;
 
 // 키 생성 시퀀스 영역.
 const KEYGEN_Y = 124;
@@ -197,13 +195,6 @@ type KeyRec = {
 export const rsaStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
     const tr = params.t ?? makeTranslator(params.locale);
-    /** 상단 개념 서술. tr 이 필요해 모듈 스코프가 아니라 여기 둔다. */
-    const CONCEPT_TEXT = [
-      tr('concept.line1', 'RSA locks and unlocks a message with a pair of keys'),
-          tr('concept.line2', 'born from two large primes. The public padlock anyone'),
-          tr('concept.line3', 'holds can only lock, and only the private key its'),
-          tr('concept.line4', 'owner keeps can open it again.'),
-    ];
     const palette = getColors(params.theme);
     const cat = categorical(8, 'vivid');
     const catDeep = categorical(8, 'deep');
@@ -287,18 +278,6 @@ export const rsaStageView: View = {
       tr('label.title', 'RSA — one pair of asymmetric keys'),
     );
 
-    CONCEPT_TEXT.forEach((line, i) => {
-      makeText(
-        captionLayer,
-        {
-          x: 12,
-          y: CONCEPT_Y0 + i * CONCEPT_LINE_H,
-          'font-size': fontSizes.sm,
-          fill: palette.textMuted,
-        },
-        line,
-      );
-    });
 
     // 우상단 — 현재 파라미터 요약 (p, q, n, e, d).
     const paramSummaryEl = makeText(

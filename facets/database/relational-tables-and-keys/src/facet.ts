@@ -230,18 +230,6 @@ export const relationalTablesAndKeysFacet: FacetJson = {
       id: 'kunci primer: no. siswa ▼',
       pt: 'chave primária: nº de aluno ▼',
     },
-    'label.references': {
-      en: 'See also: Wikipedia · Crow\'s Foot · dbdiagram.io',
-      ko: '참고: Wikipedia · Crow\'s Foot · dbdiagram.io · 위키백과(외래 키)',
-      ja: '参考: Wikipedia · Crow\'s Foot · dbdiagram.io',
-      zh: '参考: Wikipedia · Crow\'s Foot · dbdiagram.io',
-      ar: 'انظر أيضًا: Wikipedia · Crow\'s Foot · dbdiagram.io',
-      es: 'Véase también: Wikipedia · Crow\'s Foot · dbdiagram.io',
-      fr: 'Voir aussi : Wikipedia · Crow\'s Foot · dbdiagram.io',
-      hi: 'और देखें: Wikipedia · Crow\'s Foot · dbdiagram.io',
-      id: 'Lihat juga: Wikipedia · Crow\'s Foot · dbdiagram.io',
-      pt: 'Veja também: Wikipedia · Crow\'s Foot · dbdiagram.io',
-    },
     'legend.alt': {
       en: '🔑 alt alternate key',
       ko: '🔑 alt 대체키',

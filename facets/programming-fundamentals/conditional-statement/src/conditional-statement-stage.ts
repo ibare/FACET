@@ -204,22 +204,6 @@ const REFERENCES: Refs[] = [
 export const conditionalFlowchartView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
     const tr = params.t ?? makeTranslator(params.locale);
-    /** 좌측 서사. tr 이 필요해 모듈 스코프가 아니라 여기 둔다 (C10). */
-    const SIDE_CONCEPT_TEXT = [
-      tr('concept.line1', 'A conditional is the promise that when running code'),
-      tr('concept.line2', 'reaches a fork, it reads whether the current value is'),
-      tr('concept.line3', 'true or false and passes through exactly one branch.'),
-      tr('concept.line4', 'The branch not taken is closed for this run — not a'),
-      tr('concept.line5', 'single line of it executes. Once the fork is over,'),
-      tr('concept.line6', 'every path gathers back into one line and carries on'),
-      tr('concept.line7', 'into the code that follows.'),
-    ];
-    const SIDE_GUIDE_TEXT = [
-      tr('guide.line1', 'Try moving the slider above. Watch the result'),
-      tr('guide.line2', 'condense again at the diamond, and the lit path and'),
-      tr('guide.line3', 'the closed one swap. A branch with a bar drawn'),
-      tr('guide.line4', 'across it is the path that did not run this time.'),
-    ];
     const palette = getColors(params.theme);
     // categorical 시드 — 활성 가지 + 결과 참/거짓 칩.
     const cat = categorical(6, 'vivid');
@@ -395,47 +379,6 @@ export const conditionalFlowchartView: View = {
       tr('label.concept', 'concept'),
     );
     void sideTitle;
-
-    const conceptLineH = 16;
-    SIDE_CONCEPT_TEXT.forEach((line, i) => {
-      makeText(
-        sideLayer,
-        {
-          x: SIDE_X0,
-          y: SIDE_TOP + 32 + i * conceptLineH,
-          'font-size': fontSizes.sm,
-          fill: palette.text,
-        },
-        line,
-      );
-    });
-
-    const guideTitle = makeText(
-      sideLayer,
-      {
-        x: SIDE_X0,
-        y: SIDE_TOP + 32 + SIDE_CONCEPT_TEXT.length * conceptLineH + 22,
-        'font-size': fontSizes.xs,
-        'font-weight': 700,
-        fill: palette.textMuted,
-        'letter-spacing': '0.04em',
-      },
-      tr('label.guide', 'how to explore'),
-    );
-    void guideTitle;
-
-    SIDE_GUIDE_TEXT.forEach((line, i) => {
-      makeText(
-        sideLayer,
-        {
-          x: SIDE_X0,
-          y: SIDE_TOP + 32 + SIDE_CONCEPT_TEXT.length * conceptLineH + 42 + i * conceptLineH,
-          'font-size': fontSizes.sm,
-          fill: palette.textMuted,
-        },
-        line,
-      );
-    });
 
     // ── 캡션 ──────────────────────────────────────────────────────────
     const baseCaptionEl = makeText(

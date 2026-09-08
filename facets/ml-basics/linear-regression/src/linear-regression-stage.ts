@@ -42,8 +42,6 @@ const H = 620;
 
 // ── 영역 ────────────────────────────────────────────────────────────────
 const TITLE_Y = 22;
-const CONCEPT_Y0 = 42;
-const CONCEPT_LINE_H = 16;
 
 const BODY_Y = 110;
 const BODY_H = 280;
@@ -246,12 +244,6 @@ function wait(ms: number): Promise<void> {
 export const linearRegressionStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
     const tr = params.t ?? makeTranslator(params.locale);
-    /** 좌상단 개념 서술. tr 이 필요해 모듈 스코프가 아니라 여기 둔다. */
-    const CONCEPT_TEXT = [
-      tr('concept.line1', 'Linear regression threads one line through a cloud of points,'),
-      tr('concept.line2', 'turning each residual into an area and rotating and shifting the line'),
-      tr('concept.line3', 'one step per iteration so those areas add up to as little as possible.'),
-    ];
     container.textContent = '';
 
     const colors = getColors(params.theme);
@@ -295,20 +287,6 @@ export const linearRegressionStageView: View = {
       },
       tr('label.title', 'Linear regression — as the residual areas shrink, the dot rolls down into the valley'),
     );
-
-    for (let i = 0; i < CONCEPT_TEXT.length; i++) {
-      makeText(
-        svg,
-        {
-          x: W / 2,
-          y: CONCEPT_Y0 + i * CONCEPT_LINE_H,
-          'text-anchor': 'middle',
-          'font-size': fontSizes.xs,
-          fill: colors.textMuted,
-        },
-        CONCEPT_TEXT[i]!,
-      );
-    }
 
     // 두 평면 사이 분리선.
     const sepX = (DATA_X + DATA_W + PARAM_X) / 2;

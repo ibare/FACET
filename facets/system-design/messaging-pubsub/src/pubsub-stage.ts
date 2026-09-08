@@ -458,20 +458,6 @@ export const pubsubStageView: View = {
     refText.textContent =
       tr('label.references', 'See also: Hohpe — Publish-Subscribe Channel · MS Azure Architecture Center · GoF Observer · Aiven Kafka Visualization');
     svg.appendChild(refText);
-
-    // === 시각화 안 텍스트 (하단 한 줄 narration) ===
-    const narrative = document.createElementNS(SVG_NS, 'text');
-    setAttrs(narrative, {
-      x: 12,
-      y: H - 8,
-      fill: colors.text,
-      'font-size': '9px',
-      'font-family': fonts.body,
-    });
-    narrative.textContent =
-      tr('legend.indirection', 'Publishers throw only at a topic and subscribers ask only for a topic — the broker in between hands out the copies, and every arrow breaks once at the broker lifeline and starts again.');
-    svg.appendChild(narrative);
-
     // === broker 라이프라인 (이벤트, alerts) ===
     const brokerEventsLine = makeLifeline(BROKER_EVENTS_X);
     const brokerAlertsLine = makeLifeline(BROKER_ALERTS_X, { aux: true });

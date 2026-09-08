@@ -1304,17 +1304,6 @@ export const ipRoutingStageView: View = {
       tr('label.references', 'See also: Kurose-Ross LPM Interactive · INET/OMNeT++ Routing Visualizer · Cisco Packet Tracer · Practical Networking — Packet Traveling');
     svg.appendChild(refText);
 
-    const narrative = svgEl('text', {
-      x: 12,
-      y: H - 6,
-      fill: colors.text,
-      'font-size': '9px',
-      'font-family': fonts.body,
-    });
-    narrative.textContent =
-      tr('legend.rules', 'Only one router\'s table is open at any moment — a router sees only its own. The longest match wins. Every hop takes one off the TTL.');
-    svg.appendChild(narrative);
-
     // 패킷 카드 init.
     buildPacketCard();
     packet.group.setAttribute('opacity', '0');

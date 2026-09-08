@@ -37,8 +37,6 @@ const H = 460;
 
 // ── 영역 ────────────────────────────────────────────────────────────────
 const TITLE_Y = 20;
-const CONCEPT_Y0 = 38;
-const CONCEPT_LINE_H = 14;
 
 // 천장 영역 — 트리거 표식이 내려오는 자리.
 const CEILING_Y0 = 80;
@@ -213,17 +211,6 @@ function stageSlotRect(col: number, row: number): {
 export const contextSwitchingStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
     const tr = params.t ?? makeTranslator(params.locale);
-    /** 상단 개념 서술. tr 이 필요해 모듈 스코프가 아니라 여기 둔다. */
-    const CONCEPT_TEXT = [
-      tr(
-        'concept.line1',
-        "Context switching — on a single CPU stage one flow's whole register set is lifted out into its own holder,",
-      ),
-      tr(
-        'concept.line2',
-        "and the other flow's set is placed back into those same slots, so each resumes exactly where it stopped.",
-      ),
-    ];
     container.textContent = '';
 
     const colors = getColors(params.theme);
@@ -316,21 +303,6 @@ export const contextSwitchingStageView: View = {
       },
       tr('label.title', 'Context switching — stage / holders / time'),
     );
-
-    // 개념 캡션 (2줄).
-    for (let i = 0; i < CONCEPT_TEXT.length; i++) {
-      makeText(
-        svg,
-        {
-          x: W / 2,
-          y: CONCEPT_Y0 + i * CONCEPT_LINE_H,
-          'text-anchor': 'middle',
-          'font-size': fontSizes.xs,
-          fill: colors.textMuted,
-        },
-        CONCEPT_TEXT[i]!,
-      );
-    }
 
     // 사건 캡션 (천장 영역 위 또는 시간 띠 위).
     const eventCaption = makeText(

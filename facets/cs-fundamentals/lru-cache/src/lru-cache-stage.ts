@@ -69,8 +69,6 @@ const DLL_AXIS_Y = 320;
 const DUMMY_W = 28;
 
 // 시각화 안 텍스트 박스.
-const NARRATIVE_TOP = 360;
-const NARRATIVE_H = 116;
 
 // ── 시간 (ms) ──
 const PROMOTE_ARC_MS = 520;
@@ -137,12 +135,6 @@ const K = {
   mruEnd: 'label.mruEnd',
   traceTitle: 'label.traceTitle',
   references: 'label.references',
-  narrative1: 'narrative.line1',
-  narrative2: 'narrative.line2',
-  narrative3: 'narrative.line3',
-  narrative4: 'narrative.line4',
-  narrative5: 'narrative.line5',
-  narrative6: 'narrative.line6',
   getHit: 'caption.getHit',
   getMiss: 'caption.getMiss',
   missMark: 'caption.missMark',
@@ -361,46 +353,6 @@ export const lruCacheStageView: View = {
     });
     mruLabel.textContent = tr(K.mruEnd, '(just seen) MRU ▶');
     svg.appendChild(mruLabel);
-
-    // === 시각화 안 텍스트 ===
-    const narrativeBg = document.createElementNS(SVG_NS, 'rect');
-    setAttrs(narrativeBg, {
-      x: MAIN_LEFT,
-      y: NARRATIVE_TOP,
-      width: MAIN_W,
-      height: NARRATIVE_H,
-      fill: colors.bg,
-      stroke: colors.border,
-      'stroke-width': '1',
-      rx: '4',
-    });
-    svg.appendChild(narrativeBg);
-
-    const narrativeText = document.createElementNS(SVG_NS, 'text');
-    setAttrs(narrativeText, {
-      x: MAIN_LEFT + 10,
-      y: NARRATIVE_TOP + 18,
-      fill: colors.text,
-      'font-size': fontSizes.xs,
-      'font-family': fonts.body,
-    });
-    svg.appendChild(narrativeText);
-
-    const narrativeLines = [
-      tr(K.narrative1, 'An LRU cache carves a "recency order" onto a plain key-value store.'),
-      tr(K.narrative2, 'The hash slots on top give fast key → node pointer lookup,'),
-      tr(K.narrative3, 'while the doubly linked list below carries the order of use.'),
-      tr(K.narrative4, 'Both areas share the same nodes, so every call updates the two at once.'),
-      tr(K.narrative5, 'Even a get is a write in effect — it drags its node to the MRU end.'),
-      tr(K.narrative6, 'A put on a full cache makes the node at the LRU end vanish from both areas together.'),
-    ];
-    for (let i = 0; i < narrativeLines.length; i++) {
-      const tspan = document.createElementNS(SVG_NS, 'tspan');
-      tspan.setAttribute('x', String(MAIN_LEFT + 10));
-      tspan.setAttribute('dy', i === 0 ? '0' : '15');
-      tspan.textContent = narrativeLines[i] ?? '';
-      narrativeText.appendChild(tspan);
-    }
 
     // === 트레이스 스트립 ===
     const traceBg = document.createElementNS(SVG_NS, 'rect');

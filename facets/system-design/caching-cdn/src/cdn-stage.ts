@@ -382,20 +382,6 @@ export const cdnStageView: View = {
     // === 엣지 PoP 그룹 ===
     const edgeGroup = document.createElementNS(SVG_NS, 'g');
     svg.appendChild(edgeGroup);
-
-    // === 시각화 안 텍스트 (하단 narration) ===
-    const narrative = document.createElementNS(SVG_NS, 'text');
-    setAttrs(narrative, {
-      x: 12,
-      y: H - 28,
-      fill: colors.text,
-      'font-size': '9px',
-      'font-family': fonts.body,
-    });
-    narrative.textContent =
-      tr('legend.hitMiss', 'A hit is one short arc from client to edge — a miss is the long trip up the hierarchy and back, filling the edge on the way.');
-    svg.appendChild(narrative);
-
     // === 레퍼런스 라벨 ===
     const refText = document.createElementNS(SVG_NS, 'text');
     setAttrs(refText, {

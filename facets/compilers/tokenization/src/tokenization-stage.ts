@@ -40,8 +40,6 @@ const H = 540;
 
 // ── 영역 분할 ───────────────────────────────────────────────────────────
 const TITLE_Y = 22;
-const CONCEPT_Y0 = 42;
-const CONCEPT_LINE_H = 15;
 
 // 입력 띠.
 const STRIP_X0 = 24;
@@ -252,13 +250,6 @@ type CardRec = {
 export const tokenizationStageView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
     const tr = params.t ?? makeTranslator(params.locale);
-    /** 상단 개념 서술. tr 이 필요해 모듈 스코프가 아니라 여기 둔다. */
-    const CONCEPT_LINES = [
-      tr('concept.line1', 'Tokenization is the first stage of a compiler — reading left to right, one'),
-      tr('concept.line2', 'character at a time, it cuts the source into the smallest meaningful units'),
-      tr('concept.line3', '(tokens), taking the longest run it can. Whitespace and comments never'),
-      tr('concept.line4', 'become tokens and sink into grey. Watch the strip above feed the cards below.'),
-    ];
     const palette = getColors(params.theme);
     const kindColors = buildKindColors(palette);
 
@@ -324,19 +315,6 @@ export const tokenizationStageView: View = {
       },
       tr('label.title', 'Tokenization — one beat of condensation'),
     );
-    CONCEPT_LINES.forEach((line, i) => {
-      makeText(
-        headerLayer,
-        {
-          x: 24,
-          y: CONCEPT_Y0 + i * CONCEPT_LINE_H,
-          'font-size': fontSizes.xs,
-          fill: palette.textMuted,
-        },
-        line,
-      );
-    });
-
     // 예제 라벨 (오른쪽 상단).
     const exampleNameEl = makeText(
       headerLayer,
