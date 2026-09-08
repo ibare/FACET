@@ -20,7 +20,7 @@
  *   - signalOutOfRange(opts?)                         — 빨간 점선 깜빡.
  */
 
-import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import type { CanvasView, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
 import { makeTranslator } from '@ffacet/core/runtime';
 import { getColors, fonts, fontSizes } from '@ffacet/core/runtime';
 
@@ -91,8 +91,12 @@ type Layout = {
   stripTop: number;
 };
 
-export const arrayStageView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const arrayStageView: CanvasView = {
+  canvas: { width: W, height: H },
+  mount(
+    container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     const tr = params.t ?? makeTranslator(params.locale);
     container.textContent = '';
     const colors = getColors(params.theme);
@@ -102,11 +106,7 @@ export const arrayStageView: View = {
     root.style.fontFamily = fonts.body;
     root.style.color = colors.text;
 
-    const svg = document.createElementNS(SVG_NS, 'svg');
-    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    svg.setAttribute('width', '100%');
-    svg.style.maxWidth = `${W}px`;
-    svg.style.display = 'block';
+    const svg = params.canvas;
     svg.style.background = colors.bgSubtle;
 
     // 회색 예비 칸 격자 무늬 패턴.

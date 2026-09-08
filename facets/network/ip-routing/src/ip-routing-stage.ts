@@ -26,7 +26,7 @@
  * 모든 운동 메서드는 Promise<void> 반환 — projector 가 await 한다.
  */
 
-import type { View, ViewMountParams, ViewInstance } from '@ffacet/core/runtime';
+import type { CanvasView, ViewMountParams, ViewInstance } from '@ffacet/core/runtime';
 import { makeTranslator } from '@ffacet/core/runtime';
 import {
   getColors,
@@ -146,8 +146,12 @@ type LinkRec = {
 };
 
 // ── 본체 ───────────────────────────────────────────────────────────────────
-export const ipRoutingStageView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const ipRoutingStageView: CanvasView = {
+  canvas: { width: W, height: H },
+  mount(
+    container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     const tr = params.t ?? makeTranslator(params.locale);
     container.textContent = '';
     const colors: Palette = getColors(params.theme);
@@ -162,12 +166,7 @@ export const ipRoutingStageView: View = {
     root.style.fontFamily = fonts.body;
     root.style.color = colors.text;
 
-    const svg = svgEl('svg', {
-      viewBox: `0 0 ${W} ${H}`,
-      width: '100%',
-    });
-    svg.style.maxWidth = `${W}px`;
-    svg.style.display = 'block';
+    const svg = params.canvas;
     svg.style.background = colors.bgSubtle;
     root.appendChild(svg);
     container.appendChild(root);

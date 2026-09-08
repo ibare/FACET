@@ -18,7 +18,7 @@
  * 식별자 (C1) 명시: `cell:` `arrow:` `grid:` `parallelogram:` `gauge:` `point:` `preset:`.
  */
 
-import type { View, ViewMountParams, ViewInstance } from '@ffacet/core';
+import type { CanvasView, ViewMountParams, ViewInstance } from '@ffacet/core';
 import { getColors, categorical, fontSizes, makeTranslator, type Palette } from '@ffacet/core/runtime';
 
 // ── 좌표·치수 상수 ───────────────────────────────────────────────────────────
@@ -89,8 +89,12 @@ function svgToPlane(x: number, y: number): { u: number; v: number } {
 }
 
 // ── view ────────────────────────────────────────────────────────────────────
-export const matrixTransformStageView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const matrixTransformStageView: CanvasView = {
+  canvas: { width: W, height: H },
+  mount(
+    _container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     const tr = params.t ?? makeTranslator(params.locale);
     const colors: Palette = getColors(params.theme);
     const cat = categorical(8, 'vivid');
@@ -108,17 +112,7 @@ export const matrixTransformStageView: View = {
     const COLOR_GAUGE_NEG = cat[5];
     const COLOR_DANGER = colors.danger;   // 원점 표지
 
-    // ── 루트 SVG ────────────────────────────────────────────────────────────
-    const svg = el('svg', {
-      viewBox: `0 0 ${W} ${H}`,
-      width: '100%',
-      preserveAspectRatio: 'xMidYMid meet',
-      role: 'img',
-      'aria-label': tr('label.aria', '2D matrix transform visualization'),
-    });
-    svg.style.maxWidth = `${W}px`;
-    svg.style.display = 'block';
-    container.appendChild(svg);
+    const svg = params.canvas;
 
     // ── defs ────────────────────────────────────────────────────────────────
     const defs = el('defs');

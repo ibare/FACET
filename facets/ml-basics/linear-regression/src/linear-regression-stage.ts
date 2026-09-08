@@ -29,7 +29,7 @@
  *   - 발산 표지 / 잘림 점선 — palette.danger
  */
 
-import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import type { CanvasView, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
 import { makeTranslator } from '@ffacet/core/runtime';
 import { getColors, fonts, fontSizes, categorical } from '@ffacet/core/runtime';
 import type { Point, LrSegment } from './algorithm.js';
@@ -232,8 +232,12 @@ function wait(ms: number): Promise<void> {
 
 // ── stage 본체 ──────────────────────────────────────────────────────────
 
-export const linearRegressionStageView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const linearRegressionStageView: CanvasView = {
+  canvas: { width: W, height: H },
+  mount(
+    container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     const tr = params.t ?? makeTranslator(params.locale);
     container.textContent = '';
 
@@ -252,7 +256,7 @@ export const linearRegressionStageView: View = {
     const RSS_GAUGE_TONE = catVivid[1]!;
     const DANGER = colors.danger;
 
-    const svg = document.createElementNS(SVG_NS, 'svg');
+    const svg = params.canvas;
     setAttrs(svg, {
       viewBox: `0 0 ${W} ${H}`,
       width: '100%',
@@ -263,7 +267,6 @@ export const linearRegressionStageView: View = {
     });
     svg.style.fontFamily = fonts.body;
     svg.style.background = colors.bg;
-    container.appendChild(svg);
 
     // 상단 캡션.
     makeText(

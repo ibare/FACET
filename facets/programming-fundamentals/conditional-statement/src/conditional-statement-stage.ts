@@ -21,9 +21,9 @@
  * 채널로 `{ type: 'input', payload: { name: 'value', value: '0..100' } }` 송신.
  */
 
-import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import type { CanvasView, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
 import { makeTranslator } from '@ffacet/core/runtime';
-import { getColors, fonts, fontSizes, categorical } from '@ffacet/core/runtime';
+import { getColors, fontSizes, categorical } from '@ffacet/core/runtime';
 import type {
   ConditionalMode,
   ConditionalRuleSet,
@@ -188,8 +188,12 @@ type Layout = {
 };
 
 
-export const conditionalFlowchartView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const conditionalFlowchartView: CanvasView = {
+  canvas: { width: W, height: H },
+  mount(
+    container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     const tr = params.t ?? makeTranslator(params.locale);
     const palette = getColors(params.theme);
     // categorical 시드 — 활성 가지 + 결과 참/거짓 칩.
@@ -200,16 +204,7 @@ export const conditionalFlowchartView: View = {
 
     container.innerHTML = '';
 
-    const svg = document.createElementNS(SVG_NS, 'svg');
-    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    svg.setAttribute('width', '100%');
-    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-    svg.style.maxWidth = '720px';
-    svg.style.height = 'auto';
-    svg.style.fontFamily = fonts.body;
-    svg.style.userSelect = 'none';
-    svg.style.touchAction = 'none';
-    container.appendChild(svg);
+    const svg = params.canvas;
 
     // ── 빗장 패턴 정의 ────────────────────────────────────────────────
     const defs = document.createElementNS(SVG_NS, 'defs');

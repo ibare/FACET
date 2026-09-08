@@ -24,7 +24,7 @@
  *     하나하나에 차례로 정렬되며 안착한다. 운동선 가늘고 단계적.
  */
 
-import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import type { CanvasView, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
 import { makeTranslator } from '@ffacet/core/runtime';
 import { getColors, fonts, fontSizes, categorical } from '@ffacet/core/runtime';
 import type { Flow, TriggerKind, Mode } from './algorithm.js';
@@ -199,8 +199,12 @@ function stageSlotRect(col: number, row: number): {
 
 // ── stage 본체 ──────────────────────────────────────────────────────────
 
-export const contextSwitchingStageView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const contextSwitchingStageView: CanvasView = {
+  canvas: { width: W, height: H },
+  mount(
+    container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     const tr = params.t ?? makeTranslator(params.locale);
     container.textContent = '';
 
@@ -246,7 +250,7 @@ export const contextSwitchingStageView: View = {
       }
     };
 
-    const svg = document.createElementNS(SVG_NS, 'svg');
+    const svg = params.canvas;
     setAttrs(svg, {
       viewBox: `0 0 ${W} ${H}`,
       width: '100%',
@@ -256,7 +260,6 @@ export const contextSwitchingStageView: View = {
       'aria-label': tr('label.aria', 'Context switching visualization — one CPU stage, holders on each side, triggers from the ceiling, and a time strip'),
     });
     svg.style.fontFamily = fonts.body;
-    container.appendChild(svg);
 
     // <defs> — 회색 사선 패턴.
     const defs = document.createElementNS(SVG_NS, 'defs');

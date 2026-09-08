@@ -22,7 +22,7 @@
  * 통과시키므로 view 는 dispatch 를 직접 쓰지 않는다 — 메서드 호출만 담당.
  */
 
-import type { Translate, View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import type { Translate, CanvasView, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
 import type { LocaleStr } from '@ffacet/core/runtime';
 import { makeTranslator, resolveLocale } from '@ffacet/core/runtime';
 import { getColors, fonts, fontSizes, categorical } from '@ffacet/core/runtime';
@@ -235,23 +235,19 @@ type CardRec = {
   kindLabelEl: SVGTextElement;
 };
 
-export const tokenizationStageView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const tokenizationStageView: CanvasView = {
+  canvas: { width: W, height: H },
+  mount(
+    container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     const tr = params.t ?? makeTranslator(params.locale);
     const palette = getColors(params.theme);
     const kindColors = buildKindColors(palette);
 
     container.innerHTML = '';
 
-    const svg = document.createElementNS(SVG_NS, 'svg');
-    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    svg.setAttribute('width', '100%');
-    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-    svg.style.maxWidth = '720px';
-    svg.style.height = 'auto';
-    svg.style.fontFamily = fonts.body;
-    svg.style.userSelect = 'none';
-    container.appendChild(svg);
+    const svg = params.canvas;
 
     // ── 마커 / 패턴 ───────────────────────────────────────────────────
     const defs = document.createElementNS(SVG_NS, 'defs');

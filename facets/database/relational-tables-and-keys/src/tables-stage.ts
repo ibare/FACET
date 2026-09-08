@@ -20,7 +20,7 @@
  * 셀 호버 인터랙션은 view 내부에서 직접 SVG mouseover/mouseout 으로 처리.
  */
 
-import type { Translate, View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import type { Translate, CanvasView, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
 import { makeTranslator } from '@ffacet/core/runtime';
 import {
   getColors,
@@ -178,8 +178,12 @@ type RelationRec = {
   endMarkEl: SVGGElement;
 };
 
-export const tablesStageView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const tablesStageView: CanvasView = {
+  canvas: { width: W, height: H },
+  mount(
+    container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     const tr = params.t ?? makeTranslator(params.locale);
     container.textContent = '';
     container.style.width = '100%';
@@ -194,14 +198,13 @@ export const tablesStageView: View = {
     const HIGHLIGHT_TONE = cat[3]!; // 셀 짝짓기 강조 — 옅은 청록.
     const SAME_VALUE_TONE = cat[4]!; // 같은 값 옅은 마커 — 보라.
 
-    const svg = document.createElementNS(SVG_NS, 'svg');
+    const svg = params.canvas;
     setAttrs(svg, {
       viewBox: `0 0 ${W} ${H}`,
       xmlns: SVG_NS,
       style: 'display:block;width:100%;height:auto;font-family:' + fonts.body,
       role: 'img',
     });
-    container.appendChild(svg);
 
     // ── 캡션 ──
     const baseCaption = document.createElementNS(SVG_NS, 'text');

@@ -29,7 +29,7 @@
  *   - 외부 관찰자 어두운 회색 — palette.textMuted (배경 fill 알파)
  */
 
-import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import type { CanvasView, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
 import { makeTranslator } from '@ffacet/core/runtime';
 import { getColors, fonts, fontSizes, categorical } from '@ffacet/core/runtime';
 
@@ -192,8 +192,12 @@ type KeyRec = {
 
 // ── View ────────────────────────────────────────────────────────────────
 
-export const rsaStageView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const rsaStageView: CanvasView = {
+  canvas: { width: W, height: H },
+  mount(
+    container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     const tr = params.t ?? makeTranslator(params.locale);
     const palette = getColors(params.theme);
     const cat = categorical(8, 'vivid');
@@ -209,15 +213,7 @@ export const rsaStageView: View = {
 
     container.innerHTML = '';
 
-    const svg = document.createElementNS(SVG_NS, 'svg');
-    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    svg.setAttribute('width', '100%');
-    svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
-    svg.style.maxWidth = '720px';
-    svg.style.height = 'auto';
-    svg.style.fontFamily = fonts.body;
-    svg.style.userSelect = 'none';
-    container.appendChild(svg);
+    const svg = params.canvas;
 
     // ── defs (점선 격벽 화살표 마커 + 빗장 패턴) ──────────────────────
     const defs = document.createElementNS(SVG_NS, 'defs');

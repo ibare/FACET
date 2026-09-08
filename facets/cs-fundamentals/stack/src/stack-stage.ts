@@ -18,7 +18,7 @@
  *   - getStackSize()                                — 디버깅용.
  */
 
-import type { View, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import type { CanvasView, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
 import { makeTranslator } from '@ffacet/core/runtime';
 import {
   getColors,
@@ -143,8 +143,12 @@ function pickColor(stamp: number): string {
   return PALETTE[i]!;
 }
 
-export const stackStageView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const stackStageView: CanvasView = {
+  canvas: { width: W, height: H },
+  mount(
+    container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     container.textContent = '';
     const tr = params.t ?? makeTranslator(params.locale);
 
@@ -155,11 +159,7 @@ export const stackStageView: View = {
     root.style.fontFamily = fonts.body;
     root.style.color = colors.text;
 
-    const svg = document.createElementNS(SVG_NS, 'svg');
-    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    svg.setAttribute('width', '100%');
-    svg.style.maxWidth = `${W}px`;
-    svg.style.display = 'block';
+    const svg = params.canvas;
     svg.style.background = colors.bgSubtle;
 
     // === 캡션 ===
