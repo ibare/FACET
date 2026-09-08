@@ -131,10 +131,14 @@ export const outOfBoundsStageView: View = {
     const tr = params.t ?? makeTranslator(params.locale);
     const colors: Palette = getColors(params.theme ?? 'light');
 
-    const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img' });
-    svg.style.width = '100%';
+    // width 는 CSS 가 아니라 **속성**으로 준다. facet-block 은 flex column 이라
+    // 부모 폭이 내용으로 정해지는데, 그때 CSS width:100% 는 순환이 되어
+    // 브라우저가 SVG 의 기본 intrinsic 폭(300px)으로 떨어뜨린다 — viewBox 620 이
+    // 300 에 눌려 그림이 절반으로 쪼그라든다.
+    const svg = el('svg', { viewBox: `0 0 ${W} ${H}`, width: '100%', role: 'img' });
     svg.style.height = 'auto';
     svg.style.maxWidth = `${W}px`;
+    svg.style.margin = '0 auto';
     svg.style.display = 'block';
     svg.style.overflow = 'visible';
     container.appendChild(svg);
