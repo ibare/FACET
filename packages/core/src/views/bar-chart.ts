@@ -21,7 +21,7 @@
  *   reset()
  */
 
-import type { View, ViewInstance, ViewMountParams } from './types.js';
+import type { CanvasView, ViewInstance, ViewMountParams } from './types.js';
 import { getColors, shiftLightness, fonts, radii, space } from './design-tokens.js';
 import { makeTranslator, type Translate } from '../runtime/i18n.js';
 import { createIsoBar, type IsoBarHandle } from './iso-bar.js';
@@ -45,8 +45,12 @@ export type BarChartFeature = 'rising-marker' | 'sorted-boundary';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
-export const barChartView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const barChartView: CanvasView = {
+  canvas: { height: 200, fit: 'stretch' },
+  mount(
+    container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     container.textContent = '';
 
     const colors = getColors(params.theme);
@@ -71,14 +75,9 @@ export const barChartView: View = {
     root.style.flex = '1 1 auto';
     root.style.boxSizing = 'border-box';
 
-    const svg = document.createElementNS(SVG_NS, 'svg') as SVGSVGElement;
+    const svg = params.canvas;
     svg.setAttribute('class', 'facet-bar-chart__svg');
-    svg.setAttribute('width', '100%');
-    svg.style.display = 'block';
     svg.style.overflow = 'visible';
-    svg.style.flex = '1 1 auto';
-    svg.style.width = '100%';
-    svg.style.height = '100%';
     svg.style.minHeight = `${initialHeight}px`;
 
     // 레이어: boundary(뒤) → bars → marker(앞)

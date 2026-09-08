@@ -3,7 +3,7 @@
  */
 
 import type { LayoutNode, BlockSpec } from '../types/facet-json.js';
-import type { ViewCanvasSpec, ViewInstance, ViewMountParams } from '../views/types.js';
+import type { View, ViewCanvasSpec, ViewInstance, ViewMountParams } from '../views/types.js';
 import { getView } from '../views/index.js';
 import { PIECE_CANVAS_W } from '../views/design-tokens.js';
 
@@ -24,13 +24,19 @@ function createCanvas(spec: ViewCanvasSpec): SVGSVGElement {
     svg.setAttribute('width', String(w));
     svg.setAttribute('height', String(spec.height));
     svg.style.maxWidth = '100%';
+    svg.style.height = 'auto';
+  } else if (spec.fit === 'stretch') {
+    svg.setAttribute('width', '100%');
+    svg.style.width = '100%';
+    svg.style.height = '100%';
+    svg.style.flex = '1 1 auto';
   } else {
     svg.setAttribute('width', '100%');
     svg.style.maxWidth = `${w}px`;
+    svg.style.height = 'auto';
   }
-  svg.style.height = 'auto';
   svg.style.display = 'block';
-  svg.style.margin = '0 auto';
+  if (spec.fit !== 'stretch') svg.style.margin = '0 auto';
   return svg;
 }
 
@@ -131,6 +137,23 @@ export type MountBlocksParams = {
   mountParams?: Partial<ViewMountParams>;
 };
 
+/**
+ * view 하나를 마운트한다. 러너 밖에서 view 를 띄울 때도 이 경로를 쓴다 —
+ * CanvasView 라면 껍데기를 만들어 넘기는 일이 여기서 한 번만 일어난다.
+ */
+export function mountView(
+  view: View,
+  container: HTMLElement,
+  params: ViewMountParams,
+): ViewInstance {
+  if ('canvas' in view) {
+    const canvas = createCanvas(view.canvas);
+    container.appendChild(canvas);
+    return view.mount(container, { ...params, canvas });
+  }
+  return view.mount(container, params);
+}
+
 export function mountBlocks(params: MountBlocksParams): MountedBlocks {
   const result: MountedBlocks = {};
   for (const [ref, spec] of Object.entries(params.blocks)) {
@@ -151,14 +174,7 @@ export function mountBlocks(params: MountBlocksParams): MountedBlocks {
       // FacetJson.messages 저작 문안을 보지 못한다 (C10 조회 1층 유실).
       t: params.mountParams?.t,
     };
-    if ('canvas' in view) {
-      // 껍데기는 여기서 한 번만 만든다. view 는 그 안에만 그린다.
-      const canvas = createCanvas(view.canvas);
-      mount.appendChild(canvas);
-      result[ref] = view.mount(mount, { ...mountParams, canvas });
-      continue;
-    }
-    result[ref] = view.mount(mount, mountParams);
+    result[ref] = mountView(view, mount, mountParams);
   }
   return result;
 }

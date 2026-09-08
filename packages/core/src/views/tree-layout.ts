@@ -30,7 +30,7 @@
  *   replaceNodeLabel(id, label)
  */
 
-import type { View, ViewInstance, ViewMountParams } from './types.js';
+import type { CanvasView, ViewInstance, ViewMountParams } from './types.js';
 import { getColors, type Palette, fonts, radii, space } from './design-tokens.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -214,8 +214,12 @@ type NodeEntry = {
 
 type EdgeEntry = { line: SVGLineElement; state: TreeEdgeState; parentId: string; childId: string };
 
-export const treeLayoutView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const treeLayoutView: CanvasView = {
+  canvas: { width: 480, height: 320 },
+  mount(
+    container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     container.textContent = '';
 
     const colors = getColors(params.theme);
@@ -245,11 +249,10 @@ export const treeLayoutView: View = {
     root.style.borderRadius = radii.md;
     root.style.fontFamily = fonts.body;
 
-    const svg = document.createElementNS(SVG_NS, 'svg') as SVGSVGElement;
+    // 높이는 노드 수가 정한다 — 러너가 준 캔버스의 viewBox 를 여기서 갱신한다.
+    const svg = params.canvas;
     svg.setAttribute('viewBox', `0 0 ${W} ${totalH}`);
-    svg.setAttribute('width', '100%');
     svg.setAttribute('height', String(totalH));
-    svg.style.display = 'block';
 
     // 해치 패턴 정의 — fold 상태 오버레이.
     const defs = document.createElementNS(SVG_NS, 'defs');

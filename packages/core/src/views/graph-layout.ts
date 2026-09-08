@@ -26,7 +26,7 @@
  * reset 의 시그니처와 동작은 변경 없음.
  */
 
-import type { View, ViewInstance, ViewMountParams } from './types.js';
+import type { CanvasView, ViewInstance, ViewMountParams } from './types.js';
 import { getColors, type Palette, fonts, fontSizes, radii, space } from './design-tokens.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -71,8 +71,12 @@ function raf(): Promise<void> {
   return new Promise((res) => setTimeout(res, 16));
 }
 
-export const graphLayoutView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const graphLayoutView: CanvasView = {
+  canvas: { width: 480, height: 280 },
+  mount(
+    container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     container.textContent = '';
 
     const colors = getColors(params.theme);
@@ -95,11 +99,10 @@ export const graphLayoutView: View = {
     root.style.borderRadius = radii.md;
     root.style.fontFamily = fonts.body;
 
-    const svg = document.createElementNS(SVG_NS, 'svg') as SVGSVGElement;
+    // 크기는 블록 설정이 정한다 — 러너가 준 캔버스를 여기서 맞춘다.
+    const svg = params.canvas;
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    svg.setAttribute('width', '100%');
     svg.setAttribute('height', String(H));
-    svg.style.display = 'block';
 
     // 레이어 순서: rings(배경) → edges → nodes → badges
     const ringsG = document.createElementNS(SVG_NS, 'g');

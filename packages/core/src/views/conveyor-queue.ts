@@ -38,7 +38,7 @@
  *   reset()                 — 모든 상태 초기화.
  */
 
-import type { View, ViewInstance, ViewMountParams } from './types.js';
+import type { CanvasView, ViewInstance, ViewMountParams } from './types.js';
 import {
   getColors,
   categorical,
@@ -291,8 +291,14 @@ function flashElement(el: Element, className: string, durationMs: number): void 
   window.setTimeout(() => el.classList.remove(className), durationMs);
 }
 
-export const conveyorQueueView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const conveyorQueueView: CanvasView = {
+  // 조연 패널에서 파이프가 전체 행을 삼키지 않도록 intrinsic 을 고른다.
+  // viewBox 는 큐 길이로 정해지므로 mount 에서 갱신한다.
+  canvas: { width: 344, height: 51, fit: 'intrinsic' },
+  mount(
+    container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     container.textContent = '';
     const colors = getColors(params.theme);
     const cfg = (params.config ?? {}) as ConveyorQueueConfig;
@@ -400,16 +406,12 @@ export const conveyorQueueView: View = {
     // max-width:100% 로 컨테이너 초과 시에만 축소한다. 컨테이너가 넓어도 자동으로
     // 늘어나지 않으므로, BFS 등 조연 패널에서 파이프가 전체 행을 삼키지 않는다.
     // 넉넉한 공간을 주고 싶은 소비측은 wrapper 에 max-width 를 직접 관리한다.
-    const stageSvg = svg('svg', {
-      viewBox: `${vbX} ${vbY} ${vbW} ${vbH}`,
-      preserveAspectRatio: 'xMidYMid meet',
-      width: vbW,
-      height: vbH,
-    });
+    const stageSvg = params.canvas;
+    stageSvg.setAttribute('viewBox', `${vbX} ${vbY} ${vbW} ${vbH}`);
+    stageSvg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    stageSvg.setAttribute('width', String(vbW));
+    stageSvg.setAttribute('height', String(vbH));
     stageSvg.classList.add('facet-cq-svg');
-    stageSvg.style.display = 'block';
-    stageSvg.style.maxWidth = '100%';
-    stageSvg.style.height = 'auto';
     stageWrap.appendChild(stageSvg);
 
     // 1. 캡 back (3D 상단 장식) — 블록 z-order 뒤에 둔다.

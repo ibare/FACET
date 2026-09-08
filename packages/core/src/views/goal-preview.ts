@@ -17,7 +17,7 @@
  *   setData(values: number[])
  */
 
-import type { View, ViewInstance, ViewMountParams } from './types.js';
+import type { CanvasView, ViewInstance, ViewMountParams } from './types.js';
 import { getColors, fonts, fontSizes, radii, space } from './design-tokens.js';
 import { resolveLocale, type LocaleStr } from '../types/locale.js';
 import { createIsoBar } from './iso-bar.js';
@@ -32,8 +32,12 @@ type GoalPreviewConfig = {
   width?: number;
 };
 
-export const goalPreviewView: View = {
-  mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
+export const goalPreviewView: CanvasView = {
+  canvas: { height: 120 },
+  mount(
+    container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance {
     container.textContent = '';
 
     const colors = getColors(params.theme);
@@ -65,11 +69,10 @@ export const goalPreviewView: View = {
     titleEl.style.textTransform = 'uppercase';
     root.appendChild(titleEl);
 
-    const svg = document.createElementNS(SVG_NS, 'svg') as SVGSVGElement;
+    // 높이는 블록 설정이 정한다.
+    const svg = params.canvas;
     svg.setAttribute('class', 'facet-goal-preview__svg');
-    svg.setAttribute('width', '100%');
     svg.setAttribute('height', String(height));
-    svg.style.display = 'block';
     root.appendChild(svg);
 
     container.appendChild(root);

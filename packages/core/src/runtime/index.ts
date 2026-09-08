@@ -58,6 +58,7 @@ export {
 } from '../views/design-tokens.js';
 export type { Theme, Palette, CategoricalTone } from '../views/design-tokens.js';
 export { CONTROL, CONTROL_SET } from '../views/control-presets.js';
+export { mountView } from './layout-builder.js';
 export type {
   CanvasView,
   PlainView,

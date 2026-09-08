@@ -53,14 +53,20 @@ export type ViewInstance = {
 export type ViewCanvasSpec = {
   /** viewBox 가로. 생략하면 PIECE_CANVAS_W. */
   width?: number;
-  /** viewBox 세로. 내용이 정한다. */
+  /**
+   * viewBox 세로의 **초기값**. 내용에 따라 달라지는 view 는 mount 에서
+   * `params.canvas.setAttribute('viewBox', …)` 로 갱신한다 — 러너가 정하는 것은
+   * 폭 정책과 정렬이지 내용 크기가 아니다 (tree-layout 은 노드 수로 높이가 정해진다).
+   */
   height: number;
   /**
    * 'fill'      컨테이너 폭을 채우되 width 를 넘지 않는다 (기본)
    * 'intrinsic' 픽셀 크기를 지킨다. 조연 패널에서 커지면 안 되는 view 용
    *             (conveyor-queue 가 그 사정을 주석으로 남겨 두었다)
+   * 'stretch'   가로세로를 컨테이너에 맞춘다. 높이가 바깥에서 정해지는
+   *             반응형 view 용 (bar-chart 는 ResizeObserver 로 다시 그린다)
    */
-  fit?: 'fill' | 'intrinsic';
+  fit?: 'fill' | 'intrinsic' | 'stretch';
 };
 
 /** SVG 를 쓰지 않는 view — 컨테이너만 받는다 (control-bar · title-block 등). */

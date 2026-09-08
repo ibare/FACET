@@ -7,15 +7,20 @@ import {
   linkedListChainView,
   orderedListView,
 } from '../src/views/index.js';
-import type { ViewInstance } from '../src/views/types.js';
+import { mountView as mountViewCore } from '../src/runtime/layout-builder.js';
+import type { View, ViewInstance } from '../src/views/types.js';
 
+/**
+ * 러너 밖에서 view 를 띄운다. CanvasView 라면 껍데기를 만들어 넘기는 일까지
+ * 코어의 mountView 가 한다 — 테스트가 그 경로를 우회하면 실제와 달라진다.
+ */
 function mountView(
-  view: { mount(c: HTMLElement, p: { config: Record<string, unknown> }): ViewInstance },
+  view: View,
   config: Record<string, unknown> = {},
 ): { container: HTMLElement; instance: ViewInstance } {
   const container = document.createElement('div');
   document.body.appendChild(container);
-  const instance = view.mount(container, { config });
+  const instance = mountViewCore(view, container, { config });
   return { container, instance };
 }
 
