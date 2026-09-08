@@ -110,6 +110,9 @@ export function mountBlocks(params: MountBlocksParams): MountedBlocks {
       locale: params.mountParams?.locale,
       theme: params.mountParams?.theme,
       dispatch: params.mountParams?.dispatch,
+      // t 를 빠뜨리면 view 가 makeTranslator(locale) fallback 으로 떨어져
+      // FacetJson.messages 저작 문안을 보지 못한다 (C10 조회 1층 유실).
+      t: params.mountParams?.t,
     };
     result[ref] = view.mount(mount, mountParams);
   }
