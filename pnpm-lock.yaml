@@ -399,6 +399,9 @@ importers:
       '@ffacet/algorithm-context-switching':
         specifier: workspace:*
         version: link:../../facets/os/context-switching
+      '@ffacet/algorithm-grow-and-copy':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/grow-and-copy
       '@ffacet/algorithm-hash-avalanche':
         specifier: workspace:*
         version: link:../../facets/security/hash-avalanche
@@ -417,6 +420,9 @@ importers:
       '@ffacet/algorithm-hash-table-chaining':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/hash-table-chaining
+      '@ffacet/algorithm-index-address-calc':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/index-address-calc
       '@ffacet/algorithm-ip-routing':
         specifier: workspace:*
         version: link:../../facets/network/ip-routing
@@ -426,6 +432,9 @@ importers:
       '@ffacet/algorithm-linked-list-singly':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/linked-list-singly
+      '@ffacet/algorithm-lost-link':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/lost-link
       '@ffacet/algorithm-lru-cache':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/lru-cache
@@ -438,15 +447,33 @@ importers:
       '@ffacet/algorithm-messaging-pubsub':
         specifier: workspace:*
         version: link:../../facets/system-design/messaging-pubsub
+      '@ffacet/algorithm-node-points-next':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/node-points-next
+      '@ffacet/algorithm-out-of-bounds':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/out-of-bounds
       '@ffacet/algorithm-pigeonhole-collision':
         specifier: workspace:*
         version: link:../../facets/security/pigeonhole-collision
+      '@ffacet/algorithm-push-pop-top':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/push-pop-top
       '@ffacet/algorithm-queue-fifo':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/queue-fifo
       '@ffacet/algorithm-relational-tables-and-keys':
         specifier: workspace:*
         version: link:../../facets/database/relational-tables-and-keys
+      '@ffacet/algorithm-relink-insert':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/relink-insert
+      '@ffacet/algorithm-shift-on-insert':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/shift-on-insert
+      '@ffacet/algorithm-shift-on-remove':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/shift-on-remove
       '@ffacet/algorithm-signature-key-direction':
         specifier: workspace:*
         version: link:../../facets/security/signature-key-direction
@@ -459,6 +486,9 @@ importers:
       '@ffacet/algorithm-tokenization':
         specifier: workspace:*
         version: link:../../facets/compilers/tokenization
+      '@ffacet/algorithm-traverse-from-head':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/traverse-from-head
       '@ffacet/core':
         specifier: workspace:*
         version: link:../core

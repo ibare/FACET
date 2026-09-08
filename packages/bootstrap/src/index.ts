@@ -129,6 +129,38 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:merkleTree', () =>
     import('@ffacet/algorithm-merkle-tree').then((m) => m.registerMerkleTree()),
   );
+  // 자료구조 출처의 조각 열 (배열 5 · 연결 리스트 4 · 스택 1)
+  registerFacetLoader('facet:indexAddressCalc', () =>
+    import('@ffacet/algorithm-index-address-calc').then((m) => m.registerIndexAddressCalc()),
+  );
+  registerFacetLoader('facet:shiftOnInsert', () =>
+    import('@ffacet/algorithm-shift-on-insert').then((m) => m.registerShiftOnInsert()),
+  );
+  registerFacetLoader('facet:shiftOnRemove', () =>
+    import('@ffacet/algorithm-shift-on-remove').then((m) => m.registerShiftOnRemove()),
+  );
+  registerFacetLoader('facet:growAndCopy', () =>
+    import('@ffacet/algorithm-grow-and-copy').then((m) => m.registerGrowAndCopy()),
+  );
+  registerFacetLoader('facet:outOfBounds', () =>
+    import('@ffacet/algorithm-out-of-bounds').then((m) => m.registerOutOfBounds()),
+  );
+  registerFacetLoader('facet:nodePointsNext', () =>
+    import('@ffacet/algorithm-node-points-next').then((m) => m.registerNodePointsNext()),
+  );
+  registerFacetLoader('facet:traverseFromHead', () =>
+    import('@ffacet/algorithm-traverse-from-head').then((m) => m.registerTraverseFromHead()),
+  );
+  registerFacetLoader('facet:relinkInsert', () =>
+    import('@ffacet/algorithm-relink-insert').then((m) => m.registerRelinkInsert()),
+  );
+  registerFacetLoader('facet:lostLink', () =>
+    import('@ffacet/algorithm-lost-link').then((m) => m.registerLostLink()),
+  );
+  registerFacetLoader('facet:pushPopTop', () =>
+    import('@ffacet/algorithm-push-pop-top').then((m) => m.registerPushPopTop()),
+  );
+
   registerFacetLoader('facet:signatureKeyDirection', () =>
     import('@ffacet/algorithm-signature-key-direction').then((m) =>
       m.registerSignatureKeyDirection(),
