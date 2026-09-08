@@ -24,7 +24,6 @@ import {
   fonts,
   fontSizes,
   getColors,
-  lightColors,
   makeTranslator,
   type Palette,
   type CanvasView,
@@ -191,12 +190,12 @@ export const shiftOnInsertStageView: CanvasView = {
           tile.box.setAttribute('fill', colors.itemActive);
           tile.box.setAttribute('stroke', colors.itemActive);
           // 색 있는 타일 위 글자는 테마와 무관하게 어두워야 읽힌다.
-          tile.label.setAttribute('fill', lightColors.text);
+          tile.label.setAttribute('fill', colors.stateInk);
           break;
         case 'incoming':
           tile.box.setAttribute('fill', colors.accent);
           tile.box.setAttribute('stroke', colors.accent);
-          tile.label.setAttribute('fill', lightColors.text);
+          tile.label.setAttribute('fill', colors.stateInk);
           break;
       }
     };

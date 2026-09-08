@@ -15,7 +15,7 @@
  *                Sorted(회·흰) / Pivot(노랑=accent) / Active(주황)
  *   severity     danger(빨강) / success
  *   region       sortedTailBg/Border, subtreeShadeLeft/Right
- *   special      risingMarker / auxCursor / ghostOutline
+ *   special      risingMarker / auxCursor / ghostOutline / stateInk
  *   iso-body     isoBodyMain / isoBodySide  ← 막대 본체 (상태 무관)
  *   함수형        categorical(n, tone) / depthVeil(depth, theme) /
  *                shiftLightness(hex, ±deltaL)
@@ -68,6 +68,19 @@ export type Palette = {
   itemSorted: string;
   itemPivot: string;
   itemActive: string;
+
+  /**
+   * state 타일 위에 얹는 글자색.
+   *
+   * `itemComparing` · `itemSwapping` · `itemPivot` · `itemActive` 는 두 팔레트에서
+   * **값이 같다**. 그 위에 `textInverse` 를 쓰면 라이트에서 흰 글자, 다크에서 검은
+   * 글자가 되어 한쪽이 반드시 틀린다 — `#facc15` 위 `#ffffff` 는 대비 1.6:1 이다.
+   * 그래서 이 잉크는 테마를 따라 뒤집히지 않는다.
+   *
+   * 타일이 테마를 따라 뒤집히는 경우(`itemSorted` 등)에는 쓰지 않는다. 그때는
+   * `textInverse` 가 맞다.
+   */
+  stateInk: string;
 
   /** rising-marker: 패스 동안 "떠오르는 값"을 표시하는 강조색 */
   risingMarker: string;
@@ -125,6 +138,7 @@ export const lightColors: Palette = {
   itemPivot: '#facc15',
   itemActive: '#ed7055',
 
+  stateInk: '#171717',
   risingMarker: '#171717',
   sortedTailBg: 'rgba(23, 23, 23, 0.03)',
   sortedTailBorder: '#171717',
@@ -159,6 +173,7 @@ export const darkColors: Palette = {
   itemPivot: '#facc15',
   itemActive: '#ed7055',
 
+  stateInk: '#171717',
   risingMarker: '#fafafa',
   sortedTailBg: 'rgba(250, 250, 250, 0.04)',
   sortedTailBorder: '#fafafa',
