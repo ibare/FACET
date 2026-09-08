@@ -53,6 +53,7 @@ const MODULES: Array<[string, () => Promise<Record<string, unknown>>]> = [
   ['facets/cs-fundamentals/path-compression/src/path-compression-stage.ts', () => import('../../../facets/cs-fundamentals/path-compression/src/path-compression-stage.js')],
   ['facets/cs-fundamentals/push-pop-top/src/push-pop-top-stage.ts', () => import('../../../facets/cs-fundamentals/push-pop-top/src/push-pop-top-stage.js')],
   ['facets/cs-fundamentals/recolor-then-rotate/src/recolor-then-rotate-stage.ts', () => import('../../../facets/cs-fundamentals/recolor-then-rotate/src/recolor-then-rotate-stage.js')],
+  ['facets/cs-fundamentals/red-black-tree/src/red-black-tree-stage.ts', () => import('../../../facets/cs-fundamentals/red-black-tree/src/red-black-tree-stage.js')],
   ['facets/cs-fundamentals/relink-insert/src/relink-stage.ts', () => import('../../../facets/cs-fundamentals/relink-insert/src/relink-stage.js')],
   ['facets/cs-fundamentals/rotate-to-balance/src/rotate-to-balance-stage.ts', () => import('../../../facets/cs-fundamentals/rotate-to-balance/src/rotate-to-balance-stage.js')],
   ['facets/cs-fundamentals/share-prefix-path/src/share-prefix-path-stage.ts', () => import('../../../facets/cs-fundamentals/share-prefix-path/src/share-prefix-path-stage.js')],

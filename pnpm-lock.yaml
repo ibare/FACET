@@ -379,6 +379,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/red-black-tree:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/relink-insert:
     dependencies:
       '@ffacet/core':
@@ -747,6 +753,9 @@ importers:
       '@ffacet/algorithm-recolor-then-rotate':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/recolor-then-rotate
+      '@ffacet/algorithm-red-black-tree':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/red-black-tree
       '@ffacet/algorithm-relational-tables-and-keys':
         specifier: workspace:*
         version: link:../../facets/database/relational-tables-and-keys

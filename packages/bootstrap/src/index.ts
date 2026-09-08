@@ -235,6 +235,9 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:avlTree', () =>
     import('@ffacet/algorithm-avl-tree').then((m) => m.registerAvlTree()),
   );
+  registerFacetLoader('facet:redBlackTree', () =>
+    import('@ffacet/algorithm-red-black-tree').then((m) => m.registerRedBlackTree()),
+  );
 
   // 자료구조 출처의 조각 열 (배열 5 · 연결 리스트 4 · 스택 1)
   registerFacetLoader('facet:indexAddressCalc', () =>

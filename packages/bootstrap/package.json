@@ -106,6 +106,7 @@
     "@ffacet/algorithm-push-pop-top": "workspace:*",
     "@ffacet/algorithm-queue-fifo": "workspace:*",
     "@ffacet/algorithm-recolor-then-rotate": "workspace:*",
+    "@ffacet/algorithm-red-black-tree": "workspace:*",
     "@ffacet/algorithm-relational-tables-and-keys": "workspace:*",
     "@ffacet/algorithm-relink-insert": "workspace:*",
     "@ffacet/algorithm-rotate-to-balance": "workspace:*",

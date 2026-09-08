@@ -60,6 +60,7 @@ const MODULES: Array<[string, () => Promise<Record<string, unknown>>]> = [
   ['facets/cs-fundamentals/push-pop-top/src/index.ts', () => import('../../../facets/cs-fundamentals/push-pop-top/src/index.js')],
   ['facets/cs-fundamentals/queue-fifo/src/index.ts', () => import('../../../facets/cs-fundamentals/queue-fifo/src/index.js')],
   ['facets/cs-fundamentals/recolor-then-rotate/src/index.ts', () => import('../../../facets/cs-fundamentals/recolor-then-rotate/src/index.js')],
+  ['facets/cs-fundamentals/red-black-tree/src/index.ts', () => import('../../../facets/cs-fundamentals/red-black-tree/src/index.js')],
   ['facets/cs-fundamentals/relink-insert/src/index.ts', () => import('../../../facets/cs-fundamentals/relink-insert/src/index.js')],
   ['facets/cs-fundamentals/rotate-to-balance/src/index.ts', () => import('../../../facets/cs-fundamentals/rotate-to-balance/src/index.js')],
   ['facets/cs-fundamentals/share-prefix-path/src/index.ts', () => import('../../../facets/cs-fundamentals/share-prefix-path/src/index.js')],
