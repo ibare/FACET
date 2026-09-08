@@ -24,6 +24,7 @@ const MODULES: Array<[string, () => Promise<Record<string, unknown>>]> = [
   ['facets/cs-fundamentals/adjacency-list-vs-matrix/src/index.ts', () => import('../../../facets/cs-fundamentals/adjacency-list-vs-matrix/src/index.js')],
   ['facets/cs-fundamentals/array-as-tree/src/index.ts', () => import('../../../facets/cs-fundamentals/array-as-tree/src/index.js')],
   ['facets/cs-fundamentals/array/src/index.ts', () => import('../../../facets/cs-fundamentals/array/src/index.js')],
+  ['facets/cs-fundamentals/b-tree/src/index.ts', () => import('../../../facets/cs-fundamentals/b-tree/src/index.js')],
   ['facets/cs-fundamentals/bfs/src/index.ts', () => import('../../../facets/cs-fundamentals/bfs/src/index.js')],
   ['facets/cs-fundamentals/black-height-equal/src/index.ts', () => import('../../../facets/cs-fundamentals/black-height-equal/src/index.js')],
   ['facets/cs-fundamentals/bst-compare-and-go/src/index.ts', () => import('../../../facets/cs-fundamentals/bst-compare-and-go/src/index.js')],

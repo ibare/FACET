@@ -56,6 +56,7 @@
     "@ffacet/algorithm-array": "workspace:*",
     "@ffacet/algorithm-array-as-tree": "workspace:*",
     "@ffacet/algorithm-asymmetric-rsa": "workspace:*",
+    "@ffacet/algorithm-b-tree": "workspace:*",
     "@ffacet/algorithm-bfs": "workspace:*",
     "@ffacet/algorithm-black-height-equal": "workspace:*",
     "@ffacet/algorithm-bst": "workspace:*",

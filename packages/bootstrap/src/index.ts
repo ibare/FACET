@@ -229,6 +229,9 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:trie', () =>
     import('@ffacet/algorithm-trie').then((m) => m.registerTrie()),
   );
+  registerFacetLoader('facet:bTree', () =>
+    import('@ffacet/algorithm-b-tree').then((m) => m.registerBTree()),
+  );
 
   // 자료구조 출처의 조각 열 (배열 5 · 연결 리스트 4 · 스택 1)
   registerFacetLoader('facet:indexAddressCalc', () =>

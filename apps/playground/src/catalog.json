@@ -20,7 +20,7 @@
             { "id": "bst", "name": "이진 탐색 트리", "facetId": "facet:bst" },
             { "id": "avl-tree", "name": "AVL 트리" },
             { "id": "red-black-tree", "name": "Red-Black 트리" },
-            { "id": "b-tree", "name": "B-Tree" },
+            { "id": "b-tree", "name": "B-Tree", "facetId": "facet:bTree" },
             { "id": "trie", "name": "Trie", "facetId": "facet:trie" },
             { "id": "heap", "name": "힙", "facetId": "facet:heapBinary" },
             { "id": "union-find", "name": "유니온-파인드", "facetId": "facet:unionFind" },
