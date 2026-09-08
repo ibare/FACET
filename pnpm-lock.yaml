@@ -453,12 +453,27 @@ importers:
       '@ffacet/algorithm-caching-cdn':
         specifier: workspace:*
         version: link:../../facets/system-design/caching-cdn
+      '@ffacet/algorithm-chaining-bucket':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/chaining-bucket
+      '@ffacet/algorithm-circular-buffer-wrap':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/circular-buffer-wrap
       '@ffacet/algorithm-conditional-statement':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/conditional-statement
       '@ffacet/algorithm-context-switching':
         specifier: workspace:*
         version: link:../../facets/os/context-switching
+      '@ffacet/algorithm-depth-doubles-count':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/depth-doubles-count
+      '@ffacet/algorithm-deque-both-ends':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/deque-both-ends
+      '@ffacet/algorithm-enqueue-dequeue-ends':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/enqueue-dequeue-ends
       '@ffacet/algorithm-grow-and-copy':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/grow-and-copy
@@ -480,6 +495,9 @@ importers:
       '@ffacet/algorithm-hash-table-chaining':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/hash-table-chaining
+      '@ffacet/algorithm-hash-to-bucket':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/hash-to-bucket
       '@ffacet/algorithm-index-address-calc':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/index-address-calc
@@ -492,6 +510,9 @@ importers:
       '@ffacet/algorithm-linked-list-singly':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/linked-list-singly
+      '@ffacet/algorithm-load-factor-rehash':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/load-factor-rehash
       '@ffacet/algorithm-lost-link':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/lost-link
@@ -510,9 +531,15 @@ importers:
       '@ffacet/algorithm-node-points-next':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/node-points-next
+      '@ffacet/algorithm-open-addressing-probe':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/open-addressing-probe
       '@ffacet/algorithm-out-of-bounds':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/out-of-bounds
+      '@ffacet/algorithm-parent-two-children':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/parent-two-children
       '@ffacet/algorithm-pigeonhole-collision':
         specifier: workspace:*
         version: link:../../facets/security/pigeonhole-collision
@@ -546,6 +573,9 @@ importers:
       '@ffacet/algorithm-tokenization':
         specifier: workspace:*
         version: link:../../facets/compilers/tokenization
+      '@ffacet/algorithm-traversal-order':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/traversal-order
       '@ffacet/algorithm-traverse-from-head':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/traverse-from-head

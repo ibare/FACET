@@ -129,6 +129,38 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:merkleTree', () =>
     import('@ffacet/algorithm-merkle-tree').then((m) => m.registerMerkleTree()),
   );
+  // 자료구조 출처의 조각 열 (큐 3 · 해시 4 · 트리 3)
+  registerFacetLoader('facet:enqueueDequeueEnds', () =>
+    import('@ffacet/algorithm-enqueue-dequeue-ends').then((m) => m.registerEnqueueDequeueEnds()),
+  );
+  registerFacetLoader('facet:circularBufferWrap', () =>
+    import('@ffacet/algorithm-circular-buffer-wrap').then((m) => m.registerCircularBufferWrap()),
+  );
+  registerFacetLoader('facet:dequeBothEnds', () =>
+    import('@ffacet/algorithm-deque-both-ends').then((m) => m.registerDequeBothEnds()),
+  );
+  registerFacetLoader('facet:hashToBucket', () =>
+    import('@ffacet/algorithm-hash-to-bucket').then((m) => m.registerHashToBucket()),
+  );
+  registerFacetLoader('facet:chainingBucket', () =>
+    import('@ffacet/algorithm-chaining-bucket').then((m) => m.registerChainingBucket()),
+  );
+  registerFacetLoader('facet:openAddressingProbe', () =>
+    import('@ffacet/algorithm-open-addressing-probe').then((m) => m.registerOpenAddressingProbe()),
+  );
+  registerFacetLoader('facet:loadFactorRehash', () =>
+    import('@ffacet/algorithm-load-factor-rehash').then((m) => m.registerLoadFactorRehash()),
+  );
+  registerFacetLoader('facet:parentTwoChildren', () =>
+    import('@ffacet/algorithm-parent-two-children').then((m) => m.registerParentTwoChildren()),
+  );
+  registerFacetLoader('facet:traversalOrder', () =>
+    import('@ffacet/algorithm-traversal-order').then((m) => m.registerTraversalOrder()),
+  );
+  registerFacetLoader('facet:depthDoublesCount', () =>
+    import('@ffacet/algorithm-depth-doubles-count').then((m) => m.registerDepthDoublesCount()),
+  );
+
   // 자료구조 출처의 조각 열 (배열 5 · 연결 리스트 4 · 스택 1)
   registerFacetLoader('facet:indexAddressCalc', () =>
     import('@ffacet/algorithm-index-address-calc').then((m) => m.registerIndexAddressCalc()),
