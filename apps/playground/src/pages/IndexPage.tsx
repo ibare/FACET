@@ -1,3 +1,4 @@
+import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import * as Accordion from '@radix-ui/react-accordion';
 import {
@@ -94,6 +95,46 @@ export const SAFELIST: readonly string[] = (() => {
   return out;
 })();
 
+/**
+ * 아코디언 펼침 상태를 세션에 남긴다.
+ *
+ * 조각을 보러 갔다 뒤로 오면 이 페이지가 새로 마운트되어 접힌 채로 돌아온다.
+ * 목록이 길어 매번 다시 펼쳐야 하므로, 열어 둔 것을 기억한다. 탭을 닫으면
+ * 사라지는 세션 범위가 맞다 — 어제 무엇을 열어 뒀는지까지 기억할 일은 아니다.
+ *
+ * 첫 렌더에서 동기로 읽어 높이가 처음부터 맞는다. 그래야 브라우저의 스크롤
+ * 복원도 제자리를 찾는다.
+ */
+function usePersistedAccordion(key: string, fallback: string[]): [string[], (next: string[]) => void] {
+  const [value, setValue] = useState<string[]>(() => {
+    if (typeof window === 'undefined') return fallback;
+    try {
+      const raw = window.sessionStorage.getItem(key);
+      if (raw === null) return fallback;
+      const parsed: unknown = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.every((v) => typeof v === 'string')) return parsed;
+      return fallback;
+    } catch {
+      // 사생활 보호 모드 등에서 sessionStorage 접근 자체가 던진다.
+      return fallback;
+    }
+  });
+
+  const set = useCallback(
+    (next: string[]) => {
+      setValue(next);
+      try {
+        window.sessionStorage.setItem(key, JSON.stringify(next));
+      } catch {
+        // 저장하지 못해도 이번 세션의 화면은 그대로 돈다.
+      }
+    },
+    [key],
+  );
+
+  return [value, set];
+}
+
 function accentOf(name: string): AccentTokens {
   return ACCENTS[name] ?? ACCENTS.cyan;
 }
@@ -116,6 +157,7 @@ export function IndexPage() {
   const total = countAllTopics();
   const ready = countImplementedTopics();
   const pieces = countPieces();
+  const [openDomains, setOpenDomains] = usePersistedAccordion('facet:catalog:domains', ['cs-fundamentals']);
 
   return (
     <div className="min-h-screen">
@@ -160,7 +202,12 @@ export function IndexPage() {
           </div>
         </header>
 
-        <Accordion.Root type="multiple" className="space-y-4" defaultValue={['cs-fundamentals']}>
+        <Accordion.Root
+          type="multiple"
+          className="space-y-4"
+          value={openDomains}
+          onValueChange={setOpenDomains}
+        >
           {catalog.map((domain) => (
             <DomainCard key={domain.id} domain={domain} />
           ))}
@@ -175,6 +222,7 @@ function DomainCard({ domain }: { domain: Domain }) {
   const Icon = ICONS[domain.icon] ?? Cpu;
   const implemented = countDomainImplemented(domain);
   const total = countDomainTopics(domain);
+  const [openSubs, setOpenSubs] = usePersistedAccordion(`facet:catalog:subs:${domain.id}`, []);
 
   return (
     <Accordion.Item
@@ -204,7 +252,7 @@ function DomainCard({ domain }: { domain: Domain }) {
       </Accordion.Header>
       <Accordion.Content className="overflow-hidden">
         <div className="px-5 pb-5 pt-1">
-          <Accordion.Root type="multiple" className="space-y-2">
+          <Accordion.Root type="multiple" className="space-y-2" value={openSubs} onValueChange={setOpenSubs}>
             {domain.subdomains.map((sub) => (
               <SubdomainItem key={sub.id} subdomain={sub} accent={accent} />
             ))}
@@ -264,13 +312,16 @@ function TopicTile({ topic, accent }: { topic: Topic; accent: AccentTokens }) {
         title={topic.desc}
         className={`group/tile relative flex items-center justify-between gap-2 overflow-hidden rounded-lg bg-surface-raised px-3 py-2.5 ring-1 ring-border transition hover:bg-surface-raised-hover hover:ring-border-strong focus-visible:outline-none focus-visible:ring-2 ${accent.ringSoft}`}
       >
-        <div className="flex min-w-0 items-center gap-2">
-          <Mark weight={isPiece ? 'duotone' : 'fill'} className={`h-3 w-3 shrink-0 ${accent.text}`} />
-          <span className="truncate text-sm text-fg">{topic.name}</span>
+        <div className="flex min-w-0 items-start gap-2">
+          <Mark weight={isPiece ? 'duotone' : 'fill'} className={`mt-1 h-3 w-3 shrink-0 ${accent.text}`} />
+          <div className="min-w-0">
+            <div className="truncate text-sm leading-snug text-fg">{topic.name}</div>
+            <div className="truncate font-mono text-[10px] leading-tight text-fg-subtle">{topic.id}</div>
+          </div>
         </div>
         <ArrowRight
           weight="bold"
-          className={`h-3.5 w-3.5 shrink-0 text-fg-subtle transition group-hover/tile:translate-x-0.5 ${accent.textHover}`}
+          className={`mt-1 h-3.5 w-3.5 shrink-0 text-fg-subtle transition group-hover/tile:translate-x-0.5 ${accent.textHover}`}
         />
       </Link>
     );
@@ -281,15 +332,18 @@ function TopicTile({ topic, accent }: { topic: Topic; accent: AccentTokens }) {
       title={topic.desc}
       className="flex cursor-not-allowed items-center justify-between gap-2 rounded-lg bg-surface px-3 py-2.5 ring-1 ring-border opacity-70"
     >
-      <div className="flex min-w-0 items-center gap-2">
+      <div className="flex min-w-0 items-start gap-2">
         {isPiece ? (
-          <PuzzlePiece weight="duotone" className="h-3 w-3 shrink-0 text-fg-subtle" />
+          <PuzzlePiece weight="duotone" className="mt-1 h-3 w-3 shrink-0 text-fg-subtle" />
         ) : (
-          <Lock weight="duotone" className="h-3 w-3 shrink-0 text-fg-subtle" />
+          <Lock weight="duotone" className="mt-1 h-3 w-3 shrink-0 text-fg-subtle" />
         )}
-        <span className="truncate text-sm text-fg-muted">{topic.name}</span>
+        <div className="min-w-0">
+          <div className="truncate text-sm leading-snug text-fg-muted">{topic.name}</div>
+          <div className="truncate font-mono text-[10px] leading-tight text-fg-subtle">{topic.id}</div>
+        </div>
       </div>
-      <span className="shrink-0 text-[10px] uppercase tracking-wider text-fg-subtle">
+      <span className="mt-1 shrink-0 text-[10px] uppercase tracking-wider text-fg-subtle">
         {isPiece ? 'piece' : 'soon'}
       </span>
     </div>
