@@ -90,8 +90,8 @@ last_verified: 2026-09-07
   전에 전부 끝나 있게 된다.
 - **`header` (title-block) 를 두지 않는다.** 제목은 글의 문단이 준다.
 - **`metrics` 를 두지 않는다.** 조각은 셀 것이 없으므로 `ctx.metric` 도 부르지 않는다.
-- **캔버스 폭은 `PIECE_CANVAS_W`** (`@ffacet/core/runtime`). 매직 넘버를 stage 마다
-  적지 않는다. 세로는 내용이 정한다.
+- **캔버스는 `CanvasView` 로 선언한다** — `canvas: { height: H }`. 가로는 러너가
+  `PIECE_CANVAS_W` 로 정하므로 적지 않고, 세로만 내용이 정한다 (S-view).
 - **그 폭을 채운다.** 요소 크기를 상수로 못박고 남는 폭을 좌우 여백으로 버리지
   않는다. 크기는 캔버스에서 역산하고 상수로는 **상한**만 둔다.
 
