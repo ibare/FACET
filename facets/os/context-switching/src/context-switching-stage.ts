@@ -86,20 +86,11 @@ const STRIP_Y = BODY_Y + BODY_H + 20;
 const STRIP_H = 28;
 
 // 참고 칩.
-const CHIP_Y0 = STRIP_Y + STRIP_H + 22;
-const CHIP_GAP = 12;
 
 // 운동 시간 (ms).
 const PULSE_DUR = 220;
 const CAPTION_DUR = 1800;
 
-type Refs = { name: string; url: string };
-const REFERENCES: Refs[] = [
-  { name: 'OSTEP — Limited Direct Execution', url: 'https://pages.cs.wisc.edu/~remzi/OSTEP/cpu-mechanisms.pdf' },
-  { name: 'Silberschatz — CPU Switch (PCB)', url: 'https://www.cs.fsu.edu/~lacher/courses/COP4610/lectures_9e/ch06.pdf' },
-  { name: 'Wikipedia — Context switch', url: 'https://en.wikipedia.org/wiki/Context_switch' },
-  { name: 'Process Scheduling Visualizer', url: 'https://simulations4all.com/simulations/process-scheduling-visualizer' },
-];
 
 // ── SVG 헬퍼 ────────────────────────────────────────────────────────────
 
@@ -525,46 +516,6 @@ export const contextSwitchingStageView: View = {
     defs.appendChild(clip);
     makeRect(clip, { x: STRIP_X, y: STRIP_Y, width: STRIP_W, height: STRIP_H });
     stripContent.setAttribute('clip-path', `url(#${clipId})`);
-
-    // ── 참고 칩 ──
-    let chipX = STRIP_X;
-    for (const ref of REFERENCES) {
-      const tw = ref.name.length * 6 + 14;
-      makeRect(svg, {
-        x: chipX,
-        y: CHIP_Y0,
-        width: tw,
-        height: 20,
-        rx: 10,
-        fill: colors.bgSubtle,
-        stroke: colors.border,
-        'stroke-width': 0.6,
-      });
-      const label = makeText(
-        svg,
-        {
-          x: chipX + tw / 2,
-          y: CHIP_Y0 + 14,
-          'text-anchor': 'middle',
-          'font-size': fontSizes.xs,
-          fill: colors.textMuted,
-        },
-        ref.name,
-      );
-      label.style.cursor = 'pointer';
-      label.addEventListener('click', () => {
-        if (typeof window !== 'undefined') window.open(ref.url, '_blank', 'noopener');
-      });
-      chipX += tw + CHIP_GAP;
-    }
-    makeText(svg, {
-      x: STRIP_X,
-      y: CHIP_Y0 + 36,
-      'font-size': fontSizes.xs,
-      fill: colors.textMuted,
-      opacity: 0.7,
-    }, tr('label.references', 'See also — OSTEP · Silberschatz · Wikipedia · Process Scheduling Visualizer'));
-
     // ── 상태 ─────────────────────────────────────────────────────────────
     let currentMode: Mode = 'thread';
     let currentOccupant: Flow | 'empty' = 'a';

@@ -75,8 +75,6 @@ const LOSS_PANEL_X = DATA_X;
 const LOSS_PANEL_W = (DATA_X + DATA_W + 20 + PARAM_W) - DATA_X;
 
 // 참고 칩.
-const CHIP_Y0 = LOSS_PANEL_Y + LOSS_PANEL_H + 22;
-const CHIP_Y1 = CHIP_Y0 + 20;
 
 // 운동 시간 (ms).
 const STEP_MOVE_DUR = 280;
@@ -90,14 +88,7 @@ const DATA_DOM_X1 = 5;
 const DATA_DOM_Y0 = -1;
 const DATA_DOM_Y1 = 11;
 
-type Refs = { name: string; url: string };
 
-const REFERENCES: Refs[] = [
-  { name: 'Setosa — OLS Regression', url: 'https://setosa.io/ev/ordinary-least-squares-regression/' },
-  { name: 'ml-visualized — Linear Regression', url: 'https://ml-visualized.com/chapter1/linear_regression' },
-  { name: 'Google ML — Loss / GD', url: 'https://developers.google.com/machine-learning/crash-course/linear-regression/loss' },
-  { name: 'angeloyeo — linear regression', url: 'https://angeloyeo.github.io/2020/08/24/linear_regression.html' },
-];
 
 // ── SVG 헬퍼 ────────────────────────────────────────────────────────────
 
@@ -595,43 +586,6 @@ export const linearRegressionStageView: View = {
         fill: colors.text,
       },
       '',
-    );
-
-    // 참고 칩.
-    for (let i = 0; i < REFERENCES.length; i++) {
-      const r = REFERENCES[i]!;
-      const colW = W / REFERENCES.length;
-      const cx = colW * i + colW / 2;
-      const a = document.createElementNS(SVG_NS, 'a');
-      a.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', r.url);
-      a.setAttribute('href', r.url);
-      a.setAttribute('target', '_blank');
-      a.setAttribute('rel', 'noopener');
-      const t = makeText(
-        a as unknown as SVGElement,
-        {
-          x: cx,
-          y: CHIP_Y0,
-          'text-anchor': 'middle',
-          'font-size': fontSizes.xs,
-          fill: colors.textMuted,
-        },
-        r.name,
-      );
-      t.style.cursor = 'pointer';
-      svg.appendChild(a);
-    }
-    makeText(
-      svg,
-      {
-        x: W / 2,
-        y: CHIP_Y1,
-        'text-anchor': 'middle',
-        'font-size': fontSizes.xs,
-        fill: colors.textMuted,
-        opacity: 0.7,
-      },
-      tr('label.references', 'See also — Setosa · ml-visualized · Google ML Crash Course · angeloyeo'),
     );
 
     // ── 상태 ──────────────────────────────────────────────────────────────

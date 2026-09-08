@@ -444,21 +444,7 @@ export const pubsubStageView: View = {
     svg.appendChild(traceTitle);
 
     const traceGroup = document.createElementNS(SVG_NS, 'g');
-    svg.appendChild(traceGroup);
-
-    // === 레퍼런스 라벨 ===
-    const refText = document.createElementNS(SVG_NS, 'text');
-    setAttrs(refText, {
-      x: 12,
-      y: H - 24,
-      fill: colors.textMuted,
-      'font-size': '9px',
-      'font-family': fonts.body,
-    });
-    refText.textContent =
-      tr('label.references', 'See also: Hohpe — Publish-Subscribe Channel · MS Azure Architecture Center · GoF Observer · Aiven Kafka Visualization');
-    svg.appendChild(refText);
-    // === broker 라이프라인 (이벤트, alerts) ===
+    svg.appendChild(traceGroup);    // === broker 라이프라인 (이벤트, alerts) ===
     const brokerEventsLine = makeLifeline(BROKER_EVENTS_X);
     const brokerAlertsLine = makeLifeline(BROKER_ALERTS_X, { aux: true });
     brokerEventsLine.setAttribute('stroke', colors.text);

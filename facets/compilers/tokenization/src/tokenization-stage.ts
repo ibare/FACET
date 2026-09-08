@@ -73,8 +73,6 @@ const LEGEND_Y = 388;
 const LEGEND_LINE_H = 18;
 
 // 참고 레퍼런스 칩.
-const CHIP_BAR_Y0 = 482;
-const CHIP_BAR_Y1 = 524;
 
 // ── 운동 시간 (ms) ──────────────────────────────────────────────────────
 const COMMIT_FALL_MS = 220;
@@ -156,16 +154,6 @@ function makeLine(
   return el;
 }
 
-type Refs = { name: string; url: string };
-const REFERENCES: Refs[] = [
-  { name: 'Crafting Interpreters — Scanning', url: 'https://craftinginterpreters.com/scanning.html' },
-  { name: 'Tokenizer Playground (Xenova)', url: 'https://huggingface.co/spaces/Xenova/the-tokenizer-playground' },
-  {
-    name: "Ruslan's Blog — LSBASI Part 1",
-    url: 'https://ruslanspivak.com/lsbasi-part1/',
-  },
-  { name: 'regex101', url: 'https://regex101.com/' },
-];
 
 // 종류별 의미 색을 categorical 시드 + palette 에서 합성. design-tokens 위에 의미 매핑만 — hex 직접 박지 않음 (S-view).
 type KindColors = Record<TokenKind | 'swallow', string>;
@@ -300,7 +288,6 @@ export const tokenizationStageView: View = {
     const fallLayer = makeGroup(svg);
     const cardsLayer = makeGroup(svg);
     const legendLayer = makeGroup(svg);
-    const chipsLayer = makeGroup(svg);
     const captionLayer = makeGroup(svg);
 
     // ── 헤더: 제목 + 개념 캡션 ────────────────────────────────────────
@@ -451,63 +438,6 @@ export const tokenizationStageView: View = {
           fill: palette.text,
         },
         kindLabel(tr, k),
-      );
-    });
-
-    // ── 참고 레퍼런스 칩 ─────────────────────────────────────────────
-    makeText(
-      chipsLayer,
-      {
-        x: OUT_X0 + 4,
-        y: CHIP_BAR_Y0 - 6,
-        'font-size': fontSizes.xs,
-        'font-weight': 700,
-        fill: palette.textMuted,
-        'letter-spacing': '0.04em',
-      },
-      tr('label.references', 'see also'),
-    );
-    const chipW = (W - 48 - (REFERENCES.length - 1) * 8) / REFERENCES.length;
-    REFERENCES.forEach((ref, i) => {
-      const x = OUT_X0 + i * (chipW + 8);
-      const y = CHIP_BAR_Y0;
-      const link = document.createElementNS(SVG_NS, 'a');
-      link.setAttribute('href', ref.url);
-      link.setAttribute('target', '_blank');
-      link.setAttribute('rel', 'noreferrer');
-      chipsLayer.appendChild(link);
-
-      makeRect(link, {
-        x,
-        y,
-        width: chipW,
-        height: CHIP_BAR_Y1 - CHIP_BAR_Y0,
-        rx: 6,
-        ry: 6,
-        fill: palette.bgSubtle,
-        stroke: palette.border,
-        'stroke-width': 1,
-      });
-      makeText(
-        link,
-        {
-          x: x + 10,
-          y: y + 18,
-          'font-size': fontSizes.xs,
-          fill: palette.text,
-        },
-        ref.name,
-      );
-      makeText(
-        link,
-        {
-          x: x + chipW - 10,
-          y: y + 18,
-          'font-size': fontSizes.xs,
-          'text-anchor': 'end',
-          fill: palette.textMuted,
-        },
-        '↗',
       );
     });
 

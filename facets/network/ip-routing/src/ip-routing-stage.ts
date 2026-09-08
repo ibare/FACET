@@ -1291,19 +1291,6 @@ export const ipRoutingStageView: View = {
         payload.viaInterface ? `via ${payload.viaInterface}` : '',
       );
     }
-
-    // ── 시각화 안 텍스트 / 레퍼런스 ────────────────────────────────────
-    const refText = svgEl('text', {
-      x: 12,
-      y: H - 20,
-      fill: colors.textMuted,
-      'font-size': '9px',
-      'font-family': fonts.body,
-    });
-    refText.textContent =
-      tr('label.references', 'See also: Kurose-Ross LPM Interactive · INET/OMNeT++ Routing Visualizer · Cisco Packet Tracer · Practical Networking — Packet Traveling');
-    svg.appendChild(refText);
-
     // 패킷 카드 init.
     buildPacketCard();
     packet.group.setAttribute('opacity', '0');

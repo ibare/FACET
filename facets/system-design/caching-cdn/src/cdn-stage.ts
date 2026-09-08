@@ -382,19 +382,6 @@ export const cdnStageView: View = {
     // === 엣지 PoP 그룹 ===
     const edgeGroup = document.createElementNS(SVG_NS, 'g');
     svg.appendChild(edgeGroup);
-    // === 레퍼런스 라벨 ===
-    const refText = document.createElementNS(SVG_NS, 'text');
-    setAttrs(refText, {
-      x: 12,
-      y: H - 12,
-      fill: colors.textMuted,
-      'font-size': '9px',
-      'font-family': fonts.body,
-    });
-    refText.textContent =
-      tr('label.references', 'See also: Cloudflare CDN Reference Architecture · Cloudflare Global Network · ByteByteGo CDN · NAVER Cloud CDN tips');
-    svg.appendChild(refText);
-
     // ── 모델 상태 ──
     const edges = new Map<string, EdgeRec>();
     const contents = new Map<string, ContentRec>();

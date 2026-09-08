@@ -1597,17 +1597,4 @@ function drawLegend(
     }
   }
 
-  // 레퍼런스 라벨 (옅은 한 줄).
-  const refs = document.createElementNS(SVG_NS, 'text');
-  setAttrs(refs, {
-    x: W - 12,
-    y: LEGEND_Y + 36,
-    'text-anchor': 'end',
-    fill: palette.textMuted,
-    'font-size': '9px',
-    'font-family': fonts.body,
-  });
-  refs.textContent =
-    tr('label.references', "See also: Wikipedia · Crow's Foot · dbdiagram.io");
-  g.appendChild(refs);
 }

@@ -134,7 +134,6 @@ const K = {
   lruEnd: 'label.lruEnd',
   mruEnd: 'label.mruEnd',
   traceTitle: 'label.traceTitle',
-  references: 'label.references',
   getHit: 'caption.getHit',
   getMiss: 'caption.getMiss',
   missMark: 'caption.missMark',
@@ -384,17 +383,6 @@ export const lruCacheStageView: View = {
     svg.appendChild(traceGroup);
 
     // === 레퍼런스 라벨 ===
-    const refText = document.createElementNS(SVG_NS, 'text');
-    setAttrs(refText, {
-      x: MAIN_LEFT,
-      y: H - 12,
-      fill: colors.textMuted,
-      'font-size': '10px',
-      'font-family': fonts.body,
-    });
-    refText.textContent = tr(K.references, 'See also: NeetCode 146 · dev.to LRU illustrated · GeeksforGeeks LRU');
-    svg.appendChild(refText);
-
     // === 운동 overlay ===
     const overlayGroup = document.createElementNS(SVG_NS, 'g');
     svg.appendChild(overlayGroup);

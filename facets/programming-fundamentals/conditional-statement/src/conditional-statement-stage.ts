@@ -52,8 +52,6 @@ const SIDE_TOP = 70;
 const SIDE_BOTTOM = 470;
 
 // 참고 레퍼런스 칩 영역.
-const CHIP_BAR_Y0 = 510;
-const CHIP_BAR_Y1 = 552;
 
 // ── 운동 시간 (ms) ──────────────────────────────────────────────────────
 const DISSOLVE_MS = 180;
@@ -189,17 +187,6 @@ type Layout = {
   merge: MergeRec;
 };
 
-type Refs = {
-  name: string;
-  url: string;
-};
-
-const REFERENCES: Refs[] = [
-  { name: 'Edraw — If-Else Flowchart Guide', url: 'https://www.edraw.ai/blog/if-else-flowchart.html' },
-  { name: 'Scratch Wiki — If/Else', url: 'https://en.scratch-wiki.info/wiki/If_()_Then,_Else_(block)' },
-  { name: 'Python Tutor — Visualize', url: 'https://pythontutor.com/visualize.html' },
-  { name: 'ko.javascript.info — if/else', url: 'https://ko.javascript.info/ifelse' },
-];
 
 export const conditionalFlowchartView: View = {
   mount(container: HTMLElement, params: ViewMountParams): ViewInstance {
@@ -421,64 +408,6 @@ export const conditionalFlowchartView: View = {
         captionTimer = null;
       }, dur);
     }
-
-    // ── 참고 레퍼런스 칩 ─────────────────────────────────────────────
-    const chipsTitle = makeText(
-      chipsLayer,
-      {
-        x: 12,
-        y: CHIP_BAR_Y0 - 6,
-        'font-size': fontSizes.xs,
-        'font-weight': 700,
-        fill: palette.textMuted,
-        'letter-spacing': '0.04em',
-      },
-      tr('label.references', 'see also'),
-    );
-    void chipsTitle;
-    const chipW = (W - 24 - (REFERENCES.length - 1) * 8) / REFERENCES.length;
-    REFERENCES.forEach((ref, i) => {
-      const x = 12 + i * (chipW + 8);
-      const y = CHIP_BAR_Y0;
-      const link = document.createElementNS(SVG_NS, 'a');
-      link.setAttribute('href', ref.url);
-      link.setAttribute('target', '_blank');
-      link.setAttribute('rel', 'noreferrer');
-      chipsLayer.appendChild(link);
-
-      makeRect(link, {
-        x,
-        y,
-        width: chipW,
-        height: CHIP_BAR_Y1 - CHIP_BAR_Y0,
-        rx: 6,
-        ry: 6,
-        fill: palette.bgSubtle,
-        stroke: palette.border,
-        'stroke-width': 1,
-      });
-      makeText(
-        link,
-        {
-          x: x + 10,
-          y: y + 18,
-          'font-size': fontSizes.xs,
-          fill: palette.text,
-        },
-        ref.name,
-      );
-      makeText(
-        link,
-        {
-          x: x + chipW - 10,
-          y: y + 18,
-          'font-size': fontSizes.xs,
-          'text-anchor': 'end',
-          fill: palette.textMuted,
-        },
-        '↗',
-      );
-    });
 
     // ── 도식 (모드별 빌드) ───────────────────────────────────────────
     let layout: Layout | null = null;
