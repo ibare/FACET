@@ -35,7 +35,7 @@ export function registerRequiresSorted(): void {
   registerAlgorithm<RequiresSortedData>('requiresSorted', requiresSortedAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('requiresSorted', requiresSortedProjector);
+  registerProjector('requiresSortedProjector', requiresSortedProjector);
   for (const ir of requiresSortedIRs) registerIR(ir.id, ir);
   registerView('requires-sorted-stage', requiresSortedStageView);
   registerFacets([requiresSortedFacet]);

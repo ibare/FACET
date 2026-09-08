@@ -32,7 +32,7 @@ export {
 
 export function registerCountThenPlace(): void {
   registerAlgorithm('countThenPlace', countThenPlaceAlgorithm, { mechanismKind: 'reactive' });
-  registerProjector('countThenPlace', countThenPlaceProjector);
+  registerProjector('countThenPlaceProjector', countThenPlaceProjector);
   for (const ir of countThenPlaceIRs) registerIR(ir.id, ir);
   registerView('count-then-place-stage', countThenPlaceStageView);
   registerFacets([countThenPlaceFacet]);

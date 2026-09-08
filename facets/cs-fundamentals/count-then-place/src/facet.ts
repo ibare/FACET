@@ -19,7 +19,7 @@ export const countThenPlaceFacet: FacetJson = {
     ko: '값마다 세어 두면 자리가 미리 정해진다 — 값끼리 견주는 일이 한 번도 없다.',
   },
   algorithm: 'module:countThenPlace',
-  projector: 'module:countThenPlace',
+  projector: 'module:countThenPlaceProjector',
   initialData: {
     type: 'count-then-place',
     values: [2, 0, 1, 2, 0, 2],

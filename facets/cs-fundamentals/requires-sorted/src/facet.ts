@@ -21,7 +21,7 @@ export const requiresSortedFacet: FacetJson = {
     ko: '같은 값 일곱을 줄 선 것과 흐트러진 것으로 놓고 같은 이진 탐색을 건다. 흐트러진 쪽은 거기 있는 값을 없다고 답한다.',
   },
   algorithm: 'module:requiresSorted',
-  projector: 'module:requiresSorted',
+  projector: 'module:requiresSortedProjector',
   initialData: {
     type: 'requires-sorted',
     target: 3,
