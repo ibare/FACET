@@ -51,8 +51,8 @@ export const bstConcept: FacetConceptSource = {
     },
 
     useWhen: [
-      'The reader should feel that one comparison throws away half the tree. Driving searches and watching the discarded subtree fade is what turns that from a formula into a habit.',
-      'The article is about how the insertion order decides the shape. That needs the reader to type their own sequences and compare the results.',
+      'The article has reached deletion and is treating it as insertion run backwards, when removing a node that has two children is a different job. Insertions, searches and deletions run on one tree here, so whether the ordering survives a removal turns up in the search that follows it.',
+      'The prose counts a failed lookup and a successful one together as the cost of searching. Hits and misses are tallied apart here, so the article can say what a miss costs on its own.',
     ],
 
 

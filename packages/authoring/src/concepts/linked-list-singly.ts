@@ -54,8 +54,8 @@ export const linkedListSinglyConcept: FacetConceptSource = {
     },
 
     useWhen: [
-      'The article contrasts links with contiguous storage, and the reader needs to feel that reaching the tenth node means walking ten.',
-      'The reader should see what an insert costs here — relinking two references, with no shifting anywhere.',
+      'The article says the position decides what an insert costs, and the reader misses that it is the walking that differs while the joining does not. Inserting at changing positions on one chain leaves the joining identical and moves only the step counter.',
+      'The article is about to argue that this structure is wrong for repeated indexed access, and that argument only lands as arithmetic — the step counter keeps adding across operations, so a run of lookups leaves a total the reader can read off.',
     ],
 
 

@@ -56,7 +56,7 @@ export const hashTableChainingConcept: FacetConceptSource = {
 
     useWhen: [
       'The reader should find out what a collision actually costs — insert keys that land on the same slot and watch the chain grow, then look up through it.',
-      'The article is about the gap between average and worst case. Driving enough keys into one bucket is how that gap becomes visible rather than quoted.',
+      'The article judges a hash function as good or bad and the reader has nothing to judge it by. Inserting key after key and reading the distribution — how many slots sit empty against how many hold chains of two or three — is where an even spread and a pile-up become the same table told apart.',
     ],
 
 

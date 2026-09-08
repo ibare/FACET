@@ -56,8 +56,8 @@ export const arrayConcept: FacetConceptSource = {
     },
 
     useWhen: [
-      'The prose says an index reaches any cell in one step, and the reader is likely to picture a search. This shows the address being computed rather than looked for.',
-      'The reader needs to feel why an insert in the middle costs more than an append — the shifting has to be watched, not asserted.',
+      'The article calls both of them the same operation — putting a value at the front and adding one at the end — and the reader takes the cost to be the same. Doing both on one block and reading the shift counter after each is what separates them.',
+      'The prose sets reaching a cell by its number against looking for a value, and the two sit side by side here as buttons on one block, so the reader can take a turn at each and watch one finish at once while the other works through the cells.',
     ],
 
 
