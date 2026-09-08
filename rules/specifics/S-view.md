@@ -21,6 +21,19 @@ last_verified: 2026-09-05
 - 폰트 크기 / 여백은 `fontSizes` / `space` / `radii` 토큰을 경유한다.
 - **화면에 그리는 문자열은 `params.t` 로 조회한다** (`t(key, 'en 원본', vars?)`). 러너가 `FacetJson.messages` 오버라이드를 얹은 조회기를 주입하므로, View 가 스스로 `makeTranslator` 를 부르면 저작자 문안을 보지 못한다. 러너 밖 mount 를 위한 fallback 은 `params.t ?? makeTranslator(params.locale)` 형태로만 둔다. 자세한 규약은 C10.
 - `FacetJson` 이 `LocaleStr` 로 주는 값 (`cfg.label`, `placeholder` 등) 은 `resolveLocale(value, params.locale)` 로 해석한다. 저작자가 준 값이 있으면 프레임워크 기본 라벨보다 우선한다.
+- **세로는 마운트한 뒤 바뀌지 않는다.** 재생 중에 `viewBox` 를 다시 재지 않는다.
+  - 호스트(Tiptap NodeView)는 높이를 정하지 않는다. SVG 의 viewBox 비율이 그대로
+    문서에서의 높이가 되므로, 높이가 바뀌면 **글 안에 박힌 그림의 위아래 문단이
+    밀린다.** 읽는 사람에게는 글이 흔들리는 것으로 보인다.
+  - 내용에 따라 커지는 그림(나무가 깊어지는 힙·유니온파인드 같은 것)은 흔한
+    깊이만큼 미리 자리를 잡아 두고, **넘치면 층 간격을 줄여 담는다.** 높이를
+    늘리는 것이 아니다.
+  - 최악의 깊이에 맞춰 잡지는 않는다 — 유니온-파인드는 자리 수만큼 줄이 길어질
+    수 있어 그렇게 잡으면 화면 대부분이 늘 비어 있다.
+  - `mount` 에서 내용을 보고 한 번 정하는 것은 무방하다. 그 뒤로 바꾸지 않으면 된다.
+  - 완제품 둘이 이 함정에 빠졌다(heapBinary 229→291, unionFind 80→260). 나머지
+    예순여덟은 성했다. `packages/core/test/canvas-height.test.ts` 가 전수로 잰다.
+
 - **`destroy()` 는 관찰 가능한 뒷일을 남기지 않는다.** 그리고 **남기지 않는다고
   적은 주석은 사실이어야 한다.**
   - 스스로 다음 회차를 예약하는 루프(`setTimeout(tick, 16)` 꼴, rAF 루프)는

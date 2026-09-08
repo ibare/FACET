@@ -36,6 +36,17 @@ const NODE_R = 16;
 const CAPTION_PAD = 30;
 const MOVE_MS = 240;
 
+/**
+ * 미리 자리를 잡아 두는 깊이.
+ *
+ * 학습자가 계속 합치면 줄이 자리 수만큼(size−1) 길어질 수 있다. 그 최악에
+ * 맞춰 잡으면 화면 대부분이 늘 비어 있으므로, 흔한 깊이만큼만 잡고 넘치면
+ * 층 간격을 줄여 담는다. **높이는 어떤 경우에도 바뀌지 않는다** — 재생 중에
+ * viewBox 를 다시 재면 글 안에 박혔을 때 위아래 문단이 밀린다 (S-view).
+ */
+const RESERVE_DEPTH = 5;
+const STAGE_H = TOP + RESERVE_DEPTH * LEVEL_GAP + NODE_R + CAPTION_PAD;
+
 type Node = {
   g: SVGGElement;
   circle: SVGCircleElement;
@@ -76,8 +87,8 @@ function rootOf(parent: number[], i: number): number {
 }
 
 export const unionFindStageView: CanvasView = {
-  // 내용이 정하는 세로. mount 에서 실제 깊이로 다시 잰다.
-  canvas: { height: 260 },
+  // 세로는 고정이다. 재생 중에 바꾸지 않는다 (S-view).
+  canvas: { height: STAGE_H },
 
   mount(_container: HTMLElement, params: ViewMountParams & { canvas: SVGSVGElement }): ViewInstance {
     const svg = params.canvas;
@@ -146,33 +157,40 @@ export const unionFindStageView: CanvasView = {
       const pos = new Map<number, { x: number; y: number }>();
       let maxDepth = 0;
 
+      // 먼저 가장 깊은 자리를 알아야 층 간격을 정할 수 있다.
+      const depths = new Map<number, number>();
+      for (let i = 0; i < n; i += 1) {
+        const d = depthOf(parent, i);
+        depths.set(i, d);
+        if (d > maxDepth) maxDepth = d;
+      }
+      // 잡아 둔 깊이를 넘으면 간격을 줄여 담는다. 높이는 늘리지 않는다.
+      const levelGap =
+        maxDepth > RESERVE_DEPTH ? (RESERVE_DEPTH * LEVEL_GAP) / maxDepth : LEVEL_GAP;
+
       for (const r of roots) {
         const list = members.get(r) ?? [r];
         const band = (usable * list.length) / n;
         // 무리 안에서 깊이별로 줄을 세운다.
         const byDepth = new Map<number, number[]>();
         for (const m of list) {
-          const d = depthOf(parent, m);
-          if (d > maxDepth) maxDepth = d;
-          const row = byDepth.get(d) ?? [];
+          const row = byDepth.get(depths.get(m) ?? 0) ?? [];
           row.push(m);
-          byDepth.set(d, row);
+          byDepth.set(depths.get(m) ?? 0, row);
         }
         for (const [d, row] of byDepth) {
           row.forEach((m, k) => {
             pos.set(m, {
               x: cursorX + (band * (k + 0.5)) / row.length,
-              y: TOP + d * LEVEL_GAP,
+              y: TOP + d * levelGap,
             });
           });
         }
         cursorX += band;
       }
 
-      const h = TOP + maxDepth * LEVEL_GAP + NODE_R + CAPTION_PAD;
-      svg.setAttribute('viewBox', `0 0 ${W} ${h}`);
       captionText.setAttribute('x', String(W / 2));
-      captionText.setAttribute('y', String(h - 10));
+      captionText.setAttribute('y', String(STAGE_H - 10));
 
       // 간선 먼저 — 노드 아래에 깔린다.
       for (let i = 0; i < n; i += 1) {

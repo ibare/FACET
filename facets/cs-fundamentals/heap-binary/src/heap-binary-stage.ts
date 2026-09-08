@@ -19,6 +19,7 @@ import {
   fontSizes,
   getColors,
   makeTranslator,
+  PIECE_CANVAS_W,
   type CanvasView,
   type Palette,
   type Theme,
@@ -38,6 +39,15 @@ const LEVEL_GAP = 62;
 const NODE_R = 17;
 const CAPTION_H = 26;
 const MOVE_MS = 240;
+
+/**
+ * 담을 수 있는 가장 깊은 층. `capacity` 15 면 마지막 자리가 층 3 이다.
+ *
+ * 높이를 미리 이만큼 잡아 두고 **재생 중에는 바꾸지 않는다.** 내용에 따라
+ * viewBox 를 다시 재면 글 안에 박혔을 때 위아래 문단이 밀린다 (S-view).
+ */
+const RESERVE_DEPTH = 3;
+const STAGE_H = TREE_TOP + RESERVE_DEPTH * LEVEL_GAP + NODE_R + CAPTION_H + 18;
 
 /** 자리 하나의 상태. 타일 색과 잉크가 여기서 갈린다. */
 type SlotState = 'default' | 'comparing' | 'swapping' | 'settled' | 'sorted';
@@ -99,8 +109,8 @@ function tileFor(state: SlotState, c: Palette): string {
 }
 
 export const heapBinaryStageView: CanvasView = {
-  // 내용이 정하는 세로. mount 에서 실제 깊이로 다시 잰다.
-  canvas: { height: 340 },
+  // 세로는 고정이다. 재생 중에 바꾸지 않는다 (S-view).
+  canvas: { height: STAGE_H },
 
   mount(_container: HTMLElement, params: ViewMountParams & { canvas: SVGSVGElement }): ViewInstance {
     const svg = params.canvas;
@@ -123,10 +133,15 @@ export const heapBinaryStageView: CanvasView = {
     });
     svg.append(edgeLayer, nodeLayer, arrayLayer, captionText);
 
-    let geo: Geometry = { w: 620, cellW: CELL_MAX_W, originX: SIDE_MIN };
+    let geo: Geometry = { w: PIECE_CANVAS_W, cellW: CELL_MAX_W, originX: SIDE_MIN };
+    // 높이는 여기서 한 번만 정한다. 러너가 만든 viewBox 와 같은 값이라
+    // 사실상 확인이지만, 이 stage 가 세로를 어디서 정하는지 한 자리에 둔다.
+    svg.setAttribute('viewBox', `0 0 ${geo.w} ${STAGE_H}`);
     let slots: Slot[] = [];
     let states: SlotState[] = [];
     let heapSize = 0;
+    /** 층 사이 간격. 깊이가 잡아 둔 자리를 넘을 때만 줄어든다. */
+    let levelGap = LEVEL_GAP;
     let destroyed = false;
     const timers = new Set<ReturnType<typeof setTimeout>>();
 
@@ -151,7 +166,7 @@ export const heapBinaryStageView: CanvasView = {
       const band = (geo.w - SIDE_MIN * 2) / rowCount;
       return {
         x: SIDE_MIN + band * (inRow + 0.5),
-        y: TREE_TOP + d * LEVEL_GAP,
+        y: TREE_TOP + d * levelGap,
       };
     }
 
@@ -179,11 +194,14 @@ export const heapBinaryStageView: CanvasView = {
       const originX = Math.round((geo.w - count * cellW) / 2);
       geo = { ...geo, cellW, originX };
 
-      const maxDepth = all.length > 0 ? depthOf(heapSize - 1) : 0;
-      const h = TREE_TOP + Math.max(0, maxDepth) * LEVEL_GAP + NODE_R + CAPTION_H + 18;
-      svg.setAttribute('viewBox', `0 0 ${geo.w} ${h}`);
+      // 깊이가 잡아 둔 자리를 넘으면 층 간격을 줄여 담는다 — 높이를 늘리지
+      // 않는다. viewBox 는 mount 때 정해진 그대로다.
+      const maxDepth = all.length > 0 ? depthOf(Math.max(0, heapSize - 1)) : 0;
+      levelGap = maxDepth > RESERVE_DEPTH
+        ? (RESERVE_DEPTH * LEVEL_GAP) / maxDepth
+        : LEVEL_GAP;
       captionText.setAttribute('x', String(geo.w / 2));
-      captionText.setAttribute('y', String(h - 10));
+      captionText.setAttribute('y', String(STAGE_H - 10));
       if (all.length === 0) {
         captionText.textContent = t('caption.empty', 'The heap is empty.');
       }
