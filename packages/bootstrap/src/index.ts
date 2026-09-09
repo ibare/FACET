@@ -405,4 +405,16 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:interpolationSearch', () =>
     import('@ffacet/algorithm-interpolation-search').then((m) => m.registerInterpolationSearch()),
   );
+  registerFacetLoader('facet:dynamicProgramming', () =>
+    import('@ffacet/algorithm-dynamic-programming').then((m) => m.registerDynamicProgramming()),
+  );
+  registerFacetLoader('facet:greedy', () =>
+    import('@ffacet/algorithm-greedy').then((m) => m.registerGreedy()),
+  );
+  registerFacetLoader('facet:backtracking', () =>
+    import('@ffacet/algorithm-backtracking').then((m) => m.registerBacktracking()),
+  );
+  registerFacetLoader('facet:branchAndBound', () =>
+    import('@ffacet/algorithm-branch-and-bound').then((m) => m.registerBranchAndBound()),
+  );
 }
