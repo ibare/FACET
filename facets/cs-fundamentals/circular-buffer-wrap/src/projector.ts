@@ -120,7 +120,7 @@ export const circularBufferWrapProjector: ProjectorFactory = (
         case 'done': {
           if (!initial) return;
           stage?.setCaption(
-            tr('caption.done', 'Four operations later, still {count} slots — nothing grew.', {
+            tr('caption.done', 'Still {count} slots — nothing grew.', {
               count: initial.slots.length,
             }),
           );

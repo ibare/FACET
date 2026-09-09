@@ -50,7 +50,7 @@ export const bstCompareAndGoProjector: ProjectorFactory = (views, runtime) => {
   let needle = 0;
 
   function targetCaption(): string {
-    return tr('caption.target', 'Looking for {needle}', { needle });
+    return tr('caption.target', 'Looking for {needle}.', { needle });
   }
 
   function onInit(initialData: unknown): void {
@@ -91,14 +91,14 @@ export const bstCompareAndGoProjector: ProjectorFactory = (views, runtime) => {
         await stage.moveCursor?.(p.nodeId);
         if (p.result === 'lt') {
           stage.setCaption?.(
-            tr('caption.compareLt', '{needle} < {nodeValue} — smaller, go left', {
+            tr('caption.compareLt', '{needle} < {nodeValue} — smaller, go left.', {
               needle: p.needle,
               nodeValue: p.nodeValue,
             }),
           );
         } else if (p.result === 'gt') {
           stage.setCaption?.(
-            tr('caption.compareGt', '{needle} > {nodeValue} — bigger, go right', {
+            tr('caption.compareGt', '{needle} > {nodeValue} — bigger, go right.', {
               needle: p.needle,
               nodeValue: p.nodeValue,
             }),
@@ -106,7 +106,7 @@ export const bstCompareAndGoProjector: ProjectorFactory = (views, runtime) => {
         } else {
           stage.setMatched?.(p.nodeId);
           stage.setCaption?.(
-            tr('caption.compareEq', '{needle} = {nodeValue} — found', {
+            tr('caption.compareEq', '{needle} = {nodeValue} — found.', {
               needle: p.needle,
               nodeValue: p.nodeValue,
             }),
@@ -128,7 +128,7 @@ export const bstCompareAndGoProjector: ProjectorFactory = (views, runtime) => {
         }
         const nodeIds = p.nodes.filter((n): n is string => typeof n === 'string');
         await stage.foldSide?.(p.rootId, p.side, nodeIds);
-        stage.setCaption?.(tr('caption.narrowed', 'Narrowed to {n} candidates', { n: p.remaining }));
+        stage.setCaption?.(tr('caption.narrowed', 'Narrowed to {n} candidates.', { n: p.remaining }));
         return;
       }
       case 'rewind': {

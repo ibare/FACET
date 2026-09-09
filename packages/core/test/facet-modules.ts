@@ -67,3 +67,19 @@ export const PIECE_MARKED_COUNT: number = Object.values(
     eager: true,
   }),
 ).filter((src) => src.includes('@piece')).length;
+
+/**
+ * facet 패키지의 소스 전문. 경로 → 내용.
+ *
+ * 코드가 **무엇이라 적혀 있는지**를 보는 검사용이다. 모듈을 로드해서는 알 수 없는
+ * 것 — 호출부에 리터럴로 적힌 en 원본이 선언과 같은지 — 이 여기서만 드러난다.
+ */
+export const FACET_SOURCES: Record<string, string> = Object.fromEntries(
+  Object.entries(
+    import.meta.glob('../../../facets/*/*/src/*.ts', {
+      query: '?raw',
+      import: 'default',
+      eager: true,
+    }),
+  ).map(([key, src]) => [key.replace(/^(\.\.\/)+/, ''), src]),
+);

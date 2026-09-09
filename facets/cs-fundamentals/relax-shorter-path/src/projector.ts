@@ -158,7 +158,7 @@ export const relaxShorterPathProjector: ProjectorFactory = (
           const current = asNumber(p?.current);
           if (vertex === null || candidate === null || current === null) return;
           stage.setCaption(
-            tr('caption.keep', '{candidate} is not shorter than {current} — the number written stays.', {
+            tr('caption.keep', '{candidate} is not shorter than {current} — nothing is erased, the number stays where it is.', {
               candidate,
               current,
             }),

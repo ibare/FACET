@@ -75,7 +75,7 @@ export const twoColorConflictProjector: ProjectorFactory = (views, runtime) => {
 
   const openingCaption = (): void => {
     stage?.setCaption?.(
-      tr('caption.start', 'A ring of vertices. Neighbors must not share a color.'),
+      tr('caption.start', 'A ring of vertices, none of them painted yet.'),
     );
   };
 
