@@ -1,0 +1,284 @@
+/**
+ * 이진 탐색 완결형 선언.
+ *
+ * 블록은 셋뿐이다 — `stage` · `controls` · `codePanel`. 제목 블록을 두지 않는다
+ * (이름은 카탈로그 카드와 글의 문단이 준다). 미리보기 · 기록 · 남은 구간 표시는
+ * 빌트인 view 를 빌리지 않고 stage 가 직접 그린다.
+ *
+ * 이 facet 의 산출물은 그림이 아니라 **코드** 다. `ir:binarysearch-iterative`
+ * 하나가 여섯 언어로 펼쳐지고, 재생 중인 phase 가 그 줄을 짚는다.
+ *
+ * `shuffleOnReset` 을 켜지 않는다. 이진 탐색은 줄 서 있는 것을 전제로 하므로
+ * 섞는 순간 알고리즘이 거짓말을 한다.
+ *
+ * 식별자 (C1): `index:<i>`.
+ */
+
+import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
+
+export const binarySearchFacet: FacetJson = {
+  id: 'facet:binarySearch',
+  // 제목은 카탈로그 카드의 이름과 같다 (C4 명명 규칙 5).
+  title: {
+    en: 'Binary Search',
+    ko: '이진 탐색',
+    ar: 'البحث الثنائي',
+    es: 'Búsqueda binaria',
+    fr: 'Recherche dichotomique',
+    hi: 'द्विआधारी खोज',
+    id: 'Pencarian biner',
+    pt: 'Busca binária',
+  },
+  description: {
+    en: 'Look at the middle and throw away half — and to answer "not here", the range must run empty.',
+    ko: '가운데를 보고 절반을 버린다 — 없다고 답하려면 구간이 비어야 한다',
+    ar: 'انظر إلى المنتصف وتخلّص من النصف — ولتقول "غير موجود" يجب أن يفرغ المجال.',
+    es: 'Mira el centro y descarta la mitad; para decir "no está" el rango debe quedar vacío.',
+    fr: 'Regardez le milieu et jetez la moitié — et pour répondre « absent », l’intervalle doit se vider.',
+    hi: 'मध्य को देखें और आधा हटा दें — और "यहाँ नहीं है" कहने के लिए दायरे का खाली होना ज़रूरी है।',
+    id: 'Lihat bagian tengah lalu buang separuhnya — dan untuk menjawab "tidak ada", rentangnya harus kosong.',
+    pt: 'Olhe o meio e descarte a metade — e para dizer "não está aqui", o intervalo precisa esvaziar.',
+  },
+  algorithm: 'module:binarySearch',
+  projector: 'module:binarySearchProjector',
+  // 사양이 정한 자료. 있는 값 하나(71)와 없는 값 하나(40)를 잇달아 찾는다 —
+  // 찾을 때와 없을 때가 어떻게 끝나는지가 둘 다 보여야 하기 때문이다.
+  initialData: {
+    type: 'array',
+    values: [3, 9, 14, 21, 28, 35, 42, 50, 63, 71, 88, 95],
+    targets: [71, 40],
+  },
+  layout: {
+    type: 'column',
+    gap: 8,
+    children: [{ ref: 'stage' }, { ref: 'controls' }, { ref: 'codePanel' }],
+  },
+  blocks: {
+    stage: { type: 'binary-search-stage' },
+    controls: {
+      type: 'control-bar',
+      controls: CONTROL_SET.playback,
+      metrics: [
+        {
+          name: 'compare-count',
+          label: {
+            en: 'Compare',
+            ko: '견줌',
+            ar: 'مقارنة',
+            es: 'Comparar',
+            fr: 'Comparer',
+            hi: 'तुलना',
+            id: 'Banding',
+            pt: 'Comparar',
+          },
+          initial: 0,
+        },
+        {
+          name: 'search-count',
+          label: {
+            en: 'Search',
+            ko: '찾기',
+            ar: 'بحث',
+            es: 'Búsqueda',
+            fr: 'Recherche',
+            hi: 'खोज',
+            id: 'Pencarian',
+            pt: 'Busca',
+          },
+          initial: 0,
+        },
+        {
+          name: 'hit-count',
+          label: {
+            en: 'Hit',
+            ko: '찾음',
+            ar: 'إصابة',
+            es: 'Acierto',
+            fr: 'Trouvé',
+            hi: 'मिला',
+            id: 'Ketemu',
+            pt: 'Acerto',
+          },
+          initial: 0,
+        },
+      ],
+    },
+    codePanel: {
+      type: 'code-view',
+      label: {
+        en: 'Code',
+        ko: '코드',
+        ar: 'الشيفرة',
+        es: 'Código',
+        fr: 'Code',
+        hi: 'कोड',
+        id: 'Kode',
+        pt: 'Código',
+      },
+      ir: 'ir:binarysearch-iterative',
+    },
+  },
+  messages: {
+    'caption.start': {
+      en: 'A sorted row of {count} values. Every comparison throws half of them away.',
+      ko: '줄 선 값 {count} 개. 한 번 견줄 때마다 절반이 날아간다',
+      ar: 'صف مرتّب من {count} قيمة. كل مقارنة تُسقط نصفها.',
+      es: 'Una fila ordenada de {count} valores. Cada comparación descarta la mitad.',
+      fr: 'Une rangée triée de {count} valeurs. Chaque comparaison en écarte la moitié.',
+      hi: 'क्रम में लगे {count} मान। हर तुलना उनमें से आधे हटा देती है।',
+      id: 'Deret terurut berisi {count} nilai. Setiap perbandingan membuang separuhnya.',
+      pt: 'Uma fila ordenada de {count} valores. Cada comparação descarta a metade.',
+    },
+    'caption.searchBegin': {
+      en: 'Search {run}: look for {target} among {size} candidates.',
+      ko: '{run} 번째 찾기 — 후보 {size} 개에서 {target} 을 찾는다',
+      ar: 'البحث {run}: ابحث عن {target} بين {size} مرشحًا.',
+      es: 'Búsqueda {run}: busca {target} entre {size} candidatos.',
+      fr: 'Recherche {run} : chercher {target} parmi {size} candidats.',
+      hi: 'खोज {run}: {size} उम्मीदवारों में {target} ढूँढें।',
+      id: 'Pencarian {run}: cari {target} di antara {size} kandidat.',
+      pt: 'Busca {run}: procure {target} entre {size} candidatos.',
+    },
+    'caption.pickMid': {
+      en: 'The middle of [{lo}..{hi}] is seat {index}, holding {value}.',
+      ko: '[{lo}..{hi}] 의 가운데는 {index} 번 자리, 값은 {value}',
+      ar: 'منتصف [{lo}..{hi}] هو الموضع {index}، وفيه {value}.',
+      es: 'El centro de [{lo}..{hi}] es el puesto {index}, con {value}.',
+      fr: 'Le milieu de [{lo}..{hi}] est la place {index}, qui contient {value}.',
+      hi: '[{lo}..{hi}] का मध्य स्थान {index} है, जिसमें {value} है।',
+      id: 'Tengah [{lo}..{hi}] adalah kursi {index}, berisi {value}.',
+      pt: 'O meio de [{lo}..{hi}] é o lugar {index}, com {value}.',
+    },
+    'caption.less': {
+      en: '{value} < {target} — the wanted value can only be to the right.',
+      ko: '{value} < {target} — 찾는 값은 오른쪽에만 있을 수 있다',
+      ar: '{value} < {target} — القيمة المطلوبة لا يمكن أن تكون إلا على اليمين.',
+      es: '{value} < {target}: el valor buscado solo puede estar a la derecha.',
+      fr: '{value} < {target} — la valeur cherchée ne peut être qu’à droite.',
+      hi: '{value} < {target} — खोजा जा रहा मान केवल दाईं ओर हो सकता है।',
+      id: '{value} < {target} — nilai yang dicari hanya mungkin di sebelah kanan.',
+      pt: '{value} < {target} — o valor procurado só pode estar à direita.',
+    },
+    'caption.greater': {
+      en: '{value} > {target} — the wanted value can only be to the left.',
+      ko: '{value} > {target} — 찾는 값은 왼쪽에만 있을 수 있다',
+      ar: '{value} > {target} — القيمة المطلوبة لا يمكن أن تكون إلا على اليسار.',
+      es: '{value} > {target}: el valor buscado solo puede estar a la izquierda.',
+      fr: '{value} > {target} — la valeur cherchée ne peut être qu’à gauche.',
+      hi: '{value} > {target} — खोजा जा रहा मान केवल बाईं ओर हो सकता है।',
+      id: '{value} > {target} — nilai yang dicari hanya mungkin di sebelah kiri.',
+      pt: '{value} > {target} — o valor procurado só pode estar à esquerda.',
+    },
+    'caption.equal': {
+      en: '{value} is the value we wanted.',
+      ko: '{value} — 찾던 값이다',
+      ar: '{value} هي القيمة المطلوبة.',
+      es: '{value} es el valor que buscábamos.',
+      fr: '{value} est la valeur cherchée.',
+      hi: '{value} वही मान है जिसे हम खोज रहे थे।',
+      id: '{value} adalah nilai yang dicari.',
+      pt: '{value} é o valor que procurávamos.',
+    },
+    'caption.dropLeft': {
+      en: 'Drop the left half — {size} candidates left.',
+      ko: '왼쪽 절반을 버린다 — 후보 {size} 개 남았다',
+      ar: 'أسقط النصف الأيسر — بقي {size} مرشحًا.',
+      es: 'Descarta la mitad izquierda: quedan {size} candidatos.',
+      fr: 'On jette la moitié gauche — il reste {size} candidats.',
+      hi: 'बायाँ आधा हिस्सा हटा दें — {size} उम्मीदवार बचे।',
+      id: 'Buang separuh kiri — tersisa {size} kandidat.',
+      pt: 'Descarte a metade esquerda — restam {size} candidatos.',
+    },
+    'caption.dropRight': {
+      en: 'Drop the right half — {size} candidates left.',
+      ko: '오른쪽 절반을 버린다 — 후보 {size} 개 남았다',
+      ar: 'أسقط النصف الأيمن — بقي {size} مرشحًا.',
+      es: 'Descarta la mitad derecha: quedan {size} candidatos.',
+      fr: 'On jette la moitié droite — il reste {size} candidats.',
+      hi: 'दायाँ आधा हिस्सा हटा दें — {size} उम्मीदवार बचे।',
+      id: 'Buang separuh kanan — tersisa {size} kandidat.',
+      pt: 'Descarte a metade direita — restam {size} candidatos.',
+    },
+    'caption.empty': {
+      en: 'lo has passed hi — the range holds nothing at all.',
+      ko: 'lo 가 hi 를 지나쳤다 — 구간에 아무것도 남지 않았다',
+      ar: 'تجاوز lo القيمة hi — لم يبقَ في المجال شيء.',
+      es: 'lo ha pasado a hi: el rango no contiene nada.',
+      fr: 'lo a dépassé hi — l’intervalle ne contient plus rien.',
+      hi: 'lo, hi से आगे निकल गया — दायरे में कुछ भी नहीं बचा।',
+      id: 'lo sudah melewati hi — rentangnya tidak berisi apa pun.',
+      pt: 'lo passou de hi — o intervalo não contém mais nada.',
+    },
+    'caption.found': {
+      en: 'Found {target} at seat {index} after {compares} comparisons.',
+      ko: '{compares} 번 견주고 {index} 번 자리에서 {target} 을 찾았다',
+      ar: 'عُثر على {target} في الموضع {index} بعد {compares} مقارنات.',
+      es: 'Se encontró {target} en el puesto {index} tras {compares} comparaciones.',
+      fr: '{target} trouvé à la place {index} après {compares} comparaisons.',
+      hi: '{compares} तुलनाओं के बाद {target} स्थान {index} पर मिला।',
+      id: '{target} ditemukan di kursi {index} setelah {compares} perbandingan.',
+      pt: '{target} encontrado no lugar {index} após {compares} comparações.',
+    },
+    'caption.notFound': {
+      en: 'There is no {target} here. The empty range is the proof, and {compares} comparisons were enough to reach it.',
+      ko: '{target} 은 여기 없다. 빈 구간이 그 증거이고, 거기 닿는 데 견줌 {compares} 번이면 됐다',
+      ar: 'لا وجود لـ {target} هنا. المجال الفارغ هو الدليل، وقد كفت {compares} مقارنات للوصول إليه.',
+      es: 'Aquí no hay ningún {target}. El rango vacío es la prueba, y bastaron {compares} comparaciones para llegar a él.',
+      fr: 'Il n’y a pas de {target} ici. L’intervalle vide en est la preuve, et {compares} comparaisons ont suffi pour y arriver.',
+      hi: 'यहाँ {target} है ही नहीं। खाली दायरा इसका प्रमाण है, और वहाँ तक पहुँचने के लिए {compares} तुलनाएँ काफ़ी थीं।',
+      id: 'Tidak ada {target} di sini. Rentang kosong itulah buktinya, dan {compares} perbandingan sudah cukup untuk sampai ke sana.',
+      pt: 'Não há nenhum {target} aqui. O intervalo vazio é a prova, e {compares} comparações bastaram para chegar a ele.',
+    },
+    'caption.done': {
+      en: '{searches} searches, {hits} found, {compares} comparisons in all.',
+      ko: '찾기 {searches} 번, 찾은 것 {hits} 개, 견줌은 모두 {compares} 번',
+      ar: '{searches} عمليتا بحث، ووُجد {hits}، و{compares} مقارنة في المجمل.',
+      es: '{searches} búsquedas, {hits} encontrado, {compares} comparaciones en total.',
+      fr: '{searches} recherches, {hits} trouvé, {compares} comparaisons au total.',
+      hi: '{searches} खोजें, {hits} मिला, कुल {compares} तुलनाएँ।',
+      id: '{searches} pencarian, {hits} ketemu, {compares} perbandingan seluruhnya.',
+      pt: '{searches} buscas, {hits} encontrado, {compares} comparações no total.',
+    },
+    'label.searchFor': {
+      en: 'Looking for {value}',
+      ko: '{value} 를 찾는 중',
+      ar: 'البحث عن {value}',
+      es: 'Buscando {value}',
+      fr: 'Recherche de {value}',
+      hi: '{value} की खोज',
+      id: 'Mencari {value}',
+      pt: 'Procurando {value}',
+    },
+    'label.remaining': {
+      en: '{count} left',
+      ko: '{count} 개 남음',
+      ar: 'بقي {count}',
+      es: 'quedan {count}',
+      fr: 'reste {count}',
+      hi: '{count} बचे',
+      id: 'sisa {count}',
+      pt: 'restam {count}',
+    },
+    'label.history': {
+      en: 'Ranges searched',
+      ko: '거쳐 온 구간',
+      ar: 'المجالات التي مرّ بها البحث',
+      es: 'Rangos recorridos',
+      fr: 'Intervalles parcourus',
+      hi: 'खोजे गए दायरे',
+      id: 'Rentang yang dilalui',
+      pt: 'Intervalos percorridos',
+    },
+    'label.emptyRange': {
+      en: 'the range is empty',
+      ko: '구간이 비었다',
+      ar: 'المجال فارغ',
+      es: 'el rango está vacío',
+      fr: 'intervalle vide',
+      hi: 'दायरा खाली है',
+      id: 'rentang kosong',
+      pt: 'o intervalo está vazio',
+    },
+  },
+};
