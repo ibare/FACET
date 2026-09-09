@@ -167,6 +167,21 @@ export const cppTranspiler: Transpiler = {
       lines.push({ code: `}`, phase: null });
     }
 
+    // C++ 는 부르기 전에 선언되어 있어야 한다. 함수가 여럿이고 앞의 것이 뒤의
+    // 것을 부르면(퀵 정렬의 quick_sort → partition 이 그렇다) 정의 순서만으로는
+    // 컴파일되지 않는다. IR 규약상 첫 함수가 entry point 라 순서를 바꿀 수도
+    // 없으므로, 둘 이상이면 프로토타입을 먼저 낸다.
+    //
+    // 다른 다섯 언어에는 이 문제가 없다 — Java·C# 은 클래스 안의 static 이라
+    // 순서를 따지지 않고, 파이썬·자바스크립트·타입스크립트는 부를 때 찾는다.
+    if (ir.functions.length > 1) {
+      for (const fn of ir.functions) {
+        const params = fn.params.map(cppParam).join(', ');
+        lines.push({ code: `${cppType(fn.returnType)} ${fn.name}(${params});`, phase: null });
+      }
+      lines.push({ code: '', phase: null });
+    }
+
     ir.functions.forEach((fn, i) => {
       if (i > 0) lines.push({ code: '', phase: null });
       emitFunc(fn);
