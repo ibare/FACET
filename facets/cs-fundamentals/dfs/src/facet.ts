@@ -1,0 +1,254 @@
+/**
+ * 깊이 우선 탐색 완결형 선언.
+ *
+ * 블록은 셋뿐이다 — `stage` · `controls` · `codePanel`. 제목 블록을 두지 않는다
+ * (이름은 카탈로그 카드와 글의 문단이 준다). 그래프 · 호출 스택 · 방문 차례 띠는
+ * 빌트인 view 를 빌리지 않고 stage 가 직접 그린다.
+ *
+ * 이 facet 의 산출물은 그림이 아니라 **코드** 다. `ir:dfs-recursive` 하나가 여섯
+ * 언어로 펼쳐지고, 재생 중인 phase 가 그 줄을 짚는다. 재귀 함수 하나가 여섯 가지
+ * 재귀 표기로 갈리는 것을 보는 것이 이 완제품이 있는 까닭이다.
+ *
+ * 식별자 (C1): `node:<n>`.
+ */
+
+import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
+
+export const dfsFacet: FacetJson = {
+  id: 'facet:dfs',
+  // 제목은 카탈로그 카드의 이름과 같다 (C4 명명 규칙 5).
+  title: {
+    en: 'Depth-First Search',
+    ko: '깊이 우선 탐색',
+    ar: 'البحث بالعمق أولًا',
+    es: 'Búsqueda en profundidad',
+    fr: 'Parcours en profondeur',
+    hi: 'गहराई-प्रथम खोज',
+    id: 'Penelusuran mendalam',
+    pt: 'Busca em profundidade',
+  },
+  description: {
+    en: 'Follow one branch to its end, then back out and take the next.',
+    ko: '한 갈래를 끝까지 파고들었다가, 막히면 되짚어 나와 다음 갈래로 든다',
+    ar: 'اتبع فرعًا حتى نهايته، ثم ارجع وخذ الفرع التالي.',
+    es: 'Sigue una rama hasta el final, luego vuelve atrás y toma la siguiente.',
+    fr: "Suivre une branche jusqu'au bout, puis revenir et prendre la suivante.",
+    hi: 'एक शाखा को अंत तक जाएँ, फिर लौटकर अगली शाखा लें।',
+    id: 'Ikuti satu cabang sampai habis, lalu mundur dan ambil cabang berikutnya.',
+    pt: 'Siga um ramo até o fim, depois volte e pegue o próximo.',
+  },
+  algorithm: 'module:dfs',
+  projector: 'module:dfsProjector',
+  // 사양이 정한 자료. 정점 여덟에 방향 간선 여덟. 이웃 목록에 적힌 차례가 곧
+  // 보는 차례라, 0 에서 1 을 먼저 보고 2 는 맨 마지막에 닿는다. 2 에서 5 로
+  // 가는 간선은 그때 이미 본 자리라 들어가지 않는다 — 그 하나가 "본 것은 다시
+  // 보지 않는다" 를 화면에서 증명한다.
+  initialData: {
+    type: 'dfs',
+    adjacency: [[1, 2], [3, 4], [5], [], [5, 6], [], [7], []],
+    start: 0,
+  },
+  layout: {
+    type: 'column',
+    gap: 8,
+    children: [{ ref: 'stage' }, { ref: 'controls' }, { ref: 'codePanel' }],
+  },
+  blocks: {
+    stage: { type: 'dfs-stage' },
+    controls: {
+      type: 'control-bar',
+      controls: CONTROL_SET.playback,
+      metrics: [
+        {
+          name: 'visit-count',
+          label: {
+            en: 'Visited',
+            ko: '본 정점',
+            ar: 'تمت زيارتها',
+            es: 'Visitados',
+            fr: 'Visités',
+            hi: 'देखे गए',
+            id: 'Dikunjungi',
+            pt: 'Visitados',
+          },
+          initial: 0,
+        },
+        {
+          name: 'skip-count',
+          label: {
+            en: 'Refused',
+            ko: '못 들어간 간선',
+            ar: 'حواف مرفوضة',
+            es: 'Rechazadas',
+            fr: 'Refusées',
+            hi: 'अस्वीकृत',
+            id: 'Ditolak',
+            pt: 'Recusadas',
+          },
+          initial: 0,
+        },
+        {
+          name: 'max-depth',
+          label: {
+            en: 'Deepest',
+            ko: '가장 깊었던 스택',
+            ar: 'الأعمق',
+            es: 'Más profundo',
+            fr: 'Plus profond',
+            hi: 'सबसे गहरा',
+            id: 'Terdalam',
+            pt: 'Mais fundo',
+          },
+          initial: 0,
+        },
+      ],
+    },
+    codePanel: {
+      type: 'code-view',
+      label: {
+        en: 'Code',
+        ko: '코드',
+        ar: 'الشيفرة',
+        es: 'Código',
+        fr: 'Code',
+        hi: 'कोड',
+        id: 'Kode',
+        pt: 'Código',
+      },
+      ir: 'ir:dfs-recursive',
+    },
+  },
+  messages: {
+    'label.stack': {
+      en: 'Call stack',
+      ko: '호출 스택',
+      ar: 'مكدس الاستدعاء',
+      es: 'Pila de llamadas',
+      fr: "Pile d'appels",
+      hi: 'कॉल स्टैक',
+      id: 'Tumpukan panggilan',
+      pt: 'Pilha de chamadas',
+    },
+    'label.order': {
+      en: 'Visit order',
+      ko: '방문 차례',
+      ar: 'ترتيب الزيارة',
+      es: 'Orden de visita',
+      fr: 'Ordre de visite',
+      hi: 'भ्रमण क्रम',
+      id: 'Urutan kunjungan',
+      pt: 'Ordem de visita',
+    },
+    'legend.dive': {
+      en: 'dive into a branch',
+      ko: '갈래로 파고듦',
+      ar: 'الغوص في فرع',
+      es: 'entrar en una rama',
+      fr: 'plonger dans une branche',
+      hi: 'शाखा में उतरना',
+      id: 'menyelam ke cabang',
+      pt: 'mergulhar num ramo',
+    },
+    'legend.back': {
+      en: 'come back out',
+      ko: '되짚어 나옴',
+      ar: 'العودة للخارج',
+      es: 'volver atrás',
+      fr: 'ressortir',
+      hi: 'वापस लौटना',
+      id: 'mundur keluar',
+      pt: 'voltar atrás',
+    },
+    'caption.start': {
+      en: 'Start at {node}. Follow one branch as far as it goes.',
+      ko: '시작은 {node}. 한 갈래를 끝까지 따라 내려간다',
+      ar: 'ابدأ من {node}. اتبع فرعًا واحدًا إلى أقصى مدى.',
+      es: 'Empieza en {node}. Sigue una rama hasta donde llegue.',
+      fr: 'Départ en {node}. Suivre une branche aussi loin que possible.',
+      hi: '{node} से शुरू। एक शाखा को जहाँ तक जाए वहाँ तक जाएँ।',
+      id: 'Mulai di {node}. Ikuti satu cabang sejauh mungkin.',
+      pt: 'Começa em {node}. Siga um ramo até onde der.',
+    },
+    'caption.mark': {
+      en: 'Enter {node} and mark it seen. Stack depth {depth}.',
+      ko: '{node} 에 들어와 본 자리로 표시한다. 스택 깊이 {depth}',
+      ar: 'ادخل {node} وضع عليه علامة. عمق المكدس {depth}.',
+      es: 'Entra en {node} y márcalo como visto. Profundidad de pila {depth}.',
+      fr: 'Entrer dans {node} et le marquer vu. Profondeur de pile {depth}.',
+      hi: '{node} में प्रवेश और उसे देखा हुआ चिह्नित करें। स्टैक गहराई {depth}।',
+      id: 'Masuk ke {node} dan tandai sudah dilihat. Kedalaman tumpukan {depth}.',
+      pt: 'Entra em {node} e marca como visto. Profundidade da pilha {depth}.',
+    },
+    'caption.scan': {
+      en: 'Neighbors of {node} — {i} of {total} is {neighbor}.',
+      ko: '{node} 의 이웃을 훑는다 — {total} 중 {i} 번째는 {neighbor}',
+      ar: 'جيران {node} — الجار {i} من {total} هو {neighbor}.',
+      es: 'Vecinos de {node}: el {i} de {total} es {neighbor}.',
+      fr: 'Voisins de {node} — le {i} sur {total} est {neighbor}.',
+      hi: '{node} के पड़ोसी — {total} में से {i} वाँ {neighbor} है।',
+      id: 'Tetangga {node} — yang ke-{i} dari {total} adalah {neighbor}.',
+      pt: 'Vizinhos de {node} — o {i} de {total} é {neighbor}.',
+    },
+    'caption.open': {
+      en: '{neighbor} is not seen yet. Dive in.',
+      ko: '아직 안 본 자리 {neighbor}. 여기로 파고든다',
+      ar: '{neighbor} لم يُرَ بعد. اغطس فيه.',
+      es: '{neighbor} aún no se ha visto. Entra.',
+      fr: '{neighbor} pas encore vu. On y plonge.',
+      hi: '{neighbor} अभी तक नहीं देखा गया। अंदर उतरें।',
+      id: '{neighbor} belum dilihat. Selami.',
+      pt: '{neighbor} ainda não foi visto. Mergulha.',
+    },
+    'caption.skip': {
+      en: '{neighbor} is already seen. Do not go in.',
+      ko: '이미 본 자리 {neighbor}. 들어가지 않는다',
+      ar: '{neighbor} سبق أن رُئي. لا تدخل.',
+      es: '{neighbor} ya se ha visto. No entres.',
+      fr: "{neighbor} déjà vu. On n'y entre pas.",
+      hi: '{neighbor} पहले ही देखा जा चुका। अंदर न जाएँ।',
+      id: '{neighbor} sudah pernah dilihat. Jangan masuk.',
+      pt: '{neighbor} já foi visto. Não entra.',
+    },
+    'caption.descend': {
+      en: 'Dive from {from} into {to}. One more frame on the stack.',
+      ko: '{from} 에서 {to} 로 파고든다. 프레임이 하나 쌓인다',
+      ar: 'اغطس من {from} إلى {to}. إطار آخر على المكدس.',
+      es: 'Baja de {from} a {to}. Un marco más en la pila.',
+      fr: 'Plonger de {from} vers {to}. Un cadre de plus sur la pile.',
+      hi: '{from} से {to} में उतरें। स्टैक पर एक और फ़्रेम।',
+      id: 'Menyelam dari {from} ke {to}. Satu bingkai lagi di tumpukan.',
+      pt: 'Mergulha de {from} para {to}. Mais um quadro na pilha.',
+    },
+    'caption.ascend': {
+      en: 'No neighbors left at {node}. Come back out to {parent}.',
+      ko: '{node} 에 더 볼 이웃이 없다. {parent} 로 되짚어 나온다',
+      ar: 'لم يبق جيران عند {node}. ارجع إلى {parent}.',
+      es: 'No quedan vecinos en {node}. Vuelve a {parent}.',
+      fr: 'Plus de voisins en {node}. On ressort vers {parent}.',
+      hi: '{node} पर कोई पड़ोसी शेष नहीं। {parent} पर लौटें।',
+      id: 'Tidak ada tetangga tersisa di {node}. Mundur ke {parent}.',
+      pt: 'Não há vizinhos em {node}. Volta para {parent}.',
+    },
+    'caption.ascendRoot': {
+      en: 'No neighbors left at {node}. The first call returns and the walk ends.',
+      ko: '{node} 에 더 볼 이웃이 없다. 첫 부름이 끝나고 걸음도 끝난다',
+      ar: 'لم يبق جيران عند {node}. الاستدعاء الأول يعود وتنتهي الجولة.',
+      es: 'No quedan vecinos en {node}. La primera llamada retorna y el recorrido acaba.',
+      fr: 'Plus de voisins en {node}. Le premier appel retourne et le parcours se termine.',
+      hi: '{node} पर कोई पड़ोसी शेष नहीं। पहली कॉल लौटती है और यात्रा समाप्त।',
+      id: 'Tidak ada tetangga tersisa di {node}. Panggilan pertama kembali dan penelusuran selesai.',
+      pt: 'Não há vizinhos em {node}. A primeira chamada retorna e o percurso termina.',
+    },
+    'caption.done': {
+      en: 'All {count} vertices seen. Deepest stack {depth}. Edges refused {skipped}.',
+      ko: '정점 {count} 개를 모두 보았다. 가장 깊었던 스택은 {depth}. 못 들어간 간선 {skipped}',
+      ar: 'شوهدت كل الرؤوس {count}. أعمق مكدس {depth}. حواف مرفوضة {skipped}.',
+      es: 'Vistos los {count} vértices. Pila más profunda {depth}. Aristas rechazadas {skipped}.',
+      fr: 'Les {count} sommets ont été vus. Pile la plus profonde {depth}. Arêtes refusées {skipped}.',
+      hi: 'सभी {count} शीर्ष देखे गए। सबसे गहरा स्टैक {depth}। अस्वीकृत किनारे {skipped}।',
+      id: 'Semua {count} simpul telah dilihat. Tumpukan terdalam {depth}. Sisi ditolak {skipped}.',
+      pt: 'Os {count} vértices foram vistos. Pilha mais profunda {depth}. Arestas recusadas {skipped}.',
+    },
+  },
+};

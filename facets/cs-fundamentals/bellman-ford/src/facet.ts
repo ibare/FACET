@@ -1,0 +1,296 @@
+/**
+ * 벨만-포드 완결형 선언.
+ *
+ * 블록은 셋뿐이다 — `stage` · `controls` · `codePanel`. 제목 블록을 두지 않는다
+ * (이름은 카탈로그 카드와 글의 문단이 준다). 그래프도 바퀴 원장도 빌트인 view 를
+ * 빌리지 않고 stage 가 직접 그린다.
+ *
+ * 이 facet 의 산출물은 그림이 아니라 **코드** 다. `ir:bellman-ford-relax` 하나가
+ * 여섯 언어로 펼쳐지고, 재생 중인 phase 가 그 줄을 짚는다. 특히 마지막 반복문 —
+ * 앞의 것과 조건이 글자 하나 다르지 않은 "한 바퀴 더" — 이 코드 패널에 나란히
+ * 보이는 것이 이 알고리즘의 요점이다.
+ *
+ * 식별자 (C1): `node:<정점>` · `edge:<꼬리>-<머리>`.
+ */
+
+import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
+
+export const bellmanFordFacet: FacetJson = {
+  id: 'facet:bellmanFord',
+  title: {
+    en: 'Bellman-Ford',
+    ko: '벨만-포드',
+    ar: 'بلمان-فورد',
+    es: 'Bellman-Ford',
+    fr: 'Bellman-Ford',
+    hi: 'बेलमैन-फ़ोर्ड',
+    id: 'Bellman-Ford',
+    pt: 'Bellman-Ford',
+  },
+  description: {
+    en: 'Sweep every edge n-1 times — distances soak one layer deeper each pass.',
+    ko: '모든 간선을 정점 수보다 한 번 적게 편다 — 바퀴마다 값이 한 겹씩 더 깊이 스민다',
+    ar: 'امسح كل الحواف n-1 مرة — تتغلغل المسافات طبقة أعمق في كل جولة.',
+    es: 'Recorre todas las aristas n-1 veces: las distancias calan una capa más en cada pasada.',
+    fr: "Balayer toutes les arêtes n-1 fois — les distances s'infiltrent d'une couche de plus à chaque passe.",
+    hi: 'हर किनारे को n-1 बार पार करें — हर चक्र में दूरियाँ एक परत और गहरे रिसती हैं।',
+    id: 'Sapu semua sisi n-1 kali — jarak meresap satu lapis lebih dalam tiap putaran.',
+    pt: 'Percorra todas as arestas n-1 vezes — as distâncias infiltram uma camada mais fundo a cada passagem.',
+  },
+  algorithm: 'module:bellmanFord',
+  projector: 'module:bellmanFordProjector',
+  // 사양이 정한 자료. 간선을 펴는 차례가 곧 이 배열의 차례이며, 그 차례가 한
+  // 바퀴에 얼마나 스미는지를 정한다. 이 차례에서는 첫 바퀴에 여섯 칸이 한꺼번에
+  // 줄고 (2→3→1 이 같은 바퀴 안에서 이어 스민다) 둘째 바퀴에는 한 칸만 준다.
+  // 셋째·넷째 바퀴는 한 칸도 안 줄지만, 그것을 보아야 왜 n-1 번인지가 보인다.
+  // 좌표는 두지 않는다 — 배치는 stage 가 셈한다.
+  initialData: {
+    type: 'bellman-ford',
+    vertexCount: 5,
+    edges: [
+      { from: 0, to: 1, weight: 6 },
+      { from: 0, to: 2, weight: 7 },
+      { from: 1, to: 2, weight: 8 },
+      { from: 1, to: 3, weight: 5 },
+      { from: 1, to: 4, weight: -4 },
+      { from: 2, to: 3, weight: -3 },
+      { from: 2, to: 4, weight: 9 },
+      { from: 3, to: 1, weight: -2 },
+      { from: 4, to: 3, weight: 7 },
+    ],
+    source: 0,
+  },
+  layout: {
+    type: 'column',
+    gap: 8,
+    children: [{ ref: 'stage' }, { ref: 'controls' }, { ref: 'codePanel' }],
+  },
+  blocks: {
+    stage: { type: 'bellman-ford-stage' },
+    controls: {
+      type: 'control-bar',
+      controls: CONTROL_SET.playback,
+      metrics: [
+        {
+          name: 'pass-count',
+          label: {
+            en: 'Passes',
+            ko: '바퀴',
+            ar: 'جولات',
+            es: 'Pasadas',
+            fr: 'Passes',
+            hi: 'चक्र',
+            id: 'Putaran',
+            pt: 'Passagens',
+          },
+          initial: 0,
+        },
+        {
+          name: 'relax-count',
+          label: {
+            en: 'Drops',
+            ko: '줄어듦',
+            ar: 'انخفاضات',
+            es: 'Bajadas',
+            fr: 'Baisses',
+            hi: 'कमी',
+            id: 'Turun',
+            pt: 'Quedas',
+          },
+          initial: 0,
+        },
+        {
+          name: 'compare-count',
+          label: {
+            en: 'Edge tests',
+            ko: '간선 견줌',
+            ar: 'اختبارات الحواف',
+            es: 'Pruebas de arista',
+            fr: "Tests d'arête",
+            hi: 'किनारा जाँच',
+            id: 'Uji sisi',
+            pt: 'Testes de aresta',
+          },
+          initial: 0,
+        },
+      ],
+    },
+    codePanel: {
+      type: 'code-view',
+      label: {
+        en: 'Code',
+        ko: '코드',
+        ar: 'الشيفرة',
+        es: 'Código',
+        fr: 'Code',
+        hi: 'कोड',
+        id: 'Kode',
+        pt: 'Código',
+      },
+      ir: 'ir:bellman-ford-relax',
+    },
+  },
+  messages: {
+    'label.passHeader': {
+      en: 'pass',
+      ko: '바퀴',
+      ar: 'جولة',
+      es: 'pasada',
+      fr: 'passe',
+      hi: 'चक्र',
+      id: 'putaran',
+      pt: 'passagem',
+    },
+    'label.rowStart': {
+      en: 'start',
+      ko: '처음',
+      ar: 'البداية',
+      es: 'inicio',
+      fr: 'début',
+      hi: 'आरंभ',
+      id: 'awal',
+      pt: 'início',
+    },
+    'label.rowCheck': {
+      en: 'check',
+      ko: '검사',
+      ar: 'فحص',
+      es: 'control',
+      fr: 'contrôle',
+      hi: 'जाँच',
+      id: 'periksa',
+      pt: 'conferência',
+    },
+    'caption.start': {
+      en: 'Every vertex starts unreachable. Only the source is 0.',
+      ko: '모든 정점은 아직 닿지 않은 채로 시작한다. 출발점만 0 이다',
+      ar: 'كل رأس يبدأ غير مبلوغ. المصدر وحده صفر.',
+      es: 'Todo vértice empieza inalcanzable. Solo el origen vale 0.',
+      fr: 'Chaque sommet commence inatteignable. Seule la source vaut 0.',
+      hi: 'हर शीर्ष अप्राप्य से शुरू होता है। केवल स्रोत 0 है।',
+      id: 'Setiap simpul mulai tak terjangkau. Hanya sumber yang 0.',
+      pt: 'Todo vértice começa inalcançável. Só a origem vale 0.',
+    },
+    'caption.seeded': {
+      en: 'Source {v} is 0. Everything else is {inf} until an edge reaches it.',
+      ko: '출발점 {v} 는 0. 나머지는 간선이 닿기 전까지 {inf} 이다',
+      ar: 'المصدر {v} صفر. الباقي {inf} إلى أن تصله حافة.',
+      es: 'El origen {v} vale 0. El resto es {inf} hasta que una arista llegue.',
+      fr: "La source {v} vaut 0. Le reste est {inf} tant qu'aucune arête n'y arrive.",
+      hi: 'स्रोत {v} 0 है। बाकी सब {inf} है जब तक कोई किनारा न पहुँचे।',
+      id: 'Sumber {v} bernilai 0. Sisanya {inf} sampai ada sisi yang mencapainya.',
+      pt: 'A origem {v} vale 0. O resto é {inf} até uma aresta chegar.',
+    },
+    'caption.passBegin': {
+      en: 'Pass {pass} of {total}. Sweep all edges in the same fixed order.',
+      ko: '{total} 바퀴 가운데 {pass} 바퀴. 간선 전부를 늘 같은 차례로 훑는다',
+      ar: 'الجولة {pass} من {total}. امسح كل الحواف بالترتيب الثابت نفسه.',
+      es: 'Pasada {pass} de {total}. Recorre todas las aristas en el mismo orden fijo.',
+      fr: 'Passe {pass} sur {total}. Parcourir toutes les arêtes dans le même ordre fixe.',
+      hi: '{total} में से {pass} चक्र। सभी किनारों को उसी नियत क्रम में देखें।',
+      id: 'Putaran {pass} dari {total}. Sapu semua sisi dengan urutan tetap yang sama.',
+      pt: 'Passagem {pass} de {total}. Percorra todas as arestas na mesma ordem fixa.',
+    },
+    'caption.unreached': {
+      en: 'Edge {u}→{v}: {u} is still {inf}, so nothing can be pushed through it.',
+      ko: '간선 {u}→{v} — {u} 가 아직 {inf} 이라 이 길로는 아무것도 못 민다',
+      ar: 'الحافة {u}→{v}: الرأس {u} ما زال {inf}، فلا شيء يمر عبرها.',
+      es: 'Arista {u}→{v}: {u} sigue en {inf}, así que nada puede pasar por ella.',
+      fr: 'Arête {u}→{v} : {u} vaut encore {inf}, rien ne peut passer par là.',
+      hi: 'किनारा {u}→{v}: {u} अब भी {inf} है, इसलिए इससे कुछ नहीं जा सकता।',
+      id: 'Sisi {u}→{v}: {u} masih {inf}, jadi tak ada yang bisa lewat.',
+      pt: 'Aresta {u}→{v}: {u} ainda é {inf}, então nada passa por ela.',
+    },
+    'caption.improves': {
+      en: 'Edge {u}→{v}: {du} + ({w}) = {sum}, below {dv}. It drops.',
+      ko: '간선 {u}→{v} — {du} + ({w}) = {sum}, {dv} 보다 작다. 값이 줄어든다',
+      ar: 'الحافة {u}→{v}: {du} + ({w}) = {sum}، أقل من {dv}. تنخفض القيمة.',
+      es: 'Arista {u}→{v}: {du} + ({w}) = {sum}, menor que {dv}. Baja.',
+      fr: 'Arête {u}→{v} : {du} + ({w}) = {sum}, sous {dv}. La valeur baisse.',
+      hi: 'किनारा {u}→{v}: {du} + ({w}) = {sum}, जो {dv} से कम है। मान घटता है।',
+      id: 'Sisi {u}→{v}: {du} + ({w}) = {sum}, di bawah {dv}. Nilainya turun.',
+      pt: 'Aresta {u}→{v}: {du} + ({w}) = {sum}, abaixo de {dv}. Cai.',
+    },
+    'caption.noDrop': {
+      en: 'Edge {u}→{v}: {du} + ({w}) = {sum}, not below {dv}. Nothing changes.',
+      ko: '간선 {u}→{v} — {du} + ({w}) = {sum}, {dv} 보다 작지 않다. 그대로 둔다',
+      ar: 'الحافة {u}→{v}: {du} + ({w}) = {sum}، ليست أقل من {dv}. لا شيء يتغير.',
+      es: 'Arista {u}→{v}: {du} + ({w}) = {sum}, no menor que {dv}. Nada cambia.',
+      fr: 'Arête {u}→{v} : {du} + ({w}) = {sum}, pas sous {dv}. Rien ne change.',
+      hi: 'किनारा {u}→{v}: {du} + ({w}) = {sum}, {dv} से कम नहीं। कुछ नहीं बदलता।',
+      id: 'Sisi {u}→{v}: {du} + ({w}) = {sum}, tidak di bawah {dv}. Tak ada yang berubah.',
+      pt: 'Aresta {u}→{v}: {du} + ({w}) = {sum}, não abaixo de {dv}. Nada muda.',
+    },
+    'caption.relaxed': {
+      en: 'Vertex {v} drops from {before} to {after}.',
+      ko: '정점 {v} 가 {before} 에서 {after} 로 줄었다',
+      ar: 'الرأس {v} ينخفض من {before} إلى {after}.',
+      es: 'El vértice {v} baja de {before} a {after}.',
+      fr: 'Le sommet {v} passe de {before} à {after}.',
+      hi: 'शीर्ष {v} {before} से घटकर {after} हो गया।',
+      id: 'Simpul {v} turun dari {before} ke {after}.',
+      pt: 'O vértice {v} cai de {before} para {after}.',
+    },
+    'caption.passEnd': {
+      en: 'Pass {pass} soaked into {changed} vertices.',
+      ko: '이 바퀴에 값이 스민 정점은 {changed} 개 ({pass} 바퀴)',
+      ar: 'الجولة {pass} تسربت إلى {changed} رؤوس.',
+      es: 'La pasada {pass} caló en {changed} vértices.',
+      fr: 'La passe {pass} a imprégné {changed} sommets.',
+      hi: 'चक्र {pass} में {changed} शीर्षों तक मान रिसा।',
+      id: 'Putaran {pass} meresap ke {changed} simpul.',
+      pt: 'A passagem {pass} infiltrou em {changed} vértices.',
+    },
+    'caption.passQuiet': {
+      en: 'Pass {pass} changed nothing. The distances have settled.',
+      ko: '이 바퀴에는 아무것도 바뀌지 않았다 ({pass} 바퀴). 거리가 자리를 잡았다',
+      ar: 'الجولة {pass} لم تغيّر شيئًا. استقرت المسافات.',
+      es: 'La pasada {pass} no cambió nada. Las distancias se asentaron.',
+      fr: "La passe {pass} n'a rien changé. Les distances sont stabilisées.",
+      hi: 'चक्र {pass} में कुछ नहीं बदला। दूरियाँ स्थिर हो गईं।',
+      id: 'Putaran {pass} tidak mengubah apa pun. Jaraknya sudah mapan.',
+      pt: 'A passagem {pass} não mudou nada. As distâncias assentaram.',
+    },
+    'caption.checkBegin': {
+      en: 'One more sweep — the same test again. If anything still drops, a negative cycle exists.',
+      ko: '한 바퀴 더 — 조건은 똑같다. 여기서도 줄어드는 것이 있으면 음수 고리가 있다는 뜻이다',
+      ar: 'مسحة أخرى — الاختبار نفسه. إن انخفض شيء بعد، فثمة دورة سالبة.',
+      es: 'Una pasada más, la misma prueba. Si algo aún baja, hay un ciclo negativo.',
+      fr: 'Une passe de plus — le même test. Si quelque chose baisse encore, il y a un cycle négatif.',
+      hi: 'एक चक्र और — वही जाँच। अगर अब भी कुछ घटे तो ऋणात्मक चक्र है।',
+      id: 'Satu sapuan lagi — uji yang sama. Kalau masih ada yang turun, ada siklus negatif.',
+      pt: 'Mais uma passagem — o mesmo teste. Se algo ainda cair, há ciclo negativo.',
+    },
+    'caption.checkClean': {
+      en: 'Nothing dropped. No negative cycle — the distances are final.',
+      ko: '아무것도 줄지 않았다. 음수 고리가 없고 거리는 확정이다',
+      ar: 'لم ينخفض شيء. لا دورة سالبة — المسافات نهائية.',
+      es: 'Nada bajó. No hay ciclo negativo: las distancias son definitivas.',
+      fr: "Rien n'a baissé. Pas de cycle négatif — les distances sont définitives.",
+      hi: 'कुछ नहीं घटा। कोई ऋणात्मक चक्र नहीं — दूरियाँ अंतिम हैं।',
+      id: 'Tak ada yang turun. Tak ada siklus negatif — jaraknya final.',
+      pt: 'Nada caiu. Sem ciclo negativo — as distâncias são finais.',
+    },
+    'caption.checkDirty': {
+      en: '{changed} edges still drop. A negative cycle is in there.',
+      ko: '아직 줄어드는 간선이 있다. 그 수는 {changed}. 음수 고리가 있다',
+      ar: 'ما زالت {changed} حواف تنخفض. هناك دورة سالبة.',
+      es: 'Todavía bajan {changed} aristas. Hay un ciclo negativo.',
+      fr: '{changed} arêtes baissent encore. Il y a un cycle négatif.',
+      hi: 'अब भी {changed} किनारे घट रहे हैं। वहाँ ऋणात्मक चक्र है।',
+      id: 'Masih ada {changed} sisi yang turun. Ada siklus negatif di sana.',
+      pt: 'Ainda caem {changed} arestas. Há um ciclo negativo ali.',
+    },
+    'caption.done': {
+      en: '{passes} passes and {relaxed} drops. Distances: {values}.',
+      ko: '바퀴는 {passes}, 줄어든 횟수는 {relaxed}. 거리는 {values}',
+      ar: '{passes} جولات و{relaxed} انخفاضات. المسافات: {values}.',
+      es: '{passes} pasadas y {relaxed} bajadas. Distancias: {values}.',
+      fr: '{passes} passes et {relaxed} baisses. Distances : {values}.',
+      hi: '{passes} चक्र और {relaxed} कमी। दूरियाँ: {values}।',
+      id: '{passes} putaran dan {relaxed} penurunan. Jarak: {values}.',
+      pt: '{passes} passagens e {relaxed} quedas. Distâncias: {values}.',
+    },
+  },
+};

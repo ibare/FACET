@@ -484,4 +484,21 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:heuristicGuides', () =>
     import('@ffacet/algorithm-heuristic-guides').then((m) => m.registerHeuristicGuides()),
   );
+
+  // 그래프 완제품 1차 — 최단 경로 셋 · 깊이 우선 · 위상 정렬.
+  registerFacetLoader('facet:floydWarshall', () =>
+    import('@ffacet/algorithm-floyd-warshall').then((m) => m.registerFloydWarshall()),
+  );
+  registerFacetLoader('facet:bellmanFord', () =>
+    import('@ffacet/algorithm-bellman-ford').then((m) => m.registerBellmanFord()),
+  );
+  registerFacetLoader('facet:dijkstra', () =>
+    import('@ffacet/algorithm-dijkstra').then((m) => m.registerDijkstra()),
+  );
+  registerFacetLoader('facet:dfs', () =>
+    import('@ffacet/algorithm-dfs').then((m) => m.registerDfs()),
+  );
+  registerFacetLoader('facet:topologicalSort', () =>
+    import('@ffacet/algorithm-topological-sort').then((m) => m.registerTopologicalSort()),
+  );
 }
