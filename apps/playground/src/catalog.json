@@ -82,8 +82,6 @@
             { "id": "linear-search", "name": "선형 탐색" },
             { "id": "binary-search", "name": "이진 탐색" },
             { "id": "interpolation-search", "name": "보간 탐색" },
-            { "id": "recursion", "name": "재귀" },
-            { "id": "divide-and-conquer", "name": "분할 정복" },
             { "id": "dynamic-programming", "name": "동적 계획법" },
             { "id": "greedy", "name": "그리디" },
             { "id": "backtracking", "name": "백트래킹" },
