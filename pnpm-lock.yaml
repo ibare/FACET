@@ -367,6 +367,31 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/heap-sort:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
+
   facets/cs-fundamentals/heap-sort-extract:
     dependencies:
       '@ffacet/core':
@@ -402,6 +427,31 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/cs-fundamentals/insertion-sort:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
 
   facets/cs-fundamentals/linked-list-singly:
     dependencies:
@@ -635,11 +685,61 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/selection-sort:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
+
   facets/cs-fundamentals/share-prefix-path:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/cs-fundamentals/shell-sort:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
 
   facets/cs-fundamentals/shift-on-insert:
     dependencies:
@@ -985,6 +1085,9 @@ importers:
       '@ffacet/algorithm-heap-property':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/heap-property
+      '@ffacet/algorithm-heap-sort':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/heap-sort
       '@ffacet/algorithm-heap-sort-extract':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/heap-sort-extract
@@ -1003,6 +1106,9 @@ importers:
       '@ffacet/algorithm-insert-into-sorted-part':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/insert-into-sorted-part
+      '@ffacet/algorithm-insertion-sort':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/insertion-sort
       '@ffacet/algorithm-ip-routing':
         specifier: workspace:*
         version: link:../../facets/network/ip-routing
@@ -1108,9 +1214,15 @@ importers:
       '@ffacet/algorithm-select-min-each-pass':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/select-min-each-pass
+      '@ffacet/algorithm-selection-sort':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/selection-sort
       '@ffacet/algorithm-share-prefix-path':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/share-prefix-path
+      '@ffacet/algorithm-shell-sort':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/shell-sort
       '@ffacet/algorithm-shift-on-insert':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/shift-on-insert

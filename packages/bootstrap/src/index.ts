@@ -384,4 +384,16 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:radixSort', () =>
     import('@ffacet/algorithm-radix-sort').then((m) => m.registerRadixSort()),
   );
+  registerFacetLoader('facet:selectionSort', () =>
+    import('@ffacet/algorithm-selection-sort').then((m) => m.registerSelectionSort()),
+  );
+  registerFacetLoader('facet:insertionSort', () =>
+    import('@ffacet/algorithm-insertion-sort').then((m) => m.registerInsertionSort()),
+  );
+  registerFacetLoader('facet:shellSort', () =>
+    import('@ffacet/algorithm-shell-sort').then((m) => m.registerShellSort()),
+  );
+  registerFacetLoader('facet:heapSort', () =>
+    import('@ffacet/algorithm-heap-sort').then((m) => m.registerHeapSort()),
+  );
 }
