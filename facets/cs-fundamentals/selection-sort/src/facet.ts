@@ -1,0 +1,230 @@
+/**
+ * 선택 정렬 완결형 선언.
+ *
+ * 블록은 셋뿐이다 — `stage` · `controls` · `codePanel`. 제목 블록을 두지 않는다
+ * (이름은 카탈로그 카드와 글의 문단이 준다). 견줌 장부와 확정 구간은 빌트인
+ * view 를 빌리지 않고 stage 가 직접 그린다.
+ *
+ * 이 facet 의 산출물은 그림이 아니라 **코드** 다. `ir:selectionsort-imperative`
+ * 하나가 여섯 언어로 펼쳐지고, 재생 중인 phase 가 그 줄을 짚는다.
+ *
+ * `shuffleOnReset` 을 켜지 않는다. 이 자료는 `i=3` 에서 최솟값이 이미 제자리라
+ * 여섯 바퀴에 이동이 다섯인 배치이고, 그 어긋남이 이 facet 이 말하려는 것이다.
+ *
+ * 식별자 (C1): `index:<i>`.
+ */
+
+import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
+
+export const selectionSortFacet: FacetJson = {
+  id: 'facet:selectionSort',
+  // 제목은 카탈로그 카드의 이름과 같다 (C4 명명 규칙 5).
+  title: {
+    en: 'Selection Sort',
+    ko: '선택 정렬',
+    ar: 'الترتيب بالاختيار',
+    es: 'Ordenamiento por selección',
+    fr: 'Tri par sélection',
+    hi: 'सिलेक्शन सॉर्ट',
+    id: 'Pengurutan seleksi',
+    pt: 'Ordenação por seleção',
+  },
+  description: {
+    en: 'Scan all that is left to find the smallest, then move it exactly once.',
+    ko: '남은 전부를 훑어 가장 작은 것을 찾고, 딱 한 번 옮긴다',
+    ar: 'امسح كل ما تبقّى لتجد الأصغر، ثم انقله مرة واحدة فقط.',
+    es: 'Recorre todo lo que queda para hallar el menor y muévelo una sola vez.',
+    fr: 'Parcourez tout le reste pour trouver le plus petit, puis déplacez-le une seule fois.',
+    hi: 'बचे हुए सभी को देखकर सबसे छोटा ढूँढें, फिर उसे ठीक एक बार खिसकाएँ।',
+    id: 'Telusuri seluruh sisanya untuk menemukan yang terkecil, lalu pindahkan sekali saja.',
+    pt: 'Percorra todo o restante para achar o menor e mova-o uma única vez.',
+  },
+  algorithm: 'module:selectionSort',
+  projector: 'module:selectionSortProjector',
+  // 사양이 정한 자료. `i=3` 바퀴에서 최솟값이 이미 제자리라 여섯 바퀴에
+  // 맞바꿈이 다섯이 된다 — 섞으면 그 대목이 사라진다.
+  initialData: { type: 'array', values: [64, 25, 12, 22, 11, 90, 34] },
+  layout: {
+    type: 'column',
+    gap: 8,
+    children: [{ ref: 'stage' }, { ref: 'controls' }, { ref: 'codePanel' }],
+  },
+  blocks: {
+    stage: { type: 'selection-sort-stage' },
+    controls: {
+      type: 'control-bar',
+      controls: CONTROL_SET.playback,
+      metrics: [
+        {
+          name: 'compare-count',
+          label: {
+            en: 'Compare',
+            ko: '견줌',
+            ar: 'مقارنة',
+            es: 'Comparar',
+            fr: 'Comparer',
+            hi: 'तुलना',
+            id: 'Banding',
+            pt: 'Comparar',
+          },
+          initial: 0,
+        },
+        {
+          name: 'swap-count',
+          label: {
+            en: 'Swap',
+            ko: '맞바꿈',
+            ar: 'تبديل',
+            es: 'Intercambio',
+            fr: 'Échange',
+            hi: 'अदला-बदली',
+            id: 'Tukar',
+            pt: 'Troca',
+          },
+          initial: 0,
+        },
+        {
+          name: 'pass-count',
+          label: {
+            en: 'Pass',
+            ko: '바퀴',
+            ar: 'جولة',
+            es: 'Pasada',
+            fr: 'Passe',
+            hi: 'चक्र',
+            id: 'Putaran',
+            pt: 'Passagem',
+          },
+          initial: 0,
+        },
+      ],
+    },
+    codePanel: {
+      type: 'code-view',
+      label: {
+        en: 'Code',
+        ko: '코드',
+        ar: 'الشيفرة',
+        es: 'Código',
+        fr: 'Code',
+        hi: 'कोड',
+        id: 'Kode',
+        pt: 'Código',
+      },
+      ir: 'ir:selectionsort-imperative',
+    },
+  },
+  messages: {
+    'label.compares': {
+      en: 'Comparisons',
+      ko: '견줌',
+      ar: 'المقارنات',
+      es: 'Comparaciones',
+      fr: 'Comparaisons',
+      hi: 'तुलनाएँ',
+      id: 'Perbandingan',
+      pt: 'Comparações',
+    },
+    'label.moves': {
+      en: 'Moves',
+      ko: '이동',
+      ar: 'النقلات',
+      es: 'Movimientos',
+      fr: 'Déplacements',
+      hi: 'खिसकाव',
+      id: 'Perpindahan',
+      pt: 'Movimentos',
+    },
+    'label.total': {
+      en: '{compares} comparisons, {moves} moves',
+      ko: '견줌 {compares} 번, 이동 {moves} 번',
+      ar: '{compares} مقارنة، {moves} نقلة',
+      es: '{compares} comparaciones, {moves} movimientos',
+      fr: '{compares} comparaisons, {moves} déplacements',
+      hi: '{compares} तुलनाएँ, {moves} खिसकाव',
+      id: '{compares} perbandingan, {moves} perpindahan',
+      pt: '{compares} comparações, {moves} movimentos',
+    },
+    'caption.start': {
+      en: 'Nothing is in place yet. Each pass fills one more seat from the left.',
+      ko: '아직 제자리인 것이 없다. 바퀴마다 왼쪽부터 한 자리씩 채운다',
+      ar: 'لا شيء في مكانه بعد. كل جولة تملأ مقعدًا إضافيًا من اليسار.',
+      es: 'Nada está en su sitio todavía. Cada pasada llena un puesto más desde la izquierda.',
+      fr: "Rien n'est encore à sa place. Chaque passe remplit une place de plus depuis la gauche.",
+      hi: 'अभी कुछ भी अपनी जगह पर नहीं है। हर चक्र बाईं ओर से एक और स्थान भरता है।',
+      id: 'Belum ada yang pada tempatnya. Tiap putaran mengisi satu kursi lagi dari kiri.',
+      pt: 'Nada está no lugar ainda. Cada passagem preenche mais um assento a partir da esquerda.',
+    },
+    'caption.pickSeat': {
+      en: 'Seat {seat} is next. Assume {value} is the smallest and scan the {remaining} cells to its right.',
+      ko: '다음은 {seat} 번 자리. {value} 를 최솟값으로 두고 오른쪽 {remaining} 칸을 훑는다',
+      ar: 'المقعد {seat} هو التالي. افترض أن {value} هو الأصغر وامسح {remaining} خانة على يمينه.',
+      es: 'Sigue el puesto {seat}. Supón que {value} es el menor y recorre las {remaining} casillas a su derecha.',
+      fr: 'Au tour de la place {seat}. Supposez que {value} est le plus petit et parcourez les {remaining} cases à sa droite.',
+      hi: 'अब स्थान {seat} की बारी। मान लें {value} सबसे छोटा है और दाईं ओर के {remaining} खाने देखें।',
+      id: 'Giliran kursi {seat}. Anggap {value} yang terkecil lalu telusuri {remaining} sel di kanannya.',
+      pt: 'Agora o assento {seat}. Suponha que {value} é o menor e percorra as {remaining} casas à sua direita.',
+    },
+    'caption.compare': {
+      en: 'Is {value} smaller than {min}?',
+      ko: '{value} 가 {min} 보다 작은가',
+      ar: 'هل {value} أصغر من {min}؟',
+      es: '¿Es {value} menor que {min}?',
+      fr: '{value} est-il plus petit que {min} ?',
+      hi: 'क्या {value}, {min} से छोटा है?',
+      id: 'Apakah {value} lebih kecil dari {min}?',
+      pt: '{value} é menor que {min}?',
+    },
+    'caption.moveMin': {
+      en: 'Yes — {value} beats {previous}. The min mark moves, but nothing is moved yet.',
+      ko: '그렇다 — {value} 가 {previous} 를 이긴다. 표식만 옮겨 갈 뿐 값은 아직 움직이지 않는다',
+      ar: 'نعم — {value} يتفوق على {previous}. تنتقل علامة الأصغر فقط ولم تتحرك أي قيمة بعد.',
+      es: 'Sí: {value} gana a {previous}. Solo se mueve la marca del mínimo; ningún valor cambia de sitio.',
+      fr: "Oui — {value} bat {previous}. Seule la marque du minimum se déplace ; aucune valeur ne bouge.",
+      hi: 'हाँ — {value}, {previous} से छोटा है। सिर्फ़ न्यूनतम का निशान खिसकता है, कोई मान नहीं।',
+      id: 'Ya — {value} mengalahkan {previous}. Hanya tanda minimum yang pindah, nilainya belum bergerak.',
+      pt: 'Sim — {value} vence {previous}. Só a marca do mínimo se move; nenhum valor mudou de lugar.',
+    },
+    'caption.scanEnd': {
+      en: 'Scanned to the end with {count} comparisons. The smallest left is {value}.',
+      ko: '{count} 번 견주며 끝까지 훑었다. 남은 것 중 가장 작은 값은 {value}',
+      ar: 'تم المسح حتى النهاية بـ {count} مقارنة. الأصغر بين المتبقي هو {value}.',
+      es: 'Recorrido hasta el final con {count} comparaciones. El menor que queda es {value}.',
+      fr: "Parcouru jusqu'au bout en {count} comparaisons. Le plus petit restant est {value}.",
+      hi: '{count} तुलनाओं के साथ अंत तक देखा। बचे हुओं में सबसे छोटा {value} है।',
+      id: 'Ditelusuri sampai akhir dengan {count} perbandingan. Yang terkecil tersisa adalah {value}.',
+      pt: 'Percorrido até o fim com {count} comparações. O menor restante é {value}.',
+    },
+    'caption.swap': {
+      en: 'Bring {value} to seat {seat}; {other} takes its old place.',
+      ko: '{value} 를 {seat} 번 자리로 데려오고, {other} 는 그 자리로 간다',
+      ar: 'أحضر {value} إلى المقعد {seat}، و{other} يأخذ مكانه القديم.',
+      es: 'Trae {value} al puesto {seat}; {other} ocupa su antiguo lugar.',
+      fr: 'Amenez {value} à la place {seat} ; {other} prend son ancienne place.',
+      hi: '{value} को स्थान {seat} पर लाएँ; {other} उसकी पुरानी जगह ले लेता है।',
+      id: 'Bawa {value} ke kursi {seat}; {other} menempati tempat lamanya.',
+      pt: 'Traga {value} para o assento {seat}; {other} fica no lugar antigo dele.',
+    },
+    'caption.alreadyHome': {
+      en: 'The mark never left seat {seat} — no move at all.',
+      ko: '표식이 {seat} 번 자리를 떠나지 않았다 — 이 바퀴는 이동이 없다',
+      ar: 'لم تغادر العلامة المقعد {seat} — لا نقلة في هذه الجولة.',
+      es: 'La marca nunca salió del puesto {seat}: esta pasada no mueve nada.',
+      fr: 'La marque a gardé la place {seat} — aucun déplacement cette passe.',
+      hi: 'निशान स्थान {seat} से हिला ही नहीं — इस चक्र में कोई खिसकाव नहीं।',
+      id: 'Tandanya tidak pernah meninggalkan kursi {seat} — tidak ada perpindahan.',
+      pt: 'A marca nunca saiu do assento {seat} — nenhum movimento nesta passagem.',
+    },
+    'caption.done': {
+      en: 'Sorted in {passes} passes: {compares} comparisons but only {swaps} moves.',
+      ko: '{passes} 바퀴로 정렬됐다 — 견줌 {compares} 번에 이동은 {swaps} 번뿐',
+      ar: 'تم الترتيب في {passes} جولات: {compares} مقارنة مقابل {swaps} نقلات فقط.',
+      es: 'Ordenado en {passes} pasadas: {compares} comparaciones y solo {swaps} movimientos.',
+      fr: 'Trié en {passes} passes : {compares} comparaisons pour seulement {swaps} déplacements.',
+      hi: '{passes} चक्रों में क्रम में लग गया: {compares} तुलनाएँ पर केवल {swaps} खिसकाव।',
+      id: 'Terurut dalam {passes} putaran: {compares} perbandingan tetapi hanya {swaps} perpindahan.',
+      pt: 'Ordenado em {passes} passagens: {compares} comparações mas apenas {swaps} movimentos.',
+    },
+  },
+};
