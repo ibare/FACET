@@ -378,4 +378,10 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:quickSort', () =>
     import('@ffacet/algorithm-quick-sort').then((m) => m.registerQuickSort()),
   );
+  registerFacetLoader('facet:countingSort', () =>
+    import('@ffacet/algorithm-counting-sort').then((m) => m.registerCountingSort()),
+  );
+  registerFacetLoader('facet:radixSort', () =>
+    import('@ffacet/algorithm-radix-sort').then((m) => m.registerRadixSort()),
+  );
 }

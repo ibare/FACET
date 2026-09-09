@@ -252,6 +252,31 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/counting-sort:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
+
   facets/cs-fundamentals/depth-doubles-count:
     dependencies:
       '@ffacet/core':
@@ -519,6 +544,31 @@ importers:
         version: link:../../../packages/view-code
 
   facets/cs-fundamentals/quick-sort:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
+
+  facets/cs-fundamentals/radix-sort:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -872,6 +922,9 @@ importers:
       '@ffacet/algorithm-count-then-place':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/count-then-place
+      '@ffacet/algorithm-counting-sort':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/counting-sort
       '@ffacet/algorithm-depth-doubles-count':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/depth-doubles-count
@@ -1028,6 +1081,9 @@ importers:
       '@ffacet/algorithm-quick-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/quick-sort
+      '@ffacet/algorithm-radix-sort':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/radix-sort
       '@ffacet/algorithm-recolor-then-rotate':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/recolor-then-rotate
