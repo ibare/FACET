@@ -372,4 +372,10 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:boundAndCut', () =>
     import('@ffacet/algorithm-bound-and-cut').then((m) => m.registerBoundAndCut()),
   );
+  registerFacetLoader('facet:mergeSort', () =>
+    import('@ffacet/algorithm-merge-sort').then((m) => m.registerMergeSort()),
+  );
+  registerFacetLoader('facet:quickSort', () =>
+    import('@ffacet/algorithm-quick-sort').then((m) => m.registerQuickSort()),
+  );
 }
