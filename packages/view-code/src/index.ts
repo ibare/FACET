@@ -143,6 +143,19 @@ export const codeView: View = {
     root.appendChild(emptyEl);
 
     // ── 드롭다운 ────────────────────────
+    //
+    // `document.body` 에 붙는다. 코드 패널이 `overflow` 가 걸린 조상 안에 있으면
+    // 그 안에 둔 팝업은 잘리기 때문이다.
+    //
+    // 그래서 **호스트가 씌운 오버레이보다 위**여야 한다. facet 이 모달 안에서
+    // 열리는 경우가 그렇다 — playground 의 모달은 z-index 50 이라, 예전 값
+    // 10 으로는 드롭다운이 그 뒤에 열려 눌러도 아무 일도 안 일어나는 것처럼
+    // 보였다. 버튼도 눌리고 드롭다운도 열리는데 가려져 있을 뿐이라 더 찾기
+    // 어려웠다.
+    //
+    // 호스트가 어떤 값을 쓰는지 view 는 알 수 없으므로 넉넉히 잡는다. 다만
+    // 최대값(2147483647)은 쓰지 않는다 — 호스트가 진짜로 위에 띄워야 하는 것
+    // (전역 알림 등)까지 덮으면 그것대로 고치기 어려워진다.
     const dropdown = document.createElement('div');
     dropdown.className = 'facet-code-view__dropdown';
     dropdown.style.position = 'absolute';
@@ -152,7 +165,7 @@ export const codeView: View = {
     dropdown.style.padding = space.xs;
     dropdown.style.boxShadow = '0 6px 16px rgba(0,0,0,0.12)';
     dropdown.style.display = 'none';
-    dropdown.style.zIndex = '10';
+    dropdown.style.zIndex = '10000';
     dropdown.style.minWidth = '140px';
     dropdown.style.flexDirection = 'column';
     document.body.appendChild(dropdown);

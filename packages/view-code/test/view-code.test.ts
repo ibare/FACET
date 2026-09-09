@@ -148,4 +148,31 @@ describe('code-view', () => {
 
     instance.destroy();
   });
+  it('언어 드롭다운은 호스트 오버레이 위에 열린다', () => {
+    const py = makeTranspiler('python');
+    registerTranspiler('python', py);
+    const { instance } = mountWithSpec([py]);
+
+    const dropdown = document.querySelector('.facet-code-view__dropdown') as HTMLElement;
+    expect(dropdown).toBeTruthy();
+
+    // 드롭다운은 overflow 잘림을 피하려 document.body 에 붙는다. 그래서 facet 을
+    // 감싼 호스트 오버레이보다 위여야 한다 — playground 의 모달이 z-index 50 이라
+    // 예전 값 10 으로는 그 뒤에 열려, 눌러도 아무 일도 안 일어나는 것처럼 보였다.
+    // 버튼도 눌리고 드롭다운도 열리는데 가려져 있을 뿐이었다.
+    expect(Number(dropdown.style.zIndex)).toBeGreaterThan(1000);
+
+    instance.destroy();
+  });
+
+  it('destroy 는 body 에 붙인 드롭다운을 남기지 않는다', () => {
+    const py = makeTranspiler('python');
+    registerTranspiler('python', py);
+    const before = document.querySelectorAll('.facet-code-view__dropdown').length;
+    const { instance } = mountWithSpec([py]);
+    expect(document.querySelectorAll('.facet-code-view__dropdown').length).toBe(before + 1);
+
+    instance.destroy();
+    expect(document.querySelectorAll('.facet-code-view__dropdown').length).toBe(before);
+  });
 });
