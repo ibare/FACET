@@ -21,11 +21,22 @@ const MODULES: Array<() => Promise<Record<string, unknown>>> = [
   () => import('../../../facets/cs-fundamentals/avl-tree/src/index.js'),
   () => import('../../../facets/cs-fundamentals/b-tree/src/index.js'),
   () => import('../../../facets/cs-fundamentals/bfs/src/index.js'),
+  () => import('../../../facets/cs-fundamentals/binary-search/src/index.js'),
   () => import('../../../facets/cs-fundamentals/bst/src/index.js'),
   () => import('../../../facets/cs-fundamentals/bubble-sort/src/index.js'),
+  () => import('../../../facets/cs-fundamentals/counting-sort/src/index.js'),
   () => import('../../../facets/cs-fundamentals/heap-binary/src/index.js'),
+  () => import('../../../facets/cs-fundamentals/heap-sort/src/index.js'),
+  () => import('../../../facets/cs-fundamentals/insertion-sort/src/index.js'),
+  () => import('../../../facets/cs-fundamentals/interpolation-search/src/index.js'),
+  () => import('../../../facets/cs-fundamentals/linear-search/src/index.js'),
+  () => import('../../../facets/cs-fundamentals/merge-sort/src/index.js'),
   () => import('../../../facets/cs-fundamentals/queue-fifo/src/index.js'),
+  () => import('../../../facets/cs-fundamentals/quick-sort/src/index.js'),
+  () => import('../../../facets/cs-fundamentals/radix-sort/src/index.js'),
   () => import('../../../facets/cs-fundamentals/red-black-tree/src/index.js'),
+  () => import('../../../facets/cs-fundamentals/selection-sort/src/index.js'),
+  () => import('../../../facets/cs-fundamentals/shell-sort/src/index.js'),
 ];
 
 /** projector 가 부르는 아무 메서드나 삼키는 스텁. 무엇을 부르는지는 관심 밖이다. */

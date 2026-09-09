@@ -396,4 +396,13 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:heapSort', () =>
     import('@ffacet/algorithm-heap-sort').then((m) => m.registerHeapSort()),
   );
+  registerFacetLoader('facet:binarySearch', () =>
+    import('@ffacet/algorithm-binary-search').then((m) => m.registerBinarySearch()),
+  );
+  registerFacetLoader('facet:linearSearch', () =>
+    import('@ffacet/algorithm-linear-search').then((m) => m.registerLinearSearch()),
+  );
+  registerFacetLoader('facet:interpolationSearch', () =>
+    import('@ffacet/algorithm-interpolation-search').then((m) => m.registerInterpolationSearch()),
+  );
 }
