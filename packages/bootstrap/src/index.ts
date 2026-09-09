@@ -481,4 +481,7 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:undoByBackEdge', () =>
     import('@ffacet/algorithm-undo-by-back-edge').then((m) => m.registerUndoByBackEdge()),
   );
+  registerFacetLoader('facet:heuristicGuides', () =>
+    import('@ffacet/algorithm-heuristic-guides').then((m) => m.registerHeuristicGuides()),
+  );
 }

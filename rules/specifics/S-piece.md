@@ -128,9 +128,37 @@ last_verified: 2026-09-07
 
   ```ts
   const waiters = new Set<() => void>();
-  // promise 마다: const finish = () => { waiters.delete(finish); resolve(); };
-  // destroy 에서: for (const wake of [...waiters]) wake(); waiters.clear();
+  const timers = new Set<ReturnType<typeof setTimeout>>();   // 프레임이면 Set<number>
+
+  function wait(ms: number): Promise<void> {
+    return new Promise<void>((resolve) => {
+      if (destroyed) return resolve();
+      const finish = (): void => {
+        waiters.delete(finish);
+        resolve();
+      };
+      waiters.add(finish);
+      const id = setTimeout(() => {
+        timers.delete(id);
+        finish();
+      }, ms);
+      timers.add(id);
+    });
+  }
+
+  destroy(): void {
+    destroyed = true;
+    for (const id of timers) clearTimeout(id);   // 걸어 둔 것을 먼저 거두고
+    timers.clear();
+    for (const wake of [...waiters]) wake();      // 기다리던 것을 깨운다
+    waiters.clear();
+    // …붙인 것 떼기
+  }
   ```
+
+  **걸어 둔 것(타이머·프레임)은 집합에 담아 destroy 에서 일괄로 거둔다.** `finish`
+  안에서 자기 것만 취소하는 방식도 동작은 하지만, 저장소에 이미 세 갈래가 생겨
+  다음 사람이 무엇을 본으로 삼을지 헷갈렸다. 위 모양 하나로 간다.
 
   타입도 통과하고 예외도 안 나며 화면은 이미 사라진 뒤라 눈으로는 못 잡는다. 아홉이
   이 구멍을 냈고 전부 `packages/core/test/destroy-releases-waiters.test.ts` 가

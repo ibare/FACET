@@ -110,6 +110,7 @@
     "@ffacet/algorithm-heap-sort-extract": "workspace:*",
     "@ffacet/algorithm-height-balance-check": "workspace:*",
     "@ffacet/algorithm-height-stays-low": "workspace:*",
+    "@ffacet/algorithm-heuristic-guides": "workspace:*",
     "@ffacet/algorithm-in-place-vs-extra": "workspace:*",
     "@ffacet/algorithm-indegree-zero-first": "workspace:*",
     "@ffacet/algorithm-index-address-calc": "workspace:*",

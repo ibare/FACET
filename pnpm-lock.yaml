@@ -577,6 +577,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/heuristic-guides:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/in-place-vs-extra:
     dependencies:
       '@ffacet/core':
@@ -1440,6 +1446,9 @@ importers:
       '@ffacet/algorithm-height-stays-low':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/height-stays-low
+      '@ffacet/algorithm-heuristic-guides':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/heuristic-guides
       '@ffacet/algorithm-in-place-vs-extra':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/in-place-vs-extra
