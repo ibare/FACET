@@ -1,0 +1,26 @@
+{
+  "name": "@ffacet/algorithm-kruskal-mst",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@ffacet/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@ffacet/ir-interpreter": "workspace:*",
+    "@ffacet/transpiler-cpp": "workspace:*",
+    "@ffacet/transpiler-csharp": "workspace:*",
+    "@ffacet/transpiler-java": "workspace:*",
+    "@ffacet/transpiler-javascript": "workspace:*",
+    "@ffacet/transpiler-python": "workspace:*",
+    "@ffacet/transpiler-typescript": "workspace:*"
+  }
+}

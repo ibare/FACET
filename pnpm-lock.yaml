@@ -1734,6 +1734,9 @@ importers:
       '@ffacet/algorithm-ip-routing':
         specifier: workspace:*
         version: link:../../facets/network/ip-routing
+      '@ffacet/algorithm-kruskal-mst':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/kruskal-mst
       '@ffacet/algorithm-linear-regression':
         specifier: workspace:*
         version: link:../../facets/ml-basics/linear-regression
@@ -1758,6 +1761,9 @@ importers:
       '@ffacet/algorithm-matrix-transform-2d':
         specifier: workspace:*
         version: link:../../facets/graphics/matrix-transform-2d
+      '@ffacet/algorithm-max-flow':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/max-flow
       '@ffacet/algorithm-memo-write-once':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/memo-write-once
@@ -1818,6 +1824,9 @@ importers:
       '@ffacet/algorithm-pivot-choice-matters':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/pivot-choice-matters
+      '@ffacet/algorithm-prim-mst':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/prim-mst
       '@ffacet/algorithm-prune-branch':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/prune-branch
@@ -1863,6 +1872,9 @@ importers:
       '@ffacet/algorithm-scan-until-found':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/scan-until-found
+      '@ffacet/algorithm-scc':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/scc
       '@ffacet/algorithm-select-min-each-pass':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/select-min-each-pass

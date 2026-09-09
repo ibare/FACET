@@ -501,4 +501,18 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:topologicalSort', () =>
     import('@ffacet/algorithm-topological-sort').then((m) => m.registerTopologicalSort()),
   );
+
+  // 그래프 완제품 2차 — 최소 신장 트리 둘 · 강한 연결 · 최대 유량.
+  registerFacetLoader('facet:primMst', () =>
+    import('@ffacet/algorithm-prim-mst').then((m) => m.registerPrimMst()),
+  );
+  registerFacetLoader('facet:kruskalMst', () =>
+    import('@ffacet/algorithm-kruskal-mst').then((m) => m.registerKruskalMst()),
+  );
+  registerFacetLoader('facet:scc', () =>
+    import('@ffacet/algorithm-scc').then((m) => m.registerScc()),
+  );
+  registerFacetLoader('facet:maxFlow', () =>
+    import('@ffacet/algorithm-max-flow').then((m) => m.registerMaxFlow()),
+  );
 }

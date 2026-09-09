@@ -333,13 +333,24 @@ describe('화면', () => {
       expect(svg).not.toBeNull();
       const box = svg?.getAttribute('viewBox');
 
+      // 완제품은 스스로 재생하지 않는다 — 재생 버튼이 있는 물건이라
+      // `autoStart` 가 꺼져 있다. 부르지 않으면 아래 기다림이 헛돌고,
+      // 찾는 수가 마침 초기 화면(간선 무게 따위)에도 있으면 **재생을 재지
+      // 않은 채 통과한다.** 그래서 시작 전 화면을 먼저 잡아 두고 견준다.
+      const beforeText = svg?.textContent ?? '';
+      handle.start();
+
       // 끝까지 굴린다. 걸음이 멎을 때까지 기다리되 상한을 둔다.
-      const started = Date.now();
+      // 찾는 값이 화면에 나타나는 것으로 끊으면 이르다 — 그 수가 마침 간선
+      // 무게로도 떠 있으면 첫 프레임에 통과한다. 화면이 **멎을 때까지** 기다린다.
       let text = '';
-      while (Date.now() - started < 40_000) {
-        await new Promise((r) => setTimeout(r, 400));
-        text = svg?.textContent ?? '';
-        if (text.includes('-2')) break;
+      let quiet = 0;
+      const started = Date.now();
+      while (Date.now() - started < 90_000 && quiet < 8) {
+        await new Promise((r) => setTimeout(r, 500));
+        const now = svg?.textContent ?? '';
+        quiet = now === text ? quiet + 1 : 0;
+        text = now;
       }
 
       // 알고리즘이 셈한 거리 — 상수로 박지 않는다.
@@ -349,6 +360,7 @@ describe('화면', () => {
       for (const d of truth.dist) {
         expect(text).toContain(String(d));
       }
+      expect(text).not.toBe(beforeText);
       expect(svg?.getAttribute('viewBox')).toBe(box);
       expect(errors).toEqual([]);
     } finally {
