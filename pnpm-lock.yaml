@@ -361,6 +361,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/transpiler-typescript
 
+  facets/cs-fundamentals/cycle-blocks-order:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/depth-doubles-count:
     dependencies:
       '@ffacet/core':
@@ -374,6 +380,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/digit-by-digit:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/dive-then-backtrack:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -414,6 +426,12 @@ importers:
         version: link:../../../packages/transpiler-typescript
 
   facets/cs-fundamentals/enqueue-dequeue-ends:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/fewer-hops-not-shorter:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -553,6 +571,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/indegree-zero-first:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/index-address-calc:
     dependencies:
       '@ffacet/core':
@@ -670,6 +694,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/mark-visited-or-loop:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/memo-write-once:
     dependencies:
       '@ffacet/core':
@@ -714,6 +744,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/node-points-next:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/one-way-edge:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -786,6 +822,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/view-code
 
+  facets/cs-fundamentals/queue-vs-stack-order:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/quick-sort:
     dependencies:
       '@ffacet/core':
@@ -848,6 +890,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/relax-shorter-path:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/relink-insert:
     dependencies:
       '@ffacet/core':
@@ -902,6 +950,12 @@ importers:
       '@ffacet/transpiler-typescript':
         specifier: workspace:*
         version: link:../../../packages/transpiler-typescript
+
+  facets/cs-fundamentals/separate-components:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
 
   facets/cs-fundamentals/share-prefix-path:
     dependencies:
@@ -1007,6 +1061,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/try-and-undo:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/two-color-conflict:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -1227,6 +1287,9 @@ importers:
       '@ffacet/algorithm-counting-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/counting-sort
+      '@ffacet/algorithm-cycle-blocks-order':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/cycle-blocks-order
       '@ffacet/algorithm-depth-doubles-count':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/depth-doubles-count
@@ -1236,6 +1299,9 @@ importers:
       '@ffacet/algorithm-digit-by-digit':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/digit-by-digit
+      '@ffacet/algorithm-dive-then-backtrack':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/dive-then-backtrack
       '@ffacet/algorithm-divide-conquer-combine':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/divide-conquer-combine
@@ -1245,6 +1311,9 @@ importers:
       '@ffacet/algorithm-enqueue-dequeue-ends':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/enqueue-dequeue-ends
+      '@ffacet/algorithm-fewer-hops-not-shorter':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/fewer-hops-not-shorter
       '@ffacet/algorithm-find-root':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/find-root
@@ -1308,6 +1377,9 @@ importers:
       '@ffacet/algorithm-in-place-vs-extra':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/in-place-vs-extra
+      '@ffacet/algorithm-indegree-zero-first':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/indegree-zero-first
       '@ffacet/algorithm-index-address-calc':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/index-address-calc
@@ -1341,6 +1413,9 @@ importers:
       '@ffacet/algorithm-lru-cache':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/lru-cache
+      '@ffacet/algorithm-mark-visited-or-loop':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/mark-visited-or-loop
       '@ffacet/algorithm-matrix-transform-2d':
         specifier: workspace:*
         version: link:../../facets/graphics/matrix-transform-2d
@@ -1365,6 +1440,9 @@ importers:
       '@ffacet/algorithm-node-points-next':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/node-points-next
+      '@ffacet/algorithm-one-way-edge':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/one-way-edge
       '@ffacet/algorithm-open-addressing-probe':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/open-addressing-probe
@@ -1398,6 +1476,9 @@ importers:
       '@ffacet/algorithm-queue-fifo':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/queue-fifo
+      '@ffacet/algorithm-queue-vs-stack-order':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/queue-vs-stack-order
       '@ffacet/algorithm-quick-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/quick-sort
@@ -1413,6 +1494,9 @@ importers:
       '@ffacet/algorithm-relational-tables-and-keys':
         specifier: workspace:*
         version: link:../../facets/database/relational-tables-and-keys
+      '@ffacet/algorithm-relax-shorter-path':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/relax-shorter-path
       '@ffacet/algorithm-relink-insert':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/relink-insert
@@ -1431,6 +1515,9 @@ importers:
       '@ffacet/algorithm-selection-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/selection-sort
+      '@ffacet/algorithm-separate-components':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/separate-components
       '@ffacet/algorithm-share-prefix-path':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/share-prefix-path
@@ -1485,6 +1572,9 @@ importers:
       '@ffacet/algorithm-try-and-undo':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/try-and-undo
+      '@ffacet/algorithm-two-color-conflict':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/two-color-conflict
       '@ffacet/algorithm-union-by-rank':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/union-by-rank

@@ -417,4 +417,36 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:branchAndBound', () =>
     import('@ffacet/algorithm-branch-and-bound').then((m) => m.registerBranchAndBound()),
   );
+
+  // 그래프 조각 — 표현 · 순회 · 위상 정렬 · 최단 경로의 한 대목씩.
+  registerFacetLoader('facet:oneWayEdge', () =>
+    import('@ffacet/algorithm-one-way-edge').then((m) => m.registerOneWayEdge()),
+  );
+  registerFacetLoader('facet:fewerHopsNotShorter', () =>
+    import('@ffacet/algorithm-fewer-hops-not-shorter').then((m) => m.registerFewerHopsNotShorter()),
+  );
+  registerFacetLoader('facet:queueVsStackOrder', () =>
+    import('@ffacet/algorithm-queue-vs-stack-order').then((m) => m.registerQueueVsStackOrder()),
+  );
+  registerFacetLoader('facet:markVisitedOrLoop', () =>
+    import('@ffacet/algorithm-mark-visited-or-loop').then((m) => m.registerMarkVisitedOrLoop()),
+  );
+  registerFacetLoader('facet:diveThenBacktrack', () =>
+    import('@ffacet/algorithm-dive-then-backtrack').then((m) => m.registerDiveThenBacktrack()),
+  );
+  registerFacetLoader('facet:separateComponents', () =>
+    import('@ffacet/algorithm-separate-components').then((m) => m.registerSeparateComponents()),
+  );
+  registerFacetLoader('facet:twoColorConflict', () =>
+    import('@ffacet/algorithm-two-color-conflict').then((m) => m.registerTwoColorConflict()),
+  );
+  registerFacetLoader('facet:indegreeZeroFirst', () =>
+    import('@ffacet/algorithm-indegree-zero-first').then((m) => m.registerIndegreeZeroFirst()),
+  );
+  registerFacetLoader('facet:relaxShorterPath', () =>
+    import('@ffacet/algorithm-relax-shorter-path').then((m) => m.registerRelaxShorterPath()),
+  );
+  registerFacetLoader('facet:cycleBlocksOrder', () =>
+    import('@ffacet/algorithm-cycle-blocks-order').then((m) => m.registerCycleBlocksOrder()),
+  );
 }
