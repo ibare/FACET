@@ -22,9 +22,12 @@ last_verified: 2026-09-07
 `facet.ts` 의 JSDoc 에 **`@piece` 표식**이 있는 facet. 파일 구성은 **S-facet 을
 그대로 따른다** (6파일 + stage view 1개) — 이 문서는 그 위에 얹히는 추가 규범이다.
 
-현재 조각 9종, 전부 `facets/security/`:
-`hashFixedLength` · `hashAvalanche` · `pigeonholeCollision` · `hashIntegrityCheck` ·
-`hashSalt` · `hashChain` · `merkleTree` · `signatureKeyDirection` · `signatureOnHash`
+**적용 범위는 표식이 정한다. 목록을 적지 않는다.** 한때 여기에 아홉 종을 적어
+두었는데, 그 뒤로 조각이 여든여섯이 되도록 문장이 그대로 남아 이 문서를 처음 읽는
+사람에게 "`facets/security/` 아홉에만 해당한다" 로 읽혔다. 정의를 세운 바로 아래에
+손목록을 덧붙이면 목록이 정의를 이긴다.
+
+현재 여든여섯이고, 세는 법은 `grep -l '@piece' facets/*/*/src/facet.ts` 다.
 
 ## 조각을 만드는 순서
 

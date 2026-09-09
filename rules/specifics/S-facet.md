@@ -37,7 +37,7 @@ SVG 렌더 코드를 1000+ LOC 두는 것은 책임 분리 위반이라 별도 �
 `tree-layout` · `graph-layout` · `linked-list-chain` · `conveyor-queue` ·
 `ordered-list` · `goal-preview` · `pass-tracker` · `snapshot-strip` ·
 `text-display` · `title-block`) 로 표현되지 않는 경우에만 두는 것으로 적혀 있었고,
-그때는 여기에 그런 facet 의 목록도 있었다. 지금은 105 중 101 이 stage view 를
+그때는 여기에 그런 facet 의 목록도 있었다. 지금은 126 중 122 가 stage view 를
 가지므로 목록에 뜻이 없다.
 
 빌트인은 코드 재사용을 노린 장치였으나 **대량 생산에서 유사 화면 복제를 낳아 실패로

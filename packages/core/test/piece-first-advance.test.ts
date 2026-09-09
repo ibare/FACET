@@ -11,7 +11,7 @@
  * 한다. 하나만 나오면 그것이 되감기이고 걸음은 오지 않은 것이다.
  *
  * 조각인지는 컨트롤로 가린다 — replay 와 advance 둘뿐인 것이 조각이다
- * (`CONTROL_SET.piece`). 새 조각을 만들면 아래 목록에 한 줄 보탠다.
+ * (`CONTROL_SET.piece`). facet 전수를 `facet-modules.ts` 에서 받아 그중 조각만 고른다.
  */
 // @vitest-environment happy-dom
 import { describe, expect, it } from 'vitest';
@@ -20,111 +20,46 @@ import { getProjector, registerProjector } from '../src/runtime/registry.js';
 import type { FacetJson } from '../src/types/facet-json.js';
 import type { FacetRunHandle } from '../src/runtime/runner.js';
 
-const MODULES: Array<[string, () => Promise<Record<string, unknown>>]> = [
-  ['facets/compilers/tokenization/src/index.ts', () => import('../../../facets/compilers/tokenization/src/index.js')],
-  ['facets/cs-fundamentals/adjacency-list-vs-matrix/src/index.ts', () => import('../../../facets/cs-fundamentals/adjacency-list-vs-matrix/src/index.js')],
-  ['facets/cs-fundamentals/array-as-tree/src/index.ts', () => import('../../../facets/cs-fundamentals/array-as-tree/src/index.js')],
-  ['facets/cs-fundamentals/array/src/index.ts', () => import('../../../facets/cs-fundamentals/array/src/index.js')],
-  ['facets/cs-fundamentals/avl-tree/src/index.ts', () => import('../../../facets/cs-fundamentals/avl-tree/src/index.js')],
-  ['facets/cs-fundamentals/b-tree/src/index.ts', () => import('../../../facets/cs-fundamentals/b-tree/src/index.js')],
-  ['facets/cs-fundamentals/bfs/src/index.ts', () => import('../../../facets/cs-fundamentals/bfs/src/index.js')],
-  ['facets/cs-fundamentals/black-height-equal/src/index.ts', () => import('../../../facets/cs-fundamentals/black-height-equal/src/index.js')],
-  ['facets/cs-fundamentals/bottom-up-table/src/index.ts', () => import('../../../facets/cs-fundamentals/bottom-up-table/src/index.js')],
-  ['facets/cs-fundamentals/bound-and-cut/src/index.ts', () => import('../../../facets/cs-fundamentals/bound-and-cut/src/index.js')],
-  ['facets/cs-fundamentals/bst-compare-and-go/src/index.ts', () => import('../../../facets/cs-fundamentals/bst-compare-and-go/src/index.js')],
-  ['facets/cs-fundamentals/bst-degenerate/src/index.ts', () => import('../../../facets/cs-fundamentals/bst-degenerate/src/index.js')],
-  ['facets/cs-fundamentals/bst-inorder-sorted/src/index.ts', () => import('../../../facets/cs-fundamentals/bst-inorder-sorted/src/index.js')],
-  ['facets/cs-fundamentals/bst/src/index.ts', () => import('../../../facets/cs-fundamentals/bst/src/index.js')],
-  ['facets/cs-fundamentals/bubble-adjacent-swap/src/index.ts', () => import('../../../facets/cs-fundamentals/bubble-adjacent-swap/src/index.js')],
-  ['facets/cs-fundamentals/bubble-sort/src/index.ts', () => import('../../../facets/cs-fundamentals/bubble-sort/src/index.js')],
-  ['facets/cs-fundamentals/chaining-bucket/src/index.ts', () => import('../../../facets/cs-fundamentals/chaining-bucket/src/index.js')],
-  ['facets/cs-fundamentals/circular-buffer-wrap/src/index.ts', () => import('../../../facets/cs-fundamentals/circular-buffer-wrap/src/index.js')],
-  ['facets/cs-fundamentals/compare-and-swap/src/index.ts', () => import('../../../facets/cs-fundamentals/compare-and-swap/src/index.js')],
-  ['facets/cs-fundamentals/count-then-place/src/index.ts', () => import('../../../facets/cs-fundamentals/count-then-place/src/index.js')],
-  ['facets/cs-fundamentals/depth-doubles-count/src/index.ts', () => import('../../../facets/cs-fundamentals/depth-doubles-count/src/index.js')],
-  ['facets/cs-fundamentals/deque-both-ends/src/index.ts', () => import('../../../facets/cs-fundamentals/deque-both-ends/src/index.js')],
-  ['facets/cs-fundamentals/digit-by-digit/src/index.ts', () => import('../../../facets/cs-fundamentals/digit-by-digit/src/index.js')],
-  ['facets/cs-fundamentals/divide-conquer-combine/src/index.ts', () => import('../../../facets/cs-fundamentals/divide-conquer-combine/src/index.js')],
-  ['facets/cs-fundamentals/enqueue-dequeue-ends/src/index.ts', () => import('../../../facets/cs-fundamentals/enqueue-dequeue-ends/src/index.js')],
-  ['facets/cs-fundamentals/find-root/src/index.ts', () => import('../../../facets/cs-fundamentals/find-root/src/index.js')],
-  ['facets/cs-fundamentals/gap-shrink/src/index.ts', () => import('../../../facets/cs-fundamentals/gap-shrink/src/index.js')],
-  ['facets/cs-fundamentals/greedy-can-fail/src/index.ts', () => import('../../../facets/cs-fundamentals/greedy-can-fail/src/index.js')],
-  ['facets/cs-fundamentals/grow-and-copy/src/index.ts', () => import('../../../facets/cs-fundamentals/grow-and-copy/src/index.js')],
-  ['facets/cs-fundamentals/guess-by-value/src/index.ts', () => import('../../../facets/cs-fundamentals/guess-by-value/src/index.js')],
-  ['facets/cs-fundamentals/halve-the-range/src/index.ts', () => import('../../../facets/cs-fundamentals/halve-the-range/src/index.js')],
-  ['facets/cs-fundamentals/hash-table-chaining/src/index.ts', () => import('../../../facets/cs-fundamentals/hash-table-chaining/src/index.js')],
-  ['facets/cs-fundamentals/hash-to-bucket/src/index.ts', () => import('../../../facets/cs-fundamentals/hash-to-bucket/src/index.js')],
-  ['facets/cs-fundamentals/heap-binary/src/index.ts', () => import('../../../facets/cs-fundamentals/heap-binary/src/index.js')],
-  ['facets/cs-fundamentals/heap-property/src/index.ts', () => import('../../../facets/cs-fundamentals/heap-property/src/index.js')],
-  ['facets/cs-fundamentals/heap-sort-extract/src/index.ts', () => import('../../../facets/cs-fundamentals/heap-sort-extract/src/index.js')],
-  ['facets/cs-fundamentals/height-balance-check/src/index.ts', () => import('../../../facets/cs-fundamentals/height-balance-check/src/index.js')],
-  ['facets/cs-fundamentals/height-stays-low/src/index.ts', () => import('../../../facets/cs-fundamentals/height-stays-low/src/index.js')],
-  ['facets/cs-fundamentals/in-place-vs-extra/src/index.ts', () => import('../../../facets/cs-fundamentals/in-place-vs-extra/src/index.js')],
-  ['facets/cs-fundamentals/index-address-calc/src/index.ts', () => import('../../../facets/cs-fundamentals/index-address-calc/src/index.js')],
-  ['facets/cs-fundamentals/insert-into-sorted-part/src/index.ts', () => import('../../../facets/cs-fundamentals/insert-into-sorted-part/src/index.js')],
-  ['facets/cs-fundamentals/linked-list-singly/src/index.ts', () => import('../../../facets/cs-fundamentals/linked-list-singly/src/index.js')],
-  ['facets/cs-fundamentals/load-factor-rehash/src/index.ts', () => import('../../../facets/cs-fundamentals/load-factor-rehash/src/index.js')],
-  ['facets/cs-fundamentals/lost-link/src/index.ts', () => import('../../../facets/cs-fundamentals/lost-link/src/index.js')],
-  ['facets/cs-fundamentals/lru-cache/src/index.ts', () => import('../../../facets/cs-fundamentals/lru-cache/src/index.js')],
-  ['facets/cs-fundamentals/memo-write-once/src/index.ts', () => import('../../../facets/cs-fundamentals/memo-write-once/src/index.js')],
-  ['facets/cs-fundamentals/merge-two-sorted/src/index.ts', () => import('../../../facets/cs-fundamentals/merge-two-sorted/src/index.js')],
-  ['facets/cs-fundamentals/node-holds-many/src/index.ts', () => import('../../../facets/cs-fundamentals/node-holds-many/src/index.js')],
-  ['facets/cs-fundamentals/node-points-next/src/index.ts', () => import('../../../facets/cs-fundamentals/node-points-next/src/index.js')],
-  ['facets/cs-fundamentals/open-addressing-probe/src/index.ts', () => import('../../../facets/cs-fundamentals/open-addressing-probe/src/index.js')],
-  ['facets/cs-fundamentals/out-of-bounds/src/index.ts', () => import('../../../facets/cs-fundamentals/out-of-bounds/src/index.js')],
-  ['facets/cs-fundamentals/overlapping-subproblems/src/index.ts', () => import('../../../facets/cs-fundamentals/overlapping-subproblems/src/index.js')],
-  ['facets/cs-fundamentals/parent-two-children/src/index.ts', () => import('../../../facets/cs-fundamentals/parent-two-children/src/index.js')],
-  ['facets/cs-fundamentals/partition-around-pivot/src/index.ts', () => import('../../../facets/cs-fundamentals/partition-around-pivot/src/index.js')],
-  ['facets/cs-fundamentals/path-compression/src/index.ts', () => import('../../../facets/cs-fundamentals/path-compression/src/index.js')],
-  ['facets/cs-fundamentals/pivot-choice-matters/src/index.ts', () => import('../../../facets/cs-fundamentals/pivot-choice-matters/src/index.js')],
-  ['facets/cs-fundamentals/prune-branch/src/index.ts', () => import('../../../facets/cs-fundamentals/prune-branch/src/index.js')],
-  ['facets/cs-fundamentals/push-pop-top/src/index.ts', () => import('../../../facets/cs-fundamentals/push-pop-top/src/index.js')],
-  ['facets/cs-fundamentals/queue-fifo/src/index.ts', () => import('../../../facets/cs-fundamentals/queue-fifo/src/index.js')],
-  ['facets/cs-fundamentals/recolor-then-rotate/src/index.ts', () => import('../../../facets/cs-fundamentals/recolor-then-rotate/src/index.js')],
-  ['facets/cs-fundamentals/red-black-tree/src/index.ts', () => import('../../../facets/cs-fundamentals/red-black-tree/src/index.js')],
-  ['facets/cs-fundamentals/relink-insert/src/index.ts', () => import('../../../facets/cs-fundamentals/relink-insert/src/index.js')],
-  ['facets/cs-fundamentals/requires-sorted/src/index.ts', () => import('../../../facets/cs-fundamentals/requires-sorted/src/index.js')],
-  ['facets/cs-fundamentals/rotate-to-balance/src/index.ts', () => import('../../../facets/cs-fundamentals/rotate-to-balance/src/index.js')],
-  ['facets/cs-fundamentals/scan-until-found/src/index.ts', () => import('../../../facets/cs-fundamentals/scan-until-found/src/index.js')],
-  ['facets/cs-fundamentals/select-min-each-pass/src/index.ts', () => import('../../../facets/cs-fundamentals/select-min-each-pass/src/index.js')],
-  ['facets/cs-fundamentals/share-prefix-path/src/index.ts', () => import('../../../facets/cs-fundamentals/share-prefix-path/src/index.js')],
-  ['facets/cs-fundamentals/shift-on-insert/src/index.ts', () => import('../../../facets/cs-fundamentals/shift-on-insert/src/index.js')],
-  ['facets/cs-fundamentals/shift-on-remove/src/index.ts', () => import('../../../facets/cs-fundamentals/shift-on-remove/src/index.js')],
-  ['facets/cs-fundamentals/sift-down/src/index.ts', () => import('../../../facets/cs-fundamentals/sift-down/src/index.js')],
-  ['facets/cs-fundamentals/sift-up/src/index.ts', () => import('../../../facets/cs-fundamentals/sift-up/src/index.js')],
-  ['facets/cs-fundamentals/sort-stability/src/index.ts', () => import('../../../facets/cs-fundamentals/sort-stability/src/index.js')],
-  ['facets/cs-fundamentals/split-until-one/src/index.ts', () => import('../../../facets/cs-fundamentals/split-until-one/src/index.js')],
-  ['facets/cs-fundamentals/split-when-full/src/index.ts', () => import('../../../facets/cs-fundamentals/split-when-full/src/index.js')],
-  ['facets/cs-fundamentals/stack/src/index.ts', () => import('../../../facets/cs-fundamentals/stack/src/index.js')],
-  ['facets/cs-fundamentals/take-best-now/src/index.ts', () => import('../../../facets/cs-fundamentals/take-best-now/src/index.js')],
-  ['facets/cs-fundamentals/traversal-order/src/index.ts', () => import('../../../facets/cs-fundamentals/traversal-order/src/index.js')],
-  ['facets/cs-fundamentals/traverse-from-head/src/index.ts', () => import('../../../facets/cs-fundamentals/traverse-from-head/src/index.js')],
-  ['facets/cs-fundamentals/trie/src/index.ts', () => import('../../../facets/cs-fundamentals/trie/src/index.js')],
-  ['facets/cs-fundamentals/try-and-undo/src/index.ts', () => import('../../../facets/cs-fundamentals/try-and-undo/src/index.js')],
-  ['facets/cs-fundamentals/union-by-rank/src/index.ts', () => import('../../../facets/cs-fundamentals/union-by-rank/src/index.js')],
-  ['facets/cs-fundamentals/union-find/src/index.ts', () => import('../../../facets/cs-fundamentals/union-find/src/index.js')],
-  ['facets/cs-fundamentals/walk-per-character/src/index.ts', () => import('../../../facets/cs-fundamentals/walk-per-character/src/index.js')],
-  ['facets/database/relational-tables-and-keys/src/index.ts', () => import('../../../facets/database/relational-tables-and-keys/src/index.js')],
-  ['facets/graphics/matrix-transform-2d/src/index.ts', () => import('../../../facets/graphics/matrix-transform-2d/src/index.js')],
-  ['facets/ml-basics/linear-regression/src/index.ts', () => import('../../../facets/ml-basics/linear-regression/src/index.js')],
-  ['facets/network/ip-routing/src/index.ts', () => import('../../../facets/network/ip-routing/src/index.js')],
-  ['facets/os/context-switching/src/index.ts', () => import('../../../facets/os/context-switching/src/index.js')],
-  ['facets/programming-fundamentals/conditional-statement/src/index.ts', () => import('../../../facets/programming-fundamentals/conditional-statement/src/index.js')],
-  ['facets/security/asymmetric-rsa/src/index.ts', () => import('../../../facets/security/asymmetric-rsa/src/index.js')],
-  ['facets/security/hash-avalanche/src/index.ts', () => import('../../../facets/security/hash-avalanche/src/index.js')],
-  ['facets/security/hash-chain/src/index.ts', () => import('../../../facets/security/hash-chain/src/index.js')],
-  ['facets/security/hash-fixed-length/src/index.ts', () => import('../../../facets/security/hash-fixed-length/src/index.js')],
-  ['facets/security/hash-integrity-check/src/index.ts', () => import('../../../facets/security/hash-integrity-check/src/index.js')],
-  ['facets/security/hash-salt/src/index.ts', () => import('../../../facets/security/hash-salt/src/index.js')],
-  ['facets/security/merkle-tree/src/index.ts', () => import('../../../facets/security/merkle-tree/src/index.js')],
-  ['facets/security/pigeonhole-collision/src/index.ts', () => import('../../../facets/security/pigeonhole-collision/src/index.js')],
-  ['facets/security/signature-key-direction/src/index.ts', () => import('../../../facets/security/signature-key-direction/src/index.js')],
-  ['facets/security/signature-on-hash/src/index.ts', () => import('../../../facets/security/signature-on-hash/src/index.js')],
-  ['facets/system-design/caching-cdn/src/index.ts', () => import('../../../facets/system-design/caching-cdn/src/index.js')],
-  ['facets/system-design/messaging-pubsub/src/index.ts', () => import('../../../facets/system-design/messaging-pubsub/src/index.js')],
-];
+import { FACET_MODULES as MODULES, PIECE_MARKED_COUNT } from './facet-modules.js';
 function delay(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
+}
+
+/**
+ * 발신이 멎을 때까지 기다린다.
+ *
+ * `quietMs` 동안 누구도 새로 내보내지 않으면 멎은 것으로 본다. 멎었으면 `true`,
+ * 상한에 닿았으면 `false` 다.
+ *
+ * 상한에 닿는 것은 끝나지 않는 조각이 있다는 뜻일 수도, 그저 다 굴리기에 상한이
+ * 모자란다는 뜻일 수도 있다. 어느 쪽이든 **그 뒤의 판정은 뜻이 흐려진다** — 자동
+ * 재생이 도는 중에 누르면 첫 누름의 몫을 잰 것이 아니게 된다. 그래서 삼키지 않고
+ * 돌려주고, 아래에서 통과 조건에 넣는다.
+ *
+ * 조각 여든여섯을 한 문서에 동시에 띄우면 타이머가 서로 밀려, 가장 긴 조각이
+ * 열여섯 초여도 다 멎기까지 서른여덟 초가 걸린다. 상한은 그 실측 위에 둔 것이지
+ * 조각의 길이에서 나온 수가 아니다.
+ */
+async function settle(
+  rows: Array<{ counter: { n: number } }>,
+  quietMs: number,
+  capMs: number,
+): Promise<boolean> {
+  const total = (): number => rows.reduce((a, r) => a + r.counter.n, 0);
+  const started = Date.now();
+  let last = total();
+  let quietSince = Date.now();
+  while (Date.now() - started < capMs) {
+    await delay(250);
+    const now = total();
+    if (now !== last) {
+      last = now;
+      quietSince = Date.now();
+      continue;
+    }
+    if (Date.now() - quietSince >= quietMs) return true;
+  }
+  return false;
 }
 
 function facetsOf(mod: Record<string, unknown>): FacetJson[] {
@@ -183,6 +118,7 @@ describe('조각의 첫 advance', () => {
     const stalled: string[] = [];   // 되감기 하나로 끝난 것
     const deaf: string[] = [];      // 아무것도 안 나온 것
     const noButton: string[] = [];
+    let settled = false;          // 자동 재생이 정말 멎은 뒤에 눌렀는가
 
     const original = console.error;
     console.error = () => {};
@@ -204,10 +140,15 @@ describe('조각의 첫 advance', () => {
         }
       }
 
-      // 자동 재생이 끝나기를 기다린다. 전부 동시에 굴러가므로 가장 긴 것에 맞춘다.
-      // 가장 긴 조각의 자동 재생보다 넉넉해야 한다. 같으면 그 조각의
-      // 마지막 걸음과 누름이 겹쳐 첫 누름의 뜻이 흐려진다.
-      await delay(18_000);
+      // 자동 재생이 끝나기를 기다린다. 고정 시간으로 기다리던 때가 있었는데,
+      // 그 수가 곧 조각의 길이 상한이 되어 버렸다 — 그래프 조각 배치에서 가장 긴
+      // 것이 15.8초로 18초에 2초를 남기고 붙었다. 조각이 얼마나 길지는 저작
+      // 결정이므로 검사가 그것을 제한하면 안 된다.
+      //
+      // 그래서 **발신이 멎는 것**을 본다. 모든 조각의 누적 발신 수를 재고, 한동안
+      // 아무도 새로 내보내지 않으면 자동 재생이 다 끝난 것이다. 상한을 두어
+      // 영원히 도는 조각이 있어도 검사가 매달리지는 않게 한다.
+      settled = await settle(rows, 3_000, 90_000);
 
       for (const r of rows) {
         const btn = r.container.querySelector<HTMLButtonElement>('button[data-control-id="advance"]');
@@ -231,7 +172,12 @@ describe('조각의 첫 advance', () => {
       console.error = original;
     }
 
-    expect(rows.length).toBeGreaterThan(0);
+    // 컨트롤 모양으로 고른 수와 소스의 `@piece` 표식 수가 같아야 한다.
+    // 어긋나면 컨트롤이 규범을 벗어난 조각이 있다는 뜻이고, 그 조각은 이
+    // 검사에서 스스로를 지운 채 통과하고 있었다는 뜻이다.
+    expect(rows.length).toBe(PIECE_MARKED_COUNT);
+    // 멎지 않은 채 눌렀다면 아래 셋이 비어 있어도 그것을 통과라 부를 수 없다.
+    expect(settled).toBe(true);
     expect({ stalled, deaf, noButton }).toEqual({ stalled: [], deaf: [], noButton: [] });
-  }, 45_000);
+  }, 120_000);
 });

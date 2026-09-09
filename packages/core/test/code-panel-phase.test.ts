@@ -9,39 +9,16 @@
  * 코드가 뜬다 — 다만 재생하는 동안 아무 줄도 짚지 않을 뿐이라 눈으로는 "원래
  * 그런 것" 과 구별되지 않는다.
  *
- * 그래서 여기서 전수로 잰다. 코드 패널을 단 facet 을 새로 만들면 아래 목록에
- * 한 줄 보태라.
+ * 그래서 여기서 전수로 잰다. facet 전부를 `facet-modules.ts` 에서 받아 그중
+ * `code-view` 블록을 단 것만 고르므로, 대상은 손목록이 아니라 선언이 정한다 —
+ * 알고리즘 완제품 열하나를 만들고 목록에 넣는 것을 빠뜨린 적이 있다.
  */
 // @vitest-environment happy-dom
 import { describe, expect, it } from 'vitest';
 import { getFacetById, getProjector } from '../src/runtime/registry.js';
 import type { ProjectorViews } from '../src/runtime/projector.js';
 
-const MODULES: Array<() => Promise<Record<string, unknown>>> = [
-  () => import('../../../facets/cs-fundamentals/avl-tree/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/b-tree/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/backtracking/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/bfs/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/binary-search/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/branch-and-bound/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/bst/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/bubble-sort/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/counting-sort/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/dynamic-programming/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/greedy/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/heap-binary/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/heap-sort/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/insertion-sort/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/interpolation-search/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/linear-search/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/merge-sort/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/queue-fifo/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/quick-sort/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/radix-sort/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/red-black-tree/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/selection-sort/src/index.js'),
-  () => import('../../../facets/cs-fundamentals/shell-sort/src/index.js'),
-];
+import { FACET_MODULES as MODULES } from './facet-modules.js';
 
 /** projector 가 부르는 아무 메서드나 삼키는 스텁. 무엇을 부르는지는 관심 밖이다. */
 function stubView(): ProjectorViews[string] {
@@ -59,7 +36,7 @@ describe('코드 패널 phase 배선', () => {
     const mismatched: string[] = [];
     let checked = 0;
 
-    for (const load of MODULES) {
+    for (const [, load] of MODULES) {
       const mod = await load();
       for (const [k, v] of Object.entries(mod)) {
         if (k.startsWith('register') && typeof v === 'function') (v as () => void)();
@@ -104,7 +81,9 @@ describe('코드 패널 phase 배선', () => {
       }
     }
 
-    expect(checked).toBeGreaterThan(0);
+    // 코드 패널을 단 facet 은 스물셋이다. 열 아래로 떨어지면 거르는 조건이나
+    // glob 이 깨진 것이지 패널이 줄어든 것이 아니다.
+    expect(checked).toBeGreaterThan(15);
     expect({ missing, mismatched }).toEqual({ missing: [], mismatched: [] });
   });
 });

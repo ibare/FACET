@@ -58,8 +58,9 @@ last_verified: 2026-09-05
       그 안에 되붙인다.
     - CanvasView 로 옮길 때 열하나가 이 함정에 빠졌고 **일곱은 발견되지 않은 채
       커밋됐다.** 그래서 `packages/core/test/canvas-attach.test.ts` 가 CanvasView
-      전수를 마운트해 캔버스가 남아 있는지 잰다. 새 CanvasView 를 만들면 그
-      목록에 한 줄 보탠다.
+      전수를 마운트해 캔버스가 남아 있는지 잰다. 대상은 `test/facet-modules.ts` 가
+      디렉터리에서 모으므로 stage 파일을 만들기만 하면 들어온다 — 손목록이던 때
+      알고리즘 완제품 열하나가 자매 검사의 목록에서 빠진 적이 있다.
   - 정책은 view 가 고른다 — `fit: 'fill'`(기본) · `'intrinsic'`(조연 패널에서 커지면 안 될 때) · `'stretch'`(컨테이너를 채울 때). 구현은 러너가 한다.
   - `canvas.height` 는 초기값이다. 내용이나 블록 설정으로 크기가 정해지는 view 는 mount 에서 `params.canvas.setAttribute('viewBox', …)` 로 갱신한다.
   - SVG 를 하나 쓰지 않는 view 는 해당 없다 (`snapshot-strip` 은 항목마다 따로 만든다). 그런 view 는 `PlainView` 로 둔다.
