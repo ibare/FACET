@@ -538,4 +538,24 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:splitByQuestion', () =>
     import('@ffacet/algorithm-split-by-question').then((m) => m.registerSplitByQuestion()),
   );
+
+  // 지도학습 조각 2차 — 의사결정 트리 하나 · 랜덤 포레스트 둘 · SVM 셋.
+  registerFacetLoader('facet:impurityDrops', () =>
+    import('@ffacet/algorithm-impurity-drops').then((m) => m.registerImpurityDrops()),
+  );
+  registerFacetLoader('facet:baggingSample', () =>
+    import('@ffacet/algorithm-bagging-sample').then((m) => m.registerBaggingSample()),
+  );
+  registerFacetLoader('facet:manyTreesVote', () =>
+    import('@ffacet/algorithm-many-trees-vote').then((m) => m.registerManyTreesVote()),
+  );
+  registerFacetLoader('facet:widestMargin', () =>
+    import('@ffacet/algorithm-widest-margin').then((m) => m.registerWidestMargin()),
+  );
+  registerFacetLoader('facet:supportVectorsOnly', () =>
+    import('@ffacet/algorithm-support-vectors-only').then((m) => m.registerSupportVectorsOnly()),
+  );
+  registerFacetLoader('facet:kernelLifts', () =>
+    import('@ffacet/algorithm-kernel-lifts').then((m) => m.registerKernelLifts()),
+  );
 }

@@ -2,8 +2,8 @@
 name: S-piece
 description: 조각(piece) facet 의 규범 — 질문 하나에 답하는 작은 facet. 형태는 질문이 정하고, 앞 조각의 레이아웃을 출발점으로 삼지 않는다.
 type: specific
-version: 2
-last_verified: 2026-09-07
+version: 3
+last_verified: 2026-09-09
 ---
 
 # S-piece. 조각(piece) facet
@@ -23,11 +23,11 @@ last_verified: 2026-09-07
 그대로 따른다** (6파일 + stage view 1개) — 이 문서는 그 위에 얹히는 추가 규범이다.
 
 **적용 범위는 표식이 정한다. 목록을 적지 않는다.** 한때 여기에 아홉 종을 적어
-두었는데, 그 뒤로 조각이 여든여섯이 되도록 문장이 그대로 남아 이 문서를 처음 읽는
+두었는데, 그 뒤로 조각이 백을 넘도록 문장이 그대로 남아 이 문서를 처음 읽는
 사람에게 "`facets/security/` 아홉에만 해당한다" 로 읽혔다. 정의를 세운 바로 아래에
 손목록을 덧붙이면 목록이 정의를 이긴다.
 
-현재 여든여섯이고, 세는 법은 `grep -l '@piece' facets/*/*/src/facet.ts` 다.
+현재 110 이고, 세는 법은 `grep -l '@piece' facets/*/*/src/facet.ts` 다.
 
 ## 조각을 만드는 순서
 
@@ -179,8 +179,22 @@ last_verified: 2026-09-07
     자리는 그림의 몫이다.
   - `stepMs` 처럼 읽을 시간을 정하는 값은 예외로 선언에 둔다. 그것은 저작 결정이지
     그림의 결과가 아니다.
-- **캔버스는 `CanvasView` 로 선언한다** — `canvas: { height: H }`. 가로는 러너가
-  `PIECE_CANVAS_W` 로 정하므로 적지 않고, 세로만 내용이 정한다 (S-view).
+- **캔버스 세로는 stage 가 자기 파일에 상수로 갖는다.** 가로는 러너가
+  `PIECE_CANVAS_W` 로 정하므로 어디에도 적지 않고, 세로는 그림이 정하는 값이라
+  그림 곁에 둔다 (S-view).
+  - 한때 이 자리에 "`canvas: { height: H }` 로 **선언한다**" 고 적혀 있었다.
+    원칙 6 으로 옮겨가며 stage view 가 자기 높이를 갖게 되었는데 조항만 남아,
+    **조각 110 개 중 0 개가 따르지 않는 사문**이 되어 있었다. 규칙이 사실과
+    어긋나면 다음 감사가 110 건짜리 유령 위반을 만난다.
+- **`initialData` 를 좁히는 것은 stage 의 `mount` 다.** `params.initialData` 를
+  받는 자리가 거기이고, projector 가 없어도 반드시 불리는 유일한 경로다.
+  좁히개(`readScene` 류)는 stage 가 내주고, projector 가 그 값을 쓸 일이 있으면
+  같은 함수를 부른다 — **좁히는 규칙이 두 벌이 되지 않게.**
+  - **projector 의 `onInit` 에서 같은 것을 다시 좁혀 stage 로 밀어 넣지 않는다.**
+    mount 가 이미 받았으므로 중복 경로가 된다. 조각 여섯을 격리해 만들었더니
+    4 대 2 로 갈렸다 — 규범에 이 문장이 없었기 때문이다.
+  - 걸음마다 오는 **payload** 는 이와 다르다. 그것은 projector 가 좁혀 넘긴다
+    (아래 조항).
 - **`layout` 을 선언하지 않는다.** 조각은 stage 와 controls 뿐이라 적을 것이
   하나뿐이다. 러너가 `column · gap 8 · blocks 키 순서` 로 만든다. 필수였을 때
   열아홉이 각자 적었고 gap 이 4 와 8 로, align 이 셋만 갈렸다.

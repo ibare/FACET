@@ -2,8 +2,8 @@
 name: C9 타입 경계
 description: as unknown as / as Record / as any 캐스팅은 구조적 열린 타입 경계에서만 허용한다. 러너 내부 데이터 전달에는 정식 타입으로 좁힌다.
 type: concern
-version: 1
-last_verified: 2026-04-21
+version: 2
+last_verified: 2026-09-09
 ---
 
 # C9. 타입 경계
@@ -27,6 +27,9 @@ last_verified: 2026-04-21
 - 같은 구체형 cast 가 한 파일에 10회 이상 반복되면 중앙 타입 선언이나 헬퍼로 추출한다.
 - 런타임 값 검증 없이 `as` 캐스팅으로 payload 구조를 "믿고" 소비하지 않는다 — 반드시 `typeof`/`Array.isArray` 등의 가드 후 사용.
 - 테스트 외 코드에서 `as Record<string, unknown>` 을 타입 힌트 회피 목적으로 쓰지 않는다. 정식 타입이 있으면 그것을 쓴다.
+  - **런타임 가드가 뒤따르는 좁히개는 예외다.** `typeof v !== 'object' || v === null` 로 막은 뒤 필드마다 `typeof` 를 보는 함수라면 `as Record<string, unknown>` 을 써도 된다. 필드가 대여섯이면 인라인 단언(`as { a?: unknown; b?: unknown; … }`)으로 펴는 편이 오히려 읽기 어렵다.
+  - 가르는 물음은 **"이 단언 뒤에 검사가 있는가"** 다. 검사 없이 곧바로 필드를 꺼내 쓰면 회피이고, 꺼낸 값을 하나씩 `typeof` 로 거르면 좁히개다.
+  - 조각 여섯을 격리해 만들었더니 이 대목이 4 대 2 로 갈렸다. 문면이 "타입 힌트 회피 **목적으로**" 라고 목적을 한정해, 가드를 갖춘 쪽은 허용으로 읽혔기 때문이다. 그 읽기가 옳다 — 여기 못박아 둔다.
 
 ## PREFER
 

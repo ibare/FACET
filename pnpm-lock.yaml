@@ -1420,13 +1420,31 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ml-basics/bagging-sample:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ml-basics/decision-boundary:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ml-basics/impurity-drops:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ml-basics/k-changes-boundary:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/kernel-lifts:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -1439,6 +1457,12 @@ importers:
         version: link:../../../packages/core
 
   facets/ml-basics/linear-regression:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/many-trees-vote:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -1462,7 +1486,19 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ml-basics/support-vectors-only:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ml-basics/vote-by-neighbors:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/widest-margin:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -1587,6 +1623,9 @@ importers:
       '@ffacet/algorithm-backtracking':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/backtracking
+      '@ffacet/algorithm-bagging-sample':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/bagging-sample
       '@ffacet/algorithm-bellman-ford':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bellman-ford
@@ -1758,6 +1797,9 @@ importers:
       '@ffacet/algorithm-heuristic-guides':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/heuristic-guides
+      '@ffacet/algorithm-impurity-drops':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/impurity-drops
       '@ffacet/algorithm-in-place-vs-extra':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/in-place-vs-extra
@@ -1782,6 +1824,9 @@ importers:
       '@ffacet/algorithm-k-changes-boundary':
         specifier: workspace:*
         version: link:../../facets/ml-basics/k-changes-boundary
+      '@ffacet/algorithm-kernel-lifts':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/kernel-lifts
       '@ffacet/algorithm-kruskal-mst':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/kruskal-mst
@@ -1806,6 +1851,9 @@ importers:
       '@ffacet/algorithm-lru-cache':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/lru-cache
+      '@ffacet/algorithm-many-trees-vote':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/many-trees-vote
       '@ffacet/algorithm-mark-visited-or-loop':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/mark-visited-or-loop
@@ -1983,6 +2031,9 @@ importers:
       '@ffacet/algorithm-stack':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/stack
+      '@ffacet/algorithm-support-vectors-only':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/support-vectors-only
       '@ffacet/algorithm-take-best-now':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/take-best-now
@@ -2025,6 +2076,9 @@ importers:
       '@ffacet/algorithm-walk-per-character':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/walk-per-character
+      '@ffacet/algorithm-widest-margin':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/widest-margin
       '@ffacet/core':
         specifier: workspace:*
         version: link:../core

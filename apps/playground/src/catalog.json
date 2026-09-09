@@ -823,12 +823,12 @@
             { "id": "vote-by-neighbors", "name": "최근접 이웃 투표", "desc": "가까운 것들에게 물어본다", "facetId": "facet:voteByNeighbors", "kind": "piece", "origin": "knn" },
             { "id": "k-changes-boundary", "name": "k 값의 영향", "desc": "k 를 바꾸면 경계가 바뀐다", "facetId": "facet:kChangesBoundary", "kind": "piece", "origin": "knn" },
             { "id": "split-by-question", "name": "분기 기준", "desc": "질문 하나로 둘로 가른다", "facetId": "facet:splitByQuestion", "kind": "piece", "origin": "decision-tree" },
-            { "id": "impurity-drops", "name": "불순도 감소", "desc": "가를수록 섞임이 줄어든다", "kind": "piece", "origin": "decision-tree" },
-            { "id": "many-trees-vote", "name": "앙상블 투표", "desc": "여러 나무가 투표한다", "kind": "piece", "origin": "random-forest" },
-            { "id": "bagging-sample", "name": "배깅", "desc": "뽑고 되돌리며 다르게 배운다", "kind": "piece", "origin": "random-forest" },
-            { "id": "widest-margin", "name": "최대 마진", "desc": "가장 넓은 틈을 낸다", "kind": "piece", "origin": "svm" },
-            { "id": "support-vectors-only", "name": "서포트 벡터", "desc": "경계에 닿은 것만 정한다", "kind": "piece", "origin": "svm" },
-            { "id": "kernel-lifts", "name": "커널 트릭", "desc": "못 가르면 차원을 올린다", "kind": "piece", "origin": "svm" }
+            { "id": "impurity-drops", "name": "불순도 감소", "desc": "가를수록 섞임이 줄어든다", "facetId": "facet:impurityDrops", "kind": "piece", "origin": "decision-tree" },
+            { "id": "many-trees-vote", "name": "앙상블 투표", "desc": "여러 나무가 투표한다", "facetId": "facet:manyTreesVote", "kind": "piece", "origin": "random-forest" },
+            { "id": "bagging-sample", "name": "배깅", "desc": "뽑고 되돌리며 다르게 배운다", "facetId": "facet:baggingSample", "kind": "piece", "origin": "random-forest" },
+            { "id": "widest-margin", "name": "최대 마진", "desc": "가장 넓은 틈을 낸다", "facetId": "facet:widestMargin", "kind": "piece", "origin": "svm" },
+            { "id": "support-vectors-only", "name": "서포트 벡터", "desc": "경계에 닿은 것만 정한다", "facetId": "facet:supportVectorsOnly", "kind": "piece", "origin": "svm" },
+            { "id": "kernel-lifts", "name": "커널 트릭", "desc": "못 가르면 차원을 올린다", "facetId": "facet:kernelLifts", "kind": "piece", "origin": "svm" }
           ]
         },
         {
