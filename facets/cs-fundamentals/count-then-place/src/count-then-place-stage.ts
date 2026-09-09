@@ -112,15 +112,28 @@ export const countThenPlaceStageView: CanvasView = {
     let destroyed = false;
     const timers = new Set<ReturnType<typeof setTimeout>>();
 
+    /**
+     * 기다리다 만 것을 깨우는 자리. 타이머·프레임을 거두는 것만으로는 모자란다 —
+     * 취소된 tick 은 아예 불리지 않아 promise 를 풀 길이 사라지고, projector 가
+     * 그것을 기다리므로 `await ctx.emit` 이 영영 돌아오지 않는다. unmount 된 뒤에도
+     * 알고리즘과 SVG 트리가 통째로 붙들린다 (S-view).
+     */
+    const waiters = new Set<() => void>();
+
     const wait = (ms: number): Promise<void> =>
       new Promise<void>((resolve) => {
         if (destroyed || ms <= 0) {
           resolve();
           return;
         }
+        const finish = (): void => {
+          waiters.delete(finish);
+          resolve();
+        };
+        waiters.add(finish);
         const id = setTimeout(() => {
           timers.delete(id);
-          resolve();
+          finish();
         }, ms);
         timers.add(id);
       });
@@ -426,6 +439,8 @@ export const countThenPlaceStageView: CanvasView = {
         destroyed = true;
         for (const id of timers) clearTimeout(id);
         timers.clear();
+        for (const wake of [...waiters]) wake();
+        waiters.clear();
         root.remove();
       },
     };

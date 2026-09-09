@@ -132,6 +132,13 @@ export const dequeBothEndsStageView: CanvasView = {
     // ── 시간 자원. destroy 에서 모두 거둔다 (S-view).
     const timers = new Set<ReturnType<typeof setTimeout>>();
     const raf = new Set<number>();
+
+    /**
+     * 기다리다 만 것을 깨우는 자리. 타이머·프레임을 거두는 것만으로는 모자란다 —
+     * 취소된 tick 은 아예 불리지 않아 promise 를 풀 길이 사라지고, projector 가
+     * 그것을 기다리므로 `await ctx.emit` 이 영영 돌아오지 않는다 (S-view).
+     */
+    const waiters = new Set<() => void>();
     let disposed = false;
 
     const wait = (ms: number): Promise<void> =>
@@ -140,9 +147,14 @@ export const dequeBothEndsStageView: CanvasView = {
           resolve();
           return;
         }
+        const finish = (): void => {
+          waiters.delete(finish);
+          resolve();
+        };
+        waiters.add(finish);
         const id = setTimeout(() => {
           timers.delete(id);
-          resolve();
+          finish();
         }, ms);
         timers.add(id);
       });
@@ -154,18 +166,23 @@ export const dequeBothEndsStageView: CanvasView = {
           resolve();
           return;
         }
+        const finish = (): void => {
+          waiters.delete(finish);
+          resolve();
+        };
+        waiters.add(finish);
         let start: number | null = null;
         const tick = (now: number): void => {
           if (disposed) {
             onFrame(1);
-            resolve();
+            finish();
             return;
           }
           if (start === null) start = now;
           const p = Math.min(1, (now - start) / ms);
           onFrame(ease(p));
           if (p < 1) raf.add(requestAnimationFrame(tick));
-          else resolve();
+          else finish();
         };
         raf.add(requestAnimationFrame(tick));
       });
@@ -494,6 +511,8 @@ export const dequeBothEndsStageView: CanvasView = {
           for (const id of raf) cancelAnimationFrame(id);
         }
         raf.clear();
+        for (const wake of [...waiters]) wake();
+        waiters.clear();
         // remove() 는 이미 떨어져 나간 노드에도 안전하다 — 러너가 컨테이너를
         // 먼저 비운 뒤 destroy 를 부르는 경우가 있다.
         sceneryG.remove();

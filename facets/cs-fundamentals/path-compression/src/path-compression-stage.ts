@@ -174,6 +174,23 @@ export const pathCompressionStageView: CanvasView = {
     let destroyed = false;
     const timers = new Set<ReturnType<typeof setTimeout>>();
 
+    /**
+     * 기다리다 만 것을 깨우는 자리. 타이머를 거두는 것만으로는 모자란다 — 취소된
+     * tick 은 아예 불리지 않아 promise 를 풀 길이 사라지고, projector 가 그것을
+     * 기다리므로 `await ctx.emit` 이 영영 돌아오지 않는다 (S-view).
+     */
+    const waiters = new Set<() => void>();
+
+    /** 위 집합에 담아 두고 한 번만 부르는 resolve 를 만든다. */
+    function wakeable(resolve: () => void): () => void {
+      const finish = (): void => {
+        waiters.delete(finish);
+        resolve();
+      };
+      waiters.add(finish);
+      return finish;
+    }
+
     function later(fn: () => void, ms: number): void {
       const id = setTimeout(() => {
         timers.delete(id);
@@ -326,6 +343,7 @@ export const pathCompressionStageView: CanvasView = {
       const cursor = ensureCursor();
       const { p0, ctrl, p1 } = edgeGeometry(from, to);
       return new Promise((resolve) => {
+        const finish = wakeable(resolve);
         let step = 0;
         const tick = () => {
           step += 1;
@@ -336,7 +354,7 @@ export const pathCompressionStageView: CanvasView = {
           if (tt < 1) {
             later(tick, ANIM_MS / ANIM_STEPS);
           } else {
-            resolve();
+            finish();
           }
         };
         tick();
@@ -366,6 +384,7 @@ export const pathCompressionStageView: CanvasView = {
       const to = edgeGeometry(node, newParent);
       path.setAttribute('stroke', colors.accent);
       return new Promise((resolve) => {
+        const finish = wakeable(resolve);
         let step = 0;
         const tick = () => {
           step += 1;
@@ -378,7 +397,7 @@ export const pathCompressionStageView: CanvasView = {
             later(tick, ANIM_MS / ANIM_STEPS);
           } else {
             path.setAttribute('stroke', colors.textMuted);
-            resolve();
+            finish();
           }
         };
         tick();
@@ -390,10 +409,11 @@ export const pathCompressionStageView: CanvasView = {
       rect.setAttribute('stroke', colors.accent);
       rect.setAttribute('stroke-width', '2');
       return new Promise((resolve) => {
+        const finish = wakeable(resolve);
         later(() => {
           rect.setAttribute('stroke', node === root ? colors.accent : colors.border);
           rect.setAttribute('stroke-width', node === root ? '2' : '1');
-          resolve();
+          finish();
         }, ANIM_MS);
       });
     }
@@ -431,6 +451,8 @@ export const pathCompressionStageView: CanvasView = {
       destroyed = true;
       for (const id of timers) clearTimeout(id);
       timers.clear();
+      for (const wake of [...waiters]) wake();
+      waiters.clear();
       svg.textContent = '';
     }
 

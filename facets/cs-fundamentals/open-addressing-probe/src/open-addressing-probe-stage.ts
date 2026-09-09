@@ -192,11 +192,27 @@ export const openAddressingProbeStageView: CanvasView = {
     let destroyed = false;
     const timers = new Set<number>();
 
+    /**
+     * 기다리다 만 것을 깨우는 자리. 타이머·프레임을 거두는 것만으로는 모자란다 —
+     * 취소된 tick 은 아예 불리지 않아 promise 를 풀 길이 사라지고, projector 가
+     * 그것을 기다리므로 `await ctx.emit` 이 영영 돌아오지 않는다 (S-view).
+     */
+    const waiters = new Set<() => void>();
+
     function wait(ms: number): Promise<void> {
       return new Promise((res) => {
+        if (destroyed) {
+          res();
+          return;
+        }
+        const finish = (): void => {
+          waiters.delete(finish);
+          res();
+        };
+        waiters.add(finish);
         const id = window.setTimeout(() => {
           timers.delete(id);
-          res();
+          finish();
         }, Math.max(0, ms));
         timers.add(id);
       });
@@ -204,7 +220,18 @@ export const openAddressingProbeStageView: CanvasView = {
 
     function nextFrame(): Promise<void> {
       if (typeof requestAnimationFrame === 'function') {
-        return new Promise((res) => requestAnimationFrame(() => res()));
+        return new Promise((res) => {
+          if (destroyed) {
+            res();
+            return;
+          }
+          const finish = (): void => {
+            waiters.delete(finish);
+            res();
+          };
+          waiters.add(finish);
+          requestAnimationFrame(() => finish());
+        });
       }
       return wait(16);
     }
@@ -301,6 +328,8 @@ export const openAddressingProbeStageView: CanvasView = {
         destroyed = true;
         for (const id of timers) window.clearTimeout(id);
         timers.clear();
+        for (const wake of [...waiters]) wake();
+        waiters.clear();
         canvas.replaceChildren();
       },
 

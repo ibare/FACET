@@ -89,7 +89,9 @@ last_verified: 2026-09-07
   - 예외인지 가리는 물음: **데이터가 순서를 정하는가, 저작자가 정하는가.**
     나무를 중위로 밟는 순서는 나무가 정하고, 배열의 어느 칸을 짚어 보일지는
     사람이 정한다.
-- **control-bar 는 `[CONTROL.replay, CONTROL.advance]` 다.** 라벨을 손으로 적지
+- **control-bar 는 `CONTROL_SET.piece` 다** (= `[CONTROL.replay, CONTROL.advance]`).
+  둘을 펴 적어도 값은 같지만 프리셋으로 통일한다 — 여든여섯 중 마흔하나가 편 채로
+  남아 저장소가 반반으로 갈렸다. 라벨을 손으로 적지
   않는다 — 같은 컨트롤을 아홉 번 적으면 문안이 갈라진다 (실제로 `reset` 이 29곳에
   쓰이는 동안 라벨이 세 갈래로 어긋나 있었다).
   - `CONTROL.replay` — 액션은 `reset` 이다. `ReactiveMechanism.reset()` 이 끝에
@@ -113,8 +115,42 @@ last_verified: 2026-09-07
   말을 마치고, 완료 상태 자체가 정보다. 그래서 뷰포트 진입 시 재생 같은 장치는
   두지 않는다 — 읽는 흐름을 방해하고, 여러 조각이 박힌 글에서는 독자가 도달하기
   전에 전부 끝나 있게 된다.
+- **`waitForInput` 은 받은 것의 종류를 본다.** `if ((await ctx.waitForInput()).type
+  !== 'advance') continue;` — 지금은 `ReactiveMechanism` 이 reset/speed 를 스스로
+  처리하고 `advance` 만 흘려보내므로 안 걸러도 돌아간다. 그러나 조각에 위젯 입력이
+  하나라도 붙는 순간 그것까지 걸음으로 세게 되고, 그때 어긋나는 것은 이 대목을
+  빠뜨린 조각뿐이다 (S-runtime 의 dispatch 단일 경로).
+- **`destroy()` 는 기다리던 promise 를 푼다.** 타이머와 프레임을 거두는 것만으로는
+  모자라다 — **취소된 tick 은 아예 불리지 않으므로** `destroyed` 를 보고 resolve
+  하는 길도 지나가지 않는다. stage 의 애니메이션 promise 를 projector 가 기다리고
+  있으니, 그것이 안 풀리면 `await ctx.emit` 이 영영 돌아오지 않아 unmount 된 뒤에도
+  알고리즘·projector·SVG 가 통째로 붙들린다.
+
+  ```ts
+  const waiters = new Set<() => void>();
+  // promise 마다: const finish = () => { waiters.delete(finish); resolve(); };
+  // destroy 에서: for (const wake of [...waiters]) wake(); waiters.clear();
+  ```
+
+  타입도 통과하고 예외도 안 나며 화면은 이미 사라진 뒤라 눈으로는 못 잡는다. 아홉이
+  이 구멍을 냈고 전부 `packages/core/test/destroy-releases-waiters.test.ts` 가
+  찾았다 — 새 조각은 그 전수 검사에 자동으로 들어온다.
+- **화면에 수를 넣을 때 그 뒤에 조사를 붙이지 않는다.** `'{n} 이 남았다'` 는 n 이
+  1 이냐 2 냐에 따라 틀어지고, 저작자는 데이터를 바꿀 때 그것을 못 본다. 조사가
+  붙지 않는 문형으로 쓴다 — `'남은 것은 {n}.'` 처럼 수를 문장 끝이나 콜론 뒤로
+  민다. 한국어에만 있는 제약이라 en 원본은 그대로 두면 된다 (C10).
+- **payload 스키마 주석과 실제 발신을 맞춘다** (C2). 주석이 `done {}` 인데 실제로는
+  필드를 싣고 있으면, 다음 사람이 그 필드를 없는 것으로 읽는다.
 - **`header` (title-block) 를 두지 않는다.** 제목은 글의 문단이 준다.
 - **`metrics` 를 두지 않는다.** 조각은 셀 것이 없으므로 `ctx.metric` 도 부르지 않는다.
+- **그림의 좌표는 stage 가 셈한다. `initialData` 에 넣지 않는다.** 어디에 무엇을
+  놓을지는 질문이 정하는 형태의 일부이고(위 MUST), 캔버스 비율이 바뀌면 뜻이
+  달라지는데 선언에 박힌 수는 그것을 따라오지 못한다. 배치 규칙(링에 고르게 ·
+  깊이별 열 · 값 순 정렬)을 stage 안에 두고 좌표는 캔버스에서 역산한다.
+  - 선언에 두는 것은 **구조**다 — 정점 · 간선 · 무게 · 출발점. 거기서 나오는
+    자리는 그림의 몫이다.
+  - `stepMs` 처럼 읽을 시간을 정하는 값은 예외로 선언에 둔다. 그것은 저작 결정이지
+    그림의 결과가 아니다.
 - **캔버스는 `CanvasView` 로 선언한다** — `canvas: { height: H }`. 가로는 러너가
   `PIECE_CANVAS_W` 로 정하므로 적지 않고, 세로만 내용이 정한다 (S-view).
 - **`layout` 을 선언하지 않는다.** 조각은 stage 와 controls 뿐이라 적을 것이

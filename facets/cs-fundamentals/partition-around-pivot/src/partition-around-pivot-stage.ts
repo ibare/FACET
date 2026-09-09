@@ -210,6 +210,14 @@ export const partitionAroundPivotStageView: CanvasView = {
     let destroyed = false;
     const rafs = new Set<number>();
 
+    /**
+     * 기다리다 만 것을 깨우는 자리. 타이머·프레임을 거두는 것만으로는 모자란다 —
+     * 취소된 tick 은 아예 불리지 않아 promise 를 풀 길이 사라지고, projector 가
+     * 그것을 기다리므로 `await ctx.emit` 이 영영 돌아오지 않는다. unmount 된 뒤에도
+     * 알고리즘과 SVG 트리가 통째로 붙들린다 (S-view).
+     */
+    const waiters = new Set<() => void>();
+
     const canRaf = typeof requestAnimationFrame === 'function';
 
     function animate(durMs: number, onFrame: (t: number) => void): Promise<void> {
@@ -218,16 +226,21 @@ export const partitionAroundPivotStageView: CanvasView = {
         return Promise.resolve();
       }
       return new Promise<void>((resolve) => {
+        const finish = (): void => {
+          waiters.delete(finish);
+          resolve();
+        };
+        waiters.add(finish);
         const start = Date.now();
         const tick = (): void => {
           if (destroyed) {
-            resolve();
+            finish();
             return;
           }
           const t = Math.min(1, (Date.now() - start) / durMs);
           onFrame(t);
           if (t >= 1) {
-            resolve();
+            finish();
             return;
           }
           const next = requestAnimationFrame(() => {
@@ -355,6 +368,8 @@ export const partitionAroundPivotStageView: CanvasView = {
           for (const id of rafs) cancelAnimationFrame(id);
         }
         rafs.clear();
+        for (const wake of [...waiters]) wake();
+        waiters.clear();
         root.remove();
       },
     };
