@@ -26,7 +26,15 @@ last_verified: 2026-04-21
 
 - algorithm 에 등장하는 phase 가 irs 에 없는 상태로 병합하지 않는다. (하이라이트 조용히 실패)
 - irs 에만 존재하고 algorithm 이 발신하지 않는 phase 는 dead code 다. 제거한다.
-- phase 값을 변수 / enum 우회로 이름을 가리지 않는다. 반드시 리터럴 문자열.
+- phase 값을 변수 / enum 우회로 이름을 가리지 않는다. **호출부에 리터럴 문자열로
+  나타나야 한다** — 이름이 코드에서 눈으로 추적되고 grep 으로 잡히는 것이 이 조항의
+  취지다.
+
+  `const phase = (name: string) => ctx.emit({ type: 'phase', payload: { phase: name } })`
+  같은 헬퍼는 **허용된다.** emit 지점만 보면 phase 가 변수이지만 호출부가 전부
+  `phase('compare')` 꼴이라 취지가 지켜지고, 매번 `type` 과 `silent` 를 적는 되풀이가
+  사라진다. facet 32 중 14 가 이 형태다. 금지하는 것은 `PHASES[i]` 나
+  `` `${prefix}-end` `` 처럼 **이름 자체가 조립되어 grep 으로 안 잡히는** 경우다.
 
 ## PREFER
 

@@ -41,6 +41,12 @@ last_verified: 2026-09-05
    비대칭이 영구화되고, `{facet:queue}` 봉투를 봐도 어느 큐인지 알 수 없다.
 3. **변별이 필요 없으면 붙이지 않는다.** 모든 스택이 LIFO 이므로 `facet:stack` 은
    그대로 둔다. 쓰지도 않을 변별어는 id 를 길게만 만든다.
+
+   **예외 — 널리 굳은 알고리즘 이름은 그 이름 그대로 쓴다.** 규칙 1 대로면
+   `facet:searchBinary` · `facet:sortMerge` 여야 하지만 `binarySearch` ·
+   `mergeSort` 로 둔다. "이진 탐색" 은 한 덩어리로 굳은 고유명이라 쪼개면 읽는
+   사람이 먼저 헷갈린다. 계열 열둘(`*Sort` 아홉 · `*Search` 셋)이 이 예외로
+   묶이며, 그룹핑은 카탈로그의 서브도메인이 이미 하고 있다.
 4. **계층을 id 문자열에 넣지 않는다.** `facet:queue:fifo` 같은 다중 세그먼트를 쓰지
    않는다. 근거 셋 —
    - 호스트 DSL 파서 (`packages/host-tiptap/src/markdown.ts`) 의 토큰 정규식이
