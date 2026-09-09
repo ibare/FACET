@@ -449,4 +449,36 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:cycleBlocksOrder', () =>
     import('@ffacet/algorithm-cycle-blocks-order').then((m) => m.registerCycleBlocksOrder()),
   );
+
+  // 그래프 조각 2차 — 최단 경로 · 최소 신장 트리 · 강한 연결 · 최대 유량.
+  registerFacetLoader('facet:pickNearestUnsettled', () =>
+    import('@ffacet/algorithm-pick-nearest-unsettled').then((m) => m.registerPickNearestUnsettled()),
+  );
+  registerFacetLoader('facet:negativeEdgeBreaks', () =>
+    import('@ffacet/algorithm-negative-edge-breaks').then((m) => m.registerNegativeEdgeBreaks()),
+  );
+  registerFacetLoader('facet:repeatRelaxAll', () =>
+    import('@ffacet/algorithm-repeat-relax-all').then((m) => m.registerRepeatRelaxAll()),
+  );
+  registerFacetLoader('facet:oneMoreRoundDrops', () =>
+    import('@ffacet/algorithm-one-more-round-drops').then((m) => m.registerOneMoreRoundDrops()),
+  );
+  registerFacetLoader('facet:throughMiddleNode', () =>
+    import('@ffacet/algorithm-through-middle-node').then((m) => m.registerThroughMiddleNode()),
+  );
+  registerFacetLoader('facet:growOneTree', () =>
+    import('@ffacet/algorithm-grow-one-tree').then((m) => m.registerGrowOneTree()),
+  );
+  registerFacetLoader('facet:sortEdgesAvoidCycle', () =>
+    import('@ffacet/algorithm-sort-edges-avoid-cycle').then((m) => m.registerSortEdgesAvoidCycle()),
+  );
+  registerFacetLoader('facet:mutuallyReachable', () =>
+    import('@ffacet/algorithm-mutually-reachable').then((m) => m.registerMutuallyReachable()),
+  );
+  registerFacetLoader('facet:bottleneckSetsFlow', () =>
+    import('@ffacet/algorithm-bottleneck-sets-flow').then((m) => m.registerBottleneckSetsFlow()),
+  );
+  registerFacetLoader('facet:undoByBackEdge', () =>
+    import('@ffacet/algorithm-undo-by-back-edge').then((m) => m.registerUndoByBackEdge()),
+  );
 }

@@ -229,6 +229,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/bottleneck-sets-flow:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/bottom-up-table:
     dependencies:
       '@ffacet/core':
@@ -486,6 +492,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/grow-one-tree:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/guess-by-value:
     dependencies:
       '@ffacet/core':
@@ -737,6 +749,18 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/mutually-reachable:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/negative-edge-breaks:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/node-holds-many:
     dependencies:
       '@ffacet/core':
@@ -744,6 +768,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/node-points-next:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/one-more-round-drops:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -786,6 +816,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/path-compression:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/pick-nearest-unsettled:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -902,6 +938,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/repeat-relax-all:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/requires-sorted:
     dependencies:
       '@ffacet/core':
@@ -1012,6 +1054,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/sort-edges-avoid-cycle:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/sort-stability:
     dependencies:
       '@ffacet/core':
@@ -1042,6 +1090,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/through-middle-node:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/traversal-order:
     dependencies:
       '@ffacet/core':
@@ -1067,6 +1121,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/two-color-conflict:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/undo-by-back-edge:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -1236,6 +1296,9 @@ importers:
       '@ffacet/algorithm-black-height-equal':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/black-height-equal
+      '@ffacet/algorithm-bottleneck-sets-flow':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/bottleneck-sets-flow
       '@ffacet/algorithm-bottom-up-table':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bottom-up-table
@@ -1329,6 +1392,9 @@ importers:
       '@ffacet/algorithm-grow-and-copy':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/grow-and-copy
+      '@ffacet/algorithm-grow-one-tree':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/grow-one-tree
       '@ffacet/algorithm-guess-by-value':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/guess-by-value
@@ -1434,12 +1500,21 @@ importers:
       '@ffacet/algorithm-messaging-pubsub':
         specifier: workspace:*
         version: link:../../facets/system-design/messaging-pubsub
+      '@ffacet/algorithm-mutually-reachable':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/mutually-reachable
+      '@ffacet/algorithm-negative-edge-breaks':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/negative-edge-breaks
       '@ffacet/algorithm-node-holds-many':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/node-holds-many
       '@ffacet/algorithm-node-points-next':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/node-points-next
+      '@ffacet/algorithm-one-more-round-drops':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/one-more-round-drops
       '@ffacet/algorithm-one-way-edge':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/one-way-edge
@@ -1461,6 +1536,9 @@ importers:
       '@ffacet/algorithm-path-compression':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/path-compression
+      '@ffacet/algorithm-pick-nearest-unsettled':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/pick-nearest-unsettled
       '@ffacet/algorithm-pigeonhole-collision':
         specifier: workspace:*
         version: link:../../facets/security/pigeonhole-collision
@@ -1500,6 +1578,9 @@ importers:
       '@ffacet/algorithm-relink-insert':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/relink-insert
+      '@ffacet/algorithm-repeat-relax-all':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/repeat-relax-all
       '@ffacet/algorithm-requires-sorted':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/requires-sorted
@@ -1542,6 +1623,9 @@ importers:
       '@ffacet/algorithm-signature-on-hash':
         specifier: workspace:*
         version: link:../../facets/security/signature-on-hash
+      '@ffacet/algorithm-sort-edges-avoid-cycle':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/sort-edges-avoid-cycle
       '@ffacet/algorithm-sort-stability':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/sort-stability
@@ -1557,6 +1641,9 @@ importers:
       '@ffacet/algorithm-take-best-now':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/take-best-now
+      '@ffacet/algorithm-through-middle-node':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/through-middle-node
       '@ffacet/algorithm-tokenization':
         specifier: workspace:*
         version: link:../../facets/compilers/tokenization
@@ -1575,6 +1662,9 @@ importers:
       '@ffacet/algorithm-two-color-conflict':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/two-color-conflict
+      '@ffacet/algorithm-undo-by-back-edge':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/undo-by-back-edge
       '@ffacet/algorithm-union-by-rank':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/union-by-rank
