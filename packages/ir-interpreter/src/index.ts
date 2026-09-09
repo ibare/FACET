@@ -197,6 +197,17 @@ export class IRInterpreter {
             return (l as number) * (r as number);
           case '/':
             return (l as number) / (r as number);
+          // 정수 나눗셈. 파이썬의 `//` 와 javascript transpiler 의
+          // `Math.floor(a / b)` 가 둘 다 내림이므로 인터프리터도 내림으로 맞춘다.
+          // 이 case 가 없으면 `mid = (lo + hi) // 2` 가 조용히 undefined 가 되어
+          // 문법만 성한 코드가 셈은 틀리게 돈다.
+          //
+          // 부호 전제: 지금 IR 들은 피연산자가 늘 비음수(자리 번호 셈)라 내림과
+          // 0 방향 절단이 같은 값이다. 음수를 쓰는 IR 이 생기면 `/` 로 옮기는
+          // cpp · java · csharp 와 갈린다 (`-7 // 2` → 여기는 -4, 저쪽은 -3).
+          // 그때는 언어별 emit 과 이 자리를 함께 정해야 한다.
+          case '//':
+            return Math.floor((l as number) / (r as number));
           case '%':
             return (l as number) % (r as number);
           case '<':
