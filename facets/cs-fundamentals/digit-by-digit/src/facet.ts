@@ -26,7 +26,7 @@ export const digitByDigitFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'digit-by-digit-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece ?? [] },
+    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
   },
   messages: {
     'caption.start': {

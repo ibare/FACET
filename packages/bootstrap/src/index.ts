@@ -515,4 +515,27 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:maxFlow', () =>
     import('@ffacet/algorithm-max-flow').then((m) => m.registerMaxFlow()),
   );
+
+  // 지도학습 조각 1차 — 선형 회귀 둘 · 로지스틱 둘 · k-NN 둘 · 의사결정 트리 하나.
+  registerFacetLoader('facet:residualDistance', () =>
+    import('@ffacet/algorithm-residual-distance').then((m) => m.registerResidualDistance()),
+  );
+  registerFacetLoader('facet:leastSquares', () =>
+    import('@ffacet/algorithm-least-squares').then((m) => m.registerLeastSquares()),
+  );
+  registerFacetLoader('facet:squashToProbability', () =>
+    import('@ffacet/algorithm-squash-to-probability').then((m) => m.registerSquashToProbability()),
+  );
+  registerFacetLoader('facet:decisionBoundary', () =>
+    import('@ffacet/algorithm-decision-boundary').then((m) => m.registerDecisionBoundary()),
+  );
+  registerFacetLoader('facet:voteByNeighbors', () =>
+    import('@ffacet/algorithm-vote-by-neighbors').then((m) => m.registerVoteByNeighbors()),
+  );
+  registerFacetLoader('facet:kChangesBoundary', () =>
+    import('@ffacet/algorithm-k-changes-boundary').then((m) => m.registerKChangesBoundary()),
+  );
+  registerFacetLoader('facet:splitByQuestion', () =>
+    import('@ffacet/algorithm-split-by-question').then((m) => m.registerSplitByQuestion()),
+  );
 }

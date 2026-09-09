@@ -1420,7 +1420,49 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ml-basics/decision-boundary:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/k-changes-boundary:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/least-squares:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ml-basics/linear-regression:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/residual-distance:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/split-by-question:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/squash-to-probability:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/vote-by-neighbors:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -1614,6 +1656,9 @@ importers:
       '@ffacet/algorithm-cycle-blocks-order':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/cycle-blocks-order
+      '@ffacet/algorithm-decision-boundary':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/decision-boundary
       '@ffacet/algorithm-depth-doubles-count':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/depth-doubles-count
@@ -1734,9 +1779,15 @@ importers:
       '@ffacet/algorithm-ip-routing':
         specifier: workspace:*
         version: link:../../facets/network/ip-routing
+      '@ffacet/algorithm-k-changes-boundary':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/k-changes-boundary
       '@ffacet/algorithm-kruskal-mst':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/kruskal-mst
+      '@ffacet/algorithm-least-squares':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/least-squares
       '@ffacet/algorithm-linear-regression':
         specifier: workspace:*
         version: link:../../facets/ml-basics/linear-regression
@@ -1866,6 +1917,9 @@ importers:
       '@ffacet/algorithm-requires-sorted':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/requires-sorted
+      '@ffacet/algorithm-residual-distance':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/residual-distance
       '@ffacet/algorithm-rotate-to-balance':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/rotate-to-balance
@@ -1914,12 +1968,18 @@ importers:
       '@ffacet/algorithm-sort-stability':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/sort-stability
+      '@ffacet/algorithm-split-by-question':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/split-by-question
       '@ffacet/algorithm-split-until-one':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/split-until-one
       '@ffacet/algorithm-split-when-full':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/split-when-full
+      '@ffacet/algorithm-squash-to-probability':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/squash-to-probability
       '@ffacet/algorithm-stack':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/stack
@@ -1959,6 +2019,9 @@ importers:
       '@ffacet/algorithm-union-find':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/union-find
+      '@ffacet/algorithm-vote-by-neighbors':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/vote-by-neighbors
       '@ffacet/algorithm-walk-per-character':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/walk-per-character
