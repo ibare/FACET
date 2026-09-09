@@ -41,8 +41,16 @@ last_verified: 2026-09-05
 - Projector 는 시각 상태를 독자적으로 관리해도 되지만, **데이터 원본은 알고리즘의 `ctx.data`** 이며 Projector 는 필요한 만큼만 shadow-copy 해 추적한다.
 - 짝 원칙: View → Algorithm/Mechanism 의 사용자 입력 채널은 **`mechanism.dispatch` 단일 경로**다. control-bar 클릭은 `mechanism.onControl` 로, View 위젯 입력은 `mechanism.dispatch` 로 직교 분리되며, 두 경로 외의 우회 경로 (View 가 algorithm/mechanism 을 직접 참조 등) 를 만들지 않는다.
 
-## 6. View Catalog 재사용 우선
+## 6. 시각화는 facet 이 각자 그린다
 
-- 새 facet 을 추가할 때, 기존 View (`packages/core/src/views/*` + `@ffacet/view-code`) 로 표현 가능하면 **새 View 를 만들지 않는다**.
-- 새 View 는 둘 이상의 facet 이 공유할 수 있을 때만 만든다. 한 facet 전용 시각화는 facet 패키지 안에 두되, 재사용성이 생기면 Catalog 로 승격한다.
+- **stage view 는 예외가 아니라 기본이다.** 새 facet 은 자기 시각화를 자기 패키지
+  안(`facets/<domain>/<name>/src/<name>-stage.ts`)에 직접 그린다.
+- **공유 View 를 새로 만들지 않는다.** 빌트인 카탈로그(`packages/core/src/views/*`)는
+  코드 재사용과 품질 상향을 노린 장치였으나, 대량 생산에서 **유사 화면 복제**를 낳아
+  실패로 판정됐다 (2026-09-09). 같은 부속을 물려받은 facet 들이 서로 닮은 화면이
+  되었고, 그것은 시각화의 값을 깎는다. 걷어낼 예정이며 그것을 쓰는 완제품 스물다섯도
+  다시 만든다.
+- **예외는 둘.** `control-bar` 는 화면이 아니라 조작 경로다 — 러너가 mechanism 을
+  붙이는 자리라 대체할 수 없다. `code-view` 는 완제품의 산출물 그 자체다(IR 하나가
+  여섯 언어로 갈리는 것을 보이는 패널).
 - View 는 색상 / 폰트 / 여백을 `design-tokens` 경유로 획득한다. 하드코딩 금지.

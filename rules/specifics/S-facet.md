@@ -28,9 +28,23 @@ last_verified: 2026-09-05
 
 ## stage view 파일이란
 
-`*-stage.ts` 는 빌트인 view (`packages/core/src/views/*` — bars / array-cells / linked-list / graph-canvas / text-display 등) 로 표현이 불가능한 facet 고유 시각화를 단일 SVG 캔버스 한 폭에 직접 그리는 view 모듈이다. projector 가 호출할 메서드 인터페이스 (`init`, `signalStepBegin` / `signalStepEnd` / `signalConverged` 등) 를 노출하고, 디자인 토큰만으로 색을 결정하며 (S-view 결정 트리 준수), 좌표계·레이아웃·캡션 영역·참조 칩 배치를 담당한다. projector 안에 SVG 렌더 코드를 1000+ LOC 두는 것은 책임 분리 위반이라 별도 파일로 분기한다.
+`*-stage.ts` 는 facet 의 시각화를 단일 SVG 캔버스 한 폭에 직접 그리는 view 모듈이다.
+projector 가 호출할 메서드 인터페이스를 노출하고, 디자인 토큰만으로 색을 결정하며
+(S-view 결정 트리 준수), 좌표계·레이아웃·캡션 영역·배치를 담당한다. projector 안에
+SVG 렌더 코드를 1000+ LOC 두는 것은 책임 분리 위반이라 별도 파일로 분기한다.
 
-현재 stage view 를 둔 facet (15종): `array` / `asymmetric-rsa` / `caching-cdn` / `conditional-statement` / `context-switching` / `hash-table-chaining` / `ip-routing` / `linear-regression` / `linked-list-singly` / `lru-cache` / `matrix-transform-2d` / `messaging-pubsub` / `relational-tables-and-keys` / `stack` / `tokenization`.
+**stage view 는 예외가 아니라 기본이다.** 한때 빌트인 view (`bar-chart` ·
+`tree-layout` · `graph-layout` · `linked-list-chain` · `conveyor-queue` ·
+`ordered-list` · `goal-preview` · `pass-tracker` · `snapshot-strip` ·
+`text-display` · `title-block`) 로 표현되지 않는 경우에만 두는 것으로 적혀 있었고,
+그때는 여기에 그런 facet 의 목록도 있었다. 지금은 105 중 101 이 stage view 를
+가지므로 목록에 뜻이 없다.
+
+빌트인은 코드 재사용을 노린 장치였으나 **대량 생산에서 유사 화면 복제를 낳아 실패로
+판정됐다** (2026-09-09). 걷어낼 예정이고, 그것을 쓰는 완제품 스물다섯도 다시 만든다.
+새 facet 은 빌트인을 쓰지 않는다 — 쓰는 것은 둘뿐이다. `control-bar` 는 화면이 아니라
+조작 경로이고(러너가 mechanism 을 붙이는 자리), `code-view` 는 완제품의 산출물
+그 자체다.
 
 ## MUST
 
