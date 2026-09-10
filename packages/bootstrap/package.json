@@ -124,6 +124,7 @@
     "@ffacet/algorithm-ip-routing": "workspace:*",
     "@ffacet/algorithm-kruskal-mst": "workspace:*",
     "@ffacet/algorithm-linear-regression": "workspace:*",
+    "@ffacet/algorithm-pca": "workspace:*",
     "@ffacet/algorithm-dbscan": "workspace:*",
     "@ffacet/algorithm-hierarchical": "workspace:*",
     "@ffacet/algorithm-kmeans": "workspace:*",

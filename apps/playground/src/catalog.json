@@ -838,7 +838,7 @@
             { "id": "kmeans", "name": "k-평균", "facetId": "facet:kmeans" },
             { "id": "hierarchical", "name": "계층 클러스터링", "facetId": "facet:hierarchical" },
             { "id": "dbscan", "name": "DBSCAN", "facetId": "facet:dbscan" },
-            { "id": "pca", "name": "PCA" },
+            { "id": "pca", "name": "PCA", "facetId": "facet:pca" },
             { "id": "tsne", "name": "t-SNE" },
             { "id": "assign-then-move", "name": "할당과 갱신", "desc": "가까운 곳에 붙이고 가운데로 옮긴다", "facetId": "facet:assignThenMove", "kind": "piece", "origin": "kmeans" },
             { "id": "k-must-be-given", "name": "군집 수 선택", "desc": "몇 무리인지 미리 정해야 한다", "facetId": "facet:kMustBeGiven", "kind": "piece", "origin": "kmeans" },

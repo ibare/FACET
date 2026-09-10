@@ -1,0 +1,394 @@
+/**
+ * PCA 완제품 선언.
+ *
+ * 블록은 셋뿐이다 — `stage` · `controls` · `codePanel`. 제목 블록을 두지
+ * 않는다 (이름은 글이 준다). 산점도 · 퍼짐 자 · 다이얼 · 자취 표 · 원장은
+ * 빌트인 view 를 빌리지 않고 stage 가 직접 그린다 (원칙 6).
+ *
+ * 이 완제품이 완제품인 까닭은 셋이 다 있어서다.
+ *   - IR `ir:pca` 하나가 여섯 언어로 갈린다. 거듭제곱 반복 한 걸음과 공분산이
+ *     통째로 펼쳐진다.
+ *   - **손잡이 둘이 논증을 진다.** 표준화 스위치가 없으면 "주성분은 축의
+ *     단위에도 매여 있다" 를 말할 길이 없고, 축 고르기가 없으면 "내려 찍으면
+ *     무엇을 잃는가" 를 보일 길이 없다.
+ *   - 조각 둘(directionOfMostSpread · projectAndLose)이 **축의 단위가 같은
+ *     자료**로 한 장면씩 말한 것을 잇는다. 여기서는 단위가 다른 자료를 주고,
+ *     그러면 답이 통째로 달라지는 것을 보인다.
+ *
+ * 식별자 (C1): `frame:` `matrix:` `vector:` `turn:` `axis:` `ledger:`.
+ *
+ * 자료는 점 열둘이고 x 는 0~100 대, y 는 0~10 대다. 두 축은 음의 상관
+ * (상관계수 −0.8334) 이라, 표준화하면 주축이 정확히 −45° 로 간다. 좌표만
+ * 두고 가운데 · 공분산 · 주축 · 화면 자리는 전부 algorithm 과 stage 가 이
+ * 좌표에서 셈한다.
+ */
+
+import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
+
+/**
+ * 점 열둘. x 가 12~95, y 가 2.1~7.8 — **같은 자료인데 축의 단위가 다르다.**
+ * 원래 단위로 풀면 x 의 퍼짐이 y 의 16 배라 x 가 이기고, 두 축을 각자의
+ * 표준편차로 나누면 상관계수가 그대로 답이 되어 −45° 로 간다.
+ */
+const POINTS: Array<{ x: number; y: number }> = [
+  { x: 12, y: 7.2 },
+  { x: 20, y: 6.1 },
+  { x: 28, y: 7.8 },
+  { x: 35, y: 5.4 },
+  { x: 43, y: 6.9 },
+  { x: 50, y: 4.8 },
+  { x: 58, y: 6.2 },
+  { x: 65, y: 3.9 },
+  { x: 73, y: 5.1 },
+  { x: 80, y: 3.2 },
+  { x: 88, y: 4.4 },
+  { x: 95, y: 2.1 },
+];
+
+export const pcaFacet: FacetJson = {
+  id: 'facet:pca',
+  title: {
+    en: 'PCA — the widest direction depends on your units',
+    ko: 'PCA — 가장 넓게 퍼진 방향은 축의 단위에 매여 있다',
+    ar: 'تحليل المكوّنات الرئيسية — أوسع اتجاه يتعلق بوحدات المحاور',
+    es: 'PCA: la dirección más ancha depende de las unidades',
+    fr: "ACP — la direction la plus large dépend des unités",
+    hi: 'PCA — सबसे चौड़ी दिशा आपकी इकाइयों पर निर्भर करती है',
+    id: 'PCA — arah paling lebar bergantung pada satuan sumbu',
+    pt: 'PCA — a direção mais larga depende das unidades',
+  },
+  description: {
+    en: 'Power iteration finds the principal axis; standardizing the axes turns it by 42 degrees',
+    ko: '거듭제곱 반복으로 주축을 찾고, 두 축을 표준화하면 그 주축이 42도 돌아간다',
+    ar: 'تكرار القوى يجد المحور الرئيسي، وتوحيد المحاور يديره 42 درجة',
+    es: 'La iteración de potencias halla el eje principal; estandarizar los ejes lo gira 42 grados',
+    fr: "La méthode de la puissance trouve l'axe principal ; standardiser les axes le fait tourner de 42 degrés",
+    hi: 'घात पुनरावृत्ति मुख्य अक्ष खोजती है; अक्षों को मानकीकृत करने पर वह 42 अंश घूम जाती है',
+    id: 'Iterasi pangkat menemukan sumbu utama; menstandardisasi sumbu memutarnya 42 derajat',
+    pt: 'A iteração de potência acha o eixo principal; padronizar os eixos o gira 42 graus',
+  },
+  algorithm: 'module:pca',
+  projector: 'module:pcaProjector',
+  initialData: {
+    type: 'pca',
+    points: POINTS,
+    maxSteps: 24,
+    /** 단위 벡터 두 끝 사이가 이보다 가까우면 멎은 것으로 본다. */
+    convergenceEpsilon: 1e-4,
+    stepMs: 380,
+  },
+  shuffleOnReset: false,
+  layout: {
+    type: 'column',
+    gap: 8,
+    children: [{ ref: 'stage', padding: '4px 0' }, { ref: 'controls' }, { ref: 'codePanel' }],
+  },
+  blocks: {
+    stage: { type: 'pca-stage' },
+    controls: {
+      type: 'control-bar',
+      controls: [
+        ...CONTROL_SET.playback,
+        {
+          widget: 'segmented-slider',
+          action: 'standardize',
+          name: 'standardize',
+          label: {
+            en: 'Axis units',
+            ko: '축의 단위',
+            ar: 'وحدات المحاور',
+            es: 'Unidades de los ejes',
+            fr: 'Unités des axes',
+            hi: 'अक्षों की इकाइयाँ',
+            id: 'Satuan sumbu',
+            pt: 'Unidades dos eixos',
+          },
+          segments: [
+            {
+              value: 0,
+              label: {
+                en: 'As given',
+                ko: '그대로',
+                ar: 'كما هي',
+                es: 'Tal cual',
+                fr: 'Telles quelles',
+                hi: 'जैसी हैं',
+                id: 'Apa adanya',
+                pt: 'Como estão',
+              },
+              default: true,
+            },
+            {
+              value: 1,
+              label: {
+                en: 'Standardized',
+                ko: '표준화',
+                ar: 'موحّدة',
+                es: 'Estandarizadas',
+                fr: 'Standardisées',
+                hi: 'मानकीकृत',
+                id: 'Terstandardisasi',
+                pt: 'Padronizadas',
+              },
+            },
+          ],
+        },
+        {
+          widget: 'segmented-slider',
+          action: 'axis',
+          name: 'axis',
+          label: {
+            en: 'Project onto',
+            ko: '사영할 축',
+            ar: 'الإسقاط على',
+            es: 'Proyectar sobre',
+            fr: 'Projeter sur',
+            hi: 'किस पर प्रक्षेप',
+            id: 'Proyeksikan ke',
+            pt: 'Projetar em',
+          },
+          segments: [
+            {
+              value: 1,
+              label: {
+                en: '1st',
+                ko: '제1',
+                ar: 'الأول',
+                es: '1.º',
+                fr: '1er',
+                hi: 'पहली',
+                id: 'Ke-1',
+                pt: '1º',
+              },
+              default: true,
+            },
+            {
+              value: 2,
+              label: {
+                en: '2nd',
+                ko: '제2',
+                ar: 'الثاني',
+                es: '2.º',
+                fr: '2e',
+                hi: 'दूसरी',
+                id: 'Ke-2',
+                pt: '2º',
+              },
+            },
+          ],
+        },
+      ],
+      metrics: [
+        {
+          name: 'power-step-count',
+          label: {
+            en: 'Moving steps',
+            ko: '움직인 걸음',
+            ar: 'الخطوات المتحركة',
+            es: 'Pasos con giro',
+            fr: 'Pas qui bougent',
+            hi: 'गतिशील चरण',
+            id: 'Langkah bergerak',
+            pt: 'Passos que giram',
+          },
+          initial: 0,
+        },
+        {
+          name: 'axis-angle-deg',
+          label: {
+            en: 'Axis angle (°)',
+            ko: '축의 각도 (°)',
+            ar: 'زاوية المحور (°)',
+            es: 'Ángulo del eje (°)',
+            fr: "Angle de l'axe (°)",
+            hi: 'अक्ष का कोण (°)',
+            id: 'Sudut sumbu (°)',
+            pt: 'Ângulo do eixo (°)',
+          },
+          initial: 0,
+        },
+        {
+          name: 'variance-share',
+          label: {
+            en: 'Share held (%)',
+            ko: '담는 몫 (%)',
+            ar: 'الحصة المحمولة (%)',
+            es: 'Proporción contenida (%)',
+            fr: 'Part contenue (%)',
+            hi: 'समाहित हिस्सा (%)',
+            id: 'Porsi tertampung (%)',
+            pt: 'Parcela contida (%)',
+          },
+          initial: 0,
+        },
+      ],
+    },
+    codePanel: {
+      type: 'code-view',
+      label: {
+        en: 'Code',
+        ko: '코드',
+        ar: 'الشيفرة',
+        es: 'Código',
+        fr: 'Code',
+        hi: 'कोड',
+        id: 'Kode',
+        pt: 'Código',
+      },
+      ir: 'ir:pca',
+    },
+  },
+  messages: {
+    'label.frameRaw': {
+      en: 'Original units',
+      ko: '원래 단위',
+      ar: 'الوحدات الأصلية',
+      es: 'Unidades originales',
+      fr: "Unités d'origine",
+      hi: 'मूल इकाइयाँ',
+      id: 'Satuan asli',
+      pt: 'Unidades originais',
+    },
+    'label.frameStd': {
+      en: 'Standardized',
+      ko: '표준화',
+      ar: 'موحّد قياسيًا',
+      es: 'Estandarizado',
+      fr: 'Standardisé',
+      hi: 'मानकीकृत',
+      id: 'Terstandardisasi',
+      pt: 'Padronizado',
+    },
+    'label.spreadRatio': {
+      en: 'The spread in x is {n} times the spread in y.',
+      ko: 'x 의 퍼짐은 y 의 {n} 배.',
+      ar: 'انتشار x يساوي {n} ضعف انتشار y.',
+      es: 'La dispersión en x es {n} veces la de y.',
+      fr: "L'étalement en x vaut {n} fois celui en y.",
+      hi: 'x का फैलाव y के फैलाव का {n} गुना है।',
+      id: 'Sebaran x adalah {n} kali sebaran y.',
+      pt: 'A dispersão em x é {n} vezes a de y.',
+    },
+    'label.axis1': {
+      en: '1st principal axis',
+      ko: '제1 주성분',
+      ar: 'المحور الرئيسي الأول',
+      es: 'Primer eje principal',
+      fr: '1er axe principal',
+      hi: 'प्रथम मुख्य अक्ष',
+      id: 'Sumbu utama ke-1',
+      pt: '1º eixo principal',
+    },
+    'label.axis2': {
+      en: '2nd principal axis',
+      ko: '제2 주성분',
+      ar: 'المحور الرئيسي الثاني',
+      es: 'Segundo eje principal',
+      fr: '2e axe principal',
+      hi: 'द्वितीय मुख्य अक्ष',
+      id: 'Sumbu utama ke-2',
+      pt: '2º eixo principal',
+    },
+    'label.dial': {
+      en: 'Power iteration',
+      ko: '거듭제곱 반복',
+      ar: 'تكرار القوى',
+      es: 'Iteración de potencias',
+      fr: 'Méthode de la puissance',
+      hi: 'घात पुनरावृत्ति',
+      id: 'Iterasi pangkat',
+      pt: 'Iteração de potência',
+    },
+    'label.colStep': {
+      en: 'Step',
+      ko: '걸음',
+      ar: 'خطوة',
+      es: 'Paso',
+      fr: 'Pas',
+      hi: 'चरण',
+      id: 'Langkah',
+      pt: 'Passo',
+    },
+    'label.colAngle': {
+      en: 'Angle',
+      ko: '각도',
+      ar: 'الزاوية',
+      es: 'Ángulo',
+      fr: 'Angle',
+      hi: 'कोण',
+      id: 'Sudut',
+      pt: 'Ângulo',
+    },
+    'label.colTurn': {
+      en: 'Turn',
+      ko: '돌아간 정도',
+      ar: 'مقدار الدوران',
+      es: 'Giro',
+      fr: 'Rotation',
+      hi: 'घुमाव',
+      id: 'Putaran',
+      pt: 'Giro',
+    },
+    'label.settled': {
+      en: 'settled',
+      ko: '멎음',
+      ar: 'استقر',
+      es: 'estable',
+      fr: 'stabilisé',
+      hi: 'स्थिर',
+      id: 'berhenti',
+      pt: 'estável',
+    },
+    'label.ledger': {
+      en: 'What each frame answers',
+      ko: '두 틀이 낸 답',
+      ar: 'ما يجيب به كل إطار',
+      es: 'Lo que responde cada marco',
+      fr: 'Ce que répond chaque cadre',
+      hi: 'हर ढाँचे का उत्तर',
+      id: 'Jawaban tiap kerangka',
+      pt: 'O que cada referencial responde',
+    },
+    'label.colFrame': {
+      en: 'Frame',
+      ko: '틀',
+      ar: 'الإطار',
+      es: 'Marco',
+      fr: 'Cadre',
+      hi: 'ढाँचा',
+      id: 'Kerangka',
+      pt: 'Referencial',
+    },
+    'label.colShare': {
+      en: 'Share',
+      ko: '담는 몫',
+      ar: 'الحصة',
+      es: 'Proporción',
+      fr: 'Part',
+      hi: 'हिस्सा',
+      id: 'Porsi',
+      pt: 'Parcela',
+    },
+    'label.colSteps': {
+      en: 'Moving steps',
+      ko: '움직인 걸음',
+      ar: 'الخطوات المتحركة',
+      es: 'Pasos con giro',
+      fr: 'Pas qui bougent',
+      hi: 'गतिशील चरण',
+      id: 'Langkah bergerak',
+      pt: 'Passos que giram',
+    },
+    'label.deltaNote': {
+      en: 'Same twelve points — the axis turns {n} degrees.',
+      ko: '같은 점 열둘인데 주축이 {n} 도 돌아간다.',
+      ar: 'النقاط الاثنتا عشرة نفسها — المحور يدور {n} درجة.',
+      es: 'Los mismos doce puntos: el eje gira {n} grados.',
+      fr: "Les mêmes douze points — l'axe tourne de {n} degrés.",
+      hi: 'वही बारह बिंदु — अक्ष {n} अंश घूम जाती है।',
+      id: 'Dua belas titik yang sama — sumbunya berputar {n} derajat.',
+      pt: 'Os mesmos doze pontos — o eixo gira {n} graus.',
+    },
+  },
+};
