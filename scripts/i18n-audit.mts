@@ -44,6 +44,8 @@ export type FacetFacts = {
   descLocales: Set<string>;
   /** 코드가 부르는데 facet.ts 에도 프레임워크 번들에도 없는 키 */
   undeclared: string[];
+  /** `<키> <locale>` → 그 문안이 쓴 플레이스홀더를 정렬해 이은 것. 없으면 빈 문자열. */
+  placeholders: Map<string, string>;
 };
 
 /** `이름: {` 블록의 중괄호 균형을 세어 잘라낸다. */
@@ -69,17 +71,71 @@ function localesIn(seg: string): Set<string> {
   return out;
 }
 
-/** messages 블록 안의 각 키가 채운 locale. */
-function keyLocalesOf(messagesSeg: string): Map<string, Set<string>> {
-  const out = new Map<string, Set<string>>();
-  // 최상위 키만 — 한 단계 안쪽의 `{ ... }` 가 그 키의 locale 표다.
-  const re = /^\s{4}(?:'([^']+)'|([A-Za-z][\w.]*))\s*:\s*\{/gm;
-  for (const m of messagesSeg.matchAll(re)) {
-    const key = m[1] ?? m[2]!;
-    const from = m.index! + m[0].length - 1;
-    out.set(key, localesIn(block(messagesSeg.slice(from), '')));
+/** 한 문안이 쓴 `{이름}` 을 정렬해 잇는다. 번역이 빠뜨렸는지 견주는 자다. */
+function placeholdersOf(text: string): string {
+  return [...new Set([...text.matchAll(/\{(\w+)\}/g)].map((m) => m[1]!))].sort().join(',');
+}
+
+/** 한 locale 표에서 `locale: '문안'` 을 뽑는다. 여는 따옴표에 맞춰 닫는 것을 찾는다. */
+function entriesOf(table: string): Map<string, string> {
+  const out = new Map<string, string>();
+  for (const l of LOCALES) {
+    const m = new RegExp(`\\b${l}\\s*:\\s*(['"\`])`).exec(table);
+    if (!m) continue;
+    const q = m[1]!;
+    const from = m.index + m[0].length;
+    let s = '';
+    for (let i = from; i < table.length; i += 1) {
+      if (table[i] === '\\\\') { s += table[i + 1] ?? ''; i += 1; continue; }
+      if (table[i] === q) break;
+      s += table[i];
+    }
+    out.set(l, s);
   }
   return out;
+}
+
+/**
+ * 세그먼트 안의 LocaleStr 표를 전부 찾는다. **이름이 아니라 모양으로 가른다** —
+ * `키: { ... }` 블록이 `en:` 을 직접 가지면 LocaleStr 이고, 아니면 그 안으로
+ * 한 단계 더 들어간다.
+ *
+ * 처음에는 `messages` 안의 들여쓰기 4칸 키만 셌는데, `blocks` 안의 메트릭·코드
+ * 패널 `label` 도 LocaleStr 이라는 것을 배치 도중에 알았다. 353 개가 거기 있었고
+ * 그중 113 개가 두 언어 모자랐다. **한 자리만 이름으로 짚으면 나머지 자리는
+ * 영영 안 보인다.**
+ *
+ * 모양으로 가르되 중괄호 균형을 세어 자른다. `{ ... }` 를 정규식 한 방으로 잡으려
+ * 하면 플레이스홀더 `{k}` 가 든 문안에서 끊겨 그 표를 통째로 놓친다.
+ */
+function scanLocaleTables(
+  seg: string,
+  prefix: string,
+  locales: Map<string, Set<string>>,
+  placeholders: Map<string, string>,
+): void {
+  const re = /(?:'([^']+)'|([A-Za-z][\w.]*))\s*:\s*\{/g;
+  for (const m of seg.matchAll(re)) {
+    const key = m[1] ?? m[2]!;
+    const table = block(seg.slice(m.index! + m[0].length - 1), '');
+    if (table === '') continue;
+    const name = prefix === '' ? key : `${prefix}.${key}`;
+    const here = localesIn(table);
+    if (here.has('en')) {
+      locales.set(name, here);
+      for (const [l, text] of entriesOf(table)) placeholders.set(`${name} ${l}`, placeholdersOf(text));
+    } else {
+      // LocaleStr 이 아니라 구조다. 한 단계 안으로.
+      scanLocaleTables(table.slice(1, -1), name, locales, placeholders);
+    }
+  }
+}
+
+function keyLocalesOf(seg: string, prefix = ''): { locales: Map<string, Set<string>>; placeholders: Map<string, string> } {
+  const locales = new Map<string, Set<string>>();
+  const placeholders = new Map<string, string>();
+  scanLocaleTables(seg, prefix, locales, placeholders);
+  return { locales, placeholders };
 }
 
 const CALL = /\b(?:tr|t)\(\s*'([^']+)'/g;
@@ -105,7 +161,11 @@ export function collect(): FacetFacts[] {
       if (!existsSync(facetFile)) continue;
       const text = readFileSync(facetFile, 'utf8');
       const messagesSeg = block(text, 'messages:');
-      const keyLocales = keyLocalesOf(messagesSeg);
+      const { locales: keyLocales, placeholders } = keyLocalesOf(messagesSeg);
+      // blocks 안의 메트릭·코드 패널 label 도 LocaleStr 이다.
+      const fromBlocks = keyLocalesOf(block(text, 'blocks:'), 'blocks');
+      for (const [k, v] of fromBlocks.locales) keyLocales.set(k, v);
+      for (const [k, v] of fromBlocks.placeholders) placeholders.set(k, v);
 
       // 코드가 부르는 키를 모은다.
       const used = new Set<string>();
@@ -130,6 +190,7 @@ export function collect(): FacetFacts[] {
         titleLocales: localesIn(block(text, 'title:')),
         descLocales: localesIn(block(text, 'description:')),
         undeclared: [...used].filter((k) => !keyLocales.has(k) && !framework.has(k)).sort(),
+        placeholders,
       });
     }
   }
