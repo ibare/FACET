@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@ffacet/algorithm-bubble-sort": "workspace:*",
+    "@ffacet/authoring": "workspace:*",
     "@ffacet/bootstrap": "workspace:*",
     "@ffacet/core": "workspace:*",
     "@ffacet/host-tiptap": "workspace:*",

@@ -11,6 +11,9 @@ importers:
       '@ffacet/algorithm-bubble-sort':
         specifier: workspace:*
         version: link:facets/cs-fundamentals/bubble-sort
+      '@ffacet/authoring':
+        specifier: workspace:*
+        version: link:packages/authoring
       '@ffacet/bootstrap':
         specifier: workspace:*
         version: link:packages/bootstrap
