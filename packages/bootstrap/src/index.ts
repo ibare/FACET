@@ -623,8 +623,11 @@ export function bootstrapFacet(): void {
     import('@ffacet/algorithm-dbscan').then((m) => m.registerDbscan()),
   );
 
-  // 비지도학습 완제품 2차 — PCA. (t-SNE 는 아래 tasks 문서 참조)
+  // 비지도학습 완제품 2차 — PCA · t-SNE.
   registerFacetLoader('facet:pca', () =>
     import('@ffacet/algorithm-pca').then((m) => m.registerPca()),
+  );
+  registerFacetLoader('facet:tsne', () =>
+    import('@ffacet/algorithm-tsne').then((m) => m.registerTsne()),
   );
 }

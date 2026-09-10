@@ -1804,6 +1804,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/transpiler-typescript
 
+  facets/ml-basics/tsne:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ml-basics/vote-by-neighbors:
     dependencies:
       '@ffacet/core':
@@ -2427,6 +2433,9 @@ importers:
       '@ffacet/algorithm-try-and-undo':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/try-and-undo
+      '@ffacet/algorithm-tsne':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/tsne
       '@ffacet/algorithm-two-color-conflict':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/two-color-conflict

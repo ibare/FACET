@@ -839,7 +839,7 @@
             { "id": "hierarchical", "name": "계층 클러스터링", "facetId": "facet:hierarchical" },
             { "id": "dbscan", "name": "DBSCAN", "facetId": "facet:dbscan" },
             { "id": "pca", "name": "PCA", "facetId": "facet:pca" },
-            { "id": "tsne", "name": "t-SNE" },
+            { "id": "tsne", "name": "t-SNE", "facetId": "facet:tsne" },
             { "id": "assign-then-move", "name": "할당과 갱신", "desc": "가까운 곳에 붙이고 가운데로 옮긴다", "facetId": "facet:assignThenMove", "kind": "piece", "origin": "kmeans" },
             { "id": "k-must-be-given", "name": "군집 수 선택", "desc": "몇 무리인지 미리 정해야 한다", "facetId": "facet:kMustBeGiven", "kind": "piece", "origin": "kmeans" },
             { "id": "merge-nearest-pair", "name": "병합 군집화", "desc": "가장 가까운 둘을 합쳐 올라간다", "facetId": "facet:mergeNearestPair", "kind": "piece", "origin": "hierarchical" },
