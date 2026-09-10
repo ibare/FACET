@@ -16,6 +16,12 @@
  * 곁들여 **없는 facet 을 부르지 않는지**도 본다. 오타 난 토큰은 조용히 빈자리로
  * 남는다.
  */
+/*
+ * 타임아웃을 명시해 둔다. 이 검사는 facet 을 전부 로드하므로 걸리는 시간이
+ * facet 수에 비례해 는다. 기본값 5초에 기대 두면 어느 배치에선가 갑자기
+ * 터지는데, 그때 실패는 결함이 아니라 성장이다 — 실제로 178 개에서 둘이
+ * 그렇게 터졌다.
+ */
 import { describe, expect, it } from 'vitest';
 import { clearRegistry, getFacetById } from '../src/runtime/registry.js';
 import type { FacetJson } from '../src/types/facet-json.js';
@@ -80,5 +86,5 @@ describe('글과 그림의 연결', () => {
 
     expect(checked).toBeGreaterThan(100);
     expect({ silent, dangling }).toEqual({ silent: [], dangling: [] });
-  });
+  }, 60_000);
 });

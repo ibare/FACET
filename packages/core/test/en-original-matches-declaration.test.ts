@@ -20,6 +20,12 @@
  * 두지 않는 까닭이다 (C10). 아래 하한이 그 사실을 지킨다 — 검사가 보는 수가
  * 줄면 어딘가 대조에서 빠져나갔다는 뜻이다.
  */
+/*
+ * 타임아웃을 명시해 둔다. 이 검사는 facet 을 전부 로드하므로 걸리는 시간이
+ * facet 수에 비례해 는다. 기본값 5초에 기대 두면 어느 배치에선가 갑자기
+ * 터지는데, 그때 실패는 결함이 아니라 성장이다 — 실제로 178 개에서 둘이
+ * 그렇게 터졌다.
+ */
 import { describe, expect, it } from 'vitest';
 import type { FacetJson } from '../src/types/facet-json.js';
 import { FACET_MODULES, FACET_SOURCES } from './facet-modules.js';
@@ -91,5 +97,5 @@ describe('화면 문안의 두 자리', () => {
     // 이 수가 줄고, 그때 통과가 아니라 실패로 드러난다.
     expect(compared).toBeGreaterThan(900);
     expect(drifted).toEqual([]);
-  });
+  }, 60_000);
 });

@@ -13,6 +13,12 @@
  * `code-view` 블록을 단 것만 고르므로, 대상은 손목록이 아니라 선언이 정한다 —
  * 알고리즘 완제품 열하나를 만들고 목록에 넣는 것을 빠뜨린 적이 있다.
  */
+/*
+ * 타임아웃을 명시해 둔다. 이 검사는 facet 을 전부 로드하므로 걸리는 시간이
+ * facet 수에 비례해 는다. 기본값 5초에 기대 두면 어느 배치에선가 갑자기
+ * 터지는데, 그때 실패는 결함이 아니라 성장이다 — 실제로 178 개에서 둘이
+ * 그렇게 터졌다.
+ */
 // @vitest-environment happy-dom
 import { describe, expect, it } from 'vitest';
 import { getFacetById, getProjector } from '../src/runtime/registry.js';
@@ -85,5 +91,5 @@ describe('코드 패널 phase 배선', () => {
     // glob 이 깨진 것이지 패널이 줄어든 것이 아니다.
     expect(checked).toBeGreaterThan(15);
     expect({ missing, mismatched }).toEqual({ missing: [], mismatched: [] });
-  });
+  }, 60_000);
 });

@@ -11,6 +11,12 @@
  * 디렉터리에서 모은 stage 파일 전부다. 비우고 싶으면 캔버스 안쪽(`params.canvas`)을
  * 비우거나, 컨테이너를 비웠으면 캔버스를 되붙여라 (S-view).
  */
+/*
+ * 타임아웃을 명시해 둔다. 이 검사는 facet 을 전부 로드하므로 걸리는 시간이
+ * facet 수에 비례해 는다. 기본값 5초에 기대 두면 어느 배치에선가 갑자기
+ * 터지는데, 그때 실패는 결함이 아니라 성장이다 — 실제로 178 개에서 둘이
+ * 그렇게 터졌다.
+ */
 // @vitest-environment happy-dom
 import { describe, expect, it } from 'vitest';
 import { mountView } from '../src/runtime/layout-builder.js';
@@ -54,5 +60,5 @@ describe('CanvasView 캔버스 부착', () => {
     // 문턱이 실제 수(122)의 3분의 1이던 때가 있었다. glob 이 한 도메인만 남게
     // 좁아져도 통과해 버리므로, 현재 수 가까이 두어야 뜻이 있다.
     expect(checked).toBeGreaterThan(100);
-  });
+  }, 60_000);
 });

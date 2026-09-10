@@ -221,14 +221,15 @@ export const svmFacet: FacetJson = {
           action: 'set-c',
           name: 'c',
           label: {
-            en: 'C — how hard it tries',
-            ko: 'C — 안 틀리려는 마음',
-            ar: 'C — شدة الحرص',
-            es: 'C: cuánto se esfuerza',
-            fr: 'C — sa rigueur',
-            hi: 'C — कितनी सख़्ती',
-            id: 'C — seberapa keras berusaha',
-            pt: 'C — o quanto se esforça',
+            // 손잡이의 이름만 적는다. 무엇을 뜻하는지는 캡션과 글이 말한다.
+            en: 'C',
+            ko: 'C',
+            ar: 'C',
+            es: 'C',
+            fr: 'C',
+            hi: 'C',
+            id: 'C',
+            pt: 'C',
           },
           segments: [
             { value: 0.1, label: '0.1' },

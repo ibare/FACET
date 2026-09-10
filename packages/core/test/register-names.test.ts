@@ -11,6 +11,12 @@
  *
  * 대상은 `facet-modules.ts` 가 디렉터리에서 모은다 — 손목록이 아니라 전수다.
  */
+/*
+ * 타임아웃을 명시해 둔다. 이 검사는 facet 을 전부 로드하므로 걸리는 시간이
+ * facet 수에 비례해 는다. 기본값 5초에 기대 두면 어느 배치에선가 갑자기
+ * 터지는데, 그때 실패는 결함이 아니라 성장이다 — 실제로 178 개에서 둘이
+ * 그렇게 터졌다.
+ */
 // @vitest-environment happy-dom
 import { describe, expect, it } from 'vitest';
 import { clearRegistry, getAlgorithm, getProjector } from '../src/runtime/registry.js';
@@ -64,5 +70,5 @@ describe('등록 이름 규약', () => {
     // 전수인지는 glob 하나에 달렸고, 그것이 조용히 줄면 아무도 모른다.
     expect(checked).toBeGreaterThan(100);
     expect({ collided, missing }).toEqual({ collided: [], missing: [] });
-  });
+  }, 60_000);
 });

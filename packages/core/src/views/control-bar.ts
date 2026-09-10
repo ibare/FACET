@@ -61,6 +61,11 @@ function makeButton(id: string, label: string, colors: Palette): HTMLButtonEleme
   btn.style.border = `1px solid ${colors.border}`;
   btn.style.borderRadius = radii.sm;
   btn.style.cursor = 'pointer';
+  // 라벨은 쪼개지지 않는다. flex 안에서 폭이 모자라면 글자가 한 자씩 세로로
+  // 떨어지는데(한국어·중국어처럼 어디서나 끊기는 글에서 특히), 그러면 단추가
+  // 세로로 길어져 컨트롤바가 통째로 무너진다.
+  btn.style.whiteSpace = 'nowrap';
+  btn.style.flexShrink = '0';
   const baseBg = colors.bg;
   const hoverBg = colors.bgSubtle;
   btn.addEventListener('mouseenter', () => {
@@ -144,6 +149,10 @@ export const controlBarView: View = {
     const buttonGroup = document.createElement('div');
     buttonGroup.style.display = 'flex';
     buttonGroup.style.gap = space.xs;
+    // 좁으면 다음 줄로 넘긴다. 줄이 넘어가는 것은 읽을 수 있고, 글자가
+    // 쪼개지는 것은 읽을 수 없다.
+    buttonGroup.style.flexWrap = 'wrap';
+    buttonGroup.style.alignItems = 'center';
 
     const buttons: Partial<Record<ButtonId, HTMLButtonElement>> = {};
     const DEFAULT_SPEED_STEPS = [0.25, 0.5, 1, 2, 4, 8];
@@ -253,6 +262,8 @@ export const controlBarView: View = {
         wrap.style.gap = space.xs;
         wrap.style.fontSize = fontSizes.xs;
         wrap.style.color = colors.textMuted;
+        wrap.style.whiteSpace = 'nowrap';
+        wrap.style.flexShrink = '0';
         if (c.label !== undefined) wrap.textContent = resolveLocale(c.label, params.locale);
         const inputEl = document.createElement('input');
         inputEl.type = 'text';
@@ -296,6 +307,8 @@ export const controlBarView: View = {
           wrap.style.gap = space.xs;
           wrap.style.fontSize = fontSizes.xs;
           wrap.style.color = colors.textMuted;
+          wrap.style.whiteSpace = 'nowrap';
+          wrap.style.flexShrink = '0';
           if (c.label !== undefined) {
             wrap.textContent = resolveLocale(c.label as never, params.locale);
           }
@@ -404,6 +417,8 @@ export const controlBarView: View = {
         wrap.style.gap = space.xs;
         wrap.style.fontSize = fontSizes.xs;
         wrap.style.color = colors.textMuted;
+        wrap.style.whiteSpace = 'nowrap';
+        wrap.style.flexShrink = '0';
         wrap.textContent = speedText;
         speedInput = document.createElement('input');
         speedInput.type = 'range';

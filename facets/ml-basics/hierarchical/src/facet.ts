@@ -241,15 +241,17 @@ export const hierarchicalFacet: FacetJson = {
           widget: 'segmented-slider',
           action: 'set-link',
           name: 'link',
+          // 컨트롤 라벨은 손잡이의 **이름**이다. 무엇을 뜻하는지는 캡션과 글이
+          // 말한다 — 여기 설명을 적으면 컨트롤바가 그 길이만큼 넓어진다.
           label: {
-            en: 'Linkage — how far apart two groups are',
-            ko: '연결 방식 — 두 무리가 얼마나 먼가',
-            ar: 'طريقة الربط — كم تبعد مجموعتان',
-            es: 'Enlace: cuán lejos están dos grupos',
-            fr: 'Liaison — à quelle distance sont deux groupes',
-            hi: 'संयोजन — दो समूह कितनी दूर हैं',
-            id: 'Pautan — seberapa jauh dua kelompok',
-            pt: 'Ligação — quão distantes estão dois grupos',
+            en: 'Linkage',
+            ko: '연결 방식',
+            ar: 'طريقة الربط',
+            es: 'Enlace',
+            fr: 'Liaison',
+            hi: 'संयोजन',
+            id: 'Pautan',
+            pt: 'Ligação',
           },
           segments: [
             {
