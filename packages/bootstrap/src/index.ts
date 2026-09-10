@@ -558,4 +558,15 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:kernelLifts', () =>
     import('@ffacet/algorithm-kernel-lifts').then((m) => m.registerKernelLifts()),
   );
+
+  // 지도학습 완제품 1차 — 로지스틱 회귀 · k-NN · 의사결정 트리.
+  registerFacetLoader('facet:logisticRegression', () =>
+    import('@ffacet/algorithm-logistic-regression').then((m) => m.registerLogisticRegression()),
+  );
+  registerFacetLoader('facet:knn', () =>
+    import('@ffacet/algorithm-knn').then((m) => m.registerKnn()),
+  );
+  registerFacetLoader('facet:decisionTree', () =>
+    import('@ffacet/algorithm-decision-tree').then((m) => m.registerDecisionTree()),
+  );
 }
