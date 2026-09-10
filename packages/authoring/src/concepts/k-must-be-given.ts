@@ -76,7 +76,7 @@ export const kMustBeGivenConcept: FacetConceptSource = {
     contrastWith: [
       {
         concept: 'kmeans',
-        note: 'That screen fixes the number of groups and varies the start; this one varies the number itself and asks whether any measure on screen can choose between the results.',
+        note: 'There the number of groups is fixed and the starting centres decide which stable answer is reached; here the number itself varies and no measure of scatter can say which value was right.',
       },
       {
         concept: 'assignThenMove',

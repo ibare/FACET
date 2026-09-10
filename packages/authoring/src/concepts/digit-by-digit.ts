@@ -69,7 +69,7 @@ export const digitByDigitConcept: FacetConceptSource = {
     contrastWith: [
       {
         concept: 'radixSort',
-        note: 'This argues that the rounds accumulate; the full screen opens one round and shows the counting and the position arithmetic that make a round happen.',
+        note: 'This argues that the rounds accumulate into a whole ordering; the method is how one round is carried out, counting a digit and turning the counts into seats.',
       },
       {
         concept: 'sortStability',

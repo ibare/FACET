@@ -79,7 +79,7 @@ export const requiresSortedConcept: FacetConceptSource = {
     contrastWith: [
       {
         concept: 'binarySearch',
-        note: 'That screen assumes the ordering and spends its attention on the two ways the procedure can end; this one holds the procedure fixed and removes the ordering instead.',
+        note: 'The procedure assumes the ordering and is about the two ways it can end; this concept holds the procedure fixed and asks what the missing ordering costs.',
       },
       {
         concept: 'halveTheRange',

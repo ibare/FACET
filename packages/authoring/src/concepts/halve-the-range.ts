@@ -78,11 +78,11 @@ export const halveTheRangeConcept: FacetConceptSource = {
     contrastWith: [
       {
         concept: 'binarySearch',
-        note: 'That screen runs the same narrowing to both of its endings and shows it as code; this one stops at the arithmetic of a single comparison.',
+        note: 'The full procedure is that same narrowing carried to both of its endings; this concept stops at the arithmetic of one comparison and what it removes.',
       },
       {
         concept: 'requiresSorted',
-        note: 'The count here is what the ordering buys, and that screen is what happens to the same count when the ordering is not there.',
+        note: 'The halving counted here is what the ordering buys; that concept is what becomes of the same halving once order cannot vouch for the discarded side.',
       },
       {
         concept: 'depthDoublesCount',

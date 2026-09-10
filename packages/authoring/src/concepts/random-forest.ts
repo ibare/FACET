@@ -83,7 +83,7 @@ export const randomForestConcept: FacetConceptSource = {
     contrastWith: [
       {
         concept: 'baggingSample',
-        note: 'That one stays inside a single draw-and-replace and what it leaves behind; here the resampling has already happened and what is on screen is the spread of trees it produced.',
+        note: 'That one stays inside a single draw-and-replace and the rows it leaves behind; here the resampling is taken as done and the subject is how far the trees it produced disagree.',
       },
       {
         concept: 'manyTreesVote',

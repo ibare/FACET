@@ -82,11 +82,11 @@ export const binarySearchConcept: FacetConceptSource = {
     contrastWith: [
       {
         concept: 'halveTheRange',
-        note: 'That screen counts what one comparison removes and stops there; this one runs the comparisons to both of their conclusions, including the one where nothing is found.',
+        note: 'Counting what a single comparison removes is one claim; carrying those comparisons through to both endings, a match and an empty range, is another.',
       },
       {
         concept: 'requiresSorted',
-        note: 'That screen questions the premise this one takes for granted — the row here is sorted from the start and never asked to justify itself.',
+        note: 'Order is the premise here and the subject there: this is the procedure that runs on sorted input, that is the argument for why the sorting has to hold.',
       },
       {
         concept: 'linearSearch',

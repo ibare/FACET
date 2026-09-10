@@ -80,7 +80,7 @@ export const denseNeighborhoodConcept: FacetConceptSource = {
     contrastWith: [
       {
         concept: 'dbscan',
-        note: 'This fixes the radius and the threshold to show what one spreading decides; that screen moves them to show what each of them was deciding all along.',
+        note: 'Here the radius and the threshold are held fixed and the chain is the subject; there the two settings are the subject, and what each of them decides.',
       },
       {
         concept: 'noiseLeftOut',

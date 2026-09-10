@@ -77,7 +77,7 @@ export const linearSearchConcept: FacetConceptSource = {
     contrastWith: [
       {
         concept: 'scanUntilFound',
-        note: 'That screen puts the two scans side by side purely as lengths, to argue about the cost of saying "not here"; this one shows the same procedure with its code and its running totals.',
+        note: 'That concept is the asymmetry between finding and failing to find; this one is the procedure itself, one position at a time from the front.',
       },
       {
         concept: 'binarySearch',

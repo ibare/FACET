@@ -86,7 +86,7 @@ export const noiseLeftOutConcept: FacetConceptSource = {
       },
       {
         concept: 'denseNeighborhood',
-        note: 'Both run the same spreading, but that screen follows where it reaches and this one waits for it to stop and looks at what is left.',
+        note: 'Both rest on the same chaining, but that concept is about how far the chain reaches, and this one about the points it never reaches counting as an answer.',
       },
       {
         concept: 'kmeans',

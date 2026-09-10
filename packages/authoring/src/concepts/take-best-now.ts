@@ -76,7 +76,7 @@ export const takeBestNowConcept: FacetConceptSource = {
     contrastWith: [
       {
         concept: 'greedy',
-        note: 'This is the step; that screen runs the same step to the end of a scheduling problem and counts the result it reaches.',
+        note: 'This is the step; that concept is the same step carried to the end of a scheduling problem and the maximal answer it provably reaches.',
       },
       {
         concept: 'greedyCanFail',

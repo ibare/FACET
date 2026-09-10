@@ -87,7 +87,7 @@ export const globalAndLocalConcept: FacetConceptSource = {
       },
       {
         concept: 'directionOfMostSpread',
-        note: 'The top ruler is that idea in use — the axis it finds is what carries the long distances through, and this screen is about what is lost when a layout stops using one.',
+        note: 'That concept is the axis that carries the long distances through; this one is what a layout gives up once it stops laying points out along such an axis.',
       },
       {
         concept: 'pca',

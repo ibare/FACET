@@ -85,7 +85,7 @@ export const dbscanConcept: FacetConceptSource = {
     contrastWith: [
       {
         concept: 'denseNeighborhood',
-        note: 'That screen fixes both settings and shows how one spreading decides a group; this one holds the data fixed and moves the settings to show what each of them decides.',
+        note: 'Chaining explains how a single group forms once the settings are fixed; this concept is about what the radius and the threshold each decide when they move.',
       },
       {
         concept: 'noiseLeftOut',

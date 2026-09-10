@@ -83,7 +83,7 @@ export const interpolationSearchConcept: FacetConceptSource = {
       },
       {
         concept: 'binarySearch',
-        note: 'The same loop and the same three-way verdict, differing only in the line that picks a seat — which is why the two can be counted against each other on one screen.',
+        note: 'The same loop and the same three-way verdict, differing only in how the probe position is chosen — which is why their costs can be counted against each other.',
       },
       {
         concept: 'halveTheRange',

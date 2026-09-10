@@ -74,11 +74,11 @@ export const assignThenMoveConcept: FacetConceptSource = {
     contrastWith: [
       {
         concept: 'kmeans',
-        note: 'That screen runs the alternation many times over to compare where it stops; this one runs it once, slowly, to show why it stops at all.',
+        note: 'Where the alternation comes to rest, and how much the starting centres decide that, is a different question from what one turn does and why the turning stops.',
       },
       {
         concept: 'kMustBeGiven',
-        note: 'Both hold the number of centres fixed, but that screen makes the fixing itself the subject while this one takes it as given and watches the turning.',
+        note: 'Both hold the number of centres fixed, but there the fixing itself is the problem, while here it is a premise and the turning is what is at issue.',
       },
       {
         concept: 'mergeNearestPair',

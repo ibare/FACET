@@ -71,7 +71,7 @@ export const heapSortExtractConcept: FacetConceptSource = {
     contrastWith: [
       {
         concept: 'heapSort',
-        note: 'This isolates the storage question; the full screen adds the build that comes first and counts the comparisons each removal costs.',
+        note: 'This isolates the storage coincidence, that the freed cell is exactly where the removed value belongs; the full sort adds the build before it and the cost of repeating the removal.',
       },
       {
         concept: 'siftDown',

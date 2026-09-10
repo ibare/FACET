@@ -85,7 +85,7 @@ export const kChangesBoundaryConcept: FacetConceptSource = {
       },
       {
         concept: 'knn',
-        note: 'Both make the neighbour count the subject, but that screen repaints an entire plane and counts the cost of doing so, while this one follows a single point through four sizes.',
+        note: 'Both turn on the neighbour count, but there it divides the whole plane at a cost paid for every query, while here it is one point whose verdict reverses as the count grows.',
       },
       {
         concept: 'kMustBeGiven',

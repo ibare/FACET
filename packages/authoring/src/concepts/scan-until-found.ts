@@ -74,7 +74,7 @@ export const scanUntilFoundConcept: FacetConceptSource = {
     contrastWith: [
       {
         concept: 'linearSearch',
-        note: 'That screen carries the procedure with its code and running totals; this one drops everything except the two lengths, because the difference between them is the only claim being made.',
+        note: 'That concept is the procedure itself; this one keeps nothing but the asymmetry between a scan that ends at a match and one that must reach the end to prove absence.',
       },
       {
         concept: 'requiresSorted',

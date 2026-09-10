@@ -78,7 +78,7 @@ export const sortStabilityConcept: FacetConceptSource = {
     contrastWith: [
       {
         concept: 'compareAndSwap',
-        note: 'That screen states the rule that equal values are never exchanged; this one shows what a whole sort gains or loses depending on whether it obeys that rule.',
+        note: 'That concept is the rule that a swap happens only when two values are out of order; this one is what a whole sort gains or loses by honouring it when keys are equal.',
       },
       {
         concept: 'selectMinEachPass',

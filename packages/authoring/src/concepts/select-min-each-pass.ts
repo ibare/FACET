@@ -76,7 +76,7 @@ export const selectMinEachPassConcept: FacetConceptSource = {
     contrastWith: [
       {
         concept: 'selectionSort',
-        note: 'This is one pass slowed until the marker and the value come apart; that screen repeats the pass until the row is sorted and adds the two tallies up.',
+        note: 'This is one pass, in which remembering a position and moving a value come apart; that concept is every pass repeated to a sorted row at an unchanging comparison cost.',
       },
       {
         concept: 'compareAndSwap',

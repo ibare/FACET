@@ -83,7 +83,7 @@ export const sortEdgesAvoidCycleConcept: FacetConceptSource = {
       },
       {
         concept: 'findRoot',
-        note: 'Deciding membership by climbing to a representative is what colour stands in for here; this screen assumes the answer and spends its attention on what is done with it.',
+        note: 'Climbing parent pointers to a representative is how the question of membership is actually answered; this concept takes that answer as given and is about rejecting the link it condemns.',
       },
       {
         concept: 'growOneTree',

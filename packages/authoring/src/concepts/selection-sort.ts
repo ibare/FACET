@@ -82,7 +82,7 @@ export const selectionSortConcept: FacetConceptSource = {
     contrastWith: [
       {
         concept: 'selectMinEachPass',
-        note: 'That screen slows one pass down until remembering a position and moving a value come apart; this runs every pass and adds them up.',
+        note: 'That concept separates remembering a position from moving a value inside one pass; this one is every pass together and the cost the whole sort always pays.',
       },
       {
         concept: 'bubbleSort',

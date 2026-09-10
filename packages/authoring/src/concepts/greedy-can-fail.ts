@@ -75,7 +75,7 @@ export const greedyCanFailConcept: FacetConceptSource = {
     contrastWith: [
       {
         concept: 'takeBestNow',
-        note: 'That screen shows the rule succeeding with nothing to compare against; this one puts the same rule beside the smallest possible answer so the gap is visible.',
+        note: 'That concept is the rule stated on its own terms; this one is the same rule held against the smallest possible answer, where the gap between them opens.',
       },
       {
         concept: 'greedy',

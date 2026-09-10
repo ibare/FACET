@@ -79,7 +79,7 @@ export const greedyConcept: FacetConceptSource = {
     contrastWith: [
       {
         concept: 'takeBestNow',
-        note: 'That screen isolates the single decision — look at the current state, commit, never revisit; this one runs that decision to the end of a real problem and counts what it produced.',
+        note: 'That concept is the single decision — read only the current state, commit, never revisit; this one is that decision carried to the end of a real problem and the answer it yields.',
       },
       {
         concept: 'greedyCanFail',

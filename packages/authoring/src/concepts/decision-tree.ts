@@ -86,7 +86,7 @@ export const decisionTreeConcept: FacetConceptSource = {
     contrastWith: [
       {
         concept: 'splitByQuestion',
-        note: 'That screen opens up a single node and asks what a question is choosing; this one repeats that choice down both sides and asks when the repeating should end.',
+        note: 'One branch test is about which feature it looks at and where it cuts; the tree is about repeating that choice down both sides and how deep the repetition may go.',
       },
       {
         concept: 'impurityDrops',

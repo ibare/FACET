@@ -80,7 +80,7 @@ export const tsneConcept: FacetConceptSource = {
     contrastWith: [
       {
         concept: 'keepNeighborsClose',
-        note: 'That screen shows by hand why keeping short distances forces a break somewhere; here the same pressure appears as a setting that decides where the damage lands.',
+        note: 'That concept is why holding every short distance intact forces a break somewhere; here the same pressure is governed by perplexity, which decides where the break lands.',
       },
       {
         concept: 'globalAndLocal',
