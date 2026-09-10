@@ -846,11 +846,11 @@
             { "id": "merge-nearest-pair", "name": "병합 군집화", "desc": "가장 가까운 둘을 합쳐 올라간다", "facetId": "facet:mergeNearestPair", "kind": "piece", "origin": "hierarchical" },
             { "id": "dendrogram-cut", "name": "덴드로그램 절단", "desc": "어디서 자르느냐로 무리 수가 정해진다", "facetId": "facet:dendrogramCut", "kind": "piece", "origin": "hierarchical" },
             { "id": "dense-neighborhood", "name": "밀도 기반 군집", "desc": "이웃이 촘촘하면 한 무리", "facetId": "facet:denseNeighborhood", "kind": "piece", "origin": "dbscan" },
-            { "id": "noise-left-out", "name": "잡음점", "desc": "어디에도 안 붙는 것은 남긴다", "kind": "piece", "origin": "dbscan" },
-            { "id": "direction-of-most-spread", "name": "주성분", "desc": "가장 넓게 퍼진 방향", "kind": "piece", "origin": "pca" },
-            { "id": "project-and-lose", "name": "설명 분산", "desc": "내려 찍으면 얼마를 잃는가", "kind": "piece", "origin": "pca" },
-            { "id": "keep-neighbors-close", "name": "지역 구조 보존", "desc": "가까운 것만 가깝게 남긴다", "kind": "piece", "origin": "tsne" },
-            { "id": "global-and-local", "name": "전역과 지역 구조", "desc": "멀고 가까움을 함께 지킨다", "kind": "piece", "origin": "umap" }
+            { "id": "noise-left-out", "name": "잡음점", "desc": "어디에도 안 붙는 것은 남긴다", "facetId": "facet:noiseLeftOut", "kind": "piece", "origin": "dbscan" },
+            { "id": "direction-of-most-spread", "name": "주성분", "desc": "가장 넓게 퍼진 방향", "facetId": "facet:directionOfMostSpread", "kind": "piece", "origin": "pca" },
+            { "id": "project-and-lose", "name": "설명 분산", "desc": "내려 찍으면 얼마를 잃는가", "facetId": "facet:projectAndLose", "kind": "piece", "origin": "pca" },
+            { "id": "keep-neighbors-close", "name": "지역 구조 보존", "desc": "가까운 것만 가깝게 남긴다", "facetId": "facet:keepNeighborsClose", "kind": "piece", "origin": "tsne" },
+            { "id": "global-and-local", "name": "전역과 지역 구조", "desc": "멀고 가까움을 함께 지킨다", "facetId": "facet:globalAndLocal", "kind": "piece", "origin": "umap" }
           ]
         },
         {

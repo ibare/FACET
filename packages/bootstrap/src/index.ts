@@ -594,4 +594,21 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:denseNeighborhood', () =>
     import('@ffacet/algorithm-dense-neighborhood').then((m) => m.registerDenseNeighborhood()),
   );
+
+  // 비지도학습 조각 2차 — 잡음점 · 주성분 둘 · 차원 축소 둘. 비지도 조각 완결.
+  registerFacetLoader('facet:noiseLeftOut', () =>
+    import('@ffacet/algorithm-noise-left-out').then((m) => m.registerNoiseLeftOut()),
+  );
+  registerFacetLoader('facet:directionOfMostSpread', () =>
+    import('@ffacet/algorithm-direction-of-most-spread').then((m) => m.registerDirectionOfMostSpread()),
+  );
+  registerFacetLoader('facet:projectAndLose', () =>
+    import('@ffacet/algorithm-project-and-lose').then((m) => m.registerProjectAndLose()),
+  );
+  registerFacetLoader('facet:keepNeighborsClose', () =>
+    import('@ffacet/algorithm-keep-neighbors-close').then((m) => m.registerKeepNeighborsClose()),
+  );
+  registerFacetLoader('facet:globalAndLocal', () =>
+    import('@ffacet/algorithm-global-and-local').then((m) => m.registerGlobalAndLocal()),
+  );
 }

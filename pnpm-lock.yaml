@@ -1478,6 +1478,18 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ml-basics/direction-of-most-spread:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/global-and-local:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ml-basics/impurity-drops:
     dependencies:
       '@ffacet/core':
@@ -1491,6 +1503,12 @@ importers:
         version: link:../../../packages/core
 
   facets/ml-basics/k-must-be-given:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/keep-neighbors-close:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -1577,6 +1595,18 @@ importers:
         version: link:../../../packages/core
 
   facets/ml-basics/merge-nearest-pair:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/noise-left-out:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/project-and-lose:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -1895,6 +1925,9 @@ importers:
       '@ffacet/algorithm-dijkstra':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/dijkstra
+      '@ffacet/algorithm-direction-of-most-spread':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/direction-of-most-spread
       '@ffacet/algorithm-dive-then-backtrack':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/dive-then-backtrack
@@ -1919,6 +1952,9 @@ importers:
       '@ffacet/algorithm-gap-shrink':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/gap-shrink
+      '@ffacet/algorithm-global-and-local':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/global-and-local
       '@ffacet/algorithm-greedy':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/greedy
@@ -2009,6 +2045,9 @@ importers:
       '@ffacet/algorithm-k-must-be-given':
         specifier: workspace:*
         version: link:../../facets/ml-basics/k-must-be-given
+      '@ffacet/algorithm-keep-neighbors-close':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/keep-neighbors-close
       '@ffacet/algorithm-kernel-lifts':
         specifier: workspace:*
         version: link:../../facets/ml-basics/kernel-lifts
@@ -2084,6 +2123,9 @@ importers:
       '@ffacet/algorithm-node-points-next':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/node-points-next
+      '@ffacet/algorithm-noise-left-out':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/noise-left-out
       '@ffacet/algorithm-one-more-round-drops':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/one-more-round-drops
@@ -2120,6 +2162,9 @@ importers:
       '@ffacet/algorithm-prim-mst':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/prim-mst
+      '@ffacet/algorithm-project-and-lose':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/project-and-lose
       '@ffacet/algorithm-prune-branch':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/prune-branch
