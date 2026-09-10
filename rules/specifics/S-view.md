@@ -18,7 +18,16 @@ last_verified: 2026-09-05
 - 모든 View 는 `packages/core/src/views/types.ts` 의 `View` 인터페이스를 구현한다. 즉 `mount(container: HTMLElement, params: ViewMountParams): ViewInstance` 를 export 한다.
 - `ViewInstance.destroy()` 는 **모든** 부착 DOM 노드와 이벤트 리스너를 정리한다. 리소스 누수 금지.
 - 색상은 `getColors(theme)` 로 현재 팔레트를 얻어서 사용한다. `design-tokens.ts` 의 `colors` / `lightColors` / `darkColors` 를 직접 참조해도 되지만, **리터럴 hex / rgb 하드코딩 금지**.
-- 폰트 크기 / 여백은 `fontSizes` / `space` / `radii` 토큰을 경유한다.
+- 폰트 크기 / 여백은 `fontSizes` / `space` / `radii` 토큰을 경유한다. **다만 SVG
+  안의 기하 수치는 이 조항의 대상이 아니다** — `<rect rx>` · `stroke-width` ·
+  좌표 · 반지름은 그림이 정하는 값이고, 토큰이 정하는 것은 **문서 층의 리듬**
+  (글자 크기, 요소 사이 여백, 카드 모서리)이다.
+  - 이 경계를 적어 두지 않았더니 stage 165 개 중 **112 개가 숫자 `rx` 를 쓰고
+    29 개가 `radii` 를 쓰는** 상태가 됐다. 어느 쪽도 틀리지 않았다 — 조항이
+    무엇에 대한 것인지 말하지 않았을 뿐이다. `S-piece` 의 `canvas: { height }`
+    가 110 개짜리 유령 위반이 된 것과 같은 모양이라, 그 전에 경계를 긋는다.
+  - 가르는 물음: **테마를 바꾸면 같이 바뀌어야 하는 값인가.** 카드 모서리는
+    그렇고, 그림 안 막대의 둥글기는 아니다.
 - **화면에 그리는 문자열은 `params.t` 로 조회한다** (`t(key, 'en 원본', vars?)`). 러너가 `FacetJson.messages` 오버라이드를 얹은 조회기를 주입하므로, View 가 스스로 `makeTranslator` 를 부르면 저작자 문안을 보지 못한다. 러너 밖 mount 를 위한 fallback 은 `params.t ?? makeTranslator(params.locale)` 형태로만 둔다. 자세한 규약은 C10.
 - `FacetJson` 이 `LocaleStr` 로 주는 값 (`cfg.label`, `placeholder` 등) 은 `resolveLocale(value, params.locale)` 로 해석한다. 저작자가 준 값이 있으면 프레임워크 기본 라벨보다 우선한다.
 - **세로는 마운트한 뒤 바뀌지 않는다.** 재생 중에 `viewBox` 를 다시 재지 않는다.

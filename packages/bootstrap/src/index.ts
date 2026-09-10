@@ -577,4 +577,21 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:svm', () =>
     import('@ffacet/algorithm-svm').then((m) => m.registerSvm()),
   );
+
+  // 비지도학습 조각 1차 — k-평균 둘 · 계층 군집화 둘 · 밀도 기반 하나.
+  registerFacetLoader('facet:assignThenMove', () =>
+    import('@ffacet/algorithm-assign-then-move').then((m) => m.registerAssignThenMove()),
+  );
+  registerFacetLoader('facet:kMustBeGiven', () =>
+    import('@ffacet/algorithm-k-must-be-given').then((m) => m.registerKMustBeGiven()),
+  );
+  registerFacetLoader('facet:mergeNearestPair', () =>
+    import('@ffacet/algorithm-merge-nearest-pair').then((m) => m.registerMergeNearestPair()),
+  );
+  registerFacetLoader('facet:dendrogramCut', () =>
+    import('@ffacet/algorithm-dendrogram-cut').then((m) => m.registerDendrogramCut()),
+  );
+  registerFacetLoader('facet:denseNeighborhood', () =>
+    import('@ffacet/algorithm-dense-neighborhood').then((m) => m.registerDenseNeighborhood()),
+  );
 }

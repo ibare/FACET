@@ -1420,6 +1420,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ml-basics/assign-then-move:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ml-basics/bagging-sample:
     dependencies:
       '@ffacet/core':
@@ -1460,6 +1466,18 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/transpiler-typescript
 
+  facets/ml-basics/dendrogram-cut:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/dense-neighborhood:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ml-basics/impurity-drops:
     dependencies:
       '@ffacet/core':
@@ -1467,6 +1485,12 @@ importers:
         version: link:../../../packages/core
 
   facets/ml-basics/k-changes-boundary:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/k-must-be-given:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -1547,6 +1571,12 @@ importers:
         version: link:../../../packages/transpiler-typescript
 
   facets/ml-basics/many-trees-vote:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/merge-nearest-pair:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -1751,6 +1781,9 @@ importers:
       '@ffacet/algorithm-array-as-tree':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/array-as-tree
+      '@ffacet/algorithm-assign-then-move':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/assign-then-move
       '@ffacet/algorithm-asymmetric-rsa':
         specifier: workspace:*
         version: link:../../facets/security/asymmetric-rsa
@@ -1841,6 +1874,12 @@ importers:
       '@ffacet/algorithm-decision-tree':
         specifier: workspace:*
         version: link:../../facets/ml-basics/decision-tree
+      '@ffacet/algorithm-dendrogram-cut':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/dendrogram-cut
+      '@ffacet/algorithm-dense-neighborhood':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/dense-neighborhood
       '@ffacet/algorithm-depth-doubles-count':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/depth-doubles-count
@@ -1967,6 +2006,9 @@ importers:
       '@ffacet/algorithm-k-changes-boundary':
         specifier: workspace:*
         version: link:../../facets/ml-basics/k-changes-boundary
+      '@ffacet/algorithm-k-must-be-given':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/k-must-be-given
       '@ffacet/algorithm-kernel-lifts':
         specifier: workspace:*
         version: link:../../facets/ml-basics/kernel-lifts
@@ -2015,6 +2057,9 @@ importers:
       '@ffacet/algorithm-memo-write-once':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/memo-write-once
+      '@ffacet/algorithm-merge-nearest-pair':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/merge-nearest-pair
       '@ffacet/algorithm-merge-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/merge-sort
