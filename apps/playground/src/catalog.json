@@ -67,6 +67,27 @@
           ]
         },
         {
+          "id": "probabilistic-structures",
+          "name": "확률적 자료구조",
+          "topics": [
+            { "id": "bloom-filter", "name": "블룸 필터" },
+            { "id": "count-min-sketch", "name": "Count-Min Sketch" },
+            { "id": "hyperloglog", "name": "HyperLogLog" },
+            { "id": "t-digest", "name": "t-digest" },
+            { "id": "skip-list", "name": "스킵 리스트" },
+            { "id": "several-hashes-one-value", "name": "한 값이 여러 자리를", "desc": "해시 여럿이 각자 자리를 켠다", "kind": "piece", "origin": "bloom-filter" },
+            { "id": "wrong-in-one-direction", "name": "한쪽으로만 틀린다", "desc": "없는데 있다고는 해도 그 반대는 없다", "kind": "piece", "origin": "bloom-filter" },
+            { "id": "cannot-unset", "name": "뺄 수가 없다", "desc": "켠 자리가 누구 것인지 모른다", "kind": "piece", "origin": "bloom-filter" },
+            { "id": "trust-the-smallest", "name": "가장 작은 것을 믿는다", "desc": "여러 줄이 부딪쳐도 최솟값은 덜 부풀었다", "kind": "piece", "origin": "count-min-sketch" },
+            { "id": "leading-zeros-tell", "name": "앞자리 0의 개수", "desc": "드문 것을 봤다면 많이 본 것이다", "kind": "piece", "origin": "hyperloglog" },
+            { "id": "average-the-buckets", "name": "통을 나눠 고른다", "desc": "여럿의 값을 모아 튐을 줄인다", "kind": "piece", "origin": "hyperloglog" },
+            { "id": "crowd-the-tails", "name": "끝을 촘촘히", "desc": "가운데를 성글게 하고 꼬리에 자리를 몰아준다", "kind": "piece", "origin": "t-digest" },
+            { "id": "skip-a-layer", "name": "층을 건너뛴다", "desc": "위에서 멀리 뛰고 아래에서 좁힌다", "kind": "piece", "origin": "skip-list" },
+            { "id": "coin-flip-height", "name": "동전으로 정한 높이", "desc": "무작위가 균형 잡는 일을 대신한다", "kind": "piece", "origin": "skip-list" },
+            { "id": "space-error-tradeoff", "name": "적게 쓰면 더 틀린다", "desc": "자리를 아끼는 값을 오차로 치른다", "kind": "piece", "origin": "count-min-sketch" }
+          ]
+        },
+        {
           "id": "algorithms",
           "name": "알고리즘",
           "topics": [
@@ -323,6 +344,104 @@
       ]
     },
     {
+      "id": "computer-architecture",
+      "name": "컴퓨터 구조",
+      "tagline": "비트 표현에서 파이프라인까지",
+      "icon": "Memory",
+      "accent": "orange",
+      "subdomains": [
+        {
+          "id": "number-representation",
+          "name": "수와 비트 표현",
+          "topics": [
+            { "id": "twos-complement", "name": "2의 보수" },
+            { "id": "floating-point", "name": "부동소수점" },
+            { "id": "bitwise-ops", "name": "비트 연산" },
+            { "id": "integer-overflow", "name": "오버플로" },
+            { "id": "positional-value", "name": "자리값과 진법", "desc": "같은 수를 다른 밑으로 적는다", "kind": "piece", "origin": "twos-complement" },
+            { "id": "negate-and-add-one", "name": "2의 보수 만들기", "desc": "뒤집고 하나 더하면 음수가 된다", "kind": "piece", "origin": "twos-complement" },
+            { "id": "signed-wraparound", "name": "수의 끝과 끝", "desc": "가장 큰 수 다음이 가장 작은 수다", "kind": "piece", "origin": "integer-overflow" },
+            { "id": "silent-truncation", "name": "잘려 나간 윗자리", "desc": "넘친 비트는 조용히 버려진다", "kind": "piece", "origin": "integer-overflow" },
+            { "id": "mantissa-and-exponent", "name": "가수와 지수", "desc": "자릿수를 나눠 넓은 범위를 담는다", "kind": "piece", "origin": "floating-point" },
+            { "id": "unrepresentable-fraction", "name": "끝나지 않는 소수", "desc": "0.1 은 2진법에서 딱 떨어지지 않는다", "kind": "piece", "origin": "floating-point" },
+            { "id": "uneven-float-gaps", "name": "고르지 않은 눈금", "desc": "수가 클수록 이웃이 멀다", "kind": "piece", "origin": "floating-point" },
+            { "id": "bit-mask", "name": "비트 마스크", "desc": "필요한 자리만 남긴다", "kind": "piece", "origin": "bitwise-ops" },
+            { "id": "bit-shift", "name": "자리 옮기기", "desc": "옮기면 곱해지고 나뉜다", "kind": "piece", "origin": "bitwise-ops" },
+            { "id": "byte-order", "name": "엔디언", "desc": "같은 값을 반대 순서로 늘어놓는다", "kind": "piece", "origin": "bitwise-ops" }
+          ]
+        },
+        {
+          "id": "cache-hierarchy",
+          "name": "캐시 계층",
+          "topics": [
+            { "id": "cache-line", "name": "캐시 라인" },
+            { "id": "direct-mapped-cache", "name": "직접 사상 캐시" },
+            { "id": "set-associative-cache", "name": "집합 연관 캐시" },
+            { "id": "cache-replacement", "name": "캐시 교체 정책" },
+            { "id": "write-policy", "name": "쓰기 정책" },
+            { "id": "line-fill", "name": "줄 단위로 올라온다", "desc": "하나를 부르면 이웃까지 딸려 온다", "kind": "piece", "origin": "cache-line" },
+            { "id": "temporal-locality", "name": "시간 지역성", "desc": "방금 쓴 것을 곧 또 쓴다", "kind": "piece", "origin": "cache-line" },
+            { "id": "spatial-locality", "name": "공간 지역성", "desc": "옆자리를 이어서 쓴다", "kind": "piece", "origin": "cache-line" },
+            { "id": "index-and-tag", "name": "인덱스와 태그", "desc": "주소를 쪼개 들어갈 자리를 정한다", "kind": "piece", "origin": "direct-mapped-cache" },
+            { "id": "conflict-miss", "name": "충돌 실패", "desc": "빈 자리가 있는데도 밀려난다", "kind": "piece", "origin": "direct-mapped-cache" },
+            { "id": "associativity-relief", "name": "연관도", "desc": "한 자리에 여럿을 두면 덜 밀린다", "kind": "piece", "origin": "set-associative-cache" },
+            { "id": "latency-ladder", "name": "지연 계단", "desc": "한 계단 내려갈 때마다 수십 배", "kind": "piece", "origin": "cache-line" },
+            { "id": "write-back-vs-through", "name": "지금 내려보낼까 모아 둘까", "desc": "고친 것을 언제 아래로 보내는가", "kind": "piece", "origin": "write-policy" },
+            { "id": "false-sharing", "name": "거짓 공유", "desc": "다른 값인데 같은 줄이라 부딪친다", "kind": "piece", "origin": "write-policy" }
+          ]
+        },
+        {
+          "id": "instruction-pipeline",
+          "name": "명령어 파이프라인",
+          "topics": [
+            { "id": "five-stage-pipeline", "name": "5단계 파이프라인" },
+            { "id": "data-hazard", "name": "데이터 해저드" },
+            { "id": "control-hazard", "name": "제어 해저드" },
+            { "id": "out-of-order-execution", "name": "비순차 실행" },
+            { "id": "stage-overlap", "name": "단계 겹치기", "desc": "앞이 끝나기 전에 다음을 집어넣는다", "kind": "piece", "origin": "five-stage-pipeline" },
+            { "id": "throughput-not-latency", "name": "처리량과 지연", "desc": "하나는 안 빨라지고 여럿이 빨라진다", "kind": "piece", "origin": "five-stage-pipeline" },
+            { "id": "read-before-write", "name": "아직 안 나온 값", "desc": "앞의 결과를 기다려야 한다", "kind": "piece", "origin": "data-hazard" },
+            { "id": "operand-forwarding", "name": "포워딩", "desc": "쓰기 전에 옆으로 건넨다", "kind": "piece", "origin": "data-hazard" },
+            { "id": "pipeline-bubble", "name": "거품", "desc": "빈 칸이 뒤따라 흐른다", "kind": "piece", "origin": "data-hazard" },
+            { "id": "branch-flush", "name": "잘못 넣은 것 버리기", "desc": "갈래를 틀리면 채운 것을 비운다", "kind": "piece", "origin": "control-hazard" },
+            { "id": "dual-issue", "name": "한 박자에 둘", "desc": "서로 안 걸리는 것은 함께 낸다", "kind": "piece", "origin": "out-of-order-execution" },
+            { "id": "ready-first", "name": "준비된 것부터", "desc": "순서를 바꿔 실행하고 순서대로 끝낸다", "kind": "piece", "origin": "out-of-order-execution" }
+          ]
+        },
+        {
+          "id": "branch-prediction",
+          "name": "분기 예측",
+          "topics": [
+            { "id": "static-prediction", "name": "정적 예측" },
+            { "id": "saturating-counter", "name": "2비트 포화 카운터" },
+            { "id": "branch-history-table", "name": "분기 이력 표" },
+            { "id": "misprediction-penalty", "name": "틀린 값", "desc": "한 번 틀리면 여러 박자를 버린다", "kind": "piece", "origin": "static-prediction" },
+            { "id": "backward-taken", "name": "뒤로 뛰면 반복", "desc": "뒤로 가는 분기는 대개 참이다", "kind": "piece", "origin": "static-prediction" },
+            { "id": "one-bit-double-fault", "name": "1비트의 두 번 실수", "desc": "한 번 어긋나면 연달아 틀린다", "kind": "piece", "origin": "saturating-counter" },
+            { "id": "four-state-hysteresis", "name": "네 칸을 오간다", "desc": "한 번 틀렸다고 바로 바꾸지 않는다", "kind": "piece", "origin": "saturating-counter" },
+            { "id": "pattern-from-history", "name": "지난 몇 번이 다음을 가리킨다", "desc": "되풀이되는 무늬를 표가 기억한다", "kind": "piece", "origin": "branch-history-table" },
+            { "id": "unpredictable-branch", "name": "맞힐 수 없는 분기", "desc": "무작위 앞에서는 절반만 맞는다", "kind": "piece", "origin": "branch-history-table" }
+          ]
+        },
+        {
+          "id": "data-layout",
+          "name": "데이터 배치와 접근",
+          "topics": [
+            { "id": "struct-alignment", "name": "구조체 정렬" },
+            { "id": "array-traversal-order", "name": "배열 순회 순서" },
+            { "id": "prefetching", "name": "프리페치" },
+            { "id": "simd", "name": "SIMD" },
+            { "id": "padding-gap", "name": "정렬과 패딩", "desc": "빈틈을 넣어 자리를 맞춘다", "kind": "piece", "origin": "struct-alignment" },
+            { "id": "field-order-size", "name": "순서가 크기를 바꾼다", "desc": "같은 필드인데 늘어놓는 차례로 커진다", "kind": "piece", "origin": "struct-alignment" },
+            { "id": "row-vs-column-walk", "name": "행 우선과 열 우선", "desc": "같은 합인데 걸음의 값이 다르다", "kind": "piece", "origin": "array-traversal-order" },
+            { "id": "stride-and-miss", "name": "건너뛰는 간격", "desc": "멀리 뛸수록 줄을 버린다", "kind": "piece", "origin": "array-traversal-order" },
+            { "id": "fetch-ahead", "name": "앞질러 가져오기", "desc": "쓸 것을 미리 부른다", "kind": "piece", "origin": "prefetching" },
+            { "id": "lanes-in-step", "name": "차선을 나란히", "desc": "한 명령이 여럿을 함께 민다", "kind": "piece", "origin": "simd" }
+          ]
+        }
+      ]
+    },
+    {
       "id": "operating-systems",
       "name": "운영체제",
       "tagline": "프로세스 · 메모리 · 입출력",
@@ -554,6 +673,96 @@
             { "id": "certificate-chain", "name": "인증서 체인", "desc": "누가 보증했는지 거슬러 오른다", "kind": "piece", "origin": "tls-handshake" },
             { "id": "token-bearer", "name": "베어러 토큰", "desc": "표를 든 사람이 통과한다", "kind": "piece", "origin": "auth" },
             { "id": "rule-match-order", "name": "규칙 우선순위", "desc": "규칙을 위에서부터 맞춰 본다", "kind": "piece", "origin": "firewall" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "web-runtime",
+      "name": "웹 런타임",
+      "tagline": "브라우저가 한 프레임을 그리기까지",
+      "icon": "Browser",
+      "accent": "blue",
+      "subdomains": [
+        {
+          "id": "event-loop",
+          "name": "이벤트 루프",
+          "topics": [
+            { "id": "call-stack", "name": "콜 스택" },
+            { "id": "task-queue", "name": "태스크 큐" },
+            { "id": "microtask-queue", "name": "마이크로태스크 큐" },
+            { "id": "blocking-and-yield", "name": "블로킹과 양보" },
+            { "id": "frames-stack-up", "name": "부르면 쌓인다", "desc": "끝나야 걷히고, 걷혀야 다음이 온다", "kind": "piece", "origin": "call-stack" },
+            { "id": "one-turn-at-a-time", "name": "한 번에 하나", "desc": "지금 것이 끝나야 다음이 시작된다", "kind": "piece", "origin": "task-queue" },
+            { "id": "microtask-cuts-in", "name": "먼저 끼어든다", "desc": "다음 차례보다 앞서 비워진다", "kind": "piece", "origin": "microtask-queue" },
+            { "id": "microtask-starvation", "name": "끼어들기가 멈추지 않으면", "desc": "계속 끼어들면 화면이 멎는다", "kind": "piece", "origin": "microtask-queue" },
+            { "id": "timer-is-a-floor", "name": "0밀리초라도 지금은 아니다", "desc": "타이머는 최소 시간이지 약속이 아니다", "kind": "piece", "origin": "task-queue" },
+            { "id": "long-task-blocks", "name": "셈하는 동안", "desc": "긴 일 하나가 클릭을 쌓아 둔다", "kind": "piece", "origin": "blocking-and-yield" },
+            { "id": "yield-to-render", "name": "중간에 놓아주기", "desc": "쪼개어 돌려주면 화면이 산다", "kind": "piece", "origin": "blocking-and-yield" }
+          ]
+        },
+        {
+          "id": "rendering-pipeline",
+          "name": "렌더링 파이프라인",
+          "topics": [
+            { "id": "dom-and-cssom", "name": "DOM 과 CSSOM" },
+            { "id": "style-calculation", "name": "스타일 계산" },
+            { "id": "layout-reflow", "name": "레이아웃" },
+            { "id": "paint-and-composite", "name": "페인트와 합성" },
+            { "id": "two-trees-meet", "name": "두 트리가 만난다", "desc": "구조와 꾸밈이 합쳐져 그릴 것이 된다", "kind": "piece", "origin": "dom-and-cssom" },
+            { "id": "selector-right-to-left", "name": "오른쪽부터 거슬러", "desc": "맞는지 보려고 위로 올라간다", "kind": "piece", "origin": "style-calculation" },
+            { "id": "cascade-conflict", "name": "같은 자리를 두고", "desc": "규칙이 다투면 무게로 정해진다", "kind": "piece", "origin": "style-calculation" },
+            { "id": "one-grows-rest-shift", "name": "하나가 커지면", "desc": "뒤의 것이 줄줄이 밀린다", "kind": "piece", "origin": "layout-reflow" },
+            { "id": "forced-sync-layout", "name": "읽고 쓰기를 번갈아", "desc": "물을 때마다 자리를 다시 잰다", "kind": "piece", "origin": "layout-reflow" },
+            { "id": "stack-of-sheets", "name": "칠한 장을 포갠다", "desc": "따로 칠하고 겹쳐 한 장으로", "kind": "piece", "origin": "paint-and-composite" },
+            { "id": "layer-promotion", "name": "떼어 놓으면", "desc": "따로 둔 것은 다시 칠하지 않는다", "kind": "piece", "origin": "paint-and-composite" }
+          ]
+        },
+        {
+          "id": "reconciliation",
+          "name": "재조정과 반응성",
+          "topics": [
+            { "id": "virtual-dom-diff", "name": "가상 DOM diff" },
+            { "id": "keys-in-lists", "name": "키와 목록" },
+            { "id": "dependency-tracking", "name": "의존 추적" },
+            { "id": "update-batching", "name": "배칭" },
+            { "id": "side-by-side-trees", "name": "같은 자리끼리", "desc": "두 트리를 맞대어 다른 곳만 고친다", "kind": "piece", "origin": "virtual-dom-diff" },
+            { "id": "type-change-rebuild", "name": "종류가 다르면", "desc": "아래를 통째로 버리고 새로 만든다", "kind": "piece", "origin": "virtual-dom-diff" },
+            { "id": "missing-key-remount", "name": "이름표가 없으면", "desc": "자리로만 맞춰 엉뚱한 것이 남는다", "kind": "piece", "origin": "keys-in-lists" },
+            { "id": "key-reorder", "name": "이름표가 있으면", "desc": "만들지 않고 옮기기만 한다", "kind": "piece", "origin": "keys-in-lists" },
+            { "id": "read-is-subscribe", "name": "읽은 것만 기억한다", "desc": "읽은 값이 바뀔 때만 다시 그린다", "kind": "piece", "origin": "dependency-tracking" },
+            { "id": "dirty-scan", "name": "무엇이 바뀌었나", "desc": "기억하지 않으면 전부 훑어야 한다", "kind": "piece", "origin": "dependency-tracking" },
+            { "id": "coalesce-updates", "name": "모아서 한 번에", "desc": "여러 번 바꿔도 한 번만 그린다", "kind": "piece", "origin": "update-batching" }
+          ]
+        },
+        {
+          "id": "frame-budget",
+          "name": "프레임과 애니메이션",
+          "topics": [
+            { "id": "frame-deadline", "name": "프레임 예산" },
+            { "id": "animation-frame-callback", "name": "requestAnimationFrame" },
+            { "id": "composited-animation", "name": "합성 전용 애니메이션" },
+            { "id": "sixteen-milliseconds", "name": "한 장에 주어진 시간", "desc": "늦으면 그 장은 나오지 않는다", "kind": "piece", "origin": "frame-deadline" },
+            { "id": "dropped-frame", "name": "건너뛴 한 장", "desc": "늦은 장은 기다려 주지 않는다", "kind": "piece", "origin": "frame-deadline" },
+            { "id": "just-before-paint", "name": "그리기 직전에", "desc": "한 장에 한 번만 불린다", "kind": "piece", "origin": "animation-frame-callback" },
+            { "id": "layout-per-frame", "name": "매 프레임 다시 재기", "desc": "자리를 바꾸면 계속 다시 잰다", "kind": "piece", "origin": "composited-animation" },
+            { "id": "move-without-repaint", "name": "옮기기만 하면", "desc": "이미 칠한 것을 밀기만 한다", "kind": "piece", "origin": "composited-animation" },
+            { "id": "jank-vs-slow", "name": "고르지 않은 것", "desc": "느린 것보다 들쭉날쭉한 것이 거슬린다", "kind": "piece", "origin": "frame-deadline" }
+          ]
+        },
+        {
+          "id": "resource-loading",
+          "name": "로딩 순서",
+          "topics": [
+            { "id": "critical-rendering-path", "name": "크리티컬 렌더링 패스" },
+            { "id": "script-blocking", "name": "스크립트 차단" },
+            { "id": "resource-priority", "name": "리소스 우선순위" },
+            { "id": "parser-stops", "name": "읽기가 멎는다", "desc": "스크립트를 만나면 문서 읽기를 멈춘다", "kind": "piece", "origin": "script-blocking" },
+            { "id": "defer-vs-async", "name": "미룰까 끼어들까", "desc": "기다렸다 순서대로냐 오는 대로냐", "kind": "piece", "origin": "script-blocking" },
+            { "id": "style-blocks-paint", "name": "꾸밈이 오기 전에는", "desc": "스타일이 없으면 첫 장을 안 그린다", "kind": "piece", "origin": "critical-rendering-path" },
+            { "id": "preload-hint", "name": "앞당겨 부르기", "desc": "곧 쓸 것을 미리 시작한다", "kind": "piece", "origin": "resource-priority" },
+            { "id": "font-swap", "name": "글꼴이 늦으면", "desc": "글이 떴다가 모양을 바꾼다", "kind": "piece", "origin": "resource-priority" },
+            { "id": "what-first-paint-needs", "name": "첫 장에 필요한 것", "desc": "없어도 되는 것을 뒤로 미룬다", "kind": "piece", "origin": "critical-rendering-path" }
           ]
         }
       ]
@@ -800,6 +1009,97 @@
       ]
     },
     {
+      "id": "dev-tooling",
+      "name": "개발 도구",
+      "tagline": "차이 · 이력 · 빌드의 알고리즘",
+      "icon": "GitBranch",
+      "accent": "lime",
+      "subdomains": [
+        {
+          "id": "diff-and-merge",
+          "name": "차이와 병합",
+          "topics": [
+            { "id": "longest-common-subsequence", "name": "최장 공통 부분 수열" },
+            { "id": "myers-diff", "name": "Myers diff" },
+            { "id": "three-way-merge", "name": "3-way 병합" },
+            { "id": "conflict-resolution", "name": "충돌 해소" },
+            { "id": "keep-the-common", "name": "같은 것을 최대한 남긴다", "desc": "남길 것을 정하면 고칠 것이 정해진다", "kind": "piece", "origin": "longest-common-subsequence" },
+            { "id": "edit-script", "name": "지운 줄과 넣은 줄", "desc": "차이를 손질 목록으로 적는다", "kind": "piece", "origin": "longest-common-subsequence" },
+            { "id": "diagonal-is-free", "name": "대각선은 공짜", "desc": "같은 줄로 갈 때는 값을 안 치른다", "kind": "piece", "origin": "myers-diff" },
+            { "id": "ancestor-as-referee", "name": "갈라지기 전 자리", "desc": "누가 고쳤는지는 공통 조상이 안다", "kind": "piece", "origin": "three-way-merge" },
+            { "id": "one-side-changed", "name": "한쪽만 고쳤으면", "desc": "고친 쪽을 그대로 쓴다", "kind": "piece", "origin": "three-way-merge" },
+            { "id": "both-touched-same-line", "name": "둘이 같은 줄을", "desc": "같은 자리를 고치면 멈춘다", "kind": "piece", "origin": "conflict-resolution" },
+            { "id": "move-looks-like-rewrite", "name": "옮긴 것과 다시 쓴 것", "desc": "줄 단위로 보면 이동이 삭제와 삽입이다", "kind": "piece", "origin": "conflict-resolution" }
+          ]
+        },
+        {
+          "id": "history-graph",
+          "name": "이력 그래프",
+          "topics": [
+            { "id": "commit-dag", "name": "커밋 DAG" },
+            { "id": "merge-base", "name": "병합 기준점" },
+            { "id": "rebase-vs-merge", "name": "리베이스와 병합" },
+            { "id": "history-bisect", "name": "이진 탐색 추적" },
+            { "id": "snapshot-points-back", "name": "찍은 자리가 앞을 가리킨다", "desc": "이력은 뒤에서 앞으로 이어진 사슬이다", "kind": "piece", "origin": "commit-dag" },
+            { "id": "branch-is-a-label", "name": "가지가 아니라 이름표", "desc": "브랜치는 한 자리를 가리키는 이름이다", "kind": "piece", "origin": "commit-dag" },
+            { "id": "fast-forward", "name": "빨리 감기", "desc": "갈라지지 않았으면 이름표만 옮긴다", "kind": "piece", "origin": "merge-base" },
+            { "id": "where-they-parted", "name": "둘이 갈라진 자리", "desc": "두 갈래를 거슬러 처음 만나는 곳", "kind": "piece", "origin": "merge-base" },
+            { "id": "replay-on-new-base", "name": "다시 얹기", "desc": "고친 것을 새 바닥 위에 하나씩 다시 놓는다", "kind": "piece", "origin": "rebase-vs-merge" },
+            { "id": "pick-one-out", "name": "하나만 골라 옮기기", "desc": "가지 전체가 아니라 한 뭉치만", "kind": "piece", "origin": "rebase-vs-merge" },
+            { "id": "bisect-halving", "name": "절반씩 좁히기", "desc": "어디서 깨졌는지 반씩 줄여 찾는다", "kind": "piece", "origin": "history-bisect" },
+            { "id": "unreachable-snapshot", "name": "아무도 안 가리키면", "desc": "이름이 떨어진 자리는 잊힌다", "kind": "piece", "origin": "commit-dag" }
+          ]
+        },
+        {
+          "id": "build-graph",
+          "name": "빌드와 의존",
+          "topics": [
+            { "id": "dependency-graph", "name": "의존 그래프" },
+            { "id": "incremental-build", "name": "증분 빌드" },
+            { "id": "cache-invalidation", "name": "캐시 무효화" },
+            { "id": "circular-dependency", "name": "순환 의존" },
+            { "id": "who-goes-first", "name": "먼저 될 것부터", "desc": "남을 기다리는 것은 나중에 세운다", "kind": "piece", "origin": "dependency-graph" },
+            { "id": "only-what-changed", "name": "손댄 것과 그 위만", "desc": "아래가 그대로면 다시 세우지 않는다", "kind": "piece", "origin": "incremental-build" },
+            { "id": "timestamp-vs-fingerprint", "name": "언제 고쳤나 무엇이 되었나", "desc": "시각으로 보면 안 바뀐 것도 다시 센다", "kind": "piece", "origin": "incremental-build" },
+            { "id": "invalidation-cascade", "name": "하나가 흐려지면", "desc": "딸린 것까지 줄줄이 다시 해야 한다", "kind": "piece", "origin": "cache-invalidation" },
+            { "id": "nobody-can-be-first", "name": "서로를 기다린다", "desc": "고리가 있으면 시작할 자리가 없다", "kind": "piece", "origin": "circular-dependency" },
+            { "id": "independent-in-parallel", "name": "안 기다리는 것끼리", "desc": "서로 모르는 것은 함께 세운다", "kind": "piece", "origin": "dependency-graph" }
+          ]
+        },
+        {
+          "id": "package-resolution",
+          "name": "패키지 해결",
+          "topics": [
+            { "id": "semantic-versioning", "name": "버전 범위" },
+            { "id": "dependency-resolution", "name": "의존 해결" },
+            { "id": "lockfile", "name": "잠금 파일" },
+            { "id": "three-numbers", "name": "세 자리 수", "desc": "무엇이 바뀌면 어느 자리를 올리는가", "kind": "piece", "origin": "semantic-versioning" },
+            { "id": "range-and-candidates", "name": "범위와 후보", "desc": "이 안이면 어느 것이든 좋다", "kind": "piece", "origin": "semantic-versioning" },
+            { "id": "diamond-dependency", "name": "다이아몬드", "desc": "둘이 같은 것을 다른 버전으로 부른다", "kind": "piece", "origin": "dependency-resolution" },
+            { "id": "no-overlap", "name": "겹치는 데가 없다", "desc": "두 요구가 만나지 않으면 풀 수 없다", "kind": "piece", "origin": "dependency-resolution" },
+            { "id": "two-copies-coexist", "name": "두 벌이 함께 산다", "desc": "못 맞추면 각자 자기 것을 갖는다", "kind": "piece", "origin": "dependency-resolution" },
+            { "id": "pin-what-was-chosen", "name": "고른 것을 적어 둔다", "desc": "다음에도 같은 것이 뽑히도록", "kind": "piece", "origin": "lockfile" }
+          ]
+        },
+        {
+          "id": "test-coverage",
+          "name": "테스트와 커버리지",
+          "topics": [
+            { "id": "statement-coverage", "name": "구문 커버리지" },
+            { "id": "branch-coverage", "name": "분기 커버리지" },
+            { "id": "mutation-testing", "name": "변이 테스트" },
+            { "id": "counterexample-shrinking", "name": "반례 축소" },
+            { "id": "lines-you-stepped-on", "name": "밟은 줄", "desc": "지나간 줄에 표시가 남는다", "kind": "piece", "origin": "statement-coverage" },
+            { "id": "lines-covered-branch-not", "name": "줄은 다 밟았는데", "desc": "갈래 한쪽은 한 번도 안 갔다", "kind": "piece", "origin": "branch-coverage" },
+            { "id": "which-condition-decided", "name": "누가 정했나", "desc": "묶인 조건 중 결과를 가른 것 하나", "kind": "piece", "origin": "branch-coverage" },
+            { "id": "path-explosion", "name": "길이 불어난다", "desc": "갈래 열이면 길이 천을 넘는다", "kind": "piece", "origin": "branch-coverage" },
+            { "id": "surviving-mutant", "name": "망가뜨렸는데 안 잡힌다", "desc": "고쳐 놔도 통과하면 안 본 것이다", "kind": "piece", "origin": "mutation-testing" },
+            { "id": "shrink-to-smallest", "name": "깎아 내려가기", "desc": "터진 입력을 줄여 가장 작은 것으로", "kind": "piece", "origin": "counterexample-shrinking" }
+          ]
+        }
+      ]
+    },
+    {
       "id": "ml-foundations",
       "name": "머신러닝 기초",
       "tagline": "지도 · 비지도 · 학습 메커니즘",
@@ -1008,6 +1308,97 @@
       ]
     },
     {
+      "id": "ai-engineering",
+      "name": "AI 엔지니어링",
+      "tagline": "모델을 제품으로 만드는 층",
+      "icon": "Robot",
+      "accent": "purple",
+      "subdomains": [
+        {
+          "id": "text-tokenization",
+          "name": "토큰화",
+          "topics": [
+            { "id": "subword-segmentation", "name": "서브워드 분할" },
+            { "id": "bpe-training", "name": "BPE 학습" },
+            { "id": "vocabulary", "name": "어휘 사전" },
+            { "id": "between-letter-and-word", "name": "글자와 낱말 사이", "desc": "낱말도 글자도 아닌 크기로 자른다", "kind": "piece", "origin": "subword-segmentation" },
+            { "id": "merge-the-frequent-pair", "name": "자주 붙어 다닌 둘", "desc": "가장 많이 붙은 짝을 하나로 합친다", "kind": "piece", "origin": "bpe-training" },
+            { "id": "unknown-becomes-known", "name": "모르는 낱말", "desc": "아는 조각으로 쪼개어 받아 낸다", "kind": "piece", "origin": "vocabulary" },
+            { "id": "space-is-part-of-it", "name": "빈칸도 글자다", "desc": "띄어쓰기가 조각에 붙어 다닌다", "kind": "piece", "origin": "subword-segmentation" },
+            { "id": "tokens-per-language", "name": "언어마다 다른 값", "desc": "같은 뜻인데 조각 수가 몇 배 차이 난다", "kind": "piece", "origin": "vocabulary" },
+            { "id": "boundary-shift", "name": "한 글자 차이로", "desc": "자른 자리가 달라지면 뜻이 흔들린다", "kind": "piece", "origin": "subword-segmentation" }
+          ]
+        },
+        {
+          "id": "vector-search",
+          "name": "임베딩과 벡터 검색",
+          "topics": [
+            { "id": "vector-similarity", "name": "벡터 유사도" },
+            { "id": "exhaustive-search", "name": "완전 탐색" },
+            { "id": "hnsw", "name": "HNSW" },
+            { "id": "inverted-file-index", "name": "역파일 색인" },
+            { "id": "product-quantization", "name": "곱 양자화" },
+            { "id": "angle-not-length", "name": "각도로 재는 닮음", "desc": "길이를 빼고 방향만 견준다", "kind": "piece", "origin": "vector-similarity" },
+            { "id": "compare-with-all", "name": "전부 견주기", "desc": "정확하지만 수가 늘면 못 버틴다", "kind": "piece", "origin": "exhaustive-search" },
+            { "id": "neighbors-linked-ahead", "name": "이웃을 미리 이어 둔다", "desc": "길이 있으면 걸어서 찾아간다", "kind": "piece", "origin": "hnsw" },
+            { "id": "coarse-then-fine", "name": "위층에서 내려오기", "desc": "성긴 층에서 크게, 아래층에서 촘촘히", "kind": "piece", "origin": "hnsw" },
+            { "id": "probe-a-few-cells", "name": "무리 몇 개만 연다", "desc": "가까워 보이는 칸만 뒤진다", "kind": "piece", "origin": "inverted-file-index" },
+            { "id": "split-and-number", "name": "쪼개서 번호로", "desc": "토막마다 가장 닮은 대표로 바꾼다", "kind": "piece", "origin": "product-quantization" },
+            { "id": "recall-speed-tradeoff", "name": "덜 뒤지면 놓친다", "desc": "빠를수록 빠뜨리는 것이 는다", "kind": "piece", "origin": "inverted-file-index" }
+          ]
+        },
+        {
+          "id": "retrieval-augmentation",
+          "name": "검색 증강",
+          "topics": [
+            { "id": "chunking", "name": "청킹" },
+            { "id": "hybrid-search", "name": "하이브리드 검색" },
+            { "id": "reranking", "name": "재순위" },
+            { "id": "context-assembly", "name": "맥락 조립" },
+            { "id": "where-to-cut", "name": "어디서 자를 것인가", "desc": "문단 가운데를 자르면 뜻이 끊긴다", "kind": "piece", "origin": "chunking" },
+            { "id": "overlap-the-seam", "name": "겹쳐 자르기", "desc": "경계에 걸친 것을 양쪽에 남긴다", "kind": "piece", "origin": "chunking" },
+            { "id": "same-word-vs-same-meaning", "name": "글자와 뜻", "desc": "한쪽은 낱말을 맞추고 한쪽은 뜻을 맞춘다", "kind": "piece", "origin": "hybrid-search" },
+            { "id": "fuse-two-rankings", "name": "두 등수를 합친다", "desc": "각자의 순위를 모아 다시 매긴다", "kind": "piece", "origin": "hybrid-search" },
+            { "id": "look-closely-at-few", "name": "몇 개만 다시 본다", "desc": "추린 것만 꼼꼼히 견주어 순서를 바꾼다", "kind": "piece", "origin": "reranking" },
+            { "id": "budget-runs-out", "name": "넣을 자리가 모자란다", "desc": "고른 것을 다 담을 수는 없다", "kind": "piece", "origin": "context-assembly" },
+            { "id": "lost-in-the-middle", "name": "가운데를 흘린다", "desc": "앞뒤는 보고 사이의 것은 놓친다", "kind": "piece", "origin": "context-assembly" }
+          ]
+        },
+        {
+          "id": "decoding",
+          "name": "생성 제어",
+          "topics": [
+            { "id": "greedy-decoding", "name": "탐욕 디코딩" },
+            { "id": "temperature-sampling", "name": "온도와 표본 추출" },
+            { "id": "top-k-top-p", "name": "top-k / top-p" },
+            { "id": "beam-search", "name": "빔 서치" },
+            { "id": "always-the-highest", "name": "언제나 1등만", "desc": "가장 높은 것만 고르면 같은 말이 나온다", "kind": "piece", "origin": "greedy-decoding" },
+            { "id": "flatten-or-sharpen", "name": "평평하게 뾰족하게", "desc": "온도가 고를 확률의 모양을 바꾼다", "kind": "piece", "origin": "temperature-sampling" },
+            { "id": "cut-the-tail", "name": "꼬리 자르기", "desc": "아래를 버리고 남은 것에서 뽑는다", "kind": "piece", "origin": "top-k-top-p" },
+            { "id": "fill-to-a-share", "name": "몇 개가 아니라 얼마나", "desc": "차오를 때까지만 후보로 남긴다", "kind": "piece", "origin": "top-k-top-p" },
+            { "id": "carry-several-lines", "name": "여러 줄기를 함께", "desc": "후보 몇 개를 나란히 끌고 간다", "kind": "piece", "origin": "beam-search" },
+            { "id": "penalize-repeats", "name": "되풀이에 값을 매긴다", "desc": "이미 쓴 말의 값을 깎는다", "kind": "piece", "origin": "temperature-sampling" },
+            { "id": "erase-the-impossible", "name": "올 수 없는 것 지우기", "desc": "문법에 안 맞는 후보를 미리 없앤다", "kind": "piece", "origin": "beam-search" }
+          ]
+        },
+        {
+          "id": "inference-efficiency",
+          "name": "추론 효율",
+          "topics": [
+            { "id": "kv-cache", "name": "KV 캐시" },
+            { "id": "batching-and-padding", "name": "배치와 패딩" },
+            { "id": "speculative-decoding", "name": "사색적 디코딩" },
+            { "id": "dont-recount-the-past", "name": "지난 것을 다시 세지 않는다", "desc": "앞은 그대로니 새것만 셈한다", "kind": "piece", "origin": "kv-cache" },
+            { "id": "cache-keeps-growing", "name": "캐시가 자란다", "desc": "길어질수록 자리를 더 먹는다", "kind": "piece", "origin": "kv-cache" },
+            { "id": "short-waits-for-long", "name": "짧은 것이 기다린다", "desc": "길이를 맞추려 넣은 빈칸이 값을 치른다", "kind": "piece", "origin": "batching-and-padding" },
+            { "id": "refill-the-empty-slot", "name": "빈자리를 바로 채운다", "desc": "끝난 자리에 다음 것을 밀어 넣는다", "kind": "piece", "origin": "batching-and-padding" },
+            { "id": "draft-then-verify", "name": "먼저 찍고 확인하기", "desc": "작은 것이 앞서가고 큰 것이 검사한다", "kind": "piece", "origin": "speculative-decoding" },
+            { "id": "first-token-vs-rest", "name": "첫 글자와 그 뒤", "desc": "처음 한 번과 이어지는 걸음의 값이 다르다", "kind": "piece", "origin": "kv-cache" }
+          ]
+        }
+      ]
+    },
+    {
       "id": "system-design",
       "name": "시스템 설계",
       "tagline": "확장성 · 일관성 · 가용성",
@@ -1054,6 +1445,28 @@
             { "id": "send-to-idlest", "name": "최소 연결", "desc": "가장 한가한 쪽으로", "kind": "piece", "origin": "least-connection" },
             { "id": "ring-of-hashes", "name": "해시 링", "desc": "고리 위에 자리를 잡는다", "kind": "piece", "origin": "consistent-hashing" },
             { "id": "move-few-on-change", "name": "일관 해싱", "desc": "하나가 빠져도 조금만 옮긴다", "kind": "piece", "origin": "consistent-hashing" }
+          ]
+        },
+        {
+          "id": "load-and-backpressure",
+          "name": "부하와 배압",
+          "topics": [
+            { "id": "queueing-model", "name": "큐잉 모델" },
+            { "id": "rate-limiting", "name": "레이트 리미팅" },
+            { "id": "backpressure", "name": "배압" },
+            { "id": "retry-and-backoff", "name": "재시도와 백오프" },
+            { "id": "bulkhead", "name": "벌크헤드" },
+            { "id": "arrival-vs-service", "name": "들어오는 속도와 처리 속도", "desc": "들어오는 쪽이 빠르면 줄이 는다", "kind": "piece", "origin": "queueing-model" },
+            { "id": "length-is-rate-times-wait", "name": "줄 길이와 기다림", "desc": "줄의 길이는 속도와 기다림의 곱이다", "kind": "piece", "origin": "queueing-model" },
+            { "id": "knee-of-the-curve", "name": "무릎에서 꺾인다", "desc": "여유가 줄면 기다림이 갑자기 치솟는다", "kind": "piece", "origin": "queueing-model" },
+            { "id": "token-bucket", "name": "토큰 버킷", "desc": "쌓아 둔 만큼은 한꺼번에 쓴다", "kind": "piece", "origin": "rate-limiting" },
+            { "id": "leaky-bucket", "name": "누출 버킷", "desc": "들어오는 대로가 아니라 일정하게 흘린다", "kind": "piece", "origin": "rate-limiting" },
+            { "id": "sliding-window-count", "name": "창을 밀며 센다", "desc": "칸을 고정하면 경계에서 두 배가 지나간다", "kind": "piece", "origin": "rate-limiting" },
+            { "id": "tell-them-to-slow-down", "name": "못 받겠다고 알린다", "desc": "받는 쪽이 보내는 쪽을 늦춘다", "kind": "piece", "origin": "backpressure" },
+            { "id": "shed-to-survive", "name": "넘치면 버린다", "desc": "다 무너지느니 일부를 거절한다", "kind": "piece", "origin": "backpressure" },
+            { "id": "retry-storm", "name": "다 같이 다시 온다", "desc": "한꺼번에 재시도하면 두 번째로 무너진다", "kind": "piece", "origin": "retry-and-backoff" },
+            { "id": "jittered-backoff", "name": "어긋나게 기다리기", "desc": "기다리는 시간을 흩어 겹치지 않게 한다", "kind": "piece", "origin": "retry-and-backoff" },
+            { "id": "isolate-the-flood", "name": "칸을 나눠 막는다", "desc": "한 칸이 차도 옆 칸은 산다", "kind": "piece", "origin": "bulkhead" }
           ]
         },
         {

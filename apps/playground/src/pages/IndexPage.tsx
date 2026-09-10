@@ -18,6 +18,10 @@ import {
   ShieldCheck,
   PaintBrush,
   MathOperations,
+  Memory,
+  Browser,
+  GitBranch,
+  Robot,
   Atom,
   PuzzlePiece,
 } from '@phosphor-icons/react';
@@ -35,6 +39,7 @@ import { PreferencesToolbar } from '../components/PreferencesToolbar.js';
 
 const ICONS: Record<string, PhIcon> = {
   Cpu, Code, Stack, Network, Database, Translate, Brain, Lightning, Buildings, ShieldCheck, PaintBrush, MathOperations,
+  Memory, Browser, GitBranch, Robot,
 };
 
 type AccentTokens = {
@@ -74,11 +79,15 @@ const ACCENTS: Record<string, AccentTokens> = {
   red: tok('red'),
   pink: tok('pink'),
   teal: tok('teal'),
+  orange: tok('orange'),
+  blue: tok('blue'),
+  lime: tok('lime'),
+  purple: tok('purple'),
 };
 
 // Tailwind v4 source scan — 동적으로 조합되는 색상 클래스 토큰을 노출.
 export const SAFELIST: readonly string[] = (() => {
-  const colors = ['amber','cyan','violet','sky','emerald','rose','fuchsia','yellow','indigo','red','pink','teal'];
+  const colors = ['amber','cyan','violet','sky','emerald','rose','fuchsia','yellow','indigo','red','pink','teal','orange','blue','lime','purple'];
   const out: string[] = [];
   for (const c of colors) {
     out.push(
