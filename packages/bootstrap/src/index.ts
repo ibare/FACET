@@ -611,4 +611,15 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:globalAndLocal', () =>
     import('@ffacet/algorithm-global-and-local').then((m) => m.registerGlobalAndLocal()),
   );
+
+  // 비지도학습 완제품 1차 — k-평균 · 계층 군집화 · DBSCAN.
+  registerFacetLoader('facet:kmeans', () =>
+    import('@ffacet/algorithm-kmeans').then((m) => m.registerKmeans()),
+  );
+  registerFacetLoader('facet:hierarchical', () =>
+    import('@ffacet/algorithm-hierarchical').then((m) => m.registerHierarchical()),
+  );
+  registerFacetLoader('facet:dbscan', () =>
+    import('@ffacet/algorithm-dbscan').then((m) => m.registerDbscan()),
+  );
 }

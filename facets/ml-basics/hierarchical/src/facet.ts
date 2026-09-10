@@ -1,0 +1,381 @@
+/**
+ * 계층 군집화 facet 선언.
+ *
+ * 블록은 셋뿐이다 — `stage` · `controls` · `codePanel`. 제목 블록을 두지 않는다
+ * (이름은 카탈로그 카드와 글의 문단이 준다). 점판 · 나무 · 병합 차례 · 기록표는
+ * 빌트인 view 를 빌리지 않고 stage 가 직접 그린다 (원칙 6).
+ *
+ * 이 완제품이 완제품인 까닭 셋이 여기 다 걸려 있다.
+ *
+ *  - **IR** — `ir:hierarchical` 하나가 여섯 언어로 펼쳐진다. 진입점은 병합 한
+ *    걸음이고, 세 연결 방식의 차이가 그 안쪽 루프의 세 줄에 있다. 손잡이를
+ *    옮기면 코드 패널의 강조가 그 세 줄 사이를 오간다.
+ *  - **조작** — `set-link`(단일 · 완전 · 평균)와 `set-cut`(높이 여섯). 둘을
+ *    맞물려 옮겨야 "높이 2 에서 1 / 3 / 3" 이 보인다. 값 하나로는 볼 수 없다.
+ *  - **통합** — 조각 둘을 잇는다. `mergeNearestPair` 는 나무를 짓고
+ *    `dendrogramCut` 은 자르는데, 둘 다 **단일 연결만** 쓴다. 완제품은 연결을
+ *    바꾸면 나무가 바뀌고 따라서 같은 높이에서 자른 답도 바뀌는 것을 보인다.
+ *
+ * 자료는 점 여덟이다. 두 덩이(a b c / f g h) 사이에 d 와 e 가 다리처럼 놓여
+ * 있고, 단일 연결만 그 다리를 타고 이어 붙는다.
+ */
+
+import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
+
+export const hierarchicalFacet: FacetJson = {
+  id: 'facet:hierarchical',
+  title: {
+    en: 'Hierarchical Clustering — What Counts as the Distance Between Two Groups',
+    ko: '계층 군집화 — 두 무리 사이의 거리를 무엇으로 재는가',
+    ar: 'التجميع الهرمي — ما الذي يُعدّ مسافة بين مجموعتين',
+    es: 'Agrupamiento jerárquico: qué cuenta como distancia entre dos grupos',
+    fr: 'Classification hiérarchique — ce qui compte comme distance entre deux groupes',
+    hi: 'पदानुक्रमित क्लस्टरिंग — दो समूहों के बीच की दूरी किसे मानें',
+    id: 'Pengelompokan hierarkis — apa yang dihitung sebagai jarak antara dua kelompok',
+    pt: 'Agrupamento hierárquico — o que conta como distância entre dois grupos',
+  },
+  description: {
+    en: 'Single, complete and average linkage build three different trees from the same eight points, and one cut height then gives three different answers',
+    ko: '같은 점 여덟에서 단일·완전·평균 연결이 서로 다른 나무를 짓고, 같은 높이에서 자른 답도 갈린다',
+    ar: 'الربط المفرد والكامل والمتوسط يبني ثلاث أشجار مختلفة من النقاط الثماني نفسها، ثم يعطي ارتفاع قطع واحد ثلاث إجابات مختلفة',
+    es: 'El enlace simple, completo y promedio construye tres árboles distintos con los mismos ocho puntos, y una sola altura de corte da tres respuestas distintas',
+    fr: 'Les liaisons simple, complète et moyenne construisent trois arbres différents à partir des mêmes huit points, et une seule hauteur de coupe donne alors trois réponses différentes',
+    hi: 'एकल, पूर्ण और औसत संयोजन उन्हीं आठ बिंदुओं से तीन अलग वृक्ष बनाते हैं, और एक ही कटान ऊँचाई तीन अलग उत्तर देती है',
+    id: 'Pautan tunggal, lengkap, dan rata-rata membangun tiga pohon berbeda dari delapan titik yang sama, lalu satu tinggi potong memberi tiga jawaban berbeda',
+    pt: 'As ligações simples, completa e média constroem três árvores diferentes a partir dos mesmos oito pontos, e uma só altura de corte dá três respostas diferentes',
+  },
+  algorithm: 'module:hierarchical',
+  projector: 'module:hierarchicalProjector',
+  initialData: {
+    type: 'hierarchical',
+    // 두 덩이 사이에 d · e 가 다리처럼 놓인 배치. 이 자료가 이 완제품의 논증이다.
+    points: [
+      { id: 'a', x: 1.0, y: 1.0 },
+      { id: 'b', x: 1.85, y: 1.35 },
+      { id: 'c', x: 1.3, y: 2.3 },
+      { id: 'd', x: 3.3, y: 2.7 },
+      { id: 'e', x: 4.25, y: 3.15 },
+      { id: 'f', x: 5.8, y: 3.7 },
+      { id: 'g', x: 6.7, y: 4.15 },
+      { id: 'h', x: 6.15, y: 5.0 },
+    ],
+    bridgeIds: ['d', 'e'],
+    cutHeights: [1.0, 1.5, 2.0, 2.5, 3.5, 5.0],
+    initialLinkIndex: 0,
+    // 높이 2 — 셋이 1 / 3 / 3 으로 갈리는 자리에서 시작한다.
+    initialCutIndex: 2,
+    // 완전 연결의 마지막 병합이 6.521 이라 셋을 한 자로 재려면 7 이 필요하다.
+    axisMax: 7,
+    timings: { mergeStepMs: 420 },
+  },
+  layout: {
+    type: 'column',
+    gap: 8,
+    children: [{ ref: 'stage' }, { ref: 'controls' }, { ref: 'codePanel' }],
+  },
+  messages: {
+    'label.aria': {
+      en: 'Hierarchical clustering — the same points, three linkages, one cut height',
+      ko: '계층 군집화 — 같은 점, 연결 방식 셋, 자르는 높이 하나',
+      ar: 'التجميع الهرمي — النقاط نفسها، ثلاث طرق ربط، ارتفاع قطع واحد',
+      es: 'Agrupamiento jerárquico: los mismos puntos, tres enlaces, una altura de corte',
+      fr: 'Classification hiérarchique — les mêmes points, trois liaisons, une hauteur de coupe',
+      hi: 'पदानुक्रमित क्लस्टरिंग — वही बिंदु, तीन संयोजन, एक कटान ऊँचाई',
+      id: 'Pengelompokan hierarkis — titik yang sama, tiga pautan, satu tinggi potong',
+      pt: 'Agrupamento hierárquico — os mesmos pontos, três ligações, uma altura de corte',
+    },
+    'label.scatter': {
+      en: 'the points',
+      ko: '점판',
+      ar: 'النقاط',
+      es: 'los puntos',
+      fr: 'les points',
+      hi: 'बिंदु',
+      id: 'titik-titiknya',
+      pt: 'os pontos',
+    },
+    'label.bridge': {
+      en: 'the two in the middle form a bridge',
+      ko: '가운데 둘이 다리를 놓는다',
+      ar: 'النقطتان في الوسط تشكّلان جسرًا',
+      es: 'los dos del medio forman un puente',
+      fr: 'les deux du milieu forment un pont',
+      hi: 'बीच के दो एक पुल बनाते हैं',
+      id: 'dua titik di tengah membentuk jembatan',
+      pt: 'os dois do meio formam uma ponte',
+    },
+    'label.treeOf': {
+      en: '{link} — the tree',
+      ko: '{link} 연결이 짓는 나무',
+      ar: 'الشجرة التي يبنيها ربط {link}',
+      es: 'el árbol del enlace {link}',
+      fr: "l'arbre de la liaison {link}",
+      hi: '{link} संयोजन का वृक्ष',
+      id: 'pohon dari pautan {link}',
+      pt: 'a árvore da ligação {link}',
+    },
+    'label.height': {
+      en: 'height',
+      ko: '높이',
+      ar: 'الارتفاع',
+      es: 'altura',
+      fr: 'hauteur',
+      hi: 'ऊँचाई',
+      id: 'tinggi',
+      pt: 'altura',
+    },
+    'label.clusters': {
+      en: 'clusters: {k}',
+      ko: '무리 {k}',
+      ar: 'العناقيد: {k}',
+      es: 'grupos: {k}',
+      fr: 'groupes : {k}',
+      hi: 'समूह: {k}',
+      id: 'kelompok: {k}',
+      pt: 'grupos: {k}',
+    },
+    'label.mergeOrder': {
+      en: 'merge order',
+      ko: '합친 차례',
+      ar: 'ترتيب الدمج',
+      es: 'orden de fusión',
+      fr: 'ordre des fusions',
+      hi: 'विलय क्रम',
+      id: 'urutan penggabungan',
+      pt: 'ordem das fusões',
+    },
+    'label.ledger': {
+      en: 'clusters after the cut',
+      ko: '자른 뒤의 무리 수',
+      ar: 'العناقيد بعد القطع',
+      es: 'grupos tras el corte',
+      fr: 'groupes après la coupe',
+      hi: 'कटान के बाद समूह',
+      id: 'kelompok setelah pemotongan',
+      pt: 'grupos após o corte',
+    },
+    // ko 는 `label.height` 와 같은 말이 되지 않게 늘려 적는다 — 나무의 세로 자와
+    // 기록표의 열 머리가 같은 글자로 뜨면 둘을 구별할 수 없다.
+    'label.cutHeight': {
+      en: 'cut',
+      ko: '자르는 높이',
+      ar: 'القطع',
+      es: 'corte',
+      fr: 'coupe',
+      hi: 'कटान',
+      id: 'potong',
+      pt: 'corte',
+    },
+    'link.single': {
+      en: 'single',
+      ko: '단일',
+      ar: 'مفرد',
+      es: 'simple',
+      fr: 'simple',
+      hi: 'एकल',
+      id: 'tunggal',
+      pt: 'simples',
+    },
+    'link.complete': {
+      en: 'complete',
+      ko: '완전',
+      ar: 'كامل',
+      es: 'completo',
+      fr: 'complet',
+      hi: 'पूर्ण',
+      id: 'lengkap',
+      pt: 'completo',
+    },
+    'link.average': {
+      en: 'average',
+      ko: '평균',
+      ar: 'متوسط',
+      es: 'promedio',
+      fr: 'moyen',
+      hi: 'औसत',
+      id: 'rata-rata',
+      pt: 'média',
+    },
+    // 수 뒤에 조사나 복수형이 붙지 않게 민다 — {k} 가 1 일 때도 문장이 서야 한다.
+    'caption.answer': {
+      en: '{link} linkage, cut at {h} — groups: {k}',
+      ko: '{link} 연결, 높이 {h} 에서 자르면 무리 {k}.',
+      ar: 'ربط {link}، القطع عند {h} — العناقيد: {k}',
+      es: 'enlace {link}, corte en {h} — grupos: {k}',
+      fr: 'liaison {link}, coupe à {h} — groupes : {k}',
+      hi: '{link} संयोजन, {h} पर कटान — समूह: {k}',
+      id: 'pautan {link}, potong di {h} — kelompok: {k}',
+      pt: 'ligação {link}, corte em {h} — grupos: {k}',
+    },
+    // 열여덟 칸 어디에서도 참인 말이어야 한다 — 높이 5 의 평균 연결처럼 체이닝이
+    // 아닌 까닭으로 하나가 되는 자리도 있다.
+    'caption.chained': {
+      en: 'The two blobs end up in the same group — the pair in the middle links them.',
+      ko: '두 덩이가 한 무리가 된다 — 가운데 둘이 그것을 잇는다.',
+      ar: 'تنتهي الكتلتان في مجموعة واحدة — النقطتان في الوسط توصلانهما.',
+      es: 'Los dos cúmulos acaban en el mismo grupo: el par del medio los une.',
+      fr: 'Les deux amas finissent dans le même groupe — la paire du milieu les relie.',
+      hi: 'दोनों गुच्छे एक ही समूह में आ जाते हैं — बीच की जोड़ी उन्हें जोड़ती है।',
+      id: 'Kedua gumpalan berakhir dalam satu kelompok — pasangan di tengah menyatukannya.',
+      pt: 'Os dois aglomerados acabam no mesmo grupo — o par do meio os une.',
+    },
+    'caption.separate': {
+      en: 'The two blobs stay apart — the pair in the middle does not join them.',
+      ko: '두 덩이가 갈린 채로 남는다 — 가운데 둘이 그것을 잇지 못한다.',
+      ar: 'تبقى الكتلتان منفصلتين — النقطتان في الوسط لا توحّدانهما.',
+      es: 'Los dos cúmulos siguen separados: el par del medio no los une.',
+      fr: 'Les deux amas restent séparés — la paire du milieu ne les réunit pas.',
+      hi: 'दोनों गुच्छे अलग रहते हैं — बीच की जोड़ी उन्हें नहीं जोड़ती।',
+      id: 'Kedua gumpalan tetap terpisah — pasangan di tengah tidak menyatukannya.',
+      pt: 'Os dois aglomerados continuam separados — o par do meio não os une.',
+    },
+  },
+  blocks: {
+    stage: { type: 'hierarchical-stage' },
+    controls: {
+      type: 'control-bar',
+      controls: [
+        ...CONTROL_SET.playback,
+        {
+          widget: 'segmented-slider',
+          action: 'set-link',
+          name: 'link',
+          label: {
+            en: 'Linkage — how far apart two groups are',
+            ko: '연결 방식 — 두 무리가 얼마나 먼가',
+            ar: 'طريقة الربط — كم تبعد مجموعتان',
+            es: 'Enlace: cuán lejos están dos grupos',
+            fr: 'Liaison — à quelle distance sont deux groupes',
+            hi: 'संयोजन — दो समूह कितनी दूर हैं',
+            id: 'Pautan — seberapa jauh dua kelompok',
+            pt: 'Ligação — quão distantes estão dois grupos',
+          },
+          segments: [
+            {
+              value: 0,
+              default: true,
+              label: {
+                en: 'Single',
+                ko: '단일',
+                ar: 'مفرد',
+                es: 'Simple',
+                fr: 'Simple',
+                hi: 'एकल',
+                id: 'Tunggal',
+                pt: 'Simples',
+              },
+            },
+            {
+              value: 1,
+              label: {
+                en: 'Complete',
+                ko: '완전',
+                ar: 'كامل',
+                es: 'Completo',
+                fr: 'Complet',
+                hi: 'पूर्ण',
+                id: 'Lengkap',
+                pt: 'Completo',
+              },
+            },
+            {
+              value: 2,
+              label: {
+                en: 'Average',
+                ko: '평균',
+                ar: 'متوسط',
+                es: 'Promedio',
+                fr: 'Moyen',
+                hi: 'औसत',
+                id: 'Rata-rata',
+                pt: 'Média',
+              },
+            },
+          ],
+        },
+        {
+          widget: 'segmented-slider',
+          action: 'set-cut',
+          name: 'cut',
+          label: {
+            en: 'Cut height',
+            ko: '자르는 높이',
+            ar: 'ارتفاع القطع',
+            es: 'Altura de corte',
+            fr: 'Hauteur de coupe',
+            hi: 'कटान ऊँचाई',
+            id: 'Tinggi potong',
+            pt: 'Altura de corte',
+          },
+          segments: [
+            { value: 1.0, label: '1.0' },
+            { value: 1.5, label: '1.5' },
+            { value: 2.0, label: '2.0', default: true },
+            { value: 2.5, label: '2.5' },
+            { value: 3.5, label: '3.5' },
+            { value: 5.0, label: '5.0' },
+          ],
+        },
+      ],
+      metrics: [
+        {
+          name: 'merge-count',
+          label: {
+            en: 'Merges',
+            ko: '합친 횟수',
+            ar: 'عمليات الدمج',
+            es: 'Fusiones',
+            fr: 'Fusions',
+            hi: 'विलय',
+            id: 'Penggabungan',
+            pt: 'Fusões',
+          },
+          initial: 0,
+        },
+        {
+          name: 'cluster-count',
+          label: {
+            en: 'Clusters now',
+            ko: '지금 무리 수',
+            ar: 'العناقيد الآن',
+            es: 'Grupos ahora',
+            fr: 'Groupes actuels',
+            hi: 'अभी समूह',
+            id: 'Kelompok kini',
+            pt: 'Grupos agora',
+          },
+          initial: 8,
+        },
+        {
+          name: 'distance-count',
+          label: {
+            en: 'Distances measured',
+            ko: '거리를 잰 횟수',
+            ar: 'المسافات المقيسة',
+            es: 'Distancias medidas',
+            fr: 'Distances mesurées',
+            hi: 'मापी गई दूरियाँ',
+            id: 'Jarak yang diukur',
+            pt: 'Distâncias medidas',
+          },
+          initial: 0,
+        },
+      ],
+    },
+    codePanel: {
+      type: 'code-view',
+      label: {
+        en: 'Code',
+        ko: '코드',
+        ar: 'الشيفرة',
+        es: 'Código',
+        fr: 'Code',
+        hi: 'कोड',
+        id: 'Kode',
+        pt: 'Código',
+      },
+      ir: 'ir:hierarchical',
+    },
+  },
+};
