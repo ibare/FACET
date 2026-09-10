@@ -59,6 +59,18 @@ export const heapBinaryFacet: FacetJson = {
     children: [{ ref: 'header' }, { ref: 'stage', padding: '8px 0' }, { ref: 'controls' }, { ref: 'codePanel' }],
   },
   messages: {
+    'caption.empty': {
+      en: 'The heap is empty.',
+      ko: '힙이 비어 있다.',
+      ja: 'ヒープは空です。',
+      zh: '堆是空的。',
+      ar: 'الكومة فارغة.',
+      es: 'El montículo está vacío.',
+      fr: 'Le tas est vide.',
+      hi: 'हीप खाली है।',
+      id: 'Heap kosong.',
+      pt: 'O heap está vazio.',
+    },
     'caption.start': {
       en: 'Building a heap — each value climbs to its place.',
       ko: '힙을 세운다 — 값마다 제 자리까지 오른다',

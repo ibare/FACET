@@ -16,7 +16,8 @@
     "typecheck": "pnpm -r run typecheck",
     "messages:gen": "tsx scripts/gen-messages.mts",
     "screen:gen": "tsx scripts/gen-screen-labels.mts",
-    "concept:audit": "tsx scripts/concept-audit.mts"
+    "concept:audit": "tsx scripts/concept-audit.mts",
+    "i18n:audit": "tsx scripts/i18n-audit.mts"
   },
   "devDependencies": {
     "@ffacet/algorithm-bubble-sort": "workspace:*",

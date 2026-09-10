@@ -70,6 +70,18 @@ export const unionFindFacet: FacetJson = {
     ],
   },
   messages: {
+    'caption.empty': {
+      en: 'Nothing here yet.',
+      ko: '아직 아무것도 없다.',
+      ja: 'まだ何もありません。',
+      zh: '这里还什么都没有。',
+      ar: 'لا شيء هنا بعد.',
+      es: 'Aún no hay nada.',
+      fr: 'Rien pour le moment.',
+      hi: 'यहाँ अभी कुछ नहीं है।',
+      id: 'Belum ada apa-apa.',
+      pt: 'Ainda não há nada.',
+    },
     'caption.start': {
       en: 'Merging groups — each union picks a root to go under.',
       ko: '무리를 합친다 — 합칠 때마다 어느 뿌리를 아래로 넣을지 고른다',

@@ -61,6 +61,18 @@ export const redBlackTreeFacet: FacetJson = {
     ],
   },
   messages: {
+    'caption.empty': {
+      en: 'Nothing here yet.',
+      ko: '아직 아무것도 없다.',
+      ja: 'まだ何もありません。',
+      zh: '这里还什么都没有。',
+      ar: 'لا شيء هنا بعد.',
+      es: 'Aún no hay nada.',
+      fr: 'Rien pour le moment.',
+      hi: 'यहाँ अभी कुछ नहीं है।',
+      id: 'Belum ada apa-apa.',
+      pt: 'Ainda não há nada.',
+    },
     'caption.start': {
       en: 'Adding keys — each arrives red, then the tree fixes itself.',
       ko: '키를 넣는다 — 늘 빨강으로 들어오고, 그다음 나무가 스스로 고친다',

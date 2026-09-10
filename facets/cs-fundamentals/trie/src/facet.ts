@@ -62,6 +62,18 @@ export const trieFacet: FacetJson = {
     ],
   },
   messages: {
+    'caption.empty': {
+      en: 'Nothing here yet.',
+      ko: '아직 아무것도 없다.',
+      ja: 'まだ何もありません。',
+      zh: '这里还什么都没有。',
+      ar: 'لا شيء هنا بعد.',
+      es: 'Aún no hay nada.',
+      fr: 'Rien pour le moment.',
+      hi: 'यहाँ अभी कुछ नहीं है।',
+      id: 'Belum ada apa-apa.',
+      pt: 'Ainda não há nada.',
+    },
     'caption.start': {
       en: 'Adding words — matching letters reuse the same path.',
       ko: '낱말을 넣는다 — 글자가 같은 동안은 같은 길을 다시 쓴다',

@@ -62,6 +62,18 @@ export const bTreeFacet: FacetJson = {
     ],
   },
   messages: {
+    'caption.empty': {
+      en: 'Nothing here yet.',
+      ko: '아직 아무것도 없다.',
+      ja: 'まだ何もありません。',
+      zh: '这里还什么都没有。',
+      ar: 'لا شيء هنا بعد.',
+      es: 'Aún no hay nada.',
+      fr: 'Rien pour le moment.',
+      hi: 'यहाँ अभी कुछ नहीं है।',
+      id: 'Belum ada apa-apa.',
+      pt: 'Ainda não há nada.',
+    },
     'caption.start': {
       en: 'Adding keys — a full seat splits before we pass it.',
       ko: '키를 넣는다 — 꽉 찬 자리는 지나가기 전에 쪼갠다',

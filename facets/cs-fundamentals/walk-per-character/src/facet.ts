@@ -12,6 +12,18 @@ import { CONTROL_SET } from '@ffacet/core/runtime';
 export const walkPerCharacterFacet: FacetJson = {
   id: 'facet:walkPerCharacter',
   title: { en: 'Walking a trie, one character at a time', ko: '글자 단위로 트라이를 내려간다' },
+  description: {
+    en: 'The word is never compared whole — each character picks one branch, and a missing branch ends it.',
+    ko: '말을 통째로 견주지 않는다. 글자 하나가 가지 하나를 고르고, 가지가 없으면 거기서 끝난다.',
+    ja: '語をまるごと比べることはない。一文字が枝を一つ選び、枝がなければそこで終わる。',
+    zh: '从不整词比较 — 每个字符选定一条分支，分支不在就到此为止。',
+    ar: 'لا تُقارَن الكلمة كاملة — كل حرف يختار فرعًا، وغياب الفرع ينهي البحث.',
+    es: 'La palabra nunca se compara entera: cada carácter elige una rama y, si falta, ahí termina.',
+    fr: "Le mot n'est jamais comparé en entier : chaque caractère choisit une branche, et son absence arrête tout.",
+    hi: 'शब्द की पूरी तुलना कभी नहीं होती — हर अक्षर एक शाखा चुनता है, और शाखा न हो तो वहीं अंत।',
+    id: 'Kata tidak pernah dibandingkan utuh — tiap huruf memilih satu cabang, dan cabang yang hilang mengakhirinya.',
+    pt: 'A palavra nunca é comparada inteira: cada caractere escolhe um ramo e, se faltar, ali termina.',
+  },
   algorithm: 'module:walkPerCharacter',
   projector: 'module:walkPerCharacterProjector',
   initialData: {

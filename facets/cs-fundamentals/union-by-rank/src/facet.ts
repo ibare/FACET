@@ -10,6 +10,18 @@ import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 export const unionByRankFacet: FacetJson = {
   id: 'facet:unionByRank',
   title: { en: 'Union by Rank', ko: '랭크 기반 합집합' },
+  description: {
+    en: 'Put the shorter tree under the taller one and the height holds; only a tie makes it grow.',
+    ko: '낮은 쪽을 높은 쪽 밑에 넣으면 키가 그대로다. 둘이 같을 때만 하나 는다.',
+    ja: '低い方を高い方の下に入れれば高さは変わらない。同じときだけ一つ伸びる。',
+    zh: '把矮的接到高的下面，高度不变；只有一样高时才会长一层。',
+    ar: 'ضع الشجرة الأقصر تحت الأطول فيبقى الارتفاع كما هو؛ ولا يزيد إلا عند التساوي.',
+    es: 'Cuelga el árbol más bajo del más alto y la altura no cambia; solo crece en un empate.',
+    fr: "Place l'arbre le plus court sous le plus haut et la hauteur tient ; elle ne croît qu'à égalité.",
+    hi: 'छोटे पेड़ को बड़े के नीचे जोड़ें तो ऊँचाई वही रहती है; बराबरी पर ही एक बढ़ती है।',
+    id: 'Taruh pohon yang lebih pendek di bawah yang lebih tinggi, tingginya tetap; hanya seri yang menambahnya.',
+    pt: 'Ponha a árvore mais baixa sob a mais alta e a altura se mantém; só um empate a faz crescer.',
+  },
   algorithm: 'module:unionByRank',
   projector: 'module:unionByRankProjector',
   initialData: {

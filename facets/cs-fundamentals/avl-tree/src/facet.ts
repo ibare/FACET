@@ -64,6 +64,18 @@ export const avlTreeFacet: FacetJson = {
     ],
   },
   messages: {
+    'caption.empty': {
+      en: 'Nothing here yet.',
+      ko: '아직 아무것도 없다.',
+      ja: 'まだ何もありません。',
+      zh: '这里还什么都没有。',
+      ar: 'لا شيء هنا بعد.',
+      es: 'Aún no hay nada.',
+      fr: 'Rien pour le moment.',
+      hi: 'यहाँ अभी कुछ नहीं है।',
+      id: 'Belum ada apa-apa.',
+      pt: 'Ainda não há nada.',
+    },
     'caption.start': {
       en: 'Adding keys — measured on the way back up.',
       ko: '키를 넣는다 — 되돌아 올라오며 잰다',

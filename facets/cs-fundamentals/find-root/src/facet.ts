@@ -11,6 +11,18 @@ import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 export const findRootFacet: FacetJson = {
   id: 'facet:findRoot',
   title: { en: 'Find the Root', ko: '뿌리 찾기' },
+  description: {
+    en: 'Every slot points upward; the one that points to itself is the name of the group.',
+    ko: '자리마다 위를 가리키고, 자기를 가리키는 자리가 그 무리의 이름이다.',
+    ja: 'どの位置も上を指し、自分自身を指す位置がその集まりの名前になる。',
+    zh: '每个位置都指向上方，指向自己的那个位置就是这一组的名字。',
+    ar: 'كل موضع يشير إلى أعلى، والموضع الذي يشير إلى نفسه هو اسم المجموعة.',
+    es: 'Cada posición apunta hacia arriba; la que se apunta a sí misma es el nombre del grupo.',
+    fr: 'Chaque case pointe vers le haut ; celle qui se pointe elle-même donne son nom au groupe.',
+    hi: 'हर स्थान ऊपर की ओर इशारा करता है; जो खुद को इंगित करता है वही समूह का नाम है।',
+    id: 'Setiap posisi menunjuk ke atas; yang menunjuk dirinya sendiri adalah nama kelompok itu.',
+    pt: 'Cada posição aponta para cima; a que aponta para si mesma é o nome do grupo.',
+  },
   algorithm: 'module:findRoot',
   projector: 'module:findRootProjector',
   initialData: {
