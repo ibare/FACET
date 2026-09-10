@@ -54,6 +54,12 @@ the centroid to the mean" 같은 같은 문장이 된다. 벡터 공간에서 �
 - `aspects` 는 쓰지 않는다 (현재 74 개 중 0 건). 호스트 어댑터가 "aspect facet 은
   아직 싣지 않는다 — 2단 노출 배선이 없다" 고 밝혀 두었다.
 - `screen.labels` 는 쓰지 않는다. `pnpm screen:gen` 산출물에서 조회 시점에 붙는다.
+- **`contrastWith[].note` 는 개념 층위로 쓴다.** 상대 facet 의 화면을 서술하지
+  않는다 — "That screen runs it many times over" 는 그 화면이 바뀌면 함께 틀리고,
+  writer 가 독자에게 보이지도 않는 화면을 언급하게 만든다. 두 개념 사이의 **주장
+  차이**를 쓴다. 2026-09-10 배치에서 25 파일 28 건이 이렇게 나갔다가 배포 직전
+  rule-guard 에 걸려 되돌렸다 (기존 74 개에서는 2 건뿐이었다). 사양에서 빠지면
+  반복된다.
 - 다 쓰면 `concepts/index.ts` 의 `CONCEPT_SOURCES` 에 등록한다. 등록하지 않으면
   파일만 있고 아무 데도 안 나온다.
 
