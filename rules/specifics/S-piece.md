@@ -2,8 +2,8 @@
 name: S-piece
 description: 조각(piece) facet 의 규범 — 질문 하나에 답하는 작은 facet. 형태는 질문이 정하고, 앞 조각의 레이아웃을 출발점으로 삼지 않는다.
 type: specific
-version: 3
-last_verified: 2026-09-09
+version: 4
+last_verified: 2026-09-10
 ---
 
 # S-piece. 조각(piece) facet
@@ -294,10 +294,21 @@ id 명명(C4)과 facet 간 import 금지(S-facet)는 조각에도 그대로 적�
   그것을 만들게 한 그룹은 하나다. 디렉터리와 playground 배치는 **출처**를 뜻한다.
   `signatureOnHash` 는 해시를 재료로 쓰지만 서명을 설명하려다 나왔으므로 서명
   아래 있다.
-- **`title` / `description` / `messages` 는 en·ko 로 시작해도 된다.** 조각이
-  외부 호스트에 채택되거나 20종을 넘으면 10개 언어로 맞춘다. `LocaleStr` 이
-  `Partial<Record<string,string>>` 이라 타입은 통과하고 미지원 locale 은 en 으로
-  떨어진다.
+- **사람이 읽는 문자열은 열 언어를 갖춘다** — `en` `ko` `ja` `zh` `ar` `es` `fr`
+  `hi` `id` `pt`, `messages/*.json` 과 같은 열이다. `title` · `description` ·
+  `messages` 뿐 아니라 **`blocks` 안의 메트릭 · 코드 패널 · 컨트롤 라벨**도
+  대상이다. `en:` 을 가진 `{ ... }` 는 전부 LocaleStr 이다.
+
+  한때 "en·ko 로 시작해도 된다, 20종을 넘거나 외부 호스트에 채택되면 열로
+  맞춘다" 였다. 조각이 120 종이 되고 `@ffacet/*` 가 배포된 뒤로도 그 유예가
+  종착점처럼 읽혀 154 개가 미달로 남았다 (2026-09-10 에 9,636 문안을 채워
+  해소). **조건부 유예는 조건이 충족되어도 스스로 끝나지 않는다** — 끝났음을
+  재는 것이 없으면 그 조항은 사문이 된다. 지금은 `pnpm i18n:audit` 이 재고
+  `test/facet-i18n.test.ts` 가 막는다.
+
+  `LocaleStr` 이 `Partial<Record<string,string>>` 이라 **타입은 빠져도 통과하고**
+  미지원 locale 은 en 으로 떨어진다. 화면이 깨지지 않으므로 띄워 본 사람도
+  모르고 지나간다. 검사가 유일한 눈이다.
 
 ## 다른 규칙과의 관계
 
