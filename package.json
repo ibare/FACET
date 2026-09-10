@@ -13,7 +13,7 @@
     "catalog:gen": "tsx scripts/gen-facet-catalog.mts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "typecheck": "pnpm -r run typecheck",
+    "typecheck": "tsc -p tsconfig.json --noEmit && pnpm -r run typecheck",
     "messages:gen": "tsx scripts/gen-messages.mts",
     "screen:gen": "tsx scripts/gen-screen-labels.mts",
     "concept:audit": "tsx scripts/concept-audit.mts",

@@ -86,7 +86,9 @@ function entriesOf(table: string): Map<string, string> {
     const from = m.index + m[0].length;
     let s = '';
     for (let i = from; i < table.length; i += 1) {
-      if (table[i] === '\\\\') { s += table[i + 1] ?? ''; i += 1; continue; }
+      // 이스케이프 한 글자. 여기를 두 글자와 견주면 분기가 늘 거짓이 되어
+      // `l\'indice` 같은 문안이 잘리고 뒤쪽 자리표를 잃는다.
+      if (table[i] === '\\') { s += table[i + 1] ?? ''; i += 1; continue; }
       if (table[i] === q) break;
       s += table[i];
     }
