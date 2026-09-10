@@ -365,6 +365,30 @@ export class ReactiveMechanism implements Mechanism {
   private pendingSleepResolve: ((ok: boolean) => void) | null = null;
   private pendingSleepTimer: ReturnType<typeof setTimeout> | null = null;
 
+  /**
+   * 멈춤 채널. reactive 는 스스로 나아가지만 그것과 "지금 나아가는 중인가" 는
+   * 다른 물음이다.
+   *
+   * 이 셋이 없던 동안 `onRunningChange` 는 **알고리즘 함수가 실행 중인가** 만
+   * 말했다. 그런데 조작을 받는 완제품의 알고리즘은 `waitForInput` 에서 영영
+   * 돌아오지 않으므로 늘 참이었고, control-bar 의 재생·한 걸음 단추가 마운트
+   * 순간부터 끝까지 꺼져 있었다. 완제품 셋을 서로 못 보는 채로 만들었더니
+   * 셋 다 이 자리에 걸렸고 둘이 각자 다른 우회를 냈다 — 규범이 아니라 여기가
+   * 문제였다는 뜻이다.
+   *
+   * 이제 세 상태를 가른다.
+   *   나아가는 중  `sleep` 으로 걸음을 잇는다        → 멈춤만 누를 수 있다
+   *   멈춤        `stop()` 이 걸렸다                 → 재생·한 걸음을 누를 수 있다
+   *   입력 대기    `waitForInput` 이 실제로 기다린다   → 되돌리기와 위젯만
+   *
+   * 셋째는 `onComplete(true)` 로 낸다. control-bar 의 `setComplete` 가 이미
+   * 그 셋을 다 끄고 되돌리기만 남기므로 훅을 새로 만들 까닭이 없다.
+   */
+  private paused = false;
+  private stepOnce = false;
+  private resumeWaiter: (() => void) | null = null;
+  private awaitingInput = false;
+
   constructor(private readonly algorithmFn: (ctx: ReactiveContext) => Promise<void>) {}
 
   init(projector: ProjectorInstance, initialData: unknown, opts?: MechanismInitOptions): void {
@@ -396,10 +420,16 @@ export class ReactiveMechanism implements Mechanism {
         if (self.cancelled) throw new Error('cancelled');
         const queued = self.inputQueue.shift();
         if (queued) return queued as T;
-        return new Promise<T>((resolve, reject) => {
-          self.inputResolver = (e) => resolve(e as T);
-          self.inputRejector = reject;
-        });
+        // 여기서부터 실제로 기다린다 — 스스로 나아가지 않는다.
+        self.enterAwaiting();
+        try {
+          return await new Promise<T>((resolve, reject) => {
+            self.inputResolver = (e) => resolve(e as T);
+            self.inputRejector = reject;
+          });
+        } finally {
+          self.leaveAwaiting();
+        }
       },
       pollInput<T extends ReactiveInputEvent = ReactiveInputEvent>(): T | null {
         if (self.cancelled) return null;
@@ -409,7 +439,7 @@ export class ReactiveMechanism implements Mechanism {
       async sleep(ms: number): Promise<boolean> {
         if (self.cancelled) return false;
         const adjusted = Math.max(10, ms / Math.max(0.01, self.speedMul));
-        return new Promise<boolean>((resolve) => {
+        const ticked = await new Promise<boolean>((resolve) => {
           self.pendingSleepResolve = resolve;
           self.pendingSleepTimer = setTimeout(() => {
             self.pendingSleepTimer = null;
@@ -417,6 +447,9 @@ export class ReactiveMechanism implements Mechanism {
             resolve(true);
           }, adjusted);
         });
+        if (!ticked || self.cancelled) return false;
+        // 걸음의 경계에서만 멈춘다 — 애니메이션 한복판에서 끊지 않는다.
+        return self.awaitResume();
       },
     } as ReactiveContext;
     Object.defineProperty(ctx, 'cancelled', { get: () => self.cancelled });
@@ -468,19 +501,86 @@ export class ReactiveMechanism implements Mechanism {
     });
   }
 
-  /** reactive 에서는 mount 즉시 시작이므로 외부 start/stop/step 은 no-op. */
-  start(): void { /* no-op */ }
-  stop(): void { /* no-op */ }
-  step(): void { /* no-op */ }
+  /** 멈춤이 걸려 있으면 이을 때까지 기다린다. 이어졌으면 true, 취소됐으면 false. */
+  private async awaitResume(): Promise<boolean> {
+    // 한 걸음만 가라고 했으면 그 한 걸음이 방금 지났다.
+    if (this.stepOnce) {
+      this.stepOnce = false;
+      this.paused = true;
+    }
+    while (this.paused && !this.cancelled) {
+      this.hooks.onRunningChange?.(false);
+      await new Promise<void>((resolve) => {
+        this.resumeWaiter = resolve;
+      });
+    }
+    if (this.cancelled) return false;
+    this.hooks.onRunningChange?.(true);
+    return true;
+  }
+
+  private flushResume(): void {
+    const w = this.resumeWaiter;
+    this.resumeWaiter = null;
+    w?.();
+  }
+
+  /** 입력을 기다리기 시작한다 — 되돌리기와 위젯 말고는 누를 것이 없는 상태. */
+  private enterAwaiting(): void {
+    this.awaitingInput = true;
+    this.hooks.onRunningChange?.(false);
+    this.hooks.onComplete?.(true);
+  }
+
+  private leaveAwaiting(): void {
+    if (!this.awaitingInput) return;
+    this.awaitingInput = false;
+    if (this.cancelled) return;
+    this.hooks.onComplete?.(false);
+    this.hooks.onRunningChange?.(!this.paused);
+  }
+
+  /** 멈춰 있던 것을 잇는다. */
+  start(): void {
+    if (this.cancelled) return;
+    this.stepOnce = false;
+    if (!this.paused) return;
+    this.paused = false;
+    this.flushResume();
+    this.hooks.onRunningChange?.(true);
+  }
+
+  /** 다음 걸음의 경계에서 멈춘다. */
+  stop(): void {
+    if (this.cancelled || this.paused) return;
+    this.paused = true;
+    this.hooks.onRunningChange?.(false);
+  }
+
+  /** 한 걸음만 나아가고 다시 멈춘다. */
+  step(): void {
+    if (this.cancelled) return;
+    this.stepOnce = true;
+    if (this.paused) {
+      this.paused = false;
+      this.flushResume();
+    }
+    this.hooks.onRunningChange?.(true);
+  }
 
   async reset(): Promise<void> {
     this.cancelled = true;
     this.clearPendingSleep();
     this.flushInputRejector();
+    // 멈춘 채로 되돌리면 깨어날 길이 없다 — 기다리던 것을 먼저 푼다.
+    this.paused = false;
+    this.stepOnce = false;
+    this.flushResume();
     if (this.activePromise) {
       try { await this.activePromise; } catch { /* ignore */ }
     }
     this.cancelled = false;
+    this.awaitingInput = false;
     this.inputQueue.length = 0;
     const fresh = deepClone(this.originalInitial) as Record<string, unknown>;
     for (const k of Object.keys(this.dataRef)) {
@@ -508,6 +608,24 @@ export class ReactiveMechanism implements Mechanism {
     }
     if (action === 'speed') {
       this.setSpeed(typeof payload === 'number' ? payload : 1);
+      return;
+    }
+    // 재생 셋은 메커니즘이 진다 — 알고리즘이 알 필요가 없다.
+    //
+    // 이 세 줄이 없던 동안 `start`/`stop`/`step` 을 제대로 구현해 놓고도 단추가
+    // 거기 닿지 못했다. `'*'` 로 다 받아 `dispatch` 로 흘려보냈으므로 알고리즘의
+    // 입력 큐에 `{type:'play'}` 가 쌓였을 뿐이다. 단추 활성은 옳고 눌러도 아무
+    // 일이 없어, **고쳤다고 믿기 가장 쉬운 모양**이었다.
+    if (action === 'play') {
+      this.start();
+      return;
+    }
+    if (action === 'pause') {
+      this.stop();
+      return;
+    }
+    if (action === 'step') {
+      this.step();
       return;
     }
     // facet 고유 button — dispatch 채널로 라우팅.

@@ -230,7 +230,11 @@ export function runFacet(
       if (controlBar) callMethod(controlBar, 'updateMetric', name, value);
     },
     onMetricsReset() {
-      if (controlBar) callMethod(controlBar, 'resetMetrics');
+      if (controlBar) {
+        callMethod(controlBar, 'resetMetrics');
+        // 위젯도 처음 자리로. 슬라이더가 가리키는 값과 화면이 어긋나지 않게 한다.
+        callMethod(controlBar, 'resetInputs');
+      }
     },
   };
 

@@ -179,6 +179,14 @@ export const controlBarView: View = {
     const actionHandlers: Array<(action: string, payload?: unknown) => void> = [];
     /** value-input 위젯들의 현재 값 — facet 고유 button 클릭 시 payload 로 첨부. */
     const inputState: Record<string, string> = {};
+    /**
+     * 되감기 때 위젯을 처음 자리로 돌리는 함수들.
+     *
+     * 없던 동안 되감기가 알고리즘만 되돌리고 위젯은 그대로 두어, **슬라이더는
+     * 15 를 가리키는데 화면은 3 의 결과**를 보이는 어긋남이 났다. 조작이 논증을
+     * 지는 완제품에서는 그 어긋남 자체가 거짓말이 된다.
+     */
+    const inputResetters: Array<() => void> = [];
     const customButtons: Record<string, HTMLButtonElement> = {};
 
     const controls: ControlSpec[] = cfg.controls ?? [
@@ -328,6 +336,11 @@ export const controlBarView: View = {
               cell.style.fontWeight = isActive ? '600' : '400';
             }
           }
+          const initialIdx = activeIdx;
+          // 되감기는 값만 돌리고 dispatch 하지 않는다 — 알고리즘은 이미 처음으로
+          // 돌아가는 중이라, 여기서 또 보내면 그 걸음이 두 번 세어진다.
+          inputResetters.push(() => setActive(initialIdx, false));
+
           function setActive(idx: number, fire: boolean) {
             if (idx < 0 || idx >= segs.length) return;
             activeIdx = idx;
@@ -507,6 +520,9 @@ export const controlBarView: View = {
       },
       resetMetrics() {
         for (const [, m] of metricEls) m.value.textContent = String(m.initial);
+      },
+      resetInputs() {
+        for (const back of inputResetters) back();
       },
       setRunning,
       setComplete,
