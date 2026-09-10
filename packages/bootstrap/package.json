@@ -1,6 +1,6 @@
 {
   "name": "@ffacet/bootstrap",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "type": "module",
   "description": "facet 카탈로그 단일 출처. 카탈로그에 실린 모든 facet 의 lazy loader + view + transpiler 등록.",
   "license": "MIT",

@@ -1,6 +1,6 @@
 {
   "name": "@ffacet/core",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "type": "module",
   "description": "FACET 4-layer 러너 시스템 코어 — runtime / views / types. 알고리즘 시각화 재생 런타임(runFacet/loadFacet)과 registry 단일 출처.",
   "license": "MIT",

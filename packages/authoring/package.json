@@ -1,6 +1,6 @@
 {
   "name": "@ffacet/authoring",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "type": "module",
   "description": "facet 개념(concept) authoring 메타데이터. 호스트 LLM 파이프라인이 글에 넣을 시각화를 고르고(definition 임베딩), 고른 시각화의 내용을 writer 에게 전달(briefing)하는 데 쓰는 단일 출처.",
   "license": "MIT",
