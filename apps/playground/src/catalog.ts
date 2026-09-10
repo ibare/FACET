@@ -84,3 +84,17 @@ export function countPieces(): number {
   for (const d of catalog) for (const s of d.subdomains) for (const t of s.topics) if (t.kind === 'piece') n++;
   return n;
 }
+
+/**
+ * 구현된 조각 수.
+ *
+ * 조각 수는 구현/예정 분할과 **다른 축**이다. 화면에 셋을 나란히 두면
+ * "구현 + 예정 + 조각" 으로 읽히는데, 조각은 그 둘에 이미 나뉘어 들어가 있다.
+ * 조각 뱃지가 자기 안에서 닫히도록 이 값을 함께 보인다.
+ */
+export function countImplementedPieces(): number {
+  let n = 0;
+  for (const d of catalog)
+    for (const s of d.subdomains) for (const t of s.topics) if (t.kind === 'piece' && t.facetId) n++;
+  return n;
+}

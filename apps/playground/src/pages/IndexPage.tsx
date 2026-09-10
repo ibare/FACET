@@ -29,6 +29,7 @@ import type { Icon as PhIcon } from '@phosphor-icons/react';
 import {
   catalog,
   countAllTopics,
+  countImplementedPieces,
   countImplementedTopics,
   countPieces,
   type Domain,
@@ -166,6 +167,7 @@ export function IndexPage() {
   const total = countAllTopics();
   const ready = countImplementedTopics();
   const pieces = countPieces();
+  const piecesReady = countImplementedPieces();
   const [openDomains, setOpenDomains] = usePersistedAccordion('facet:catalog:domains', ['cs-fundamentals']);
 
   return (
@@ -189,7 +191,7 @@ export function IndexPage() {
             로.
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-fg-muted">
-            12개 분야, {total}개 시각화 목록. 알고리즘이 표준 이벤트를 발신하면 Projector 가 등록된 View 를 갱신한다 — 동일한 한 흐름에서 그래픽·코드·메트릭이 동기화된다.
+            {catalog.length}개 분야, {total}개 시각화 목록. 알고리즘이 표준 이벤트를 발신하면 Projector 가 등록된 View 를 갱신한다 — 동일한 한 흐름에서 그래픽·코드·메트릭이 동기화된다.
           </p>
 
           <div className="mt-6 flex flex-wrap items-center gap-3 text-sm">
@@ -206,7 +208,7 @@ export function IndexPage() {
             <div className="flex items-center gap-2 rounded-full bg-surface-raised px-3 py-1.5 text-fg-muted ring-1 ring-border">
               <PuzzlePiece weight="duotone" className="h-3.5 w-3.5" />
               <span className="font-medium">{pieces}</span>
-              <span className="text-fg-subtle">개 조각</span>
+              <span className="text-fg-subtle">개 조각 중 {piecesReady} 구현</span>
             </div>
           </div>
         </header>

@@ -131,6 +131,18 @@ describe('계획 카탈로그', () => {
     expect(missing).toEqual([]);
   });
 
+  /*
+   * 헤더 문구에 "12개 분야" 가 숫자로 박혀 있었다. 옆의 항목 수는 계산해 넣으면서
+   * 도메인 수만 손으로 적어 둔 것이라, 도메인 넷을 더한 뒤에도 12 를 말했다.
+   *
+   * 틀린 숫자는 타입도 검사도 통과하고 띄워 본 사람만 안다. 카탈로그에서 세어
+   * 넣으면 어긋날 자리가 없어진다.
+   */
+  it('IndexPage 가 카탈로그 규모를 숫자로 박아 두지 않는다', () => {
+    const hardcoded = [...indexPage.matchAll(/[^}\w]\d+\s*개\s*(분야|시각화|조각|구현|예정)/g)].map((m) => m[0].trim());
+    expect(hardcoded).toEqual([]);
+  });
+
   it('규모가 줄지 않았다 — 실수로 잘려 나간 것을 잡는다', () => {
     expect(domains.length).toBeGreaterThanOrEqual(16);
     expect(rows.length).toBeGreaterThanOrEqual(1077);
