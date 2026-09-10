@@ -21,6 +21,17 @@ import type {
   Transpiler,
 } from '@ffacet/core';
 
+/** 예약된 수학 이름의 C# 표기 (`IR_MATH_BUILTINS`). 첫 글자가 대문자다. */
+const MATH: Record<string, string> = {
+  exp: 'Math.Exp',
+  log: 'Math.Log',
+  sqrt: 'Math.Sqrt',
+  abs: 'Math.Abs',
+  max: 'Math.Max',
+  min: 'Math.Min',
+  floor: 'Math.Floor',
+};
+
 const INDENT = '    ';
 
 function isBinop(e: IRExpr): boolean {
@@ -80,7 +91,7 @@ export const csharpTranspiler: Transpiler = {
           return `${e.op}${x}`;
         }
         case 'call':
-          return `${e.fn}(${e.args.map(emitExpr).join(', ')})`;
+          return `${MATH[e.fn] ?? e.fn}(${e.args.map(emitExpr).join(', ')})`;
       }
     }
 

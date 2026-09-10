@@ -19,6 +19,17 @@ import type {
   Transpiler,
 } from '@ffacet/core';
 
+/** 예약된 수학 이름의 자바 표기 (`IR_MATH_BUILTINS`). */
+const MATH: Record<string, string> = {
+  exp: 'Math.exp',
+  log: 'Math.log',
+  sqrt: 'Math.sqrt',
+  abs: 'Math.abs',
+  max: 'Math.max',
+  min: 'Math.min',
+  floor: 'Math.floor',
+};
+
 const INDENT = '    ';
 
 function isBinop(e: IRExpr): boolean {
@@ -126,7 +137,7 @@ export const javaTranspiler: Transpiler = {
           return `${e.op}${x}`;
         }
         case 'call':
-          return `${e.fn}(${e.args.map((a) => emitExpr(a, syms)).join(', ')})`;
+          return `${MATH[e.fn] ?? e.fn}(${e.args.map((a) => emitExpr(a, syms)).join(', ')})`;
       }
     }
 

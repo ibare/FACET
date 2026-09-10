@@ -21,6 +21,19 @@ import type {
   Transpiler,
 } from '@ffacet/core';
 
+/**
+ * 예약된 수학 이름의 파이썬 표기 (`IR_MATH_BUILTINS`).
+ *
+ * `abs`/`max`/`min` 은 파이썬 내장이라 그대로 두고, 나머지만 `math.` 를 붙인다.
+ * `import math` 는 내지 않는다 — 이 emitter 는 함수 본문만 보인다.
+ */
+const MATH: Record<string, string> = {
+  exp: 'math.exp',
+  log: 'math.log',
+  sqrt: 'math.sqrt',
+  floor: 'math.floor',
+};
+
 const INDENT = '    ';
 
 function isBinop(e: IRExpr): boolean {
@@ -67,7 +80,7 @@ export const pythonTranspiler: Transpiler = {
           return e.op === '!' ? `not ${x}` : `-${x}`;
         }
         case 'call':
-          return `${e.fn}(${e.args.map(emitExpr).join(', ')})`;
+          return `${MATH[e.fn] ?? e.fn}(${e.args.map(emitExpr).join(', ')})`;
       }
     }
 

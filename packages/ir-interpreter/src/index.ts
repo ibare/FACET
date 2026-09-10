@@ -15,6 +15,7 @@
  */
 
 import type { IR, IRExpr, IRFunc, IRStmt } from '@ffacet/core';
+import { isIRMathBuiltin, type IRMathBuiltin } from '@ffacet/core';
 
 export type Value = number | boolean | string | Value[] | undefined;
 
@@ -59,6 +60,44 @@ const NORMAL: Control = { kind: 'normal' };
 
 type Lvalue = { get(): Value; set(v: Value): void };
 
+/**
+ * 예약된 수학 이름을 실제로 셈한다 (`IR_MATH_BUILTINS`).
+ *
+ * `max`/`min` 은 인자를 둘 받는다 — 여러 개를 받는 언어도 있으나 IR 에서는 둘로
+ * 고정한다. 셋 이상이 필요하면 겹쳐 부르는 편이 여섯 언어에서 다 같은 뜻이 된다.
+ */
+function mathBuiltin(name: IRMathBuiltin, args: Value[]): number {
+  const n = (i: number): number => {
+    const v = args[i];
+    if (typeof v !== 'number') {
+      throw new Error(`[ir-interpreter] ${name}: ${i + 1}번째 인자가 수가 아니다`);
+    }
+    return v;
+  };
+  const arity = name === 'max' || name === 'min' ? 2 : 1;
+  if (args.length !== arity) {
+    throw new Error(
+      `[ir-interpreter] ${name}: 인자 수 불일치 (기대 ${arity}, 실제 ${args.length})`,
+    );
+  }
+  switch (name) {
+    case 'exp':
+      return Math.exp(n(0));
+    case 'log':
+      return Math.log(n(0));
+    case 'sqrt':
+      return Math.sqrt(n(0));
+    case 'abs':
+      return Math.abs(n(0));
+    case 'floor':
+      return Math.floor(n(0));
+    case 'max':
+      return Math.max(n(0), n(1));
+    case 'min':
+      return Math.min(n(0), n(1));
+  }
+}
+
 export class IRInterpreter {
   private fns = new Map<string, IRFunc>();
 
@@ -68,7 +107,12 @@ export class IRInterpreter {
 
   call(name: string, args: Value[]): Value | undefined {
     const fn = this.fns.get(name);
-    if (!fn) throw new Error(`[ir-interpreter] 미등록 함수: ${name}`);
+    // IR 이 정의한 함수가 먼저다 — 같은 이름을 스스로 정의했다면 그것을 쓴다.
+    // 예약 이름은 정의를 **대신하는** 것이지 덮어쓰는 것이 아니다.
+    if (!fn) {
+      if (isIRMathBuiltin(name)) return mathBuiltin(name, args);
+      throw new Error(`[ir-interpreter] 미등록 함수: ${name}`);
+    }
     if (args.length !== fn.params.length) {
       throw new Error(
         `[ir-interpreter] ${name}: 인자 수 불일치 (기대 ${fn.params.length}, 실제 ${args.length})`,

@@ -21,6 +21,21 @@ import type {
   Transpiler,
 } from '@ffacet/core';
 
+/**
+ * 예약된 수학 이름의 C++ 표기 (`IR_MATH_BUILTINS`).
+ *
+ * `#include <cmath>` / `<algorithm>` 은 내지 않는다 — 이 emitter 는 함수 본문만 보인다.
+ */
+const MATH: Record<string, string> = {
+  exp: 'std::exp',
+  log: 'std::log',
+  sqrt: 'std::sqrt',
+  abs: 'std::abs',
+  max: 'std::max',
+  min: 'std::min',
+  floor: 'std::floor',
+};
+
 const INDENT = '    ';
 
 function isBinop(e: IRExpr): boolean {
@@ -86,7 +101,7 @@ export const cppTranspiler: Transpiler = {
           return `${e.op}${x}`;
         }
         case 'call':
-          return `${e.fn}(${e.args.map(emitExpr).join(', ')})`;
+          return `${MATH[e.fn] ?? e.fn}(${e.args.map(emitExpr).join(', ')})`;
       }
     }
 

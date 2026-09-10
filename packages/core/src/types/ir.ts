@@ -45,6 +45,36 @@ export type IRBinOp =
 
 export type IRUnOp = '!' | '-';
 
+/**
+ * IR 이 이름만으로 부를 수 있는 수학 함수.
+ *
+ * `call` 은 본래 IR 이 정의한 함수만 가리킨다. 그런데 지수·제곱근처럼 **어느
+ * 언어에나 있고 이름만 다른** 것까지 IR 안에서 정의하게 하면, 코드 패널이
+ * 알고리즘 대신 테일러 급수를 보이게 된다. 그것은 완제품이 코드 패널을 다는
+ * 까닭 자체를 지운다.
+ *
+ * 그래서 이 이름들만 예약해 둔다. 인터프리터는 실제로 셈하고, transpiler 는
+ * 자기 언어 표기로 옮긴다 (`exp` → `math.exp` · `Math.exp` · `std::exp` ·
+ * `Math.Exp`). 파이썬의 `import math` 나 C++ 의 `#include <cmath>` 는 내지
+ * 않는데, 코드 패널이 본래 함수 본문만 보이기 때문이다.
+ *
+ * **`zeros` 처럼 어느 언어에도 그 이름이 없는 것은 여기 넣지 않는다.** 그것은
+ * 표기를 옮기는 일이 아니라 없는 것을 지어내는 일이고, 배열을 만드는 방식은
+ * 언어마다 뜻이 달라 한 이름으로 덮을 수 없다.
+ *
+ * 새 이름을 더하면 **여섯 transpiler 가 모두 그것을 옮겨야 한다.**
+ * `packages/core/test/math-builtins.test.ts` 가 그 전수를 본다 — 하나가 빠지면
+ * 그 언어에서만 조용히 깨지기 때문이다.
+ */
+export const IR_MATH_BUILTINS = ['exp', 'log', 'sqrt', 'abs', 'max', 'min', 'floor'] as const;
+
+export type IRMathBuiltin = (typeof IR_MATH_BUILTINS)[number];
+
+export function isIRMathBuiltin(name: string): name is IRMathBuiltin {
+  return (IR_MATH_BUILTINS as readonly string[]).includes(name);
+}
+
+
 export type IRExpr =
   | { kind: 'lit'; value: number | string | boolean }
   | { kind: 'var'; name: string }
