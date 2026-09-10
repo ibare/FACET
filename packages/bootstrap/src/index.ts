@@ -569,4 +569,12 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:decisionTree', () =>
     import('@ffacet/algorithm-decision-tree').then((m) => m.registerDecisionTree()),
   );
+
+  // 지도학습 완제품 2차 — 랜덤 포레스트 · SVM. 이로써 지도 학습이 다 찼다.
+  registerFacetLoader('facet:randomForest', () =>
+    import('@ffacet/algorithm-random-forest').then((m) => m.registerRandomForest()),
+  );
+  registerFacetLoader('facet:svm', () =>
+    import('@ffacet/algorithm-svm').then((m) => m.registerSvm()),
+  );
 }

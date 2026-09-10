@@ -364,15 +364,16 @@ describe('결정 문턱 — 이 완제품의 논증', () => {
     expect(payloadsOf(events, 'mark')).toHaveLength(0);
   });
 
-  it('멈춤과 한 걸음이 재생을 실제로 가른다', async () => {
+  it('재생 어휘는 알고리즘까지 오지 않는다 — 와도 버린다', async () => {
+    // 메커니즘이 play / pause / step 을 직접 먹으므로 이 셋은 dispatch 로 오지
+    // 않는다. 그래도 들어왔다면 조용히 버려야 하고, 학습은 그대로 완주한다.
     const { events } = await runAlgorithm({
-      polled: [{ type: 'pause' }],
-      awaited: [{ type: 'step' }],
+      polled: [{ type: 'pause' }, { type: 'play' }, { type: 'step' }],
+      awaited: [{ type: 'play' }],
     });
-    // 멈춘 뒤 한 걸음만 나아갔다 — 시작 프레임 하나 + 한 마디.
-    const frames = payloadsOf(events, 'state-changed');
-    expect(frames.map((f) => f.step)).toEqual([0, 1]);
-    expect(payloadsOf(events, 'done')).toHaveLength(0);
+    expect(payloadsOf(events, 'mark')).toHaveLength(0);
+    expect(payloadsOf(events, 'done')).toHaveLength(1);
+    expect(frameAtStep(events, 600).step).toBe(600);
   });
 });
 
@@ -485,6 +486,56 @@ describe('화면', () => {
     handle.destroy();
     expect(errors).toEqual([]);
   }, 20000);
+});
+
+describe('멈춤과 한 걸음 — 메커니즘이 지는 조작', () => {
+  beforeEach(() => {
+    clearRegistry();
+    clearViewCatalog();
+    registerBuiltinViews();
+    registerLogisticRegression();
+  });
+  afterEach(() => {
+    clearRegistry();
+    clearViewCatalog();
+  });
+
+  it('멈추면 화면이 멎고, 한 걸음씩 누르면 다시 나아간다', async () => {
+    const host = document.createElement('div');
+    document.body.appendChild(host);
+    const handle = runFacet(logisticRegressionFacet, host, { locale: 'ko' });
+    handle.setSpeed(200);
+
+    const stepOnScreen = (): number => {
+      const m = /걸음 (\d+)/.exec(host.textContent ?? '');
+      return m ? Number(m[1]) : -1;
+    };
+
+    // 얼마쯤 굴러간 뒤 멈춘다.
+    expect(await waitUntil(() => stepOnScreen() >= 3, 5000)).toBe(true);
+    handle.stop();
+    await new Promise((r) => setTimeout(r, 200));
+    const frozen = stepOnScreen();
+    await new Promise((r) => setTimeout(r, 300));
+    expect(stepOnScreen(), '멈춘 동안에는 걸음이 늘지 않는다').toBe(frozen);
+
+    // 한 걸음 단추는 걸음의 경계 하나씩만 넘긴다 — 한 마디는 경계 다섯이다.
+    for (let i = 0; i < 6; i += 1) {
+      handle.step();
+      await new Promise((r) => setTimeout(r, 60));
+    }
+    const stepped = stepOnScreen();
+    expect(stepped, '한 걸음씩 눌러도 나아간다').toBeGreaterThan(frozen);
+    await new Promise((r) => setTimeout(r, 300));
+    expect(stepOnScreen(), '한 걸음 뒤에는 다시 멎는다').toBe(stepped);
+
+    // 다시 재생하면 끝까지 간다.
+    handle.start();
+    expect(await waitUntil(() => stepOnScreen() === 600, 15000)).toBe(true);
+
+    handle.destroy();
+    host.remove();
+  }, 30000);
 });
 
 /** 조건이 참이 될 때까지 기다린다. 마감이 지나면 false. */

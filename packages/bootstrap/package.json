@@ -124,6 +124,8 @@
     "@ffacet/algorithm-ip-routing": "workspace:*",
     "@ffacet/algorithm-kruskal-mst": "workspace:*",
     "@ffacet/algorithm-linear-regression": "workspace:*",
+    "@ffacet/algorithm-random-forest": "workspace:*",
+    "@ffacet/algorithm-svm": "workspace:*",
     "@ffacet/algorithm-decision-tree": "workspace:*",
     "@ffacet/algorithm-knn": "workspace:*",
     "@ffacet/algorithm-logistic-regression": "workspace:*",

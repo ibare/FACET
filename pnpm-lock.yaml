@@ -1552,6 +1552,34 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ml-basics/random-forest:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
+
   facets/ml-basics/residual-distance:
     dependencies:
       '@ffacet/core':
@@ -1575,6 +1603,34 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/ml-basics/svm:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
 
   facets/ml-basics/vote-by-neighbors:
     dependencies:
@@ -2037,6 +2093,9 @@ importers:
       '@ffacet/algorithm-radix-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/radix-sort
+      '@ffacet/algorithm-random-forest':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/random-forest
       '@ffacet/algorithm-recolor-then-rotate':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/recolor-then-rotate
@@ -2127,6 +2186,9 @@ importers:
       '@ffacet/algorithm-support-vectors-only':
         specifier: workspace:*
         version: link:../../facets/ml-basics/support-vectors-only
+      '@ffacet/algorithm-svm':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/svm
       '@ffacet/algorithm-take-best-now':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/take-best-now

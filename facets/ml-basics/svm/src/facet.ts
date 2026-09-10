@@ -1,0 +1,314 @@
+/**
+ * 선형 SVM (소프트 마진) facet 선언.
+ *
+ * 블록은 셋뿐이다 — `stage` · `controls` · `codePanel`. 제목 블록을 두지 않는다
+ * (이름은 카탈로그 카드와 글의 문단이 준다). 점판 · 띠 · 기록장은 빌트인 view 를
+ * 빌리지 않고 stage 가 직접 그린다 (원칙 6).
+ *
+ * 이 완제품이 완제품인 까닭 셋이 여기 다 걸려 있다.
+ *
+ *  - **IR** — `ir:svm` 하나가 여섯 언어로 펼쳐진다. 훈련 한 걸음이 곧 이 모형의
+ *    정의라, 코드 패널이 "SVM 이 무엇인가" 를 그대로 말한다.
+ *  - **조작** — `set-c` 슬라이더(0.1 / 1 / 10)와 `toggle-overlap` 단추가 논증을
+ *    진다. C 를 올리면 마진이 좁아진다는 것은 값 하나로는 볼 수 없고 셋을 옮겨
+ *    보아야 보인다.
+ *  - **통합** — 조각 셋(widestMargin · supportVectorsOnly · kernelLifts)은 전부
+ *    완벽히 갈리는 자료를 쓴다. 겹침 토글이 그 전제를 깨고, 그때 무슨 일이
+ *    일어나는지가 어느 조각도 다루지 않은 것이다.
+ */
+
+import type { FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
+
+export const svmFacet: FacetJson = {
+  id: 'facet:svm',
+  title: {
+    en: 'Support Vector Machine — When a Point Falls into the Gap',
+    ko: '서포트 벡터 머신 — 틈 안에 점이 들어와 버리면',
+    ar: 'آلة متجهات الدعم — حين تقع نقطة داخل الفجوة',
+    es: 'Máquina de vectores de soporte: cuando un punto cae dentro del hueco',
+    fr: "Machine à vecteurs de support — quand un point tombe dans l'écart",
+    hi: 'सपोर्ट वेक्टर मशीन — जब कोई बिंदु अंतराल में आ गिरे',
+    id: 'Mesin vektor dukungan — ketika sebuah titik jatuh ke dalam celah',
+    pt: 'Máquina de vetores de suporte — quando um ponto cai dentro da folga',
+  },
+  description: {
+    en: 'Hinge loss and subgradient descent, with C deciding how much error the widest gap may swallow',
+    ko: '힌지 손실과 준경사하강. 가장 넓은 틈이 얼마만큼의 잘못을 삼켜도 되는지를 C 가 정한다',
+    ar: 'خسارة المفصلة والنزول شبه التدرجي، مع C التي تقرر كم من الخطأ تبتلعه أوسع فجوة',
+    es: 'Pérdida bisagra y descenso subgradiente, con C decidiendo cuánto error puede tragarse el hueco más ancho',
+    fr: "Perte charnière et descente de sous-gradient, C décidant combien d'erreur le plus large écart peut avaler",
+    hi: 'हिंज हानि और उप-प्रवणता अवरोहण, जहाँ C तय करता है कि सबसे चौड़ा अंतराल कितनी गलती निगल सकता है',
+    id: 'Kerugian engsel dan penurunan subgradien, dengan C yang menentukan berapa banyak kesalahan boleh ditelan celah terlebar',
+    pt: 'Perda de dobradiça e descida subgradiente, com C decidindo quanto erro a folga mais larga pode engolir',
+  },
+  algorithm: 'module:svm',
+  projector: 'module:svmProjector',
+  initialData: {
+    type: 'svm',
+    points: [
+      { x: 1, y: 2, label: -1 },
+      { x: 2, y: 1, label: -1 },
+      { x: 3, y: 0.5, label: -1 },
+      { x: 2.5, y: 2.5, label: -1 },
+      { x: 1, y: 4, label: -1 },
+      { x: 4, y: 5, label: 1 },
+      { x: 5, y: 4, label: 1 },
+      { x: 6, y: 6, label: 1 },
+      { x: 4.5, y: 6.5, label: 1 },
+      { x: 6.5, y: 4.5, label: 1 },
+    ],
+    // 겹침을 켜면 +1 인 (4, 5) 가 −1 무리 한복판 (2, 2) 로 옮겨 간다.
+    overlapIndex: 5,
+    overlapAt: { x: 2, y: 2 },
+    cValues: [0.1, 1, 10],
+    initialCIndex: 1,
+    learningRate: 0.05,
+    totalSteps: 4000,
+    // 4000 걸음을 다 보이지 않는다. 앞은 촘촘히 뒤는 성기게 짚어야 "빠르게
+    // 자리를 잡고 천천히 다듬는다" 는 경사하강의 결이 보인다. 걸음 0 과 1 은
+    // 여는 장면(열 점이 모두 선을 미는 자리)이 맡으므로 2 에서 시작하고,
+    // 마지막 자리 3999 뒤의 한 걸음은 점 하나하나를 훑으며 간다.
+    checkpoints: [2, 3, 5, 8, 13, 21, 34, 60, 110, 220, 450, 900, 1800, 3000, 3999],
+    timings: { frameMs: 220, traceMs: 120 },
+  },
+  shuffleOnReset: false,
+  layout: {
+    type: 'column',
+    gap: 8,
+    children: [{ ref: 'stage' }, { ref: 'controls' }, { ref: 'codePanel' }],
+  },
+  messages: {
+    'caption.clean': {
+      en: 'Nothing sits inside the gap. Its width is {w}.',
+      ko: '틈 안에 든 점이 없다. 폭은 {w}.',
+      ar: 'لا توجد نقطة داخل الفجوة. عرضها {w}.',
+      es: 'Nada queda dentro del hueco. Su anchura es {w}.',
+      fr: "Rien ne se trouve dans l'écart. Sa largeur est {w}.",
+      hi: 'अंतराल के भीतर कोई बिंदु नहीं है। इसकी चौड़ाई {w} है।',
+      id: 'Tidak ada titik di dalam celah. Lebarnya {w}.',
+      pt: 'Nada fica dentro da folga. Sua largura é {w}.',
+    },
+    'caption.inside': {
+      en: 'Points inside the gap: {n}. None of them crossed the line. Width is {w}.',
+      ko: '틈 안에 든 점의 수는 {n}. 어느 것도 선을 넘지는 않았다. 폭은 {w}.',
+      ar: 'النقاط داخل الفجوة: {n}. لم تعبر أي منها الخط. العرض {w}.',
+      es: 'Puntos dentro del hueco: {n}. Ninguno cruzó la recta. Anchura {w}.',
+      fr: "Points dans l'écart : {n}. Aucun n'a franchi la droite. Largeur {w}.",
+      hi: 'अंतराल के भीतर बिंदु: {n}। इनमें से किसी ने रेखा पार नहीं की। चौड़ाई {w}।',
+      id: 'Titik di dalam celah: {n}. Tidak ada yang melewati garis. Lebar {w}.',
+      pt: 'Pontos dentro da folga: {n}. Nenhum cruzou a reta. Largura {w}.',
+    },
+    'caption.wrong': {
+      en: 'Points across the line: {n}. It gave them up and opened the gap to {w}.',
+      ko: '선을 넘어간 점의 수는 {n}. 그것을 포기하고 틈을 {w} 까지 벌렸다.',
+      ar: 'النقاط التي عبرت الخط: {n}. تخلّى عنها ووسّع الفجوة إلى {w}.',
+      es: 'Puntos al otro lado de la recta: {n}. Los abandonó y abrió el hueco hasta {w}.',
+      fr: "Points de l'autre côté de la droite : {n}. Il les abandonne et ouvre l'écart à {w}.",
+      hi: 'रेखा के पार बिंदु: {n}। इन्हें छोड़कर अंतराल {w} तक खोल दिया गया।',
+      id: 'Titik yang menyeberangi garis: {n}. Titik itu direlakan dan celah dibuka sampai {w}.',
+      pt: 'Pontos do outro lado da reta: {n}. Ele os abandonou e abriu a folga até {w}.',
+    },
+    'caption.cChanged': {
+      en: 'C moved to {c}. Trained again from zero.',
+      ko: 'C = {c}. 0 에서 다시 훈련한다.',
+      ar: 'تغيّرت C إلى {c}. أُعيد التدريب من الصفر.',
+      es: 'C pasó a {c}. Se entrenó de nuevo desde cero.',
+      fr: 'C est passé à {c}. Réentraîné depuis zéro.',
+      hi: 'C को {c} पर ले जाया गया। शून्य से फिर प्रशिक्षण।',
+      id: 'C dipindah ke {c}. Dilatih ulang dari nol.',
+      pt: 'C passou para {c}. Treinado de novo do zero.',
+    },
+    'caption.overlapOn': {
+      en: 'One point moved into the middle of the other group. No straight line separates them now.',
+      ko: '한 점이 반대 무리 한복판으로 옮겨 갔다. 이제 어떤 직선도 둘을 온전히 가르지 못한다.',
+      ar: 'انتقلت نقطة واحدة إلى وسط المجموعة الأخرى. لم يعد أي خط مستقيم يفصل بينهما.',
+      es: 'Un punto se movió al centro del otro grupo. Ya ninguna recta los separa.',
+      fr: "Un point s'est déplacé au milieu de l'autre groupe. Aucune droite ne les sépare plus.",
+      hi: 'एक बिंदु दूसरे समूह के बीचोंबीच चला गया। अब कोई सीधी रेखा उन्हें अलग नहीं कर सकती।',
+      id: 'Satu titik berpindah ke tengah kelompok lain. Kini tidak ada garis lurus yang memisahkan keduanya.',
+      pt: 'Um ponto foi para o meio do outro grupo. Nenhuma reta os separa mais.',
+    },
+    'caption.overlapOff': {
+      en: 'That point went home. The two groups part cleanly again.',
+      ko: '그 점이 제자리로 돌아왔다. 두 무리가 다시 깨끗이 갈린다.',
+      ar: 'عادت تلك النقطة إلى مكانها. تنفصل المجموعتان بوضوح من جديد.',
+      es: 'Ese punto volvió a su sitio. Los dos grupos se separan otra vez con limpieza.',
+      fr: 'Ce point est revenu à sa place. Les deux groupes se séparent de nouveau nettement.',
+      hi: 'वह बिंदु अपनी जगह लौट आया। दोनों समूह फिर साफ़-साफ़ बँट जाते हैं।',
+      id: 'Titik itu kembali ke tempatnya. Kedua kelompok terpisah bersih lagi.',
+      pt: 'Esse ponto voltou ao lugar. Os dois grupos se separam de novo com clareza.',
+    },
+    'caption.tryKnobs': {
+      en: 'Move C, or switch the overlap on.',
+      ko: 'C 를 옮겨 보라. 겹침을 켜 보아도 된다.',
+      ar: 'حرّك C، أو شغّل التداخل.',
+      es: 'Mueve C, o activa el solapamiento.',
+      fr: 'Déplacez C, ou activez le chevauchement.',
+      hi: 'C को खिसकाएँ, या ओवरलैप चालू करें।',
+      id: 'Geser C, atau nyalakan tumpang tindih.',
+      pt: 'Mova C, ou ligue a sobreposição.',
+    },
+    'label.aria': {
+      en: 'Linear SVM with a soft margin — the band narrows as C rises',
+      ko: '소프트 마진 선형 SVM — C 가 오르면 띠가 좁아진다',
+      ar: 'آلة متجهات دعم خطية بهامش مرن — يضيق الشريط كلما ارتفعت C',
+      es: 'SVM lineal con margen blando: la banda se estrecha al subir C',
+      fr: 'SVM linéaire à marge souple — la bande se resserre quand C augmente',
+      hi: 'सॉफ़्ट मार्जिन वाला रैखिक SVM — C बढ़ने पर पट्टी सँकरी होती है',
+      id: 'SVM linear dengan margin lunak — pita menyempit saat C naik',
+      pt: 'SVM linear com margem suave — a faixa estreita quando C sobe',
+    },
+    'label.step': {
+      en: 'step {done} / {total}',
+      ko: '{done} / {total} 걸음',
+      ar: 'خطوة {done} / {total}',
+      es: 'paso {done} / {total}',
+      fr: 'pas {done} / {total}',
+      hi: 'चरण {done} / {total}',
+      id: 'langkah {done} / {total}',
+      pt: 'passo {done} / {total}',
+    },
+    'label.ledger': {
+      en: 'margin width for each C',
+      ko: 'C 마다 벌어진 폭',
+      ar: 'عرض الهامش لكل C',
+      es: 'anchura del margen para cada C',
+      fr: 'largeur de marge pour chaque C',
+      hi: 'हर C के लिए मार्जिन की चौड़ाई',
+      id: 'lebar margin untuk tiap C',
+      pt: 'largura da margem para cada C',
+    },
+    'legend.violator': {
+      en: 'inside the band — it still pushes the line',
+      ko: '띠 안에 든 점 — 아직 선을 민다',
+      ar: 'داخل الشريط — ما زالت تدفع الخط',
+      es: 'dentro de la banda: todavía empuja la recta',
+      fr: "dans la bande — il pousse encore la droite",
+      hi: 'पट्टी के भीतर — यह अब भी रेखा को धकेलता है',
+      id: 'di dalam pita — masih mendorong garis',
+      pt: 'dentro da faixa — ainda empurra a reta',
+    },
+    'legend.misplaced': {
+      en: 'across the line — given up',
+      ko: '선을 넘어간 점 — 포기한 것',
+      ar: 'عبرت الخط — جرى التخلي عنها',
+      es: 'al otro lado de la recta: abandonado',
+      fr: "de l'autre côté de la droite — abandonné",
+      hi: 'रेखा के पार — छोड़ दिया गया',
+      id: 'menyeberangi garis — direlakan',
+      pt: 'do outro lado da reta — abandonado',
+    },
+    'legend.origin': {
+      en: 'where that point started',
+      ko: '그 점이 있던 자리',
+      ar: 'حيث كانت تلك النقطة',
+      es: 'donde estaba ese punto',
+      fr: "l'endroit d'origine de ce point",
+      hi: 'वह बिंदु पहले जहाँ था',
+      id: 'tempat asal titik itu',
+      pt: 'onde esse ponto estava',
+    },
+  },
+  blocks: {
+    stage: { type: 'svm-stage' },
+    controls: {
+      type: 'control-bar',
+      controls: [
+        ...CONTROL_SET.playback,
+        {
+          widget: 'segmented-slider',
+          action: 'set-c',
+          name: 'c',
+          label: {
+            en: 'C — how hard it tries',
+            ko: 'C — 안 틀리려는 마음',
+            ar: 'C — شدة الحرص',
+            es: 'C: cuánto se esfuerza',
+            fr: 'C — sa rigueur',
+            hi: 'C — कितनी सख़्ती',
+            id: 'C — seberapa keras berusaha',
+            pt: 'C — o quanto se esforça',
+          },
+          segments: [
+            { value: 0.1, label: '0.1' },
+            { value: 1, label: '1', default: true },
+            { value: 10, label: '10' },
+          ],
+        },
+        {
+          widget: 'button',
+          action: 'toggle-overlap',
+          label: {
+            en: '⇄ Overlap',
+            ko: '⇄ 겹침',
+            ar: '⇄ تداخل',
+            es: '⇄ Solapamiento',
+            fr: '⇄ Chevauchement',
+            hi: '⇄ ओवरलैप',
+            id: '⇄ Tumpang tindih',
+            pt: '⇄ Sobreposição',
+          },
+        },
+      ],
+      metrics: [
+        {
+          name: 'step-count',
+          label: {
+            en: 'Steps',
+            ko: '걸음',
+            ar: 'الخطوات',
+            es: 'Pasos',
+            fr: 'Pas',
+            hi: 'चरण',
+            id: 'Langkah',
+            pt: 'Passos',
+          },
+          initial: 0,
+        },
+        {
+          name: 'margin-width',
+          label: {
+            en: 'Margin width',
+            ko: '마진 폭',
+            ar: 'عرض الهامش',
+            es: 'Anchura del margen',
+            fr: 'Largeur de marge',
+            hi: 'मार्जिन चौड़ाई',
+            id: 'Lebar margin',
+            pt: 'Largura da margem',
+          },
+          initial: 0,
+        },
+        {
+          name: 'violation-count',
+          label: {
+            en: 'Inside the band',
+            ko: '띠 안에 든 점',
+            ar: 'داخل الشريط',
+            es: 'Dentro de la banda',
+            fr: 'Dans la bande',
+            hi: 'पट्टी के भीतर',
+            id: 'Di dalam pita',
+            pt: 'Dentro da faixa',
+          },
+          initial: 0,
+        },
+      ],
+    },
+    codePanel: {
+      type: 'code-view',
+      label: {
+        en: 'Code',
+        ko: '코드',
+        ar: 'الشيفرة',
+        es: 'Código',
+        fr: 'Code',
+        hi: 'कोड',
+        id: 'Kode',
+        pt: 'Código',
+      },
+      ir: 'ir:svm',
+    },
+  },
+};

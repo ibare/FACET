@@ -434,10 +434,16 @@ export async function knn(ctx: FacetContext<KnnData>): Promise<void> {
 
   // 한 바퀴가 끝났다. 남은 것은 조작뿐이라 여기서 기다린다 — 메커니즘이 이
   // 상태를 control-bar 의 "끝남" 으로 내므로 되돌리기와 위젯만 눌린다.
-  for (;;) {
-    // 문이 없는 루프다 — 기다리는 것 자체가 문이다 (C8).
-    if (ctx.cancelled) return;
-    const changed = await handleWidget(await rc.waitForInput());
-    if (changed && lastVisited >= 0 && (await visit(lastVisited)) === 'cancelled') return;
+  try {
+    for (;;) {
+      // 문이 없는 루프다 — 기다리는 것 자체가 문이다 (C8).
+      if (ctx.cancelled) return;
+      const changed = await handleWidget(await rc.waitForInput());
+      if (changed && lastVisited >= 0 && (await visit(lastVisited)) === 'cancelled') return;
+    }
+  } catch (err) {
+    // reset/destroy 가 waitForInput 을 reject 한 것은 정상 종료 경로다 (C6).
+    // 그 밖의 오류는 그대로 올려 러너가 console.error 로 드러내게 둔다.
+    if (!ctx.cancelled) throw err;
   }
 }

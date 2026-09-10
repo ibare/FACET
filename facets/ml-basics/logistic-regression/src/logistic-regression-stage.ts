@@ -59,6 +59,8 @@ const TITLE_Y = 20;
 const READOUT_Y = 276;
 const TALLY_Y = 298;
 const CAPTION_Y = 320;
+/** 집계 세 칸의 너비. */
+const TALLY_SLOT_W = 176;
 
 const DOT_R = 4.6;
 const RIBBON_DOT_R = 3.4;
@@ -507,6 +509,15 @@ export const logisticRegressionStageView: CanvasView = {
       }
     }
 
+    /** 집계 한 칸 — 색동그라미 하나와 이미 풀린 문구 하나. */
+    function tallyItem(slot: number, text: string, swatch: string): void {
+      const tx = AX0 + slot * TALLY_SLOT_W;
+      layerText.appendChild(svg('circle', { cx: tx + 4, cy: TALLY_Y - 4, r: 4, fill: swatch }));
+      layerText.appendChild(
+        label(tx + 14, TALLY_Y, text, colors.textMuted, fontSizes.xs, 'start', fonts.body),
+      );
+    }
+
     function drawText(f: LogisticStageFrame | null): void {
       clear(layerText);
       if (f) {
@@ -528,29 +539,11 @@ export const logisticRegressionStageView: CanvasView = {
           ),
         );
 
-        const tally: Array<[string, string, number, string]> = [
-          ['tally.hit', 'right {n}', f.hit, clsInk[CLASS_HIGH]],
-          ['tally.miss', 'missed {n}', f.miss, colors.danger],
-          ['tally.falseAlarm', 'false alarm {n}', f.falseAlarm, colors.danger],
-        ];
-        let tx = AX0;
-        for (const [key, en, value, swatch] of tally) {
-          layerText.appendChild(
-            svg('circle', { cx: tx + 4, cy: TALLY_Y - 4, r: 4, fill: swatch }),
-          );
-          layerText.appendChild(
-            label(
-              tx + 14,
-              TALLY_Y,
-              tr(key, en, { n: value }),
-              colors.textMuted,
-              fontSizes.xs,
-              'start',
-              fonts.body,
-            ),
-          );
-          tx += 176;
-        }
+        // en 원본은 호출부에 리터럴로 둔다 — 손목록 배열에 담으면 추출기와
+        // 전수 검사가 그 줄을 못 본다 (C10).
+        tallyItem(0, tr('tally.hit', 'right {n}', { n: f.hit }), clsInk[CLASS_HIGH]);
+        tallyItem(1, tr('tally.miss', 'missed {n}', { n: f.miss }), colors.danger);
+        tallyItem(2, tr('tally.falseAlarm', 'false alarm {n}', { n: f.falseAlarm }), colors.danger);
       }
       if (caption) {
         layerText.appendChild(

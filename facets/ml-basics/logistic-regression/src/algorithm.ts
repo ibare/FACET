@@ -6,6 +6,9 @@
  * 값**이라 그 입력을 계속 기다린다. 대기는 `destroy` / `reset` 이 깨운다
  * (`ReactiveMechanism.flushInputRejector`).
  *
+ * 재생 · 멈춤 · 한 걸음은 메커니즘이 진다. 알고리즘은 걸음의 경계마다
+ * `await rc.sleep(ms)` 를 두고 그 반환이 false 면 물러날 뿐이다.
+ *
  * ── 셈
  *
  * 배치 경사하강. 무게 둘과 치우침 하나를 0 에서 시작해 학습률 0.2 로 600 걸음.
@@ -41,7 +44,11 @@
  * ── 입력 어휘 (mechanism.dispatch → ctx.waitForInput / pollInput)
  *
  *   threshold  segmented-slider. payload `{ value: number }` — 0.3 / 0.5 / 0.8
- *   play / pause / step   control-bar 의 재생 묶음. reset · speed 는 메커니즘이 먹는다
+ *
+ * 이것 하나뿐이다. **재생 · 멈춤 · 한 걸음 · 되돌리기 · 속도는 메커니즘이
+ * 진다** — 알고리즘까지 오지 않는다. 걸음의 경계는 `rc.sleep(ms)` 이고,
+ * 멈춤이 걸리면 그 안에서 기다렸다가 이어진다. 알고리즘이 재생 상태를 따로
+ * 들고 있으면 영영 안 타는 죽은 분기가 되고, 그 사이 화면은 멀쩡해 보인다.
  *
  * ── phase 어휘 (C3 — `irs.ts` 와 글자까지 같다)
  *
@@ -121,8 +128,6 @@ export const logisticRegression = async (
   let bias = 0;
   let step = 0;
   let markIndex = 0;
-  let playing = true;
-  let pendingStep = false;
 
   /**
    * 메트릭 미러. 메커니즘은 delta 를 누적하므로 (`ctx.metric` 은 '얼마 더' 다)
@@ -220,18 +225,9 @@ export const logisticRegression = async (
         thresholdIndex = nearest;
         return true;
       }
-      case 'play':
-        playing = true;
-        return false;
-      case 'pause':
-        playing = false;
-        return false;
-      case 'step':
-        playing = false;
-        pendingStep = true;
-        return false;
       default:
-        // 이 facet 이 모르는 어휘. 조용히 버린다.
+        // 재생 · 멈춤 · 한 걸음은 메커니즘이 먹고 여기까지 오지 않는다.
+        // 그 밖의 모르는 어휘도 조용히 버린다.
         return false;
     }
   };
@@ -247,9 +243,8 @@ export const logisticRegression = async (
     if (thresholdMoved) await ctx.emit({ type: 'mark', payload: frame('caption.threshold') });
     if (ctx.cancelled) return;
 
-    const finished = markIndex >= checkpoints.length;
-    if (finished || (!playing && !pendingStep)) {
-      // 멈춰 있다. 다 배운 뒤에도 문턱은 독자의 것이라 이 기다림은 끝나지 않는다.
+    if (markIndex >= checkpoints.length) {
+      // 다 배웠다. 그래도 문턱은 독자의 것이라 이 기다림은 끝나지 않는다.
       let e: ReactiveInputEvent;
       try {
         e = await rc.waitForInput();
@@ -261,17 +256,16 @@ export const logisticRegression = async (
       continue;
     }
 
-    pendingStep = false;
-
-    // 한 마디 — 코드 패널을 따라 다섯 phase 를 밟는다.
+    // 한 마디 — 코드 패널을 따라 다섯 phase 를 밟는다. 걸음의 경계는
+    // `sleep` 이고, 멈춤 · 한 걸음이 걸리는 자리도 거기다 (메커니즘 소관).
     await phase('reset-gradient');
-    if (!(await beat(rc, playing, phaseMs))) return;
+    if (!(await rc.sleep(phaseMs))) return;
     await phase('forward');
-    if (!(await beat(rc, playing, phaseMs))) return;
+    if (!(await rc.sleep(phaseMs))) return;
     await phase('squash');
-    if (!(await beat(rc, playing, phaseMs))) return;
+    if (!(await rc.sleep(phaseMs))) return;
     await phase('accumulate');
-    if (!(await beat(rc, playing, phaseMs))) return;
+    if (!(await rc.sleep(phaseMs))) return;
 
     const target = checkpoints[markIndex];
     while (step < target && !ctx.cancelled) trainStep();
@@ -284,15 +278,6 @@ export const logisticRegression = async (
     } else {
       await ctx.emit({ type: 'state-changed', payload: frame('caption.training') });
     }
-    if (!(await beat(rc, playing, frameMs))) return;
+    if (!(await rc.sleep(frameMs))) return;
   }
 };
-
-/**
- * 재생 중일 때만 뜸을 들인다. 한 걸음 단추로 온 마디는 기다릴 까닭이 없다.
- * @returns 이어가도 되면 true, cancel 로 깨어났으면 false.
- */
-async function beat(rc: ReactiveContext<LogisticRegressionData>, playing: boolean, ms: number): Promise<boolean> {
-  if (!playing) return !rc.cancelled;
-  return rc.sleep(ms);
-}
