@@ -34,6 +34,18 @@ const MATH: Record<string, string> = {
   floor: 'math.floor',
 };
 
+/**
+ * 예약된 수학 이름을 이 언어의 표기로 바꾼다.
+ *
+ * **IR 이 그 이름을 스스로 정의했으면 표기표를 쓰지 않는다.** 인터프리터가 이미
+ * 그렇게 하므로(정의가 예약을 이긴다), 여기서 무조건 표기표를 따르면 같은 IR 이
+ * 코드 패널과 실행에서 서로 다른 말을 하게 된다.
+ */
+function makeMathName(ir: IR): (fn: string) => string {
+  const defined = new Set(ir.functions.map((f) => f.name));
+  return (fn) => (defined.has(fn) ? fn : (MATH[fn] ?? fn));
+}
+
 const INDENT = '    ';
 
 function isBinop(e: IRExpr): boolean {
@@ -53,6 +65,7 @@ export const pythonTranspiler: Transpiler = {
   label: { en: 'Python', ko: 'Python' },
   supports: ['imperative'],
   transpile(ir: IR): TranspileResult {
+    const mathName = makeMathName(ir);
     if (!ir.functions || ir.functions.length === 0) {
       throw new Error(`[transpiler-python] IR "${ir.id}" 에 functions 가 비어 있다`);
     }
@@ -80,7 +93,7 @@ export const pythonTranspiler: Transpiler = {
           return e.op === '!' ? `not ${x}` : `-${x}`;
         }
         case 'call':
-          return `${MATH[e.fn] ?? e.fn}(${e.args.map(emitExpr).join(', ')})`;
+          return `${mathName(e.fn)}(${e.args.map(emitExpr).join(', ')})`;
       }
     }
 

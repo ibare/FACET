@@ -63,7 +63,7 @@ export type IRUnOp = '!' | '-';
  * 언어마다 뜻이 달라 한 이름으로 덮을 수 없다.
  *
  * 새 이름을 더하면 **여섯 transpiler 가 모두 그것을 옮겨야 한다.**
- * `packages/core/test/math-builtins.test.ts` 가 그 전수를 본다 — 하나가 빠지면
+ * `packages/ir-interpreter/test/math-builtins.test.ts` 가 그 전수를 본다 — 하나가 빠지면
  * 그 언어에서만 조용히 깨지기 때문이다.
  */
 export const IR_MATH_BUILTINS = ['exp', 'log', 'sqrt', 'abs', 'max', 'min', 'floor'] as const;

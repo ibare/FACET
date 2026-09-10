@@ -342,7 +342,7 @@ export class CoroutineMechanism implements Mechanism {
  */
 export class ReactiveMechanism implements Mechanism {
   readonly kind = 'reactive' as const;
-  readonly supportedControls = ['reset', 'speed', '*'] as const;
+  readonly supportedControls = ['play', 'pause', 'step', 'reset', 'speed', '*'] as const;
 
   private projector: ProjectorInstance | null = null;
   private hooks: MechanismHooks = {};
@@ -599,6 +599,12 @@ export class ReactiveMechanism implements Mechanism {
     this.cancelled = true;
     this.clearPendingSleep();
     this.flushInputRejector();
+    // 멈춘 채 접으면 `awaitResume` 에 매달린 알고리즘이 영영 안 돌아온다.
+    // `reset()` 에는 이 세 줄을 넣고 여기에는 빠뜨렸었다 — 재생 도중 destroy 만
+    // 재던 전수 검사가 그 길을 안 지나 눈으로도 안 잡혔다.
+    this.paused = false;
+    this.stepOnce = false;
+    this.flushResume();
   }
 
   onControl(action: string, payload?: unknown): void {

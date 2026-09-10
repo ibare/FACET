@@ -185,6 +185,11 @@ export const controlBarView: View = {
      * 없던 동안 되감기가 알고리즘만 되돌리고 위젯은 그대로 두어, **슬라이더는
      * 15 를 가리키는데 화면은 3 의 결과**를 보이는 어긋남이 났다. 조작이 논증을
      * 지는 완제품에서는 그 어긋남 자체가 거짓말이 된다.
+     *
+     * 되돌리는 것은 **알고리즘이 읽는 값**을 지닌 위젯뿐이다 — `value-input` 과
+     * `segmented-slider`. `speed-slider` 는 되돌리지 않는다: 재생 속도는 자료가
+     * 아니라 **읽는 사람의 취향**이고, 되감을 때마다 기본 속도로 튕기면 느리게
+     * 보려던 사람이 매번 다시 맞춰야 한다. `button` 은 지닐 상태가 없다.
      */
     const inputResetters: Array<() => void> = [];
     const customButtons: Record<string, HTMLButtonElement> = {};
@@ -265,6 +270,12 @@ export const controlBarView: View = {
         inputEl.addEventListener('input', () => {
           inputState[name] = inputEl.value;
           params.dispatch?.({ type: 'input', payload: { name, value: inputEl.value } });
+        });
+        // 되감기는 값만 돌린다 — dispatch 하지 않는다. 알고리즘은 이미 처음으로
+        // 돌아가는 중이라, 여기서 또 보내면 그 걸음이 두 번 세어진다.
+        inputResetters.push(() => {
+          inputEl.value = def;
+          inputState[name] = def;
         });
         wrap.appendChild(inputEl);
         buttonGroup.appendChild(wrap);

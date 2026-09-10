@@ -116,4 +116,27 @@ describe('예약된 수학 이름', () => {
     });
     expect(runIR(ir, 'probe', [])).toBe(99);
   });
+
+  it('정의가 있으면 여섯 언어도 표기표를 쓰지 않는다', () => {
+    // 인터프리터는 정의를 우선하는데 transpiler 가 무조건 표기표를 따르면,
+    // **같은 IR 이 코드 패널과 실행에서 서로 다른 말을 한다.** 코드 패널에는
+    // `Math.sqrt(2)` 가 뜨는데 실제로 돌면 99 가 나오는 꼴이다.
+    const ir = probe('sqrt');
+    ir.functions.push({
+      name: 'sqrt',
+      params: [{ name: 'x', type: { kind: 'double' } }],
+      returnType: { kind: 'double' },
+      body: [{ kind: 'return', expr: { kind: 'lit', value: 99 } }],
+    });
+    const wrong: string[] = [];
+    for (const [lang, t] of Object.entries(TRANSPILERS)) {
+      const code = emit(t, ir);
+      const notation = NOTATION[lang]?.sqrt;
+      if (notation && code.includes(notation)) {
+        wrong.push(`${lang} — IR 이 sqrt 를 정의했는데 ${notation} 로 냈다`);
+      }
+      if (!/\bsqrt\(/.test(code)) wrong.push(`${lang} — 정의한 이름 sqrt 를 부르지 않는다`);
+    }
+    expect(wrong).toEqual([]);
+  });
 });

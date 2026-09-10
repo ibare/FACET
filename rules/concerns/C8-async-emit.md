@@ -61,6 +61,28 @@ async function gate(): Promise<boolean> {
   (`'pure' | 'exhausted' | 'cancelled'`).
 - **`waitForInput` 루프는 앞뒤로 본다.** 그것이 취소 시 throw 하더라도 규약에
   기대지 않는다 — 되짚기 루프가 조각의 가장 바깥이라 여기서 새면 아무도 못 잡는다.
+- **그 throw 를 받는 자리는 최상위 `try` 하나다.**
+
+  ```ts
+  try {
+    for (;;) {
+      if (ctx.cancelled) return;
+      …
+      if (needInput) await handle(await ctx.waitForInput());
+      const alive = await ctx.sleep(stepMs);
+      if (!alive) return;
+    }
+  } catch (err) {
+    // reset/destroy 가 waitForInput 을 reject 한 것은 정상 종료 경로다 (C6).
+    // 그 밖의 오류는 그대로 올려 러너가 console.error 로 드러내게 둔다.
+    if (!ctx.cancelled) throw err;
+  }
+  ```
+
+  아무 데도 안 잡고 러너가 삼키게 두어도 지금은 돌아간다. 그러나 그러면
+  **취소가 아닌 진짜 오류까지 함께 삼켜져** 조용히 멎는 화면이 된다. 완제품
+  다섯을 격리해 만들었더니 이 대목이 3 대 2 로 갈렸다 — 규범에 문장이 없었기
+  때문이다.
 
 이 절이 없던 동안 조각 일곱 중 **넷이 같은 자리에서 어긋났다.** 위 MUST 의 "모든
 루프 진입부" 가 reactive 의 실제 취소 규약(문이 취소를 진다)과 겹쳐 읽히지 않은

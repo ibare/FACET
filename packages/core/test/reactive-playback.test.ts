@@ -160,6 +160,28 @@ describe('reactive 의 세 상태', () => {
     void m.destroy();
   });
 
+  it('멈춘 채 접어도 알고리즘이 돌아온다', async () => {
+    // destroy 가 멈춤 대기를 안 풀면 `awaitResume` 에 매달린 알고리즘이 영영
+    // 안 돌아온다. reset 에는 푸는 세 줄이 있고 destroy 에는 빠져 있었다.
+    const rec = spy();
+    let returned = false;
+    const m = new ReactiveMechanism(async (ctx: ReactiveContext) => {
+      for (;;) {
+        if (!(await ctx.sleep(20))) break;
+      }
+      returned = true;
+    });
+    m.init(noopProjector, {}, { hooks: rec.hooks });
+    await idle(60);
+    m.onControl('pause');
+    await idle(60);
+    expect(returned, '아직 멈춰 있을 뿐이다').toBe(false);
+
+    m.destroy();
+    await idle(60);
+    expect(returned, '접으면 돌아와야 한다').toBe(true);
+  });
+
   it('멈춘 채 되돌려도 매달리지 않는다', async () => {
     const rec = spy();
     let steps = 0;
@@ -232,6 +254,33 @@ describe('되감기와 위젯', () => {
       sent.length,
       '되감기는 값만 돌린다 — 여기서 또 보내면 그 걸음이 두 번 세어진다',
     ).toBe(afterMove);
+
+    instance.destroy?.();
+    container.remove();
+  });
+
+  it('되감으면 값 입력칸도 처음 자리로 돌아간다', () => {
+    // 슬라이더만 되돌리면 값 입력칸이 낡은 채 남고, 그 뒤 facet 고유 button 이
+    // 보내는 payload(`{...inputState}`)까지 거짓이 된다.
+    const container = document.createElement('div');
+    document.body.appendChild(container);
+    const instance = mountView(controlBarView, container, {
+      config: {
+        controls: [{ widget: 'value-input', action: 'seed', name: 'seed', default: '42' }],
+      },
+    } as never);
+
+    const bar = instance as unknown as { resetInputs?(): void };
+    const input = container.querySelector('input[data-input-name="seed"]') as HTMLInputElement | null;
+    expect(input, '입력칸이 떠 있어야 한다').not.toBeNull();
+    expect(input?.value).toBe('42');
+
+    input!.value = '99';
+    input!.dispatchEvent(new Event('input', { bubbles: true }));
+    expect(input?.value).toBe('99');
+
+    bar.resetInputs?.();
+    expect(input?.value, '되감으면 처음 값으로').toBe('42');
 
     instance.destroy?.();
     container.remove();
