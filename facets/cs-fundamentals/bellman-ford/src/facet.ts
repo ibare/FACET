@@ -21,6 +21,8 @@ export const bellmanFordFacet: FacetJson = {
   title: {
     en: 'Bellman-Ford',
     ko: '벨만-포드',
+    ja: 'ベルマン-フォード',
+    zh: '贝尔曼-福特',
     ar: 'بلمان-فورد',
     es: 'Bellman-Ford',
     fr: 'Bellman-Ford',
@@ -31,6 +33,8 @@ export const bellmanFordFacet: FacetJson = {
   description: {
     en: 'Sweep every edge n-1 times — distances soak one layer deeper each pass.',
     ko: '모든 간선을 정점 수보다 한 번 적게 편다 — 바퀴마다 값이 한 겹씩 더 깊이 스민다',
+    ja: '全辺を n-1 回なでる — 一巡ごとに距離が一層ずつ深く染みる。',
+    zh: '把每条边扫 n-1 遍 — 每一轮距离都多渗进一层。',
     ar: 'امسح كل الحواف n-1 مرة — تتغلغل المسافات طبقة أعمق في كل جولة.',
     es: 'Recorre todas las aristas n-1 veces: las distancias calan una capa más en cada pasada.',
     fr: "Balayer toutes les arêtes n-1 fois — les distances s'infiltrent d'une couche de plus à chaque passe.",
@@ -77,6 +81,8 @@ export const bellmanFordFacet: FacetJson = {
           label: {
             en: 'Passes',
             ko: '바퀴',
+            ja: '周回',
+            zh: '轮数',
             ar: 'جولات',
             es: 'Pasadas',
             fr: 'Passes',
@@ -91,6 +97,8 @@ export const bellmanFordFacet: FacetJson = {
           label: {
             en: 'Drops',
             ko: '줄어듦',
+            ja: '短縮',
+            zh: '下降',
             ar: 'انخفاضات',
             es: 'Bajadas',
             fr: 'Baisses',
@@ -105,6 +113,8 @@ export const bellmanFordFacet: FacetJson = {
           label: {
             en: 'Edge tests',
             ko: '간선 견줌',
+            ja: '辺の判定',
+            zh: '边检验',
             ar: 'اختبارات الحواف',
             es: 'Pruebas de arista',
             fr: "Tests d'arête",
@@ -121,6 +131,8 @@ export const bellmanFordFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -135,6 +147,8 @@ export const bellmanFordFacet: FacetJson = {
     'label.passHeader': {
       en: 'pass',
       ko: '바퀴',
+      ja: '周',
+      zh: '轮',
       ar: 'جولة',
       es: 'pasada',
       fr: 'passe',
@@ -145,6 +159,8 @@ export const bellmanFordFacet: FacetJson = {
     'label.rowStart': {
       en: 'start',
       ko: '처음',
+      ja: '最初',
+      zh: '起始',
       ar: 'البداية',
       es: 'inicio',
       fr: 'début',
@@ -155,6 +171,8 @@ export const bellmanFordFacet: FacetJson = {
     'label.rowCheck': {
       en: 'check',
       ko: '검사',
+      ja: '検査',
+      zh: '检查',
       ar: 'فحص',
       es: 'control',
       fr: 'contrôle',
@@ -165,6 +183,8 @@ export const bellmanFordFacet: FacetJson = {
     'caption.start': {
       en: 'Every vertex starts unreachable. Only the source is 0.',
       ko: '모든 정점은 아직 닿지 않은 채로 시작한다. 출발점만 0 이다',
+      ja: 'どの頂点も未到達から始まる。始点だけが 0。',
+      zh: '每个顶点都从不可达开始。只有源点是 0。',
       ar: 'كل رأس يبدأ غير مبلوغ. المصدر وحده صفر.',
       es: 'Todo vértice empieza inalcanzable. Solo el origen vale 0.',
       fr: 'Chaque sommet commence inatteignable. Seule la source vaut 0.',
@@ -175,6 +195,8 @@ export const bellmanFordFacet: FacetJson = {
     'caption.seeded': {
       en: 'Source {v} is 0. Everything else is {inf} until an edge reaches it.',
       ko: '출발점 {v} 는 0. 나머지는 간선이 닿기 전까지 {inf} 이다',
+      ja: '始点 {v} は 0。ほかは辺が届くまで {inf} のまま。',
+      zh: '源点 {v} 是 0。其余在有边到达前都是 {inf}。',
       ar: 'المصدر {v} صفر. الباقي {inf} إلى أن تصله حافة.',
       es: 'El origen {v} vale 0. El resto es {inf} hasta que una arista llegue.',
       fr: "La source {v} vaut 0. Le reste est {inf} tant qu'aucune arête n'y arrive.",
@@ -185,6 +207,8 @@ export const bellmanFordFacet: FacetJson = {
     'caption.passBegin': {
       en: 'Pass {pass} of {total}. Sweep all edges in the same fixed order.',
       ko: '{total} 바퀴 가운데 {pass} 바퀴. 간선 전부를 늘 같은 차례로 훑는다',
+      ja: '{total} 周のうち {pass} 周目。全辺をいつも同じ順でなでる。',
+      zh: '第 {pass} 轮，共 {total} 轮。按同一固定顺序扫过所有边。',
       ar: 'الجولة {pass} من {total}. امسح كل الحواف بالترتيب الثابت نفسه.',
       es: 'Pasada {pass} de {total}. Recorre todas las aristas en el mismo orden fijo.',
       fr: 'Passe {pass} sur {total}. Parcourir toutes les arêtes dans le même ordre fixe.',
@@ -195,6 +219,8 @@ export const bellmanFordFacet: FacetJson = {
     'caption.unreached': {
       en: 'Edge {u}→{v}: {u} is still {inf}, so nothing can be pushed through it.',
       ko: '간선 {u}→{v} — {u} 가 아직 {inf} 이라 이 길로는 아무것도 못 민다',
+      ja: '辺 {u}→{v} — {u} はまだ {inf} なので、ここからは何も押し出せない。',
+      zh: '边 {u}→{v}：{u} 仍是 {inf}，所以什么也推不过去。',
       ar: 'الحافة {u}→{v}: الرأس {u} ما زال {inf}، فلا شيء يمر عبرها.',
       es: 'Arista {u}→{v}: {u} sigue en {inf}, así que nada puede pasar por ella.',
       fr: 'Arête {u}→{v} : {u} vaut encore {inf}, rien ne peut passer par là.',
@@ -205,6 +231,8 @@ export const bellmanFordFacet: FacetJson = {
     'caption.improves': {
       en: 'Edge {u}→{v}: {du} + ({w}) = {sum}, below {dv}. It drops.',
       ko: '간선 {u}→{v} — {du} + ({w}) = {sum}, {dv} 보다 작다. 값이 줄어든다',
+      ja: '辺 {u}→{v} — {du} + ({w}) = {sum}、{dv} より小さい。値が下がる。',
+      zh: '边 {u}→{v}：{du} + ({w}) = {sum}，小于 {dv}。值下降。',
       ar: 'الحافة {u}→{v}: {du} + ({w}) = {sum}، أقل من {dv}. تنخفض القيمة.',
       es: 'Arista {u}→{v}: {du} + ({w}) = {sum}, menor que {dv}. Baja.',
       fr: 'Arête {u}→{v} : {du} + ({w}) = {sum}, sous {dv}. La valeur baisse.',
@@ -215,6 +243,8 @@ export const bellmanFordFacet: FacetJson = {
     'caption.noDrop': {
       en: 'Edge {u}→{v}: {du} + ({w}) = {sum}, not below {dv}. Nothing changes.',
       ko: '간선 {u}→{v} — {du} + ({w}) = {sum}, {dv} 보다 작지 않다. 그대로 둔다',
+      ja: '辺 {u}→{v} — {du} + ({w}) = {sum}、{dv} より小さくない。そのまま。',
+      zh: '边 {u}→{v}：{du} + ({w}) = {sum}，不小于 {dv}。什么都不变。',
       ar: 'الحافة {u}→{v}: {du} + ({w}) = {sum}، ليست أقل من {dv}. لا شيء يتغير.',
       es: 'Arista {u}→{v}: {du} + ({w}) = {sum}, no menor que {dv}. Nada cambia.',
       fr: 'Arête {u}→{v} : {du} + ({w}) = {sum}, pas sous {dv}. Rien ne change.',
@@ -225,6 +255,8 @@ export const bellmanFordFacet: FacetJson = {
     'caption.relaxed': {
       en: 'Vertex {v} drops from {before} to {after}.',
       ko: '정점 {v} 가 {before} 에서 {after} 로 줄었다',
+      ja: '頂点 {v} が {before} から {after} へ下がる。',
+      zh: '顶点 {v} 从 {before} 降到 {after}。',
       ar: 'الرأس {v} ينخفض من {before} إلى {after}.',
       es: 'El vértice {v} baja de {before} a {after}.',
       fr: 'Le sommet {v} passe de {before} à {after}.',
@@ -235,6 +267,8 @@ export const bellmanFordFacet: FacetJson = {
     'caption.passEnd': {
       en: 'Pass {pass} soaked into {changed} vertices.',
       ko: '이 바퀴에 값이 스민 정점은 {changed} 개 ({pass} 바퀴)',
+      ja: '{pass} 周目で値が染みた頂点は {changed} 個。',
+      zh: '第 {pass} 轮渗到了 {changed} 个顶点。',
       ar: 'الجولة {pass} تسربت إلى {changed} رؤوس.',
       es: 'La pasada {pass} caló en {changed} vértices.',
       fr: 'La passe {pass} a imprégné {changed} sommets.',
@@ -245,6 +279,8 @@ export const bellmanFordFacet: FacetJson = {
     'caption.passQuiet': {
       en: 'Pass {pass} changed nothing. The distances have settled.',
       ko: '이 바퀴에는 아무것도 바뀌지 않았다 ({pass} 바퀴). 거리가 자리를 잡았다',
+      ja: '{pass} 周目は何も変わらなかった。距離が落ち着いた。',
+      zh: '第 {pass} 轮什么也没变。距离已经稳定。',
       ar: 'الجولة {pass} لم تغيّر شيئًا. استقرت المسافات.',
       es: 'La pasada {pass} no cambió nada. Las distancias se asentaron.',
       fr: "La passe {pass} n'a rien changé. Les distances sont stabilisées.",
@@ -255,6 +291,8 @@ export const bellmanFordFacet: FacetJson = {
     'caption.checkBegin': {
       en: 'One more sweep — the same test again. If anything still drops, a negative cycle exists.',
       ko: '한 바퀴 더 — 조건은 똑같다. 여기서도 줄어드는 것이 있으면 음수 고리가 있다는 뜻이다',
+      ja: 'もう一周 — 条件はまったく同じ。ここでも下がるものがあれば負閉路がある。',
+      zh: '再扫一轮 — 条件一模一样。若还有下降，就存在负环。',
       ar: 'مسحة أخرى — الاختبار نفسه. إن انخفض شيء بعد، فثمة دورة سالبة.',
       es: 'Una pasada más, la misma prueba. Si algo aún baja, hay un ciclo negativo.',
       fr: 'Une passe de plus — le même test. Si quelque chose baisse encore, il y a un cycle négatif.',
@@ -265,6 +303,8 @@ export const bellmanFordFacet: FacetJson = {
     'caption.checkClean': {
       en: 'Nothing dropped. No negative cycle — the distances are final.',
       ko: '아무것도 줄지 않았다. 음수 고리가 없고 거리는 확정이다',
+      ja: '何も下がらなかった。負閉路はなく、距離は確定。',
+      zh: '没有下降。没有负环 — 距离已定。',
       ar: 'لم ينخفض شيء. لا دورة سالبة — المسافات نهائية.',
       es: 'Nada bajó. No hay ciclo negativo: las distancias son definitivas.',
       fr: "Rien n'a baissé. Pas de cycle négatif — les distances sont définitives.",
@@ -275,6 +315,8 @@ export const bellmanFordFacet: FacetJson = {
     'caption.checkDirty': {
       en: '{changed} edges still drop. A negative cycle is in there.',
       ko: '아직 줄어드는 간선이 있다. 그 수는 {changed}. 음수 고리가 있다',
+      ja: 'まだ下がる辺が {changed} 本ある。負閉路がある。',
+      zh: '仍有 {changed} 条边在下降。里面有负环。',
       ar: 'ما زالت {changed} حواف تنخفض. هناك دورة سالبة.',
       es: 'Todavía bajan {changed} aristas. Hay un ciclo negativo.',
       fr: '{changed} arêtes baissent encore. Il y a un cycle négatif.',
@@ -285,6 +327,8 @@ export const bellmanFordFacet: FacetJson = {
     'caption.done': {
       en: '{passes} passes and {relaxed} drops. Distances: {values}.',
       ko: '바퀴는 {passes}, 줄어든 횟수는 {relaxed}. 거리는 {values}',
+      ja: '周回 {passes}、短縮 {relaxed} 回。距離は {values}。',
+      zh: '{passes} 轮，{relaxed} 次下降。距离：{values}。',
       ar: '{passes} جولات و{relaxed} انخفاضات. المسافات: {values}.',
       es: '{passes} pasadas y {relaxed} bajadas. Distancias: {values}.',
       fr: '{passes} passes et {relaxed} baisses. Distances : {values}.',

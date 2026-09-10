@@ -20,6 +20,8 @@ export const dynamicProgrammingFacet: FacetJson = {
   title: {
     en: 'Dynamic Programming',
     ko: '동적 계획법',
+    ja: '動的計画法',
+    zh: '动态规划',
     ar: 'البرمجة الديناميكية',
     es: 'Programación dinámica',
     fr: 'Programmation dynamique',
@@ -30,6 +32,8 @@ export const dynamicProgrammingFacet: FacetJson = {
   description: {
     en: 'Fill a table once — each cell only looks at two cells in the row above.',
     ko: '표를 한 번 채운다 — 칸 하나는 윗줄 두 칸만 본다',
+    ja: '表を一度だけ埋める — ひとつの枠は上の行のふたつの枠しか見ない。',
+    zh: '只填一次表 — 每个格子只看上一行的两个格子。',
     ar: 'املأ جدولًا مرة واحدة — كل خانة تنظر إلى خانتين فقط في الصف الذي فوقها.',
     es: 'Rellena una tabla una sola vez: cada casilla solo mira dos casillas de la fila de arriba.',
     fr: "Remplir un tableau une seule fois — chaque case ne regarde que deux cases de la ligne au-dessus.",
@@ -63,7 +67,7 @@ export const dynamicProgrammingFacet: FacetJson = {
           name: 'cell-count',
           label: {
             en: 'Cells',
-            ko: '채운 칸',
+            ko: '채운 칸', ja: '埋めた枠', zh: '已填格',
             ar: 'خانات',
             es: 'Casillas',
             fr: 'Cases',
@@ -77,7 +81,7 @@ export const dynamicProgrammingFacet: FacetJson = {
           name: 'compare-count',
           label: {
             en: 'Compare',
-            ko: '견줌',
+            ko: '견줌', ja: '比べる', zh: '比较',
             ar: 'مقارنة',
             es: 'Comparar',
             fr: 'Comparer',
@@ -91,7 +95,7 @@ export const dynamicProgrammingFacet: FacetJson = {
           name: 'skip-count',
           label: {
             en: 'Too heavy',
-            ko: '무게 초과',
+            ko: '무게 초과', ja: '重さ超過', zh: '超重',
             ar: 'ثقيل جدًا',
             es: 'Muy pesado',
             fr: 'Trop lourd',
@@ -107,7 +111,7 @@ export const dynamicProgrammingFacet: FacetJson = {
       type: 'code-view',
       label: {
         en: 'Code',
-        ko: '코드',
+        ko: '코드', ja: 'コード', zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -122,6 +126,8 @@ export const dynamicProgrammingFacet: FacetJson = {
     'label.capacity': {
       en: 'limit {n}',
       ko: '한도 {n}',
+      ja: '上限 {n}',
+      zh: '上限 {n}',
       ar: 'الحد {n}',
       es: 'límite {n}',
       fr: 'limite {n}',
@@ -132,6 +138,8 @@ export const dynamicProgrammingFacet: FacetJson = {
     'label.axisLimit': {
       en: 'limit →',
       ko: '한도 →',
+      ja: '上限 →',
+      zh: '上限 →',
       ar: 'الحد →',
       es: 'límite →',
       fr: 'limite →',
@@ -142,6 +150,8 @@ export const dynamicProgrammingFacet: FacetJson = {
     'label.noItem': {
       en: 'none',
       ko: '없음',
+      ja: 'なし',
+      zh: '无',
       ar: 'لا شيء',
       es: 'ninguno',
       fr: 'aucun',
@@ -152,6 +162,8 @@ export const dynamicProgrammingFacet: FacetJson = {
     'label.takeMark': {
       en: '{dot} = the item went in here',
       ko: '{dot} = 물건을 넣어 얻은 칸',
+      ja: '{dot} = ここで品物を入れた',
+      zh: '{dot} = 这里放进了物品',
       ar: '{dot} = دخل الغرض هنا',
       es: '{dot} = aquí entró el objeto',
       fr: "{dot} = l'objet est entré ici",
@@ -162,6 +174,8 @@ export const dynamicProgrammingFacet: FacetJson = {
     'label.best': {
       en: 'best {v}',
       ko: '최적 {v}',
+      ja: '最適 {v}',
+      zh: '最优 {v}',
       ar: 'الأفضل {v}',
       es: 'mejor {v}',
       fr: 'meilleur {v}',
@@ -172,6 +186,8 @@ export const dynamicProgrammingFacet: FacetJson = {
     'caption.start': {
       en: 'Fill the table left to right, top to bottom.',
       ko: '표를 왼쪽에서 오른쪽으로, 위에서 아래로 채운다',
+      ja: '表を左から右へ、上から下へ埋めていく。',
+      zh: '从左到右、从上到下填表。',
       ar: 'املأ الجدول من اليسار إلى اليمين ومن الأعلى إلى الأسفل.',
       es: 'Rellena la tabla de izquierda a derecha y de arriba abajo.',
       fr: 'Remplissez le tableau de gauche à droite, de haut en bas.',
@@ -182,6 +198,8 @@ export const dynamicProgrammingFacet: FacetJson = {
     'caption.tableReady': {
       en: 'Row 0 means no item at all — every limit is worth 0.',
       ko: '0 행은 아무 물건도 안 썼을 때 — 어느 한도에서도 값어치가 0 이다',
+      ja: '0 行は品物を何も使わない場合 — どの上限でも価値は 0 だ。',
+      zh: '第 0 行表示一件物品也不用 — 在任何上限下价值都是 0。',
       ar: 'الصف 0 يعني عدم أخذ أي غرض — قيمته صفر عند كل حد.',
       es: 'La fila 0 significa ningún objeto: en todo límite vale 0.',
       fr: 'La ligne 0 signifie aucun objet — sa valeur est 0 pour toute limite.',
@@ -192,6 +210,8 @@ export const dynamicProgrammingFacet: FacetJson = {
     'caption.pickCell': {
       en: 'Items 1..{item} with limit {limit}. Item {item} weighs {weight} and is worth {value}.',
       ko: '물건 1..{item} 까지 쓰고 한도가 {limit} 인 칸. 물건 {item} 은 무게 {weight}, 값 {value}',
+      ja: '品物 1..{item} を使い、上限が {limit} の枠。品物 {item} は重さ {weight}、価値 {value}。',
+      zh: '使用物品 1..{item}、上限为 {limit} 的格子。物品 {item} 重 {weight}，价值 {value}。',
       ar: 'الأغراض 1..{item} بحد {limit}. الغرض {item} وزنه {weight} وقيمته {value}.',
       es: 'Objetos 1..{item} con límite {limit}. El objeto {item} pesa {weight} y vale {value}.',
       fr: "Objets 1..{item} avec la limite {limit}. L'objet {item} pèse {weight} et vaut {value}.",
@@ -202,6 +222,8 @@ export const dynamicProgrammingFacet: FacetJson = {
     'caption.fits': {
       en: 'Weight {weight} fits in limit {limit} — both routes are open.',
       ko: '무게 {weight} 는 한도 {limit} 에 들어간다 — 두 길이 다 열려 있다',
+      ja: '重さ {weight} は上限 {limit} に収まる — 二つの道がどちらも開いている。',
+      zh: '重量 {weight} 装得进上限 {limit} — 两条路都开着。',
       ar: 'الوزن {weight} يدخل في الحد {limit} — الطريقان مفتوحان.',
       es: 'El peso {weight} cabe en el límite {limit}: ambas rutas están abiertas.',
       fr: 'Le poids {weight} tient dans la limite {limit} — les deux voies sont ouvertes.',
@@ -212,6 +234,8 @@ export const dynamicProgrammingFacet: FacetJson = {
     'caption.tooHeavy': {
       en: 'Weight {weight} does not fit in limit {limit} — item {item} cannot go in.',
       ko: '무게 {weight} 는 한도 {limit} 를 넘는다 — 물건 {item} 은 들어갈 수 없다',
+      ja: '重さ {weight} は上限 {limit} を超える — 品物 {item} は入れられない。',
+      zh: '重量 {weight} 超过上限 {limit} — 物品 {item} 放不进去。',
       ar: 'الوزن {weight} يتجاوز الحد {limit} — الغرض {item} لا يمكن أن يدخل.',
       es: 'El peso {weight} supera el límite {limit}: el objeto {item} no cabe.',
       fr: "Le poids {weight} dépasse la limite {limit} — l'objet {item} ne peut pas entrer.",
@@ -222,6 +246,8 @@ export const dynamicProgrammingFacet: FacetJson = {
     'caption.carryDown': {
       en: 'Copy {value} straight down from the row above.',
       ko: '윗줄의 {value} 를 그대로 아래로 옮겨 적는다',
+      ja: '上の行の {value} をそのまま下へ書き写す。',
+      zh: '把上一行的 {value} 原样抄到下面。',
       ar: 'انسخ {value} مباشرة من الصف الذي فوقه.',
       es: 'Copia {value} directamente de la fila de arriba.',
       fr: 'Recopie {value} directement de la ligne au-dessus.',
@@ -232,6 +258,8 @@ export const dynamicProgrammingFacet: FacetJson = {
     'caption.candidates': {
       en: 'Leave it out: {skip}. Put it in: {base} + {gain} = {take}.',
       ko: '안 넣으면 {skip}. 넣으면 {base} + {gain} = {take}',
+      ja: '入れなければ {skip}。入れれば {base} + {gain} = {take}。',
+      zh: '不放：{skip}。放进去：{base} + {gain} = {take}。',
       ar: 'بدون أخذه: {skip}. مع أخذه: {base} + {gain} = {take}.',
       es: 'Sin él: {skip}. Con él: {base} + {gain} = {take}.',
       fr: 'Sans lui : {skip}. Avec lui : {base} + {gain} = {take}.',
@@ -242,6 +270,8 @@ export const dynamicProgrammingFacet: FacetJson = {
     'caption.fillTake': {
       en: 'Putting it in wins — the cell becomes {value}.',
       ko: '넣는 쪽이 이긴다 — 이 칸은 {value}',
+      ja: '入れるほうが勝つ — この枠は {value}。',
+      zh: '放进去更划算 — 这一格是 {value}。',
       ar: 'الأخذ يفوز — تصبح الخانة {value}.',
       es: 'Gana meterlo: la casilla queda en {value}.',
       fr: "Le prendre l'emporte — la case devient {value}.",
@@ -252,6 +282,8 @@ export const dynamicProgrammingFacet: FacetJson = {
     'caption.fillSkip': {
       en: 'Leaving it out wins — the cell becomes {value}.',
       ko: '안 넣는 쪽이 이긴다 — 이 칸은 {value}',
+      ja: '入れないほうが勝つ — この枠は {value}。',
+      zh: '不放更划算 — 这一格是 {value}。',
       ar: 'الترك يفوز — تصبح الخانة {value}.',
       es: 'Gana dejarlo: la casilla queda en {value}.',
       fr: "Le laisser l'emporte — la case devient {value}.",
@@ -262,6 +294,8 @@ export const dynamicProgrammingFacet: FacetJson = {
     'caption.done': {
       en: '{cells} cells filled once each. The best is {best}.',
       ko: '칸 {cells} 개를 한 번씩만 채웠다. 최적은 {best}',
+      ja: '{cells} 個の枠をそれぞれ一度ずつ埋めた。最適は {best}。',
+      zh: '{cells} 个格子各填了一次。最优是 {best}。',
       ar: 'تم ملء {cells} خانة مرة واحدة لكل منها. الأفضل هو {best}.',
       es: '{cells} casillas rellenadas una sola vez cada una. El mejor es {best}.',
       fr: '{cells} cases remplies une seule fois chacune. Le meilleur est {best}.',

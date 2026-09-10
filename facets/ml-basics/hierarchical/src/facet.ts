@@ -28,6 +28,8 @@ export const hierarchicalFacet: FacetJson = {
   title: {
     en: 'Hierarchical Clustering — What Counts as the Distance Between Two Groups',
     ko: '계층 군집화 — 두 무리 사이의 거리를 무엇으로 재는가',
+    ja: '階層的クラスタリング — 二つの群れの距離を何で測るか',
+    zh: '层次聚类 — 两个群之间的距离该怎么算',
     ar: 'التجميع الهرمي — ما الذي يُعدّ مسافة بين مجموعتين',
     es: 'Agrupamiento jerárquico: qué cuenta como distancia entre dos grupos',
     fr: 'Classification hiérarchique — ce qui compte comme distance entre deux groupes',
@@ -38,6 +40,8 @@ export const hierarchicalFacet: FacetJson = {
   description: {
     en: 'Single, complete and average linkage build three different trees from the same eight points, and one cut height then gives three different answers',
     ko: '같은 점 여덟에서 단일·완전·평균 연결이 서로 다른 나무를 짓고, 같은 높이에서 자른 답도 갈린다',
+    ja: '単連結・完全連結・平均連結は同じ八点から三つの違う木を作り、同じ高さで切っても答えが三つに分かれる',
+    zh: '单连接、全连接与平均连接从同样的八个点长出三棵不同的树，同一个切割高度也给出三种不同的答案',
     ar: 'الربط المفرد والكامل والمتوسط يبني ثلاث أشجار مختلفة من النقاط الثماني نفسها، ثم يعطي ارتفاع قطع واحد ثلاث إجابات مختلفة',
     es: 'El enlace simple, completo y promedio construye tres árboles distintos con los mismos ocho puntos, y una sola altura de corte da tres respuestas distintas',
     fr: 'Les liaisons simple, complète et moyenne construisent trois arbres différents à partir des mêmes huit points, et une seule hauteur de coupe donne alors trois réponses différentes',
@@ -78,6 +82,8 @@ export const hierarchicalFacet: FacetJson = {
     'label.aria': {
       en: 'Hierarchical clustering — the same points, three linkages, one cut height',
       ko: '계층 군집화 — 같은 점, 연결 방식 셋, 자르는 높이 하나',
+      ja: '階層的クラスタリング — 同じ点、三つの連結法、一つの切る高さ',
+      zh: '层次聚类 — 同样的点、三种连接方式、一个切割高度',
       ar: 'التجميع الهرمي — النقاط نفسها، ثلاث طرق ربط، ارتفاع قطع واحد',
       es: 'Agrupamiento jerárquico: los mismos puntos, tres enlaces, una altura de corte',
       fr: 'Classification hiérarchique — les mêmes points, trois liaisons, une hauteur de coupe',
@@ -88,6 +94,8 @@ export const hierarchicalFacet: FacetJson = {
     'label.scatter': {
       en: 'the points',
       ko: '점판',
+      ja: '点の並び',
+      zh: '点图',
       ar: 'النقاط',
       es: 'los puntos',
       fr: 'les points',
@@ -98,6 +106,8 @@ export const hierarchicalFacet: FacetJson = {
     'label.bridge': {
       en: 'the two in the middle form a bridge',
       ko: '가운데 둘이 다리를 놓는다',
+      ja: '真ん中の二つが橋になる',
+      zh: '中间的两个搭成一座桥',
       ar: 'النقطتان في الوسط تشكّلان جسرًا',
       es: 'los dos del medio forman un puente',
       fr: 'les deux du milieu forment un pont',
@@ -108,6 +118,8 @@ export const hierarchicalFacet: FacetJson = {
     'label.treeOf': {
       en: '{link} — the tree',
       ko: '{link} 연결이 짓는 나무',
+      ja: '{link}連結が作る木',
+      zh: '{link}连接长成的树',
       ar: 'الشجرة التي يبنيها ربط {link}',
       es: 'el árbol del enlace {link}',
       fr: "l'arbre de la liaison {link}",
@@ -118,6 +130,8 @@ export const hierarchicalFacet: FacetJson = {
     'label.height': {
       en: 'height',
       ko: '높이',
+      ja: '高さ',
+      zh: '高度',
       ar: 'الارتفاع',
       es: 'altura',
       fr: 'hauteur',
@@ -128,6 +142,8 @@ export const hierarchicalFacet: FacetJson = {
     'label.clusters': {
       en: 'clusters: {k}',
       ko: '무리 {k}',
+      ja: 'クラスタ: {k}',
+      zh: '簇: {k}',
       ar: 'العناقيد: {k}',
       es: 'grupos: {k}',
       fr: 'groupes : {k}',
@@ -138,6 +154,8 @@ export const hierarchicalFacet: FacetJson = {
     'label.mergeOrder': {
       en: 'merge order',
       ko: '합친 차례',
+      ja: '合わせた順',
+      zh: '合并顺序',
       ar: 'ترتيب الدمج',
       es: 'orden de fusión',
       fr: 'ordre des fusions',
@@ -148,6 +166,8 @@ export const hierarchicalFacet: FacetJson = {
     'label.ledger': {
       en: 'clusters after the cut',
       ko: '자른 뒤의 무리 수',
+      ja: '切ったあとのクラスタ数',
+      zh: '切开后的簇数',
       ar: 'العناقيد بعد القطع',
       es: 'grupos tras el corte',
       fr: 'groupes après la coupe',
@@ -160,6 +180,8 @@ export const hierarchicalFacet: FacetJson = {
     'label.cutHeight': {
       en: 'cut',
       ko: '자르는 높이',
+      ja: '切る高さ',
+      zh: '切割高度',
       ar: 'القطع',
       es: 'corte',
       fr: 'coupe',
@@ -170,6 +192,8 @@ export const hierarchicalFacet: FacetJson = {
     'link.single': {
       en: 'single',
       ko: '단일',
+      ja: '単',
+      zh: '单',
       ar: 'مفرد',
       es: 'simple',
       fr: 'simple',
@@ -180,6 +204,8 @@ export const hierarchicalFacet: FacetJson = {
     'link.complete': {
       en: 'complete',
       ko: '완전',
+      ja: '完全',
+      zh: '全',
       ar: 'كامل',
       es: 'completo',
       fr: 'complet',
@@ -190,6 +216,8 @@ export const hierarchicalFacet: FacetJson = {
     'link.average': {
       en: 'average',
       ko: '평균',
+      ja: '平均',
+      zh: '平均',
       ar: 'متوسط',
       es: 'promedio',
       fr: 'moyen',
@@ -201,6 +229,8 @@ export const hierarchicalFacet: FacetJson = {
     'caption.answer': {
       en: '{link} linkage, cut at {h} — groups: {k}',
       ko: '{link} 연결, 높이 {h} 에서 자르면 무리 {k}.',
+      ja: '{link}連結、高さ {h} で切るとクラスタ {k}。',
+      zh: '{link}连接，在 {h} 处切开 — 簇 {k}。',
       ar: 'ربط {link}، القطع عند {h} — العناقيد: {k}',
       es: 'enlace {link}, corte en {h} — grupos: {k}',
       fr: 'liaison {link}, coupe à {h} — groupes : {k}',
@@ -213,6 +243,8 @@ export const hierarchicalFacet: FacetJson = {
     'caption.chained': {
       en: 'The two blobs end up in the same group — the pair in the middle links them.',
       ko: '두 덩이가 한 무리가 된다 — 가운데 둘이 그것을 잇는다.',
+      ja: '二つの塊が同じクラスタになる — 真ん中の二つがそれをつなぐ。',
+      zh: '两团最后归到同一簇 — 中间那两个把它们连了起来。',
       ar: 'تنتهي الكتلتان في مجموعة واحدة — النقطتان في الوسط توصلانهما.',
       es: 'Los dos cúmulos acaban en el mismo grupo: el par del medio los une.',
       fr: 'Les deux amas finissent dans le même groupe — la paire du milieu les relie.',
@@ -223,6 +255,8 @@ export const hierarchicalFacet: FacetJson = {
     'caption.separate': {
       en: 'The two blobs stay apart — the pair in the middle does not join them.',
       ko: '두 덩이가 갈린 채로 남는다 — 가운데 둘이 그것을 잇지 못한다.',
+      ja: '二つの塊は分かれたまま残る — 真ん中の二つはそれをつなげない。',
+      zh: '两团始终分开 — 中间那两个没能把它们连起来。',
       ar: 'تبقى الكتلتان منفصلتين — النقطتان في الوسط لا توحّدانهما.',
       es: 'Los dos cúmulos siguen separados: el par del medio no los une.',
       fr: 'Les deux amas restent séparés — la paire du milieu ne les réunit pas.',
@@ -246,6 +280,8 @@ export const hierarchicalFacet: FacetJson = {
           label: {
             en: 'Linkage',
             ko: '연결 방식',
+            ja: '連結法',
+            zh: '连接方式',
             ar: 'طريقة الربط',
             es: 'Enlace',
             fr: 'Liaison',
@@ -260,6 +296,8 @@ export const hierarchicalFacet: FacetJson = {
               label: {
                 en: 'Single',
                 ko: '단일',
+                ja: '単連結',
+                zh: '单连接',
                 ar: 'مفرد',
                 es: 'Simple',
                 fr: 'Simple',
@@ -273,6 +311,8 @@ export const hierarchicalFacet: FacetJson = {
               label: {
                 en: 'Complete',
                 ko: '완전',
+                ja: '完全連結',
+                zh: '全连接',
                 ar: 'كامل',
                 es: 'Completo',
                 fr: 'Complet',
@@ -286,6 +326,8 @@ export const hierarchicalFacet: FacetJson = {
               label: {
                 en: 'Average',
                 ko: '평균',
+                ja: '平均連結',
+                zh: '平均连接',
                 ar: 'متوسط',
                 es: 'Promedio',
                 fr: 'Moyen',
@@ -303,6 +345,8 @@ export const hierarchicalFacet: FacetJson = {
           label: {
             en: 'Cut height',
             ko: '자르는 높이',
+            ja: '切る高さ',
+            zh: '切割高度',
             ar: 'ارتفاع القطع',
             es: 'Altura de corte',
             fr: 'Hauteur de coupe',
@@ -326,6 +370,8 @@ export const hierarchicalFacet: FacetJson = {
           label: {
             en: 'Merges',
             ko: '합친 횟수',
+            ja: '合わせた回数',
+            zh: '合并次数',
             ar: 'عمليات الدمج',
             es: 'Fusiones',
             fr: 'Fusions',
@@ -340,6 +386,8 @@ export const hierarchicalFacet: FacetJson = {
           label: {
             en: 'Clusters now',
             ko: '지금 무리 수',
+            ja: '現在のクラスタ数',
+            zh: '当前簇数',
             ar: 'العناقيد الآن',
             es: 'Grupos ahora',
             fr: 'Groupes actuels',
@@ -354,6 +402,8 @@ export const hierarchicalFacet: FacetJson = {
           label: {
             en: 'Distances measured',
             ko: '거리를 잰 횟수',
+            ja: '測った距離の数',
+            zh: '测过的距离数',
             ar: 'المسافات المقيسة',
             es: 'Distancias medidas',
             fr: 'Distances mesurées',
@@ -370,6 +420,8 @@ export const hierarchicalFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',

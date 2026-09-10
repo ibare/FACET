@@ -61,6 +61,8 @@ export const knnFacet: FacetJson = {
   title: {
     en: 'k-Nearest Neighbours — how many do you ask?',
     ko: 'k-최근접 이웃 — 몇에게 물을 것인가',
+    ja: 'k 近傍法 — 何人に尋ねるか',
+    zh: 'k 近邻 — 要问多少个？',
     ar: 'أقرب k جار — كم واحدًا تسأل؟',
     es: 'k vecinos más cercanos: ¿a cuántos preguntas?',
     fr: 'k plus proches voisins — à combien demander ?',
@@ -71,6 +73,8 @@ export const knnFacet: FacetJson = {
   description: {
     en: 'Nothing is learned; every question rescans the data. Move k and the whole boundary changes.',
     ko: '학습이 없다. 물을 때마다 자료를 다시 훑는다. k 를 옮기면 경계 전체가 바뀐다.',
+    ja: '学習はしない。問うたびにデータを見直す。k を動かせば境界全体が変わる。',
+    zh: '它不学习；每次提问都重新扫一遍数据。移动 k，整条边界都会变。',
     ar: 'لا يوجد تعلّم؛ كل سؤال يعيد مسح البيانات. حرّك k فتتغيّر الحدود كلها.',
     es: 'No se aprende nada: cada pregunta vuelve a recorrer los datos. Mueve k y cambia toda la frontera.',
     fr: "Rien n'est appris : chaque question reparcourt les données. Déplacez k et toute la frontière change.",
@@ -101,6 +105,8 @@ export const knnFacet: FacetJson = {
     'label.legend': {
       en: 'tagged data',
       ko: '이름표 있는 자료',
+      ja: '名札つきのデータ',
+      zh: '带标签的数据',
       ar: 'بيانات موسومة',
       es: 'datos etiquetados',
       fr: 'données étiquetées',
@@ -111,6 +117,8 @@ export const knnFacet: FacetJson = {
     'label.overruledRing': {
       en: 'overruled',
       ko: '삼켜짐',
+      ja: '覆された',
+      zh: '被压过',
       ar: 'مُلغى',
       es: 'anulado',
       fr: 'renversé',
@@ -121,6 +129,8 @@ export const knnFacet: FacetJson = {
     'label.asking': {
       en: 'asking the nearest {k}',
       ko: '가장 가까운 {k} 개에게 묻는다',
+      ja: '最も近い {k} 個に尋ねる',
+      zh: '向最近的 {k} 个提问',
       ar: 'نسأل أقرب {k}',
       es: 'preguntando a los {k} más cercanos',
       fr: 'on interroge les {k} plus proches',
@@ -131,6 +141,8 @@ export const knnFacet: FacetJson = {
     'label.aCells': {
       en: 'cells judged A: {a} out of {total}',
       ko: 'A 로 판정된 칸은 {total} 중 {a}.',
+      ja: 'A と判定された枡は {total} 中 {a}',
+      zh: '判为 A 的格子：{total} 中的 {a}',
       ar: 'الخانات المحكوم عليها A: {a} من {total}',
       es: 'celdas juzgadas A: {a} de {total}',
       fr: 'cases jugées A : {a} sur {total}',
@@ -141,6 +153,8 @@ export const knnFacet: FacetJson = {
     'label.flipped': {
       en: 'moving k from {prev} to {k} flipped {n} cells',
       ko: 'k 를 {prev} 에서 {k} 로 옮기자 뒤집힌 칸은 {n}.',
+      ja: 'k を {prev} から {k} に動かして裏返った枡は {n}',
+      zh: '把 k 从 {prev} 移到 {k}，翻转了 {n} 个格子',
       ar: 'نقل k من {prev} إلى {k} قلب {n} خانة',
       es: 'mover k de {prev} a {k} volteó {n} celdas',
       fr: 'passer k de {prev} à {k} a retourné {n} cases',
@@ -151,6 +165,8 @@ export const knnFacet: FacetJson = {
     'label.firstDraw': {
       en: 'the first drawing, with no earlier k to compare against',
       ko: '처음 그린 것이라 견줄 앞의 k 가 없다.',
+      ja: '最初の描画で、比べる前の k がない',
+      zh: '这是第一次绘制，没有先前的 k 可比',
       ar: 'هذا أول رسم، ولا يوجد k سابق للمقارنة',
       es: 'es el primer dibujo, sin una k anterior con la que comparar',
       fr: 'premier tracé, sans k antérieur pour comparer',
@@ -161,6 +177,8 @@ export const knnFacet: FacetJson = {
     'label.mislabeled': {
       en: 'points judged against their own tag: {n}',
       ko: '자기 이름표와 다르게 판정된 점은 {n}.',
+      ja: '自分の名札と違う判定を受けた点は {n}',
+      zh: '判定与自身标签相悖的点：{n}',
       ar: 'النقاط المحكوم عليها خلافًا لوسمها: {n}',
       es: 'puntos juzgados en contra de su propia etiqueta: {n}',
       fr: 'points jugés à rebours de leur propre étiquette : {n}',
@@ -171,6 +189,8 @@ export const knnFacet: FacetJson = {
     'caption.idle': {
       en: 'every spot on the plane already has an answer, and that is the boundary',
       ko: '평면의 모든 자리에 이미 답이 있다. 그 답이 갈리는 자리가 경계다.',
+      ja: '平面のどの場所にもすでに答えがあり、その分かれ目が境界だ',
+      zh: '平面上每一处都已有答案，答案分开的地方就是边界',
       ar: 'كل موضع في المستوى له جواب بالفعل، وذلك هو الحد',
       es: 'cada punto del plano ya tiene una respuesta, y eso es la frontera',
       fr: 'chaque endroit du plan a déjà une réponse, et c’est cela la frontière',
@@ -181,6 +201,8 @@ export const knnFacet: FacetJson = {
     'caption.moved': {
       en: 'spot {index} of {total} is being asked',
       ko: '{total} 곳 가운데 {index} 번째 물음점.',
+      ja: '{total} か所のうち {index} 番目を尋ねている',
+      zh: '正在询问 {total} 处中的第 {index} 处',
       ar: 'يجري سؤال الموضع {index} من {total}',
       es: 'se pregunta el punto {index} de {total}',
       fr: 'on interroge l’endroit {index} sur {total}',
@@ -191,6 +213,8 @@ export const knnFacet: FacetJson = {
     'caption.measuring': {
       en: 'the distance to all {n} is measured again',
       ko: '자료 전부까지의 거리를 다시 잰다. 그 수는 {n}.',
+      ja: '全部までの距離をもう一度測る。その数は {n}',
+      zh: '重新测量到全部 {n} 个的距离',
       ar: 'تُقاس المسافة إلى الجميع من جديد، وعددهم {n}',
       es: 'se vuelve a medir la distancia a los {n}',
       fr: 'la distance vers les {n} est mesurée de nouveau',
@@ -201,6 +225,8 @@ export const knnFacet: FacetJson = {
     'caption.taking': {
       en: 'the closest one still unpicked is called out, which makes {n}',
       ko: '아직 안 뽑힌 것 중 가장 가까운 것이 불려 나온다. 이로써 뽑힌 것은 {n}.',
+      ja: 'まだ選ばれていない中で最も近いものが呼ばれ、これで {n} 個',
+      zh: '叫出尚未选中的最近者，如此共 {n} 个',
       ar: 'يُستدعى أقرب من لم يُختر بعد، فيصير العدد {n}',
       es: 'se llama al más cercano aún sin elegir, con lo que van {n}',
       fr: 'le plus proche non encore choisi est appelé, ce qui en fait {n}',
@@ -211,6 +237,8 @@ export const knnFacet: FacetJson = {
     'caption.verdict': {
       en: 'this spot is judged {label}',
       ko: '이 자리의 판정은 {label}.',
+      ja: 'この場所の判定は {label}',
+      zh: '此处判为 {label}',
       ar: 'يُحكم على هذا الموضع بأنه {label}',
       es: 'este punto se juzga {label}',
       fr: 'cet endroit est jugé {label}',
@@ -221,6 +249,8 @@ export const knnFacet: FacetJson = {
     'caption.kept': {
       en: 'its own tag is {own}, and the neighbours said the same',
       ko: '제 이름표는 {own} 이고 이웃도 그렇게 답했다.',
+      ja: '自分の名札は {own} で、隣も同じことを言った',
+      zh: '它自己的标签是 {own}，邻居也这么说',
       ar: 'وسمه هو {own}، وقال الجيران المثل',
       es: 'su propia etiqueta es {own}, y los vecinos dijeron lo mismo',
       fr: 'son étiquette est {own}, et les voisins ont dit pareil',
@@ -231,6 +261,8 @@ export const knnFacet: FacetJson = {
     'caption.swallowed': {
       en: 'its own tag is {own}, but the neighbours overruled it',
       ko: '제 이름표는 {own} 인데 이웃에게 삼켜졌다.',
+      ja: '自分の名札は {own} なのに、隣に覆された',
+      zh: '它自己的标签是 {own}，却被邻居压了过去',
       ar: 'وسمه هو {own}، لكن الجيران ألغوه',
       es: 'su propia etiqueta es {own}, pero los vecinos la anularon',
       fr: 'son étiquette est {own}, mais les voisins l’ont renversée',
@@ -241,6 +273,8 @@ export const knnFacet: FacetJson = {
     'caption.settled': {
       en: 'votes went {a} to {b}, so the answer is {label}',
       ko: '표는 {a} 대 {b} 로 갈렸고 답은 {label}.',
+      ja: '票は {a} 対 {b} に分かれ、答えは {label}',
+      zh: '票数 {a} 比 {b}，所以答案是 {label}',
       ar: 'جاءت الأصوات {a} مقابل {b}، فالجواب {label}',
       es: 'los votos fueron {a} a {b}, así que la respuesta es {label}',
       fr: 'les voix sont allées {a} contre {b}, donc la réponse est {label}',
@@ -251,6 +285,8 @@ export const knnFacet: FacetJson = {
     'caption.done': {
       en: 'the tour is over, and moving k changes the whole field at once',
       ko: '한 바퀴 다 돌았다. k 를 옮기면 평면 전체가 한꺼번에 바뀐다.',
+      ja: '一巡が終わった。k を動かせば平面全体が一度に変わる',
+      zh: '一圈走完了；移动 k，整个平面会一下子改变',
       ar: 'انتهت الجولة، وتحريك k يغيّر الحقل كله دفعة واحدة',
       es: 'el recorrido terminó, y mover k cambia todo el campo de una vez',
       fr: 'le tour est fini, et déplacer k change tout le champ d’un coup',
@@ -271,7 +307,7 @@ export const knnFacet: FacetJson = {
           name: 'k',
           label: {
             en: 'Neighbours asked',
-            ko: '묻는 이웃 수',
+            ko: '묻는 이웃 수', ja: '尋ねる隣の数', zh: '询问的邻居数',
             ar: 'عدد الجيران',
             es: 'Vecinos consultados',
             fr: 'Voisins interrogés',
@@ -292,7 +328,7 @@ export const knnFacet: FacetJson = {
           name: 'distance-count',
           label: {
             en: 'Distances',
-            ko: '잰 거리',
+            ko: '잰 거리', ja: '測った距離', zh: '已测距离',
             ar: 'مسافات',
             es: 'Distancias',
             fr: 'Distances',
@@ -306,7 +342,7 @@ export const knnFacet: FacetJson = {
           name: 'mislabel-count',
           label: {
             en: 'Overruled',
-            ko: '삼켜진 점',
+            ko: '삼켜진 점', ja: '覆された点', zh: '被推翻的点',
             ar: 'مُلغاة',
             es: 'Anulados',
             fr: 'Renversés',
@@ -320,7 +356,7 @@ export const knnFacet: FacetJson = {
           name: 'grid-a-count',
           label: {
             en: 'A cells',
-            ko: 'A 칸',
+            ko: 'A 칸', ja: 'A の枠', zh: 'A 格',
             ar: 'خانات A',
             es: 'Celdas A',
             fr: 'Cases A',
@@ -336,7 +372,7 @@ export const knnFacet: FacetJson = {
       type: 'code-view',
       label: {
         en: 'Code',
-        ko: '코드',
+        ko: '코드', ja: 'コード', zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',

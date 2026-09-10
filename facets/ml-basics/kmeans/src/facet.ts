@@ -78,6 +78,8 @@ export const kmeansFacet: FacetJson = {
   title: {
     en: 'k-means — finding groups without knowing the middles',
     ko: 'k-평균 — 가운데를 모르는 채로 무리를 찾는다',
+    ja: 'k-means — 中心を知らないまま集まりを見つける',
+    zh: 'k-均值 — 在不知道中心的情况下找出群',
     ar: 'k-المتوسطات — إيجاد المجموعات دون معرفة المراكز',
     es: 'k-medias: hallar grupos sin conocer los centros',
     fr: 'k-moyennes — trouver des groupes sans connaître les centres',
@@ -88,6 +90,8 @@ export const kmeansFacet: FacetJson = {
   description: {
     en: 'Same k, different starts, different answers — and the tightest answer is not the one a reader sees.',
     ko: '같은 k 인데 시작이 다르면 답이 다르다 — 게다가 가장 촘촘한 답은 사람이 보는 무리가 아니다.',
+    ja: '同じ k でも出発点が違えば答えが違う — しかも最も詰まった答えは人が見る集まりではない。',
+    zh: '同样的 k，起点不同答案就不同 — 而且最紧凑的答案并不是人眼看到的那一群。',
     ar: 'نفس k وبدايات مختلفة تعطي إجابات مختلفة، والإجابة الأكثر تماسكًا ليست ما يراه القارئ.',
     es: 'Mismo k, distintos inicios, distintas respuestas; y la más compacta no es la que ve un lector.',
     fr: 'Même k, départs différents, réponses différentes — et la plus compacte n’est pas celle qu’un lecteur voit.',
@@ -140,6 +144,8 @@ export const kmeansFacet: FacetJson = {
           label: {
             en: '↻ New start',
             ko: '↻ 시작 다시 뽑기',
+            ja: '↻ 出発点を引き直す',
+            zh: '↻ 重新抽起点',
             ar: '↻ بداية جديدة',
             es: '↻ Nuevo inicio',
             fr: '↻ Nouveau départ',
@@ -155,6 +161,8 @@ export const kmeansFacet: FacetJson = {
           label: {
             en: 'rounds turned',
             ko: '돈 바퀴',
+            ja: '回した回数',
+            zh: '转过的轮数',
             ar: 'الجولات',
             es: 'vueltas dadas',
             fr: 'tours effectués',
@@ -169,6 +177,8 @@ export const kmeansFacet: FacetJson = {
           label: {
             en: 'scatter now (rounded)',
             ko: '지금 흩어짐 (반올림)',
+            ja: '現在の散らばり (四捨五入)',
+            zh: '当前离散度（四舍五入）',
             ar: 'التشتت الآن (مقرَّب)',
             es: 'dispersión ahora (redondeada)',
             fr: 'dispersion (arrondie)',
@@ -183,6 +193,8 @@ export const kmeansFacet: FacetJson = {
           label: {
             en: 'distances measured',
             ko: '잰 거리',
+            ja: '測った距離の数',
+            zh: '量过的距离',
             ar: 'المسافات المقيسة',
             es: 'distancias medidas',
             fr: 'distances mesurées',
@@ -199,6 +211,8 @@ export const kmeansFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -213,6 +227,8 @@ export const kmeansFacet: FacetJson = {
     'caption.begin': {
       en: 'k = {k}. The starting centres sit on points {picks}.',
       ko: 'k = {k}. 시작 중심을 점 {picks} 위에 놓는다.',
+      ja: 'k = {k}。出発の中心を点 {picks} の上に置く。',
+      zh: 'k = {k}。把起始中心放在点 {picks} 上。',
       ar: 'k = {k}. تجلس المراكز الأولية على النقاط {picks}.',
       es: 'k = {k}. Los centros iniciales se colocan en los puntos {picks}.',
       fr: 'k = {k}. Les centres de départ sont posés sur les points {picks}.',
@@ -223,6 +239,8 @@ export const kmeansFacet: FacetJson = {
     'note.begin': {
       en: 'Between runs, the starting centres are the only thing that changes.',
       ko: '판마다 달라지는 것은 시작 중심뿐이다.',
+      ja: '回ごとに変わるのは出発の中心だけだ。',
+      zh: '每一轮之间，变的只有起始中心。',
       ar: 'بين الجولات، الشيء الوحيد الذي يتغير هو المراكز الأولية.',
       es: 'Entre ejecuciones, lo único que cambia son los centros iniciales.',
       fr: 'D’une exécution à l’autre, seuls les centres de départ changent.',
@@ -233,6 +251,8 @@ export const kmeansFacet: FacetJson = {
     'caption.measure': {
       en: 'Every point measures every centre. The distances stay squared.',
       ko: '점마다 중심을 모두 잰다. 거리는 제곱 그대로 둔다.',
+      ja: '点ごとにすべての中心を測る。距離は二乗のままにしておく。',
+      zh: '每个点都量遍所有中心。距离保持平方，不开根。',
       ar: 'كل نقطة تقيس كل مركز. تبقى المسافات مربّعة.',
       es: 'Cada punto mide cada centro. Las distancias quedan al cuadrado.',
       fr: 'Chaque point mesure chaque centre. Les distances restent au carré.',
@@ -243,6 +263,8 @@ export const kmeansFacet: FacetJson = {
     'note.measure': {
       en: 'A square root would not change which centre is nearest, so it is never taken.',
       ko: '제곱근을 씌워도 가장 가까운 중심은 바뀌지 않으므로 씌우지 않는다.',
+      ja: '平方根を取っても最も近い中心は変わらないので、取らない。',
+      zh: '开平方并不会改变哪个中心最近，所以从不开根。',
       ar: 'الجذر التربيعي لا يغيّر أي مركز هو الأقرب، لذلك لا يُحسب أبدًا.',
       es: 'La raíz cuadrada no cambia cuál centro está más cerca, así que nunca se calcula.',
       fr: 'Une racine carrée ne changerait pas le centre le plus proche : elle n’est jamais calculée.',
@@ -253,6 +275,8 @@ export const kmeansFacet: FacetJson = {
     'caption.pick': {
       en: 'Each point keeps only its nearest centre.',
       ko: '점마다 가장 가까운 중심 하나만 남긴다.',
+      ja: '点ごとに最も近い中心だけを残す。',
+      zh: '每个点只留下离它最近的中心。',
       ar: 'كل نقطة تحتفظ بأقرب مركز إليها فقط.',
       es: 'Cada punto se queda solo con su centro más cercano.',
       fr: 'Chaque point ne garde que son centre le plus proche.',
@@ -263,6 +287,8 @@ export const kmeansFacet: FacetJson = {
     'note.pick': {
       en: 'Comparing the squares is enough to find the smallest one.',
       ko: '가장 작은 것을 찾는 데는 제곱끼리 견주는 것으로 넉넉하다.',
+      ja: '最小を見つけるには二乗どうしを比べるだけで足りる。',
+      zh: '要找最小的，比较平方值就够了。',
       ar: 'مقارنة المربعات تكفي لإيجاد الأصغر.',
       es: 'Comparar los cuadrados basta para hallar el menor.',
       fr: 'Comparer les carrés suffit pour trouver le plus petit.',
@@ -273,6 +299,8 @@ export const kmeansFacet: FacetJson = {
     'caption.assign': {
       en: 'The points are attached. Groups: {sizes}.',
       ko: '점이 붙었다. 무리: {sizes}.',
+      ja: '点が付いた。集まり: {sizes}。',
+      zh: '点已归属。各群：{sizes}。',
       ar: 'التحقت النقاط. المجموعات: {sizes}.',
       es: 'Los puntos quedan adheridos. Grupos: {sizes}.',
       fr: 'Les points sont attachés. Groupes : {sizes}.',
@@ -283,6 +311,8 @@ export const kmeansFacet: FacetJson = {
     'note.assign': {
       en: 'Scatter with these centres: {spread}.',
       ko: '이 중심으로 잰 흩어짐: {spread}.',
+      ja: 'この中心で測った散らばり: {spread}。',
+      zh: '按这些中心算的离散度：{spread}。',
       ar: 'التشتت بهذه المراكز: {spread}.',
       es: 'Dispersión con estos centros: {spread}.',
       fr: 'Dispersion avec ces centres : {spread}.',
@@ -293,6 +323,8 @@ export const kmeansFacet: FacetJson = {
     'caption.gather': {
       en: 'Each group counts its points and adds up their coordinates.',
       ko: '무리마다 점의 개수를 세고 좌표를 더한다.',
+      ja: '集まりごとに点の数を数え、座標を足し合わせる。',
+      zh: '每一群清点自己的点数，并把坐标加起来。',
       ar: 'كل مجموعة تعدّ نقاطها وتجمع إحداثياتها.',
       es: 'Cada grupo cuenta sus puntos y suma sus coordenadas.',
       fr: 'Chaque groupe compte ses points et additionne leurs coordonnées.',
@@ -303,6 +335,8 @@ export const kmeansFacet: FacetJson = {
     'note.gather': {
       en: 'Group sizes: {sizes}.',
       ko: '무리 크기: {sizes}.',
+      ja: '集まりの大きさ: {sizes}。',
+      zh: '各群大小：{sizes}。',
       ar: 'أحجام المجموعات: {sizes}.',
       es: 'Tamaños de los grupos: {sizes}.',
       fr: 'Tailles des groupes : {sizes}.',
@@ -313,6 +347,8 @@ export const kmeansFacet: FacetJson = {
     'caption.move': {
       en: 'Every centre steps to the mean of its own group.',
       ko: '중심마다 제 무리의 평균 자리로 옮겨 간다.',
+      ja: '中心はそれぞれ自分の集まりの平均の位置へ移る。',
+      zh: '每个中心都移到自己那一群的平均位置。',
       ar: 'كل مركز ينتقل إلى متوسط مجموعته.',
       es: 'Cada centro se mueve a la media de su propio grupo.',
       fr: 'Chaque centre se déplace vers la moyenne de son propre groupe.',
@@ -323,6 +359,8 @@ export const kmeansFacet: FacetJson = {
     'note.move': {
       en: 'Total step {moved}. Scatter now {spread}.',
       ko: '옮긴 거리 합 {moved}. 지금 흩어짐 {spread}.',
+      ja: '移動距離の合計 {moved}。現在の散らばり {spread}。',
+      zh: '移动距离合计 {moved}。当前离散度 {spread}。',
       ar: 'مجموع الخطوة {moved}. التشتت الآن {spread}.',
       es: 'Paso total {moved}. Dispersión ahora {spread}.',
       fr: 'Déplacement total {moved}. Dispersion maintenant {spread}.',
@@ -333,6 +371,8 @@ export const kmeansFacet: FacetJson = {
     'caption.stopped': {
       en: 'Nobody moved. There is nowhere left to go.',
       ko: '아무도 움직이지 않았다. 더 갈 데가 없다.',
+      ja: '誰も動かなかった。もう行く先がない。',
+      zh: '谁都没动。已经无处可去。',
       ar: 'لم يتحرك أحد. لم يبق مكان للذهاب إليه.',
       es: 'Nadie se movió. No queda a dónde ir.',
       fr: 'Personne n’a bougé. Il n’y a plus nulle part où aller.',
@@ -343,6 +383,8 @@ export const kmeansFacet: FacetJson = {
     'note.stopped': {
       en: 'If the attachments do not change, the means do not change either.',
       ko: '붙는 자리가 그대로면 평균도 그대로다.',
+      ja: '付く先が変わらなければ、平均も変わらない。',
+      zh: '归属不变，平均也就不变。',
       ar: 'إذا لم تتغير الارتباطات فلن تتغير المتوسطات كذلك.',
       es: 'Si las adhesiones no cambian, las medias tampoco.',
       fr: 'Si les rattachements ne changent pas, les moyennes non plus.',
@@ -353,6 +395,8 @@ export const kmeansFacet: FacetJson = {
     'caption.again': {
       en: 'Something still moved. Turn again.',
       ko: '아직 움직인 것이 있다. 한 바퀴 더 돈다.',
+      ja: 'まだ動いたものがある。もう一回まわす。',
+      zh: '还有东西在动。再转一轮。',
       ar: 'ما زال هناك ما تحرّك. جولة أخرى.',
       es: 'Algo se movió todavía. Otra vuelta.',
       fr: 'Quelque chose a encore bougé. On refait un tour.',
@@ -363,6 +407,8 @@ export const kmeansFacet: FacetJson = {
     'note.again': {
       en: 'The centres travelled {moved} this round.',
       ko: '이번 바퀴에 중심이 옮긴 거리 합은 {moved}.',
+      ja: 'この回で中心が移った距離の合計は {moved}。',
+      zh: '这一轮中心移动的距离合计为 {moved}。',
       ar: 'قطعت المراكز {moved} في هذه الجولة.',
       es: 'Los centros recorrieron {moved} en esta vuelta.',
       fr: 'Les centres ont parcouru {moved} pendant ce tour.',
@@ -373,6 +419,8 @@ export const kmeansFacet: FacetJson = {
     'caption.settled': {
       en: 'Start {seed} — stopped at {sizes} after {rounds} rounds. Scatter {spread}.',
       ko: '시작 {seed} — {rounds} 바퀴 만에 {sizes} 에서 멎었다. 흩어짐 {spread}.',
+      ja: '出発 {seed} — {rounds} 回で {sizes} に落ち着いた。散らばり {spread}。',
+      zh: '起点 {seed} — 转了 {rounds} 轮后停在 {sizes}。离散度 {spread}。',
       ar: 'البداية {seed} — توقفت عند {sizes} بعد {rounds} جولات. التشتت {spread}.',
       es: 'Inicio {seed}: se detuvo en {sizes} tras {rounds} vueltas. Dispersión {spread}.',
       fr: 'Départ {seed} — arrêt sur {sizes} après {rounds} tours. Dispersion {spread}.',
@@ -383,6 +431,8 @@ export const kmeansFacet: FacetJson = {
     'note.tightestNotTruest': {
       en: 'Tightest: {tight} at {tightSpread}. What a reader sees: {human} at {humanSpread} — {ratio} times more scattered.',
       ko: '가장 촘촘한 답은 {tight} 로 {tightSpread}. 사람이 보는 무리는 {human} 로 {humanSpread} — 흩어짐이 {ratio} 배.',
+      ja: '最も詰まった答えは {tight} で {tightSpread}。人が見る集まりは {human} で {humanSpread} — 散らばりは {ratio} 倍。',
+      zh: '最紧凑的是 {tight}，为 {tightSpread}。人眼看到的是 {human}，为 {humanSpread} — 离散度是其 {ratio} 倍。',
       ar: 'الأكثر تماسكًا: {tight} عند {tightSpread}. وما يراه القارئ: {human} عند {humanSpread} — أكثر تشتتًا بمقدار {ratio} مرة.',
       es: 'La más compacta: {tight} con {tightSpread}. Lo que ve un lector: {human} con {humanSpread}, {ratio} veces más disperso.',
       fr: 'La plus compacte : {tight} à {tightSpread}. Ce qu’un lecteur voit : {human} à {humanSpread} — {ratio} fois plus dispersé.',
@@ -393,6 +443,8 @@ export const kmeansFacet: FacetJson = {
     'note.manyAnswers': {
       en: 'Starts tried: {tried}. Different answers: {distinct}, all at k = {k}. Not one of them can move.',
       ko: '해 본 시작 {tried} 가지, 서로 다른 답 {distinct} 가지 (k = {k}). 어느 것도 더 옮길 데가 없다.',
+      ja: '試した出発は {tried} 通り、異なる答えは {distinct} 通り (k = {k})。どれももう動けない。',
+      zh: '试过 {tried} 个起点，得到 {distinct} 种不同答案（k = {k}）。没有一个还能再动。',
       ar: 'البدايات المجرَّبة: {tried}. إجابات مختلفة: {distinct}، كلها عند k = {k}. ولا واحدة منها تستطيع التحرك.',
       es: 'Inicios probados: {tried}. Respuestas distintas: {distinct}, todas con k = {k}. Ninguna puede moverse.',
       fr: 'Départs essayés : {tried}. Réponses différentes : {distinct}, toutes à k = {k}. Aucune ne peut bouger.',
@@ -403,6 +455,8 @@ export const kmeansFacet: FacetJson = {
     'note.sameAnswer': {
       en: 'Starts tried: {tried}. One answer so far at k = {k}. Draw another start.',
       ko: '해 본 시작 {tried} 가지, 아직 답은 하나 (k = {k}). 시작을 다시 뽑아 보라.',
+      ja: '試した出発は {tried} 通り、答えはまだ一つ (k = {k})。出発を引き直してみよう。',
+      zh: '试过 {tried} 个起点，目前只有一种答案（k = {k}）。再抽一个起点看看。',
       ar: 'البدايات المجرَّبة: {tried}. إجابة واحدة حتى الآن عند k = {k}. جرّب بداية أخرى.',
       es: 'Inicios probados: {tried}. Una sola respuesta hasta ahora con k = {k}. Prueba otro inicio.',
       fr: 'Départs essayés : {tried}. Une seule réponse jusqu’ici à k = {k}. Essayez un autre départ.',
@@ -413,6 +467,8 @@ export const kmeansFacet: FacetJson = {
     'note.firstAnswer': {
       en: 'Draw another start and see whether it stops here again.',
       ko: '시작을 다시 뽑아 같은 자리에 멎는지 보라.',
+      ja: '出発を引き直して、また同じ場所で止まるか見てみよう。',
+      zh: '再抽一个起点，看它是不是还停在这里。',
       ar: 'جرّب بداية أخرى وانظر هل تتوقف هنا مرة أخرى.',
       es: 'Prueba otro inicio y mira si vuelve a detenerse aquí.',
       fr: 'Essayez un autre départ et voyez s’il s’arrête encore ici.',
@@ -423,6 +479,8 @@ export const kmeansFacet: FacetJson = {
     'label.aria': {
       en: 'k-means: twelve points, moving centres, and a ledger of the answers that stopped',
       ko: 'k-평균 시각화 — 점 열둘, 옮겨 가는 중심, 그리고 멎은 답을 적는 장부',
+      ja: 'k-means の可視化 — 点十二個、移り動く中心、そして止まった答えを記す帳面',
+      zh: 'k-均值可视化 — 十二个点、移动的中心，以及记录停下答案的账簿',
       ar: 'k-المتوسطات: اثنتا عشرة نقطة ومراكز متحركة وسجل بالإجابات التي توقفت',
       es: 'k-medias: doce puntos, centros que se mueven y un registro de las respuestas detenidas',
       fr: 'k-moyennes : douze points, des centres qui bougent et un registre des réponses arrêtées',
@@ -433,6 +491,8 @@ export const kmeansFacet: FacetJson = {
     'label.head': {
       en: 'k = {k} · start {seed}',
       ko: 'k = {k} · 시작 {seed}',
+      ja: 'k = {k} · 出発 {seed}',
+      zh: 'k = {k} · 起点 {seed}',
       ar: 'k = {k} · البداية {seed}',
       es: 'k = {k} · inicio {seed}',
       fr: 'k = {k} · départ {seed}',
@@ -443,6 +503,8 @@ export const kmeansFacet: FacetJson = {
     'label.round': {
       en: 'round {round}',
       ko: '{round} 바퀴',
+      ja: '{round} 回目',
+      zh: '第 {round} 轮',
       ar: 'الجولة {round}',
       es: 'vuelta {round}',
       fr: 'tour {round}',
@@ -453,6 +515,8 @@ export const kmeansFacet: FacetJson = {
     'label.settled': {
       en: 'nothing moved',
       ko: '멎었다',
+      ja: '動きが止まった',
+      zh: '已经停住',
       ar: 'لم يتحرك شيء',
       es: 'nada se movió',
       fr: 'rien n’a bougé',
@@ -463,6 +527,8 @@ export const kmeansFacet: FacetJson = {
     'label.ledger': {
       en: 'answers that stopped',
       ko: '멎은 답',
+      ja: '止まった答え',
+      zh: '停下的答案',
       ar: 'الإجابات التي توقفت',
       es: 'respuestas detenidas',
       fr: 'réponses arrêtées',
@@ -473,6 +539,8 @@ export const kmeansFacet: FacetJson = {
     'label.ledgerEmpty': {
       en: 'nothing has stopped yet',
       ko: '아직 멎은 답이 없다',
+      ja: 'まだ止まった答えはない',
+      zh: '还没有停下的答案',
       ar: 'لم تتوقف أي إجابة بعد',
       es: 'aún no se detuvo nada',
       fr: 'rien ne s’est encore arrêté',
@@ -483,6 +551,8 @@ export const kmeansFacet: FacetJson = {
     'label.colRun': {
       en: 'k · start',
       ko: 'k · 시작',
+      ja: 'k · 出発',
+      zh: 'k · 起点',
       ar: 'k · البداية',
       es: 'k · inicio',
       fr: 'k · départ',
@@ -493,6 +563,8 @@ export const kmeansFacet: FacetJson = {
     'label.colSizes': {
       en: 'sizes',
       ko: '무리',
+      ja: '集まり',
+      zh: '各群',
       ar: 'الأحجام',
       es: 'tamaños',
       fr: 'tailles',
@@ -503,6 +575,8 @@ export const kmeansFacet: FacetJson = {
     'label.colScatter': {
       en: 'scatter',
       ko: '흩어짐',
+      ja: '散らばり',
+      zh: '离散度',
       ar: 'التشتت',
       es: 'dispersión',
       fr: 'dispersion',
@@ -513,6 +587,8 @@ export const kmeansFacet: FacetJson = {
     'label.markTightest': {
       en: 'tightest',
       ko: '가장 촘촘',
+      ja: '最も詰まった',
+      zh: '最紧凑',
       ar: 'الأكثر تماسكًا',
       es: 'la más compacta',
       fr: 'la plus compacte',
@@ -523,6 +599,8 @@ export const kmeansFacet: FacetJson = {
     'label.markReader': {
       en: 'what a reader sees',
       ko: '사람이 보는 무리',
+      ja: '人が見る集まり',
+      zh: '人眼看到的群',
       ar: 'ما يراه القارئ',
       es: 'lo que ve un lector',
       fr: 'ce qu’un lecteur voit',

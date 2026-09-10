@@ -20,6 +20,8 @@ export const quickSortFacet: FacetJson = {
   title: {
     en: 'Quick Sort',
     ko: '퀵 정렬',
+    ja: 'クイックソート',
+    zh: '快速排序',
     ar: 'الترتيب السريع',
     es: 'Ordenamiento rápido',
     fr: 'Tri rapide',
@@ -30,6 +32,8 @@ export const quickSortFacet: FacetJson = {
   description: {
     en: 'Pick one pivot, split left and right — one split fixes that pivot forever.',
     ko: '기준 하나로 좌우를 가른다 — 한 번 가르면 그 기준의 자리가 확정된다',
+    ja: '基準をひとつ選んで左右に分ける — 一度分ければ、その基準の位置は決まる',
+    zh: '选一个基准，把左右分开 — 分一次，这个基准的位置就此定下',
     ar: 'اختر محورًا واحدًا وقسّم يمينًا ويسارًا — القسمة الواحدة تثبّت موضع المحور نهائيًا.',
     es: 'Elige un pivote y separa a izquierda y derecha: una partición fija ese pivote para siempre.',
     fr: 'Choisissez un pivot et séparez à gauche et à droite — une partition fixe ce pivot pour de bon.',
@@ -58,6 +62,8 @@ export const quickSortFacet: FacetJson = {
           label: {
             en: 'Compare',
             ko: '견줌',
+            ja: '比較',
+            zh: '比较',
             ar: 'مقارنة',
             es: 'Comparar',
             fr: 'Comparer',
@@ -72,6 +78,8 @@ export const quickSortFacet: FacetJson = {
           label: {
             en: 'Swap',
             ko: '맞바꿈',
+            ja: '交換',
+            zh: '交换',
             ar: 'تبديل',
             es: 'Intercambio',
             fr: 'Échange',
@@ -86,6 +94,8 @@ export const quickSortFacet: FacetJson = {
           label: {
             en: 'Partition',
             ko: '가르기',
+            ja: '分割',
+            zh: '划分',
             ar: 'تقسيم',
             es: 'Partición',
             fr: 'Partition',
@@ -102,6 +112,8 @@ export const quickSortFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -116,6 +128,8 @@ export const quickSortFacet: FacetJson = {
     'label.log': {
       en: 'Partitions',
       ko: '가르기 기록',
+      ja: '分割の記録',
+      zh: '划分记录',
       ar: 'التقسيمات',
       es: 'Particiones',
       fr: 'Partitions',
@@ -126,6 +140,8 @@ export const quickSortFacet: FacetJson = {
     'label.rangeSpan': {
       en: '[{lo}..{hi}]',
       ko: '[{lo}..{hi}]',
+      ja: '[{lo}..{hi}]',
+      zh: '[{lo}..{hi}]',
       ar: '[{lo}..{hi}]',
       es: '[{lo}..{hi}]',
       fr: '[{lo}..{hi}]',
@@ -136,6 +152,8 @@ export const quickSortFacet: FacetJson = {
     'caption.start': {
       en: 'Each round picks the last cell as pivot.',
       ko: '가를 때마다 맨 뒤 칸을 기준으로 삼는다',
+      ja: '分けるたびに、いちばん後ろのマスを基準にする。',
+      zh: '每一轮都拿最后一格当基准。',
       ar: 'كل جولة تختار الخانة الأخيرة محورًا.',
       es: 'Cada ronda toma la última casilla como pivote.',
       fr: 'Chaque tour prend la dernière case comme pivot.',
@@ -146,6 +164,8 @@ export const quickSortFacet: FacetJson = {
     'caption.rangeRoot': {
       en: 'Sort the whole array [{lo}..{hi}].',
       ko: '배열 전체 [{lo}..{hi}] 를 정렬한다',
+      ja: '配列全体 [{lo}..{hi}] を並べ替える。',
+      zh: '排序整个数组 [{lo}..{hi}]。',
       ar: 'رتّب المصفوفة كاملة [{lo}..{hi}].',
       es: 'Ordena el arreglo entero [{lo}..{hi}].',
       fr: "Trier le tableau entier [{lo}..{hi}].",
@@ -156,6 +176,8 @@ export const quickSortFacet: FacetJson = {
     'caption.rangeLeft': {
       en: 'Left of the pivot: [{lo}..{hi}].',
       ko: '기준의 왼쪽 [{lo}..{hi}]',
+      ja: '基準の左 [{lo}..{hi}]。',
+      zh: '基准的左边：[{lo}..{hi}]。',
       ar: 'يسار المحور: [{lo}..{hi}].',
       es: 'A la izquierda del pivote: [{lo}..{hi}].',
       fr: 'À gauche du pivot : [{lo}..{hi}].',
@@ -166,6 +188,8 @@ export const quickSortFacet: FacetJson = {
     'caption.rangeRight': {
       en: 'Right of the pivot: [{lo}..{hi}].',
       ko: '기준의 오른쪽 [{lo}..{hi}]',
+      ja: '基準の右 [{lo}..{hi}]。',
+      zh: '基准的右边：[{lo}..{hi}]。',
       ar: 'يمين المحور: [{lo}..{hi}].',
       es: 'A la derecha del pivote: [{lo}..{hi}].',
       fr: 'À droite du pivot : [{lo}..{hi}].',
@@ -176,6 +200,8 @@ export const quickSortFacet: FacetJson = {
     'caption.rangeEmpty': {
       en: 'Nothing on this side.',
       ko: '이쪽에는 아무것도 없다',
+      ja: 'こちら側には何もない。',
+      zh: '这一侧什么都没有。',
       ar: 'لا شيء في هذا الجانب.',
       es: 'No hay nada de este lado.',
       fr: 'Rien de ce côté.',
@@ -186,6 +212,8 @@ export const quickSortFacet: FacetJson = {
     'caption.rangeSingle': {
       en: 'One cell alone — {value} is already home.',
       ko: '한 칸뿐 — {value} 는 이미 제자리다',
+      ja: 'マスはひとつだけ — {value} はすでに定位置だ。',
+      zh: '只有一格 — {value} 已经在自己的位置上。',
       ar: 'خانة واحدة فقط — {value} في موضعه أصلًا.',
       es: 'Una sola casilla: {value} ya está en su sitio.',
       fr: "Une seule case — {value} est déjà à sa place.",
@@ -196,6 +224,8 @@ export const quickSortFacet: FacetJson = {
     'caption.pickPivot': {
       en: 'Pivot {value} — the last cell of [{lo}..{hi}].',
       ko: '기준은 {value} — [{lo}..{hi}] 의 맨 뒤 칸',
+      ja: '基準は {value} — [{lo}..{hi}] のいちばん後ろのマス。',
+      zh: '基准是 {value} — [{lo}..{hi}] 的最后一格。',
       ar: 'المحور {value} — آخر خانة في [{lo}..{hi}].',
       es: 'Pivote {value}: la última casilla de [{lo}..{hi}].',
       fr: 'Pivot {value} — la dernière case de [{lo}..{hi}].',
@@ -206,6 +236,8 @@ export const quickSortFacet: FacetJson = {
     'caption.compare': {
       en: 'Compare {value} with pivot {pivot}.',
       ko: '{value} 와 기준 {pivot} 을 견준다',
+      ja: '{value} と基準 {pivot} を見比べる。',
+      zh: '把 {value} 和基准 {pivot} 相比。',
       ar: 'قارن {value} بالمحور {pivot}.',
       es: 'Compara {value} con el pivote {pivot}.',
       fr: 'Comparer {value} au pivot {pivot}.',
@@ -216,6 +248,8 @@ export const quickSortFacet: FacetJson = {
     'caption.swap': {
       en: 'Exchange {a} and {b}.',
       ko: '{a} 와 {b} 를 맞바꾼다',
+      ja: '{a} と {b} を入れ替える。',
+      zh: '交换 {a} 和 {b}。',
       ar: 'بدّل {a} و {b}.',
       es: 'Intercambia {a} y {b}.',
       fr: 'Échanger {a} et {b}.',
@@ -226,6 +260,8 @@ export const quickSortFacet: FacetJson = {
     'caption.sendLeft': {
       en: '{value} is not larger — it moves to the small side.',
       ko: '{value} 는 크지 않다 — 작은 쪽으로 보낸다',
+      ja: '{value} は大きくない — 小さい側へ送る。',
+      zh: '{value} 不比基准大 — 送到小的那一侧。',
       ar: '{value} ليس أكبر — ينتقل إلى الجانب الصغير.',
       es: '{value} no es mayor: pasa al lado pequeño.',
       fr: "{value} n'est pas plus grand — il passe du petit côté.",
@@ -236,6 +272,8 @@ export const quickSortFacet: FacetJson = {
     'caption.stay': {
       en: '{value} is not larger — it is already on the small side.',
       ko: '{value} 는 크지 않다 — 이미 작은 쪽에 있다',
+      ja: '{value} は大きくない — すでに小さい側にいる。',
+      zh: '{value} 不比基准大 — 它已经在小的那一侧。',
       ar: '{value} ليس أكبر — وهو في الجانب الصغير أصلًا.',
       es: '{value} no es mayor: ya está en el lado pequeño.',
       fr: "{value} n'est pas plus grand — il est déjà du petit côté.",
@@ -246,6 +284,8 @@ export const quickSortFacet: FacetJson = {
     'caption.keepRight': {
       en: '{value} is larger — it stays on the big side.',
       ko: '{value} 는 더 크다 — 큰 쪽에 남는다',
+      ja: '{value} のほうが大きい — 大きい側に残る。',
+      zh: '{value} 更大 — 留在大的那一侧。',
       ar: '{value} أكبر — يبقى في الجانب الكبير.',
       es: '{value} es mayor: se queda en el lado grande.',
       fr: '{value} est plus grand — il reste du grand côté.',
@@ -256,6 +296,8 @@ export const quickSortFacet: FacetJson = {
     'caption.placePivot': {
       en: 'Pivot {value} takes seat {index}. It never moves again.',
       ko: '기준 {value} 가 {index} 번 자리에 앉는다. 다시 움직이지 않는다',
+      ja: '基準 {value} が {index} 番の席に着く。もう二度と動かない。',
+      zh: '基准 {value} 坐进第 {index} 个位置。它不会再动了。',
       ar: 'المحور {value} يأخذ المقعد {index}. لن يتحرك بعدها أبدًا.',
       es: 'El pivote {value} ocupa el puesto {index} y ya no vuelve a moverse.',
       fr: 'Le pivot {value} prend la place {index}. Il ne bougera plus.',
@@ -266,6 +308,8 @@ export const quickSortFacet: FacetJson = {
     'caption.done': {
       en: 'Sorted after {count} partitions.',
       ko: '가르기 {count} 번으로 정렬됐다',
+      ja: '分割 {count} 回で並べ替えが終わった。',
+      zh: '经过 {count} 次划分，排序完成。',
       ar: 'تم الترتيب بعد {count} تقسيمات.',
       es: 'Ordenado tras {count} particiones.',
       fr: 'Trié après {count} partitions.',

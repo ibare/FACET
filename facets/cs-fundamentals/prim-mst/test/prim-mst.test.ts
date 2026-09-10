@@ -546,7 +546,8 @@ describe('러너에 붙였을 때', () => {
 });
 
 describe('선언 — facet.ts 가 규범대로 적혀 있다', () => {
-  const LOCALES = ['en', 'ko', 'ar', 'es', 'fr', 'hi', 'id', 'pt'];
+  // 저장소가 번역 번들을 갖춘 열 언어. messages/*.json 과 같다 (S-piece).
+  const LOCALES = ['en', 'ko', 'ja', 'zh', 'ar', 'es', 'fr', 'hi', 'id', 'pt'];
 
   /** `en` 을 가진 객체를 LocaleStr 로 보고 전부 모은다. */
   function localeStrings(value: unknown, path: string, out: [string, string[]][]): void {
@@ -563,7 +564,7 @@ describe('선언 — facet.ts 가 규범대로 적혀 있다', () => {
     for (const [k, v] of Object.entries(obj)) localeStrings(v, `${path}.${k}`, out);
   }
 
-  it('사람이 읽는 문자열은 모두 여덟 언어를 갖는다', () => {
+  it('사람이 읽는 문자열은 모두 열 언어를 갖는다', () => {
     const found: [string, string[]][] = [];
     localeStrings(primMstFacet, 'facet', found);
     // 제목 · 한 줄 설명 · 메트릭 셋 · 코드 패널 이름 · 문안 스물하나 = 스물일곱.

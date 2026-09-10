@@ -370,11 +370,11 @@ describe('선언 정합 (C4)', () => {
       'caption.done',
     ];
     expect([...declared].sort()).toEqual([...used].sort());
-    // locale 여덟을 다 갖춘다.
+    // 저장소가 번역 번들을 갖춘 열 언어를 다 갖춘다 (S-piece).
     for (const key of declared) {
       const value = dijkstraFacet.messages![key] as Record<string, string>;
       expect(Object.keys(value).sort()).toEqual(
-        ['ar', 'en', 'es', 'fr', 'hi', 'id', 'ko', 'pt'],
+        ['ar', 'en', 'es', 'fr', 'hi', 'id', 'ja', 'ko', 'pt', 'zh'],
       );
     }
   });

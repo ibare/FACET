@@ -29,8 +29,6 @@
  *
  * 16칸은 축척이다. 실제 SHA-256 은 2^256 칸이며 수가 클수록 겹치기까지 오래
  * 걸릴 뿐 셈은 같다.
- *
- * title / description / messages 는 en·ko 만 채웠다 (조각 방식 1차 시험).
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
@@ -38,10 +36,29 @@ import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const pigeonholeCollisionFacet: FacetJson = {
   id: 'facet:pigeonholeCollision',
-  title: { en: 'Pigeonhole Principle', ko: '비둘기집 원리' },
+  title: {
+    en: 'Pigeonhole Principle',
+    ko: '비둘기집 원리',
+    ja: '鳩の巣原理',
+    zh: '鸽巢原理',
+    ar: 'مبدأ حظائر الحمام',
+    es: 'Principio del palomar',
+    fr: 'Principe des tiroirs',
+    hi: 'पिजनहोल सिद्धांत',
+    id: 'Prinsip lubang merpati',
+    pt: 'Princípio da casa dos pombos',
+  },
   description: {
     en: 'Sixteen places, seventeen inputs — one of them has nowhere of its own',
     ko: '자리는 열여섯, 입력은 열일곱 — 하나는 제 자리를 가질 수 없다',
+    ja: '席は十六、入力は十七 — ひとつは自分の席を持てない',
+    zh: '十六个位置，十七个输入 — 总有一个没有自己的位置',
+    ar: 'ستة عشر موضعًا وسبعة عشر مدخلًا — واحد منها لا يجد موضعًا خاصًا به',
+    es: 'Dieciséis sitios, diecisiete entradas: uno de ellos no tiene sitio propio',
+    fr: "Seize places, dix-sept entrées — l'une d'elles n'a pas de place à elle",
+    hi: 'सोलह जगहें, सत्रह इनपुट — इनमें से एक के पास अपनी जगह नहीं',
+    id: 'Enam belas tempat, tujuh belas masukan — satu di antaranya tak punya tempat sendiri',
+    pt: 'Dezesseis lugares, dezessete entradas — um deles não tem lugar próprio',
   },
   algorithm: 'module:pigeonholeCollision',
   projector: 'module:pigeonholeCollisionProjector',
@@ -76,18 +93,50 @@ export const pigeonholeCollisionFacet: FacetJson = {
     'caption.filled': {
       en: 'Spread as evenly as possible — one per place — all {count} are taken.',
       ko: '가장 고르게 나눠도 — 자리마다 하나씩 — {count} 자리가 모두 찬다.',
+      ja: 'できるだけ均等に配っても — 席ごとにひとつずつ — {count} 席すべてが埋まる。',
+      zh: '哪怕分得再均匀 — 一个位置放一个 — {count} 个位置全被占满。',
+      ar: 'مهما وزّعنا بالتساوي — واحد لكل موضع — تمتلئ المواضع الـ{count} كلها.',
+      es: 'Repartidos lo más uniformemente posible, uno por sitio: los {count} sitios quedan ocupados.',
+      fr: 'Réparti aussi uniformément que possible — un par place — les {count} places sont prises.',
+      hi: 'जितना भी बराबर बाँटें — हर जगह पर एक — सभी {count} जगहें भर जाती हैं।',
+      id: 'Dibagi serata mungkin — satu per tempat — seluruh {count} tempat terisi.',
+      pt: 'Distribuídos o mais uniformemente possível — um por lugar — os {count} lugares ficam ocupados.',
     },
     'caption.oneMore': {
       en: 'One more input arrives — input {n} for {count} places.',
       ko: '입력이 하나 더 온다 — 자리는 {count} 개인데 {n} 번째다.',
+      ja: '入力がもうひとつ来る — 席は {count} なのに {n} 番目だ。',
+      zh: '又来了一个输入 — 位置只有 {count} 个，而这是第 {n} 个。',
+      ar: 'يصل مدخل آخر — المواضع {count} وهذا المدخل رقم {n}.',
+      es: 'Llega una entrada más: hay {count} sitios y esta es la número {n}.',
+      fr: "Une entrée de plus arrive — {count} places, et c'est la {n}e.",
+      hi: 'एक और इनपुट आता है — जगहें {count} हैं और यह {n} वाँ है।',
+      id: 'Satu masukan lagi datang — tempatnya {count}, sedangkan ini yang ke-{n}.',
+      pt: 'Chega mais uma entrada — há {count} lugares e esta é a {n}.',
     },
     'caption.collide': {
       en: 'It has nowhere of its own — {overflow} sits where {occupant} already is.',
       ko: '제 자리가 없다 — {overflow} 가 {occupant} 가 앉은 자리에 함께 앉는다.',
+      ja: '自分の席がない — {overflow} は {occupant} のいる席に一緒に座る。',
+      zh: '它没有自己的位置 — {overflow} 只能坐到 {occupant} 已经占着的位置上。',
+      ar: 'لا موضع خاصًا به — يجلس {overflow} حيث يجلس {occupant} أصلًا.',
+      es: 'No tiene sitio propio: {overflow} se sienta donde ya está {occupant}.',
+      fr: "Il n'a pas de place à lui — {overflow} s'assoit là où {occupant} est déjà.",
+      hi: 'इसकी अपनी कोई जगह नहीं — {overflow} वहीं बैठता है जहाँ {occupant} पहले से है।',
+      id: 'Ia tak punya tempat sendiri — {overflow} duduk di tempat yang sudah ditempati {occupant}.',
+      pt: 'Não tem lugar próprio — {overflow} senta-se onde {occupant} já está.',
     },
     'label.places': {
       en: '{count} places',
       ko: '자리 {count} 개',
+      ja: '席 {count}',
+      zh: '{count} 个位置',
+      ar: '{count} موضعًا',
+      es: '{count} sitios',
+      fr: '{count} places',
+      hi: '{count} जगहें',
+      id: '{count} tempat',
+      pt: '{count} lugares',
     },
   },
   blocks: {

@@ -20,6 +20,8 @@ export const mergeSortFacet: FacetJson = {
   title: {
     en: 'Merge Sort',
     ko: '머지 정렬',
+    ja: 'マージソート',
+    zh: '归并排序',
     ar: 'الترتيب بالدمج',
     es: 'Ordenamiento por mezcla',
     fr: 'Tri fusion',
@@ -30,6 +32,8 @@ export const mergeSortFacet: FacetJson = {
   description: {
     en: 'Split down to single items, then merge back up by looking only at the two fronts.',
     ko: '낱개가 될 때까지 쪼갠 뒤, 양쪽 맨 앞만 보며 되짚어 오르며 합친다',
+    ja: '一つずつになるまで分け、両方の先頭だけを見ながら戻りつつ併合する。',
+    zh: '一直拆到单个元素，再只看两边最前端，一路合并回去。',
     ar: 'قسّم حتى العناصر المفردة، ثم ادمج صعودًا بالنظر إلى المقدمتين فقط.',
     es: 'Divide hasta elementos sueltos y luego mezcla hacia arriba mirando solo los dos frentes.',
     fr: 'Découpez jusqu\'aux éléments seuls, puis fusionnez en remontant en ne regardant que les deux têtes.',
@@ -50,6 +54,8 @@ export const mergeSortFacet: FacetJson = {
     'caption.start': {
       en: 'Split all the way down, then merge back up.',
       ko: '끝까지 쪼갠 뒤, 되짚어 오르며 합친다',
+      ja: '最後まで分けてから、戻りながら併合する。',
+      zh: '一路拆到底，再一路合并回来。',
       ar: 'قسّم حتى النهاية، ثم ادمج صعودًا.',
       es: 'Divide hasta el fondo y luego mezcla hacia arriba.',
       fr: 'Découpez jusqu\'en bas, puis fusionnez en remontant.',
@@ -60,6 +66,8 @@ export const mergeSortFacet: FacetJson = {
     'caption.split': {
       en: 'Cut [{lo}..{hi}] in two at {mid}.',
       ko: '[{lo}..{hi}] 를 {mid} 에서 둘로 가른다',
+      ja: '[{lo}..{hi}] を {mid} で二つに切る。',
+      zh: '在 {mid} 处把 [{lo}..{hi}] 切成两半。',
       ar: 'اقطع [{lo}..{hi}] إلى نصفين عند {mid}.',
       es: 'Corta [{lo}..{hi}] en dos en {mid}.',
       fr: 'Coupez [{lo}..{hi}] en deux à {mid}.',
@@ -70,6 +78,8 @@ export const mergeSortFacet: FacetJson = {
     'caption.goLeft': {
       en: 'Go down the left half first.',
       ko: '왼쪽 반부터 내려간다',
+      ja: 'まず左半分へ降りる。',
+      zh: '先往左半边下去。',
       ar: 'انزل إلى النصف الأيسر أولًا.',
       es: 'Baja primero por la mitad izquierda.',
       fr: 'Descendez d\'abord dans la moitié gauche.',
@@ -80,6 +90,8 @@ export const mergeSortFacet: FacetJson = {
     'caption.goRight': {
       en: 'The left half is done — now the right.',
       ko: '왼쪽 반을 마쳤다 — 이제 오른쪽',
+      ja: '左半分は終わった — 次は右。',
+      zh: '左半边好了 — 现在轮到右边。',
       ar: 'انتهى النصف الأيسر — والآن الأيمن.',
       es: 'La mitad izquierda está lista; ahora la derecha.',
       fr: 'La moitié gauche est faite — maintenant la droite.',
@@ -90,6 +102,8 @@ export const mergeSortFacet: FacetJson = {
     'caption.base': {
       en: 'One item on its own is already sorted.',
       ko: '홀로 남은 하나는 이미 정렬돼 있다',
+      ja: '一つだけならすでに並んでいる。',
+      zh: '只有一个元素，本来就是有序的。',
       ar: 'عنصر واحد بمفرده مرتَّب أصلًا.',
       es: 'Un solo elemento ya está ordenado.',
       fr: 'Un élément seul est déjà trié.',
@@ -100,6 +114,8 @@ export const mergeSortFacet: FacetJson = {
     'caption.merge': {
       en: 'Both halves are sorted — merge [{lo}..{hi}].',
       ko: '양쪽 반이 모두 정렬됐다 — [{lo}..{hi}] 를 합친다',
+      ja: '両半分とも並んだ — [{lo}..{hi}] を併合する。',
+      zh: '两半都有序了 — 合并 [{lo}..{hi}]。',
       ar: 'النصفان مرتَّبان — ادمج [{lo}..{hi}].',
       es: 'Ambas mitades están ordenadas: mezcla [{lo}..{hi}].',
       fr: 'Les deux moitiés sont triées — fusionnez [{lo}..{hi}].',
@@ -110,6 +126,8 @@ export const mergeSortFacet: FacetJson = {
     'caption.copy': {
       en: 'Both halves are copied aside — the room they borrow.',
       ko: '양쪽 반을 옆에 베껴 둔다 — 이것이 빌리는 자리다',
+      ja: '両半分を脇に写す — これが借りる場所だ。',
+      zh: '两半都复制到旁边 — 这就是借来的空间。',
       ar: 'يُنسخ النصفان جانبًا — هذا هو المكان المستعار.',
       es: 'Ambas mitades se copian aparte: ese es el espacio prestado.',
       fr: 'Les deux moitiés sont copiées à côté — c\'est la place empruntée.',
@@ -120,6 +138,8 @@ export const mergeSortFacet: FacetJson = {
     'caption.compare': {
       en: 'Only the two fronts are compared.',
       ko: '견주는 것은 양쪽 맨 앞 둘뿐이다',
+      ja: '見比べるのは両方の先頭だけ。',
+      zh: '只比较两边最前面的那个。',
       ar: 'لا يُقارَن سوى المقدمتين.',
       es: 'Solo se comparan los dos frentes.',
       fr: 'Seules les deux têtes sont comparées.',
@@ -130,6 +150,8 @@ export const mergeSortFacet: FacetJson = {
     'caption.takeLeft': {
       en: '{v} wins from the left.',
       ko: '왼쪽의 {v} 가 앞선다',
+      ja: '左の {v} が勝つ。',
+      zh: '左边的 {v} 胜出。',
       ar: '{v} يفوز من اليسار.',
       es: '{v} gana por la izquierda.',
       fr: '{v} l\'emporte à gauche.',
@@ -140,6 +162,8 @@ export const mergeSortFacet: FacetJson = {
     'caption.takeRight': {
       en: '{v} wins from the right.',
       ko: '오른쪽의 {v} 가 앞선다',
+      ja: '右の {v} が勝つ。',
+      zh: '右边的 {v} 胜出。',
       ar: '{v} يفوز من اليمين.',
       es: '{v} gana por la derecha.',
       fr: '{v} l\'emporte à droite.',
@@ -150,6 +174,8 @@ export const mergeSortFacet: FacetJson = {
     'caption.drain': {
       en: 'One side is empty — {v} just slides over.',
       ko: '한쪽이 비었다 — {v} 는 그대로 넘어온다',
+      ja: '片方が空いた — {v} はそのまま移る。',
+      zh: '一边空了 — {v} 直接挪过去。',
       ar: 'أحد الجانبين فارغ — {v} ينتقل كما هو.',
       es: 'Un lado está vacío: {v} simplemente pasa.',
       fr: 'Un côté est vide — {v} glisse simplement.',
@@ -160,6 +186,8 @@ export const mergeSortFacet: FacetJson = {
     'caption.merged': {
       en: '[{lo}..{hi}] is one sorted run now.',
       ko: '[{lo}..{hi}] 가 정렬된 한 줄이 됐다',
+      ja: '[{lo}..{hi}] が並んだひと続きになった。',
+      zh: '[{lo}..{hi}] 现在是一段有序的序列了。',
       ar: 'صار [{lo}..{hi}] سلسلة مرتَّبة واحدة.',
       es: '[{lo}..{hi}] ya es una sola tira ordenada.',
       fr: '[{lo}..{hi}] forme désormais une seule suite triée.',
@@ -170,6 +198,8 @@ export const mergeSortFacet: FacetJson = {
     'caption.done': {
       en: 'The topmost merge was the last one to run.',
       ko: '맨 위의 합침이 맨 마지막이었다',
+      ja: '一番上の併合が最後に走った。',
+      zh: '最顶层的那次合并是最后跑的。',
       ar: 'الدمج الأعلى كان آخر ما جرى.',
       es: 'La mezcla más alta fue la última en ejecutarse.',
       fr: 'La fusion la plus haute a été la dernière.',
@@ -186,24 +216,24 @@ export const mergeSortFacet: FacetJson = {
       metrics: [
         {
           name: 'compare-count',
-          label: { en: 'Compares', ko: '견줌', ar: 'مقارنات', es: 'Comparaciones', fr: 'Comparaisons', hi: 'तुलनाएँ', id: 'Perbandingan', pt: 'Comparações' },
+          label: { en: 'Compares', ko: '견줌', ja: '比較', zh: '比较', ar: 'مقارنات', es: 'Comparaciones', fr: 'Comparaisons', hi: 'तुलनाएँ', id: 'Perbandingan', pt: 'Comparações' },
           initial: 0,
         },
         {
           name: 'move-count',
-          label: { en: 'Moves', ko: '옮김', ar: 'نقلات', es: 'Movimientos', fr: 'Déplacements', hi: 'स्थानांतरण', id: 'Perpindahan', pt: 'Movimentos' },
+          label: { en: 'Moves', ko: '옮김', ja: '移動', zh: '移动', ar: 'نقلات', es: 'Movimientos', fr: 'Déplacements', hi: 'स्थानांतरण', id: 'Perpindahan', pt: 'Movimentos' },
           initial: 0,
         },
         {
           name: 'recurse-depth',
-          label: { en: 'Depth', ko: '깊이', ar: 'العمق', es: 'Profundidad', fr: 'Profondeur', hi: 'गहराई', id: 'Kedalaman', pt: 'Profundidade' },
+          label: { en: 'Depth', ko: '깊이', ja: '深さ', zh: '深度', ar: 'العمق', es: 'Profundidad', fr: 'Profondeur', hi: 'गहराई', id: 'Kedalaman', pt: 'Profundidade' },
           initial: 0,
         },
       ],
     },
     codePanel: {
       type: 'code-view',
-      label: { en: 'Code', ko: '코드', ar: 'الشيفرة', es: 'Código', fr: 'Code', hi: 'कोड', id: 'Kode', pt: 'Código' },
+      label: { en: 'Code', ko: '코드', ja: 'コード', zh: '代码', ar: 'الشيفرة', es: 'Código', fr: 'Code', hi: 'कोड', id: 'Kode', pt: 'Código' },
       ir: 'ir:mergesort-recursive',
     },
   },

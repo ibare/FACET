@@ -20,6 +20,8 @@ export const dijkstraFacet: FacetJson = {
   title: {
     en: 'Dijkstra',
     ko: '다익스트라',
+    ja: 'ダイクストラ法',
+    zh: '迪杰斯特拉算法',
     ar: 'خوارزمية دايكسترا',
     es: 'Dijkstra',
     fr: 'Dijkstra',
@@ -30,6 +32,8 @@ export const dijkstraFacet: FacetJson = {
   description: {
     en: 'Settle the nearest unsettled vertex, then loosen its neighbours.',
     ko: '미확정 중 가장 가까운 것을 굳히고, 그 이웃을 편다',
+    ja: '未確定のうち最も近い頂点を確定し、その隣を緩める。',
+    zh: '在未确定的顶点中选最近的一个定下来，再松弛它的邻居。',
     ar: 'ثبّت أقرب رأس غير مستقرّ ثم أرخِ جيرانه.',
     es: 'Fija el vértice no fijado más cercano y luego relaja sus vecinos.',
     fr: 'Fixer le sommet non fixé le plus proche, puis relâcher ses voisins.',
@@ -75,6 +79,8 @@ export const dijkstraFacet: FacetJson = {
           label: {
             en: 'Scans',
             ko: '훑기',
+            ja: '走査',
+            zh: '扫描',
             ar: 'مسوح',
             es: 'Barridos',
             fr: 'Balayages',
@@ -89,6 +95,8 @@ export const dijkstraFacet: FacetJson = {
           label: {
             en: 'Settled',
             ko: '굳힘',
+            ja: '確定',
+            zh: '已定',
             ar: 'مستقرّة',
             es: 'Fijados',
             fr: 'Fixés',
@@ -103,6 +111,8 @@ export const dijkstraFacet: FacetJson = {
           label: {
             en: 'Shortened',
             ko: '줄인 값',
+            ja: '短縮',
+            zh: '缩短',
             ar: 'تقصيرات',
             es: 'Acortados',
             fr: 'Raccourcis',
@@ -119,6 +129,8 @@ export const dijkstraFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -133,6 +145,8 @@ export const dijkstraFacet: FacetJson = {
     'label.source': {
       en: 'source',
       ko: '출발',
+      ja: '出発点',
+      zh: '起点',
       ar: 'المصدر',
       es: 'origen',
       fr: 'source',
@@ -143,6 +157,8 @@ export const dijkstraFacet: FacetJson = {
     'label.ledger': {
       en: 'Settled, in order',
       ko: '굳은 차례',
+      ja: '確定した順',
+      zh: '定下的顺序',
       ar: 'المستقرّة بالترتيب',
       es: 'Fijados, en orden',
       fr: "Fixés, dans l'ordre",
@@ -153,6 +169,8 @@ export const dijkstraFacet: FacetJson = {
     'label.tentative': {
       en: 'tentative — may still drop',
       ko: '잠정 — 아직 줄어들 수 있다',
+      ja: '暫定 — まだ下がりうる',
+      zh: '暂定 — 还可能变小',
       ar: 'مؤقّت — قد ينخفض بعد',
       es: 'provisional: aún puede bajar',
       fr: 'provisoire — peut encore baisser',
@@ -163,6 +181,8 @@ export const dijkstraFacet: FacetJson = {
     'label.settled': {
       en: 'settled — never moves again',
       ko: '확정 — 다시 움직이지 않는다',
+      ja: '確定 — もう動かない',
+      zh: '已定 — 不再变动',
       ar: 'مستقرّ — لا يتغيّر مرة أخرى',
       es: 'fijado: ya no se mueve',
       fr: 'fixé — ne bouge plus',
@@ -173,6 +193,8 @@ export const dijkstraFacet: FacetJson = {
     'caption.init': {
       en: 'Source is {src}. Everything else is still infinity.',
       ko: '출발은 {src}. 나머지 거리는 아직 무한대다',
+      ja: '出発点は {src}。ほかはまだ無限大だ。',
+      zh: '起点是 {src}。其余的还都是无穷大。',
       ar: 'نقطة البداية هي {src}. وكل ما عداها لا يزال لانهاية.',
       es: 'El origen es {src}. Todo lo demás sigue en infinito.',
       fr: "La source est {src}. Tout le reste est encore à l'infini.",
@@ -183,6 +205,8 @@ export const dijkstraFacet: FacetJson = {
     'caption.round': {
       en: 'Round {round} — pick the nearest unsettled vertex.',
       ko: '{round} 번째 회 — 미확정 중 가장 가까운 것을 고른다',
+      ja: '第 {round} 回 — 未確定のうち最も近いものを選ぶ。',
+      zh: '第 {round} 轮 — 在未确定的顶点中挑最近的。',
       ar: 'الجولة {round} — اختر أقرب رأس غير مستقرّ.',
       es: 'Ronda {round}: elige el vértice no fijado más cercano.',
       fr: 'Tour {round} — choisir le sommet non fixé le plus proche.',
@@ -193,6 +217,8 @@ export const dijkstraFacet: FacetJson = {
     'caption.scanSettled': {
       en: 'Vertex {node} is already settled — skip it.',
       ko: '이미 굳은 자리라 건너뛴다 — 정점 {node}',
+      ja: '頂点 {node} はすでに確定 — 飛ばす。',
+      zh: '顶点 {node} 已经定下 — 跳过。',
       ar: 'الرأس {node} مستقرّ بالفعل — تخطَّه.',
       es: 'El vértice {node} ya está fijado; se omite.',
       fr: 'Le sommet {node} est déjà fixé — on passe.',
@@ -203,6 +229,8 @@ export const dijkstraFacet: FacetJson = {
     'caption.scanUnreached': {
       en: 'Vertex {node} has not been reached yet.',
       ko: '아직 닿은 적이 없다 — 정점 {node}',
+      ja: '頂点 {node} にはまだ届いていない。',
+      zh: '顶点 {node} 还没被到达过。',
       ar: 'الرأس {node} لم يُبلَغ بعد.',
       es: 'Al vértice {node} aún no se ha llegado.',
       fr: "Le sommet {node} n'a pas encore été atteint.",
@@ -213,6 +241,8 @@ export const dijkstraFacet: FacetJson = {
     'caption.scanFarther': {
       en: 'Vertex {node} sits at {dist} — farther than the current best {best}.',
       ko: '정점 {node} 의 잠정 거리 {dist} — 지금 후보 {best} 보다 멀다',
+      ja: '頂点 {node} の暫定距離は {dist} — いまの候補 {best} より遠い。',
+      zh: '顶点 {node} 的距离是 {dist} — 比当前最好的 {best} 还远。',
       ar: 'الرأس {node} على بُعد {dist} — أبعد من الأفضل الحالي {best}.',
       es: 'El vértice {node} está a {dist}, más lejos que el mejor actual {best}.',
       fr: 'Le sommet {node} est à {dist} — plus loin que le meilleur actuel {best}.',
@@ -223,6 +253,8 @@ export const dijkstraFacet: FacetJson = {
     'caption.scanValue': {
       en: 'Vertex {node} sits at {dist} so far.',
       ko: '정점 {node} 의 잠정 거리는 {dist}',
+      ja: '頂点 {node} の暫定距離は {dist}。',
+      zh: '顶点 {node} 目前的距离是 {dist}。',
       ar: 'الرأس {node} على بُعد {dist} حتى الآن.',
       es: 'El vértice {node} está a {dist} por ahora.',
       fr: "Le sommet {node} est à {dist} pour l'instant.",
@@ -233,6 +265,8 @@ export const dijkstraFacet: FacetJson = {
     'caption.bestUpdate': {
       en: 'Nearest so far: vertex {node} at {dist}.',
       ko: '지금까지 가장 가까운 후보 — 정점 {node} 의 거리 {dist}',
+      ja: 'ここまでで最も近い候補 — 頂点 {node}、距離 {dist}。',
+      zh: '目前最近的：顶点 {node}，距离 {dist}。',
       ar: 'الأقرب حتى الآن: الرأس {node} على بُعد {dist}.',
       es: 'El más cercano hasta ahora: el vértice {node} a {dist}.',
       fr: "Le plus proche jusqu'ici : le sommet {node} à {dist}.",
@@ -243,6 +277,8 @@ export const dijkstraFacet: FacetJson = {
     'caption.choose': {
       en: 'Chosen: vertex {node} at distance {dist}.',
       ko: '골랐다 — 정점 {node} 의 거리 {dist}',
+      ja: '選んだ — 頂点 {node}、距離 {dist}。',
+      zh: '选中：顶点 {node}，距离 {dist}。',
       ar: 'المختار: الرأس {node} على مسافة {dist}.',
       es: 'Elegido: el vértice {node} a distancia {dist}.',
       fr: 'Choisi : le sommet {node} à la distance {dist}.',
@@ -253,6 +289,8 @@ export const dijkstraFacet: FacetJson = {
     'caption.settle': {
       en: 'Settled — vertex {node} is at {dist}. It will not move again.',
       ko: '굳혔다 — 정점 {node} 의 거리는 {dist}. 여기서 다시 바뀌지 않는다',
+      ja: '確定 — 頂点 {node} の距離は {dist}。もう変わらない。',
+      zh: '定下 — 顶点 {node} 的距离是 {dist}。不会再变。',
       ar: 'استقرّ — الرأس {node} على بُعد {dist}. لن يتغيّر بعد الآن.',
       es: 'Fijado: el vértice {node} está a {dist}. Ya no se moverá.',
       fr: 'Fixé — le sommet {node} est à {dist}. Il ne bougera plus.',
@@ -263,6 +301,8 @@ export const dijkstraFacet: FacetJson = {
     'caption.relaxCheck': {
       en: 'From {from} to {to}: {base} + {weight} = {through}, currently {current}.',
       ko: '정점 {from} 에서 정점 {to} 까지 {base} + {weight} = {through} — 지금 값은 {current}',
+      ja: '{from} から {to} へ: {base} + {weight} = {through} — いまの値は {current}。',
+      zh: '从 {from} 到 {to}：{base} + {weight} = {through}，现在的值是 {current}。',
       ar: 'من {from} إلى {to}: {base} + {weight} = {through}، والقيمة الحالية {current}.',
       es: 'De {from} a {to}: {base} + {weight} = {through}; ahora vale {current}.',
       fr: 'De {from} à {to} : {base} + {weight} = {through}, valeur actuelle {current}.',
@@ -273,6 +313,8 @@ export const dijkstraFacet: FacetJson = {
     'caption.relaxApply': {
       en: 'A shorter route — vertex {to} drops from {before} to {after}.',
       ko: '더 짧은 길을 찾았다 — 정점 {to} 의 잠정 거리 {before} → {after}',
+      ja: 'より短い道が見つかった — 頂点 {to} の暫定距離が {before} → {after}。',
+      zh: '找到更短的路 — 顶点 {to} 从 {before} 降到 {after}。',
       ar: 'طريق أقصر — الرأس {to} ينزل من {before} إلى {after}.',
       es: 'Una ruta más corta: el vértice {to} baja de {before} a {after}.',
       fr: 'Un chemin plus court — le sommet {to} passe de {before} à {after}.',
@@ -283,6 +325,8 @@ export const dijkstraFacet: FacetJson = {
     'caption.done': {
       en: 'All {count} vertices are settled — the settled distances never went down.',
       ko: '{count} 개가 모두 굳었다 — 굳힌 차례로 값은 한 번도 줄지 않았다',
+      ja: '{count} 個すべてが確定した — 確定した距離は一度も下がらなかった。',
+      zh: '{count} 个顶点全部定下 — 定下的距离一次也没有再变小。',
       ar: 'استقرّت كل الرؤوس {count} — ولم تنقص أي مسافة مستقرّة.',
       es: 'Los {count} vértices están fijados: ninguna distancia fijada bajó después.',
       fr: "Les {count} sommets sont tous fixés — aucune distance fixée n'a baissé ensuite.",

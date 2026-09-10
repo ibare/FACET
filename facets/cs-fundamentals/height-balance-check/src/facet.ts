@@ -9,7 +9,18 @@ import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const heightBalanceCheckFacet: FacetJson = {
   id: 'facet:heightBalanceCheck',
-  title: { en: 'Height Balance Check', ko: '균형 인수' },
+  title: {
+    en: 'Height Balance Check',
+    ko: '균형 인수',
+    ja: '高さの均衡チェック',
+    zh: '高度平衡检查',
+    ar: 'فحص توازن الارتفاع',
+    es: 'Comprobación del equilibrio de altura',
+    fr: "Vérification de l'équilibre des hauteurs",
+    hi: 'ऊँचाई संतुलन जाँच',
+    id: 'Pemeriksaan keseimbangan tinggi',
+    pt: 'Verificação do equilíbrio de altura',
+  },
   description: {
     en: 'The balance factor is not read from above — it is carried up from the leaves.',
     ko: '균형 인수는 위에서 내려다보아 얻는 것이 아니라 잎에서부터 올라오며 쌓인다.',

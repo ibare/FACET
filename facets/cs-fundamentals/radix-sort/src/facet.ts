@@ -25,6 +25,8 @@ export const radixSortFacet: FacetJson = {
   title: {
     en: 'Radix Sort',
     ko: '기수 정렬',
+    ja: '基数ソート',
+    zh: '基数排序',
     ar: 'الترتيب الجذري',
     es: 'Ordenamiento radix',
     fr: 'Tri par base',
@@ -35,6 +37,8 @@ export const radixSortFacet: FacetJson = {
   description: {
     en: 'Line them up by one digit at a time — never comparing two values.',
     ko: '한 자리씩만 보고 줄을 세운다 — 값끼리 견주는 일이 없다',
+    ja: '一桁ずつ見て並べる — 値どうしを比べることがない。',
+    zh: '每次只看一位数来排队 — 从不比较两个值。',
     ar: 'رتّبها رقمًا واحدًا في كل جولة — دون أي مقارنة بين قيمتين.',
     es: 'Ordena mirando un solo dígito por vuelta, sin comparar dos valores nunca.',
     fr: 'Aligne-les un chiffre à la fois — sans jamais comparer deux valeurs.',
@@ -64,6 +68,8 @@ export const radixSortFacet: FacetJson = {
           label: {
             en: 'Rounds',
             ko: '라운드',
+            ja: 'ラウンド',
+            zh: '轮次',
             ar: 'جولات',
             es: 'Vueltas',
             fr: 'Tours',
@@ -78,6 +84,8 @@ export const radixSortFacet: FacetJson = {
           label: {
             en: 'Placements',
             ko: '놓기',
+            ja: '配置',
+            zh: '放置',
             ar: 'إيداعات',
             es: 'Colocaciones',
             fr: 'Placements',
@@ -92,6 +100,8 @@ export const radixSortFacet: FacetJson = {
           label: {
             en: 'Compare',
             ko: '견줌',
+            ja: '比較',
+            zh: '比较',
             ar: 'مقارنة',
             es: 'Comparar',
             fr: 'Comparer',
@@ -108,6 +118,8 @@ export const radixSortFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -122,6 +134,8 @@ export const radixSortFacet: FacetJson = {
     'caption.start': {
       en: 'One digit at a time, starting from the lowest place.',
       ko: '한 자리씩만 본다. 낮은 자리부터',
+      ja: '一桁ずつ、いちばん低い位から。',
+      zh: '一次一位，从最低位开始。',
       ar: 'رقم واحد في كل مرة، بدءًا من أدنى منزلة.',
       es: 'Un dígito por vez, empezando por la posición más baja.',
       fr: 'Un chiffre à la fois, en partant du rang le plus bas.',
@@ -132,6 +146,8 @@ export const radixSortFacet: FacetJson = {
     'caption.scanMax': {
       en: 'The largest value is {max} — it decides how many places to visit.',
       ko: '가장 큰 수가 {max} 다 — 자리를 몇 번 볼지가 여기서 정해진다',
+      ja: 'いちばん大きい数は {max} — 何桁見るかがここで決まる。',
+      zh: '最大的值是 {max} — 要走多少位由它决定。',
       ar: 'أكبر قيمة هي {max} — وهي تحدد عدد المنازل التي سنمر بها.',
       es: 'El valor mayor es {max}: él decide cuántas posiciones hay que recorrer.',
       fr: 'La plus grande valeur est {max} — elle décide du nombre de rangs à parcourir.',
@@ -142,6 +158,8 @@ export const radixSortFacet: FacetJson = {
     'caption.round': {
       en: 'Round {round} — line them up by the place worth {exp}.',
       ko: '{round} 번째 라운드 — {exp} 자리로 줄을 세운다',
+      ja: 'ラウンド {round} — {exp} の位で並べる。',
+      zh: '第 {round} 轮 — 按值为 {exp} 的那一位排队。',
       ar: 'الجولة {round} — رتّبها حسب المنزلة التي تساوي {exp}.',
       es: 'Vuelta {round}: alinéalos por la posición que vale {exp}.',
       fr: 'Tour {round} — aligne-les selon le rang valant {exp}.',
@@ -152,6 +170,8 @@ export const radixSortFacet: FacetJson = {
     'caption.read': {
       en: 'The place-{exp} digit of {value} is {digit}.',
       ko: '{value} 의 {exp} 자리 숫자는 {digit}',
+      ja: '{value} の {exp} の位の数字は {digit}。',
+      zh: '{value} 在 {exp} 位上的数字是 {digit}。',
       ar: 'رقم المنزلة {exp} في {value} هو {digit}.',
       es: 'El dígito de la posición {exp} de {value} es {digit}.',
       fr: 'Le chiffre de rang {exp} de {value} est {digit}.',
@@ -162,6 +182,8 @@ export const radixSortFacet: FacetJson = {
     'caption.count': {
       en: 'Bucket {digit} now holds {count}.',
       ko: '{digit} 번 통이 이제 {count} 개다',
+      ja: 'バケツ {digit} はいま {count} 個。',
+      zh: '桶 {digit} 现在有 {count} 个。',
       ar: 'السلة {digit} تحتوي الآن على {count}.',
       es: 'El cubo {digit} ya tiene {count}.',
       fr: 'Le seau {digit} en contient maintenant {count}.',
@@ -172,6 +194,8 @@ export const radixSortFacet: FacetJson = {
     'caption.prefix': {
       en: 'Bucket {digit} takes {added} from its left neighbour — {value} values sit at digit {digit} or below.',
       ko: '{digit} 번 통이 왼쪽 이웃에게서 {added} 를 받는다 — {digit} 이하인 수가 {value} 개라는 뜻이다',
+      ja: 'バケツ {digit} が左隣から {added} を受け取る — 数字 {digit} 以下の値が {value} 個あるということだ。',
+      zh: '桶 {digit} 从左邻取来 {added} — 也就是说数字为 {digit} 或更小的值有 {value} 个。',
       ar: 'السلة {digit} تأخذ {added} من جارتها اليسرى — أي أن {value} قيمة تقع عند الرقم {digit} أو دونه.',
       es: 'El cubo {digit} toma {added} de su vecino izquierdo: hay {value} valores con dígito {digit} o menor.',
       fr: 'Le seau {digit} prend {added} à son voisin de gauche — {value} valeurs ont un chiffre inférieur ou égal à {digit}.',
@@ -182,6 +206,8 @@ export const radixSortFacet: FacetJson = {
     'caption.place': {
       en: 'Read from the back: bucket {digit} drops to {slot}, so {value} takes seat {slot}.',
       ko: '뒤에서부터 읽는다 — {digit} 번 통이 {slot} 로 줄고, 그 자리에 {value} 가 앉는다',
+      ja: '後ろから読む — バケツ {digit} が {slot} に減り、その席に {value} が座る。',
+      zh: '从后往前读：桶 {digit} 降到 {slot}，于是 {value} 坐进第 {slot} 个位置。',
       ar: 'نقرأ من الخلف: السلة {digit} تنزل إلى {slot}، فيأخذ {value} المقعد {slot}.',
       es: 'Se lee desde atrás: el cubo {digit} baja a {slot}, así que {value} ocupa el puesto {slot}.',
       fr: 'On lit depuis la fin : le seau {digit} descend à {slot}, donc {value} prend la place {slot}.',
@@ -192,6 +218,8 @@ export const radixSortFacet: FacetJson = {
     'caption.roundEnd': {
       en: 'Place {exp} is settled. Round {round} kept the earlier order untouched.',
       ko: '{exp} 자리가 끝났다. {round} 번째 라운드는 앞선 순서를 건드리지 않았다',
+      ja: '{exp} の位が片づいた。ラウンド {round} は前の順序に手をつけていない。',
+      zh: '{exp} 这一位定下来了。第 {round} 轮没有动过先前的顺序。',
       ar: 'انتهت المنزلة {exp}. الجولة {round} لم تمسّ الترتيب السابق.',
       es: 'La posición {exp} queda resuelta. La vuelta {round} no alteró el orden anterior.',
       fr: 'Le rang {exp} est réglé. Le tour {round} n\'a pas touché à l\'ordre précédent.',
@@ -202,6 +230,8 @@ export const radixSortFacet: FacetJson = {
     'caption.done': {
       en: 'Sorted in {rounds} rounds and {places} placements — without comparing two values even once.',
       ko: '{rounds} 라운드, {places} 번 놓기로 정렬됐다 — 값끼리 견준 적은 한 번도 없다',
+      ja: '{rounds} ラウンド、{places} 回の配置で並び終えた — 値どうしを比べたことは一度もない。',
+      zh: '用 {rounds} 轮、{places} 次放置排好了 — 一次也没有比较过两个值。',
       ar: 'تم الترتيب في {rounds} جولات و {places} إيداعًا — دون مقارنة قيمتين ولو مرة واحدة.',
       es: 'Ordenado en {rounds} vueltas y {places} colocaciones, sin comparar dos valores ni una vez.',
       fr: 'Trié en {rounds} tours et {places} placements — sans comparer deux valeurs une seule fois.',

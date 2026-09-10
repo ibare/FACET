@@ -16,7 +16,7 @@
  * 해시 사슬 조각과 짝을 이룬다. 사슬은 한 칸을 고치면 뒤가 전부 무너지고,
  * 트리는 한 줄만 갈린다 — 그 대비가 두 조각을 가른다.
  *
- * title / description / messages 는 en·ko 만 채웠다 (조각 방식 1차 시험).
+ * title / description / messages 는 열 언어를 채웠다.
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
@@ -24,10 +24,29 @@ import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const merkleTreeFacet: FacetJson = {
   id: 'facet:merkleTree',
-  title: { en: 'Merkle Tree', ko: '머클 트리' },
+  title: {
+    en: 'Merkle Tree',
+    ko: '머클 트리',
+    ja: 'マークル木',
+    zh: '默克尔树',
+    ar: 'شجرة ميركل',
+    es: 'Árbol de Merkle',
+    fr: 'Arbre de Merkle',
+    hi: 'मर्कल ट्री',
+    id: 'Pohon Merkle',
+    pt: 'Árvore de Merkle',
+  },
   description: {
     en: 'Fold hashes in pairs and one leaf changing moves only its own path to the top',
     ko: '해시를 둘씩 접어 두면 잎 하나가 바뀔 때 꼭대기까지 한 줄만 움직인다',
+    ja: 'ハッシュを二つずつ畳んでおけば、葉が一つ変わっても頂上まで一筋だけが動く',
+    zh: '把哈希两两折叠，一片叶子变了，也只有它到顶的那条路会动',
+    ar: 'اطوِ التجزئات مثنى مثنى، فإذا تغيّرت ورقة واحدة تحرّك مسارها وحده حتى القمة',
+    es: 'Pliega los hash de dos en dos y, si cambia una hoja, solo se mueve su camino hasta la cima',
+    fr: "Repliez les empreintes deux à deux : si une feuille change, seul son chemin jusqu'au sommet bouge",
+    hi: 'हैश को जोड़ों में मोड़ दें, तो एक पत्ती बदलने पर सिर्फ़ उसी का रास्ता शिखर तक हिलता है',
+    id: 'Lipat hash berpasangan, maka satu daun yang berubah hanya menggerakkan jalurnya sendiri sampai puncak',
+    pt: 'Dobre os hashes aos pares e, se uma folha muda, só o caminho dela até o topo se move',
   },
   algorithm: 'module:merkleTree',
   projector: 'module:merkleTreeProjector',
@@ -66,18 +85,50 @@ export const merkleTreeFacet: FacetJson = {
     'caption.leaves': {
       en: 'Each file gets its own hash.',
       ko: '파일마다 자기 해시를 갖는다.',
+      ja: 'ファイルごとに自分のハッシュを持つ。',
+      zh: '每个文件都有自己的哈希。',
+      ar: 'كل ملف له تجزئته الخاصة.',
+      es: 'Cada archivo tiene su propio hash.',
+      fr: 'Chaque fichier a sa propre empreinte.',
+      hi: 'हर फ़ाइल का अपना हैश होता है।',
+      id: 'Setiap berkas punya hash-nya sendiri.',
+      pt: 'Cada arquivo tem o seu próprio hash.',
     },
     'caption.folded': {
       en: 'Folded in pairs, all of it comes down to one value.',
       ko: '둘씩 접어 올리면 전부가 값 하나로 모인다.',
+      ja: '二つずつ畳んで上げると、すべてが一つの値にまとまる。',
+      zh: '两两折叠上去，全部归到一个值。',
+      ar: 'بالطيّ مثنى مثنى، ينتهي كل ذلك إلى قيمة واحدة.',
+      es: 'Plegados de dos en dos, todo se reduce a un solo valor.',
+      fr: 'Repliés deux à deux, tout se ramène à une seule valeur.',
+      hi: 'जोड़ों में मुड़कर, सब कुछ एक ही मान में सिमट जाता है।',
+      id: 'Dilipat berpasangan, semuanya mengerucut jadi satu nilai.',
+      pt: 'Dobrados aos pares, tudo se resume a um único valor.',
     },
     'caption.changed': {
       en: 'One file changes.',
       ko: '파일 하나가 바뀐다.',
+      ja: 'ファイルが一つ変わる。',
+      zh: '有一个文件被改动了。',
+      ar: 'يتغيّر ملف واحد.',
+      es: 'Cambia un archivo.',
+      fr: 'Un fichier change.',
+      hi: 'एक फ़ाइल बदल जाती है।',
+      id: 'Satu berkas berubah.',
+      pt: 'Um arquivo muda.',
     },
     'caption.pathOnly': {
       en: 'Only the path up to the top changes — the other branch is untouched.',
       ko: '꼭대기까지 한 줄만 갈린다 — 다른 가지는 손대지 않은 그대로다.',
+      ja: '変わるのは頂上までの一筋だけ — もう一方の枝はそのままだ。',
+      zh: '只有通向顶端的那条路变了 — 另一支原封不动。',
+      ar: 'لا يتغيّر إلا المسار الصاعد إلى القمة — الفرع الآخر كما هو.',
+      es: 'Solo cambia el camino hasta la cima: la otra rama queda intacta.',
+      fr: "Seul le chemin jusqu'au sommet change — l'autre branche reste intacte.",
+      hi: 'सिर्फ़ शिखर तक का रास्ता बदलता है — दूसरी शाखा जस की तस रहती है।',
+      id: 'Hanya jalur naik ke puncak yang berubah — cabang lainnya tak tersentuh.',
+      pt: 'Só o caminho até o topo muda — o outro ramo fica intacto.',
     },
   },
   blocks: {

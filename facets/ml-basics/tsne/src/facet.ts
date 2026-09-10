@@ -106,6 +106,8 @@ export const tsneFacet: FacetJson = {
   title: {
     en: 't-SNE — what the flattened picture will and will not tell you',
     ko: 't-SNE — 편 그림에서 읽어도 되는 것과 읽으면 안 되는 것',
+    ja: 't-SNE — 平らにした絵から読めるものと読めないもの',
+    zh: 't-SNE — 摊平后的图能告诉你什么，不能告诉你什么',
     ar: 't-SNE — ما تقوله الصورة المسطّحة وما لا تقوله',
     es: 't-SNE: lo que la imagen aplanada dice y lo que no',
     fr: "t-SNE — ce que l'image aplatie dit et ce qu'elle ne dit pas",
@@ -116,6 +118,8 @@ export const tsneFacet: FacetJson = {
   description: {
     en: 'Perplexity decides whether the groups break, blur, or split cleanly — and even the clean picture loses the distance between groups',
     ko: '퍼플렉시티가 무리를 부술지 흐릴지 깨끗이 가를지 정한다 — 그리고 깨끗이 갈린 그림에서도 무리 사이 거리는 남지 않는다',
+    ja: 'パープレキシティが集まりを壊すか、ぼかすか、きれいに分けるかを決める — そしてきれいに分かれた絵でも集まり同士の距離は残らない',
+    zh: '困惑度决定了群会被打碎、被模糊，还是干净分开 — 而即便分得干净，群与群之间的距离也留不下来',
     ar: 'البيربلكستي يقرر هل تتفكك المجموعات أم تتشوّش أم تنفصل بنظافة — وحتى الصورة النظيفة تفقد المسافة بين المجموعات',
     es: 'La perplejidad decide si los grupos se rompen, se difuminan o se separan limpiamente, y hasta la imagen limpia pierde la distancia entre grupos',
     fr: "La perplexité décide si les groupes éclatent, se brouillent ou se séparent nettement — et même l'image nette perd la distance entre les groupes",
@@ -156,6 +160,8 @@ export const tsneFacet: FacetJson = {
     'label.source': {
       en: 'where the points really are',
       ko: '점이 실제로 놓인 자리',
+      ja: '点が実際にある場所',
+      zh: '点真正所在的位置',
       ar: 'حيث تقع النقاط فعلًا',
       es: 'dónde están realmente los puntos',
       fr: 'où les points se trouvent vraiment',
@@ -166,6 +172,8 @@ export const tsneFacet: FacetJson = {
     'label.embedding': {
       en: 'the same points, flattened by t-SNE',
       ko: '같은 점을 t-SNE 로 편 그림',
+      ja: '同じ点を t-SNE で平らにした絵',
+      zh: '同样的点，被 t-SNE 摊平后',
       ar: 'النقاط نفسها بعد تسطيحها بـ t-SNE',
       es: 'los mismos puntos, aplanados por t-SNE',
       fr: 'les mêmes points, aplatis par t-SNE',
@@ -176,6 +184,8 @@ export const tsneFacet: FacetJson = {
     'label.ratioBase': {
       en: 'gaps as multiples of A-B',
       ko: 'A-B 를 1 로 놓은 몫',
+      ja: 'A-B を 1 とした間隔の倍数',
+      zh: '以 A-B 为 1 的间距倍数',
       ar: 'الفجوات كمضاعفات لـ A-B',
       es: 'huecos como múltiplos de A-B',
       fr: 'écarts en multiples de A-B',
@@ -186,6 +196,8 @@ export const tsneFacet: FacetJson = {
     'label.noUnits': {
       en: 'these coordinates have no unit',
       ko: '이 좌표에는 단위가 없다',
+      ja: 'この座標に単位はない',
+      zh: '这些坐标没有单位',
       ar: 'هذه الإحداثيات بلا وحدة',
       es: 'estas coordenadas no tienen unidad',
       fr: "ces coordonnées n'ont pas d'unité",
@@ -196,6 +208,8 @@ export const tsneFacet: FacetJson = {
     'label.spreadRing': {
       en: 'ring = how wide the group sits',
       ko: '동그라미는 무리가 퍼진 폭',
+      ja: '円は集まりの広がり',
+      zh: '圆圈表示这一群摊开的幅度',
       ar: 'الحلقة = مدى اتساع المجموعة',
       es: 'el anillo = cuánto se extiende el grupo',
       fr: "l'anneau = l'étalement du groupe",
@@ -206,6 +220,8 @@ export const tsneFacet: FacetJson = {
     'readout.separation': {
       en: 'separation {value}',
       ko: '갈림 {value}',
+      ja: '分離度 {value}',
+      zh: '分离度 {value}',
       ar: 'الانفصال {value}',
       es: 'separación {value}',
       fr: 'séparation {value}',
@@ -216,6 +232,8 @@ export const tsneFacet: FacetJson = {
     'ledger.title': {
       en: 'what each setting gave',
       ko: '손잡이마다 나온 답',
+      ja: '設定ごとに出た結果',
+      zh: '每个设定给出的结果',
       ar: 'ما أعطاه كل ضبط',
       es: 'lo que dio cada ajuste',
       fr: 'ce que chaque réglage a donné',
@@ -226,6 +244,8 @@ export const tsneFacet: FacetJson = {
     'ledger.source': {
       en: 'real positions',
       ko: '원래 자리',
+      ja: '本来の位置',
+      zh: '原本的位置',
       ar: 'المواقع الحقيقية',
       es: 'posiciones reales',
       fr: 'positions réelles',
@@ -236,6 +256,8 @@ export const tsneFacet: FacetJson = {
     'ledger.perplexity': {
       en: 'perplexity {value}',
       ko: '퍼플렉시티 {value}',
+      ja: 'パープレキシティ {value}',
+      zh: '困惑度 {value}',
       ar: 'بيربلكستي {value}',
       es: 'perplejidad {value}',
       fr: 'perplexité {value}',
@@ -246,6 +268,8 @@ export const tsneFacet: FacetJson = {
     'col.separation': {
       en: 'separation',
       ko: '갈림',
+      ja: '分離度',
+      zh: '分离度',
       ar: 'الانفصال',
       es: 'separación',
       fr: 'séparation',
@@ -256,6 +280,8 @@ export const tsneFacet: FacetJson = {
     'col.ratio': {
       en: 'gap ratio',
       ko: '무리 사이 비',
+      ja: '集まり間の比',
+      zh: '群间距之比',
       ar: 'نسبة الفجوة',
       es: 'razón de huecos',
       fr: 'rapport des écarts',
@@ -266,6 +292,8 @@ export const tsneFacet: FacetJson = {
     'verdict.clean': {
       en: 'split cleanly',
       ko: '깨끗이 갈렸다',
+      ja: 'きれいに分かれた',
+      zh: '分得很干净',
       ar: 'انفصلت بنظافة',
       es: 'se separó limpiamente',
       fr: 'nettement séparé',
@@ -276,6 +304,8 @@ export const tsneFacet: FacetJson = {
     'verdict.broken': {
       en: 'groups broke apart',
       ko: '무리가 부서졌다',
+      ja: '集まりが壊れた',
+      zh: '群被打碎了',
       ar: 'تفكّكت المجموعات',
       es: 'los grupos se rompieron',
       fr: 'les groupes ont éclaté',
@@ -286,6 +316,8 @@ export const tsneFacet: FacetJson = {
     'verdict.blurred': {
       en: 'edges blurred',
       ko: '경계가 흐려졌다',
+      ja: '境目がぼやけた',
+      zh: '边界模糊了',
       ar: 'تشوّشت الحدود',
       es: 'los bordes se difuminaron',
       fr: 'les bords se sont brouillés',
@@ -296,6 +328,8 @@ export const tsneFacet: FacetJson = {
     'caption.source': {
       en: 'Really, B-C is {ratio} times A-B. Watch what survives the flattening.',
       ko: '실제로 B-C 는 A-B 의 {ratio} 배다. 펴고 나서 무엇이 남는지 보라.',
+      ja: '実際には B-C は A-B の {ratio} 倍だ。平らにして何が残るかを見てほしい。',
+      zh: '实际上 B-C 是 A-B 的 {ratio} 倍。看看摊平之后还剩下什么。',
       ar: 'في الواقع، B-C يساوي {ratio} ضعف A-B. راقب ما يبقى بعد التسطيح.',
       es: 'En realidad B-C es {ratio} veces A-B. Mira qué sobrevive al aplanado.',
       fr: "En réalité, B-C vaut {ratio} fois A-B. Regardez ce qui survit à l'aplatissement.",
@@ -306,6 +340,8 @@ export const tsneFacet: FacetJson = {
     'caption.running': {
       en: 'Flattening at perplexity {perplexity} - step {step} of {steps}.',
       ko: '퍼플렉시티 {perplexity} 로 펴는 중 - 걸음 {step} / {steps}.',
+      ja: 'パープレキシティ {perplexity} で平らにしている - 手順 {step} / {steps}。',
+      zh: '正在以困惑度 {perplexity} 摊平 - 第 {step} 步，共 {steps} 步。',
       ar: 'التسطيح عند بيربلكستي {perplexity} - الخطوة {step} من {steps}.',
       es: 'Aplanando con perplejidad {perplexity} - paso {step} de {steps}.',
       fr: 'Aplatissement à perplexité {perplexity} - pas {step} sur {steps}.',
@@ -316,6 +352,8 @@ export const tsneFacet: FacetJson = {
     'caption.clean': {
       en: 'Perplexity {perplexity}: separation {separation}, so the groups split cleanly. But the gap ratio is now {ratio}, not {sourceRatio}.',
       ko: '퍼플렉시티 {perplexity}: 갈림 {separation} 이라 무리는 깨끗이 갈렸다. 그런데 무리 사이 비는 {sourceRatio} 가 아니라 {ratio} 다.',
+      ja: 'パープレキシティ {perplexity}: 分離度 {separation} で集まりはきれいに分かれた。だが集まり間の比は {sourceRatio} ではなく {ratio} だ。',
+      zh: '困惑度 {perplexity}：分离度 {separation}，群分得很干净。可群间距之比现在是 {ratio}，不是 {sourceRatio}。',
       ar: 'بيربلكستي {perplexity}: الانفصال {separation}، فانفصلت المجموعات بنظافة. لكن نسبة الفجوة صارت {ratio} بدل {sourceRatio}.',
       es: 'Perplejidad {perplexity}: separación {separation}, así que los grupos se separan limpiamente. Pero la razón de huecos ahora es {ratio}, no {sourceRatio}.',
       fr: "Perplexité {perplexity} : séparation {separation}, les groupes se séparent nettement. Mais le rapport des écarts vaut désormais {ratio}, non {sourceRatio}.",
@@ -326,6 +364,8 @@ export const tsneFacet: FacetJson = {
     'caption.broken': {
       en: 'Perplexity {perplexity}: separation {separation}. Too few neighbours, so a group shattered and no boundary survives.',
       ko: '퍼플렉시티 {perplexity}: 갈림 {separation}. 이웃을 너무 적게 보아 무리 하나가 흩어졌고 경계가 남지 않았다.',
+      ja: 'パープレキシティ {perplexity}: 分離度 {separation}。隣を見る数が少なすぎて集まりが一つ砕け、境目が残らなかった。',
+      zh: '困惑度 {perplexity}：分离度 {separation}。看的邻居太少，有一群散掉了，边界没有留下。',
       ar: 'بيربلكستي {perplexity}: الانفصال {separation}. جيران قليلون جدًا، فتناثرت مجموعة ولم يبق حدّ.',
       es: 'Perplejidad {perplexity}: separación {separation}. Con tan pocos vecinos, un grupo se hizo pedazos y no queda frontera.',
       fr: "Perplexité {perplexity} : séparation {separation}. Trop peu de voisins : un groupe a volé en éclats et aucune frontière ne subsiste.",
@@ -336,6 +376,8 @@ export const tsneFacet: FacetJson = {
     'caption.blurred': {
       en: 'Perplexity {perplexity}: separation {separation}. Too many neighbours, so the groups sit tight but their edges touch.',
       ko: '퍼플렉시티 {perplexity}: 갈림 {separation}. 이웃을 너무 많이 보아 무리는 촘촘한데 경계가 맞닿았다.',
+      ja: 'パープレキシティ {perplexity}: 分離度 {separation}。隣を見る数が多すぎて集まりは詰まったが、境目が触れ合っている。',
+      zh: '困惑度 {perplexity}：分离度 {separation}。看的邻居太多，群挤得紧，边界却挨在一起。',
       ar: 'بيربلكستي {perplexity}: الانفصال {separation}. جيران كثيرون جدًا، فبقيت المجموعات متماسكة لكن حوافها تلامست.',
       es: 'Perplejidad {perplexity}: separación {separation}. Con demasiados vecinos, los grupos quedan compactos pero sus bordes se tocan.',
       fr: "Perplexité {perplexity} : séparation {separation}. Trop de voisins : les groupes restent compacts mais leurs bords se touchent.",
@@ -346,6 +388,8 @@ export const tsneFacet: FacetJson = {
     'label.aria': {
       en: 't-SNE visualization: the real positions beside the flattened picture, with a ledger of what each perplexity gave',
       ko: 't-SNE 시각화 — 원래 자리와 편 그림을 나란히 놓고, 퍼플렉시티마다 나온 답을 아래에 쌓는다',
+      ja: 't-SNE の可視化 — 本来の位置と平らにした絵を並べ、パープレキシティごとの結果を下に積む',
+      zh: 't-SNE 可视化 — 原本的位置与摊平后的图并排，下方记下每个困惑度给出的结果',
       ar: 'تصور t-SNE: المواقع الحقيقية بجوار الصورة المسطّحة، مع سجل لما أعطاه كل بيربلكستي',
       es: 'Visualización de t-SNE: las posiciones reales junto a la imagen aplanada, con un registro de lo que dio cada perplejidad',
       fr: "Visualisation t-SNE : les positions réelles à côté de l'image aplatie, avec un registre de ce que chaque perplexité a donné",
@@ -367,6 +411,8 @@ export const tsneFacet: FacetJson = {
           label: {
             en: 'Perplexity',
             ko: '퍼플렉시티',
+            ja: 'パープレキシティ',
+            zh: '困惑度',
             ar: 'بيربلكستي',
             es: 'Perplejidad',
             fr: 'Perplexité',
@@ -387,6 +433,8 @@ export const tsneFacet: FacetJson = {
           label: {
             en: 'steps run',
             ko: '돈 걸음 수',
+            ja: '進んだ手順数',
+            zh: '已走步数',
             ar: 'الخطوات المنفَّذة',
             es: 'pasos dados',
             fr: 'pas effectués',
@@ -401,6 +449,8 @@ export const tsneFacet: FacetJson = {
           label: {
             en: 'separation now',
             ko: '지금 갈림',
+            ja: '現在の分離度',
+            zh: '当前分离度',
             ar: 'الانفصال الآن',
             es: 'separación ahora',
             fr: 'séparation actuelle',
@@ -415,6 +465,8 @@ export const tsneFacet: FacetJson = {
           label: {
             en: 'gap ratio',
             ko: '무리 사이 비',
+            ja: '集まり間の比',
+            zh: '群间距之比',
             ar: 'نسبة الفجوة',
             es: 'razón de huecos',
             fr: 'rapport des écarts',

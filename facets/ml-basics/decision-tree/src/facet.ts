@@ -43,6 +43,8 @@ export const decisionTreeFacet: FacetJson = {
   title: {
     en: 'Decision Tree — When Should the Questions Stop?',
     ko: '의사결정 트리 — 질문은 언제 멈춰야 하는가',
+    ja: '決定木 — 質問はどこで止めるべきか',
+    zh: '决策树 — 提问该在何时停下',
     ar: 'شجرة القرار — متى ينبغي أن تتوقف الأسئلة؟',
     es: 'Árbol de decisión: ¿cuándo deben parar las preguntas?',
     fr: 'Arbre de décision — quand les questions doivent-elles cesser ?',
@@ -53,6 +55,8 @@ export const decisionTreeFacet: FacetJson = {
   description: {
     en: 'Each node tries every cut and keeps the least mixed one, then asks again on both sides — raise the depth cap and watch the gain run out.',
     ko: '노드마다 모든 자름을 시험해 가장 덜 섞이는 것을 고르고 양쪽에 다시 묻는다 — 깊이 상한을 올려 가며 얻는 것이 어디서 끝나는지 본다.',
+    ja: 'ノードごとにすべての切り方を試し、最も混ざりの少ないものを選んで両側でまた問う — 深さの上限を上げて、得るものが尽きる地点を見る。',
+    zh: '每个节点都试遍所有切法，留下混杂最少的那一刀，再对两边继续追问 — 抬高深度上限，看看收益在哪里耗尽。',
     ar: 'تجرّب كل عقدة جميع القطوع وتحتفظ بأقلها اختلاطًا ثم تسأل مجددًا على الجانبين — ارفع حدّ العمق وراقب متى ينفد المكسب.',
     es: 'Cada nodo prueba todos los cortes, se queda con el menos mezclado y vuelve a preguntar en ambos lados: sube el tope de profundidad y mira dónde se agota la ganancia.',
     fr: "Chaque nœud essaie toutes les coupes, garde la moins mélangée puis redemande des deux côtés — augmentez le plafond de profondeur et voyez le gain s'épuiser.",
@@ -82,6 +86,8 @@ export const decisionTreeFacet: FacetJson = {
     'label.scatter': {
       en: 'Eighteen labelled points',
       ko: '이름표 붙은 점 열여덟',
+      ja: 'ラベル付きの点、十八',
+      zh: '带标签的十八个点',
       ar: 'ثماني عشرة نقطة موسومة',
       es: 'Dieciocho puntos etiquetados',
       fr: 'Dix-huit points étiquetés',
@@ -92,6 +98,8 @@ export const decisionTreeFacet: FacetJson = {
     'label.tree': {
       en: 'The tree it grows',
       ko: '길러 낸 나무',
+      ja: '育った木',
+      zh: '长出来的树',
       ar: 'الشجرة التي تنمو',
       es: 'El árbol que crece',
       fr: "L'arbre qui pousse",
@@ -102,6 +110,8 @@ export const decisionTreeFacet: FacetJson = {
     'label.aria': {
       en: 'A decision tree growing: each question drawn as a cut on the point board',
       ko: '자라는 의사결정 트리 — 질문 하나가 판 위의 자름선 하나로 그려진다',
+      ja: '育っていく決定木 — 質問一つが点の盤上の切り線一本として描かれる',
+      zh: '正在生长的决策树 — 每个问题都画成点阵板上的一刀',
       ar: 'شجرة قرار تنمو: كل سؤال مرسوم كقطع على لوح النقاط',
       es: 'Un árbol de decisión creciendo: cada pregunta dibujada como un corte en el tablero de puntos',
       fr: "Un arbre de décision qui pousse : chaque question tracée comme une coupe sur le tableau de points",
@@ -112,6 +122,8 @@ export const decisionTreeFacet: FacetJson = {
     'caption.start': {
       en: 'At every node, try each cut and keep the one that mixes least.',
       ko: '노드마다 자름을 하나씩 시험해 가장 덜 섞이는 것을 고른다.',
+      ja: 'ノードごとに切り方を一つずつ試し、最も混ざりの少ないものを選ぶ。',
+      zh: '在每个节点上逐一试切，留下混杂最少的那一刀。',
       ar: 'عند كل عقدة، جرّب كل قطع واحتفظ بأقلها اختلاطًا.',
       es: 'En cada nodo, prueba cada corte y quédate con el que menos mezcla.',
       fr: 'À chaque nœud, essayer chaque coupe et garder celle qui mélange le moins.',
@@ -122,6 +134,8 @@ export const decisionTreeFacet: FacetJson = {
     'caption.open': {
       en: 'Node {id} at depth {depth} — A {a}, B {b}, gini {gini}.',
       ko: '깊이 {depth} 의 노드 {id} — A {a}, B {b}, 지니 {gini}.',
+      ja: '深さ {depth} のノード {id} — A {a}、B {b}、ジニ {gini}。',
+      zh: '深度 {depth} 的节点 {id} — A {a}，B {b}，基尼 {gini}。',
       ar: 'العقدة {id} على العمق {depth} — A {a}، B {b}، جيني {gini}.',
       es: 'Nodo {id} a profundidad {depth} — A {a}, B {b}, gini {gini}.',
       fr: 'Nœud {id} à la profondeur {depth} — A {a}, B {b}, gini {gini}.',
@@ -132,6 +146,8 @@ export const decisionTreeFacet: FacetJson = {
     'caption.axis': {
       en: 'Lining the points up along {axis}.',
       ko: '점들을 {axis} 축으로 줄 세운다.',
+      ja: '点を {axis} 軸に沿って並べる。',
+      zh: '把点沿 {axis} 轴排开。',
       ar: 'ترتيب النقاط على المحور {axis}.',
       es: 'Alineando los puntos según {axis}.',
       fr: 'Alignement des points selon {axis}.',
@@ -142,6 +158,8 @@ export const decisionTreeFacet: FacetJson = {
     'caption.try': {
       en: 'Trying {axis} < {cut} — weighted gini {wgini}.',
       ko: '시험: {axis} < {cut} — 가중 지니 {wgini}.',
+      ja: '試す: {axis} < {cut} — 加重ジニ {wgini}。',
+      zh: '试试 {axis} < {cut} — 加权基尼 {wgini}。',
       ar: 'تجربة {axis} < {cut} — جيني موزون {wgini}.',
       es: 'Probando {axis} < {cut} — gini ponderado {wgini}.',
       fr: 'Essai de {axis} < {cut} — gini pondéré {wgini}.',
@@ -152,6 +170,8 @@ export const decisionTreeFacet: FacetJson = {
     'caption.best': {
       en: 'Best so far — {axis} < {cut}, gini falls by {drop}.',
       ko: '지금까지 가장 좋은 것 — {axis} < {cut}, 줄어든 폭 {drop}.',
+      ja: 'いまのところ最良 — {axis} < {cut}、ジニは {drop} 下がる。',
+      zh: '目前最好的 — {axis} < {cut}，基尼下降 {drop}。',
       ar: 'الأفضل حتى الآن — {axis} < {cut}، انخفاض جيني {drop}.',
       es: 'Lo mejor hasta ahora — {axis} < {cut}, el gini baja {drop}.',
       fr: "Le meilleur jusqu'ici — {axis} < {cut}, le gini baisse de {drop}.",
@@ -162,6 +182,8 @@ export const decisionTreeFacet: FacetJson = {
     'caption.partition': {
       en: 'Dealing the points into two piles at {axis} < {cut}.',
       ko: '두 무리로 가른다 — {axis} < {cut}.',
+      ja: '{axis} < {cut} で点を二つの山に分ける。',
+      zh: '按 {axis} < {cut} 把点分成两堆。',
       ar: 'توزيع النقاط إلى كومتين عند {axis} < {cut}.',
       es: 'Repartiendo los puntos en dos montones en {axis} < {cut}.',
       fr: 'Répartition des points en deux tas à {axis} < {cut}.',
@@ -172,6 +194,8 @@ export const decisionTreeFacet: FacetJson = {
     'caption.split': {
       en: 'Node {id} settles on {axis} < {cut} — gini falls by {drop}.',
       ko: '노드 {id} 의 질문은 {axis} < {cut} — 줄어든 폭 {drop}.',
+      ja: 'ノード {id} の質問は {axis} < {cut} に決まった — ジニは {drop} 下がる。',
+      zh: '节点 {id} 定下 {axis} < {cut} — 基尼下降 {drop}。',
       ar: 'العقدة {id} تستقر على {axis} < {cut} — انخفاض جيني {drop}.',
       es: 'El nodo {id} se queda con {axis} < {cut} — el gini baja {drop}.',
       fr: 'Le nœud {id} retient {axis} < {cut} — le gini baisse de {drop}.',
@@ -182,6 +206,8 @@ export const decisionTreeFacet: FacetJson = {
     'caption.recurseLeft': {
       en: 'The same question again, now on the left pile.',
       ko: '같은 물음을 다시 — 이번에는 왼쪽 무리에.',
+      ja: '同じ問いをもう一度 — 今度は左の山に。',
+      zh: '同样的问题再来一次 — 这回问左边那堆。',
       ar: 'السؤال نفسه مرة أخرى، الآن على الكومة اليسرى.',
       es: 'La misma pregunta otra vez, ahora sobre el montón izquierdo.',
       fr: 'La même question à nouveau, cette fois sur le tas de gauche.',
@@ -192,6 +218,8 @@ export const decisionTreeFacet: FacetJson = {
     'caption.recurseRight': {
       en: 'The same question again, now on the right pile.',
       ko: '같은 물음을 다시 — 이번에는 오른쪽 무리에.',
+      ja: '同じ問いをもう一度 — 今度は右の山に。',
+      zh: '同样的问题再来一次 — 这回问右边那堆。',
       ar: 'السؤال نفسه مرة أخرى، الآن على الكومة اليمنى.',
       es: 'La misma pregunta otra vez, ahora sobre el montón derecho.',
       fr: 'La même question à nouveau, cette fois sur le tas de droite.',
@@ -202,6 +230,8 @@ export const decisionTreeFacet: FacetJson = {
     'caption.leaf': {
       en: 'A leaf — A {a}, B {b}. It answers {label}.',
       ko: '잎이다 — A {a}, B {b}. 이 자리의 답은 {label}.',
+      ja: '葉だ — A {a}、B {b}。ここの答えは {label}。',
+      zh: '这是叶子 — A {a}，B {b}。它的答案是 {label}。',
       ar: 'ورقة — A {a}، B {b}. جوابها {label}.',
       es: 'Una hoja — A {a}, B {b}. Responde {label}.',
       fr: 'Une feuille — A {a}, B {b}. Elle répond {label}.',
@@ -212,6 +242,8 @@ export const decisionTreeFacet: FacetJson = {
     'caption.snapshot': {
       en: 'Depth cap {depthLimit} — the tree regrown to that cap.',
       ko: '깊이 상한 {depthLimit} — 그 상한으로 나무를 다시 길렀다.',
+      ja: '深さの上限 {depthLimit} — その上限で木を育て直した。',
+      zh: '深度上限 {depthLimit} — 树按这个上限重新长了一遍。',
       ar: 'حدّ العمق {depthLimit} — أُعيد إنماء الشجرة حتى هذا الحد.',
       es: 'Tope de profundidad {depthLimit} — el árbol vuelto a crecer hasta ese tope.',
       fr: "Plafond de profondeur {depthLimit} — arbre repoussé jusqu'à ce plafond.",
@@ -222,6 +254,8 @@ export const decisionTreeFacet: FacetJson = {
     'caption.done': {
       en: 'Depth cap {depthLimit} — the tree has stopped growing.',
       ko: '깊이 상한 {depthLimit} — 나무가 다 자랐다.',
+      ja: '深さの上限 {depthLimit} — 木は育ちきった。',
+      zh: '深度上限 {depthLimit} — 树不再长了。',
       ar: 'حدّ العمق {depthLimit} — توقفت الشجرة عن النمو.',
       es: 'Tope de profundidad {depthLimit} — el árbol dejó de crecer.',
       fr: "Plafond de profondeur {depthLimit} — l'arbre a cessé de pousser.",
@@ -232,6 +266,8 @@ export const decisionTreeFacet: FacetJson = {
     'summary.line': {
       en: 'depth cap {depthLimit} · leaves {leafCount} · correct {correct} of {total}',
       ko: '깊이 상한 {depthLimit} · 잎 {leafCount} · 맞힌 것은 {correct}/{total}',
+      ja: '深さの上限 {depthLimit} · 葉 {leafCount} · 正解 {correct}/{total}',
+      zh: '深度上限 {depthLimit} · 叶子 {leafCount} · 答对 {correct}/{total}',
       ar: 'حدّ العمق {depthLimit} · أوراق {leafCount} · صحيح {correct} من {total}',
       es: 'tope {depthLimit} · hojas {leafCount} · aciertos {correct} de {total}',
       fr: 'plafond {depthLimit} · feuilles {leafCount} · justes {correct} sur {total}',
@@ -242,6 +278,8 @@ export const decisionTreeFacet: FacetJson = {
     'verdict.gain': {
       en: 'One more question, and more points land right — {correct} of {total}.',
       ko: '한 걸음 더 물으니 맞히는 것이 늘었다 — {correct}/{total}.',
+      ja: 'もう一つ問うと、当たる点が増えた — {correct}/{total}。',
+      zh: '多问一层，答对的点变多了 — {correct}/{total}。',
       ar: 'سؤال إضافي واحد، ونقاط أكثر تقع في مكانها — {correct} من {total}.',
       es: 'Una pregunta más y más puntos caen bien — {correct} de {total}.',
       fr: 'Une question de plus, et plus de points tombent juste — {correct} sur {total}.',
@@ -252,6 +290,8 @@ export const decisionTreeFacet: FacetJson = {
     'verdict.noGain': {
       en: 'One more question, and nothing was gained — still {correct} right out of {total}.',
       ko: '한 걸음 더 물었지만 늘지 않았다 — 그대로 {correct}/{total}.',
+      ja: 'もう一つ問いを足しても増えない — {correct}/{total} のままだ。',
+      zh: '多问一层，却什么也没多得 — 还是 {correct}/{total}。',
       ar: 'سؤال إضافي واحد، ولم يُكسب شيء — ما زال {correct} من {total}.',
       es: 'Una pregunta más y nada se ganó — siguen {correct} de {total}.',
       fr: 'Une question de plus, et rien de gagné — toujours {correct} sur {total}.',
@@ -262,6 +302,8 @@ export const decisionTreeFacet: FacetJson = {
     'verdict.onePoint': {
       en: 'The last questions fence off a single point. {correct} of {total} — the tree has learned the noise by heart.',
       ko: '마지막 질문들이 점 하나만을 위해 칸을 낸다. {correct}/{total} — 잡음을 외운 것이다.',
+      ja: '最後の質問たちは点一つのために枠を切っている。{correct}/{total} — 雑音を丸暗記したのだ。',
+      zh: '最后几问只是为一个点圈出一块地。{correct}/{total} — 这棵树把噪声背下来了。',
       ar: 'الأسئلة الأخيرة تسيّج نقطة واحدة فقط. {correct} من {total} — حفظت الشجرة الضجيج عن ظهر قلب.',
       es: 'Las últimas preguntas acotan un solo punto. {correct} de {total} — el árbol se aprendió el ruido de memoria.',
       fr: "Les dernières questions clôturent un seul point. {correct} sur {total} — l'arbre a appris le bruit par cœur.",
@@ -283,6 +325,8 @@ export const decisionTreeFacet: FacetJson = {
           label: {
             en: 'Depth cap',
             ko: '깊이 상한',
+            ja: '深さの上限',
+            zh: '深度上限',
             ar: 'حدّ العمق',
             es: 'Tope de profundidad',
             fr: 'Plafond de profondeur',
@@ -305,6 +349,8 @@ export const decisionTreeFacet: FacetJson = {
           label: {
             en: 'Cuts tried',
             ko: '시험한 자름',
+            ja: '試した切り方',
+            zh: '试过的切法',
             ar: 'قطوع مجرَّبة',
             es: 'Cortes probados',
             fr: 'Coupes essayées',
@@ -319,6 +365,8 @@ export const decisionTreeFacet: FacetJson = {
           label: {
             en: 'Leaves',
             ko: '잎',
+            ja: '葉',
+            zh: '叶子',
             ar: 'أوراق',
             es: 'Hojas',
             fr: 'Feuilles',
@@ -333,6 +381,8 @@ export const decisionTreeFacet: FacetJson = {
           label: {
             en: 'Correct',
             ko: '맞힌 수',
+            ja: '正解',
+            zh: '答对',
             ar: 'صحيح',
             es: 'Aciertos',
             fr: 'Justes',
@@ -349,6 +399,8 @@ export const decisionTreeFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',

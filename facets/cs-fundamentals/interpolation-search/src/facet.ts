@@ -23,6 +23,8 @@ export const interpolationSearchFacet: FacetJson = {
   title: {
     en: 'Interpolation Search',
     ko: '보간 탐색',
+    ja: '補間探索',
+    zh: '插值查找',
     ar: 'البحث بالاستيفاء',
     es: 'Búsqueda por interpolación',
     fr: 'Recherche par interpolation',
@@ -33,6 +35,8 @@ export const interpolationSearchFacet: FacetJson = {
   description: {
     en: 'Aim by size instead of splitting in half — one line separates it from binary search.',
     ko: '반으로 가르는 대신 값의 크기로 자리를 겨눈다 — 이진 탐색과 딱 한 줄이 다르다',
+    ja: '半分に割る代わりに値の大きさで狙う — 二分探索との違いはたった一行だ。',
+    zh: '不再对半切分，而是按值的大小瞄准 — 与二分查找只差一行。',
     ar: 'صوّب حسب حجم القيمة بدل التنصيف — سطر واحد يفصله عن البحث الثنائي.',
     es: 'Apunta por el tamaño en vez de partir por la mitad: una sola línea lo separa de la búsqueda binaria.',
     fr: 'Viser selon la taille au lieu de couper en deux — une seule ligne le sépare de la recherche binaire.',
@@ -64,7 +68,7 @@ export const interpolationSearchFacet: FacetJson = {
           name: 'probe-count',
           label: {
             en: 'Probe',
-            ko: '겨눔',
+            ko: '겨눔', ja: '狙い', zh: '试探',
             ar: 'تصويب',
             es: 'Sondeo',
             fr: 'Sondage',
@@ -78,7 +82,7 @@ export const interpolationSearchFacet: FacetJson = {
           name: 'halving-count',
           label: {
             en: 'Halving',
-            ko: '반 접기',
+            ko: '반 접기', ja: '半分に折る', zh: '折半',
             ar: 'تنصيف',
             es: 'Bisección',
             fr: 'Dichotomie',
@@ -94,7 +98,7 @@ export const interpolationSearchFacet: FacetJson = {
       type: 'code-view',
       label: {
         en: 'Code',
-        ko: '코드',
+        ko: '코드', ja: 'コード', zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -109,6 +113,8 @@ export const interpolationSearchFacet: FacetJson = {
     'label.aimTrack': {
       en: 'Aiming',
       ko: '겨눔',
+      ja: '狙い',
+      zh: '瞄准',
       ar: 'التصويب',
       es: 'Apuntando',
       fr: 'Visée',
@@ -119,6 +125,8 @@ export const interpolationSearchFacet: FacetJson = {
     'label.halveTrack': {
       en: 'Halving',
       ko: '반 접기',
+      ja: '半分に割る',
+      zh: '对半切分',
       ar: 'التنصيف',
       es: 'Bisección',
       fr: 'Dichotomie',
@@ -129,6 +137,8 @@ export const interpolationSearchFacet: FacetJson = {
     'caption.start': {
       en: 'The values are evenly spread — so size can point at a seat.',
       ko: '값이 고르게 퍼져 있다 — 그래서 크기가 자리를 가리킬 수 있다',
+      ja: '値は均等に散らばっている — だから大きさが席を指し示せる。',
+      zh: '这些值分布均匀 — 所以大小可以指出座位。',
       ar: 'القيم موزّعة بانتظام — لذا يستطيع الحجم أن يشير إلى موضع.',
       es: 'Los valores están repartidos de forma pareja, así que el tamaño puede señalar un puesto.',
       fr: 'Les valeurs sont réparties régulièrement — la taille peut donc désigner une place.',
@@ -139,6 +149,8 @@ export const interpolationSearchFacet: FacetJson = {
     'caption.begin': {
       en: 'Look for {target}.',
       ko: '{target} 을 찾는다',
+      ja: '{target} を探す。',
+      zh: '寻找 {target}。',
       ar: 'ابحث عن {target}.',
       es: 'Busca {target}.',
       fr: 'Chercher {target}.',
@@ -149,6 +161,8 @@ export const interpolationSearchFacet: FacetJson = {
     'caption.inRange': {
       en: 'The wanted value lies between {low} and {high} — aiming is safe.',
       ko: '찾는 값이 {low} 와 {high} 사이에 있다 — 겨눠도 된다',
+      ja: '探す値は {low} と {high} のあいだにある — 狙っても大丈夫だ。',
+      zh: '所找的值在 {low} 与 {high} 之间 — 可以放心瞄准。',
       ar: 'القيمة المطلوبة تقع بين {low} و {high} — التصويب آمن.',
       es: 'El valor buscado está entre {low} y {high}: apuntar es seguro.',
       fr: 'La valeur cherchée est entre {low} et {high} — viser est sûr.',
@@ -159,6 +173,8 @@ export const interpolationSearchFacet: FacetJson = {
     'caption.outOfRange': {
       en: 'The wanted value is outside {low}..{high} — aiming would point off the array.',
       ko: '찾는 값이 {low}..{high} 밖이다 — 겨누면 배열 밖을 가리킨다',
+      ja: '探す値は {low}..{high} の外だ — 狙えば配列の外を指してしまう。',
+      zh: '所找的值在 {low}..{high} 之外 — 瞄准会指到数组外面。',
       ar: 'القيمة المطلوبة خارج {low}..{high} — التصويب سيشير خارج المصفوفة.',
       es: 'El valor buscado está fuera de {low}..{high}: apuntar señalaría fuera del arreglo.',
       fr: 'La valeur cherchée est hors de {low}..{high} — viser pointerait hors du tableau.',
@@ -169,6 +185,8 @@ export const interpolationSearchFacet: FacetJson = {
     'caption.probe': {
       en: 'Size aims at seat {mid} — not the middle, but where it should be.',
       ko: '크기가 {mid} 번 자리를 겨눈다 — 가운데가 아니라 있을 법한 자리다',
+      ja: '大きさが {mid} 番の席を狙う — 真ん中ではなく、あるはずの場所だ。',
+      zh: '大小瞄准第 {mid} 个座位 — 不是正中间，而是它应该在的地方。',
       ar: 'الحجم يصوّب إلى الموضع {mid} — ليس المنتصف بل حيث يُتوقّع أن يكون.',
       es: 'El tamaño apunta al puesto {mid}: no al centro, sino donde debería estar.',
       fr: 'La taille vise la place {mid} — pas le milieu, mais là où elle devrait être.',
@@ -179,6 +197,8 @@ export const interpolationSearchFacet: FacetJson = {
     'caption.tooSmall': {
       en: 'Seat {index} holds {value} — smaller than {target}.',
       ko: '{index} 번 자리는 {value} — {target} 보다 작다',
+      ja: '{index} 番の席は {value} — {target} より小さい。',
+      zh: '第 {index} 个座位是 {value} — 比 {target} 小。',
       ar: 'الموضع {index} يحمل {value} — أصغر من {target}.',
       es: 'El puesto {index} tiene {value}: menor que {target}.',
       fr: 'La place {index} contient {value} — plus petit que {target}.',
@@ -189,6 +209,8 @@ export const interpolationSearchFacet: FacetJson = {
     'caption.tooBig': {
       en: 'Seat {index} holds {value} — larger than {target}.',
       ko: '{index} 번 자리는 {value} — {target} 보다 크다',
+      ja: '{index} 番の席は {value} — {target} より大きい。',
+      zh: '第 {index} 个座位是 {value} — 比 {target} 大。',
       ar: 'الموضع {index} يحمل {value} — أكبر من {target}.',
       es: 'El puesto {index} tiene {value}: mayor que {target}.',
       fr: 'La place {index} contient {value} — plus grand que {target}.',
@@ -199,6 +221,8 @@ export const interpolationSearchFacet: FacetJson = {
     'caption.hit': {
       en: 'Seat {index} holds {value}. That is the one.',
       ko: '{index} 번 자리가 {value} 다. 바로 그것이다',
+      ja: '{index} 番の席が {value} だ。これがそれだ。',
+      zh: '第 {index} 个座位是 {value}。就是它。',
       ar: 'الموضع {index} يحمل {value}. هذا هو المطلوب.',
       es: 'El puesto {index} tiene {value}. Es ese.',
       fr: "La place {index} contient {value}. C'est bien elle.",
@@ -209,6 +233,8 @@ export const interpolationSearchFacet: FacetJson = {
     'caption.dropLeft': {
       en: 'Seat {mid} and everything left of it goes.',
       ko: '{mid} 번 자리와 그 왼쪽을 통째로 버린다',
+      ja: '{mid} 番の席とその左をまとめて捨てる。',
+      zh: '第 {mid} 个座位连同左边的全部丢掉。',
       ar: 'يُستبعد الموضع {mid} وكل ما على يساره.',
       es: 'Se descarta el puesto {mid} y todo lo que está a su izquierda.',
       fr: 'La place {mid} et tout ce qui est à sa gauche sont abandonnés.',
@@ -219,6 +245,8 @@ export const interpolationSearchFacet: FacetJson = {
     'caption.dropRight': {
       en: 'Seat {mid} and everything right of it goes.',
       ko: '{mid} 번 자리와 그 오른쪽을 통째로 버린다',
+      ja: '{mid} 番の席とその右をまとめて捨てる。',
+      zh: '第 {mid} 个座位连同右边的全部丢掉。',
       ar: 'يُستبعد الموضع {mid} وكل ما على يمينه.',
       es: 'Se descarta el puesto {mid} y todo lo que está a su derecha.',
       fr: 'La place {mid} et tout ce qui est à sa droite sont abandonnés.',
@@ -229,6 +257,8 @@ export const interpolationSearchFacet: FacetJson = {
     'caption.found': {
       en: 'Found at seat {index}. Probes so far: {probes}.',
       ko: '{index} 번 자리에서 찾았다. 겨눔 {probes}',
+      ja: '{index} 番の席で見つかった。狙いは {probes} 回。',
+      zh: '在第 {index} 个座位找到了。瞄准 {probes} 次。',
       ar: 'وُجد في الموضع {index}. عدد التصويبات: {probes}.',
       es: 'Encontrado en el puesto {index}. Sondeos: {probes}.',
       fr: 'Trouvé à la place {index}. Sondages : {probes}.',
@@ -239,6 +269,8 @@ export const interpolationSearchFacet: FacetJson = {
     'caption.missed': {
       en: '{target} is not in this array.',
       ko: '{target} 는 이 배열에 없다',
+      ja: '{target} はこの配列にない。',
+      zh: '{target} 不在这个数组里。',
       ar: '{target} ليس في هذه المصفوفة.',
       es: '{target} no está en este arreglo.',
       fr: "{target} n'est pas dans ce tableau.",
@@ -249,6 +281,8 @@ export const interpolationSearchFacet: FacetJson = {
     'caption.halveBegin': {
       en: 'Now the same array, halved blindly — how many steps?',
       ko: '이제 같은 배열을 눈 감고 반씩 접는다 — 몇 걸음일까',
+      ja: '今度は同じ配列を目をつぶって半分ずつ割る — 何歩かかるか。',
+      zh: '现在把同一个数组闭着眼对半切分 — 要几步？',
       ar: 'الآن المصفوفة نفسها، بالتنصيف الأعمى — كم خطوة؟',
       es: 'Ahora el mismo arreglo, partido a ciegas por la mitad: ¿cuántos pasos?',
       fr: "Le même tableau, coupé en deux à l'aveugle — combien d'étapes ?",
@@ -259,6 +293,8 @@ export const interpolationSearchFacet: FacetJson = {
     'caption.halveProbe': {
       en: 'Halving takes the middle seat {mid} — {value}.',
       ko: '반 접기는 가운데 자리 {mid} 를 짚는다 — {value}',
+      ja: '半分に割るほうは真ん中の席 {mid} を取る — {value}。',
+      zh: '对半切分取中间的座位 {mid} — {value}。',
       ar: 'التنصيف يأخذ الموضع الأوسط {mid} — {value}.',
       es: 'La bisección toma el puesto central {mid}: {value}.',
       fr: 'La dichotomie prend la place centrale {mid} — {value}.',
@@ -269,6 +305,8 @@ export const interpolationSearchFacet: FacetJson = {
     'caption.halveHit': {
       en: 'Halving reaches it on step {step}.',
       ko: '반 접기는 {step} 걸음 만에 닿는다',
+      ja: '半分に割るほうは {step} 歩目で届く。',
+      zh: '对半切分在第 {step} 步才到。',
       ar: 'التنصيف يصل إليه في الخطوة {step}.',
       es: 'La bisección llega en el paso {step}.',
       fr: "La dichotomie y arrive à l'étape {step}.",
@@ -279,6 +317,8 @@ export const interpolationSearchFacet: FacetJson = {
     'caption.done': {
       en: 'Aiming {probes} against halving {halvings}.',
       ko: '겨눔 {probes} 대 반 접기 {halvings}',
+      ja: '狙い {probes} 対 半分に割る {halvings}。',
+      zh: '瞄准 {probes} 次，对半切分 {halvings} 次。',
       ar: 'التصويب {probes} مقابل التنصيف {halvings}.',
       es: 'Apuntar {probes} frente a bisecar {halvings}.',
       fr: 'Visée {probes} contre dichotomie {halvings}.',

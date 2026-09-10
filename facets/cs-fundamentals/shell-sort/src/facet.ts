@@ -21,6 +21,8 @@ export const shellSortFacet: FacetJson = {
   title: {
     en: 'Shell Sort',
     ko: '셸 정렬',
+    ja: 'シェルソート',
+    zh: '希尔排序',
     ar: 'ترتيب شل',
     es: 'Ordenamiento de Shell',
     fr: 'Tri de Shell',
@@ -31,6 +33,8 @@ export const shellSortFacet: FacetJson = {
   description: {
     en: 'Insertion sort taken with a stride — clear the far disorder first and the last pass has little left.',
     ko: '간격을 두고 하는 삽입 정렬 — 멀리 있는 어긋남을 먼저 걷어 내면 마지막 라운드가 할 일이 적다',
+    ja: '歩幅を広げた挿入ソート — 遠くの乱れを先に片づければ、最後の一巡に残る仕事は少ない。',
+    zh: '迈大步的插入排序 — 先清掉远处的错乱，最后一趟就没剩多少活。',
     ar: 'ترتيب بالإدراج بخطوة أوسع — أزِل الاختلال البعيد أولًا فلا يبقى للجولة الأخيرة الكثير.',
     es: 'Ordenamiento por inserción con zancada: quita primero el desorden lejano y a la última pasada le queda poco.',
     fr: "Tri par insertion à grandes enjambées — enlevez d'abord le désordre lointain et il reste peu à la dernière passe.",
@@ -59,6 +63,8 @@ export const shellSortFacet: FacetJson = {
           label: {
             en: 'Compare',
             ko: '견줌',
+            ja: '比較',
+            zh: '比较',
             ar: 'مقارنة',
             es: 'Comparar',
             fr: 'Comparer',
@@ -73,6 +79,8 @@ export const shellSortFacet: FacetJson = {
           label: {
             en: 'Shift',
             ko: '이동',
+            ja: '移動',
+            zh: '移动',
             ar: 'إزاحة',
             es: 'Desplazar',
             fr: 'Décaler',
@@ -87,6 +95,8 @@ export const shellSortFacet: FacetJson = {
           label: {
             en: 'Gap rounds',
             ko: '간격 라운드',
+            ja: '間隔ラウンド',
+            zh: '间隔轮数',
             ar: 'جولات الفجوة',
             es: 'Rondas de salto',
             fr: "Tours d'écart",
@@ -103,6 +113,8 @@ export const shellSortFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -117,6 +129,8 @@ export const shellSortFacet: FacetJson = {
     'label.gapSpan': {
       en: 'gap {gap}',
       ko: '간격 {gap}',
+      ja: '間隔 {gap}',
+      zh: '间隔 {gap}',
       ar: 'فجوة {gap}',
       es: 'salto {gap}',
       fr: 'écart {gap}',
@@ -127,6 +141,8 @@ export const shellSortFacet: FacetJson = {
     'label.shiftsWithGaps': {
       en: 'Shifts, with gaps',
       ko: '간격을 두면 이동',
+      ja: '間隔ありの移動',
+      zh: '有间隔时的移动',
       ar: 'إزاحات مع الفجوات',
       es: 'Desplazamientos con saltos',
       fr: 'Décalages avec écarts',
@@ -137,6 +153,8 @@ export const shellSortFacet: FacetJson = {
     'label.shiftsNeighbourOnly': {
       en: 'Shifts, gap 1 only',
       ko: '간격 1 만으로 하면 이동',
+      ja: '間隔 1 だけの移動',
+      zh: '仅间隔 1 时的移动',
       ar: 'إزاحات بفجوة 1 فقط',
       es: 'Desplazamientos solo con salto 1',
       fr: 'Décalages, écart 1 seulement',
@@ -147,6 +165,8 @@ export const shellSortFacet: FacetJson = {
     'caption.start': {
       en: 'Insertion sort, but the step is a gap instead of one cell.',
       ko: '삽입 정렬인데 걸음이 한 칸이 아니라 간격만큼이다',
+      ja: '挿入ソートだが、歩幅は一マスではなく間隔ぶんだ。',
+      zh: '还是插入排序，只是每步跨的不是一格，而是一个间隔。',
       ar: 'ترتيب بالإدراج، لكن الخطوة فجوة لا خانة واحدة.',
       es: 'Ordenamiento por inserción, pero el paso es un salto y no una casilla.',
       fr: "Tri par insertion, mais le pas est un écart et non une case.",
@@ -157,6 +177,8 @@ export const shellSortFacet: FacetJson = {
     'caption.baseline': {
       en: 'The same input with gap 1 only would shift {shifts} times. Watch that number.',
       ko: '같은 입력을 간격 1 만으로 하면 이동이 {shifts} 번이다. 이 수를 기억해 두자',
+      ja: '同じ入力を間隔 1 だけでやると移動は {shifts} 回。この数を覚えておこう。',
+      zh: '同样的输入若只用间隔 1，要移动 {shifts} 次。记住这个数。',
       ar: 'المدخل نفسه بفجوة 1 فقط يحتاج {shifts} إزاحة. تذكّر هذا الرقم.',
       es: 'La misma entrada solo con salto 1 haría {shifts} desplazamientos. Recuerda ese número.',
       fr: "La même entrée avec un écart de 1 seulement ferait {shifts} décalages. Retenez ce nombre.",
@@ -167,6 +189,8 @@ export const shellSortFacet: FacetJson = {
     'caption.roundGap': {
       en: 'Round {round} — gap {gap} splits the row into {chains} chains that never touch.',
       ko: '라운드 {round} — 간격 {gap} 이 줄을 서로 닿지 않는 사슬 {chains} 개로 가른다',
+      ja: 'ラウンド {round} — 間隔 {gap} が列を、互いに触れない {chains} 本の鎖に分ける。',
+      zh: '第 {round} 轮 — 间隔 {gap} 把这排分成 {chains} 条互不相碰的链。',
       ar: 'الجولة {round} — الفجوة {gap} تقسم الصف إلى {chains} سلاسل لا تتلامس.',
       es: 'Ronda {round}: el salto {gap} divide la fila en {chains} cadenas que no se tocan.',
       fr: "Tour {round} — l'écart {gap} divise la rangée en {chains} chaînes qui ne se touchent pas.",
@@ -177,6 +201,8 @@ export const shellSortFacet: FacetJson = {
     'caption.roundNeighbour': {
       en: 'Round {round} — gap 1. This is plain insertion sort, and little is left to do.',
       ko: '라운드 {round} — 간격 1. 보통의 삽입 정렬인데 할 일이 얼마 남지 않았다',
+      ja: 'ラウンド {round} — 間隔 1。ふつうの挿入ソートだが、やることはもう少ない。',
+      zh: '第 {round} 轮 — 间隔 1。这就是普通的插入排序，而且没剩多少活。',
       ar: 'الجولة {round} — فجوة 1. هذا ترتيب بالإدراج عادي، ولم يبقَ الكثير.',
       es: 'Ronda {round}: salto 1. Es el ordenamiento por inserción de siempre y queda poco por hacer.',
       fr: "Tour {round} — écart 1. C'est le tri par insertion ordinaire, et il reste peu à faire.",
@@ -187,6 +213,8 @@ export const shellSortFacet: FacetJson = {
     'caption.pick': {
       en: 'Lift {value} out of seat {index} — its seat is now a hole.',
       ko: '{index} 번 자리에서 {value} 를 집어 든다 — 그 자리는 구멍이 된다',
+      ja: '席 {index} から {value} を持ち上げる — その席は穴になる。',
+      zh: '把 {value} 从第 {index} 个位子上拿起 — 那个位子成了空洞。',
       ar: 'ارفع {value} من المقعد {index} — صار مقعده فجوة.',
       es: 'Levanta {value} del puesto {index}: su puesto queda como un hueco.',
       fr: 'On soulève {value} de la place {index} — sa place devient un trou.',
@@ -197,6 +225,8 @@ export const shellSortFacet: FacetJson = {
     'caption.compareGreater': {
       en: '{value} is larger than {held} — it must step aside.',
       ko: '{value} 는 {held} 보다 크다 — 비켜서야 한다',
+      ja: '{value} は {held} より大きい — わきへどかねばならない。',
+      zh: '{value} 比 {held} 大 — 得让开。',
       ar: '{value} أكبر من {held} — عليه أن يتنحّى.',
       es: '{value} es mayor que {held}: debe apartarse.',
       fr: '{value} est plus grand que {held} — il doit se décaler.',
@@ -207,6 +237,8 @@ export const shellSortFacet: FacetJson = {
     'caption.compareStop': {
       en: '{value} is not larger than {held} — the hole is home.',
       ko: '{value} 는 {held} 보다 크지 않다 — 구멍이 곧 자리다',
+      ja: '{value} は {held} より大きくない — 穴がその居場所だ。',
+      zh: '{value} 不比 {held} 大 — 空洞就是它的位置。',
       ar: '{value} ليس أكبر من {held} — الفجوة هي الموضع.',
       es: '{value} no es mayor que {held}: el hueco es su sitio.',
       fr: "{value} n'est pas plus grand que {held} — le trou est la bonne place.",
@@ -217,6 +249,8 @@ export const shellSortFacet: FacetJson = {
     'caption.shift': {
       en: '{value} steps aside: it moves right by {gap}, and the hole moves left.',
       ko: '{value} 가 비켜선다 — 오른쪽으로 {gap} 만큼 가고 구멍이 왼쪽으로 옮겨 간다',
+      ja: '{value} がわきへどく — 右へ {gap} だけ動き、穴は左へ移る。',
+      zh: '{value} 让开：向右移 {gap}，空洞往左挪。',
       ar: 'يتنحّى {value} — ينتقل يمينًا بمقدار {gap}، وتنتقل الفجوة يسارًا.',
       es: '{value} se aparta: avanza {gap} a la derecha y el hueco se mueve a la izquierda.',
       fr: '{value} se décale : il avance de {gap} vers la droite, et le trou va vers la gauche.',
@@ -227,6 +261,8 @@ export const shellSortFacet: FacetJson = {
     'caption.place': {
       en: '{value} drops into seat {index}.',
       ko: '{value} 가 {index} 번 자리에 내려앉는다',
+      ja: '{value} が席 {index} に降りる。',
+      zh: '{value} 落进第 {index} 个位子。',
       ar: 'يستقر {value} في المقعد {index}.',
       es: '{value} baja al puesto {index}.',
       fr: '{value} se pose sur la place {index}.',
@@ -237,6 +273,8 @@ export const shellSortFacet: FacetJson = {
     'caption.placeStay': {
       en: '{value} was already in place — nothing moved.',
       ko: '{value} 는 이미 제자리였다 — 움직인 것이 없다',
+      ja: '{value} はもとから所定の位置だった — 何も動かない。',
+      zh: '{value} 本来就在位子上 — 什么都没动。',
       ar: '{value} كان في موضعه أصلًا — لم يتحرك شيء.',
       es: '{value} ya estaba en su sitio: nada se movió.',
       fr: "{value} était déjà à sa place — rien n'a bougé.",
@@ -247,6 +285,8 @@ export const shellSortFacet: FacetJson = {
     'caption.roundEnd': {
       en: 'Gap {gap} done — {compares} compares, {shifts} shifts.',
       ko: '간격 {gap} 라운드 끝 — 견줌 {compares} 번, 이동 {shifts} 번',
+      ja: '間隔 {gap} のラウンドが終わった — 比較 {compares} 回、移動 {shifts} 回。',
+      zh: '间隔 {gap} 的一轮结束 — 比较 {compares} 次，移动 {shifts} 次。',
       ar: 'انتهت جولة الفجوة {gap} — {compares} مقارنة و {shifts} إزاحة.',
       es: 'Fin de la ronda con salto {gap}: {compares} comparaciones y {shifts} desplazamientos.',
       fr: "Fin du tour d'écart {gap} — {compares} comparaisons, {shifts} décalages.",
@@ -257,6 +297,8 @@ export const shellSortFacet: FacetJson = {
     'caption.done': {
       en: 'Sorted with {shifts} shifts instead of {baselineShifts} — the far rounds paid for it.',
       ko: '이동 {baselineShifts} 번이 아니라 {shifts} 번으로 정렬됐다 — 멀리 견준 앞 라운드가 벌어 준 몫이다',
+      ja: '移動 {baselineShifts} 回ではなく {shifts} 回で並んだ — 遠くを見たラウンドが稼いだぶんだ。',
+      zh: '只用 {shifts} 次移动就排好，而不是 {baselineShifts} 次 — 这是前面大间隔轮次挣来的。',
       ar: 'تم الترتيب بـ {shifts} إزاحة بدل {baselineShifts} — هذا ما وفّرته الجولات البعيدة.',
       es: 'Ordenado con {shifts} desplazamientos en vez de {baselineShifts}: lo ganaron las rondas de salto largo.',
       fr: "Trié en {shifts} décalages au lieu de {baselineShifts} — c'est ce que les tours à grand écart ont épargné.",

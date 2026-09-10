@@ -25,6 +25,8 @@ export const svmFacet: FacetJson = {
   title: {
     en: 'Support Vector Machine — When a Point Falls into the Gap',
     ko: '서포트 벡터 머신 — 틈 안에 점이 들어와 버리면',
+    ja: 'サポートベクターマシン — 隙間の中に点が入ってしまったら',
+    zh: '支持向量机 — 当一个点掉进缝里',
     ar: 'آلة متجهات الدعم — حين تقع نقطة داخل الفجوة',
     es: 'Máquina de vectores de soporte: cuando un punto cae dentro del hueco',
     fr: "Machine à vecteurs de support — quand un point tombe dans l'écart",
@@ -35,6 +37,8 @@ export const svmFacet: FacetJson = {
   description: {
     en: 'Hinge loss and subgradient descent, with C deciding how much error the widest gap may swallow',
     ko: '힌지 손실과 준경사하강. 가장 넓은 틈이 얼마만큼의 잘못을 삼켜도 되는지를 C 가 정한다',
+    ja: 'ヒンジ損失と劣勾配降下。最も広い隙間がどれだけの誤りを飲み込んでよいかを C が決める',
+    zh: '合页损失与次梯度下降，由 C 决定最宽的缝可以吞下多少错误',
     ar: 'خسارة المفصلة والنزول شبه التدرجي، مع C التي تقرر كم من الخطأ تبتلعه أوسع فجوة',
     es: 'Pérdida bisagra y descenso subgradiente, con C decidiendo cuánto error puede tragarse el hueco más ancho',
     fr: "Perte charnière et descente de sous-gradient, C décidant combien d'erreur le plus large écart peut avaler",
@@ -82,6 +86,8 @@ export const svmFacet: FacetJson = {
     'caption.clean': {
       en: 'Nothing sits inside the gap. Its width is {w}.',
       ko: '틈 안에 든 점이 없다. 폭은 {w}.',
+      ja: '隙間の中に入った点はない。幅は {w}。',
+      zh: '缝里没有点。宽度是 {w}。',
       ar: 'لا توجد نقطة داخل الفجوة. عرضها {w}.',
       es: 'Nada queda dentro del hueco. Su anchura es {w}.',
       fr: "Rien ne se trouve dans l'écart. Sa largeur est {w}.",
@@ -92,6 +98,8 @@ export const svmFacet: FacetJson = {
     'caption.inside': {
       en: 'Points inside the gap: {n}. None of them crossed the line. Width is {w}.',
       ko: '틈 안에 든 점의 수는 {n}. 어느 것도 선을 넘지는 않았다. 폭은 {w}.',
+      ja: '隙間の中に入った点は {n} 個。どれも線は越えていない。幅は {w}。',
+      zh: '掉进缝里的点有 {n} 个。都没有越过线。宽度是 {w}。',
       ar: 'النقاط داخل الفجوة: {n}. لم تعبر أي منها الخط. العرض {w}.',
       es: 'Puntos dentro del hueco: {n}. Ninguno cruzó la recta. Anchura {w}.',
       fr: "Points dans l'écart : {n}. Aucun n'a franchi la droite. Largeur {w}.",
@@ -102,6 +110,8 @@ export const svmFacet: FacetJson = {
     'caption.wrong': {
       en: 'Points across the line: {n}. It gave them up and opened the gap to {w}.',
       ko: '선을 넘어간 점의 수는 {n}. 그것을 포기하고 틈을 {w} 까지 벌렸다.',
+      ja: '線を越えた点は {n} 個。それを諦めて隙間を {w} まで広げた。',
+      zh: '越过线的点有 {n} 个。放弃了它们，把缝拉宽到 {w}。',
       ar: 'النقاط التي عبرت الخط: {n}. تخلّى عنها ووسّع الفجوة إلى {w}.',
       es: 'Puntos al otro lado de la recta: {n}. Los abandonó y abrió el hueco hasta {w}.',
       fr: "Points de l'autre côté de la droite : {n}. Il les abandonne et ouvre l'écart à {w}.",
@@ -112,6 +122,8 @@ export const svmFacet: FacetJson = {
     'caption.cChanged': {
       en: 'C moved to {c}. Trained again from zero.',
       ko: 'C = {c}. 0 에서 다시 훈련한다.',
+      ja: 'C = {c}。ゼロから訓練し直す。',
+      zh: 'C = {c}。从零重新训练。',
       ar: 'تغيّرت C إلى {c}. أُعيد التدريب من الصفر.',
       es: 'C pasó a {c}. Se entrenó de nuevo desde cero.',
       fr: 'C est passé à {c}. Réentraîné depuis zéro.',
@@ -122,6 +134,8 @@ export const svmFacet: FacetJson = {
     'caption.overlapOn': {
       en: 'One point moved into the middle of the other group. No straight line separates them now.',
       ko: '한 점이 반대 무리 한복판으로 옮겨 갔다. 이제 어떤 직선도 둘을 온전히 가르지 못한다.',
+      ja: '一つの点が反対の組の真ん中へ移った。もうどんな直線も二つを分けきれない。',
+      zh: '有一个点搬到了另一组的正中间。现在没有哪条直线能把两组分开。',
       ar: 'انتقلت نقطة واحدة إلى وسط المجموعة الأخرى. لم يعد أي خط مستقيم يفصل بينهما.',
       es: 'Un punto se movió al centro del otro grupo. Ya ninguna recta los separa.',
       fr: "Un point s'est déplacé au milieu de l'autre groupe. Aucune droite ne les sépare plus.",
@@ -132,6 +146,8 @@ export const svmFacet: FacetJson = {
     'caption.overlapOff': {
       en: 'That point went home. The two groups part cleanly again.',
       ko: '그 점이 제자리로 돌아왔다. 두 무리가 다시 깨끗이 갈린다.',
+      ja: 'その点が元の場所へ戻った。二つの組はまた綺麗に分かれる。',
+      zh: '那个点回到原处。两组又干干净净地分开了。',
       ar: 'عادت تلك النقطة إلى مكانها. تنفصل المجموعتان بوضوح من جديد.',
       es: 'Ese punto volvió a su sitio. Los dos grupos se separan otra vez con limpieza.',
       fr: 'Ce point est revenu à sa place. Les deux groupes se séparent de nouveau nettement.',
@@ -142,6 +158,8 @@ export const svmFacet: FacetJson = {
     'caption.tryKnobs': {
       en: 'Move C, or switch the overlap on.',
       ko: 'C 를 옮겨 보라. 겹침을 켜 보아도 된다.',
+      ja: 'C を動かしてみよう。重なりを入れてみてもいい。',
+      zh: '试着挪一挪 C，或者把重叠打开。',
       ar: 'حرّك C، أو شغّل التداخل.',
       es: 'Mueve C, o activa el solapamiento.',
       fr: 'Déplacez C, ou activez le chevauchement.',
@@ -152,6 +170,8 @@ export const svmFacet: FacetJson = {
     'label.aria': {
       en: 'Linear SVM with a soft margin — the band narrows as C rises',
       ko: '소프트 마진 선형 SVM — C 가 오르면 띠가 좁아진다',
+      ja: 'ソフトマージン線形 SVM — C が上がると帯が狭まる',
+      zh: '软间隔线性 SVM — C 越大，带子越窄',
       ar: 'آلة متجهات دعم خطية بهامش مرن — يضيق الشريط كلما ارتفعت C',
       es: 'SVM lineal con margen blando: la banda se estrecha al subir C',
       fr: 'SVM linéaire à marge souple — la bande se resserre quand C augmente',
@@ -162,6 +182,8 @@ export const svmFacet: FacetJson = {
     'label.step': {
       en: 'step {done} / {total}',
       ko: '{done} / {total} 걸음',
+      ja: '{done} / {total} 歩',
+      zh: '第 {done} / {total} 步',
       ar: 'خطوة {done} / {total}',
       es: 'paso {done} / {total}',
       fr: 'pas {done} / {total}',
@@ -172,6 +194,8 @@ export const svmFacet: FacetJson = {
     'label.ledger': {
       en: 'margin width for each C',
       ko: 'C 마다 벌어진 폭',
+      ja: 'C ごとのマージン幅',
+      zh: '每个 C 对应的间隔宽度',
       ar: 'عرض الهامش لكل C',
       es: 'anchura del margen para cada C',
       fr: 'largeur de marge pour chaque C',
@@ -182,6 +206,8 @@ export const svmFacet: FacetJson = {
     'legend.violator': {
       en: 'inside the band — it still pushes the line',
       ko: '띠 안에 든 점 — 아직 선을 민다',
+      ja: '帯の中の点 — まだ線を押している',
+      zh: '带子里的点 — 还在推着线',
       ar: 'داخل الشريط — ما زالت تدفع الخط',
       es: 'dentro de la banda: todavía empuja la recta',
       fr: "dans la bande — il pousse encore la droite",
@@ -192,6 +218,8 @@ export const svmFacet: FacetJson = {
     'legend.misplaced': {
       en: 'across the line — given up',
       ko: '선을 넘어간 점 — 포기한 것',
+      ja: '線を越えた点 — 諦めたもの',
+      zh: '越过线的点 — 被放弃的',
       ar: 'عبرت الخط — جرى التخلي عنها',
       es: 'al otro lado de la recta: abandonado',
       fr: "de l'autre côté de la droite — abandonné",
@@ -202,6 +230,8 @@ export const svmFacet: FacetJson = {
     'legend.origin': {
       en: 'where that point started',
       ko: '그 점이 있던 자리',
+      ja: 'その点があった場所',
+      zh: '那个点原来的位置',
       ar: 'حيث كانت تلك النقطة',
       es: 'donde estaba ese punto',
       fr: "l'endroit d'origine de ce point",
@@ -224,6 +254,8 @@ export const svmFacet: FacetJson = {
             // 손잡이의 이름만 적는다. 무엇을 뜻하는지는 캡션과 글이 말한다.
             en: 'C',
             ko: 'C',
+            ja: 'C',
+            zh: 'C',
             ar: 'C',
             es: 'C',
             fr: 'C',
@@ -243,6 +275,8 @@ export const svmFacet: FacetJson = {
           label: {
             en: '⇄ Overlap',
             ko: '⇄ 겹침',
+            ja: '⇄ 重なり',
+            zh: '⇄ 重叠',
             ar: '⇄ تداخل',
             es: '⇄ Solapamiento',
             fr: '⇄ Chevauchement',
@@ -258,6 +292,8 @@ export const svmFacet: FacetJson = {
           label: {
             en: 'Steps',
             ko: '걸음',
+            ja: '歩数',
+            zh: '步数',
             ar: 'الخطوات',
             es: 'Pasos',
             fr: 'Pas',
@@ -272,6 +308,8 @@ export const svmFacet: FacetJson = {
           label: {
             en: 'Margin width',
             ko: '마진 폭',
+            ja: 'マージン幅',
+            zh: '间隔宽度',
             ar: 'عرض الهامش',
             es: 'Anchura del margen',
             fr: 'Largeur de marge',
@@ -286,6 +324,8 @@ export const svmFacet: FacetJson = {
           label: {
             en: 'Inside the band',
             ko: '띠 안에 든 점',
+            ja: '帯の中',
+            zh: '带子里',
             ar: 'داخل الشريط',
             es: 'Dentro de la banda',
             fr: 'Dans la bande',
@@ -302,6 +342,8 @@ export const svmFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',

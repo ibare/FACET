@@ -20,6 +20,8 @@ export const topologicalSortFacet: FacetJson = {
   title: {
     en: 'Topological Sort',
     ko: '위상 정렬',
+    ja: 'トポロジカルソート',
+    zh: '拓扑排序',
     ar: 'الفرز الطوبولوجي',
     es: 'Orden topológico',
     fr: 'Tri topologique',
@@ -30,6 +32,8 @@ export const topologicalSortFacet: FacetJson = {
   description: {
     en: 'Take whatever has no arrow coming in — each one you take frees the next.',
     ko: '들어오는 화살이 없는 것부터 꺼낸다 — 꺼낼 때마다 다음 것이 풀린다',
+    ja: '入ってくる矢がないものから取り出す — 取るたびに次のものが解ける。',
+    zh: '先取没有箭头指进来的 — 每取走一个，下一个就松开了。',
     ar: 'خذ ما لا يدخله سهم — كل واحد تأخذه يحرّر التالي.',
     es: 'Saca lo que no recibe ninguna flecha: cada uno que sacas libera al siguiente.',
     fr: 'Prenez ce qui ne reçoit aucune flèche — chacun retiré libère le suivant.',
@@ -71,6 +75,8 @@ export const topologicalSortFacet: FacetJson = {
           label: {
             en: 'Taken out',
             ko: '꺼낸 것',
+            ja: '取り出した数',
+            zh: '已取出',
             ar: 'ما خرج',
             es: 'Sacados',
             fr: 'Sortis',
@@ -85,6 +91,8 @@ export const topologicalSortFacet: FacetJson = {
           label: {
             en: 'Into queue',
             ko: '줄에 든 것',
+            ja: '列に入った数',
+            zh: '入队',
             ar: 'دخل الطابور',
             es: 'A la cola',
             fr: 'Mis en file',
@@ -99,6 +107,8 @@ export const topologicalSortFacet: FacetJson = {
           label: {
             en: 'Arrows cleared',
             ko: '지운 화살',
+            ja: '消した矢',
+            zh: '已清箭头',
             ar: 'أسهم أُزيلت',
             es: 'Flechas quitadas',
             fr: 'Flèches effacées',
@@ -115,6 +125,8 @@ export const topologicalSortFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -129,6 +141,8 @@ export const topologicalSortFacet: FacetJson = {
     'label.graph': {
       en: 'Graph — the number on a vertex is how many arrows still point at it',
       ko: '그래프 — 정점에 붙은 수는 아직 그것을 가리키는 화살의 수',
+      ja: 'グラフ — 頂点の数字は、まだそこを指している矢の数',
+      zh: '图 — 顶点上的数字是仍指向它的箭头数',
       ar: 'الرسم البياني — الرقم على الرأس هو عدد الأسهم التي ما زالت تشير إليه',
       es: 'Grafo: el número en un vértice es cuántas flechas aún lo apuntan',
       fr: 'Graphe — le nombre sur un sommet indique combien de flèches le visent encore',
@@ -139,6 +153,8 @@ export const topologicalSortFacet: FacetJson = {
     'label.queue': {
       en: 'Queue — one array with a head and a tail',
       ko: '줄 — 배열 하나와 head · tail 두 색인',
+      ja: '列 — 配列一つと head・tail の二つの添字',
+      zh: '队列 — 一个数组，配 head 和 tail',
       ar: 'الطابور — مصفوفة واحدة برأس (head) وذيل (tail)',
       es: 'Cola: un único arreglo con head y tail',
       fr: 'File — un seul tableau avec head et tail',
@@ -149,6 +165,8 @@ export const topologicalSortFacet: FacetJson = {
     'label.order': {
       en: 'Order — what comes out, left to right',
       ko: '차례 — 나온 것이 왼쪽부터 쌓인다',
+      ja: '順番 — 出たものが左から並ぶ',
+      zh: '次序 — 取出的从左往右排',
       ar: 'الترتيب — ما يخرج، من اليسار إلى اليمين',
       es: 'Orden: lo que sale, de izquierda a derecha',
       fr: 'Ordre — ce qui sort, de gauche à droite',
@@ -159,6 +177,8 @@ export const topologicalSortFacet: FacetJson = {
     'label.tally': {
       en: 'out {taken} / {total}',
       ko: '꺼낸 것 {taken} / {total}',
+      ja: '取り出し {taken} / {total}',
+      zh: '已取 {taken} / {total}',
       ar: 'خرج {taken} / {total}',
       es: 'salidos {taken} / {total}',
       fr: 'sortis {taken} / {total}',
@@ -169,6 +189,8 @@ export const topologicalSortFacet: FacetJson = {
     'caption.start': {
       en: 'Nothing has come out yet. First, count the arrows.',
       ko: '아직 나온 것이 없다. 먼저 화살을 센다',
+      ja: 'まだ何も出ていない。まずは矢を数える。',
+      zh: '还没有任何东西出来。先数一数箭头。',
       ar: 'لم يخرج شيء بعد. أولًا نعدّ الأسهم.',
       es: 'Todavía no ha salido nada. Primero, cuenta las flechas.',
       fr: "Rien n'est encore sorti. D'abord, comptons les flèches.",
@@ -179,6 +201,8 @@ export const topologicalSortFacet: FacetJson = {
     'caption.count': {
       en: 'Count how many arrows come into each vertex.',
       ko: '정점마다 들어오는 화살이 몇인지 센다',
+      ja: '頂点ごとに入ってくる矢の数を数える。',
+      zh: '数一数每个顶点有多少箭头指进来。',
       ar: 'نعدّ كم سهمًا يدخل إلى كل رأس.',
       es: 'Cuenta cuántas flechas entran en cada vértice.',
       fr: 'Comptez combien de flèches entrent dans chaque sommet.',
@@ -189,6 +213,8 @@ export const topologicalSortFacet: FacetJson = {
     'caption.countEdge': {
       en: 'One more arrow reaches {v} — the count is now {value}.',
       ko: '{v} 번으로 화살이 하나 더 들어온다. 그 수는 이제 {value}',
+      ja: '{v} にもう一本の矢が届く — その数はいま {value}。',
+      zh: '又有一支箭到达 {v} — 计数现在是 {value}。',
       ar: 'سهم آخر يصل إلى {v} — العدد الآن {value}.',
       es: 'Otra flecha llega a {v}: la cuenta ahora es {value}.',
       fr: 'Une flèche de plus atteint {v} — le compte est maintenant {value}.',
@@ -199,6 +225,8 @@ export const topologicalSortFacet: FacetJson = {
     'caption.seed': {
       en: 'Whatever has no incoming arrow can go first.',
       ko: '들어오는 화살이 없는 것이 먼저 갈 수 있다',
+      ja: '入ってくる矢がないものが先に行ける。',
+      zh: '没有箭头指进来的可以先走。',
       ar: 'ما لا يدخله سهم يمكن أن يذهب أولًا.',
       es: 'Lo que no recibe ninguna flecha puede ir primero.',
       fr: 'Ce qui ne reçoit aucune flèche peut partir en premier.',
@@ -209,6 +237,8 @@ export const topologicalSortFacet: FacetJson = {
     'caption.enqueue': {
       en: 'Nothing points at {v} any more — it drops into the queue.',
       ko: '{v} 번을 가리키는 것이 이제 없다 — 줄로 떨어진다',
+      ja: 'もう {v} を指すものはない — 列に落ちる。',
+      zh: '再没有东西指向 {v} — 它落进队列。',
       ar: 'لم يعد شيء يشير إلى {v} — يسقط في الطابور.',
       es: 'Ya nada apunta a {v}: cae en la cola.',
       fr: 'Plus rien ne vise {v} — il tombe dans la file.',
@@ -219,6 +249,8 @@ export const topologicalSortFacet: FacetJson = {
     'caption.pop': {
       en: 'Take {v} from the head of the queue.',
       ko: '줄의 head 자리에서 {v} 번을 꺼낸다',
+      ja: '列の head から {v} を取り出す。',
+      zh: '从队列的 head 取出 {v}。',
       ar: 'نأخذ {v} من رأس الطابور.',
       es: 'Toma {v} de la cabeza de la cola.',
       fr: 'Prenez {v} en tête de la file.',
@@ -229,6 +261,8 @@ export const topologicalSortFacet: FacetJson = {
     'caption.emitOrder': {
       en: 'Write {v} into the order at place {slot}.',
       ko: '차례의 {slot} 번 자리에 {v} 번을 적는다',
+      ja: '順番の {slot} 番目に {v} を書き込む。',
+      zh: '把 {v} 写进次序的第 {slot} 位。',
       ar: 'نكتب {v} في الترتيب عند الموضع {slot}.',
       es: 'Escribe {v} en el orden, en la posición {slot}.',
       fr: "Écrivez {v} dans l'ordre, à la place {slot}.",
@@ -239,6 +273,8 @@ export const topologicalSortFacet: FacetJson = {
     'caption.relax': {
       en: '{u} is gone, so {v} now has {value} arrows left.',
       ko: '{u} 번이 빠졌으니 {v} 번에 남은 화살은 {value}',
+      ja: '{u} が抜けたので、{v} に残る矢は {value}。',
+      zh: '{u} 已经走了，所以 {v} 还剩 {value} 支箭。',
       ar: 'خرج {u}، فصار لدى {v} {value} من الأسهم المتبقية.',
       es: '{u} ya salió, así que a {v} le quedan {value} flechas.',
       fr: '{u} est sorti, il reste donc {value} flèches vers {v}.',
@@ -249,6 +285,8 @@ export const topologicalSortFacet: FacetJson = {
     'caption.cycleCheck': {
       en: 'Compare what came out against the number of vertices.',
       ko: '꺼낸 수를 정점 수와 견준다',
+      ja: '取り出した数を頂点の数と見比べる。',
+      zh: '把取出的数量与顶点数对照。',
       ar: 'نقارن ما خرج بعدد الرؤوس.',
       es: 'Compara lo que salió con el número de vértices.',
       fr: 'Comparez ce qui est sorti au nombre de sommets.',
@@ -259,6 +297,8 @@ export const topologicalSortFacet: FacetJson = {
     'caption.doneOk': {
       en: 'All {total} came out. The order is {order}.',
       ko: '{total} 개가 모두 나왔다. 차례는 {order}',
+      ja: '{total} 個すべてが出た。順番は {order}。',
+      zh: '{total} 个全部取出。次序是 {order}。',
       ar: 'خرجت الرؤوس {total} كلها. الترتيب هو {order}.',
       es: 'Salieron los {total}. El orden es {order}.',
       fr: "Les {total} sont tous sortis. L'ordre est {order}.",
@@ -269,6 +309,8 @@ export const topologicalSortFacet: FacetJson = {
     'caption.doneCycle': {
       en: 'Only {taken} of {total} came out — the rest hold each other back.',
       ko: '{total} 중에서 {taken} 만 나왔다 — 남은 것들이 서로를 막고 있다',
+      ja: '{total} のうち {taken} しか出なかった — 残りは互いを塞いでいる。',
+      zh: '{total} 个中只出来了 {taken} 个 — 剩下的彼此挡住。',
       ar: 'خرج {taken} فقط من {total} — والبقية يحجز بعضها بعضًا.',
       es: 'Solo salieron {taken} de {total}: los demás se bloquean entre sí.',
       fr: 'Seuls {taken} sur {total} sont sortis — les autres se bloquent mutuellement.',

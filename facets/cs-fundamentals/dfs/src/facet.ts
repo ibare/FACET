@@ -21,6 +21,8 @@ export const dfsFacet: FacetJson = {
   title: {
     en: 'Depth-First Search',
     ko: '깊이 우선 탐색',
+    ja: '深さ優先探索',
+    zh: '深度优先搜索',
     ar: 'البحث بالعمق أولًا',
     es: 'Búsqueda en profundidad',
     fr: 'Parcours en profondeur',
@@ -31,6 +33,8 @@ export const dfsFacet: FacetJson = {
   description: {
     en: 'Follow one branch to its end, then back out and take the next.',
     ko: '한 갈래를 끝까지 파고들었다가, 막히면 되짚어 나와 다음 갈래로 든다',
+    ja: '一つの枝を行き止まりまでたどり、戻って次の枝に入る。',
+    zh: '沿一条分支走到底，再退回来走下一条。',
     ar: 'اتبع فرعًا حتى نهايته، ثم ارجع وخذ الفرع التالي.',
     es: 'Sigue una rama hasta el final, luego vuelve atrás y toma la siguiente.',
     fr: "Suivre une branche jusqu'au bout, puis revenir et prendre la suivante.",
@@ -64,7 +68,7 @@ export const dfsFacet: FacetJson = {
           name: 'visit-count',
           label: {
             en: 'Visited',
-            ko: '본 정점',
+            ko: '본 정점', ja: '訪問済み', zh: '已访问',
             ar: 'تمت زيارتها',
             es: 'Visitados',
             fr: 'Visités',
@@ -78,7 +82,7 @@ export const dfsFacet: FacetJson = {
           name: 'skip-count',
           label: {
             en: 'Refused',
-            ko: '못 들어간 간선',
+            ko: '못 들어간 간선', ja: '入れなかった辺', zh: '未走的边',
             ar: 'حواف مرفوضة',
             es: 'Rechazadas',
             fr: 'Refusées',
@@ -92,7 +96,7 @@ export const dfsFacet: FacetJson = {
           name: 'max-depth',
           label: {
             en: 'Deepest',
-            ko: '가장 깊었던 스택',
+            ko: '가장 깊었던 스택', ja: '最も深いスタック', zh: '最深栈',
             ar: 'الأعمق',
             es: 'Más profundo',
             fr: 'Plus profond',
@@ -108,7 +112,7 @@ export const dfsFacet: FacetJson = {
       type: 'code-view',
       label: {
         en: 'Code',
-        ko: '코드',
+        ko: '코드', ja: 'コード', zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -123,6 +127,8 @@ export const dfsFacet: FacetJson = {
     'label.stack': {
       en: 'Call stack',
       ko: '호출 스택',
+      ja: 'コールスタック',
+      zh: '调用栈',
       ar: 'مكدس الاستدعاء',
       es: 'Pila de llamadas',
       fr: "Pile d'appels",
@@ -133,6 +139,8 @@ export const dfsFacet: FacetJson = {
     'label.order': {
       en: 'Visit order',
       ko: '방문 차례',
+      ja: '訪問順',
+      zh: '访问顺序',
       ar: 'ترتيب الزيارة',
       es: 'Orden de visita',
       fr: 'Ordre de visite',
@@ -143,6 +151,8 @@ export const dfsFacet: FacetJson = {
     'legend.dive': {
       en: 'dive into a branch',
       ko: '갈래로 파고듦',
+      ja: '枝へ潜る',
+      zh: '深入一条分支',
       ar: 'الغوص في فرع',
       es: 'entrar en una rama',
       fr: 'plonger dans une branche',
@@ -153,6 +163,8 @@ export const dfsFacet: FacetJson = {
     'legend.back': {
       en: 'come back out',
       ko: '되짚어 나옴',
+      ja: '戻ってくる',
+      zh: '退回来',
       ar: 'العودة للخارج',
       es: 'volver atrás',
       fr: 'ressortir',
@@ -163,6 +175,8 @@ export const dfsFacet: FacetJson = {
     'caption.start': {
       en: 'Start at {node}. Follow one branch as far as it goes.',
       ko: '시작은 {node}. 한 갈래를 끝까지 따라 내려간다',
+      ja: '{node} から始める。一つの枝を行けるところまでたどる。',
+      zh: '从 {node} 出发。沿着一条分支一直走下去。',
       ar: 'ابدأ من {node}. اتبع فرعًا واحدًا إلى أقصى مدى.',
       es: 'Empieza en {node}. Sigue una rama hasta donde llegue.',
       fr: 'Départ en {node}. Suivre une branche aussi loin que possible.',
@@ -173,6 +187,8 @@ export const dfsFacet: FacetJson = {
     'caption.mark': {
       en: 'Enter {node} and mark it seen. Stack depth {depth}.',
       ko: '{node} 에 들어와 본 자리로 표시한다. 스택 깊이 {depth}',
+      ja: '{node} に入り、見た印をつける。スタックの深さ {depth}。',
+      zh: '进入 {node} 并标记为已看过。栈深 {depth}。',
       ar: 'ادخل {node} وضع عليه علامة. عمق المكدس {depth}.',
       es: 'Entra en {node} y márcalo como visto. Profundidad de pila {depth}.',
       fr: 'Entrer dans {node} et le marquer vu. Profondeur de pile {depth}.',
@@ -183,6 +199,8 @@ export const dfsFacet: FacetJson = {
     'caption.scan': {
       en: 'Neighbors of {node} — {i} of {total} is {neighbor}.',
       ko: '{node} 의 이웃을 훑는다 — {total} 중 {i} 번째는 {neighbor}',
+      ja: '{node} の隣を見る — {total} 個のうち {i} 番目は {neighbor}。',
+      zh: '查看 {node} 的邻居 — {total} 个中的第 {i} 个是 {neighbor}。',
       ar: 'جيران {node} — الجار {i} من {total} هو {neighbor}.',
       es: 'Vecinos de {node}: el {i} de {total} es {neighbor}.',
       fr: 'Voisins de {node} — le {i} sur {total} est {neighbor}.',
@@ -193,6 +211,8 @@ export const dfsFacet: FacetJson = {
     'caption.open': {
       en: '{neighbor} is not seen yet. Dive in.',
       ko: '아직 안 본 자리 {neighbor}. 여기로 파고든다',
+      ja: '{neighbor} はまだ見ていない。潜り込む。',
+      zh: '{neighbor} 还没看过。深入进去。',
       ar: '{neighbor} لم يُرَ بعد. اغطس فيه.',
       es: '{neighbor} aún no se ha visto. Entra.',
       fr: '{neighbor} pas encore vu. On y plonge.',
@@ -203,6 +223,8 @@ export const dfsFacet: FacetJson = {
     'caption.skip': {
       en: '{neighbor} is already seen. Do not go in.',
       ko: '이미 본 자리 {neighbor}. 들어가지 않는다',
+      ja: '{neighbor} はもう見た。入らない。',
+      zh: '{neighbor} 已经看过了。不进去。',
       ar: '{neighbor} سبق أن رُئي. لا تدخل.',
       es: '{neighbor} ya se ha visto. No entres.',
       fr: "{neighbor} déjà vu. On n'y entre pas.",
@@ -213,6 +235,8 @@ export const dfsFacet: FacetJson = {
     'caption.descend': {
       en: 'Dive from {from} into {to}. One more frame on the stack.',
       ko: '{from} 에서 {to} 로 파고든다. 프레임이 하나 쌓인다',
+      ja: '{from} から {to} へ潜る。スタックにフレームが一つ積まれる。',
+      zh: '从 {from} 深入到 {to}。栈上多了一层。',
       ar: 'اغطس من {from} إلى {to}. إطار آخر على المكدس.',
       es: 'Baja de {from} a {to}. Un marco más en la pila.',
       fr: 'Plonger de {from} vers {to}. Un cadre de plus sur la pile.',
@@ -223,6 +247,8 @@ export const dfsFacet: FacetJson = {
     'caption.ascend': {
       en: 'No neighbors left at {node}. Come back out to {parent}.',
       ko: '{node} 에 더 볼 이웃이 없다. {parent} 로 되짚어 나온다',
+      ja: '{node} に見る隣がもうない。{parent} へ戻る。',
+      zh: '{node} 已经没有可看的邻居。退回到 {parent}。',
       ar: 'لم يبق جيران عند {node}. ارجع إلى {parent}.',
       es: 'No quedan vecinos en {node}. Vuelve a {parent}.',
       fr: 'Plus de voisins en {node}. On ressort vers {parent}.',
@@ -233,6 +259,8 @@ export const dfsFacet: FacetJson = {
     'caption.ascendRoot': {
       en: 'No neighbors left at {node}. The first call returns and the walk ends.',
       ko: '{node} 에 더 볼 이웃이 없다. 첫 부름이 끝나고 걸음도 끝난다',
+      ja: '{node} に見る隣がもうない。最初の呼び出しが返り、探索が終わる。',
+      zh: '{node} 已经没有可看的邻居。最初的调用返回，遍历结束。',
       ar: 'لم يبق جيران عند {node}. الاستدعاء الأول يعود وتنتهي الجولة.',
       es: 'No quedan vecinos en {node}. La primera llamada retorna y el recorrido acaba.',
       fr: 'Plus de voisins en {node}. Le premier appel retourne et le parcours se termine.',
@@ -243,6 +271,8 @@ export const dfsFacet: FacetJson = {
     'caption.done': {
       en: 'All {count} vertices seen. Deepest stack {depth}. Edges refused {skipped}.',
       ko: '정점 {count} 개를 모두 보았다. 가장 깊었던 스택은 {depth}. 못 들어간 간선 {skipped}',
+      ja: '{count} 個の頂点をすべて見た。最も深かったスタックは {depth}。入れなかった辺は {skipped}。',
+      zh: '{count} 个顶点全部看过。最深的栈为 {depth}。被拒绝的边 {skipped} 条。',
       ar: 'شوهدت كل الرؤوس {count}. أعمق مكدس {depth}. حواف مرفوضة {skipped}.',
       es: 'Vistos los {count} vértices. Pila más profunda {depth}. Aristas rechazadas {skipped}.',
       fr: 'Les {count} sommets ont été vus. Pile la plus profonde {depth}. Arêtes refusées {skipped}.',

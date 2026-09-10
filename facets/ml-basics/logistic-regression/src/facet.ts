@@ -55,6 +55,8 @@ export const logisticRegressionFacet: FacetJson = {
   title: {
     en: 'Logistic Regression — Learning a Probability, Choosing a Line',
     ko: '로지스틱 회귀 — 확률을 배우고, 선을 고른다',
+    ja: 'ロジスティック回帰 — 確率を学び、線を選ぶ',
+    zh: '逻辑回归 — 学出概率，选定一条线',
     ar: 'الانحدار اللوجستي — تعلّم احتمال واختيار خط',
     es: 'Regresión logística: aprender una probabilidad y elegir una línea',
     fr: 'Régression logistique — apprendre une probabilité, choisir une ligne',
@@ -65,6 +67,8 @@ export const logisticRegressionFacet: FacetJson = {
   description: {
     en: 'The weights are learned; the threshold is chosen. Raise it and false alarms fall while misses rise.',
     ko: '무게는 배우고 문턱은 고른다. 올릴수록 헛짚음이 줄고 놓침이 는다.',
+    ja: '重みは学び、しきい値は選ぶ。上げれば空振りが減り、見落としが増える。',
+    zh: '权重是学出来的，阈值是选出来的。调高它，误报变少，漏报变多。',
     ar: 'الأوزان تُتعلَّم والعتبة تُختار. ارفعها فتقلّ الإنذارات الكاذبة ويزيد ما يفوتك.',
     es: 'Los pesos se aprenden; el umbral se elige. Súbelo y bajan las falsas alarmas mientras suben los fallos.',
     fr: 'Les poids s\'apprennent, le seuil se choisit. En le montant, les fausses alertes baissent et les oublis augmentent.',
@@ -93,6 +97,8 @@ export const logisticRegressionFacet: FacetJson = {
     'panel.plane': {
       en: 'the plane, and where the line lands',
       ko: '평면, 그리고 선이 놓이는 자리',
+      ja: '平面と、線が落ち着く場所',
+      zh: '平面，以及线落在哪里',
       ar: 'المستوى، وأين يقع الخط',
       es: 'el plano y dónde cae la línea',
       fr: 'le plan, et où la ligne se pose',
@@ -103,6 +109,8 @@ export const logisticRegressionFacet: FacetJson = {
     'panel.ribbon': {
       en: 'the 0–1 ribbon that every z folds into',
       ko: '모든 z 가 접혀 드는 0~1 띠',
+      ja: 'あらゆる z が畳み込まれる 0–1 の帯',
+      zh: '每个 z 都折进去的 0–1 色带',
       ar: 'شريط 0–1 الذي ينطوي إليه كل z',
       es: 'la banda 0–1 en la que se pliega cada z',
       fr: 'le ruban 0–1 dans lequel chaque z se replie',
@@ -113,6 +121,8 @@ export const logisticRegressionFacet: FacetJson = {
     'label.threshold': {
       en: 'threshold {th}',
       ko: '문턱 {th}',
+      ja: 'しきい値 {th}',
+      zh: '阈值 {th}',
       ar: 'العتبة {th}',
       es: 'umbral {th}',
       fr: 'seuil {th}',
@@ -123,6 +133,8 @@ export const logisticRegressionFacet: FacetJson = {
     'readout.params': {
       en: 'step {step} · w = ({w0}, {w1}) · b = {b} · log-loss {loss}',
       ko: '걸음 {step} · w = ({w0}, {w1}) · b = {b} · 로그손실 {loss}',
+      ja: 'ステップ {step} · w = ({w0}, {w1}) · b = {b} · 対数損失 {loss}',
+      zh: '第 {step} 步 · w = ({w0}, {w1}) · b = {b} · 对数损失 {loss}',
       ar: 'الخطوة {step} · w = ({w0}, {w1}) · b = {b} · الخسارة اللوغاريتمية {loss}',
       es: 'paso {step} · w = ({w0}, {w1}) · b = {b} · log-loss {loss}',
       fr: 'pas {step} · w = ({w0}, {w1}) · b = {b} · log-loss {loss}',
@@ -133,6 +145,8 @@ export const logisticRegressionFacet: FacetJson = {
     'tally.hit': {
       en: 'right {n}',
       ko: '맞힘 {n}',
+      ja: '正解 {n}',
+      zh: '命中 {n}',
       ar: 'صحيح {n}',
       es: 'aciertos {n}',
       fr: 'justes {n}',
@@ -143,6 +157,8 @@ export const logisticRegressionFacet: FacetJson = {
     'tally.miss': {
       en: 'missed {n}',
       ko: '놓침 {n}',
+      ja: '見落とし {n}',
+      zh: '漏报 {n}',
       ar: 'فائت {n}',
       es: 'fallos {n}',
       fr: 'manqués {n}',
@@ -153,6 +169,8 @@ export const logisticRegressionFacet: FacetJson = {
     'tally.falseAlarm': {
       en: 'false alarm {n}',
       ko: '헛짚음 {n}',
+      ja: '空振り {n}',
+      zh: '误报 {n}',
       ar: 'إنذار كاذب {n}',
       es: 'falsas alarmas {n}',
       fr: 'fausses alertes {n}',
@@ -163,6 +181,8 @@ export const logisticRegressionFacet: FacetJson = {
     'caption.start': {
       en: 'The weights start at zero, so every point is still a coin flip.',
       ko: '무게가 0 에서 시작하니 아직 모든 점이 반반이다.',
+      ja: '重みはゼロから始まるので、どの点もまだ五分五分だ。',
+      zh: '权重从零开始，所以每个点还都是掷硬币。',
       ar: 'تبدأ الأوزان من الصفر، فكل نقطة ما تزال رمية عملة.',
       es: 'Los pesos empiezan en cero, así que cada punto sigue siendo cara o cruz.',
       fr: 'Les poids partent de zéro : chaque point est encore un pile ou face.',
@@ -173,6 +193,8 @@ export const logisticRegressionFacet: FacetJson = {
     'caption.training': {
       en: 'The weights move, and the line and the ribbon move with them.',
       ko: '무게가 움직인다. 선과 띠가 그것을 따라 움직인다.',
+      ja: '重みが動き、線と帯もそれについて動く。',
+      zh: '权重在动，线和色带跟着一起动。',
       ar: 'تتحرك الأوزان، ويتحرك معها الخط والشريط.',
       es: 'Los pesos se mueven, y con ellos la línea y la banda.',
       fr: 'Les poids bougent, et la ligne et le ruban bougent avec eux.',
@@ -183,6 +205,8 @@ export const logisticRegressionFacet: FacetJson = {
     'caption.threshold': {
       en: 'The weights did not move. Only the place where you say "this one" did.',
       ko: '무게는 그대로다. 움직인 것은 "이쪽" 이라 말하는 자리뿐이다.',
+      ja: '重みは動いていない。動いたのは「こっちだ」と言う場所だけだ。',
+      zh: '权重没有动。动的只是你说「就是它」的那个位置。',
       ar: 'لم تتحرك الأوزان. تحرّك فقط الموضع الذي تقول عنده "هذه".',
       es: 'Los pesos no se movieron. Solo se movió el lugar donde dices "este".',
       fr: 'Les poids n\'ont pas bougé. Seul l\'endroit où vous dites "celui-ci" a bougé.',
@@ -193,6 +217,8 @@ export const logisticRegressionFacet: FacetJson = {
     'caption.done': {
       en: 'Learning is over. Where to draw the line is still yours to pick.',
       ko: '학습은 끝났다. 어디서 선을 그을지는 여전히 읽는 이가 고른다.',
+      ja: '学習は終わった。どこで線を引くかは、なお読み手が選ぶ。',
+      zh: '学习结束了。线画在哪里，仍然由你来选。',
       ar: 'انتهى التعلّم. أما أين تُرسم الحدود فما زال اختيارك.',
       es: 'El aprendizaje terminó. Dónde trazar la línea sigue siendo tu elección.',
       fr: 'L\'apprentissage est fini. Où tracer la ligne reste votre choix.',
@@ -213,7 +239,7 @@ export const logisticRegressionFacet: FacetJson = {
           name: 'threshold',
           label: {
             en: 'Decision threshold',
-            ko: '결정 문턱',
+            ko: '결정 문턱', ja: '判定のしきい値', zh: '决策阈值',
             ar: 'عتبة القرار',
             es: 'Umbral de decisión',
             fr: 'Seuil de décision',
@@ -233,7 +259,7 @@ export const logisticRegressionFacet: FacetJson = {
           name: 'step-count',
           label: {
             en: 'steps',
-            ko: '걸음',
+            ko: '걸음', ja: '歩', zh: '步',
             ar: 'خطوات',
             es: 'pasos',
             fr: 'pas',
@@ -247,7 +273,7 @@ export const logisticRegressionFacet: FacetJson = {
           name: 'log-loss',
           label: {
             en: 'avg log-loss',
-            ko: '평균 로그손실',
+            ko: '평균 로그손실', ja: '平均対数損失', zh: '平均对数损失',
             ar: 'متوسط الخسارة اللوغاريتمية',
             es: 'log-loss medio',
             fr: 'log-loss moyen',
@@ -261,7 +287,7 @@ export const logisticRegressionFacet: FacetJson = {
           name: 'correct-count',
           label: {
             en: 'right at this threshold',
-            ko: '이 문턱에서 맞힌 수',
+            ko: '이 문턱에서 맞힌 수', ja: 'このしきい値で当てた数', zh: '此阈值下答对数',
             ar: 'الصحيح عند هذه العتبة',
             es: 'aciertos con este umbral',
             fr: 'justes à ce seuil',
@@ -277,7 +303,7 @@ export const logisticRegressionFacet: FacetJson = {
       type: 'code-view',
       label: {
         en: 'one training step',
-        ko: '학습 한 판',
+        ko: '학습 한 판', ja: '学習ひと回し', zh: '一轮训练',
         ar: 'خطوة تدريب واحدة',
         es: 'un paso de entrenamiento',
         fr: 'un pas d\'entraînement',

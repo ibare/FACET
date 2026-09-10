@@ -23,6 +23,8 @@ export const branchAndBoundFacet: FacetJson = {
   title: {
     en: 'Branch and Bound',
     ko: '분기 한정',
+    ja: '分枝限定法',
+    zh: '分支限界法',
     ar: 'التفريع والتحديد',
     es: 'Ramificación y acotación',
     fr: 'Séparation et évaluation',
@@ -33,6 +35,8 @@ export const branchAndBoundFacet: FacetJson = {
   description: {
     en: 'The same knapsack without a table — branch, measure how far a branch could reach, and cut the ones that cannot win.',
     ko: '같은 배낭을 표 없이 푼다 — 갈래를 뻗고, 그 갈래의 최선을 재어, 못 이길 갈래를 자른다',
+    ja: '同じナップサックを表なしで解く — 枝を伸ばし、その枝が届きうる最大を測り、勝てない枝を切る。',
+    zh: '同一个背包，不用表 — 分出枝杈，量一量这条枝最多能到多少，砍掉赢不了的。',
     ar: 'نفس حقيبة الظهر بلا جدول — تفرّع، وقِس أقصى ما يبلغه الفرع، واقطع ما لا يمكنه الفوز.',
     es: 'La misma mochila sin tabla: ramifica, mide hasta dónde podría llegar cada rama y poda las que no pueden ganar.',
     fr: 'Le même sac à dos sans tableau : ramifiez, mesurez jusqu’où une branche pourrait aller, puis coupez celles qui ne peuvent pas gagner.',
@@ -67,6 +71,8 @@ export const branchAndBoundFacet: FacetJson = {
           label: {
             en: 'Branches',
             ko: '갈래',
+            ja: '分枝',
+            zh: '分支',
             ar: 'الفروع',
             es: 'Ramas',
             fr: 'Branches',
@@ -81,6 +87,8 @@ export const branchAndBoundFacet: FacetJson = {
           label: {
             en: 'Cut',
             ko: '자름',
+            ja: '切った枝',
+            zh: '剪枝',
             ar: 'مقطوعة',
             es: 'Podas',
             fr: 'Coupes',
@@ -95,6 +103,8 @@ export const branchAndBoundFacet: FacetJson = {
           label: {
             en: 'Too heavy',
             ko: '무게 넘침',
+            ja: '重量超過',
+            zh: '超重',
             ar: 'ثقيلة جدًا',
             es: 'Muy pesado',
             fr: 'Trop lourd',
@@ -111,6 +121,8 @@ export const branchAndBoundFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -125,6 +137,8 @@ export const branchAndBoundFacet: FacetJson = {
     'label.value': {
       en: 'value',
       ko: '값',
+      ja: '価値',
+      zh: '价值',
       ar: 'القيمة',
       es: 'valor',
       fr: 'valeur',
@@ -135,6 +149,8 @@ export const branchAndBoundFacet: FacetJson = {
     'label.weight': {
       en: 'weight',
       ko: '무게',
+      ja: '重さ',
+      zh: '重量',
       ar: 'الوزن',
       es: 'peso',
       fr: 'poids',
@@ -145,6 +161,8 @@ export const branchAndBoundFacet: FacetJson = {
     'label.capacity': {
       en: 'limit',
       ko: '한도',
+      ja: '上限',
+      zh: '限重',
       ar: 'الحد',
       es: 'límite',
       fr: 'limite',
@@ -155,6 +173,8 @@ export const branchAndBoundFacet: FacetJson = {
     'label.best': {
       en: 'best',
       ko: '최고',
+      ja: '最良',
+      zh: '最优',
       ar: 'الأفضل',
       es: 'mejor',
       fr: 'meilleur',
@@ -165,6 +185,8 @@ export const branchAndBoundFacet: FacetJson = {
     'label.bound': {
       en: 'bound',
       ko: '한계',
+      ja: '限界',
+      zh: '界',
       ar: 'الحد الأعلى',
       es: 'cota',
       fr: 'borne',
@@ -175,6 +197,8 @@ export const branchAndBoundFacet: FacetJson = {
     'caption.start': {
       en: 'Items are sorted by value per weight. Branch, measure a limit, cut what cannot win.',
       ko: '값/무게가 큰 순서로 늘어놓았다. 갈래를 뻗고, 한계를 재고, 못 이길 갈래는 자른다',
+      ja: '品物は重さあたりの価値の順に並んでいる。枝を伸ばし、限界を測り、勝てないものを切る。',
+      zh: '物品按单位重量的价值排好。分枝、量界、砍掉赢不了的。',
       ar: 'الأغراض مرتّبة حسب القيمة لكل وحدة وزن. تفرّع، وقِس حدًّا أعلى، واقطع ما لا يمكنه الفوز.',
       es: 'Los objetos están ordenados por valor entre peso. Ramifica, mide una cota y poda lo que no puede ganar.',
       fr: 'Les objets sont triés par valeur sur poids. Ramifiez, mesurez une borne, coupez ce qui ne peut pas gagner.',
@@ -185,6 +209,8 @@ export const branchAndBoundFacet: FacetJson = {
     'caption.enterRoot': {
       en: 'Start with an empty bag — nothing packed yet.',
       ko: '빈 배낭에서 시작한다 — 아직 담은 것이 없다',
+      ja: '空の袋から始める — まだ何も詰めていない。',
+      zh: '从空包开始 — 还什么都没装。',
       ar: 'ابدأ بحقيبة فارغة — لم يُوضع شيء بعد.',
       es: 'Empieza con la mochila vacía: aún no hay nada dentro.',
       fr: 'On part d’un sac vide — rien n’est encore emballé.',
@@ -195,6 +221,8 @@ export const branchAndBoundFacet: FacetJson = {
     'caption.enterTake': {
       en: 'Packed item #{item}: value {v}, weight {w}.',
       ko: '물건 #{item} 을 담았다 — 값 {v}, 무게 {w}',
+      ja: '品物 #{item} を詰めた — 価値 {v}、重さ {w}。',
+      zh: '装入物品 #{item}：价值 {v}，重量 {w}。',
       ar: 'وُضِع الغرض #{item}: القيمة {v}، الوزن {w}.',
       es: 'Se guarda el objeto #{item}: valor {v}, peso {w}.',
       fr: 'Objet #{item} emballé : valeur {v}, poids {w}.',
@@ -205,6 +233,8 @@ export const branchAndBoundFacet: FacetJson = {
     'caption.enterSkip': {
       en: 'Left item #{item} behind: value {v}, weight {w}.',
       ko: '물건 #{item} 을 두고 왔다 — 값 {v}, 무게 {w}',
+      ja: '品物 #{item} は置いてきた — 価値 {v}、重さ {w}。',
+      zh: '把物品 #{item} 留下了：价值 {v}，重量 {w}。',
       ar: 'تُرِك الغرض #{item}: القيمة {v}، الوزن {w}.',
       es: 'Se deja el objeto #{item}: valor {v}, peso {w}.',
       fr: 'Objet #{item} laissé de côté : valeur {v}, poids {w}.',
@@ -215,6 +245,8 @@ export const branchAndBoundFacet: FacetJson = {
     'caption.overflow': {
       en: 'Weight {w} is over the limit {cap} — turn back.',
       ko: '무게 {w} 가 한도 {cap} 을 넘었다 — 되돌아간다',
+      ja: '重さ {w} が上限 {cap} を超えた — 引き返す。',
+      zh: '重量 {w} 超过限重 {cap} — 折回去。',
       ar: 'الوزن {w} تجاوز الحد {cap} — ارجع.',
       es: 'El peso {w} supera el límite {cap}: hay que retroceder.',
       fr: 'Le poids {w} dépasse la limite {cap} — on revient en arrière.',
@@ -225,6 +257,8 @@ export const branchAndBoundFacet: FacetJson = {
     'caption.newBest': {
       en: 'Value {best} beats {prev} — this is the new best.',
       ko: '값 {best} 가 {prev} 를 이겼다 — 새 최고다',
+      ja: '価値 {best} が {prev} を上回った — これが新しい最良だ。',
+      zh: '价值 {best} 胜过 {prev} — 这是新的最优。',
       ar: 'القيمة {best} تتفوّق على {prev} — هذا هو الأفضل الجديد.',
       es: 'El valor {best} supera a {prev}: es el nuevo mejor.',
       fr: 'La valeur {best} dépasse {prev} — c’est le nouveau meilleur.',
@@ -235,6 +269,8 @@ export const branchAndBoundFacet: FacetJson = {
     'caption.exhausted': {
       en: 'No item left — this branch ends at {v}.',
       ko: '남은 물건이 없다 — 이 갈래는 {v} 로 끝난다',
+      ja: '品物が尽きた — この枝は {v} で終わる。',
+      zh: '没有物品了 — 这条枝止于 {v}。',
       ar: 'لم يبقَ غرض — ينتهي هذا الفرع عند {v}.',
       es: 'No queda ningún objeto: esta rama termina en {v}.',
       fr: 'Plus aucun objet — cette branche s’arrête à {v}.',
@@ -245,6 +281,8 @@ export const branchAndBoundFacet: FacetJson = {
     'caption.boundBegin': {
       en: 'Measure the limit: {v} packed, room {room} left.',
       ko: '한계를 잰다 — 담은 값 {v}, 남은 자리 {room}',
+      ja: '限界を測る — 詰めた価値 {v}、残りの余地 {room}。',
+      zh: '量一量界：已装 {v}，还剩 {room} 的空间。',
       ar: 'قِس الحد الأعلى: {v} مُحزَّمة، ويبقى مكان {room}.',
       es: 'Mide la cota: {v} ya guardado, queda espacio {room}.',
       fr: 'On mesure la borne : {v} emballé, il reste {room} de place.',
@@ -255,6 +293,8 @@ export const branchAndBoundFacet: FacetJson = {
     'caption.boundFit': {
       en: 'Item #{item} fits whole — add {value}, room {room} left.',
       ko: '물건 #{item} 은 통째로 들어간다 — {value} 를 더하고 자리는 {room} 남는다',
+      ja: '品物 #{item} は丸ごと入る — {value} を足し、余地は {room} 残る。',
+      zh: '物品 #{item} 整个放得下 — 加上 {value}，还剩 {room}。',
       ar: 'الغرض #{item} يدخل بكامله — أضف {value}، ويبقى مكان {room}.',
       es: 'El objeto #{item} cabe entero: suma {value} y queda espacio {room}.',
       fr: 'L’objet #{item} tient en entier — on ajoute {value}, il reste {room}.',
@@ -265,6 +305,8 @@ export const branchAndBoundFacet: FacetJson = {
     'caption.boundSplit': {
       en: 'Item #{item} will not fit — take {room} of its {weight} as a slice: +{part}.',
       ko: '물건 #{item} 은 다 못 넣는다 — 무게 {weight} 중 {room} 만큼만 쪼개 담는다: +{part}',
+      ja: '品物 #{item} は入りきらない — 重さ {weight} のうち {room} 分だけ切り取る: +{part}。',
+      zh: '物品 #{item} 放不下 — 只从它的 {weight} 里切 {room}：+{part}。',
       ar: 'الغرض #{item} لا يتّسع — خُذ {room} من وزنه {weight} كشريحة: +{part}.',
       es: 'El objeto #{item} no cabe: toma {room} de sus {weight} como fracción: +{part}.',
       fr: 'L’objet #{item} ne rentre pas — on en prend {room} sur {weight} en fraction : +{part}.',
@@ -275,6 +317,8 @@ export const branchAndBoundFacet: FacetJson = {
     'caption.boundEnd': {
       en: 'At best this branch reaches {bound}.',
       ko: '이 갈래가 최선을 다하면 {bound} 까지다',
+      ja: 'この枝が精一杯でも {bound} までだ。',
+      zh: '这条枝最多也就到 {bound}。',
       ar: 'في أفضل الأحوال يبلغ هذا الفرع {bound}.',
       es: 'En el mejor caso esta rama llega a {bound}.',
       fr: 'Au mieux, cette branche atteint {bound}.',
@@ -285,6 +329,8 @@ export const branchAndBoundFacet: FacetJson = {
     'caption.cut': {
       en: '{bound} cannot beat {best} — cut the whole branch.',
       ko: '{bound} 로는 {best} 를 못 넘는다 — 갈래를 통째로 자른다',
+      ja: '{bound} では {best} を超えられない — 枝ごと切る。',
+      zh: '{bound} 赢不过 {best} — 整条枝砍掉。',
       ar: '{bound} لا يتجاوز {best} — اقطع الفرع بأكمله.',
       es: '{bound} no puede superar a {best}: poda la rama entera.',
       fr: '{bound} ne peut pas dépasser {best} — on coupe toute la branche.',
@@ -295,6 +341,8 @@ export const branchAndBoundFacet: FacetJson = {
     'caption.keep': {
       en: '{bound} beats {best} — this branch is worth opening.',
       ko: '{bound} 는 {best} 를 넘는다 — 열어 볼 값어치가 있다',
+      ja: '{bound} は {best} を上回る — この枝は開く値打ちがある。',
+      zh: '{bound} 超过 {best} — 这条枝值得打开。',
       ar: '{bound} يتجاوز {best} — يستحق هذا الفرع أن يُفتح.',
       es: '{bound} supera a {best}: vale la pena abrir esta rama.',
       fr: '{bound} dépasse {best} — cette branche mérite d’être ouverte.',
@@ -305,6 +353,8 @@ export const branchAndBoundFacet: FacetJson = {
     'caption.returnBest': {
       en: 'Both sides done — the best from here is {best}.',
       ko: '양쪽을 다 봤다 — 여기서의 최고는 {best} 다',
+      ja: '両側とも見終えた — ここからの最良は {best}。',
+      zh: '两边都看完了 — 从这里出发的最优是 {best}。',
       ar: 'انتهى الجانبان — الأفضل من هنا هو {best}.',
       es: 'Ambos lados listos: lo mejor desde aquí es {best}.',
       fr: 'Les deux côtés sont faits — le meilleur d’ici est {best}.',
@@ -315,6 +365,8 @@ export const branchAndBoundFacet: FacetJson = {
     'caption.done': {
       en: 'Best {best}, reached by opening {visits} branches out of {subsets} possible packings.',
       ko: '최고 {best} — {subsets} 가지 조합 중 {visits} 갈래만 열어 보고 닿았다',
+      ja: '最良は {best}。{subsets} 通りの詰め方のうち {visits} 枝だけ開いて辿り着いた。',
+      zh: '最优 {best}，在 {subsets} 种可能装法里只打开了 {visits} 条枝就找到了。',
       ar: 'الأفضل {best}، بُلِغ بفتح {visits} فرعًا من أصل {subsets} تركيبة ممكنة.',
       es: 'Mejor {best}, alcanzado abriendo {visits} ramas de {subsets} combinaciones posibles.',
       fr: 'Meilleur {best}, atteint en ouvrant {visits} branches sur {subsets} combinaisons possibles.',

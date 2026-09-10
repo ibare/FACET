@@ -20,6 +20,8 @@ export const heapSortFacet: FacetJson = {
   title: {
     en: 'Heap Sort',
     ko: '힙 정렬',
+    ja: 'ヒープソート',
+    zh: '堆排序',
     ar: 'الترتيب بالكومة',
     es: 'Ordenamiento por montículo',
     fr: 'Tri par tas',
@@ -30,6 +32,8 @@ export const heapSortFacet: FacetJson = {
   description: {
     en: 'Make the row a max heap, then keep moving the top to the back — no spare array needed.',
     ko: '배열을 최대 힙으로 만든 뒤 꼭대기를 뒤로 옮기기를 되풀이한다 — 자리를 빌리지 않는다',
+    ja: '配列を最大ヒープにしてから、頂点を後ろへ移すのを繰り返す — 余分な配列はいらない。',
+    zh: '把这一行变成大顶堆，然后不断把堆顶挪到末尾 — 不需要额外数组。',
     ar: 'حوّل الصف إلى كومة عظمى ثم انقل القمة إلى المؤخرة مرارًا — دون مصفوفة إضافية.',
     es: 'Convierte la fila en un montículo máximo y lleva la cima al final una y otra vez, sin arreglo extra.',
     fr: "Transformez la rangée en tas max, puis déplacez le sommet vers la fin — sans tableau supplémentaire.",
@@ -58,6 +62,8 @@ export const heapSortFacet: FacetJson = {
           label: {
             en: 'Compare',
             ko: '견줌',
+            ja: '比較',
+            zh: '比较',
             ar: 'مقارنة',
             es: 'Comparar',
             fr: 'Comparer',
@@ -72,6 +78,8 @@ export const heapSortFacet: FacetJson = {
           label: {
             en: 'Swap',
             ko: '맞바꿈',
+            ja: '交換',
+            zh: '交换',
             ar: 'تبديل',
             es: 'Intercambio',
             fr: 'Échange',
@@ -86,6 +94,8 @@ export const heapSortFacet: FacetJson = {
           label: {
             en: 'Settled',
             ko: '확정된 칸',
+            ja: '確定',
+            zh: '已定',
             ar: 'مستقرة',
             es: 'Fijadas',
             fr: 'Fixées',
@@ -102,6 +112,8 @@ export const heapSortFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -116,6 +128,8 @@ export const heapSortFacet: FacetJson = {
     'label.heap': {
       en: 'Heap',
       ko: '힙',
+      ja: 'ヒープ',
+      zh: '堆',
       ar: 'الكومة',
       es: 'Montículo',
       fr: 'Tas',
@@ -126,6 +140,8 @@ export const heapSortFacet: FacetJson = {
     'label.sorted': {
       en: 'Sorted',
       ko: '정렬 끝',
+      ja: '整列済み',
+      zh: '已排序',
       ar: 'مرتّب',
       es: 'Ordenado',
       fr: 'Trié',
@@ -136,6 +152,8 @@ export const heapSortFacet: FacetJson = {
     'caption.start': {
       en: 'One row is already a tree — the children of seat i are 2i+1 and 2i+2.',
       ko: '이 한 줄이 이미 트리다 — 자리 i 의 자식은 2i+1 과 2i+2',
+      ja: 'この一列がすでに木だ — 席 i の子は 2i+1 と 2i+2。',
+      zh: '这一行本身就是一棵树 — 位置 i 的孩子是 2i+1 和 2i+2。',
       ar: 'هذا الصف شجرة بالفعل — أبناء الموضع i هما 2i+1 و 2i+2.',
       es: 'Esta fila ya es un árbol: los hijos del puesto i son 2i+1 y 2i+2.',
       fr: "Cette rangée est déjà un arbre — les enfants de la place i sont 2i+1 et 2i+2.",
@@ -146,6 +164,8 @@ export const heapSortFacet: FacetJson = {
     'caption.buildBegin': {
       en: 'Start at seat {index}, the last seat that has children.',
       ko: '자식을 가진 마지막 자리 {index} 번부터 시작한다',
+      ja: '子を持つ最後の席 {index} から始める。',
+      zh: '从有孩子的最后一个位置 {index} 开始。',
       ar: 'ابدأ من الموضع {index}، آخر موضع له أبناء.',
       es: 'Empieza en el puesto {index}, el último que tiene hijos.',
       fr: 'Commencer à la place {index}, la dernière qui a des enfants.',
@@ -156,6 +176,8 @@ export const heapSortFacet: FacetJson = {
     'caption.siftBuild': {
       en: 'Sink the value at seat {index} as far as it must go.',
       ko: '{index} 번 자리의 값을 내려갈 만큼 내린다',
+      ja: '席 {index} の値を、下がるべきところまで沈める。',
+      zh: '把位置 {index} 的值一直下沉到该停的地方。',
       ar: 'أنزل قيمة الموضع {index} إلى حيث يجب أن تستقر.',
       es: 'Hunde el valor del puesto {index} tan abajo como haga falta.',
       fr: "Faire descendre la valeur de la place {index} aussi bas qu'il le faut.",
@@ -166,6 +188,8 @@ export const heapSortFacet: FacetJson = {
     'caption.siftRoot': {
       en: 'Sink the new top back down through the smaller heap.',
       ko: '새 꼭대기를 줄어든 힙 안에서 다시 내린다',
+      ja: '新しい頂点を、小さくなったヒープの中でまた沈める。',
+      zh: '把新的堆顶在缩小后的堆里再次下沉。',
       ar: 'أنزل القمة الجديدة من جديد داخل الكومة الأصغر.',
       es: 'Vuelve a hundir la nueva cima dentro del montículo ya más pequeño.',
       fr: 'Faire redescendre le nouveau sommet dans le tas devenu plus petit.',
@@ -176,6 +200,8 @@ export const heapSortFacet: FacetJson = {
     'caption.compareChildren': {
       en: 'Two children {left} and {right} — {big} is bigger.',
       ko: '두 자식 {left} 와 {right} 중 큰 쪽은 {big}',
+      ja: '二つの子 {left} と {right} — 大きいのは {big}。',
+      zh: '两个孩子 {left} 和 {right} — 更大的是 {big}。',
       ar: 'الابنان {left} و {right} — الأكبر هو {big}.',
       es: 'Dos hijos, {left} y {right}: el mayor es {big}.',
       fr: 'Deux enfants {left} et {right} — le plus grand est {big}.',
@@ -186,6 +212,8 @@ export const heapSortFacet: FacetJson = {
     'caption.compareParent': {
       en: 'Is the parent {parent} already at least {child}?',
       ko: '부모 {parent} 가 이미 {child} 만 한가',
+      ja: '親 {parent} はすでに {child} 以上か。',
+      zh: '父节点 {parent} 已经不小于 {child} 了吗？',
       ar: 'هل الأب {parent} أكبر من {child} أو يساويه؟',
       es: '¿El padre {parent} ya es al menos {child}?',
       fr: 'Le parent {parent} vaut-il déjà au moins {child} ?',
@@ -196,6 +224,8 @@ export const heapSortFacet: FacetJson = {
     'caption.moveDown': {
       en: '{parent} is the smaller one — it sinks past {child}.',
       ko: '{parent} 가 더 작다 — {child} 와 자리를 바꿔 내려간다',
+      ja: '{parent} のほうが小さい — {child} と入れ替わって沈む。',
+      zh: '{parent} 更小 — 它和 {child} 换位下沉。',
       ar: '{parent} هو الأصغر — ينزل مبادلًا مكانه مع {child}.',
       es: '{parent} es el menor: baja intercambiándose con {child}.',
       fr: '{parent} est le plus petit — il descend en échangeant avec {child}.',
@@ -206,6 +236,8 @@ export const heapSortFacet: FacetJson = {
     'caption.settleDown': {
       en: '{value} has nowhere lower to go — it rests here.',
       ko: '{value} 는 더 내려갈 곳이 없다 — 여기서 멈춘다',
+      ja: '{value} はこれ以上下がれない — ここで止まる。',
+      zh: '{value} 再也下不去了 — 就停在这里。',
       ar: 'لا مكان أدنى لـ {value} — يستقر هنا.',
       es: '{value} no puede bajar más: se queda aquí.',
       fr: "{value} ne peut pas descendre plus bas — il s'arrête ici.",
@@ -216,6 +248,8 @@ export const heapSortFacet: FacetJson = {
     'caption.buildEnd': {
       en: 'It is a max heap now — the top {top} is the largest value.',
       ko: '최대 힙이 됐다 — 꼭대기 {top} 이 가장 큰 값이다',
+      ja: '最大ヒープになった — 頂点の {top} が最大値だ。',
+      zh: '现在是大顶堆了 — 堆顶 {top} 就是最大值。',
       ar: 'صارت كومة عظمى — القمة {top} هي أكبر قيمة.',
       es: 'Ya es un montículo máximo: la cima {top} es el mayor valor.',
       fr: "C'est maintenant un tas max — le sommet {top} est la plus grande valeur.",
@@ -226,6 +260,8 @@ export const heapSortFacet: FacetJson = {
     'caption.swapTopEnd': {
       en: 'Swap the top {top} with the last cell {tail} of the heap.',
       ko: '꼭대기 {top} 과 힙의 마지막 칸 {tail} 을 맞바꾼다',
+      ja: '頂点の {top} とヒープの最後の枠 {tail} を入れ替える。',
+      zh: '把堆顶 {top} 和堆的最后一格 {tail} 交换。',
       ar: 'بدّل القمة {top} مع آخر خانة في الكومة {tail}.',
       es: 'Intercambia la cima {top} con la última casilla {tail} del montículo.',
       fr: 'Échanger le sommet {top} avec la dernière case {tail} du tas.',
@@ -236,6 +272,8 @@ export const heapSortFacet: FacetJson = {
     'caption.settleSeat': {
       en: '{value} takes seat {index} and never moves again.',
       ko: '{value} 가 {index} 번 자리에 앉는다. 다시 움직이지 않는다',
+      ja: '{value} が席 {index} に着き、二度と動かない。',
+      zh: '{value} 坐进位置 {index}，再也不动了。',
       ar: '{value} يأخذ الموضع {index} ولا يتحرك بعدها أبدًا.',
       es: '{value} ocupa el puesto {index} y ya no vuelve a moverse.',
       fr: '{value} prend la place {index} et ne bougera plus.',
@@ -246,6 +284,8 @@ export const heapSortFacet: FacetJson = {
     'caption.shrinkHeap': {
       en: 'The heap shrinks to {size} cells — that seat left the tree.',
       ko: '힙이 {size} 칸으로 줄었다 — 그 자리는 트리에서 빠졌다',
+      ja: 'ヒープが {size} 枠に縮んだ — その席は木から外れた。',
+      zh: '堆缩小到 {size} 格 — 那个位置离开了树。',
       ar: 'انكمشت الكومة إلى {size} خانات — خرج ذلك الموضع من الشجرة.',
       es: 'El montículo se reduce a {size} casillas: ese puesto salió del árbol.',
       fr: "Le tas se réduit à {size} cases — cette place est sortie de l'arbre.",
@@ -256,6 +296,8 @@ export const heapSortFacet: FacetJson = {
     'caption.done': {
       en: 'Sorted with {compares} compares and {swaps} swaps.',
       ko: '견줌 {compares} 번 · 맞바꿈 {swaps} 번으로 정렬됐다',
+      ja: '比較 {compares} 回、交換 {swaps} 回で整列した。',
+      zh: '经过 {compares} 次比较和 {swaps} 次交换完成排序。',
       ar: 'تم الترتيب بـ {compares} مقارنة و {swaps} تبديلًا.',
       es: 'Ordenado con {compares} comparaciones y {swaps} intercambios.',
       fr: 'Trié avec {compares} comparaisons et {swaps} échanges.',

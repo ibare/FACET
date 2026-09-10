@@ -26,8 +26,7 @@
  * 화면에는 언제나 견줄 두 항이 함께 있다 — 차이만 그리면 무엇과 무엇의 차이인지가
  * 사라지기 때문이다. 네 걸음: 입력 둘 → 입력 차이 → 출력 둘 → 출력 차이.
  *
- * title / description / messages 는 en·ko 만 채웠다. 조각 방식의 구조를
- * 확인하기 위한 1차 시험이라 10개 언어 확장은 채택 이후로 미룬다.
+ * title / description / messages 는 열 언어를 채웠다.
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
@@ -35,10 +34,29 @@ import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const hashAvalancheFacet: FacetJson = {
   id: 'facet:hashAvalanche',
-  title: { en: 'Avalanche Effect', ko: '눈사태 효과' },
+  title: {
+    en: 'Avalanche Effect',
+    ko: '눈사태 효과',
+    ja: 'なだれ効果',
+    zh: '雪崩效应',
+    ar: 'تأثير الانهيار',
+    es: 'Efecto avalancha',
+    fr: 'Effet avalanche',
+    hi: 'हिमस्खलन प्रभाव',
+    id: 'Efek longsoran',
+    pt: 'Efeito avalanche',
+  },
   description: {
     en: 'One changed character flips about half of a hash output',
     ko: '한 글자를 바꾸면 해시 출력의 절반이 뒤집힌다',
+    ja: '一文字変えるだけで、ハッシュ出力の半分ほどが反転する',
+    zh: '只改一个字符，哈希输出就有近一半被翻转',
+    ar: 'تغيير حرف واحد يقلب نحو نصف مخرجات التجزئة',
+    es: 'Cambiar un solo carácter voltea alrededor de la mitad del hash',
+    fr: "Changer un seul caractère retourne environ la moitié de l'empreinte",
+    hi: 'एक अक्षर बदलते ही हैश का लगभग आधा हिस्सा पलट जाता है',
+    id: 'Mengubah satu karakter membalik sekitar separuh keluaran hash',
+    pt: 'Trocar um único caractere inverte cerca de metade da saída do hash',
   },
   algorithm: 'module:hashAvalanche',
   projector: 'module:hashAvalancheProjector',
@@ -56,14 +74,38 @@ export const hashAvalancheFacet: FacetJson = {
     'caption.result': {
       en: 'Only {inputFlipped} of {inputTotal} input bits differ, but {outputFlipped} of {outputTotal} output bits do.',
       ko: '입력은 {inputTotal} 비트 중 {inputFlipped} 비트만 달랐는데, 출력은 {outputTotal} 비트 중 {outputFlipped} 비트가 다르다.',
+      ja: '入力は {inputTotal} ビット中 {inputFlipped} ビットしか違わないのに、出力は {outputTotal} ビット中 {outputFlipped} ビットが違う。',
+      zh: '输入 {inputTotal} 位中只有 {inputFlipped} 位不同，输出 {outputTotal} 位中却有 {outputFlipped} 位不同。',
+      ar: 'من {inputTotal} بت في الدخل تختلف {inputFlipped} فقط، بينما تختلف {outputFlipped} من {outputTotal} بت في الخرج.',
+      es: 'Solo {inputFlipped} de {inputTotal} bits de entrada difieren, pero sí difieren {outputFlipped} de {outputTotal} bits de salida.',
+      fr: "Seuls {inputFlipped} bits d'entrée sur {inputTotal} diffèrent, mais {outputFlipped} bits de sortie sur {outputTotal} le font.",
+      hi: 'इनपुट के {inputTotal} बिट में से केवल {inputFlipped} अलग हैं, पर आउटपुट के {outputTotal} बिट में से {outputFlipped} अलग हैं।',
+      id: 'Hanya {inputFlipped} dari {inputTotal} bit masukan yang berbeda, tetapi {outputFlipped} dari {outputTotal} bit keluaran berbeda.',
+      pt: 'Só {inputFlipped} de {inputTotal} bits de entrada diferem, mas {outputFlipped} de {outputTotal} bits de saída diferem.',
     },
     'label.bitDiff': {
       en: '{flipped} / {total} bits differ',
       ko: '{flipped} / {total} 비트 다름',
+      ja: '{flipped} / {total} ビットが違う',
+      zh: '{flipped} / {total} 位不同',
+      ar: '{flipped} / {total} بت مختلفة',
+      es: '{flipped} / {total} bits difieren',
+      fr: '{flipped} / {total} bits diffèrent',
+      hi: '{flipped} / {total} बिट अलग',
+      id: '{flipped} / {total} bit berbeda',
+      pt: '{flipped} / {total} bits diferem',
     },
     'label.through': {
       en: '↓  {algorithm}  ↓',
       ko: '↓  {algorithm}  ↓',
+      ja: '↓  {algorithm}  ↓',
+      zh: '↓  {algorithm}  ↓',
+      ar: '↓  {algorithm}  ↓',
+      es: '↓  {algorithm}  ↓',
+      fr: '↓  {algorithm}  ↓',
+      hi: '↓  {algorithm}  ↓',
+      id: '↓  {algorithm}  ↓',
+      pt: '↓  {algorithm}  ↓',
     },
   },
   blocks: {

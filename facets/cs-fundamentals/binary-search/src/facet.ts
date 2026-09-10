@@ -23,6 +23,8 @@ export const binarySearchFacet: FacetJson = {
   title: {
     en: 'Binary Search',
     ko: '이진 탐색',
+    ja: '二分探索',
+    zh: '二分查找',
     ar: 'البحث الثنائي',
     es: 'Búsqueda binaria',
     fr: 'Recherche dichotomique',
@@ -33,6 +35,8 @@ export const binarySearchFacet: FacetJson = {
   description: {
     en: 'Look at the middle and throw away half — and to answer "not here", the range must run empty.',
     ko: '가운데를 보고 절반을 버린다 — 없다고 답하려면 구간이 비어야 한다',
+    ja: '真ん中を見て半分を捨てる — 「ない」と答えるには区間が空にならねばならない。',
+    zh: '看中间，扔掉一半 — 要回答「不在这里」，区间必须走到空。',
     ar: 'انظر إلى المنتصف وتخلّص من النصف — ولتقول "غير موجود" يجب أن يفرغ المجال.',
     es: 'Mira el centro y descarta la mitad; para decir "no está" el rango debe quedar vacío.',
     fr: 'Regardez le milieu et jetez la moitié — et pour répondre « absent », l’intervalle doit se vider.',
@@ -65,6 +69,8 @@ export const binarySearchFacet: FacetJson = {
           label: {
             en: 'Compare',
             ko: '견줌',
+            ja: '比較',
+            zh: '比较',
             ar: 'مقارنة',
             es: 'Comparar',
             fr: 'Comparer',
@@ -79,6 +85,8 @@ export const binarySearchFacet: FacetJson = {
           label: {
             en: 'Search',
             ko: '찾기',
+            ja: '探索',
+            zh: '查找',
             ar: 'بحث',
             es: 'Búsqueda',
             fr: 'Recherche',
@@ -93,6 +101,8 @@ export const binarySearchFacet: FacetJson = {
           label: {
             en: 'Hit',
             ko: '찾음',
+            ja: '発見',
+            zh: '命中',
             ar: 'إصابة',
             es: 'Acierto',
             fr: 'Trouvé',
@@ -109,6 +119,8 @@ export const binarySearchFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -123,6 +135,8 @@ export const binarySearchFacet: FacetJson = {
     'caption.start': {
       en: 'A sorted row of {count} values. Every comparison throws half of them away.',
       ko: '줄 선 값 {count} 개. 한 번 견줄 때마다 절반이 날아간다',
+      ja: '並んだ値が {count} 個。一度比べるたびに半分が消える。',
+      zh: '排好序的 {count} 个值。每比较一次就扔掉一半。',
       ar: 'صف مرتّب من {count} قيمة. كل مقارنة تُسقط نصفها.',
       es: 'Una fila ordenada de {count} valores. Cada comparación descarta la mitad.',
       fr: 'Une rangée triée de {count} valeurs. Chaque comparaison en écarte la moitié.',
@@ -133,6 +147,8 @@ export const binarySearchFacet: FacetJson = {
     'caption.searchBegin': {
       en: 'Search {run}: look for {target} among {size} candidates.',
       ko: '{run} 번째 찾기 — 후보 {size} 개에서 {target} 을 찾는다',
+      ja: '{run} 回目の探索 — 候補 {size} 個から {target} を探す。',
+      zh: '第 {run} 次查找 — 在 {size} 个候选里找 {target}。',
       ar: 'البحث {run}: ابحث عن {target} بين {size} مرشحًا.',
       es: 'Búsqueda {run}: busca {target} entre {size} candidatos.',
       fr: 'Recherche {run} : chercher {target} parmi {size} candidats.',
@@ -143,6 +159,8 @@ export const binarySearchFacet: FacetJson = {
     'caption.pickMid': {
       en: 'The middle of [{lo}..{hi}] is seat {index}, holding {value}.',
       ko: '[{lo}..{hi}] 의 가운데는 {index} 번 자리, 값은 {value}',
+      ja: '[{lo}..{hi}] の真ん中は {index} 番目、値は {value}。',
+      zh: '[{lo}..{hi}] 的中间是第 {index} 位，值为 {value}。',
       ar: 'منتصف [{lo}..{hi}] هو الموضع {index}، وفيه {value}.',
       es: 'El centro de [{lo}..{hi}] es el puesto {index}, con {value}.',
       fr: 'Le milieu de [{lo}..{hi}] est la place {index}, qui contient {value}.',
@@ -153,6 +171,8 @@ export const binarySearchFacet: FacetJson = {
     'caption.less': {
       en: '{value} < {target} — the wanted value can only be to the right.',
       ko: '{value} < {target} — 찾는 값은 오른쪽에만 있을 수 있다',
+      ja: '{value} < {target} — 探す値は右にしかない。',
+      zh: '{value} < {target} — 要找的值只可能在右边。',
       ar: '{value} < {target} — القيمة المطلوبة لا يمكن أن تكون إلا على اليمين.',
       es: '{value} < {target}: el valor buscado solo puede estar a la derecha.',
       fr: '{value} < {target} — la valeur cherchée ne peut être qu’à droite.',
@@ -163,6 +183,8 @@ export const binarySearchFacet: FacetJson = {
     'caption.greater': {
       en: '{value} > {target} — the wanted value can only be to the left.',
       ko: '{value} > {target} — 찾는 값은 왼쪽에만 있을 수 있다',
+      ja: '{value} > {target} — 探す値は左にしかない。',
+      zh: '{value} > {target} — 要找的值只可能在左边。',
       ar: '{value} > {target} — القيمة المطلوبة لا يمكن أن تكون إلا على اليسار.',
       es: '{value} > {target}: el valor buscado solo puede estar a la izquierda.',
       fr: '{value} > {target} — la valeur cherchée ne peut être qu’à gauche.',
@@ -173,6 +195,8 @@ export const binarySearchFacet: FacetJson = {
     'caption.equal': {
       en: '{value} is the value we wanted.',
       ko: '{value} — 찾던 값이다',
+      ja: '{value} — 探していた値だ。',
+      zh: '{value} — 正是要找的值。',
       ar: '{value} هي القيمة المطلوبة.',
       es: '{value} es el valor que buscábamos.',
       fr: '{value} est la valeur cherchée.',
@@ -183,6 +207,8 @@ export const binarySearchFacet: FacetJson = {
     'caption.dropLeft': {
       en: 'Drop the left half — {size} candidates left.',
       ko: '왼쪽 절반을 버린다 — 후보 {size} 개 남았다',
+      ja: '左半分を捨てる — 候補は {size} 個。',
+      zh: '扔掉左半边 — 还剩 {size} 个候选。',
       ar: 'أسقط النصف الأيسر — بقي {size} مرشحًا.',
       es: 'Descarta la mitad izquierda: quedan {size} candidatos.',
       fr: 'On jette la moitié gauche — il reste {size} candidats.',
@@ -193,6 +219,8 @@ export const binarySearchFacet: FacetJson = {
     'caption.dropRight': {
       en: 'Drop the right half — {size} candidates left.',
       ko: '오른쪽 절반을 버린다 — 후보 {size} 개 남았다',
+      ja: '右半分を捨てる — 候補は {size} 個。',
+      zh: '扔掉右半边 — 还剩 {size} 个候选。',
       ar: 'أسقط النصف الأيمن — بقي {size} مرشحًا.',
       es: 'Descarta la mitad derecha: quedan {size} candidatos.',
       fr: 'On jette la moitié droite — il reste {size} candidats.',
@@ -203,6 +231,8 @@ export const binarySearchFacet: FacetJson = {
     'caption.empty': {
       en: 'lo has passed hi — the range holds nothing at all.',
       ko: 'lo 가 hi 를 지나쳤다 — 구간에 아무것도 남지 않았다',
+      ja: 'lo が hi を追い越した — 区間には何も残っていない。',
+      zh: 'lo 越过了 hi — 区间里什么都不剩。',
       ar: 'تجاوز lo القيمة hi — لم يبقَ في المجال شيء.',
       es: 'lo ha pasado a hi: el rango no contiene nada.',
       fr: 'lo a dépassé hi — l’intervalle ne contient plus rien.',
@@ -213,6 +243,8 @@ export const binarySearchFacet: FacetJson = {
     'caption.found': {
       en: 'Found {target} at seat {index} after {compares} comparisons.',
       ko: '{compares} 번 견주고 {index} 번 자리에서 {target} 을 찾았다',
+      ja: '{compares} 回比べて {index} 番目で {target} を見つけた。',
+      zh: '比较 {compares} 次后在第 {index} 位找到 {target}。',
       ar: 'عُثر على {target} في الموضع {index} بعد {compares} مقارنات.',
       es: 'Se encontró {target} en el puesto {index} tras {compares} comparaciones.',
       fr: '{target} trouvé à la place {index} après {compares} comparaisons.',
@@ -223,6 +255,8 @@ export const binarySearchFacet: FacetJson = {
     'caption.notFound': {
       en: 'There is no {target} here. The empty range is the proof, and {compares} comparisons were enough to reach it.',
       ko: '{target} 은 여기 없다. 빈 구간이 그 증거이고, 거기 닿는 데 견줌 {compares} 번이면 됐다',
+      ja: 'ここに {target} はない。空になった区間がその証拠で、そこへ着くのに比較 {compares} 回で足りた。',
+      zh: '这里没有 {target}。空区间就是证据，走到那里 {compares} 次比较就够了。',
       ar: 'لا وجود لـ {target} هنا. المجال الفارغ هو الدليل، وقد كفت {compares} مقارنات للوصول إليه.',
       es: 'Aquí no hay ningún {target}. El rango vacío es la prueba, y bastaron {compares} comparaciones para llegar a él.',
       fr: 'Il n’y a pas de {target} ici. L’intervalle vide en est la preuve, et {compares} comparaisons ont suffi pour y arriver.',
@@ -233,6 +267,8 @@ export const binarySearchFacet: FacetJson = {
     'caption.done': {
       en: '{searches} searches, {hits} found, {compares} comparisons in all.',
       ko: '찾기 {searches} 번, 찾은 것 {hits} 개, 견줌은 모두 {compares} 번',
+      ja: '探索 {searches} 回、見つけたもの {hits} 個、比較は全部で {compares} 回。',
+      zh: '查找 {searches} 次，找到 {hits} 个，共比较 {compares} 次。',
       ar: '{searches} عمليتا بحث، ووُجد {hits}، و{compares} مقارنة في المجمل.',
       es: '{searches} búsquedas, {hits} encontrado, {compares} comparaciones en total.',
       fr: '{searches} recherches, {hits} trouvé, {compares} comparaisons au total.',
@@ -243,6 +279,8 @@ export const binarySearchFacet: FacetJson = {
     'label.searchFor': {
       en: 'Looking for {value}',
       ko: '{value} 를 찾는 중',
+      ja: '{value} を探索中',
+      zh: '正在找 {value}',
       ar: 'البحث عن {value}',
       es: 'Buscando {value}',
       fr: 'Recherche de {value}',
@@ -253,6 +291,8 @@ export const binarySearchFacet: FacetJson = {
     'label.remaining': {
       en: '{count} left',
       ko: '{count} 개 남음',
+      ja: '残り {count} 個',
+      zh: '还剩 {count} 个',
       ar: 'بقي {count}',
       es: 'quedan {count}',
       fr: 'reste {count}',
@@ -263,6 +303,8 @@ export const binarySearchFacet: FacetJson = {
     'label.history': {
       en: 'Ranges searched',
       ko: '거쳐 온 구간',
+      ja: '通ってきた区間',
+      zh: '走过的区间',
       ar: 'المجالات التي مرّ بها البحث',
       es: 'Rangos recorridos',
       fr: 'Intervalles parcourus',
@@ -273,6 +315,8 @@ export const binarySearchFacet: FacetJson = {
     'label.emptyRange': {
       en: 'the range is empty',
       ko: '구간이 비었다',
+      ja: '区間が空だ',
+      zh: '区间空了',
       ar: 'المجال فارغ',
       es: 'el rango está vacío',
       fr: 'intervalle vide',

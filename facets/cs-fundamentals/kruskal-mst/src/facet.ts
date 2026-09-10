@@ -14,6 +14,8 @@ export const kruskalMstFacet: FacetJson = {
   title: {
     en: 'Kruskal — lightest edge first',
     ko: '크루스칼 — 가벼운 간선부터',
+    ja: 'クラスカル法 — 軽い辺から',
+    zh: 'Kruskal — 从最轻的边开始',
     ar: 'كروسكال — الأخف أولاً',
     es: 'Kruskal: primero la arista más ligera',
     fr: 'Kruskal — la plus légère d’abord',
@@ -24,6 +26,8 @@ export const kruskalMstFacet: FacetJson = {
   description: {
     en: 'Line the edges up by weight, take them from the top, and drop any edge whose ends are already in one group.',
     ko: '간선을 무게 순으로 줄 세워 위에서부터 집고, 양 끝이 이미 같은 무리인 간선은 버린다.',
+    ja: '辺を重み順に並べて上から取り、両端がすでに同じグループにある辺は捨てる。',
+    zh: '把边按权重排好，从上往下取，两端已在同一组的边就丢掉。',
     ar: 'رتّب الحواف حسب الوزن وخذها من الأعلى، واحذف كل حافة طرفاها في المجموعة نفسها.',
     es: 'Ordena las aristas por peso, tómalas desde arriba y descarta las que unen un mismo grupo.',
     fr: 'Range les arêtes par poids, prends-les depuis le haut et jette celles dont les deux bouts sont déjà dans le même groupe.',
@@ -67,6 +71,8 @@ export const kruskalMstFacet: FacetJson = {
           label: {
             en: 'Joined',
             ko: '이은 간선',
+            ja: 'つないだ辺',
+            zh: '已连的边',
             ar: 'موصولة',
             es: 'Unidas',
             fr: 'Reliées',
@@ -81,6 +87,8 @@ export const kruskalMstFacet: FacetJson = {
           label: {
             en: 'Dropped',
             ko: '버린 간선',
+            ja: '捨てた辺',
+            zh: '丢弃的边',
             ar: 'محذوفة',
             es: 'Descartadas',
             fr: 'Rejetées',
@@ -95,6 +103,8 @@ export const kruskalMstFacet: FacetJson = {
           label: {
             en: 'Total weight',
             ko: '무게 합',
+            ja: '重みの合計',
+            zh: '权重总和',
             ar: 'مجموع الوزن',
             es: 'Peso total',
             fr: 'Poids total',
@@ -111,6 +121,8 @@ export const kruskalMstFacet: FacetJson = {
       label: {
         en: 'kruskal · find · unite',
         ko: 'kruskal · find · unite',
+        ja: 'kruskal · find · unite',
+        zh: 'kruskal · find · unite',
         ar: 'kruskal · find · unite',
         es: 'kruskal · find · unite',
         fr: 'kruskal · find · unite',
@@ -125,6 +137,8 @@ export const kruskalMstFacet: FacetJson = {
     'label.line': {
       en: 'By weight',
       ko: '무게 순',
+      ja: '重み順',
+      zh: '按权重',
       ar: 'حسب الوزن',
       es: 'Por peso',
       fr: 'Par poids',
@@ -135,6 +149,8 @@ export const kruskalMstFacet: FacetJson = {
     'caption.makeSet': {
       en: 'Every vertex starts as its own group.',
       ko: '정점 하나하나가 저마다 한 무리로 선다.',
+      ja: 'どの頂点も、はじめは自分だけのグループだ。',
+      zh: '每个顶点起初都自成一组。',
       ar: 'كل رأس يبدأ مجموعةً بذاته.',
       es: 'Cada vértice empieza siendo su propio grupo.',
       fr: 'Chaque sommet commence comme son propre groupe.',
@@ -145,6 +161,8 @@ export const kruskalMstFacet: FacetJson = {
     'caption.sort': {
       en: 'Line the edges up by weight.',
       ko: '간선을 무게 순으로 줄 세운다.',
+      ja: '辺を重み順に並べる。',
+      zh: '把边按权重排好。',
       ar: 'رتّب الحواف حسب الوزن.',
       es: 'Ordena las aristas por peso.',
       fr: 'Range les arêtes par poids.',
@@ -155,6 +173,8 @@ export const kruskalMstFacet: FacetJson = {
     'caption.take': {
       en: 'Take edge {edge}, weight {w}.',
       ko: '집어 든 간선 {edge}. 무게 {w}.',
+      ja: '辺 {edge} を取る。重み {w}。',
+      zh: '取边 {edge}，权重 {w}。',
       ar: 'خذ الحافة {edge}، الوزن {w}.',
       es: 'Toma la arista {edge}, peso {w}.',
       fr: 'Prends l’arête {edge}, poids {w}.',
@@ -165,6 +185,8 @@ export const kruskalMstFacet: FacetJson = {
     'caption.roots': {
       en: 'Climb from both ends — roots {a}, {b}.',
       ko: '양 끝에서 타고 올라간 뿌리 둘 — {a}, {b}.',
+      ja: '両端からたどって根を見る — 根は {a} と {b}。',
+      zh: '从两端往上找 — 根是 {a} 和 {b}。',
       ar: 'اصعد من الطرفين — الجذران {a}، {b}.',
       es: 'Sube desde ambos extremos: raíces {a}, {b}.',
       fr: 'Remonte des deux bouts — racines {a}, {b}.',
@@ -175,6 +197,8 @@ export const kruskalMstFacet: FacetJson = {
     'caption.same': {
       en: 'Same root, so this edge would close a cycle. Drop it.',
       ko: '뿌리가 같다. 이으면 고리가 되므로 버린다.',
+      ja: '根が同じだ。つなぐと閉路になるので捨てる。',
+      zh: '根相同，连上就会成环。丢掉。',
       ar: 'الجذر نفسه، فهذه الحافة تُغلق دورة. احذفها.',
       es: 'La misma raíz: esta arista cerraría un ciclo. Descártala.',
       fr: 'Même racine : cette arête fermerait un cycle. On la jette.',
@@ -185,6 +209,8 @@ export const kruskalMstFacet: FacetJson = {
     'caption.join': {
       en: 'Different roots, so the two groups become one.',
       ko: '뿌리가 다르다. 두 무리가 하나로 합쳐진다.',
+      ja: '根が違う。二つのグループが一つになる。',
+      zh: '根不同，两组合而为一。',
       ar: 'جذران مختلفان، فتصير المجموعتان واحدة.',
       es: 'Raíces distintas: los dos grupos se vuelven uno.',
       fr: 'Racines différentes : les deux groupes n’en font plus qu’un.',
@@ -195,6 +221,8 @@ export const kruskalMstFacet: FacetJson = {
     'caption.done': {
       en: 'Joined {picked}, dropped {dropped}. Total weight {total}.',
       ko: '이은 간선 {picked}, 버린 간선 {dropped}. 무게 합 {total}.',
+      ja: 'つないだ辺 {picked}、捨てた辺 {dropped}。重みの合計 {total}。',
+      zh: '已连 {picked} 条，丢弃 {dropped} 条。权重总和 {total}。',
       ar: 'موصولة {picked}، محذوفة {dropped}. مجموع الوزن {total}.',
       es: 'Unidas {picked}, descartadas {dropped}. Peso total {total}.',
       fr: 'Reliées {picked}, rejetées {dropped}. Poids total {total}.',

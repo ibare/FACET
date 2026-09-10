@@ -24,6 +24,8 @@ export const countingSortFacet: FacetJson = {
   title: {
     en: 'Counting Sort',
     ko: '카운팅 정렬',
+    ja: 'カウンティングソート',
+    zh: '计数排序',
     ar: 'ترتيب العدّ',
     es: 'Ordenamiento por conteo',
     fr: 'Tri par comptage',
@@ -34,6 +36,8 @@ export const countingSortFacet: FacetJson = {
   description: {
     en: 'Never compares two values — it counts them, adds the counts up, and seats each one.',
     ko: '값을 견주지 않는다 — 세고, 더해서 자리를 얻고, 그 자리에 놓는다',
+    ja: '値どうしを比べない — 数えて、足し合わせて、席に着かせる。',
+    zh: '从不比较两个值 — 先数，再累加，然后各就各位。',
     ar: 'لا يقارن قيمتين أبدًا — بل يعدّها، ويجمع الأعداد، ويضع كل قيمة في مقعدها.',
     es: 'Nunca compara dos valores: los cuenta, suma los conteos y sienta cada uno en su sitio.',
     fr: 'Ne compare jamais deux valeurs — il les compte, cumule les comptes et place chacune à son siège.',
@@ -61,6 +65,8 @@ export const countingSortFacet: FacetJson = {
           label: {
             en: 'Count',
             ko: '세기',
+            ja: 'カウント',
+            zh: '计数',
             ar: 'عدّ',
             es: 'Conteo',
             fr: 'Comptage',
@@ -75,6 +81,8 @@ export const countingSortFacet: FacetJson = {
           label: {
             en: 'Place',
             ko: '놓기',
+            ja: '配置',
+            zh: '放置',
             ar: 'وضع',
             es: 'Colocación',
             fr: 'Placement',
@@ -90,6 +98,8 @@ export const countingSortFacet: FacetJson = {
           label: {
             en: 'Compare',
             ko: '견줌',
+            ja: '比較',
+            zh: '比较',
             ar: 'مقارنة',
             es: 'Comparar',
             fr: 'Comparer',
@@ -106,6 +116,8 @@ export const countingSortFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -120,6 +132,8 @@ export const countingSortFacet: FacetJson = {
     'label.input': {
       en: 'input',
       ko: '입력',
+      ja: '入力',
+      zh: '输入',
       ar: 'الدخل',
       es: 'entrada',
       fr: 'entrée',
@@ -130,6 +144,8 @@ export const countingSortFacet: FacetJson = {
     'label.value': {
       en: 'value',
       ko: '값',
+      ja: '値',
+      zh: '值',
       ar: 'القيمة',
       es: 'valor',
       fr: 'valeur',
@@ -140,6 +156,8 @@ export const countingSortFacet: FacetJson = {
     'label.count': {
       en: 'count',
       ko: '개수',
+      ja: '個数',
+      zh: '个数',
       ar: 'العدد',
       es: 'conteo',
       fr: 'compte',
@@ -150,6 +168,8 @@ export const countingSortFacet: FacetJson = {
     'label.start': {
       en: 'start',
       ko: '시작 자리',
+      ja: '開始位置',
+      zh: '起始位',
       ar: 'البداية',
       es: 'inicio',
       fr: 'début',
@@ -160,6 +180,8 @@ export const countingSortFacet: FacetJson = {
     'label.output': {
       en: 'output',
       ko: '출력',
+      ja: '出力',
+      zh: '输出',
       ar: 'الخرج',
       es: 'salida',
       fr: 'sortie',
@@ -170,6 +192,8 @@ export const countingSortFacet: FacetJson = {
     'step.count': {
       en: '1. count',
       ko: '1. 세기',
+      ja: '1. 数える',
+      zh: '1. 计数',
       ar: '1. العدّ',
       es: '1. contar',
       fr: '1. compter',
@@ -180,6 +204,8 @@ export const countingSortFacet: FacetJson = {
     'step.prefix': {
       en: '2. add up',
       ko: '2. 누적합',
+      ja: '2. 足し上げ',
+      zh: '2. 累加',
       ar: '2. الجمع',
       es: '2. acumular',
       fr: '2. cumuler',
@@ -190,6 +216,8 @@ export const countingSortFacet: FacetJson = {
     'step.place': {
       en: '3. place',
       ko: '3. 놓기',
+      ja: '3. 配置',
+      zh: '3. 放置',
       ar: '3. الوضع',
       es: '3. colocar',
       fr: '3. placer',
@@ -200,6 +228,8 @@ export const countingSortFacet: FacetJson = {
     'caption.start': {
       en: 'No value is ever compared with another. Count first, then place.',
       ko: '값을 다른 값과 견주지 않는다. 먼저 세고, 그 다음에 놓는다',
+      ja: 'どの値も他と比べない。まず数え、それから置く。',
+      zh: '任何值都不与另一个比较。先数，再放。',
       ar: 'لا تُقارن أي قيمة بأخرى. عُدّ أولًا ثم ضَع.',
       es: 'Ningún valor se compara con otro. Primero contar, después colocar.',
       fr: "Aucune valeur n'est comparée à une autre. D'abord compter, ensuite placer.",
@@ -210,6 +240,8 @@ export const countingSortFacet: FacetJson = {
     'caption.alloc': {
       en: 'Make one slot per value and one seat per item.',
       ko: '값마다 칸 하나, 항목마다 자리 하나를 마련한다',
+      ja: '値ごとに枠を一つ、要素ごとに席を一つ用意する。',
+      zh: '为每个值备一格，为每个元素备一个座位。',
       ar: 'جهّز خانة لكل قيمة ومقعدًا لكل عنصر.',
       es: 'Prepara una casilla por valor y un asiento por elemento.',
       fr: 'Prépare une case par valeur et un siège par élément.',
@@ -220,6 +252,8 @@ export const countingSortFacet: FacetJson = {
     'caption.readForCount': {
       en: 'Read {value} — one more for its slot.',
       ko: '{value} 를 읽는다 — 그 값의 칸에 하나 더',
+      ja: '{value} を読む — その枠に一つ追加。',
+      zh: '读到 {value} — 它的格子加一。',
       ar: 'اقرأ {value} — واحد إضافي لخانته.',
       es: 'Lee {value}: uno más para su casilla.',
       fr: 'Lit {value} — un de plus pour sa case.',
@@ -230,6 +264,8 @@ export const countingSortFacet: FacetJson = {
     'caption.count': {
       en: 'Slot {value} now holds {count}.',
       ko: '{value} 칸의 개수가 {count} 가 됐다',
+      ja: '枠 {value} は {count} になった。',
+      zh: '格子 {value} 现在是 {count}。',
       ar: 'خانة {value} صارت تحمل {count}.',
       es: 'La casilla {value} ya contiene {count}.',
       fr: 'La case {value} contient maintenant {count}.',
@@ -240,6 +276,8 @@ export const countingSortFacet: FacetJson = {
     'caption.countsDone': {
       en: 'Every item is counted. Slots nobody visited stay empty.',
       ko: '모두 셌다. 아무도 들르지 않은 칸은 빈 채로 남는다',
+      ja: 'すべて数え終えた。誰も来なかった枠は空のまま。',
+      zh: '全部数完了。没人到过的格子仍是空的。',
       ar: 'عُدّت كل العناصر. الخانات التي لم يزرها أحد تبقى فارغة.',
       es: 'Todo está contado. Las casillas que nadie visitó siguen vacías.',
       fr: "Tout est compté. Les cases que personne n'a visitées restent vides.",
@@ -250,6 +288,8 @@ export const countingSortFacet: FacetJson = {
     'caption.prefix': {
       en: 'Value {value} starts at seat {start}.',
       ko: '값 {value} 는 {start} 번 자리에서 시작한다',
+      ja: '値 {value} は席 {start} から始まる。',
+      zh: '值 {value} 从座位 {start} 开始。',
       ar: 'القيمة {value} تبدأ عند المقعد {start}.',
       es: 'El valor {value} empieza en el asiento {start}.',
       fr: 'La valeur {value} commence au siège {start}.',
@@ -260,6 +300,8 @@ export const countingSortFacet: FacetJson = {
     'caption.prefixEmpty': {
       en: 'Nothing of value {value} — seat {start} stays free for the next value.',
       ko: '값 {value} 는 하나도 없다 — {start} 번 자리는 다음 값에게 그대로 넘어간다',
+      ja: '値 {value} は一つもない — 席 {start} は次の値にそのまま渡る。',
+      zh: '没有一个 {value} — 座位 {start} 原样留给下一个值。',
       ar: 'لا وجود للقيمة {value} — المقعد {start} يبقى للقيمة التالية.',
       es: 'No hay ningún {value}: el asiento {start} queda para el siguiente valor.',
       fr: 'Aucun {value} — le siège {start} reste pour la valeur suivante.',
@@ -270,6 +312,8 @@ export const countingSortFacet: FacetJson = {
     'caption.startsDone': {
       en: 'Every value knows its first seat. Now place them in order.',
       ko: '값마다 첫 자리를 얻었다. 이제 앞에서부터 놓는다',
+      ja: 'どの値も最初の席を得た。あとは前から置いていく。',
+      zh: '每个值都有了第一个座位。现在按顺序放置。',
       ar: 'كل قيمة تعرف مقعدها الأول. الآن ضَعها بالترتيب.',
       es: 'Cada valor conoce su primer asiento. Ahora colócalos en orden.',
       fr: "Chaque valeur connaît son premier siège. Place-les maintenant dans l'ordre.",
@@ -280,6 +324,8 @@ export const countingSortFacet: FacetJson = {
     'caption.readForPlace': {
       en: 'Read {value} — where does it sit?',
       ko: '{value} 를 읽는다 — 어느 자리인가',
+      ja: '{value} を読む — どの席か。',
+      zh: '读到 {value} — 它坐哪里？',
       ar: 'اقرأ {value} — أين يجلس؟',
       es: 'Lee {value}: ¿dónde se sienta?',
       fr: 'Lit {value} — à quel siège ?',
@@ -290,6 +336,8 @@ export const countingSortFacet: FacetJson = {
     'caption.place': {
       en: '{value} takes seat {slot}.',
       ko: '{value} 가 {slot} 번 자리에 앉는다',
+      ja: '{value} が席 {slot} に座る。',
+      zh: '{value} 坐到座位 {slot}。',
       ar: '{value} يأخذ المقعد {slot}.',
       es: '{value} ocupa el asiento {slot}.',
       fr: '{value} prend le siège {slot}.',
@@ -300,6 +348,8 @@ export const countingSortFacet: FacetJson = {
     'caption.advance': {
       en: 'Push the seat of {value} on to {start} — the next one waits there.',
       ko: '{value} 의 자리를 {start} 로 한 칸 민다 — 다음 {value} 는 거기서 기다린다',
+      ja: '{value} の席を {start} へ一つ進める — 次の {value} はそこで待つ。',
+      zh: '把 {value} 的座位推到 {start} — 下一个在那里等。',
       ar: 'ادفع مقعد {value} إلى {start} — التالي ينتظر هناك.',
       es: 'Empuja el asiento de {value} hasta {start}: el siguiente espera ahí.',
       fr: 'Décale le siège de {value} vers {start} — le suivant y attend.',
@@ -310,6 +360,8 @@ export const countingSortFacet: FacetJson = {
     'caption.done': {
       en: '{placements} placements, {comparisons} comparisons.',
       ko: '놓기 {placements} 번, 견줌 {comparisons} 번',
+      ja: '配置 {placements} 回、比較 {comparisons} 回。',
+      zh: '放置 {placements} 次，比较 {comparisons} 次。',
       ar: '{placements} عمليات وضع، {comparisons} مقارنات.',
       es: '{placements} colocaciones, {comparisons} comparaciones.',
       fr: '{placements} placements, {comparisons} comparaisons.',

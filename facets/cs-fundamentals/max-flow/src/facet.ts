@@ -13,6 +13,8 @@ export const maxFlowFacet: FacetJson = {
   title: {
     en: 'Maximum Flow',
     ko: '최대 유량',
+    ja: '最大流',
+    zh: '最大流',
     ar: 'التدفق الأقصى',
     es: 'Flujo máximo',
     fr: 'Flot maximal',
@@ -23,6 +25,8 @@ export const maxFlowFacet: FacetJson = {
   description: {
     en: 'Find a route that still has room, push the bottleneck through it, and repeat until no route is left.',
     ko: '여유가 남은 길을 찾아 병목만큼 흘리기를, 더 찾을 길이 없을 때까지 되풀이한다.',
+    ja: '余裕の残る道を見つけ、ボトルネックの分だけ流す。道がなくなるまで繰り返す。',
+    zh: '找一条还有余量的路，按瓶颈的量灌进去，直到再也找不到路。',
     ar: 'ابحث عن مسار فيه متسع، ادفع بمقدار أضيق أنبوب، وكرر حتى لا يبقى مسار.',
     es: 'Busca una ruta con espacio, empuja el cuello de botella y repite hasta que no quede ninguna.',
     fr: "Trouve un chemin qui a encore de la marge, pousse la valeur du goulot, et recommence jusqu à épuisement.",
@@ -66,6 +70,8 @@ export const maxFlowFacet: FacetJson = {
           label: {
             en: 'pipes checked',
             ko: '살펴본 관',
+            ja: '調べた管',
+            zh: '查看的管',
             ar: 'أنابيب فُحصت',
             es: 'tuberías revisadas',
             fr: 'tuyaux examinés',
@@ -80,6 +86,8 @@ export const maxFlowFacet: FacetJson = {
           label: {
             en: 'routes found',
             ko: '찾은 길',
+            ja: '見つけた道',
+            zh: '找到的路',
             ar: 'مسارات وُجدت',
             es: 'rutas halladas',
             fr: 'chemins trouvés',
@@ -94,6 +102,8 @@ export const maxFlowFacet: FacetJson = {
           label: {
             en: 'total flow',
             ko: '총 유량',
+            ja: '総流量',
+            zh: '总流量',
             ar: 'إجمالي التدفق',
             es: 'flujo total',
             fr: 'flux total',
@@ -110,6 +120,8 @@ export const maxFlowFacet: FacetJson = {
       label: {
         en: 'Edmonds-Karp — breadth first, then push the bottleneck',
         ko: '에드몬즈-카프 — 너비 우선으로 찾고, 병목만큼 흘린다',
+        ja: 'エドモンズ・カープ — 幅優先で探し、ボトルネックの分だけ流す',
+        zh: 'Edmonds-Karp — 先广度搜索，再按瓶颈灌流',
         ar: 'إدموندز-كارب — بحث بالعرض ثم دفع بمقدار العنق',
         es: 'Edmonds-Karp: anchura primero, luego empuja el cuello de botella',
         fr: 'Edmonds-Karp — en largeur, puis on pousse le goulot',
@@ -124,6 +136,8 @@ export const maxFlowFacet: FacetJson = {
     'label.roomLeft': {
       en: 'room left, each way',
       ko: '남은 여유 (양쪽 방향)',
+      ja: '残りの余裕（両方向）',
+      zh: '剩余余量（两个方向）',
       ar: 'المتسع المتبقي في كل اتجاه',
       es: 'espacio libre en cada sentido',
       fr: 'marge restante, dans chaque sens',
@@ -134,6 +148,8 @@ export const maxFlowFacet: FacetJson = {
     'label.pushBack': {
       en: 'flowing now — can be pushed back',
       ko: '지금 흐르는 양 — 되돌릴 수 있다',
+      ja: '今流れている量 — 押し戻せる',
+      zh: '当前流量 — 可以回退',
       ar: 'يتدفق الآن — يمكن إعادته',
       es: 'fluye ahora: se puede devolver',
       fr: 'en circulation — peut être renvoyé',
@@ -144,6 +160,8 @@ export const maxFlowFacet: FacetJson = {
     'label.totalFlow': {
       en: 'total flow',
       ko: '총 유량',
+      ja: '総流量',
+      zh: '总流量',
       ar: 'إجمالي التدفق',
       es: 'flujo total',
       fr: 'flux total',
@@ -154,6 +172,8 @@ export const maxFlowFacet: FacetJson = {
     'label.source': {
       en: 'source',
       ko: '들어오는 곳',
+      ja: '流入口',
+      zh: '源点',
       ar: 'المصدر',
       es: 'origen',
       fr: 'source',
@@ -164,6 +184,8 @@ export const maxFlowFacet: FacetJson = {
     'label.sink': {
       en: 'sink',
       ko: '나가는 곳',
+      ja: '流出口',
+      zh: '汇点',
       ar: 'المصرف',
       es: 'destino',
       fr: 'puits',
@@ -174,6 +196,8 @@ export const maxFlowFacet: FacetJson = {
     'label.queue': {
       en: 'BFS queue',
       ko: '너비 우선 큐',
+      ja: '幅優先キュー',
+      zh: 'BFS 队列',
       ar: 'طابور البحث بالعرض',
       es: 'cola BFS',
       fr: 'file BFS',
@@ -184,6 +208,8 @@ export const maxFlowFacet: FacetJson = {
     'label.round': {
       en: 'search {n}',
       ko: '탐색 {n}회차',
+      ja: '探索 {n} 回目',
+      zh: '第 {n} 轮搜索',
       ar: 'بحث {n}',
       es: 'búsqueda {n}',
       fr: 'recherche {n}',
@@ -194,6 +220,8 @@ export const maxFlowFacet: FacetJson = {
     'caption.start': {
       en: 'Every pipe is empty. Find a route with room and fill it.',
       ko: '관은 모두 비어 있다. 여유가 남은 길을 찾아 채운다.',
+      ja: '管はすべて空だ。余裕のある道を見つけて満たす。',
+      zh: '所有管子都是空的。找一条有余量的路把它填满。',
       ar: 'كل الأنابيب فارغة. ابحث عن مسار فيه متسع واملأه.',
       es: 'Todas las tuberías están vacías. Busca una ruta con espacio y llénala.',
       fr: 'Tous les tuyaux sont vides. Trouve un chemin qui a de la marge et remplis-le.',
@@ -204,6 +232,8 @@ export const maxFlowFacet: FacetJson = {
     'caption.search': {
       en: 'Breadth first: the route found first is the one with the fewest pipes.',
       ko: '너비 우선이라 먼저 닿는 길이 곧 관을 가장 적게 지나는 길이다.',
+      ja: '幅優先だから、先に見つかる道が管を最も少なく通る道になる。',
+      zh: '广度优先，最先找到的路就是经过管子最少的路。',
       ar: 'البحث بالعرض: المسار الذي يُعثر عليه أولاً هو الأقل عدداً من الأنابيب.',
       es: 'Búsqueda en anchura: la primera ruta hallada es la de menos tuberías.',
       fr: 'Parcours en largeur : le premier chemin trouvé traverse le moins de tuyaux.',
@@ -214,6 +244,8 @@ export const maxFlowFacet: FacetJson = {
     'caption.found': {
       en: 'A route is open. Walk it back to find the narrowest pipe.',
       ko: '길이 열렸다. 거슬러 오르며 가장 좁은 관을 찾는다.',
+      ja: '道が開いた。さかのぼって最も細い管を探す。',
+      zh: '路通了。回溯这条路，找出最窄的管。',
       ar: 'المسار مفتوح. عُد عبره للعثور على أضيق أنبوب.',
       es: 'Hay una ruta abierta. Recórrela al revés para hallar la tubería más estrecha.',
       fr: 'Un chemin est ouvert. Remonte-le pour trouver le tuyau le plus étroit.',
@@ -224,6 +256,8 @@ export const maxFlowFacet: FacetJson = {
     'caption.bottleneck': {
       en: 'Narrowest pipe on the route so far: {best}',
       ko: '지금까지 가장 좁은 관은 {best}',
+      ja: 'ここまでで最も細い管は {best}',
+      zh: '目前路上最窄的管是 {best}',
       ar: 'أضيق أنبوب على المسار حتى الآن: {best}',
       es: 'Tubería más estrecha de la ruta hasta ahora: {best}',
       fr: 'Tuyau le plus étroit du chemin jusque-là : {best}',
@@ -234,6 +268,8 @@ export const maxFlowFacet: FacetJson = {
     'caption.push': {
       en: 'Pushing {amount} — this way has that much less room.',
       ko: '{amount} 만큼 흘린다. 이 방향 여유가 그만큼 준다.',
+      ja: '{amount} だけ流す。この向きの余裕がその分減る。',
+      zh: '灌入 {amount} — 这个方向的余量就少了这么多。',
       ar: 'يتم دفع {amount} — يقل المتسع في هذا الاتجاه بالقدر نفسه.',
       es: 'Se empuja {amount}: en este sentido queda ese espacio menos.',
       fr: 'On pousse {amount} : ce sens perd autant de marge.',
@@ -244,6 +280,8 @@ export const maxFlowFacet: FacetJson = {
     'caption.residual': {
       en: 'The other way gains {amount} to push back later.',
       ko: '반대 방향에는 되돌릴 폭이 {amount} 만큼 생긴다.',
+      ja: '逆向きには、あとで押し戻せる分が {amount} できる。',
+      zh: '反方向多出 {amount}，以后可以回退。',
       ar: 'يكسب الاتجاه المعاكس {amount} يمكن إعادتها لاحقاً.',
       es: 'El sentido contrario gana {amount} para devolver más tarde.',
       fr: 'Le sens inverse gagne {amount} à renvoyer plus tard.',
@@ -254,6 +292,8 @@ export const maxFlowFacet: FacetJson = {
     'caption.added': {
       en: 'This route carried {amount}.',
       ko: '이 길로 흐른 양은 {amount}.',
+      ja: 'この道を流れた量は {amount}。',
+      zh: '这条路输送了 {amount}。',
       ar: 'حمل هذا المسار {amount}.',
       es: 'Esta ruta llevó {amount}.',
       fr: 'Ce chemin a transporté {amount}.',
@@ -264,6 +304,8 @@ export const maxFlowFacet: FacetJson = {
     'caption.noPath': {
       en: 'No route with room left. The flow cannot grow.',
       ko: '여유가 남은 길이 더 없다. 유량은 더 늘지 않는다.',
+      ja: '余裕の残る道はもうない。流量はこれ以上増えない。',
+      zh: '再没有有余量的路了。流量不能再增加。',
       ar: 'لا مسار فيه متسع. لا يمكن للتدفق أن يزيد.',
       es: 'No queda ninguna ruta con espacio. El flujo ya no puede crecer.',
       fr: 'Plus aucun chemin avec de la marge. Le flux ne peut plus croître.',
@@ -274,6 +316,8 @@ export const maxFlowFacet: FacetJson = {
     'caption.done': {
       en: 'Routes used: {paths}. Maximum flow: {total}.',
       ko: '쓴 길은 {paths}. 최대 유량은 {total}.',
+      ja: '使った道は {paths}。最大流は {total}。',
+      zh: '用了 {paths} 条路。最大流为 {total}。',
       ar: 'المسارات المستخدمة: {paths}. أقصى تدفق: {total}.',
       es: 'Rutas usadas: {paths}. Flujo máximo: {total}.',
       fr: 'Chemins utilisés : {paths}. Flux maximal : {total}.',

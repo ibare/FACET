@@ -43,6 +43,8 @@ export const randomForestFacet: FacetJson = {
   title: {
     en: 'Random Forest — What Many Trees Add',
     ko: '랜덤 포레스트 — 여럿을 기르면 무엇이 더 생기는가',
+    ja: 'ランダムフォレスト — 木を増やすと何が加わるか',
+    zh: '随机森林 — 多种几棵树能多出什么',
     ar: 'الغابة العشوائية — ما الذي تضيفه أشجار كثيرة',
     es: 'Bosque aleatorio: lo que añaden muchos árboles',
     fr: 'Forêt aléatoire — ce qu\'apportent plusieurs arbres',
@@ -53,6 +55,8 @@ export const randomForestFacet: FacetJson = {
   description: {
     en: 'One tree is 100% sure everywhere. A forest also tells you how sure it is.',
     ko: '나무 하나는 평면 어디서나 100% 확신한다. 숲은 자기가 얼마나 확신하는지도 말한다.',
+    ja: '木が一本なら、どこでも 100% 言い切る。森はどれだけ確かかまで教えてくれる。',
+    zh: '一棵树在哪里都是 100% 笃定。森林还会告诉你它有多笃定。',
     ar: 'شجرة واحدة واثقة 100% في كل مكان. أما الغابة فتخبرك أيضًا بمدى ثقتها.',
     es: 'Un solo árbol está 100% seguro en todas partes. Un bosque además te dice cuánta seguridad tiene.',
     fr: 'Un seul arbre est sûr à 100% partout. Une forêt vous dit en plus à quel point elle est sûre.',
@@ -83,6 +87,8 @@ export const randomForestFacet: FacetJson = {
     'caption.start': {
       en: 'Growing {total} trees, one at a time.',
       ko: '나무 {total} 그루를 하나씩 기른다.',
+      ja: '木を {total} 本、一本ずつ育てる。',
+      zh: '一棵接一棵，种下 {total} 棵树。',
       ar: 'نزرع {total} شجرة، واحدة تلو الأخرى.',
       es: 'Cultivando {total} árboles, uno a uno.',
       fr: 'On fait pousser {total} arbres, un par un.',
@@ -93,6 +99,8 @@ export const randomForestFacet: FacetJson = {
     'caption.grown': {
       en: 'Tree {t} of {total} — {leaves} leaves, right on {correct} of {points} training points.',
       ko: '나무 {t}/{total} — 잎 {leaves} 개, 훈련 점 {points} 개 가운데 {correct} 개 적중.',
+      ja: '木 {t}/{total} — 葉 {leaves} 枚、訓練点 {points} 個のうち {correct} 個に的中。',
+      zh: '第 {t}/{total} 棵树 — {leaves} 片叶子，{points} 个训练点中说对 {correct} 个。',
       ar: 'الشجرة {t} من {total} — {leaves} ورقة، تصيب {correct} من {points} نقطة تدريب.',
       es: 'Árbol {t} de {total}: {leaves} hojas, acierta en {correct} de {points} puntos de entrenamiento.',
       fr: 'Arbre {t} sur {total} — {leaves} feuilles, juste sur {correct} des {points} points d\'entraînement.',
@@ -103,6 +111,8 @@ export const randomForestFacet: FacetJson = {
     'caption.slide': {
       en: 'Now drag the forest size. At 1 the plane is one flat colour; the band appears only once trees disagree.',
       ko: '이제 숲 크기를 옮겨 보아라. 1 에서는 평면이 한 가지 색이고, 나무들이 갈리고 나서야 띠가 생긴다.',
+      ja: '森の大きさを動かしてみよう。1 では平面は一色で、木の意見が割れて初めて帯が現れる。',
+      zh: '现在拖动森林的大小。到 1 时整个平面只有一种颜色；只有当树意见分歧，带子才会出现。',
       ar: 'حرّك الآن حجم الغابة. عند 1 يكون المستوى بلون واحد؛ ولا يظهر الشريط إلا حين تختلف الأشجار.',
       es: 'Ahora mueve el tamaño del bosque. En 1 el plano es de un solo color; la franja aparece solo cuando los árboles discrepan.',
       fr: 'Faites maintenant glisser la taille de la forêt. À 1 le plan est d\'une seule couleur ; la bande n\'apparaît que lorsque les arbres divergent.',
@@ -113,6 +123,8 @@ export const randomForestFacet: FacetJson = {
     'caption.oneTree': {
       en: 'One tree — sure everywhere. Split cells: {split} of {cells}. Right on {correct} of {points}.',
       ko: '나무 하나 — 어디서나 확신한다. 갈리는 칸은 {cells} 중 {split}. 적중은 {points} 중 {correct}.',
+      ja: '木は一本 — どこでも言い切る。割れた枠は {cells} 中 {split}。的中は {points} 中 {correct}。',
+      zh: '只有一棵树 — 哪里都笃定。分歧的格子 {cells} 中有 {split}。说对 {points} 中的 {correct}。',
       ar: 'شجرة واحدة — واثقة في كل مكان. الخلايا المنقسمة: {split} من {cells}. تصيب {correct} من {points}.',
       es: 'Un solo árbol: seguro en todas partes. Celdas divididas: {split} de {cells}. Acierta en {correct} de {points}.',
       fr: 'Un seul arbre — sûr partout. Cases partagées : {split} sur {cells}. Juste sur {correct} sur {points}.',
@@ -123,6 +135,8 @@ export const randomForestFacet: FacetJson = {
     'caption.size': {
       en: 'Forest of {n} — split cells: {split} of {cells}. Right on {correct} of {points}.',
       ko: '나무 {n} 그루의 숲 — 갈리는 칸은 {cells} 중 {split}. 적중은 {points} 중 {correct}.',
+      ja: '木 {n} 本の森 — 割れた枠は {cells} 中 {split}。的中は {points} 中 {correct}。',
+      zh: '{n} 棵树的森林 — 分歧的格子 {cells} 中有 {split}。说对 {points} 中的 {correct}。',
       ar: 'غابة من {n} — الخلايا المنقسمة: {split} من {cells}. تصيب {correct} من {points}.',
       es: 'Bosque de {n}: celdas divididas: {split} de {cells}. Acierta en {correct} de {points}.',
       fr: 'Forêt de {n} — cases partagées : {split} sur {cells}. Juste sur {correct} sur {points}.',
@@ -133,6 +147,8 @@ export const randomForestFacet: FacetJson = {
     'label.grown': {
       en: 'trees grown',
       ko: '기른 나무',
+      ja: '育てた木',
+      zh: '已种的树',
       ar: 'الأشجار المزروعة',
       es: 'árboles cultivados',
       fr: 'arbres poussés',
@@ -143,6 +159,8 @@ export const randomForestFacet: FacetJson = {
     'label.votes': {
       en: 'votes at the probe point',
       ko: '물음점이 받은 표',
+      ja: '問いの点が集めた票',
+      zh: '探针点收到的票',
       ar: 'الأصوات عند نقطة الفحص',
       es: 'votos en el punto de prueba',
       fr: 'votes au point sondé',
@@ -153,6 +171,8 @@ export const randomForestFacet: FacetJson = {
     'label.sureness': {
       en: 'how sure the forest is',
       ko: '숲이 얼마나 확신하는가',
+      ja: '森がどれだけ確かか',
+      zh: '森林有多笃定',
       ar: 'إلى أي مدى تثق الغابة',
       es: 'cuánta seguridad tiene el bosque',
       fr: 'à quel point la forêt est sûre',
@@ -163,6 +183,8 @@ export const randomForestFacet: FacetJson = {
     'label.rampSplit': {
       en: 'split',
       ko: '갈림',
+      ja: '割れる',
+      zh: '分歧',
       ar: 'منقسم',
       es: 'dividido',
       fr: 'partagé',
@@ -173,6 +195,8 @@ export const randomForestFacet: FacetJson = {
     'label.rampSure': {
       en: 'unanimous',
       ko: '만장일치',
+      ja: '全会一致',
+      zh: '一致',
       ar: 'بالإجماع',
       es: 'unánime',
       fr: 'unanime',
@@ -183,6 +207,8 @@ export const randomForestFacet: FacetJson = {
     'label.seen': {
       en: 'looking at {n} of {total} trees',
       ko: '보는 나무는 {total} 중 {n}',
+      ja: '見ている木は {total} 中 {n}',
+      zh: '正看着 {total} 棵中的 {n} 棵',
       ar: 'ننظر إلى {n} من {total} شجرة',
       es: 'mirando {n} de {total} árboles',
       fr: 'on regarde {n} arbres sur {total}',
@@ -193,6 +219,8 @@ export const randomForestFacet: FacetJson = {
     'label.treeStat': {
       en: 'tree {t}: {distinct} rows drawn, {left} left out, {leaves} leaves',
       ko: '나무 {t}: 뽑힌 자리 {distinct}, 남은 것 {left}, 잎 {leaves}',
+      ja: '木 {t}: 引いた行 {distinct}、外れた行 {left}、葉 {leaves}',
+      zh: '第 {t} 棵：抽到 {distinct} 行，落下 {left} 行，{leaves} 片叶子',
       ar: 'الشجرة {t}: {distinct} صفًا مسحوبًا، {left} خارجًا، {leaves} ورقة',
       es: 'árbol {t}: {distinct} filas sacadas, {left} fuera, {leaves} hojas',
       fr: 'arbre {t} : {distinct} lignes tirées, {left} laissées de côté, {leaves} feuilles',
@@ -203,6 +231,8 @@ export const randomForestFacet: FacetJson = {
     'label.verdict': {
       en: '{size} trees say {mark} ({a} to {b})',
       ko: '나무 {size} 그루의 답은 {mark} ({a} 대 {b})',
+      ja: '木 {size} 本の答えは {mark}（{a} 対 {b}）',
+      zh: '{size} 棵树的答案是 {mark}（{a} 比 {b}）',
       ar: '{size} شجرة تقول {mark} ({a} مقابل {b})',
       es: '{size} árboles dicen {mark} ({a} a {b})',
       fr: '{size} arbres disent {mark} ({a} contre {b})',
@@ -224,6 +254,8 @@ export const randomForestFacet: FacetJson = {
           label: {
             en: 'Forest size',
             ko: '숲 크기',
+            ja: '森の大きさ',
+            zh: '森林大小',
             ar: 'حجم الغابة',
             es: 'Tamaño del bosque',
             fr: 'Taille de la forêt',
@@ -246,6 +278,8 @@ export const randomForestFacet: FacetJson = {
           label: {
             en: 'Trees grown',
             ko: '기른 나무',
+            ja: '育てた木',
+            zh: '已种的树',
             ar: 'الأشجار المزروعة',
             es: 'Árboles cultivados',
             fr: 'Arbres poussés',
@@ -260,6 +294,8 @@ export const randomForestFacet: FacetJson = {
           label: {
             en: 'Points the forest gets right',
             ko: '숲이 맞힌 점',
+            ja: '森が当てた点',
+            zh: '森林答对的点',
             ar: 'النقاط التي تصيبها الغابة',
             es: 'Puntos que el bosque acierta',
             fr: 'Points justes de la forêt',
@@ -274,6 +310,8 @@ export const randomForestFacet: FacetJson = {
           label: {
             en: 'Cells where the vote splits',
             ko: '표가 갈리는 칸',
+            ja: '票が割れる枠',
+            zh: '投票分歧的格子',
             ar: 'الخلايا التي ينقسم فيها التصويت',
             es: 'Celdas donde el voto se divide',
             fr: 'Cases où le vote se partage',
@@ -290,6 +328,8 @@ export const randomForestFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',

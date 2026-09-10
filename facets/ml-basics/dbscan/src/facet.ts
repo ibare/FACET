@@ -76,6 +76,8 @@ export const dbscanFacet: FacetJson = {
   title: {
     en: 'DBSCAN — two handles, two different things',
     ko: 'DBSCAN — 두 손잡이는 서로 다른 것을 만진다',
+    ja: 'DBSCAN — 二つのつまみは別のものを触る',
+    zh: 'DBSCAN — 两个旋钮拨的是不同的东西',
     ar: 'DBSCAN — مقبضان يمسّان شيئين مختلفين',
     es: 'DBSCAN: dos mandos que tocan cosas distintas',
     fr: 'DBSCAN — deux molettes qui touchent deux choses différentes',
@@ -86,6 +88,8 @@ export const dbscanFacet: FacetJson = {
   description: {
     en: 'eps links what was apart; minPts breaks small blobs down. The same group count can come from very different pairs.',
     ko: 'eps 는 떨어져 있던 것을 잇고, minPts 는 작은 덩이를 무너뜨린다. 무리 수가 같아도 그 속내가 다르다.',
+    ja: 'eps は離れていたものをつなぎ、minPts は小さな塊を崩す。群れの数が同じでも、その中身はまるで違う組み合わせから来る。',
+    zh: 'eps 把原本分开的连起来，minPts 把小团打散。同样的组数，可能来自完全不同的两个取值。',
     ar: 'eps يصل ما كان متباعدًا، وminPts يفكّك الكتل الصغيرة. العدد نفسه من المجموعات قد يأتي من ثنائيات مختلفة تمامًا.',
     es: 'eps enlaza lo que estaba separado; minPts derrumba los grumos pequeños. El mismo número de grupos puede venir de pares muy distintos.',
     fr: 'eps relie ce qui était séparé ; minPts fait tomber les petits amas. Un même nombre de groupes peut venir de paires très différentes.',
@@ -144,6 +148,8 @@ export const dbscanFacet: FacetJson = {
           label: {
             en: 'Groups',
             ko: '무리',
+            ja: 'グループ',
+            zh: '组数',
             ar: 'المجموعات',
             es: 'Grupos',
             fr: 'Groupes',
@@ -158,6 +164,8 @@ export const dbscanFacet: FacetJson = {
           label: {
             en: 'Noise',
             ko: '잡음',
+            ja: 'ノイズ',
+            zh: '噪声',
             ar: 'الضجيج',
             es: 'Ruido',
             fr: 'Bruit',
@@ -172,6 +180,8 @@ export const dbscanFacet: FacetJson = {
           label: {
             en: 'Distances',
             ko: '잰 거리',
+            ja: '測った距離',
+            zh: '测过的距离',
             ar: 'المسافات',
             es: 'Distancias',
             fr: 'Distances',
@@ -188,6 +198,8 @@ export const dbscanFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -202,6 +214,8 @@ export const dbscanFacet: FacetJson = {
     'caption.start': {
       en: 'Points on the plane: {n}. No group yet.',
       ko: '평면 위의 점은 {n}. 아직 무리는 없다.',
+      ja: '平面上の点は {n}。まだグループはない。',
+      zh: '平面上的点: {n}。还没有分组。',
       ar: 'النقاط على المستوى: {n}. لا مجموعة بعد.',
       es: 'Puntos en el plano: {n}. Todavía no hay grupos.',
       fr: 'Points sur le plan : {n}. Pas encore de groupe.',
@@ -212,6 +226,8 @@ export const dbscanFacet: FacetJson = {
     'caption.epsUp': {
       en: 'eps raised to {eps} — what was apart now links up.',
       ko: 'eps 를 {eps} 로 올렸다 — 떨어져 있던 것이 이어진다.',
+      ja: 'eps を {eps} に上げた — 離れていたものがつながる。',
+      zh: 'eps 提到 {eps} — 原本分开的连了起来。',
       ar: 'رُفع eps إلى {eps} — ما كان متباعدًا صار متصلًا.',
       es: 'eps sube a {eps}: lo que estaba separado ahora se enlaza.',
       fr: 'eps monté à {eps} — ce qui était séparé se relie.',
@@ -222,6 +238,8 @@ export const dbscanFacet: FacetJson = {
     'caption.epsDown': {
       en: 'eps lowered to {eps} — the links snap and groups fall apart.',
       ko: 'eps 를 {eps} 로 내렸다 — 이어졌던 것이 끊어져 무리가 갈라진다.',
+      ja: 'eps を {eps} に下げた — つながりが切れてグループが割れる。',
+      zh: 'eps 降到 {eps} — 连接断开，组也散了。',
       ar: 'خُفض eps إلى {eps} — تنقطع الوصلات وتتفكك المجموعات.',
       es: 'eps baja a {eps}: los enlaces se rompen y los grupos se separan.',
       fr: 'eps abaissé à {eps} — les liens cèdent et les groupes se séparent.',
@@ -232,6 +250,8 @@ export const dbscanFacet: FacetJson = {
     'caption.minPtsUp': {
       en: 'minPts raised to {minPts} — thin blobs lose their core first.',
       ko: 'minPts 를 {minPts} 로 올렸다 — 성긴 덩이부터 속을 잃는다.',
+      ja: 'minPts を {minPts} に上げた — 薄い塊から先に核を失う。',
+      zh: 'minPts 提到 {minPts} — 稀疏的团先失去核心。',
       ar: 'رُفع minPts إلى {minPts} — الكتل المتفرقة تفقد نواتها أولًا.',
       es: 'minPts sube a {minPts}: los grumos ralos pierden su núcleo primero.',
       fr: 'minPts monté à {minPts} — les amas clairsemés perdent leur cœur en premier.',
@@ -242,6 +262,8 @@ export const dbscanFacet: FacetJson = {
     'caption.minPtsDown': {
       en: 'minPts lowered to {minPts} — thin blobs get their core back.',
       ko: 'minPts 를 {minPts} 로 내렸다 — 성긴 덩이가 속을 되찾는다.',
+      ja: 'minPts を {minPts} に下げた — 薄い塊が核を取り戻す。',
+      zh: 'minPts 降到 {minPts} — 稀疏的团重新拿回核心。',
       ar: 'خُفض minPts إلى {minPts} — الكتل المتفرقة تستعيد نواتها.',
       es: 'minPts baja a {minPts}: los grumos ralos recuperan su núcleo.',
       fr: 'minPts abaissé à {minPts} — les amas clairsemés retrouvent leur cœur.',
@@ -252,6 +274,8 @@ export const dbscanFacet: FacetJson = {
     'caption.core': {
       en: 'Neighbours here: {n}. That reaches minPts, so this point is a core.',
       ko: '여기 이웃 수는 {n}. minPts 에 닿았으니 이 점은 핵심이다.',
+      ja: 'ここの隣人は {n}。minPts に届いたので、この点は核だ。',
+      zh: '这里的邻居有 {n} 个。达到了 minPts，所以这个点是核心。',
       ar: 'الجيران هنا: {n}. يبلغ ذلك minPts، فهذه النقطة نواة.',
       es: 'Vecinos aquí: {n}. Alcanza minPts, así que este punto es núcleo.',
       fr: 'Voisins ici : {n}. Cela atteint minPts, donc ce point est un cœur.',
@@ -262,6 +286,8 @@ export const dbscanFacet: FacetJson = {
     'caption.thin': {
       en: 'Neighbours here: {n}. Short of minPts {minPts}.',
       ko: '여기 이웃 수는 {n}. minPts 에 못 미친다 — 필요한 수는 {minPts}.',
+      ja: 'ここの隣人は {n}。minPts {minPts} に足りない。',
+      zh: '这里的邻居有 {n} 个。不到 minPts {minPts}。',
       ar: 'الجيران هنا: {n}. أقل من minPts {minPts}.',
       es: 'Vecinos aquí: {n}. Por debajo de minPts {minPts}.',
       fr: 'Voisins ici : {n}. En deçà de minPts {minPts}.',
@@ -272,6 +298,8 @@ export const dbscanFacet: FacetJson = {
     'caption.noise': {
       en: 'Too few neighbours — this one is left as noise.',
       ko: '이웃이 모자라 이 점은 잡음으로 남는다.',
+      ja: '隣人が少なすぎる — この点はノイズとして残る。',
+      zh: '邻居太少 — 这个点被留作噪声。',
       ar: 'الجيران قليلون جدًا — تُترك هذه النقطة ضجيجًا.',
       es: 'Muy pocos vecinos: este queda como ruido.',
       fr: 'Trop peu de voisins — celui-ci reste du bruit.',
@@ -282,6 +310,8 @@ export const dbscanFacet: FacetJson = {
     'caption.opened': {
       en: 'A new group opens here. Groups so far: {n}.',
       ko: '여기서 새 무리가 열린다. 지금까지 무리는 {n}.',
+      ja: 'ここで新しいグループが開く。ここまでのグループは {n}。',
+      zh: '这里开出一个新组。到目前为止有 {n} 组。',
       ar: 'تُفتح مجموعة جديدة هنا. المجموعات حتى الآن: {n}.',
       es: 'Aquí se abre un grupo nuevo. Grupos hasta ahora: {n}.',
       fr: "Un nouveau groupe s'ouvre ici. Groupes jusqu'ici : {n}.",
@@ -292,6 +322,8 @@ export const dbscanFacet: FacetJson = {
     'caption.spread': {
       en: 'It catches on the neighbour of a neighbour and goes on the stack.',
       ko: '이웃의 이웃으로 옮아붙어 스택에 쌓인다.',
+      ja: '隣人の隣人へ燃え移り、スタックに積まれる。',
+      zh: '它蔓延到邻居的邻居，被压入栈中。',
       ar: 'تنتقل إلى جار الجار وتُوضع على المكدس.',
       es: 'Se pega al vecino del vecino y va a la pila.',
       fr: 'Cela gagne le voisin du voisin et passe sur la pile.',
@@ -302,6 +334,8 @@ export const dbscanFacet: FacetJson = {
     'caption.reclaim': {
       en: 'A point once called noise becomes a border and joins the group.',
       ko: '잡음이라 적어 둔 점이 가장자리가 되어 무리에 든다.',
+      ja: 'かつてノイズとされた点が縁になり、グループに入る。',
+      zh: '曾被判为噪声的点成了边界，加入了这一组。',
       ar: 'نقطة سُمّيت ضجيجًا تصير حدًّا وتنضم إلى المجموعة.',
       es: 'Un punto que se llamó ruido pasa a ser borde y entra al grupo.',
       fr: 'Un point jadis dit bruit devient une bordure et rejoint le groupe.',
@@ -312,6 +346,8 @@ export const dbscanFacet: FacetJson = {
     'caption.settled': {
       en: 'eps {eps} with minPts {minPts} — groups {clusters}, noise {noise}.',
       ko: 'eps {eps} 와 minPts {minPts} — 무리 {clusters}, 잡음 {noise}.',
+      ja: 'eps {eps}、minPts {minPts} — グループ {clusters}、ノイズ {noise}。',
+      zh: 'eps {eps} 配 minPts {minPts} — 组 {clusters}，噪声 {noise}。',
       ar: 'eps {eps} مع minPts {minPts} — المجموعات {clusters}، الضجيج {noise}.',
       es: 'eps {eps} con minPts {minPts}: grupos {clusters}, ruido {noise}.',
       fr: 'eps {eps} avec minPts {minPts} — groupes {clusters}, bruit {noise}.',
@@ -322,6 +358,8 @@ export const dbscanFacet: FacetJson = {
     'label.aria': {
       en: 'DBSCAN — points on a plane, the spreading stack, and a tally of every eps and minPts tried',
       ko: 'DBSCAN — 평면 위의 점, 번짐을 나르는 스택, 그리고 다녀온 eps 와 minPts 의 대조표',
+      ja: 'DBSCAN — 平面上の点、広がりを運ぶスタック、そして試した eps と minPts の一覧',
+      zh: 'DBSCAN — 平面上的点、承载蔓延的栈，以及试过的每组 eps 与 minPts 的对照表',
       ar: 'DBSCAN — نقاط على مستوٍ، ومكدس الانتشار، وجدول لكل eps وminPts جُرّب',
       es: 'DBSCAN: puntos en un plano, la pila del contagio y un recuento de cada eps y minPts probados',
       fr: 'DBSCAN — des points sur un plan, la pile de propagation et un relevé de chaque eps et minPts essayés',
@@ -332,6 +370,8 @@ export const dbscanFacet: FacetJson = {
     'label.tally': {
       en: 'groups / noise',
       ko: '무리 / 잡음',
+      ja: 'グループ / ノイズ',
+      zh: '组 / 噪声',
       ar: 'المجموعات / الضجيج',
       es: 'grupos / ruido',
       fr: 'groupes / bruit',
@@ -342,6 +382,8 @@ export const dbscanFacet: FacetJson = {
     'label.now': {
       en: 'now: eps {eps}, minPts {minPts}',
       ko: '지금: eps {eps}, minPts {minPts}',
+      ja: '現在: eps {eps}、minPts {minPts}',
+      zh: '当前: eps {eps}，minPts {minPts}',
       ar: 'الآن: eps {eps}، minPts {minPts}',
       es: 'ahora: eps {eps}, minPts {minPts}',
       fr: 'maintenant : eps {eps}, minPts {minPts}',
@@ -352,6 +394,8 @@ export const dbscanFacet: FacetJson = {
     'legend.core': {
       en: 'core — spreading goes on',
       ko: '핵심점 — 번짐이 이어진다',
+      ja: '核 — 広がりが続く',
+      zh: '核心 — 蔓延继续',
       ar: 'نواة — الانتشار يستمر',
       es: 'núcleo: el contagio sigue',
       fr: 'cœur — la propagation continue',
@@ -362,6 +406,8 @@ export const dbscanFacet: FacetJson = {
     'legend.border': {
       en: 'border — spreading stops',
       ko: '가장자리 — 번짐이 멈춘다',
+      ja: '縁 — 広がりが止まる',
+      zh: '边界 — 蔓延停止',
       ar: 'حد — الانتشار يقف',
       es: 'borde: el contagio se detiene',
       fr: "bordure — la propagation s'arrête",
@@ -372,6 +418,8 @@ export const dbscanFacet: FacetJson = {
     'legend.noise': {
       en: 'noise — no group reached',
       ko: '잡음 — 어느 무리도 닿지 못한다',
+      ja: 'ノイズ — どのグループも届かない',
+      zh: '噪声 — 没有组能到达',
       ar: 'ضجيج — لم تصل إليه أي مجموعة',
       es: 'ruido: ningún grupo lo alcanza',
       fr: "bruit — aucun groupe ne l'atteint",

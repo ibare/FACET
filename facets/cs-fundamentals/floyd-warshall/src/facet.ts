@@ -13,6 +13,8 @@ export const floydWarshallFacet: FacetJson = {
   title: {
     en: 'Floyd–Warshall',
     ko: '플로이드-워셜',
+    ja: 'フロイド–ワーシャル',
+    zh: '弗洛伊德–沃舍尔',
     ar: 'فلويد–وارشال',
     es: 'Floyd–Warshall',
     fr: 'Floyd–Warshall',
@@ -23,6 +25,8 @@ export const floydWarshallFacet: FacetJson = {
   description: {
     en: 'All-pairs shortest paths — one middle vertex at a time.',
     ko: '모든 쌍 최단 경로 — 가운데를 하나씩 바꿔 가며.',
+    ja: '全点対間の最短経路 — 中継する頂点をひとつずつ変えながら。',
+    zh: '所有点对的最短路径 — 每次只换一个中间顶点。',
     ar: 'أقصر المسارات بين كل الأزواج — رأس وسيط واحد في كل مرة.',
     es: 'Caminos mínimos entre todos los pares, un vértice intermedio a la vez.',
     fr: 'Plus courts chemins entre toutes les paires, un sommet intermédiaire à la fois.',
@@ -63,6 +67,8 @@ export const floydWarshallFacet: FacetJson = {
           label: {
             en: 'Pivots',
             ko: '가운데 세우기',
+            ja: '中継点',
+            zh: '中间点',
             ar: 'المحاور',
             es: 'Pivotes',
             fr: 'Pivots',
@@ -77,6 +83,8 @@ export const floydWarshallFacet: FacetJson = {
           label: {
             en: 'Questions',
             ko: '물음',
+            ja: '問い',
+            zh: '提问',
             ar: 'الأسئلة',
             es: 'Preguntas',
             fr: 'Questions',
@@ -91,6 +99,8 @@ export const floydWarshallFacet: FacetJson = {
           label: {
             en: 'Rewrites',
             ko: '고쳐 적기',
+            ja: '書き直し',
+            zh: '改写',
             ar: 'إعادات الكتابة',
             es: 'Reescrituras',
             fr: 'Réécritures',
@@ -107,6 +117,8 @@ export const floydWarshallFacet: FacetJson = {
       label: {
         en: 'Triple loop over every pair',
         ko: '모든 쌍을 훑는 세 겹 반복문',
+        ja: 'すべての対をめぐる三重ループ',
+        zh: '遍历每一对的三重循环',
         ar: 'حلقة ثلاثية على كل زوج',
         es: 'Triple bucle sobre cada par',
         fr: 'Triple boucle sur chaque paire',
@@ -123,6 +135,8 @@ export const floydWarshallFacet: FacetJson = {
     'label.axis': {
       en: 'from ↓   to →',
       ko: '출발 ↓   도착 →',
+      ja: '出発 ↓   到着 →',
+      zh: '起点 ↓   终点 →',
       ar: '→ إلى   ↓ من',
       es: 'desde ↓   hasta →',
       fr: 'de ↓   vers →',
@@ -133,6 +147,8 @@ export const floydWarshallFacet: FacetJson = {
     'label.pivot': {
       en: 'Middle',
       ko: '가운데',
+      ja: '中継',
+      zh: '中间',
       ar: 'الوسط',
       es: 'Intermedio',
       fr: 'Intermédiaire',
@@ -143,6 +159,8 @@ export const floydWarshallFacet: FacetJson = {
     'caption.build': {
       en: 'Zero to itself, infinity everywhere else.',
       ko: '자기 자신까지는 0, 나머지는 무한.',
+      ja: '自分自身までは 0、ほかはすべて無限大。',
+      zh: '到自己是 0，其余都是无穷大。',
       ar: 'صفر إلى نفسه، وما لا نهاية لكل ما عداه.',
       es: 'Cero hasta sí mismo, infinito en el resto.',
       fr: "Zéro jusqu'à soi-même, l'infini partout ailleurs.",
@@ -153,6 +171,8 @@ export const floydWarshallFacet: FacetJson = {
     'caption.edges': {
       en: 'Writing in the direct edges.',
       ko: '직접 잇는 간선을 적어 넣는다.',
+      ja: '直接つなぐ辺を書き入れる。',
+      zh: '把直连的边填进去。',
       ar: 'نكتب الحواف المباشرة.',
       es: 'Anotamos las aristas directas.',
       fr: 'On inscrit les arêtes directes.',
@@ -163,6 +183,8 @@ export const floydWarshallFacet: FacetJson = {
     'caption.pivot': {
       en: 'Standing in the middle: vertex {v}.',
       ko: '가운데 세운 정점: {v}.',
+      ja: '中継に立つ頂点: {v}。',
+      zh: '站在中间的顶点：{v}。',
       ar: 'الرأس في الوسط: {v}.',
       es: 'Vértice en el medio: {v}.',
       fr: 'Sommet au milieu : {v}.',
@@ -173,6 +195,8 @@ export const floydWarshallFacet: FacetJson = {
     'caption.probe': {
       en: 'Is the way through the middle shorter?',
       ko: '가운데를 거치면 더 짧은가?',
+      ja: '中継を通ったほうが短いか。',
+      zh: '经过中间会更短吗？',
       ar: 'هل الطريق عبر الوسط أقصر؟',
       es: '¿Es más corto pasando por el medio?',
       fr: 'Le passage par le milieu est-il plus court ?',
@@ -183,6 +207,8 @@ export const floydWarshallFacet: FacetJson = {
     'caption.rewrite': {
       en: 'Rewritten: d[{a}][{b}] = {value}.',
       ko: '고쳐 적었다 — d[{a}][{b}] = {value}.',
+      ja: '書き直した: d[{a}][{b}] = {value}。',
+      zh: '已改写：d[{a}][{b}] = {value}。',
       ar: 'أُعيدت الكتابة: d[{a}][{b}] = {value}.',
       es: 'Reescrito: d[{a}][{b}] = {value}.',
       fr: 'Réécrit : d[{a}][{b}] = {value}.',
@@ -193,6 +219,8 @@ export const floydWarshallFacet: FacetJson = {
     'caption.done': {
       en: 'Every pair now holds its shortest distance.',
       ko: '이제 모든 쌍이 최단 거리를 들고 있다.',
+      ja: 'いまやどの対も最短距離を持っている。',
+      zh: '现在每一对都存着自己的最短距离。',
       ar: 'كل زوج يحمل الآن أقصر مسافة.',
       es: 'Ahora cada par guarda su distancia más corta.',
       fr: 'Chaque paire détient désormais sa plus courte distance.',
@@ -203,6 +231,8 @@ export const floydWarshallFacet: FacetJson = {
     'verdict.rewrite': {
       en: 'Shorter. Rewrite the cell.',
       ko: '더 짧다. 칸을 고쳐 적는다.',
+      ja: '短い。マスを書き直す。',
+      zh: '更短。改写这一格。',
       ar: 'أقصر. أعد كتابة الخانة.',
       es: 'Más corto. Reescribe la casilla.',
       fr: 'Plus court. On réécrit la case.',
@@ -213,6 +243,8 @@ export const floydWarshallFacet: FacetJson = {
     'verdict.keep': {
       en: 'Not shorter. Leave it.',
       ko: '더 짧지 않다. 그대로 둔다.',
+      ja: '短くない。そのままにする。',
+      zh: '不更短。保持原样。',
       ar: 'ليس أقصر. اتركها.',
       es: 'No es más corto. Se queda.',
       fr: 'Pas plus court. On laisse.',

@@ -21,6 +21,8 @@ export const linearSearchFacet: FacetJson = {
   title: {
     en: 'Linear Search',
     ko: '선형 탐색',
+    ja: '線形探索',
+    zh: '线性查找',
     ar: 'البحث الخطي',
     es: 'Búsqueda lineal',
     fr: 'Recherche linéaire',
@@ -31,6 +33,8 @@ export const linearSearchFacet: FacetJson = {
   description: {
     en: 'Look at every cell in turn — with no order to lean on, that is the only honest way to say "not here".',
     ko: '앞에서부터 하나씩 본다 — 줄이 서 있지 않으면 없다고 답하려고 끝까지 봐야 한다',
+    ja: '前から一つずつ見る — 並びに頼れないなら、「ない」と言い切るにはそれしかない。',
+    zh: '从头一个一个看 — 没有顺序可依靠时，这是说「不在这里」的唯一诚实办法。',
     ar: 'انظر إلى كل خانة بالترتيب — بلا ترتيب مسبق، هذه هي الطريقة الصادقة الوحيدة لقول "غير موجود".',
     es: 'Mira cada casilla por turno: sin un orden en el que apoyarse, es la única forma honesta de decir "no está".',
     fr: 'Regarder chaque case à son tour — sans ordre sur lequel s’appuyer, c’est la seule façon honnête de dire « absent ».',
@@ -63,6 +67,8 @@ export const linearSearchFacet: FacetJson = {
           label: {
             en: 'Search',
             ko: '훑기',
+            ja: '走査',
+            zh: '遍历',
             ar: 'بحث',
             es: 'Búsqueda',
             fr: 'Recherche',
@@ -77,6 +83,8 @@ export const linearSearchFacet: FacetJson = {
           label: {
             en: 'Compare',
             ko: '견줌',
+            ja: '比較',
+            zh: '比较',
             ar: 'مقارنة',
             es: 'Comparar',
             fr: 'Comparer',
@@ -91,6 +99,8 @@ export const linearSearchFacet: FacetJson = {
           label: {
             en: 'Found',
             ko: '찾음',
+            ja: '発見',
+            zh: '找到',
             ar: 'موجود',
             es: 'Encontrado',
             fr: 'Trouvé',
@@ -107,6 +117,8 @@ export const linearSearchFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -121,6 +133,8 @@ export const linearSearchFacet: FacetJson = {
     'label.target': {
       en: 'Looking for',
       ko: '찾는 값',
+      ja: '探す値',
+      zh: '要找的值',
       ar: 'نبحث عن',
       es: 'Se busca',
       fr: 'On cherche',
@@ -131,6 +145,8 @@ export const linearSearchFacet: FacetJson = {
     'label.round': {
       en: 'Search {n} of {total}',
       ko: '{total} 번 중 {n} 번째 훑기',
+      ja: '{total} 回中 {n} 回目の走査',
+      zh: '第 {n} 次遍历，共 {total} 次',
       ar: 'البحث {n} من {total}',
       es: 'Búsqueda {n} de {total}',
       fr: 'Recherche {n} sur {total}',
@@ -141,6 +157,8 @@ export const linearSearchFacet: FacetJson = {
     'label.log': {
       en: 'Searches so far',
       ko: '지금까지의 훑기',
+      ja: 'ここまでの走査',
+      zh: '到目前的遍历',
       ar: 'عمليات البحث حتى الآن',
       es: 'Búsquedas hasta ahora',
       fr: 'Recherches jusqu’ici',
@@ -151,6 +169,8 @@ export const linearSearchFacet: FacetJson = {
     'label.rowHit': {
       en: '{target} — seat {index}, {count} cells looked at',
       ko: '{target} — {index} 번 자리, {count} 칸을 봤다',
+      ja: '{target} — {index} 番目、{count} マスを見た',
+      zh: '{target} — 第 {index} 位，看了 {count} 格',
       ar: '{target} — الموضع {index}، فُحصت {count} خانة',
       es: '{target} — puesto {index}, {count} casillas miradas',
       fr: '{target} — place {index}, {count} cases regardées',
@@ -161,6 +181,8 @@ export const linearSearchFacet: FacetJson = {
     'label.rowMiss': {
       en: '{target} — not here, all {count} cells looked at',
       ko: '{target} — 없다, {count} 칸을 다 봤다',
+      ja: '{target} — ない、{count} マスを全部見た',
+      zh: '{target} — 不在，{count} 格全看过了',
       ar: '{target} — غير موجود، فُحصت الخانات {count} كلها',
       es: '{target} — no está, se miraron las {count} casillas',
       fr: '{target} — absent, les {count} cases ont été regardées',
@@ -171,6 +193,8 @@ export const linearSearchFacet: FacetJson = {
     'caption.start': {
       en: 'The line is not sorted, so there is no way to stop early.',
       ko: '줄이 서 있지 않다 — 중간에 그만둘 근거가 없다',
+      ja: '並びが揃っていない — 途中でやめる根拠がない。',
+      zh: '这一排没有排序 — 没有理由中途停下。',
       ar: 'الصف غير مرتّب، فلا سبيل للتوقف مبكرًا.',
       es: 'La fila no está ordenada, así que no hay forma de parar antes de tiempo.',
       fr: 'La rangée n’est pas triée : rien ne permet de s’arrêter en chemin.',
@@ -181,6 +205,8 @@ export const linearSearchFacet: FacetJson = {
     'caption.begin': {
       en: 'Start at the front and look for {target}.',
       ko: '맨 앞에서부터 {target} 을 찾는다',
+      ja: '先頭から {target} を探す。',
+      zh: '从最前面开始找 {target}。',
       ar: 'ابدأ من المقدمة وابحث عن {target}.',
       es: 'Empieza por el frente y busca {target}.',
       fr: 'On part de l’avant et on cherche {target}.',
@@ -191,6 +217,8 @@ export const linearSearchFacet: FacetJson = {
     'caption.look': {
       en: 'Seat {index} holds {value}.',
       ko: '{index} 번 자리에는 {value} 가 있다',
+      ja: '{index} 番目には {value} がある。',
+      zh: '第 {index} 位放着 {value}。',
       ar: 'الموضع {index} يحمل {value}.',
       es: 'El puesto {index} contiene {value}.',
       fr: 'La place {index} contient {value}.',
@@ -201,6 +229,8 @@ export const linearSearchFacet: FacetJson = {
     'caption.same': {
       en: '{value} is {target} — stop here.',
       ko: '{value} 가 {target} 이다 — 여기서 멈춘다',
+      ja: '{value} が {target} だ — ここで止まる。',
+      zh: '{value} 就是 {target} — 就此停下。',
       ar: '{value} هو {target} — نتوقف هنا.',
       es: '{value} es {target}: paramos aquí.',
       fr: '{value} est {target} — on s’arrête ici.',
@@ -211,6 +241,8 @@ export const linearSearchFacet: FacetJson = {
     'caption.differ': {
       en: '{value} is not {target} — go on.',
       ko: '{value} 는 {target} 이 아니다 — 다음 칸으로',
+      ja: '{value} は {target} ではない — 次のマスへ。',
+      zh: '{value} 不是 {target} — 继续往下。',
       ar: '{value} ليس {target} — نتابع.',
       es: '{value} no es {target}: seguimos.',
       fr: '{value} n’est pas {target} — on continue.',
@@ -221,6 +253,8 @@ export const linearSearchFacet: FacetJson = {
     'caption.found': {
       en: 'Found {target} at seat {index} — {count} cells looked at.',
       ko: '{target} 을 {index} 번 자리에서 찾았다 — {count} 칸을 봤다',
+      ja: '{index} 番目で {target} を見つけた — {count} マスを見た。',
+      zh: '在第 {index} 位找到 {target} — 看了 {count} 格。',
       ar: 'وجدنا {target} في الموضع {index} — بعد فحص {count} خانة.',
       es: 'Se encontró {target} en el puesto {index}: {count} casillas miradas.',
       fr: '{target} trouvé à la place {index} — {count} cases regardées.',
@@ -231,6 +265,8 @@ export const linearSearchFacet: FacetJson = {
     'caption.notFound': {
       en: '{target} is not here — every one of the {count} cells had to be looked at.',
       ko: '{target} 은 없다 — {count} 칸을 하나도 빠짐없이 봐야 했다',
+      ja: '{target} はない — {count} マスを一つ残らず見るしかなかった。',
+      zh: '{target} 不在这里 — {count} 格一个不漏地都得看过。',
       ar: '{target} غير موجود — كان لا بد من فحص الخانات {count} كلها.',
       es: '{target} no está: hubo que mirar las {count} casillas, una por una.',
       fr: '{target} n’est pas là — il a fallu regarder chacune des {count} cases.',
@@ -241,6 +277,8 @@ export const linearSearchFacet: FacetJson = {
     'caption.done': {
       en: '{searches} searches took {compares} comparisons in all.',
       ko: '훑기 {searches} 번에 견줌은 모두 {compares} 번이었다',
+      ja: '走査 {searches} 回で比較は全部で {compares} 回だった。',
+      zh: '{searches} 次遍历共比较了 {compares} 次。',
       ar: 'استغرقت {searches} عمليات بحث {compares} مقارنة إجمالًا.',
       es: '{searches} búsquedas costaron {compares} comparaciones en total.',
       fr: '{searches} recherches ont coûté {compares} comparaisons au total.',

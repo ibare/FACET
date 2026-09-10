@@ -20,6 +20,8 @@ export const backtrackingFacet: FacetJson = {
   title: {
     en: 'Backtracking',
     ko: '백트래킹',
+    ja: 'バックトラッキング',
+    zh: '回溯法',
     ar: 'التراجع',
     es: 'Vuelta atrás',
     fr: 'Retour sur trace',
@@ -30,6 +32,8 @@ export const backtrackingFacet: FacetJson = {
   description: {
     en: 'When the board blocks you, take the queen back and try the next column — stepping back is the method, not a failure.',
     ko: '막히면 퀸을 물리고 다음 열을 본다 — 물러남은 실패가 아니라 절차다',
+    ja: '盤が詰まったらクイーンを戻して次の列を試す — 引き返すことは失敗ではなく手順だ。',
+    zh: '棋盘走不通就把皇后收回，试下一列 — 后退是方法，不是失败。',
     ar: 'حين يُسدّ الطريق، أعد الملكة وجرّب العمود التالي — التراجع هو الطريقة لا الفشل.',
     es: 'Cuando el tablero te bloquea, retiras la reina y pruebas la siguiente columna: retroceder es el método, no un fracaso.',
     fr: "Quand le plateau bloque, on retire la reine et on essaie la colonne suivante — revenir en arrière est la méthode, pas un échec.",
@@ -58,6 +62,8 @@ export const backtrackingFacet: FacetJson = {
           label: {
             en: 'Placed',
             ko: '놓음',
+            ja: '置いた数',
+            zh: '放置',
             ar: 'وضع',
             es: 'Colocaciones',
             fr: 'Poses',
@@ -72,6 +78,8 @@ export const backtrackingFacet: FacetJson = {
           label: {
             en: 'Taken back',
             ko: '물림',
+            ja: '戻した数',
+            zh: '收回',
             ar: 'تراجع',
             es: 'Retiradas',
             fr: 'Retraits',
@@ -86,6 +94,8 @@ export const backtrackingFacet: FacetJson = {
           label: {
             en: 'Solutions',
             ko: '해',
+            ja: '解',
+            zh: '解',
             ar: 'حلول',
             es: 'Soluciones',
             fr: 'Solutions',
@@ -102,6 +112,8 @@ export const backtrackingFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -116,6 +128,8 @@ export const backtrackingFacet: FacetJson = {
     'label.solutions': {
       en: 'Solutions found',
       ko: '찾은 해',
+      ja: '見つけた解',
+      zh: '找到的解',
       ar: 'الحلول المكتشفة',
       es: 'Soluciones encontradas',
       fr: 'Solutions trouvées',
@@ -126,6 +140,8 @@ export const backtrackingFacet: FacetJson = {
     'label.trail': {
       en: 'Search trail',
       ko: '탐색 자취',
+      ja: '探索の跡',
+      zh: '搜索轨迹',
       ar: 'أثر البحث',
       es: 'Rastro de la búsqueda',
       fr: 'Trace de la recherche',
@@ -136,6 +152,8 @@ export const backtrackingFacet: FacetJson = {
     'caption.start': {
       en: 'Fill one row at a time — find every way to seat four queens.',
       ko: '위 행부터 한 줄에 하나씩 — 퀸 넷을 놓는 모든 방법을 찾는다',
+      ja: '上の行から一つずつ — クイーン四つを置くすべての方法を探す',
+      zh: '从上面一行放一个 — 找出安置四个皇后的所有方法',
       ar: 'صفٌّ في كل مرة — ابحث عن كل طريقة لإجلاس أربع ملكات.',
       es: 'Una fila a la vez: encuentra todas las formas de sentar cuatro reinas.',
       fr: 'Une rangée à la fois — trouver toutes les façons de placer quatre reines.',
@@ -146,6 +164,8 @@ export const backtrackingFacet: FacetJson = {
     'caption.enterRow': {
       en: 'Row {row}: which column can take a queen?',
       ko: '{row} 행 — 어느 열에 퀸을 놓을 수 있나',
+      ja: '{row} 行 — どの列にクイーンを置けるか',
+      zh: '第 {row} 行 — 哪一列能放皇后',
       ar: 'الصف {row}: أي عمود يقبل ملكة؟',
       es: 'Fila {row}: ¿qué columna admite una reina?',
       fr: "Rangée {row} : quelle colonne peut accueillir une reine ?",
@@ -156,6 +176,8 @@ export const backtrackingFacet: FacetJson = {
     'caption.safe': {
       en: 'Column {col} is clear — no queen above reaches it.',
       ko: '{col} 열은 비었다 — 위의 어떤 퀸도 여기 닿지 않는다',
+      ja: '{col} 列は空いている — 上のどのクイーンもここに届かない',
+      zh: '第 {col} 列是空的 — 上面没有皇后能够到这里',
       ar: 'العمود {col} خالٍ — لا ملكة فوقه تصل إليه.',
       es: 'La columna {col} está libre: ninguna reina de arriba la alcanza.',
       fr: "La colonne {col} est libre — aucune reine au-dessus ne l'atteint.",
@@ -166,6 +188,8 @@ export const backtrackingFacet: FacetJson = {
     'caption.blockedColumn': {
       en: 'Column {col} is already taken by the queen in row {r}.',
       ko: '{col} 열은 {r} 행의 퀸이 이미 쓰고 있다',
+      ja: '{col} 列は {r} 行のクイーンがすでに使っている',
+      zh: '第 {col} 列已被第 {r} 行的皇后占用',
       ar: 'العمود {col} تشغله ملكة الصف {r}.',
       es: 'La columna {col} ya la ocupa la reina de la fila {r}.',
       fr: 'La colonne {col} est déjà prise par la reine de la rangée {r}.',
@@ -176,6 +200,8 @@ export const backtrackingFacet: FacetJson = {
     'caption.blockedDiagonal': {
       en: 'Column {col} sits on the diagonal of the queen in row {r}.',
       ko: '{col} 열은 {r} 행 퀸의 대각선 위다',
+      ja: '{col} 列は {r} 行のクイーンの斜め上だ',
+      zh: '第 {col} 列在第 {r} 行皇后的斜线上',
       ar: 'العمود {col} يقع على قطر ملكة الصف {r}.',
       es: 'La columna {col} cae en la diagonal de la reina de la fila {r}.',
       fr: 'La colonne {col} se trouve sur la diagonale de la reine de la rangée {r}.',
@@ -186,6 +212,8 @@ export const backtrackingFacet: FacetJson = {
     'caption.place': {
       en: 'Seat a queen at row {row}, column {col}.',
       ko: '{row} 행 {col} 열에 퀸을 놓는다',
+      ja: '{row} 行 {col} 列にクイーンを置く',
+      zh: '在第 {row} 行第 {col} 列放一个皇后',
       ar: 'ضع ملكة في الصف {row}، العمود {col}.',
       es: 'Sienta una reina en la fila {row}, columna {col}.',
       fr: 'Poser une reine en rangée {row}, colonne {col}.',
@@ -196,6 +224,8 @@ export const backtrackingFacet: FacetJson = {
     'caption.descend': {
       en: 'Row {from} holds — go down to row {to}.',
       ko: '{from} 행은 두고 {to} 행으로 내려간다',
+      ja: '{from} 行はそのままに、{to} 行へ下りる',
+      zh: '第 {from} 行保持不动 — 下到第 {to} 行',
       ar: 'الصف {from} ثابت — انزل إلى الصف {to}.',
       es: 'La fila {from} queda así: baja a la fila {to}.',
       fr: 'La rangée {from} tient — on descend à la rangée {to}.',
@@ -206,6 +236,8 @@ export const backtrackingFacet: FacetJson = {
     'caption.descendFull': {
       en: 'Every row holds a queen now — go down and see.',
       ko: '모든 행에 퀸이 놓였다 — 내려가서 확인한다',
+      ja: 'すべての行にクイーンが置かれた — 下りて確かめる',
+      zh: '每一行都有皇后了 — 下去确认',
       ar: 'كل صف يحمل ملكة الآن — انزل وتحقّق.',
       es: 'Ahora cada fila tiene una reina: baja y compruébalo.',
       fr: 'Chaque rangée porte une reine — on descend pour voir.',
@@ -216,6 +248,8 @@ export const backtrackingFacet: FacetJson = {
     'caption.undo': {
       en: 'Take the queen back from row {row}, column {col} and try the next column.',
       ko: '{row} 행 {col} 열의 퀸을 물리고 다음 열을 본다',
+      ja: '{row} 行 {col} 列のクイーンを戻して次の列を見る',
+      zh: '把第 {row} 行第 {col} 列的皇后收回，看下一列',
       ar: 'أعد ملكة الصف {row}، العمود {col} وجرّب العمود التالي.',
       es: 'Retira la reina de la fila {row}, columna {col} y prueba la siguiente columna.',
       fr: 'Retirer la reine de la rangée {row}, colonne {col} et essayer la colonne suivante.',
@@ -226,6 +260,8 @@ export const backtrackingFacet: FacetJson = {
     'caption.solution': {
       en: 'Solution {index}: {cols}. The search does not stop here.',
       ko: '해 {index} — {cols}. 여기서 멈추지 않는다',
+      ja: '解 {index} — {cols}。ここでは止まらない',
+      zh: '解 {index} — {cols}。搜索并不到此为止',
       ar: 'الحل {index}: {cols}. البحث لا يتوقف هنا.',
       es: 'Solución {index}: {cols}. La búsqueda no se detiene aquí.',
       fr: "Solution {index} : {cols}. La recherche ne s'arrête pas là.",
@@ -236,6 +272,8 @@ export const backtrackingFacet: FacetJson = {
     'caption.rowExitEmpty': {
       en: 'No column works in row {row} — step back up.',
       ko: '{row} 행에는 놓을 열이 없다 — 위로 물러난다',
+      ja: '{row} 行に置ける列はない — 上へ引き返す',
+      zh: '第 {row} 行没有可放的列 — 退回上面',
       ar: 'لا عمود يصلح في الصف {row} — عُد إلى الأعلى.',
       es: 'Ninguna columna sirve en la fila {row}: vuelve hacia arriba.',
       fr: 'Aucune colonne ne convient en rangée {row} — on remonte.',
@@ -246,6 +284,8 @@ export const backtrackingFacet: FacetJson = {
     'caption.rowExitFound': {
       en: 'Row {row} hands {found} solutions back up.',
       ko: '{row} 행이 해 {found} 개를 위로 올려 보낸다',
+      ja: '{row} 行が解 {found} 個を上へ返す',
+      zh: '第 {row} 行把 {found} 个解交回上面',
       ar: 'الصف {row} يعيد {found} من الحلول إلى الأعلى.',
       es: 'La fila {row} devuelve {found} soluciones hacia arriba.',
       fr: 'La rangée {row} renvoie {found} solutions vers le haut.',
@@ -256,6 +296,8 @@ export const backtrackingFacet: FacetJson = {
     'caption.done': {
       en: '{count} solutions. Placed {places} times, took back {undos} times.',
       ko: '해 {count} 개. 놓음 {places} 회 · 물림 {undos} 회',
+      ja: '解 {count} 個。置いた {places} 回・戻した {undos} 回',
+      zh: '{count} 个解。放置 {places} 次，收回 {undos} 次',
       ar: '{count} حلول. وُضعت {places} مرة، وأُعيدت {undos} مرة.',
       es: '{count} soluciones. Se colocó {places} veces y se retiró {undos} veces.',
       fr: '{count} solutions. Posée {places} fois, retirée {undos} fois.',

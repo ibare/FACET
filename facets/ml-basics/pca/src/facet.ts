@@ -51,6 +51,8 @@ export const pcaFacet: FacetJson = {
   title: {
     en: 'PCA — the widest direction depends on your units',
     ko: 'PCA — 가장 넓게 퍼진 방향은 축의 단위에 매여 있다',
+    ja: 'PCA — 最も広がった方向は軸の単位しだいだ',
+    zh: 'PCA — 最宽的方向取决于坐标轴的单位',
     ar: 'تحليل المكوّنات الرئيسية — أوسع اتجاه يتعلق بوحدات المحاور',
     es: 'PCA: la dirección más ancha depende de las unidades',
     fr: "ACP — la direction la plus large dépend des unités",
@@ -61,6 +63,8 @@ export const pcaFacet: FacetJson = {
   description: {
     en: 'Power iteration finds the principal axis; standardizing the axes turns it by 42 degrees',
     ko: '거듭제곱 반복으로 주축을 찾고, 두 축을 표준화하면 그 주축이 42도 돌아간다',
+    ja: 'べき乗法で主軸を見つける。二つの軸を標準化すると、その主軸が 42 度回る',
+    zh: '幂迭代找出主轴；把两个轴标准化，主轴就转了 42 度',
     ar: 'تكرار القوى يجد المحور الرئيسي، وتوحيد المحاور يديره 42 درجة',
     es: 'La iteración de potencias halla el eje principal; estandarizar los ejes lo gira 42 grados',
     fr: "La méthode de la puissance trouve l'axe principal ; standardiser les axes le fait tourner de 42 degrés",
@@ -97,6 +101,8 @@ export const pcaFacet: FacetJson = {
           label: {
             en: 'Axis units',
             ko: '축의 단위',
+            ja: '軸の単位',
+            zh: '坐标轴单位',
             ar: 'وحدات المحاور',
             es: 'Unidades de los ejes',
             fr: 'Unités des axes',
@@ -110,6 +116,8 @@ export const pcaFacet: FacetJson = {
               label: {
                 en: 'As given',
                 ko: '그대로',
+                ja: 'そのまま',
+                zh: '原样',
                 ar: 'كما هي',
                 es: 'Tal cual',
                 fr: 'Telles quelles',
@@ -124,6 +132,8 @@ export const pcaFacet: FacetJson = {
               label: {
                 en: 'Standardized',
                 ko: '표준화',
+                ja: '標準化',
+                zh: '标准化',
                 ar: 'موحّدة',
                 es: 'Estandarizadas',
                 fr: 'Standardisées',
@@ -141,6 +151,8 @@ export const pcaFacet: FacetJson = {
           label: {
             en: 'Project onto',
             ko: '사영할 축',
+            ja: '射影する軸',
+            zh: '投影到',
             ar: 'الإسقاط على',
             es: 'Proyectar sobre',
             fr: 'Projeter sur',
@@ -154,6 +166,8 @@ export const pcaFacet: FacetJson = {
               label: {
                 en: '1st',
                 ko: '제1',
+                ja: '第1',
+                zh: '第1',
                 ar: 'الأول',
                 es: '1.º',
                 fr: '1er',
@@ -168,6 +182,8 @@ export const pcaFacet: FacetJson = {
               label: {
                 en: '2nd',
                 ko: '제2',
+                ja: '第2',
+                zh: '第2',
                 ar: 'الثاني',
                 es: '2.º',
                 fr: '2e',
@@ -185,6 +201,8 @@ export const pcaFacet: FacetJson = {
           label: {
             en: 'Moving steps',
             ko: '움직인 걸음',
+            ja: '動いた歩数',
+            zh: '移动的步数',
             ar: 'الخطوات المتحركة',
             es: 'Pasos con giro',
             fr: 'Pas qui bougent',
@@ -199,6 +217,8 @@ export const pcaFacet: FacetJson = {
           label: {
             en: 'Axis angle (°)',
             ko: '축의 각도 (°)',
+            ja: '軸の角度 (°)',
+            zh: '轴的角度 (°)',
             ar: 'زاوية المحور (°)',
             es: 'Ángulo del eje (°)',
             fr: "Angle de l'axe (°)",
@@ -213,6 +233,8 @@ export const pcaFacet: FacetJson = {
           label: {
             en: 'Share held (%)',
             ko: '담는 몫 (%)',
+            ja: '担う割合 (%)',
+            zh: '所占份额 (%)',
             ar: 'الحصة المحمولة (%)',
             es: 'Proporción contenida (%)',
             fr: 'Part contenue (%)',
@@ -229,6 +251,8 @@ export const pcaFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -243,6 +267,8 @@ export const pcaFacet: FacetJson = {
     'label.frameRaw': {
       en: 'Original units',
       ko: '원래 단위',
+      ja: '元の単位',
+      zh: '原始单位',
       ar: 'الوحدات الأصلية',
       es: 'Unidades originales',
       fr: "Unités d'origine",
@@ -253,6 +279,8 @@ export const pcaFacet: FacetJson = {
     'label.frameStd': {
       en: 'Standardized',
       ko: '표준화',
+      ja: '標準化',
+      zh: '标准化',
       ar: 'موحّد قياسيًا',
       es: 'Estandarizado',
       fr: 'Standardisé',
@@ -263,6 +291,8 @@ export const pcaFacet: FacetJson = {
     'label.spreadRatio': {
       en: 'The spread in x is {n} times the spread in y.',
       ko: 'x 의 퍼짐은 y 의 {n} 배.',
+      ja: 'x の広がりは y の {n} 倍。',
+      zh: 'x 的离散是 y 的 {n} 倍。',
       ar: 'انتشار x يساوي {n} ضعف انتشار y.',
       es: 'La dispersión en x es {n} veces la de y.',
       fr: "L'étalement en x vaut {n} fois celui en y.",
@@ -273,6 +303,8 @@ export const pcaFacet: FacetJson = {
     'label.axis1': {
       en: '1st principal axis',
       ko: '제1 주성분',
+      ja: '第1主軸',
+      zh: '第一主轴',
       ar: 'المحور الرئيسي الأول',
       es: 'Primer eje principal',
       fr: '1er axe principal',
@@ -283,6 +315,8 @@ export const pcaFacet: FacetJson = {
     'label.axis2': {
       en: '2nd principal axis',
       ko: '제2 주성분',
+      ja: '第2主軸',
+      zh: '第二主轴',
       ar: 'المحور الرئيسي الثاني',
       es: 'Segundo eje principal',
       fr: '2e axe principal',
@@ -293,6 +327,8 @@ export const pcaFacet: FacetJson = {
     'label.dial': {
       en: 'Power iteration',
       ko: '거듭제곱 반복',
+      ja: 'べき乗法',
+      zh: '幂迭代',
       ar: 'تكرار القوى',
       es: 'Iteración de potencias',
       fr: 'Méthode de la puissance',
@@ -303,6 +339,8 @@ export const pcaFacet: FacetJson = {
     'label.colStep': {
       en: 'Step',
       ko: '걸음',
+      ja: 'ステップ',
+      zh: '步',
       ar: 'خطوة',
       es: 'Paso',
       fr: 'Pas',
@@ -313,6 +351,8 @@ export const pcaFacet: FacetJson = {
     'label.colAngle': {
       en: 'Angle',
       ko: '각도',
+      ja: '角度',
+      zh: '角度',
       ar: 'الزاوية',
       es: 'Ángulo',
       fr: 'Angle',
@@ -323,6 +363,8 @@ export const pcaFacet: FacetJson = {
     'label.colTurn': {
       en: 'Turn',
       ko: '돌아간 정도',
+      ja: '回転量',
+      zh: '转动量',
       ar: 'مقدار الدوران',
       es: 'Giro',
       fr: 'Rotation',
@@ -333,6 +375,8 @@ export const pcaFacet: FacetJson = {
     'label.settled': {
       en: 'settled',
       ko: '멎음',
+      ja: '収束',
+      zh: '已稳定',
       ar: 'استقر',
       es: 'estable',
       fr: 'stabilisé',
@@ -343,6 +387,8 @@ export const pcaFacet: FacetJson = {
     'label.ledger': {
       en: 'What each frame answers',
       ko: '두 틀이 낸 답',
+      ja: '各フレームの答え',
+      zh: '每个参照系给出的答案',
       ar: 'ما يجيب به كل إطار',
       es: 'Lo que responde cada marco',
       fr: 'Ce que répond chaque cadre',
@@ -353,6 +399,8 @@ export const pcaFacet: FacetJson = {
     'label.colFrame': {
       en: 'Frame',
       ko: '틀',
+      ja: 'フレーム',
+      zh: '参照系',
       ar: 'الإطار',
       es: 'Marco',
       fr: 'Cadre',
@@ -363,6 +411,8 @@ export const pcaFacet: FacetJson = {
     'label.colShare': {
       en: 'Share',
       ko: '담는 몫',
+      ja: '割合',
+      zh: '份额',
       ar: 'الحصة',
       es: 'Proporción',
       fr: 'Part',
@@ -373,6 +423,8 @@ export const pcaFacet: FacetJson = {
     'label.colSteps': {
       en: 'Moving steps',
       ko: '움직인 걸음',
+      ja: '動いた歩数',
+      zh: '移动的步数',
       ar: 'الخطوات المتحركة',
       es: 'Pasos con giro',
       fr: 'Pas qui bougent',
@@ -383,6 +435,8 @@ export const pcaFacet: FacetJson = {
     'label.deltaNote': {
       en: 'Same twelve points — the axis turns {n} degrees.',
       ko: '같은 점 열둘인데 주축이 {n} 도 돌아간다.',
+      ja: '同じ十二点なのに、主軸が {n} 度回る。',
+      zh: '还是那十二个点 — 主轴却转了 {n} 度。',
       ar: 'النقاط الاثنتا عشرة نفسها — المحور يدور {n} درجة.',
       es: 'Los mismos doce puntos: el eje gira {n} grados.',
       fr: "Les mêmes douze points — l'axe tourne de {n} degrés.",

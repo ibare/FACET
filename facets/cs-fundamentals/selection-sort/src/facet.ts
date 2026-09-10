@@ -23,6 +23,8 @@ export const selectionSortFacet: FacetJson = {
   title: {
     en: 'Selection Sort',
     ko: '선택 정렬',
+    ja: '選択ソート',
+    zh: '选择排序',
     ar: 'الترتيب بالاختيار',
     es: 'Ordenamiento por selección',
     fr: 'Tri par sélection',
@@ -33,6 +35,8 @@ export const selectionSortFacet: FacetJson = {
   description: {
     en: 'Scan all that is left to find the smallest, then move it exactly once.',
     ko: '남은 전부를 훑어 가장 작은 것을 찾고, 딱 한 번 옮긴다',
+    ja: '残り全部を見て最小を見つけ、ちょうど一度だけ動かす',
+    zh: '把剩下的全扫一遍找出最小的，然后只挪动一次',
     ar: 'امسح كل ما تبقّى لتجد الأصغر، ثم انقله مرة واحدة فقط.',
     es: 'Recorre todo lo que queda para hallar el menor y muévelo una sola vez.',
     fr: 'Parcourez tout le reste pour trouver le plus petit, puis déplacez-le une seule fois.',
@@ -61,6 +65,8 @@ export const selectionSortFacet: FacetJson = {
           label: {
             en: 'Compare',
             ko: '견줌',
+            ja: '比較',
+            zh: '比较',
             ar: 'مقارنة',
             es: 'Comparar',
             fr: 'Comparer',
@@ -75,6 +81,8 @@ export const selectionSortFacet: FacetJson = {
           label: {
             en: 'Swap',
             ko: '맞바꿈',
+            ja: '交換',
+            zh: '交换',
             ar: 'تبديل',
             es: 'Intercambio',
             fr: 'Échange',
@@ -89,6 +97,8 @@ export const selectionSortFacet: FacetJson = {
           label: {
             en: 'Pass',
             ko: '바퀴',
+            ja: '巡',
+            zh: '轮',
             ar: 'جولة',
             es: 'Pasada',
             fr: 'Passe',
@@ -105,6 +115,8 @@ export const selectionSortFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -119,6 +131,8 @@ export const selectionSortFacet: FacetJson = {
     'label.compares': {
       en: 'Comparisons',
       ko: '견줌',
+      ja: '比較回数',
+      zh: '比较次数',
       ar: 'المقارنات',
       es: 'Comparaciones',
       fr: 'Comparaisons',
@@ -129,6 +143,8 @@ export const selectionSortFacet: FacetJson = {
     'label.moves': {
       en: 'Moves',
       ko: '이동',
+      ja: '移動回数',
+      zh: '移动次数',
       ar: 'النقلات',
       es: 'Movimientos',
       fr: 'Déplacements',
@@ -139,6 +155,8 @@ export const selectionSortFacet: FacetJson = {
     'label.total': {
       en: '{compares} comparisons, {moves} moves',
       ko: '견줌 {compares} 번, 이동 {moves} 번',
+      ja: '比較 {compares} 回、移動 {moves} 回',
+      zh: '比较 {compares} 次，移动 {moves} 次',
       ar: '{compares} مقارنة، {moves} نقلة',
       es: '{compares} comparaciones, {moves} movimientos',
       fr: '{compares} comparaisons, {moves} déplacements',
@@ -149,6 +167,8 @@ export const selectionSortFacet: FacetJson = {
     'caption.start': {
       en: 'Nothing is in place yet. Each pass fills one more seat from the left.',
       ko: '아직 제자리인 것이 없다. 바퀴마다 왼쪽부터 한 자리씩 채운다',
+      ja: 'まだ定位置のものはない。一巡ごとに左から席がひとつずつ埋まる。',
+      zh: '还没有一个在自己的位置上。每一轮从左边多填一个座位。',
       ar: 'لا شيء في مكانه بعد. كل جولة تملأ مقعدًا إضافيًا من اليسار.',
       es: 'Nada está en su sitio todavía. Cada pasada llena un puesto más desde la izquierda.',
       fr: "Rien n'est encore à sa place. Chaque passe remplit une place de plus depuis la gauche.",
@@ -159,6 +179,8 @@ export const selectionSortFacet: FacetJson = {
     'caption.pickSeat': {
       en: 'Seat {seat} is next. Assume {value} is the smallest and scan the {remaining} cells to its right.',
       ko: '다음은 {seat} 번 자리. {value} 를 최솟값으로 두고 오른쪽 {remaining} 칸을 훑는다',
+      ja: '次は {seat} 番の席。{value} を最小とみなし、右の {remaining} マスを見ていく。',
+      zh: '轮到第 {seat} 个座位。先假定 {value} 最小，再扫它右边的 {remaining} 格。',
       ar: 'المقعد {seat} هو التالي. افترض أن {value} هو الأصغر وامسح {remaining} خانة على يمينه.',
       es: 'Sigue el puesto {seat}. Supón que {value} es el menor y recorre las {remaining} casillas a su derecha.',
       fr: 'Au tour de la place {seat}. Supposez que {value} est le plus petit et parcourez les {remaining} cases à sa droite.',
@@ -169,6 +191,8 @@ export const selectionSortFacet: FacetJson = {
     'caption.compare': {
       en: 'Is {value} smaller than {min}?',
       ko: '{value} 가 {min} 보다 작은가',
+      ja: '{value} は {min} より小さいか。',
+      zh: '{value} 比 {min} 小吗？',
       ar: 'هل {value} أصغر من {min}؟',
       es: '¿Es {value} menor que {min}?',
       fr: '{value} est-il plus petit que {min} ?',
@@ -179,6 +203,8 @@ export const selectionSortFacet: FacetJson = {
     'caption.moveMin': {
       en: 'Yes — {value} beats {previous}. The min mark moves, but nothing is moved yet.',
       ko: '그렇다 — {value} 가 {previous} 를 이긴다. 표식만 옮겨 갈 뿐 값은 아직 움직이지 않는다',
+      ja: 'そうだ — {value} が {previous} に勝つ。最小の印が移るだけで、値はまだ動かない。',
+      zh: '是 — {value} 胜过 {previous}。只是最小值的标记挪了，值还没动。',
       ar: 'نعم — {value} يتفوق على {previous}. تنتقل علامة الأصغر فقط ولم تتحرك أي قيمة بعد.',
       es: 'Sí: {value} gana a {previous}. Solo se mueve la marca del mínimo; ningún valor cambia de sitio.',
       fr: "Oui — {value} bat {previous}. Seule la marque du minimum se déplace ; aucune valeur ne bouge.",
@@ -189,6 +215,8 @@ export const selectionSortFacet: FacetJson = {
     'caption.scanEnd': {
       en: 'Scanned to the end with {count} comparisons. The smallest left is {value}.',
       ko: '{count} 번 견주며 끝까지 훑었다. 남은 것 중 가장 작은 값은 {value}',
+      ja: '{count} 回見比べて最後まで見た。残りで最小の値は {value}。',
+      zh: '比较 {count} 次，一直扫到末尾。剩下的里最小的是 {value}。',
       ar: 'تم المسح حتى النهاية بـ {count} مقارنة. الأصغر بين المتبقي هو {value}.',
       es: 'Recorrido hasta el final con {count} comparaciones. El menor que queda es {value}.',
       fr: "Parcouru jusqu'au bout en {count} comparaisons. Le plus petit restant est {value}.",
@@ -199,6 +227,8 @@ export const selectionSortFacet: FacetJson = {
     'caption.swap': {
       en: 'Bring {value} to seat {seat}; {other} takes its old place.',
       ko: '{value} 를 {seat} 번 자리로 데려오고, {other} 는 그 자리로 간다',
+      ja: '{value} を {seat} 番の席へ連れてきて、{other} が元の場所へ移る。',
+      zh: '把 {value} 带到第 {seat} 个座位；{other} 去它原来的地方。',
       ar: 'أحضر {value} إلى المقعد {seat}، و{other} يأخذ مكانه القديم.',
       es: 'Trae {value} al puesto {seat}; {other} ocupa su antiguo lugar.',
       fr: 'Amenez {value} à la place {seat} ; {other} prend son ancienne place.',
@@ -209,6 +239,8 @@ export const selectionSortFacet: FacetJson = {
     'caption.alreadyHome': {
       en: 'The mark never left seat {seat} — no move at all.',
       ko: '표식이 {seat} 번 자리를 떠나지 않았다 — 이 바퀴는 이동이 없다',
+      ja: '印は {seat} 番の席を離れなかった — この巡は移動なし。',
+      zh: '标记一直没离开第 {seat} 个座位 — 这一轮没有移动。',
       ar: 'لم تغادر العلامة المقعد {seat} — لا نقلة في هذه الجولة.',
       es: 'La marca nunca salió del puesto {seat}: esta pasada no mueve nada.',
       fr: 'La marque a gardé la place {seat} — aucun déplacement cette passe.',
@@ -219,6 +251,8 @@ export const selectionSortFacet: FacetJson = {
     'caption.done': {
       en: 'Sorted in {passes} passes: {compares} comparisons but only {swaps} moves.',
       ko: '{passes} 바퀴로 정렬됐다 — 견줌 {compares} 번에 이동은 {swaps} 번뿐',
+      ja: '{passes} 巡で並べ替えが終わった — 比較 {compares} 回に対し、移動は {swaps} 回だけ。',
+      zh: '{passes} 轮完成排序：比较 {compares} 次，却只移动 {swaps} 次。',
       ar: 'تم الترتيب في {passes} جولات: {compares} مقارنة مقابل {swaps} نقلات فقط.',
       es: 'Ordenado en {passes} pasadas: {compares} comparaciones y solo {swaps} movimientos.',
       fr: 'Trié en {passes} passes : {compares} comparaisons pour seulement {swaps} déplacements.',

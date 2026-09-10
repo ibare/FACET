@@ -23,6 +23,8 @@ export const primMstFacet: FacetJson = {
   title: {
     en: 'Prim',
     ko: '프림',
+    ja: 'プリム法',
+    zh: 'Prim 算法',
     ar: 'خوارزمية بريم',
     es: 'Prim',
     fr: 'Prim',
@@ -33,6 +35,8 @@ export const primMstFacet: FacetJson = {
   description: {
     en: 'Grow one tree, always taking the lightest edge that leaves it.',
     ko: '한 나무를 키운다 — 밖으로 나가는 가장 가벼운 간선을 붙이며',
+    ja: '木を一本だけ育てる — 外へ出るいちばん軽い辺をつないで。',
+    zh: '只养一棵树 — 每次都接上从树里伸出的最轻的边。',
     ar: 'نمِّ شجرة واحدة، وخذ دائمًا أخفّ ضلع يخرج منها.',
     es: 'Haz crecer un solo árbol tomando siempre la arista más ligera que sale de él.',
     fr: "Faire croître un seul arbre en prenant toujours l'arête la plus légère qui en sort.",
@@ -80,6 +84,8 @@ export const primMstFacet: FacetJson = {
           label: {
             en: 'Scans',
             ko: '훑기',
+            ja: 'スキャン',
+            zh: '扫描',
             ar: 'مسوح',
             es: 'Barridos',
             fr: 'Balayages',
@@ -94,6 +100,8 @@ export const primMstFacet: FacetJson = {
           label: {
             en: 'Lightened',
             ko: '가벼워진 값',
+            ja: '軽くなった値',
+            zh: '变轻的值',
             ar: 'تخفيفات',
             es: 'Aligerados',
             fr: 'Allégés',
@@ -108,6 +116,8 @@ export const primMstFacet: FacetJson = {
           label: {
             en: 'Edges taken',
             ko: '붙인 간선',
+            ja: '取った辺',
+            zh: '选中的边',
             ar: 'أضلاع مأخوذة',
             es: 'Aristas tomadas',
             fr: 'Arêtes prises',
@@ -124,6 +134,8 @@ export const primMstFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -138,6 +150,8 @@ export const primMstFacet: FacetJson = {
     'label.key': {
       en: 'cheapest edge from the tree to each vertex',
       ko: '나무에서 각 정점으로 건너가는 가장 가벼운 간선',
+      ja: '木から各頂点へ渡るいちばん軽い辺',
+      zh: '从树到各顶点的最轻边',
       ar: 'أخفّ ضلع من الشجرة إلى كل رأس',
       es: 'arista más ligera del árbol a cada vértice',
       fr: "arête la plus légère de l'arbre vers chaque sommet",
@@ -148,6 +162,8 @@ export const primMstFacet: FacetJson = {
     'label.order': {
       en: 'edges taken, in order',
       ko: '붙은 차례',
+      ja: '取った順',
+      zh: '选中的顺序',
       ar: 'الأضلاع المأخوذة بالترتيب',
       es: 'aristas tomadas, en orden',
       fr: "arêtes prises, dans l'ordre",
@@ -158,6 +174,8 @@ export const primMstFacet: FacetJson = {
     'label.total': {
       en: 'total weight',
       ko: '무게 합',
+      ja: '重みの合計',
+      zh: '权重合计',
       ar: 'الوزن الكلي',
       es: 'peso total',
       fr: 'poids total',
@@ -168,6 +186,8 @@ export const primMstFacet: FacetJson = {
     'label.start': {
       en: 'start',
       ko: '출발',
+      ja: '出発',
+      zh: '起点',
       ar: 'البداية',
       es: 'inicio',
       fr: 'départ',
@@ -178,6 +198,8 @@ export const primMstFacet: FacetJson = {
     'label.choosable': {
       en: 'choosable — leaves the tree',
       ko: '고를 수 있다 — 나무 밖으로 나간다',
+      ja: '選べる — 木の外へ出る',
+      zh: '可选 — 通向树外',
       ar: 'قابل للاختيار — يخرج من الشجرة',
       es: 'elegible: sale del árbol',
       fr: "choisissable — sort de l'arbre",
@@ -188,6 +210,8 @@ export const primMstFacet: FacetJson = {
     'label.notYet': {
       en: 'not yet — both ends on the same side',
       ko: '아직 아니다 — 두 끝이 같은 편',
+      ja: 'まだ — 両端が同じ側',
+      zh: '还不行 — 两端在同一侧',
       ar: 'ليس بعد — طرفاه في الجهة نفسها',
       es: 'todavía no: ambos extremos del mismo lado',
       fr: 'pas encore — les deux bouts du même côté',
@@ -198,6 +222,8 @@ export const primMstFacet: FacetJson = {
     'caption.init': {
       en: 'The tree starts at vertex {start}. Nothing else is reachable yet.',
       ko: '나무는 정점 {start} 에서 시작한다. 나머지는 아직 닿지 않았다',
+      ja: '木は頂点 {start} から始まる。ほかはまだ届いていない。',
+      zh: '树从顶点 {start} 开始。其余的还没够到。',
       ar: 'تبدأ الشجرة عند الرأس {start}. ولا شيء آخر مبلوغ بعد.',
       es: 'El árbol empieza en el vértice {start}. Aún no se llega a nada más.',
       fr: "L'arbre part du sommet {start}. Rien d'autre n'est encore atteint.",
@@ -208,6 +234,8 @@ export const primMstFacet: FacetJson = {
     'caption.round': {
       en: 'The tree holds {size} vertices. Look at every edge that leaves it.',
       ko: '나무에 든 자리는 {size}. 밖으로 나가는 간선을 모두 본다',
+      ja: '木に入った頂点は {size} 個。外へ出る辺をすべて見る。',
+      zh: '树里已有 {size} 个顶点。看看所有伸出去的边。',
       ar: 'تضمّ الشجرة رؤوسًا عددها {size}. انظر إلى كل ضلع يخرج منها.',
       es: 'El árbol tiene {size} vértices. Mira cada arista que sale de él.',
       fr: "L'arbre compte {size} sommets. Regardons chaque arête qui en sort.",
@@ -218,6 +246,8 @@ export const primMstFacet: FacetJson = {
     'caption.scanInside': {
       en: 'Vertex {node} is already in the tree — skip it.',
       ko: '이미 나무 안이다 — 정점 {node}',
+      ja: '頂点 {node} はすでに木の中 — 飛ばす。',
+      zh: '顶点 {node} 已在树里 — 跳过。',
       ar: 'الرأس {node} داخل الشجرة أصلًا — تخطَّه.',
       es: 'El vértice {node} ya está en el árbol; se omite.',
       fr: "Le sommet {node} est déjà dans l'arbre — on passe.",
@@ -228,6 +258,8 @@ export const primMstFacet: FacetJson = {
     'caption.scanUnreached': {
       en: 'No edge reaches vertex {node} yet.',
       ko: '아직 닿는 간선이 없다 — 정점 {node}',
+      ja: '頂点 {node} に届く辺はまだない。',
+      zh: '还没有边够到顶点 {node}。',
       ar: 'لا ضلع يبلغ الرأس {node} بعد.',
       es: 'Ninguna arista llega todavía al vértice {node}.',
       fr: "Aucune arête n'atteint encore le sommet {node}.",
@@ -238,6 +270,8 @@ export const primMstFacet: FacetJson = {
     'caption.scanBest': {
       en: 'Lightest so far: vertex {node} for {key}.',
       ko: '여기까지 가장 가벼운 후보 — 정점 {node} 로 {key}',
+      ja: 'ここまでで最軽 — 頂点 {node} へ {key}。',
+      zh: '目前最轻：到顶点 {node} 需 {key}。',
       ar: 'الأخفّ حتى الآن: الرأس {node} مقابل {key}.',
       es: 'El más ligero hasta ahora: el vértice {node} por {key}.',
       fr: "Le plus léger jusqu'ici : le sommet {node} pour {key}.",
@@ -248,6 +282,8 @@ export const primMstFacet: FacetJson = {
     'caption.scanHeavier': {
       en: 'Vertex {node} costs {key} — heavier than the current best {best}.',
       ko: '정점 {node} 로 가는 값은 {key} — 지금 후보 {best} 보다 무겁다',
+      ja: '頂点 {node} へは {key} — 今の候補 {best} より重い。',
+      zh: '到顶点 {node} 要 {key} — 比当前最佳 {best} 重。',
       ar: 'الرأس {node} يكلّف {key} — أثقل من الأفضل الحالي {best}.',
       es: 'El vértice {node} cuesta {key}, más que el mejor actual {best}.',
       fr: 'Le sommet {node} coûte {key} — plus lourd que le meilleur actuel {best}.',
@@ -258,6 +294,8 @@ export const primMstFacet: FacetJson = {
     'caption.chooseStart': {
       en: 'Vertex {node} is where the tree begins.',
       ko: '나무가 시작하는 자리 — 정점 {node}',
+      ja: '木が始まる場所 — 頂点 {node}。',
+      zh: '树从顶点 {node} 开始。',
       ar: 'الرأس {node} هو حيث تبدأ الشجرة.',
       es: 'El vértice {node} es donde empieza el árbol.',
       fr: "Le sommet {node} est là où l'arbre commence.",
@@ -268,6 +306,8 @@ export const primMstFacet: FacetJson = {
     'caption.choose': {
       en: 'Take the edge {from}-{node}, weight {weight}.',
       ko: '골랐다 — 간선 {from}-{node}, 무게 {weight}',
+      ja: '辺 {from}-{node} を取る、重み {weight}。',
+      zh: '取边 {from}-{node}，权重 {weight}。',
       ar: 'خذ الضلع {from}-{node} بوزن {weight}.',
       es: 'Toma la arista {from}-{node}, peso {weight}.',
       fr: "Prendre l'arête {from}-{node}, poids {weight}.",
@@ -278,6 +318,8 @@ export const primMstFacet: FacetJson = {
     'caption.attachStart': {
       en: 'The tree is one vertex wide: {node}.',
       ko: '나무의 첫 자리는 {node}. 무게 합은 아직 0',
+      ja: '木はまだ頂点ひとつ分 — {node}。',
+      zh: '树还只有一个顶点：{node}。',
       ar: 'الشجرة الآن رأس واحد: {node}.',
       es: 'El árbol mide un vértice: {node}.',
       fr: "L'arbre tient en un sommet : {node}.",
@@ -288,6 +330,8 @@ export const primMstFacet: FacetJson = {
     'caption.attach': {
       en: 'The tree grew by one — vertex {node} joined. Total weight is now {total}.',
       ko: '나무가 한 자리 자랐다 — 붙은 자리는 {node}. 무게 합은 {total}',
+      ja: '木がひとつ伸びた — 頂点 {node} が加わる。重みの合計は {total}。',
+      zh: '树长了一个 — 顶点 {node} 加入。权重合计现在是 {total}。',
       ar: 'نمت الشجرة رأسًا واحدًا — انضمّ الرأس {node}. الوزن الكلي الآن {total}.',
       es: 'El árbol creció uno: se unió el vértice {node}. El peso total es {total}.',
       fr: "L'arbre a grandi d'un — le sommet {node} a rejoint. Poids total : {total}.",
@@ -298,6 +342,8 @@ export const primMstFacet: FacetJson = {
     'caption.offerInside': {
       en: 'Vertex {to} is already in the tree — this edge would close a cycle.',
       ko: '이미 나무 안이라 이 간선은 고리를 만든다 — 정점 {to}',
+      ja: '頂点 {to} はすでに木の中 — この辺は閉路をつくる。',
+      zh: '顶点 {to} 已在树里 — 这条边会成环。',
       ar: 'الرأس {to} داخل الشجرة أصلًا — هذا الضلع يغلق دورة.',
       es: 'El vértice {to} ya está en el árbol; esta arista cerraría un ciclo.',
       fr: "Le sommet {to} est déjà dans l'arbre — cette arête fermerait un cycle.",
@@ -308,6 +354,8 @@ export const primMstFacet: FacetJson = {
     'caption.offerFirst': {
       en: 'Vertex {to} is reachable at last, for {weight}.',
       ko: '드디어 닿았다 — 정점 {to} 로 {weight}',
+      ja: '頂点 {to} にようやく届いた、{weight} で。',
+      zh: '终于够到顶点 {to} 了，代价 {weight}。',
       ar: 'أصبح الرأس {to} مبلوغًا أخيرًا مقابل {weight}.',
       es: 'Por fin se llega al vértice {to}, por {weight}.',
       fr: 'Le sommet {to} est enfin atteint, pour {weight}.',
@@ -318,6 +366,8 @@ export const primMstFacet: FacetJson = {
     'caption.offerImprove': {
       en: 'A lighter way into vertex {to}: {before} becomes {weight}.',
       ko: '정점 {to} 로 더 가벼운 길 — {before} 에서 {weight} 로',
+      ja: '頂点 {to} への軽い道 — {before} が {weight} になる。',
+      zh: '到顶点 {to} 有更轻的路：{before} 变成 {weight}。',
       ar: 'طريق أخفّ إلى الرأس {to}: {before} يصير {weight}.',
       es: 'Una entrada más ligera al vértice {to}: {before} pasa a {weight}.',
       fr: 'Une entrée plus légère vers le sommet {to} : {before} devient {weight}.',
@@ -328,6 +378,8 @@ export const primMstFacet: FacetJson = {
     'caption.offerKeep': {
       en: 'Into vertex {to} this edge costs {weight}; {before} is lighter.',
       ko: '정점 {to} 로 이 간선은 {weight}. 이미 알고 있는 {before} 보다 무겁다',
+      ja: '頂点 {to} へこの辺は {weight}。{before} のほうが軽い。',
+      zh: '到顶点 {to} 这条边要 {weight}；{before} 更轻。',
       ar: 'إلى الرأس {to} يكلّف هذا الضلع {weight}؛ و{before} أخفّ.',
       es: 'Hacia el vértice {to} esta arista cuesta {weight}; {before} es más ligera.',
       fr: 'Vers le sommet {to} cette arête coûte {weight} ; {before} est plus léger.',
@@ -338,6 +390,8 @@ export const primMstFacet: FacetJson = {
     'caption.done': {
       en: '{count} edges hold every vertex in one tree. Total weight is {total}.',
       ko: '간선 {count} 개로 모든 정점이 한 나무가 됐다. 무게 합은 {total}',
+      ja: '{count} 本の辺で全頂点がひとつの木になった。重みの合計は {total}。',
+      zh: '{count} 条边把所有顶点连成一棵树。权重合计 {total}。',
       ar: 'أضلاع عددها {count} تجمع كل الرؤوس في شجرة واحدة. الوزن الكلي {total}.',
       es: '{count} aristas mantienen todos los vértices en un solo árbol. El peso total es {total}.',
       fr: '{count} arêtes tiennent tous les sommets en un seul arbre. Poids total : {total}.',

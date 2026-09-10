@@ -20,6 +20,8 @@ export const insertionSortFacet: FacetJson = {
   title: {
     en: 'Insertion Sort',
     ko: '삽입 정렬',
+    ja: '挿入ソート',
+    zh: '插入排序',
     ar: 'الترتيب بالإدراج',
     es: 'Ordenamiento por inserción',
     fr: 'Tri par insertion',
@@ -30,6 +32,8 @@ export const insertionSortFacet: FacetJson = {
   description: {
     en: 'Hold one value, let the bigger ones step aside, and drop it in — an ordered input barely works at all.',
     ko: '값 하나를 들고 큰 것들을 비켜세운 뒤 끼워 넣는다 — 이미 줄 선 입력에서는 거의 일하지 않는다',
+    ja: '値を一つ手に取り、大きいものを脇へどかしてから差し込む — すでに並んだ入力ではほとんど働かない。',
+    zh: '拿起一个值，让更大的往旁边让，再把它放进去 — 输入若已排好，它几乎不用干活。',
     ar: 'احمل قيمة واحدة، ودع الأكبر منها يتنحّى، ثم أدرجها — المدخل المرتّب أصلًا لا يكلّف شيئًا تقريبًا.',
     es: 'Sostén un valor, deja que los mayores se aparten y encájalo: con una entrada ya ordenada casi no trabaja.',
     fr: "Tenez une valeur, laissez les plus grandes s'écarter, puis insérez-la — sur une entrée déjà triée, il ne travaille presque pas.",
@@ -58,6 +62,8 @@ export const insertionSortFacet: FacetJson = {
           label: {
             en: 'Compare',
             ko: '견줌',
+            ja: '比較',
+            zh: '比较',
             ar: 'مقارنة',
             es: 'Comparar',
             fr: 'Comparer',
@@ -72,6 +78,8 @@ export const insertionSortFacet: FacetJson = {
           label: {
             en: 'Step aside',
             ko: '비켜섬',
+            ja: 'ずらし',
+            zh: '让位',
             ar: 'إزاحة',
             es: 'Desplazamiento',
             fr: 'Décalage',
@@ -86,6 +94,8 @@ export const insertionSortFacet: FacetJson = {
           label: {
             en: 'Insert',
             ko: '넣기',
+            ja: '挿入',
+            zh: '插入',
             ar: 'إدراج',
             es: 'Inserción',
             fr: 'Insertion',
@@ -102,6 +112,8 @@ export const insertionSortFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -116,6 +128,8 @@ export const insertionSortFacet: FacetJson = {
     'label.sortedRun': {
       en: 'in order',
       ko: '줄 선 구간',
+      ja: '並んだ区間',
+      zh: '已排好的一段',
       ar: 'مرتّب',
       es: 'en orden',
       fr: 'en ordre',
@@ -126,6 +140,8 @@ export const insertionSortFacet: FacetJson = {
     'label.ledger': {
       en: 'Shifts per inserted value',
       ko: '넣은 값마다 비켜선 횟수',
+      ja: '挿入した値ごとのずらし回数',
+      zh: '每个插入值的让位次数',
       ar: 'عدد الإزاحات لكل قيمة مُدرجة',
       es: 'Desplazamientos por valor insertado',
       fr: 'Décalages par valeur insérée',
@@ -136,6 +152,8 @@ export const insertionSortFacet: FacetJson = {
     'caption.start': {
       en: 'The first cell alone is already a sorted run.',
       ko: '첫 칸 하나는 그 자체로 이미 줄이 서 있다',
+      ja: '最初の一マスだけで、すでに並んだ区間だ。',
+      zh: '仅第一格本身就已经是排好的一段。',
       ar: 'الخانة الأولى وحدها تُعدّ صفًّا مرتّبًا بالفعل.',
       es: 'La primera casilla por sí sola ya es un tramo ordenado.',
       fr: 'La première case à elle seule forme déjà une suite ordonnée.',
@@ -146,6 +164,8 @@ export const insertionSortFacet: FacetJson = {
     'caption.pick': {
       en: 'Take {value} out. {count} cells on the left are in order.',
       ko: '{value} 를 집어 든다. 왼쪽 {count} 칸은 줄이 서 있다',
+      ja: '{value} を取り出す。左の {count} マスは並んでいる。',
+      zh: '取出 {value}。左边 {count} 格已经排好。',
       ar: 'اسحب {value} خارجًا. {count} خانات على اليسار مرتّبة.',
       es: 'Saca {value}. Las {count} casillas de la izquierda están en orden.',
       fr: 'Retirez {value}. Les {count} cases de gauche sont en ordre.',
@@ -156,6 +176,8 @@ export const insertionSortFacet: FacetJson = {
     'caption.compare': {
       en: 'Is {value} greater than {key}?',
       ko: '{value} 는 {key} 보다 큰가',
+      ja: '{value} は {key} より大きいか。',
+      zh: '{value} 比 {key} 大吗？',
       ar: 'هل {value} أكبر من {key}؟',
       es: '¿Es {value} mayor que {key}?',
       fr: 'Est-ce que {value} est plus grand que {key} ?',
@@ -166,6 +188,8 @@ export const insertionSortFacet: FacetJson = {
     'caption.shift': {
       en: '{value} is greater — it steps one cell to the right.',
       ko: '{value} 는 더 크다 — 오른쪽으로 한 칸 비켜선다',
+      ja: '{value} の方が大きい — 右へ一マスずれる。',
+      zh: '{value} 更大 — 它往右让一格。',
       ar: '{value} أكبر — فيتنحّى خانة واحدة إلى اليمين.',
       es: '{value} es mayor: se aparta una casilla a la derecha.',
       fr: '{value} est plus grand — il se décale d’une case vers la droite.',
@@ -176,6 +200,8 @@ export const insertionSortFacet: FacetJson = {
     'caption.stopSmaller': {
       en: '{value} is not greater than {key} — the walk stops here.',
       ko: '{value} 는 {key} 보다 크지 않다 — 여기서 멈춘다',
+      ja: '{value} は {key} より大きくない — ここで止まる。',
+      zh: '{value} 不比 {key} 大 — 走到这里停下。',
       ar: '{value} ليس أكبر من {key} — يتوقّف المسير هنا.',
       es: '{value} no es mayor que {key}: el recorrido se detiene aquí.',
       fr: "{value} n'est pas plus grand que {key} — la marche s'arrête ici.",
@@ -186,6 +212,8 @@ export const insertionSortFacet: FacetJson = {
     'caption.stopEdge': {
       en: 'The left end is passed — {key} is the smallest so far.',
       ko: '왼쪽 끝을 지났다 — {key} 가 지금까지 가장 작다',
+      ja: '左端を過ぎた — {key} がここまでで最も小さい。',
+      zh: '越过了左端 — {key} 是目前最小的。',
       ar: 'تم تجاوز الطرف الأيسر — {key} هو الأصغر حتى الآن.',
       es: 'Se pasó el extremo izquierdo: {key} es el menor hasta ahora.',
       fr: "L'extrémité gauche est dépassée — {key} est le plus petit jusqu'ici.",
@@ -196,6 +224,8 @@ export const insertionSortFacet: FacetJson = {
     'caption.place': {
       en: '{value} settles into seat {index}.',
       ko: '{value} 가 {index} 번 자리에 내려앉는다',
+      ja: '{value} が {index} 番の席に収まる。',
+      zh: '{value} 落到第 {index} 个位置。',
       ar: '{value} يستقرّ في المقعد {index}.',
       es: '{value} se asienta en el puesto {index}.',
       fr: '{value} se pose à la place {index}.',
@@ -206,6 +236,8 @@ export const insertionSortFacet: FacetJson = {
     'caption.settle': {
       en: '{count} cells are in order now. {value} cost {shifts} steps aside.',
       ko: '이제 {count} 칸이 줄 섰다. {value} 는 {shifts} 번 비켜세우고 들어갔다',
+      ja: 'これで {count} マスが並んだ。{value} は {shifts} 回ずらして入った。',
+      zh: '现在有 {count} 格排好了。{value} 让了 {shifts} 次才进去。',
       ar: 'أصبحت {count} خانات مرتّبة الآن. كلّف {value} إزاحة {shifts} مرات.',
       es: 'Ahora {count} casillas están en orden. {value} costó {shifts} desplazamientos.',
       fr: '{count} cases sont maintenant en ordre. {value} a coûté {shifts} décalages.',
@@ -216,6 +248,8 @@ export const insertionSortFacet: FacetJson = {
     'caption.settleNone': {
       en: '{value} was already home — nothing stepped aside.',
       ko: '{value} 는 이미 제자리였다 — 아무것도 비켜서지 않았다',
+      ja: '{value} はもとから定位置だった — 何もずれなかった。',
+      zh: '{value} 本来就在原位 — 什么都没让。',
       ar: '{value} كان في موضعه أصلًا — لم يتنحَّ شيء.',
       es: '{value} ya estaba en su sitio: nada se apartó.',
       fr: "{value} était déjà à sa place — rien ne s'est écarté.",
@@ -226,6 +260,8 @@ export const insertionSortFacet: FacetJson = {
     'caption.done': {
       en: 'Sorted with {compares} comparisons and {shifts} steps aside.',
       ko: '견줌 {compares} 번 · 비켜섬 {shifts} 번으로 정렬됐다',
+      ja: '比較 {compares} 回、ずらし {shifts} 回で並んだ。',
+      zh: '用 {compares} 次比较和 {shifts} 次让位排好了。',
       ar: 'تم الترتيب بـ {compares} مقارنات و {shifts} إزاحات.',
       es: 'Ordenado con {compares} comparaciones y {shifts} desplazamientos.',
       fr: 'Trié avec {compares} comparaisons et {shifts} décalages.',

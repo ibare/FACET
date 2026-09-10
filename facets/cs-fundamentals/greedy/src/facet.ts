@@ -20,6 +20,8 @@ export const greedyFacet: FacetJson = {
   title: {
     en: 'Greedy',
     ko: '그리디',
+    ja: '貪欲法',
+    zh: '贪心',
     ar: 'الجشع',
     es: 'Voraz',
     fr: 'Glouton',
@@ -30,6 +32,8 @@ export const greedyFacet: FacetJson = {
   description: {
     en: 'Always take the one that finishes earliest — and that turns out to be optimal.',
     ko: '매번 가장 일찍 끝나는 것을 고른다 — 뒤를 안 보고도 그것이 최적이다',
+    ja: 'いつも一番早く終わるものを取る — それが最適になる。',
+    zh: '总是选最早结束的那个 — 而它恰好就是最优。',
     ar: 'خذ دائمًا ما ينتهي أبكر — ويتبيّن أن ذلك هو الأمثل.',
     es: 'Toma siempre la que termina antes: resulta que eso es lo óptimo.',
     fr: "Prendre toujours celle qui finit le plus tôt — et cela se révèle optimal.",
@@ -62,6 +66,8 @@ export const greedyFacet: FacetJson = {
           label: {
             en: 'Compare',
             ko: '견줌',
+            ja: '比較',
+            zh: '比较',
             ar: 'مقارنة',
             es: 'Comparar',
             fr: 'Comparer',
@@ -76,6 +82,8 @@ export const greedyFacet: FacetJson = {
           label: {
             en: 'Pick',
             ko: '고름',
+            ja: '採用',
+            zh: '选取',
             ar: 'اختيار',
             es: 'Elegir',
             fr: 'Choisir',
@@ -90,6 +98,8 @@ export const greedyFacet: FacetJson = {
           label: {
             en: 'Skip',
             ko: '건너뜀',
+            ja: '見送り',
+            zh: '跳过',
             ar: 'تخطٍّ',
             es: 'Omitir',
             fr: 'Sauter',
@@ -106,6 +116,8 @@ export const greedyFacet: FacetJson = {
       label: {
         en: 'Code',
         ko: '코드',
+        ja: 'コード',
+        zh: '代码',
         ar: 'الشيفرة',
         es: 'Código',
         fr: 'Code',
@@ -120,6 +132,8 @@ export const greedyFacet: FacetJson = {
     'label.room': {
       en: 'Meeting room',
       ko: '회의실',
+      ja: '会議室',
+      zh: '会议室',
       ar: 'قاعة الاجتماعات',
       es: 'Sala de reuniones',
       fr: 'Salle de réunion',
@@ -130,6 +144,8 @@ export const greedyFacet: FacetJson = {
     'label.summary': {
       en: 'Chosen {picked} of {total}',
       ko: '고른 회의 {picked} / {total}',
+      ja: '採用 {picked} / {total}',
+      zh: '已选 {picked} / {total}',
       ar: 'المختار {picked} من {total}',
       es: 'Elegidas {picked} de {total}',
       fr: 'Retenues {picked} sur {total}',
@@ -140,6 +156,8 @@ export const greedyFacet: FacetJson = {
     'label.span': {
       en: '[{start}, {end}]',
       ko: '[{start}, {end}]',
+      ja: '[{start}, {end}]',
+      zh: '[{start}, {end}]',
       ar: '[{start}, {end}]',
       es: '[{start}, {end}]',
       fr: '[{start}, {end}]',
@@ -150,6 +168,8 @@ export const greedyFacet: FacetJson = {
     'caption.start': {
       en: 'Fit as many meetings as possible into one room.',
       ko: '회의실 하나에 회의를 최대한 많이 넣는다',
+      ja: '会議室ひとつにできるだけ多くの会議を詰める。',
+      zh: '在一间会议室里尽量多安排会议。',
       ar: 'أدخل أكبر عدد ممكن من الاجتماعات في قاعة واحدة.',
       es: 'Mete tantas reuniones como sea posible en una sola sala.',
       fr: 'Faire tenir le plus de réunions possible dans une seule salle.',
@@ -160,6 +180,8 @@ export const greedyFacet: FacetJson = {
     'caption.sorted': {
       en: 'Line them up by finishing time.',
       ko: '끝나는 시간 순으로 줄을 세운다',
+      ja: '終わる時刻の順に並べる。',
+      zh: '按结束时间排好队。',
       ar: 'رتّبها حسب وقت الانتهاء.',
       es: 'Ordénalas por hora de finalización.',
       fr: 'Ranger par heure de fin.',
@@ -170,6 +192,8 @@ export const greedyFacet: FacetJson = {
     'caption.sortedAlready': {
       en: 'Line them up by finishing time — they already are.',
       ko: '끝나는 시간 순으로 줄을 세운다 — 이미 그 순서다',
+      ja: '終わる時刻の順に並べる — すでにその順だ。',
+      zh: '按结束时间排好队 — 本来就已经是了。',
       ar: 'رتّبها حسب وقت الانتهاء — وهي مرتّبة أصلًا.',
       es: 'Ordénalas por hora de finalización: ya lo están.',
       fr: 'Ranger par heure de fin — elles le sont déjà.',
@@ -180,6 +204,8 @@ export const greedyFacet: FacetJson = {
     'caption.init': {
       en: 'Nothing booked yet — the room is free from the start.',
       ko: '아직 잡힌 회의가 없다 — 회의실은 처음부터 비어 있다',
+      ja: 'まだ予約はない — 会議室は最初から空いている。',
+      zh: '还没有预约 — 会议室从一开始就空着。',
       ar: 'لا شيء محجوز بعد — القاعة فارغة من البداية.',
       es: 'Nada reservado todavía: la sala está libre desde el principio.',
       fr: "Rien n'est réservé — la salle est libre depuis le début.",
@@ -190,6 +216,8 @@ export const greedyFacet: FacetJson = {
     'caption.visit': {
       en: 'Look at the meeting {start}–{end}.',
       ko: '회의 {start}–{end} 를 본다',
+      ja: '会議 {start}–{end} を見る。',
+      zh: '看看会议 {start}–{end}。',
       ar: 'انظر إلى الاجتماع {start}–{end}.',
       es: 'Mira la reunión {start}–{end}.',
       fr: 'Regarder la réunion {start}–{end}.',
@@ -200,6 +228,8 @@ export const greedyFacet: FacetJson = {
     'caption.compareFirst': {
       en: 'The room is empty, so {start} fits for sure.',
       ko: '회의실이 비어 있으니 {start} 에 시작하는 것은 무조건 된다',
+      ja: '会議室は空なので {start} 始まりは必ず入る。',
+      zh: '会议室是空的，所以 {start} 开始的一定放得下。',
       ar: 'القاعة فارغة، لذا يناسب البدء عند {start} بالتأكيد.',
       es: 'La sala está vacía, así que empezar a las {start} entra seguro.',
       fr: 'La salle est vide : commencer à {start} passe forcément.',
@@ -210,6 +240,8 @@ export const greedyFacet: FacetJson = {
     'caption.compareFits': {
       en: 'Starts at {start}, room free since {lastEnd} — it fits.',
       ko: '{start} 에 시작하고 회의실은 {lastEnd} 부터 비어 있다 — 들어간다',
+      ja: '{start} 始まりで、会議室は {lastEnd} から空いている — 入る。',
+      zh: '{start} 开始，会议室自 {lastEnd} 起空着 — 放得下。',
       ar: 'يبدأ عند {start} والقاعة فارغة منذ {lastEnd} — إذن يناسب.',
       es: 'Empieza a las {start} y la sala está libre desde {lastEnd}: entra.',
       fr: 'Elle commence à {start}, la salle est libre depuis {lastEnd} — ça passe.',
@@ -220,6 +252,8 @@ export const greedyFacet: FacetJson = {
     'caption.compareClashes': {
       en: 'Starts at {start} but the room is busy until {lastEnd} — they clash.',
       ko: '{start} 에 시작하는데 회의실은 {lastEnd} 까지 차 있다 — 겹친다',
+      ja: '{start} 始まりだが、会議室は {lastEnd} まで埋まっている — かぶる。',
+      zh: '{start} 开始，但会议室到 {lastEnd} 都占着 — 冲突。',
       ar: 'يبدأ عند {start} لكن القاعة مشغولة حتى {lastEnd} — يتعارضان.',
       es: 'Empieza a las {start} pero la sala está ocupada hasta {lastEnd}: se solapan.',
       fr: "Elle commence à {start} mais la salle est occupée jusqu'à {lastEnd} — il y a chevauchement.",
@@ -230,6 +264,8 @@ export const greedyFacet: FacetJson = {
     'caption.pick': {
       en: 'Take {start}–{end}. The room is busy until {end} now.',
       ko: '{start}–{end} 를 고른다. 이제 회의실은 {end} 까지 찼다',
+      ja: '{start}–{end} を取る。会議室はこれで {end} まで埋まった。',
+      zh: '选下 {start}–{end}。现在会议室占到 {end}。',
       ar: 'خذ {start}–{end}. صارت القاعة مشغولة حتى {end}.',
       es: 'Toma {start}–{end}. Ahora la sala está ocupada hasta {end}.',
       fr: 'Prendre {start}–{end}. La salle est maintenant occupée jusque {end}.',
@@ -240,6 +276,8 @@ export const greedyFacet: FacetJson = {
     'caption.skip': {
       en: 'Drop {start}–{end}. The red part is the clash.',
       ko: '{start}–{end} 는 건너뛴다. 빨간 부분이 겹치는 만큼이다',
+      ja: '{start}–{end} は見送る。赤い部分がかぶった分だ。',
+      zh: '跳过 {start}–{end}。红色部分就是冲突的那段。',
       ar: 'تجاوز {start}–{end}. الجزء الأحمر هو مقدار التعارض.',
       es: 'Descarta {start}–{end}. La parte roja es el solapamiento.',
       fr: 'Laisser {start}–{end}. La partie rouge est le chevauchement.',
@@ -250,6 +288,8 @@ export const greedyFacet: FacetJson = {
     'caption.done': {
       en: 'Took {picks} meetings, dropped {skips} — no two of them overlap.',
       ko: '{picks} 개를 고르고 {skips} 개를 건너뛰었다 — 고른 것끼리는 겹치지 않는다',
+      ja: '{picks} 件を取り、{skips} 件を見送った — 取ったものどうしは重ならない。',
+      zh: '选了 {picks} 场，跳过 {skips} 场 — 选中的互不重叠。',
       ar: 'أخذنا {picks} اجتماعات وتجاوزنا {skips} — ولا يتداخل أي اثنين منها.',
       es: 'Se tomaron {picks} reuniones y se descartaron {skips}: ninguna se solapa.',
       fr: 'On garde {picks} réunions et on en laisse {skips} — aucune ne se chevauche.',
