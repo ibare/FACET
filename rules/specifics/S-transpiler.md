@@ -22,7 +22,26 @@ last_verified: 2026-04-21
 - `Transpiler.supports: Paradigm[]` 는 해당 언어가 실제로 처리 가능한 IR paradigm 을 명시한다 (`'imperative'` 등). 러너는 이 배열로 호환 목록을 필터링한다.
 - `Transpiler.transpile(ir: IR): TranspiledCode` 는 **입력 IR 을 변형하지 않는다** (pure). 재호출 시 동일 결과.
 - IR 의 `phase` 필드를 코드 라인 메타데이터로 전달한다. 소스 코드 출력의 각 줄에 대응하는 phase 를 기록해 코드 패널 하이라이트가 동작하도록 한다.
-- IR → 소스의 식별자/예약어 충돌은 각 언어별로 해결한다 (예: Python 의 `pass`, Java 의 `return` 등). 알고리즘 코드의 변수명을 그대로 쓰기 어렵다면 transpiler 가 rename.
+- **IR 식별자는 여섯 언어의 예약어를 피해 짓는다. 이름을 고르는 것은 IR 저작자의
+  몫이지 transpiler 의 몫이 아니다.**
+
+  한때 이 자리에 "충돌은 각 언어별로 해결한다 … transpiler 가 rename" 이라 적혀
+  있었다. **사문이었다** — 여섯 transpiler 어디에도 예약어 처리가 없고(2026-09-11
+  전수 확인, 관련 코드 0건), 실제로는 저작자가 이름을 피해 왔다. 강제할 수 없는
+  조항이 남아 있으면 어긴 것을 어겼다고 말할 근거가 사라진다.
+
+  세 번 겪었다. `hierarchical` 이 결과 인자를 `out` 이라 적었고(C# 예약어),
+  `pca` 도 같은 이름을 썼으며, 블룸 필터 완제품이 `base` 를 썼다가 emit 을 눈으로
+  보고 잡았다. **셋 다 C# 에서만 깨진다** — java · cpp · python · js · ts 는
+  멀쩡해서 한 언어만 조용히 죽는 모양이다.
+
+  - 특히 조심할 것: C# 의 `base` · `out` · `ref` · `params` · `event` · `lock` ·
+    `checked` · `fixed` · `sealed` · `object` · `string`, Python 의 `pass` ·
+    `lambda` · `from` · `global`, Java 의 `final` · `synchronized` · `native`.
+  - `value` 는 C# 의 **문맥** 키워드라 매개변수 이름으로 쓸 수 있다. 실제로 둘이
+    쓰고 있고 문제없다 — 예약어와 문맥 키워드를 가려서 본다.
+  - 지금은 사람 눈이 유일한 검출기다. 같은 자리에 네 번째가 나오면 검사로 옮긴다
+    (열 언어 미달이 `pnpm i18n:audit` 으로 넘어간 것과 같은 모양).
 
 ## MUST NOT
 

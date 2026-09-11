@@ -15,7 +15,7 @@
  *       dy = v[1] - oy                             # phase: measure-turn
  *       return sqrt(dx * dx + dy * dy)             # phase: measure-turn
  *
- *   def covariance(xs, ys, out):
+ *   def covariance(xs, ys, dst):
  *       n = len(xs)                                # phase: center
  *       mx = 0.0                                   # phase: center
  *       my = 0.0                                   # phase: center
@@ -33,9 +33,9 @@
  *           sxx = sxx + dx * dx
  *           sxy = sxy + dx * dy
  *           syy = syy + dy * dy
- *       out[0] = sxx / n
- *       out[1] = sxy / n
- *       out[2] = syy / n
+ *       dst[0] = sxx / n
+ *       dst[1] = sxy / n
+ *       dst[2] = syy / n
  *
  * ── 왜 거듭제곱 반복인가
  *
@@ -61,7 +61,7 @@
  * 표기로 옮긴다 (`math.sqrt` · `Math.sqrt` · `std::sqrt` · `Math.Sqrt`).
  *
  * `zeros` 는 쓰지 않는다 — 어느 언어에도 그 이름이 없다. `v` (길이 2) 와
- * `out` (길이 3) 은 **인자로 받는다.** 호출부가 만들어 넘기고, 함수는 그
+ * `dst` (길이 3) 은 **인자로 받는다.** 호출부가 만들어 넘기고, 함수는 그
  * 자리에 답을 적는다.
  *
  * ── 돌려주는 것
@@ -161,7 +161,7 @@ const powerStepBody: IRStmt[] = [
 ];
 
 /**
- * 공분산 셋을 `out` 에 적는다 (`out[0]=sxx` · `out[1]=sxy` · `out[2]=syy`).
+ * 공분산 셋을 `dst` 에 적는다 (`dst[0]=sxx` · `dst[1]=sxy` · `dst[2]=syy`).
  *
  * 가운데를 먼저 셈하는 것이 'center' 이고, 그 가운데에서 잰 어긋남의 곱을
  * 모으는 것이 'covariance' 다. 두 고리를 하나로 합칠 수도 있으나 (한 번 훑고
@@ -243,19 +243,19 @@ const covarianceBody: IRStmt[] = [
   },
   {
     kind: 'assign',
-    target: idx(v('out'), lit(0)),
+    target: idx(v('dst'), lit(0)),
     expr: bin('/', v('sxx'), v('n')),
     phase: 'covariance',
   },
   {
     kind: 'assign',
-    target: idx(v('out'), lit(1)),
+    target: idx(v('dst'), lit(1)),
     expr: bin('/', v('sxy'), v('n')),
     phase: 'covariance',
   },
   {
     kind: 'assign',
-    target: idx(v('out'), lit(2)),
+    target: idx(v('dst'), lit(2)),
     expr: bin('/', v('syy'), v('n')),
     phase: 'covariance',
   },
@@ -282,7 +282,7 @@ export const pcaPowerIterationIR: IR = {
       params: [
         { name: 'xs', type: tDoubleList },
         { name: 'ys', type: tDoubleList },
-        { name: 'out', type: tDoubleList },
+        { name: 'dst', type: tDoubleList },
       ],
       returnType: tVoid,
       body: covarianceBody,
