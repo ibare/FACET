@@ -133,6 +133,34 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/aho-corasick:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
+
   facets/cs-fundamentals/all-suffixes-sorted:
     dependencies:
       '@ffacet/core':
@@ -301,6 +329,34 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/cs-fundamentals/boyer-moore:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
 
   facets/cs-fundamentals/branch-and-bound:
     dependencies:
@@ -539,6 +595,34 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/dynamic-programming:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
+
+  facets/cs-fundamentals/edit-distance:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -814,6 +898,34 @@ importers:
         version: link:../../../packages/transpiler-typescript
 
   facets/cs-fundamentals/interpolation-search:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
+
+  facets/cs-fundamentals/kmp:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -1196,6 +1308,34 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/transpiler-typescript
 
+  facets/cs-fundamentals/rabin-karp:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
+
   facets/cs-fundamentals/radix-sort:
     dependencies:
       '@ffacet/core':
@@ -1449,6 +1589,34 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/suffix-array:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
+
   facets/cs-fundamentals/t-digest:
     dependencies:
       '@ffacet/core':
@@ -1566,6 +1734,34 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/cs-fundamentals/z-algorithm:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
 
   facets/database/relational-tables-and-keys:
     dependencies:
@@ -2082,6 +2278,9 @@ importers:
       '@ffacet/algorithm-adjacency-list-vs-matrix':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/adjacency-list-vs-matrix
+      '@ffacet/algorithm-aho-corasick':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/aho-corasick
       '@ffacet/algorithm-all-suffixes-sorted':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/all-suffixes-sorted
@@ -2139,6 +2338,9 @@ importers:
       '@ffacet/algorithm-bound-and-cut':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bound-and-cut
+      '@ffacet/algorithm-boyer-moore':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/boyer-moore
       '@ffacet/algorithm-branch-and-bound':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/branch-and-bound
@@ -2241,6 +2443,9 @@ importers:
       '@ffacet/algorithm-dynamic-programming':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/dynamic-programming
+      '@ffacet/algorithm-edit-distance':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/edit-distance
       '@ffacet/algorithm-edit-table-fill':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/edit-table-fill
@@ -2370,6 +2575,9 @@ importers:
       '@ffacet/algorithm-kmeans':
         specifier: workspace:*
         version: link:../../facets/ml-basics/kmeans
+      '@ffacet/algorithm-kmp':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/kmp
       '@ffacet/algorithm-knn':
         specifier: workspace:*
         version: link:../../facets/ml-basics/knn
@@ -2520,6 +2728,9 @@ importers:
       '@ffacet/algorithm-quick-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/quick-sort
+      '@ffacet/algorithm-rabin-karp':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/rabin-karp
       '@ffacet/algorithm-radix-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/radix-sort
@@ -2628,6 +2839,9 @@ importers:
       '@ffacet/algorithm-stack':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/stack
+      '@ffacet/algorithm-suffix-array':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/suffix-array
       '@ffacet/algorithm-support-vectors-only':
         specifier: workspace:*
         version: link:../../facets/ml-basics/support-vectors-only
@@ -2694,6 +2908,9 @@ importers:
       '@ffacet/algorithm-wrong-in-one-direction':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/wrong-in-one-direction
+      '@ffacet/algorithm-z-algorithm':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/z-algorithm
       '@ffacet/core':
         specifier: workspace:*
         version: link:../core

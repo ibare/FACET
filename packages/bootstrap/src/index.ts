@@ -717,4 +717,28 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:threeEditChoices', () =>
     import('@ffacet/algorithm-three-edit-choices').then((m) => m.registerThreeEditChoices()),
   );
+
+  // 문자열 알고리즘 완제품 일곱 — 위 조각 열하나를 잇는다. 일곱 다 손잡이가
+  // 논증을 지고 코드 패널을 단다 (IR 이 배열·반복·조건으로 곧게 펴지는 배치라).
+  registerFacetLoader('facet:kmp', () =>
+    import('@ffacet/algorithm-kmp').then((m) => m.registerKmp()),
+  );
+  registerFacetLoader('facet:boyerMoore', () =>
+    import('@ffacet/algorithm-boyer-moore').then((m) => m.registerBoyerMoore()),
+  );
+  registerFacetLoader('facet:rabinKarp', () =>
+    import('@ffacet/algorithm-rabin-karp').then((m) => m.registerRabinKarp()),
+  );
+  registerFacetLoader('facet:suffixArray', () =>
+    import('@ffacet/algorithm-suffix-array').then((m) => m.registerSuffixArray()),
+  );
+  registerFacetLoader('facet:zAlgorithm', () =>
+    import('@ffacet/algorithm-z-algorithm').then((m) => m.registerZAlgorithm()),
+  );
+  registerFacetLoader('facet:ahoCorasick', () =>
+    import('@ffacet/algorithm-aho-corasick').then((m) => m.registerAhoCorasick()),
+  );
+  registerFacetLoader('facet:editDistance', () =>
+    import('@ffacet/algorithm-edit-distance').then((m) => m.registerEditDistance()),
+  );
 }
