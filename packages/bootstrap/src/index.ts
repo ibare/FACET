@@ -630,4 +630,38 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:tsne', () =>
     import('@ffacet/algorithm-tsne').then((m) => m.registerTsne()),
   );
+
+  // 확률적 자료구조 조각 열 — 블룸 3 · CMS 2 · HLL 2 · t-digest 1 · 스킵 리스트 2.
+  registerFacetLoader('facet:severalHashesOneValue', () =>
+    import('@ffacet/algorithm-several-hashes-one-value').then((m) =>
+      m.registerSeveralHashesOneValue(),
+    ),
+  );
+  registerFacetLoader('facet:wrongInOneDirection', () =>
+    import('@ffacet/algorithm-wrong-in-one-direction').then((m) => m.registerWrongInOneDirection()),
+  );
+  registerFacetLoader('facet:cannotUnset', () =>
+    import('@ffacet/algorithm-cannot-unset').then((m) => m.registerCannotUnset()),
+  );
+  registerFacetLoader('facet:trustTheSmallest', () =>
+    import('@ffacet/algorithm-trust-the-smallest').then((m) => m.registerTrustTheSmallest()),
+  );
+  registerFacetLoader('facet:spaceErrorTradeoff', () =>
+    import('@ffacet/algorithm-space-error-tradeoff').then((m) => m.registerSpaceErrorTradeoff()),
+  );
+  registerFacetLoader('facet:leadingZerosTell', () =>
+    import('@ffacet/algorithm-leading-zeros-tell').then((m) => m.registerLeadingZerosTell()),
+  );
+  registerFacetLoader('facet:averageTheBuckets', () =>
+    import('@ffacet/algorithm-average-the-buckets').then((m) => m.registerAverageTheBuckets()),
+  );
+  registerFacetLoader('facet:crowdTheTails', () =>
+    import('@ffacet/algorithm-crowd-the-tails').then((m) => m.registerCrowdTheTails()),
+  );
+  registerFacetLoader('facet:skipALayer', () =>
+    import('@ffacet/algorithm-skip-a-layer').then((m) => m.registerSkipALayer()),
+  );
+  registerFacetLoader('facet:coinFlipHeight', () =>
+    import('@ffacet/algorithm-coin-flip-height').then((m) => m.registerCoinFlipHeight()),
+  );
 }

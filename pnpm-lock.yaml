@@ -145,6 +145,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/average-the-buckets:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/avl-tree:
     dependencies:
       '@ffacet/core':
@@ -349,6 +355,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/view-code
 
+  facets/cs-fundamentals/cannot-unset:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/chaining-bucket:
     dependencies:
       '@ffacet/core':
@@ -356,6 +368,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/circular-buffer-wrap:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/coin-flip-height:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -397,6 +415,12 @@ importers:
       '@ffacet/transpiler-typescript':
         specifier: workspace:*
         version: link:../../../packages/transpiler-typescript
+
+  facets/cs-fundamentals/crowd-the-tails:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
 
   facets/cs-fundamentals/cycle-blocks-order:
     dependencies:
@@ -802,6 +826,12 @@ importers:
       '@ffacet/transpiler-typescript':
         specifier: workspace:*
         version: link:../../../packages/transpiler-typescript
+
+  facets/cs-fundamentals/leading-zeros-tell:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
 
   facets/cs-fundamentals/linear-search:
     dependencies:
@@ -1232,6 +1262,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/several-hashes-one-value:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/share-prefix-path:
     dependencies:
       '@ffacet/core':
@@ -1287,6 +1323,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/skip-a-layer:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/sort-edges-avoid-cycle:
     dependencies:
       '@ffacet/core':
@@ -1294,6 +1336,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/sort-stability:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/space-error-tradeoff:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -1375,6 +1423,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/trust-the-smallest:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/try-and-undo:
     dependencies:
       '@ffacet/core':
@@ -1406,6 +1460,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/walk-per-character:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/wrong-in-one-direction:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -1938,6 +1998,9 @@ importers:
       '@ffacet/algorithm-asymmetric-rsa':
         specifier: workspace:*
         version: link:../../facets/security/asymmetric-rsa
+      '@ffacet/algorithm-average-the-buckets':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/average-the-buckets
       '@ffacet/algorithm-avl-tree':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/avl-tree
@@ -1995,12 +2058,18 @@ importers:
       '@ffacet/algorithm-caching-cdn':
         specifier: workspace:*
         version: link:../../facets/system-design/caching-cdn
+      '@ffacet/algorithm-cannot-unset':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/cannot-unset
       '@ffacet/algorithm-chaining-bucket':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/chaining-bucket
       '@ffacet/algorithm-circular-buffer-wrap':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/circular-buffer-wrap
+      '@ffacet/algorithm-coin-flip-height':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/coin-flip-height
       '@ffacet/algorithm-compare-and-swap':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/compare-and-swap
@@ -2016,6 +2085,9 @@ importers:
       '@ffacet/algorithm-counting-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/counting-sort
+      '@ffacet/algorithm-crowd-the-tails':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/crowd-the-tails
       '@ffacet/algorithm-cycle-blocks-order':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/cycle-blocks-order
@@ -2187,6 +2259,9 @@ importers:
       '@ffacet/algorithm-kruskal-mst':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/kruskal-mst
+      '@ffacet/algorithm-leading-zeros-tell':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/leading-zeros-tell
       '@ffacet/algorithm-least-squares':
         specifier: workspace:*
         version: link:../../facets/ml-basics/least-squares
@@ -2361,6 +2436,9 @@ importers:
       '@ffacet/algorithm-separate-components':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/separate-components
+      '@ffacet/algorithm-several-hashes-one-value':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/several-hashes-one-value
       '@ffacet/algorithm-share-prefix-path':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/share-prefix-path
@@ -2385,12 +2463,18 @@ importers:
       '@ffacet/algorithm-signature-on-hash':
         specifier: workspace:*
         version: link:../../facets/security/signature-on-hash
+      '@ffacet/algorithm-skip-a-layer':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/skip-a-layer
       '@ffacet/algorithm-sort-edges-avoid-cycle':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/sort-edges-avoid-cycle
       '@ffacet/algorithm-sort-stability':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/sort-stability
+      '@ffacet/algorithm-space-error-tradeoff':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/space-error-tradeoff
       '@ffacet/algorithm-split-by-question':
         specifier: workspace:*
         version: link:../../facets/ml-basics/split-by-question
@@ -2433,6 +2517,9 @@ importers:
       '@ffacet/algorithm-trie':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/trie
+      '@ffacet/algorithm-trust-the-smallest':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/trust-the-smallest
       '@ffacet/algorithm-try-and-undo':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/try-and-undo
@@ -2460,6 +2547,9 @@ importers:
       '@ffacet/algorithm-widest-margin':
         specifier: workspace:*
         version: link:../../facets/ml-basics/widest-margin
+      '@ffacet/algorithm-wrong-in-one-direction':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/wrong-in-one-direction
       '@ffacet/core':
         specifier: workspace:*
         version: link:../core

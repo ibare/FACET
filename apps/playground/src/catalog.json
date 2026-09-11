@@ -75,16 +75,16 @@
             { "id": "hyperloglog", "name": "HyperLogLog" },
             { "id": "t-digest", "name": "t-digest" },
             { "id": "skip-list", "name": "스킵 리스트" },
-            { "id": "several-hashes-one-value", "name": "한 값이 여러 자리를", "desc": "해시 여럿이 각자 자리를 켠다", "kind": "piece", "origin": "bloom-filter" },
-            { "id": "wrong-in-one-direction", "name": "한쪽으로만 틀린다", "desc": "없는데 있다고는 해도 그 반대는 없다", "kind": "piece", "origin": "bloom-filter" },
-            { "id": "cannot-unset", "name": "뺄 수가 없다", "desc": "켠 자리가 누구 것인지 모른다", "kind": "piece", "origin": "bloom-filter" },
-            { "id": "trust-the-smallest", "name": "가장 작은 것을 믿는다", "desc": "여러 줄이 부딪쳐도 최솟값은 덜 부풀었다", "kind": "piece", "origin": "count-min-sketch" },
-            { "id": "leading-zeros-tell", "name": "앞자리 0의 개수", "desc": "드문 것을 봤다면 많이 본 것이다", "kind": "piece", "origin": "hyperloglog" },
-            { "id": "average-the-buckets", "name": "통을 나눠 고른다", "desc": "여럿의 값을 모아 튐을 줄인다", "kind": "piece", "origin": "hyperloglog" },
-            { "id": "crowd-the-tails", "name": "끝을 촘촘히", "desc": "가운데를 성글게 하고 꼬리에 자리를 몰아준다", "kind": "piece", "origin": "t-digest" },
-            { "id": "skip-a-layer", "name": "층을 건너뛴다", "desc": "위에서 멀리 뛰고 아래에서 좁힌다", "kind": "piece", "origin": "skip-list" },
-            { "id": "coin-flip-height", "name": "동전으로 정한 높이", "desc": "무작위가 균형 잡는 일을 대신한다", "kind": "piece", "origin": "skip-list" },
-            { "id": "space-error-tradeoff", "name": "적게 쓰면 더 틀린다", "desc": "자리를 아끼는 값을 오차로 치른다", "kind": "piece", "origin": "count-min-sketch" }
+            { "id": "several-hashes-one-value", "name": "한 값이 여러 자리를", "desc": "해시 여럿이 각자 자리를 켠다", "facetId": "facet:severalHashesOneValue", "kind": "piece", "origin": "bloom-filter" },
+            { "id": "wrong-in-one-direction", "name": "한쪽으로만 틀린다", "desc": "없는데 있다고는 해도 그 반대는 없다", "facetId": "facet:wrongInOneDirection", "kind": "piece", "origin": "bloom-filter" },
+            { "id": "cannot-unset", "name": "뺄 수가 없다", "desc": "켠 자리가 누구 것인지 모른다", "facetId": "facet:cannotUnset", "kind": "piece", "origin": "bloom-filter" },
+            { "id": "trust-the-smallest", "name": "가장 작은 것을 믿는다", "desc": "여러 줄이 부딪쳐도 최솟값은 덜 부풀었다", "facetId": "facet:trustTheSmallest", "kind": "piece", "origin": "count-min-sketch" },
+            { "id": "leading-zeros-tell", "name": "앞자리 0의 개수", "desc": "드문 것을 봤다면 많이 본 것이다", "facetId": "facet:leadingZerosTell", "kind": "piece", "origin": "hyperloglog" },
+            { "id": "average-the-buckets", "name": "통을 나눠 고른다", "desc": "여럿의 값을 모아 튐을 줄인다", "facetId": "facet:averageTheBuckets", "kind": "piece", "origin": "hyperloglog" },
+            { "id": "crowd-the-tails", "name": "끝을 촘촘히", "desc": "가운데를 성글게 하고 꼬리에 자리를 몰아준다", "facetId": "facet:crowdTheTails", "kind": "piece", "origin": "t-digest" },
+            { "id": "skip-a-layer", "name": "층을 건너뛴다", "desc": "위에서 멀리 뛰고 아래에서 좁힌다", "facetId": "facet:skipALayer", "kind": "piece", "origin": "skip-list" },
+            { "id": "coin-flip-height", "name": "동전으로 정한 높이", "desc": "무작위가 균형 잡는 일을 대신한다", "facetId": "facet:coinFlipHeight", "kind": "piece", "origin": "skip-list" },
+            { "id": "space-error-tradeoff", "name": "적게 쓰면 더 틀린다", "desc": "자리를 아끼는 값을 오차로 치른다", "facetId": "facet:spaceErrorTradeoff", "kind": "piece", "origin": "count-min-sketch" }
           ]
         },
         {
