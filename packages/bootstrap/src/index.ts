@@ -664,4 +664,21 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:coinFlipHeight', () =>
     import('@ffacet/algorithm-coin-flip-height').then((m) => m.registerCoinFlipHeight()),
   );
+
+  // 확률적 자료구조 완제품 다섯 — 손잡이가 논증을 지는 reactive facet 들.
+  registerFacetLoader('facet:bloomFilter', () =>
+    import('@ffacet/algorithm-bloom-filter').then((m) => m.registerBloomFilter()),
+  );
+  registerFacetLoader('facet:countMinSketch', () =>
+    import('@ffacet/algorithm-count-min-sketch').then((m) => m.registerCountMinSketch()),
+  );
+  registerFacetLoader('facet:hyperloglog', () =>
+    import('@ffacet/algorithm-hyperloglog').then((m) => m.registerHyperloglog()),
+  );
+  registerFacetLoader('facet:skipList', () =>
+    import('@ffacet/algorithm-skip-list').then((m) => m.registerSkipList()),
+  );
+  registerFacetLoader('facet:tDigest', () =>
+    import('@ffacet/algorithm-t-digest').then((m) => m.registerTDigest()),
+  );
 }

@@ -266,6 +266,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/bloom-filter:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/bottleneck-sets-flow:
     dependencies:
       '@ffacet/core':
@@ -380,6 +386,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/compare-and-swap:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/count-min-sketch:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -717,6 +729,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/heuristic-guides:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/hyperloglog:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -1329,6 +1347,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/skip-list:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/sort-edges-avoid-cycle:
     dependencies:
       '@ffacet/core':
@@ -1360,6 +1384,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/stack:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/t-digest:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -2025,6 +2055,9 @@ importers:
       '@ffacet/algorithm-black-height-equal':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/black-height-equal
+      '@ffacet/algorithm-bloom-filter':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/bloom-filter
       '@ffacet/algorithm-bottleneck-sets-flow':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bottleneck-sets-flow
@@ -2079,6 +2112,9 @@ importers:
       '@ffacet/algorithm-context-switching':
         specifier: workspace:*
         version: link:../../facets/os/context-switching
+      '@ffacet/algorithm-count-min-sketch':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/count-min-sketch
       '@ffacet/algorithm-count-then-place':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/count-then-place
@@ -2214,6 +2250,9 @@ importers:
       '@ffacet/algorithm-hierarchical':
         specifier: workspace:*
         version: link:../../facets/ml-basics/hierarchical
+      '@ffacet/algorithm-hyperloglog':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/hyperloglog
       '@ffacet/algorithm-impurity-drops':
         specifier: workspace:*
         version: link:../../facets/ml-basics/impurity-drops
@@ -2466,6 +2505,9 @@ importers:
       '@ffacet/algorithm-skip-a-layer':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/skip-a-layer
+      '@ffacet/algorithm-skip-list':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/skip-list
       '@ffacet/algorithm-sort-edges-avoid-cycle':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/sort-edges-avoid-cycle
@@ -2496,6 +2538,9 @@ importers:
       '@ffacet/algorithm-svm':
         specifier: workspace:*
         version: link:../../facets/ml-basics/svm
+      '@ffacet/algorithm-t-digest':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/t-digest
       '@ffacet/algorithm-take-best-now':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/take-best-now
