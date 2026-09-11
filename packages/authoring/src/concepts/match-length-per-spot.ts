@@ -97,6 +97,10 @@ export const matchLengthPerSpotConcept: FacetConceptSource = {
 
     contrastWith: [
       {
+        concept: 'zAlgorithm',
+        note: 'Filling the table against reading it: this is about a measurement feeding on its own earlier answers, while that claims a search is nothing more than collecting the finished measurements that equal one particular length.',
+      },
+      {
         concept: 'prefixSuffixJump',
         note: 'Both are read off a single string with nothing else involved, but one measures, for each opening piece, the longest length that is at once its head and its tail, and exists to settle how far to move after a failure; this measures how far each position agrees with the beginning, and its claim is about how that measurement feeds on its own earlier answers.',
       },

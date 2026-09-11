@@ -75,6 +75,10 @@ export const naiveShiftByOneConcept: FacetConceptSource = {
 
     contrastWith: [
       {
+        concept: 'kmp',
+        note: 'The loss and what is set against it: this names what a mismatch throws away, while that puts a saving beside the loss on the same text and measures the gap between them as the pattern is made longer.',
+      },
+      {
         concept: 'prefixSuffixJump',
         note: 'Two halves of one argument: this one names what a mismatch discards, while that one names the grounds on which part of it could have been kept.',
       },

@@ -86,6 +86,10 @@ export const allSuffixesSortedConcept: FacetConceptSource = {
 
     contrastWith: [
       {
+        concept: 'suffixArray',
+        note: 'The ordering and what is asked of it: this ends when the tails are in order, while that begins there and claims the ordering answers for a pattern it was never told about.',
+      },
+      {
         concept: 'trie',
         note: 'Both make strings that begin alike findable together, but one shares those beginnings as a single path through a tree, while this leaves every string whole and gets the same grouping out of ordering alone.',
       },

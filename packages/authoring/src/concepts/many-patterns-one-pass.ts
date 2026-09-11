@@ -82,6 +82,10 @@ export const manyPatternsOnePassConcept: FacetConceptSource = {
 
     contrastWith: [
       {
+        concept: 'ahoCorasick',
+        note: 'The claim and its price: this counts the separate sweeps that collapse into one, while that sets a second number beside the saving — the room the merged structure takes, which is what the first number was bought with.',
+      },
+      {
         concept: 'failLink',
         note: 'Two halves of one machine: this names the result — the text is crossed once and nothing is missed — while that names the connection without which the crossing could not stay single.',
       },

@@ -83,6 +83,10 @@ export const badCharSkipConcept: FacetConceptSource = {
 
     contrastWith: [
       {
+        concept: 'boyerMoore',
+        note: 'One move and the run of them: this settles how far a single failure may push the pattern, while that asks what those distances average out to once the pattern is made longer.',
+      },
+      {
         concept: 'prefixSuffixJump',
         note: 'Both answer how far the pattern may move after a mismatch, but one reads the answer out of the pattern folded onto itself, worked out before any text was seen, while this reads it off the text character that broke the match — the grounds come from opposite sides.',
       },

@@ -77,6 +77,10 @@ export const prefixSuffixJumpConcept: FacetConceptSource = {
 
     contrastWith: [
       {
+        concept: 'kmp',
+        note: 'The lengths and the place they are spent: this settles what the overlaps are and how they were arrived at, while that claims what consulting them is worth across a whole text — one crossing, and a comparison count that stops answering to the pattern length.',
+      },
+      {
         concept: 'naiveShiftByOne',
         note: 'Two halves of one argument: that one names what a mismatch discards, while this one names the grounds on which part of it may be kept, and the gap between the two is the overlap length.',
       },

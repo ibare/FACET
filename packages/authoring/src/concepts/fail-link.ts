@@ -84,6 +84,10 @@ export const failLinkConcept: FacetConceptSource = {
 
     contrastWith: [
       {
+        concept: 'ahoCorasick',
+        note: 'The connection and the machine it makes possible: this settles what each link points at and why a dead end need not restart, while that asks what a whole set of patterns costs once every link is already in place.',
+      },
+      {
         concept: 'manyPatternsOnePass',
         note: 'The device and what it pays for: this is the connection prepared between places, while that is the claim the connection licenses — that the text is read through exactly once.',
       },

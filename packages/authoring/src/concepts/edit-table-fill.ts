@@ -80,6 +80,10 @@ export const editTableFillConcept: FacetConceptSource = {
 
     contrastWith: [
       {
+        concept: 'editDistance',
+        note: 'The grid and what is done with the finished grid: this ends when the last cell holds the answer, while that treats the cell as a starting point and walks back through the grid so the answer becomes a list of changes rather than a number.',
+      },
+      {
         concept: 'threeEditChoices',
         note: 'The grid and one of its entries: this settles which cells exist, how they are indexed and which of them is the answer, while that settles what decides the value inside any one of them.',
       },

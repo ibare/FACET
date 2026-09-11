@@ -89,6 +89,10 @@ export const rollingHashConcept: FacetConceptSource = {
 
     contrastWith: [
       {
+        concept: 'rabinKarp',
+        note: 'The update and the search it serves: this ends the moment two values agree, while that treats the agreement as a candidate, reads the characters standing behind it, and carries on to a position it can name.',
+      },
+      {
         concept: 'naiveShiftByOne',
         note: 'Both walk a fixed-width window one place at a time over a text, but one pays for the whole width at every position while this carries the previous position’s answer into the next and pays for two characters.',
       },

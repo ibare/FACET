@@ -20,6 +20,7 @@
 
 import type { FacetConceptSource } from '../concept-types.js';
 import { adjacencyListVsMatrixConcept } from './adjacency-list-vs-matrix.js';
+import { ahoCorasickConcept } from './aho-corasick.js';
 import { allSuffixesSortedConcept } from './all-suffixes-sorted.js';
 import { arrayConcept } from './array.js';
 import { arrayAsTreeConcept } from './array-as-tree.js';
@@ -39,6 +40,7 @@ import { bloomFilterConcept } from './bloom-filter.js';
 import { bottleneckSetsFlowConcept } from './bottleneck-sets-flow.js';
 import { bottomUpTableConcept } from './bottom-up-table.js';
 import { boundAndCutConcept } from './bound-and-cut.js';
+import { boyerMooreConcept } from './boyer-moore.js';
 import { branchAndBoundConcept } from './branch-and-bound.js';
 import { bstConcept } from './bst.js';
 import { bstCompareAndGoConcept } from './bst-compare-and-go.js';
@@ -73,6 +75,7 @@ import { directionOfMostSpreadConcept } from './direction-of-most-spread.js';
 import { diveThenBacktrackConcept } from './dive-then-backtrack.js';
 import { divideConquerCombineConcept } from './divide-conquer-combine.js';
 import { dynamicProgrammingConcept } from './dynamic-programming.js';
+import { editDistanceConcept } from './edit-distance.js';
 import { editTableFillConcept } from './edit-table-fill.js';
 import { enqueueDequeueEndsConcept } from './enqueue-dequeue-ends.js';
 import { failLinkConcept } from './fail-link.js';
@@ -116,6 +119,7 @@ import { kMustBeGivenConcept } from './k-must-be-given.js';
 import { keepNeighborsCloseConcept } from './keep-neighbors-close.js';
 import { kernelLiftsConcept } from './kernel-lifts.js';
 import { kmeansConcept } from './kmeans.js';
+import { kmpConcept } from './kmp.js';
 import { knnConcept } from './knn.js';
 import { kruskalMstConcept } from './kruskal-mst.js';
 import { leadingZerosTellConcept } from './leading-zeros-tell.js';
@@ -166,6 +170,7 @@ import { pushPopTopConcept } from './push-pop-top.js';
 import { queueFifoConcept } from './queue.js';
 import { queueVsStackOrderConcept } from './queue-vs-stack-order.js';
 import { quickSortConcept } from './quick-sort.js';
+import { rabinKarpConcept } from './rabin-karp.js';
 import { radixSortConcept } from './radix-sort.js';
 import { randomForestConcept } from './random-forest.js';
 import { recolorThenRotateConcept } from './recolor-then-rotate.js';
@@ -202,6 +207,7 @@ import { splitUntilOneConcept } from './split-until-one.js';
 import { splitWhenFullConcept } from './split-when-full.js';
 import { squashToProbabilityConcept } from './squash-to-probability.js';
 import { stackConcept } from './stack.js';
+import { suffixArrayConcept } from './suffix-array.js';
 import { supportVectorsOnlyConcept } from './support-vectors-only.js';
 import { svmConcept } from './svm.js';
 import { tDigestConcept } from './t-digest.js';
@@ -224,9 +230,11 @@ import { voteByNeighborsConcept } from './vote-by-neighbors.js';
 import { walkPerCharacterConcept } from './walk-per-character.js';
 import { widestMarginConcept } from './widest-margin.js';
 import { wrongInOneDirectionConcept } from './wrong-in-one-direction.js';
+import { zAlgorithmConcept } from './z-algorithm.js';
 
 export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   adjacencyListVsMatrixConcept,
+  ahoCorasickConcept,
   allSuffixesSortedConcept,
   arrayConcept,
   arrayAsTreeConcept,
@@ -246,6 +254,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   bottleneckSetsFlowConcept,
   bottomUpTableConcept,
   boundAndCutConcept,
+  boyerMooreConcept,
   branchAndBoundConcept,
   bstConcept,
   bstCompareAndGoConcept,
@@ -280,6 +289,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   diveThenBacktrackConcept,
   divideConquerCombineConcept,
   dynamicProgrammingConcept,
+  editDistanceConcept,
   editTableFillConcept,
   enqueueDequeueEndsConcept,
   failLinkConcept,
@@ -323,6 +333,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   keepNeighborsCloseConcept,
   kernelLiftsConcept,
   kmeansConcept,
+  kmpConcept,
   knnConcept,
   kruskalMstConcept,
   leadingZerosTellConcept,
@@ -373,6 +384,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   queueFifoConcept,
   queueVsStackOrderConcept,
   quickSortConcept,
+  rabinKarpConcept,
   radixSortConcept,
   randomForestConcept,
   recolorThenRotateConcept,
@@ -409,6 +421,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   splitWhenFullConcept,
   squashToProbabilityConcept,
   stackConcept,
+  suffixArrayConcept,
   supportVectorsOnlyConcept,
   svmConcept,
   tDigestConcept,
@@ -431,4 +444,5 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   walkPerCharacterConcept,
   widestMarginConcept,
   wrongInOneDirectionConcept,
+  zAlgorithmConcept,
 ];

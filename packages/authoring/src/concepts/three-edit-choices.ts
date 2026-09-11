@@ -82,6 +82,10 @@ export const threeEditChoicesConcept: FacetConceptSource = {
 
     contrastWith: [
       {
+        concept: 'editDistance',
+        note: 'One decision against the chain of them: this is about which of three offers wins inside a single cell, while that follows the winners end to end and shows that repricing one of the three swaps the whole chain for another.',
+      },
+      {
         concept: 'editTableFill',
         note: 'An entry and the grid holding it: this settles what fixes the value inside one cell, while that settles which cells exist, how they are indexed, and which of them answers the original question.',
       },

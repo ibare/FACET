@@ -82,6 +82,10 @@ export const matchFromBackConcept: FacetConceptSource = {
 
     contrastWith: [
       {
+        concept: 'boyerMoore',
+        note: 'The direction and the method built on it: this settles which end an alignment is decided from, while that joins the decision to a skip rule and counts what the pair together leaves unread across a whole text.',
+      },
+      {
         concept: 'badCharSkip',
         note: 'Two halves of one method: this settles which end the comparison starts from, and that settles how far the pattern travels once the comparison has failed.',
       },
