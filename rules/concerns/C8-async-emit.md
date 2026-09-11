@@ -36,10 +36,11 @@ async function gate(): Promise<boolean> {
     return true;
   }
   for (;;) {
-    if (ctx.cancelled) return false;
+    if (ctx.cancelled) return false;              // 앞 — continue 로 돌아와도 여기를 지난다
     const input = await ctx.waitForInput();
+    if (ctx.cancelled) return false;              // 뒤 — throw 규약에 기대지 않는다
     if (input.type !== 'advance') continue;
-    return !ctx.cancelled;
+    return true;
   }
 }
 ```
@@ -61,6 +62,12 @@ async function gate(): Promise<boolean> {
   (`'pure' | 'exhausted' | 'cancelled'`).
 - **`waitForInput` 루프는 앞뒤로 본다.** 그것이 취소 시 throw 하더라도 규약에
   기대지 않는다 — 되짚기 루프가 조각의 가장 바깥이라 여기서 새면 아무도 못 잡는다.
+
+  **위 예시에 앞뒤가 둘 다 들어 있다.** 2026-09-11 까지 예시에는 앞 검사만 있었고
+  (`return !ctx.cancelled` 는 `advance` 를 받은 뒤에만 닿아 `continue` 경로를 안
+  덮는다) 본문만 "앞뒤" 를 요구했다. 그래서 **예시를 베낀 쪽과 본문을 읽은 쪽이
+  갈렸다** — 배치마다 되풀이됐고 복잡도 조각 다섯에서 3 대 2 로 나뉘자 감사가
+  "이 배치의 결함이 아니라 규범 문면의 문제" 라고 짚었다. 예시를 본문에 맞췄다.
 - **그 throw 를 받는 자리는 최상위 `try` 하나다.**
 
   ```ts
