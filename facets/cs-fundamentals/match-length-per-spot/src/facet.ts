@@ -39,7 +39,7 @@ export const matchLengthPerSpotFacet: FacetJson = {
   projector: 'module:matchLengthPerSpotProjector',
   initialData: {
     type: 'match-length-per-spot',
-    text: 'aabaabxaab',
+    text: 'aabaabaabx',
     stepMs: 900,
   },
   blocks: {
