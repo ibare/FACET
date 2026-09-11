@@ -594,6 +594,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/divisor-pairs-sqrt:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/dynamic-programming:
     dependencies:
       '@ffacet/core':
@@ -1409,6 +1415,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/row-times-column:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/scan-until-found:
     dependencies:
       '@ffacet/core':
@@ -1578,6 +1590,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/split-when-full:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/square-and-halve:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -2440,6 +2458,9 @@ importers:
       '@ffacet/algorithm-divide-conquer-combine':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/divide-conquer-combine
+      '@ffacet/algorithm-divisor-pairs-sqrt':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/divisor-pairs-sqrt
       '@ffacet/algorithm-dynamic-programming':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/dynamic-programming
@@ -2767,6 +2788,9 @@ importers:
       '@ffacet/algorithm-rotate-to-balance':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/rotate-to-balance
+      '@ffacet/algorithm-row-times-column':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/row-times-column
       '@ffacet/algorithm-scan-until-found':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/scan-until-found
@@ -2833,6 +2857,9 @@ importers:
       '@ffacet/algorithm-split-when-full':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/split-when-full
+      '@ffacet/algorithm-square-and-halve':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/square-and-halve
       '@ffacet/algorithm-squash-to-probability':
         specifier: workspace:*
         version: link:../../facets/ml-basics/squash-to-probability

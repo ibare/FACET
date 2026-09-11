@@ -741,4 +741,15 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:editDistance', () =>
     import('@ffacet/algorithm-edit-distance').then((m) => m.registerEditDistance()),
   );
+
+  // 수치 알고리즘 조각 셋 — 빠른 거듭제곱 1 · 소수 판정 1 · 행렬 곱셈 1.
+  registerFacetLoader('facet:squareAndHalve', () =>
+    import('@ffacet/algorithm-square-and-halve').then((m) => m.registerSquareAndHalve()),
+  );
+  registerFacetLoader('facet:divisorPairsSqrt', () =>
+    import('@ffacet/algorithm-divisor-pairs-sqrt').then((m) => m.registerDivisorPairsSqrt()),
+  );
+  registerFacetLoader('facet:rowTimesColumn', () =>
+    import('@ffacet/algorithm-row-times-column').then((m) => m.registerRowTimesColumn()),
+  );
 }
