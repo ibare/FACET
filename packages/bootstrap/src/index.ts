@@ -786,4 +786,15 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:reduceToKnown', () =>
     import('@ffacet/algorithm-reduce-to-known').then((m) => m.registerReduceToKnown()),
   );
+
+  // 계산 복잡도 완제품 셋 — reduction 은 잣대 둘이 약해 만들지 않았다.
+  registerFacetLoader('facet:bigO', () =>
+    import('@ffacet/algorithm-big-o').then((m) => m.registerBigO()),
+  );
+  registerFacetLoader('facet:asymptotic', () =>
+    import('@ffacet/algorithm-asymptotic').then((m) => m.registerAsymptotic()),
+  );
+  registerFacetLoader('facet:pNp', () =>
+    import('@ffacet/algorithm-p-np').then((m) => m.registerPNp()),
+  );
 }

@@ -179,6 +179,34 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/asymptotic:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
+
   facets/cs-fundamentals/average-the-buckets:
     dependencies:
       '@ffacet/core':
@@ -271,6 +299,34 @@ importers:
       '@ffacet/view-code':
         specifier: workspace:*
         version: link:../../../packages/view-code
+
+  facets/cs-fundamentals/big-o:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
 
   facets/cs-fundamentals/binary-search:
     dependencies:
@@ -1295,6 +1351,34 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/cs-fundamentals/p-np:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
 
   facets/cs-fundamentals/parent-two-children:
     dependencies:
@@ -2484,6 +2568,9 @@ importers:
       '@ffacet/algorithm-asymmetric-rsa':
         specifier: workspace:*
         version: link:../../facets/security/asymmetric-rsa
+      '@ffacet/algorithm-asymptotic':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/asymptotic
       '@ffacet/algorithm-average-the-buckets':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/average-the-buckets
@@ -2508,6 +2595,9 @@ importers:
       '@ffacet/algorithm-bfs':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bfs
+      '@ffacet/algorithm-big-o':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/big-o
       '@ffacet/algorithm-binary-search':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/binary-search
@@ -2892,6 +2982,9 @@ importers:
       '@ffacet/algorithm-overlapping-subproblems':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/overlapping-subproblems
+      '@ffacet/algorithm-p-np':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/p-np
       '@ffacet/algorithm-parent-two-children':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/parent-two-children

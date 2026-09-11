@@ -1230,19 +1230,18 @@
           "topics": [
             {
               "id": "big-o",
-              "name": "Big-O 표기"
+              "name": "Big-O 표기",
+              "facetId": "facet:bigO"
             },
             {
               "id": "asymptotic",
-              "name": "점근 분석"
+              "name": "점근 분석",
+              "facetId": "facet:asymptotic"
             },
             {
               "id": "p-np",
-              "name": "P/NP 분류"
-            },
-            {
-              "id": "reduction",
-              "name": "환원"
+              "name": "P/NP 분류",
+              "facetId": "facet:pNp"
             },
             {
               "id": "growth-outpaces",
@@ -1281,7 +1280,7 @@
               "name": "환원",
               "desc": "A 를 B 로 바꿔 푼다",
               "kind": "piece",
-              "origin": "reduction",
+              "origin": "p-np",
               "facetId": "facet:reduceToKnown"
             }
           ]
