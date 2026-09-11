@@ -184,17 +184,17 @@
             { "id": "z-algorithm", "name": "Z-알고리즘" },
             { "id": "aho-corasick", "name": "Aho-Corasick" },
             { "id": "edit-distance", "name": "편집 거리" },
-            { "id": "naive-shift-by-one", "name": "단순 비교", "desc": "어긋나면 한 칸 밀고 다시", "kind": "piece", "origin": "kmp" },
-            { "id": "prefix-suffix-jump", "name": "실패 함수", "desc": "앞뒤가 겹친 만큼 건너뛴다", "kind": "piece", "origin": "kmp" },
-            { "id": "match-from-back", "name": "역방향 비교", "desc": "뒤에서부터 견준다", "kind": "piece", "origin": "boyer-moore" },
-            { "id": "bad-char-skip", "name": "나쁜 문자 규칙", "desc": "없는 글자를 만나면 크게 뛴다", "kind": "piece", "origin": "boyer-moore" },
-            { "id": "rolling-hash", "name": "롤링 해시", "desc": "창을 밀며 값을 굴린다", "kind": "piece", "origin": "rabin-karp" },
-            { "id": "all-suffixes-sorted", "name": "접미사 배열", "desc": "모든 꼬리를 줄 세운다", "kind": "piece", "origin": "suffix-array" },
-            { "id": "match-length-per-spot", "name": "Z 배열", "desc": "자리마다 얼마나 겹치는가", "kind": "piece", "origin": "z-algorithm" },
-            { "id": "many-patterns-one-pass", "name": "다중 패턴 탐색", "desc": "여러 패턴을 한 번에 훑는다", "kind": "piece", "origin": "aho-corasick" },
-            { "id": "fail-link", "name": "실패 링크", "desc": "어긋나면 뒤로 미끄러진다", "kind": "piece", "origin": "aho-corasick" },
-            { "id": "edit-table-fill", "name": "편집 거리 표", "desc": "고칠 값을 표로 채운다", "kind": "piece", "origin": "edit-distance" },
-            { "id": "three-edit-choices", "name": "삽입·삭제·교체", "desc": "넣거나 지우거나 바꾸거나", "kind": "piece", "origin": "edit-distance" }
+            { "id": "naive-shift-by-one", "name": "단순 비교", "desc": "어긋나면 한 칸 밀고 다시", "facetId": "facet:naiveShiftByOne", "kind": "piece", "origin": "kmp" },
+            { "id": "prefix-suffix-jump", "name": "실패 함수", "desc": "앞뒤가 겹친 만큼 건너뛴다", "facetId": "facet:prefixSuffixJump", "kind": "piece", "origin": "kmp" },
+            { "id": "match-from-back", "name": "역방향 비교", "desc": "뒤에서부터 견준다", "facetId": "facet:matchFromBack", "kind": "piece", "origin": "boyer-moore" },
+            { "id": "bad-char-skip", "name": "나쁜 문자 규칙", "desc": "없는 글자를 만나면 크게 뛴다", "facetId": "facet:badCharSkip", "kind": "piece", "origin": "boyer-moore" },
+            { "id": "rolling-hash", "name": "롤링 해시", "desc": "창을 밀며 값을 굴린다", "facetId": "facet:rollingHash", "kind": "piece", "origin": "rabin-karp" },
+            { "id": "all-suffixes-sorted", "name": "접미사 배열", "desc": "모든 꼬리를 줄 세운다", "facetId": "facet:allSuffixesSorted", "kind": "piece", "origin": "suffix-array" },
+            { "id": "match-length-per-spot", "name": "Z 배열", "desc": "자리마다 얼마나 겹치는가", "facetId": "facet:matchLengthPerSpot", "kind": "piece", "origin": "z-algorithm" },
+            { "id": "many-patterns-one-pass", "name": "다중 패턴 탐색", "desc": "여러 패턴을 한 번에 훑는다", "facetId": "facet:manyPatternsOnePass", "kind": "piece", "origin": "aho-corasick" },
+            { "id": "fail-link", "name": "실패 링크", "desc": "어긋나면 뒤로 미끄러진다", "facetId": "facet:failLink", "kind": "piece", "origin": "aho-corasick" },
+            { "id": "edit-table-fill", "name": "편집 거리 표", "desc": "고칠 값을 표로 채운다", "facetId": "facet:editTableFill", "kind": "piece", "origin": "edit-distance" },
+            { "id": "three-edit-choices", "name": "삽입·삭제·교체", "desc": "넣거나 지우거나 바꾸거나", "facetId": "facet:threeEditChoices", "kind": "piece", "origin": "edit-distance" }
           ]
         },
         {

@@ -133,6 +133,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/all-suffixes-sorted:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/array:
     dependencies:
       '@ffacet/core':
@@ -190,6 +196,12 @@ importers:
       '@ffacet/transpiler-typescript':
         specifier: workspace:*
         version: link:../../../packages/transpiler-typescript
+
+  facets/cs-fundamentals/bad-char-skip:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
 
   facets/cs-fundamentals/bellman-ford:
     dependencies:
@@ -554,7 +566,19 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/transpiler-typescript
 
+  facets/cs-fundamentals/edit-table-fill:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/enqueue-dequeue-ends:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/fail-link:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -903,7 +927,25 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/many-patterns-one-pass:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/mark-visited-or-loop:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/match-from-back:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/match-length-per-spot:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -975,6 +1017,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/mutually-reachable:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/naive-shift-by-one:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -1053,6 +1101,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/pivot-choice-matters:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/prefix-suffix-jump:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -1198,6 +1252,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/requires-sorted:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/rolling-hash:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -1396,6 +1456,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/take-best-now:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/three-edit-choices:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -2016,6 +2082,9 @@ importers:
       '@ffacet/algorithm-adjacency-list-vs-matrix':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/adjacency-list-vs-matrix
+      '@ffacet/algorithm-all-suffixes-sorted':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/all-suffixes-sorted
       '@ffacet/algorithm-array':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/array
@@ -2040,6 +2109,9 @@ importers:
       '@ffacet/algorithm-backtracking':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/backtracking
+      '@ffacet/algorithm-bad-char-skip':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/bad-char-skip
       '@ffacet/algorithm-bagging-sample':
         specifier: workspace:*
         version: link:../../facets/ml-basics/bagging-sample
@@ -2169,9 +2241,15 @@ importers:
       '@ffacet/algorithm-dynamic-programming':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/dynamic-programming
+      '@ffacet/algorithm-edit-table-fill':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/edit-table-fill
       '@ffacet/algorithm-enqueue-dequeue-ends':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/enqueue-dequeue-ends
+      '@ffacet/algorithm-fail-link':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/fail-link
       '@ffacet/algorithm-fewer-hops-not-shorter':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/fewer-hops-not-shorter
@@ -2325,12 +2403,21 @@ importers:
       '@ffacet/algorithm-lru-cache':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/lru-cache
+      '@ffacet/algorithm-many-patterns-one-pass':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/many-patterns-one-pass
       '@ffacet/algorithm-many-trees-vote':
         specifier: workspace:*
         version: link:../../facets/ml-basics/many-trees-vote
       '@ffacet/algorithm-mark-visited-or-loop':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/mark-visited-or-loop
+      '@ffacet/algorithm-match-from-back':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/match-from-back
+      '@ffacet/algorithm-match-length-per-spot':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/match-length-per-spot
       '@ffacet/algorithm-matrix-transform-2d':
         specifier: workspace:*
         version: link:../../facets/graphics/matrix-transform-2d
@@ -2358,6 +2445,9 @@ importers:
       '@ffacet/algorithm-mutually-reachable':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/mutually-reachable
+      '@ffacet/algorithm-naive-shift-by-one':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/naive-shift-by-one
       '@ffacet/algorithm-negative-edge-breaks':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/negative-edge-breaks
@@ -2406,6 +2496,9 @@ importers:
       '@ffacet/algorithm-pivot-choice-matters':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/pivot-choice-matters
+      '@ffacet/algorithm-prefix-suffix-jump':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/prefix-suffix-jump
       '@ffacet/algorithm-prim-mst':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/prim-mst
@@ -2457,6 +2550,9 @@ importers:
       '@ffacet/algorithm-residual-distance':
         specifier: workspace:*
         version: link:../../facets/ml-basics/residual-distance
+      '@ffacet/algorithm-rolling-hash':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/rolling-hash
       '@ffacet/algorithm-rotate-to-balance':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/rotate-to-balance
@@ -2544,6 +2640,9 @@ importers:
       '@ffacet/algorithm-take-best-now':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/take-best-now
+      '@ffacet/algorithm-three-edit-choices':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/three-edit-choices
       '@ffacet/algorithm-through-middle-node':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/through-middle-node

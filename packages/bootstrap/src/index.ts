@@ -681,4 +681,40 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:tDigest', () =>
     import('@ffacet/algorithm-t-digest').then((m) => m.registerTDigest()),
   );
+
+  // 문자열 알고리즘 조각 열하나 — KMP 2 · Boyer-Moore 2 · Rabin-Karp 1 ·
+  // 접미사 배열 1 · Z 1 · Aho-Corasick 2 · 편집 거리 2.
+  registerFacetLoader('facet:naiveShiftByOne', () =>
+    import('@ffacet/algorithm-naive-shift-by-one').then((m) => m.registerNaiveShiftByOne()),
+  );
+  registerFacetLoader('facet:prefixSuffixJump', () =>
+    import('@ffacet/algorithm-prefix-suffix-jump').then((m) => m.registerPrefixSuffixJump()),
+  );
+  registerFacetLoader('facet:matchFromBack', () =>
+    import('@ffacet/algorithm-match-from-back').then((m) => m.registerMatchFromBack()),
+  );
+  registerFacetLoader('facet:badCharSkip', () =>
+    import('@ffacet/algorithm-bad-char-skip').then((m) => m.registerBadCharSkip()),
+  );
+  registerFacetLoader('facet:rollingHash', () =>
+    import('@ffacet/algorithm-rolling-hash').then((m) => m.registerRollingHash()),
+  );
+  registerFacetLoader('facet:allSuffixesSorted', () =>
+    import('@ffacet/algorithm-all-suffixes-sorted').then((m) => m.registerAllSuffixesSorted()),
+  );
+  registerFacetLoader('facet:matchLengthPerSpot', () =>
+    import('@ffacet/algorithm-match-length-per-spot').then((m) => m.registerMatchLengthPerSpot()),
+  );
+  registerFacetLoader('facet:manyPatternsOnePass', () =>
+    import('@ffacet/algorithm-many-patterns-one-pass').then((m) => m.registerManyPatternsOnePass()),
+  );
+  registerFacetLoader('facet:failLink', () =>
+    import('@ffacet/algorithm-fail-link').then((m) => m.registerFailLink()),
+  );
+  registerFacetLoader('facet:editTableFill', () =>
+    import('@ffacet/algorithm-edit-table-fill').then((m) => m.registerEditTableFill()),
+  );
+  registerFacetLoader('facet:threeEditChoices', () =>
+    import('@ffacet/algorithm-three-edit-choices').then((m) => m.registerThreeEditChoices()),
+  );
 }
