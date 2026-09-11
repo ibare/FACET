@@ -79,7 +79,9 @@ import { dynamicProgrammingConcept } from './dynamic-programming.js';
 import { editDistanceConcept } from './edit-distance.js';
 import { editTableFillConcept } from './edit-table-fill.js';
 import { enqueueDequeueEndsConcept } from './enqueue-dequeue-ends.js';
+import { euclideanConcept } from './euclidean.js';
 import { failLinkConcept } from './fail-link.js';
+import { fastPowerConcept } from './fast-power.js';
 import { fewerHopsNotShorterConcept } from './fewer-hops-not-shorter.js';
 import { findRootConcept } from './find-root.js';
 import { floydWarshallConcept } from './floyd-warshall.js';
@@ -137,6 +139,7 @@ import { manyTreesVoteConcept } from './many-trees-vote.js';
 import { markVisitedOrLoopConcept } from './mark-visited-or-loop.js';
 import { matchFromBackConcept } from './match-from-back.js';
 import { matchLengthPerSpotConcept } from './match-length-per-spot.js';
+import { matrixMulConcept } from './matrix-mul.js';
 import { matrixTransform2dConcept } from './matrix-transform-2d.js';
 import { maxFlowConcept } from './max-flow.js';
 import { memoWriteOnceConcept } from './memo-write-once.js';
@@ -165,6 +168,7 @@ import { pigeonholeCollisionConcept } from './pigeonhole-collision.js';
 import { pivotChoiceMattersConcept } from './pivot-choice-matters.js';
 import { prefixSuffixJumpConcept } from './prefix-suffix-jump.js';
 import { primMstConcept } from './prim-mst.js';
+import { primalityConcept } from './primality.js';
 import { projectAndLoseConcept } from './project-and-lose.js';
 import { pruneBranchConcept } from './prune-branch.js';
 import { pushPopTopConcept } from './push-pop-top.js';
@@ -195,6 +199,7 @@ import { sharePrefixPathConcept } from './share-prefix-path.js';
 import { shellSortConcept } from './shell-sort.js';
 import { shiftOnInsertConcept } from './shift-on-insert.js';
 import { shiftOnRemoveConcept } from './shift-on-remove.js';
+import { sieveConcept } from './sieve.js';
 import { siftDownConcept } from './sift-down.js';
 import { siftUpConcept } from './sift-up.js';
 import { signatureKeyDirectionConcept } from './signature-key-direction.js';
@@ -296,7 +301,9 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   editDistanceConcept,
   editTableFillConcept,
   enqueueDequeueEndsConcept,
+  euclideanConcept,
   failLinkConcept,
+  fastPowerConcept,
   fewerHopsNotShorterConcept,
   findRootConcept,
   floydWarshallConcept,
@@ -354,6 +361,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   markVisitedOrLoopConcept,
   matchFromBackConcept,
   matchLengthPerSpotConcept,
+  matrixMulConcept,
   matrixTransform2dConcept,
   maxFlowConcept,
   memoWriteOnceConcept,
@@ -382,6 +390,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   pivotChoiceMattersConcept,
   prefixSuffixJumpConcept,
   primMstConcept,
+  primalityConcept,
   projectAndLoseConcept,
   pruneBranchConcept,
   pushPopTopConcept,
@@ -412,6 +421,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   shellSortConcept,
   shiftOnInsertConcept,
   shiftOnRemoveConcept,
+  sieveConcept,
   siftDownConcept,
   siftUpConcept,
   signatureKeyDirectionConcept,

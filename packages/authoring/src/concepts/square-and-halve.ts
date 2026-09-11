@@ -80,6 +80,10 @@ export const squareAndHalveConcept: FacetConceptSource = {
 
     contrastWith: [
       {
+        concept: 'fastPower',
+        note: 'The same scheme asked about twice over: this settles how the folding works and why the odd steps are exactly the ones the answer takes, while that one takes the mechanism as given and weighs what it costs against multiplying one at a time.',
+      },
+      {
         concept: 'halveTheRange',
         note: 'Both halve something every step, but one halves a set of candidates to close in on a value that already exists, while this halves an exponent and pays for the reduction by squaring what it keeps.',
       },

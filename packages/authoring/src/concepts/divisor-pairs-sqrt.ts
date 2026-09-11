@@ -80,6 +80,10 @@ export const divisorPairsSqrtConcept: FacetConceptSource = {
 
     contrastWith: [
       {
+        concept: 'primality',
+        note: 'This establishes that stopping at the root can miss nothing, and deliberately says nothing about what is saved; that one is entirely about the saving, which only a number with no divisor at all can put a size on.',
+      },
+      {
         concept: 'pigeonholeCollision',
         note: 'Both settle their claim by counting rather than by producing an example, but one counts places to prove two things must land together, while this one pairs things off to prove nothing can be missed.',
       },

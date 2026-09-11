@@ -82,6 +82,10 @@ export const rowTimesColumnConcept: FacetConceptSource = {
 
     contrastWith: [
       {
+        concept: 'matrixMul',
+        note: 'One entry is accounted for here and how many entries there are never comes up; that one asks how few products the whole multiplication can be done in, and doing one fewer per divided layer is its answer.',
+      },
+      {
         concept: 'matrixTransform2d',
         note: 'The same object read two ways: one asks what a matrix means, in that it decides where the points of a plane go, while this asks only how one number inside a product is arrived at.',
       },
