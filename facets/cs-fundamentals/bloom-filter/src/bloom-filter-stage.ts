@@ -333,8 +333,9 @@ export const bloomFilterStageView: CanvasView = {
 
       showDone(onBits: number, m: number, percent: number, queries: number) {
         const pct = percent.toFixed(1);
-        onValue.textContent = tr('value.onBits', '{on} / {m}', { on: onBits, m });
-        fpValue.textContent = tr('value.percent', '{pct}%', { pct });
+        // 수식 표기는 표식이라 상수로 둔다 — 키를 만들지 않는다 (C10 판정 3).
+        onValue.textContent = `${onBits} / ${m}`;
+        fpValue.textContent = `${pct}%`;
         // 자리가 다 차면 무엇을 물어도 "있다" 가 된다. 그것은 실패 신호다.
         const full = onBits >= m;
         fpValue.setAttribute('fill', full ? colors.danger : colors.text);
