@@ -769,4 +769,21 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:matrixMul', () =>
     import('@ffacet/algorithm-matrix-mul').then((m) => m.registerMatrixMul()),
   );
+
+  // 계산 복잡도 조각 다섯 — Big-O 2 · 점근 1 · P/NP 1 · 환원 1.
+  registerFacetLoader('facet:growthOutpaces', () =>
+    import('@ffacet/algorithm-growth-outpaces').then((m) => m.registerGrowthOutpaces()),
+  );
+  registerFacetLoader('facet:constantFades', () =>
+    import('@ffacet/algorithm-constant-fades').then((m) => m.registerConstantFades()),
+  );
+  registerFacetLoader('facet:curvesCross', () =>
+    import('@ffacet/algorithm-curves-cross').then((m) => m.registerCurvesCross()),
+  );
+  registerFacetLoader('facet:verifyVsFind', () =>
+    import('@ffacet/algorithm-verify-vs-find').then((m) => m.registerVerifyVsFind()),
+  );
+  registerFacetLoader('facet:reduceToKnown', () =>
+    import('@ffacet/algorithm-reduce-to-known').then((m) => m.registerReduceToKnown()),
+  );
 }

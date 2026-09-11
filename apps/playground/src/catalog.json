@@ -1249,35 +1249,40 @@
               "name": "최고차항 지배",
               "desc": "입력이 커지면 큰 항만 남는다",
               "kind": "piece",
-              "origin": "big-o"
+              "origin": "big-o",
+              "facetId": "facet:growthOutpaces"
             },
             {
               "id": "constant-fades",
               "name": "상수 무시",
               "desc": "상수는 묻힌다",
               "kind": "piece",
-              "origin": "big-o"
+              "origin": "big-o",
+              "facetId": "facet:constantFades"
             },
             {
               "id": "curves-cross",
               "name": "점근 교차",
               "desc": "곡선은 언젠가 갈린다",
               "kind": "piece",
-              "origin": "asymptotic"
+              "origin": "asymptotic",
+              "facetId": "facet:curvesCross"
             },
             {
               "id": "verify-vs-find",
               "name": "검증과 탐색",
               "desc": "푸는 것과 맞는지 보는 것",
               "kind": "piece",
-              "origin": "p-np"
+              "origin": "p-np",
+              "facetId": "facet:verifyVsFind"
             },
             {
               "id": "reduce-to-known",
               "name": "환원",
               "desc": "A 를 B 로 바꿔 푼다",
               "kind": "piece",
-              "origin": "reduction"
+              "origin": "reduction",
+              "facetId": "facet:reduceToKnown"
             }
           ]
         }

@@ -459,6 +459,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/constant-fades:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/count-min-sketch:
     dependencies:
       '@ffacet/core':
@@ -497,6 +503,12 @@ importers:
         version: link:../../../packages/transpiler-typescript
 
   facets/cs-fundamentals/crowd-the-tails:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/curves-cross:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -814,6 +826,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/grow-one-tree:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/growth-outpaces:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -1491,6 +1509,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/reduce-to-known:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/relax-shorter-path:
     dependencies:
       '@ffacet/core':
@@ -1876,6 +1900,12 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/union-find:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/cs-fundamentals/verify-vs-find:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -2541,6 +2571,9 @@ importers:
       '@ffacet/algorithm-conditional-statement':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/conditional-statement
+      '@ffacet/algorithm-constant-fades':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/constant-fades
       '@ffacet/algorithm-context-switching':
         specifier: workspace:*
         version: link:../../facets/os/context-switching
@@ -2556,6 +2589,9 @@ importers:
       '@ffacet/algorithm-crowd-the-tails':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/crowd-the-tails
+      '@ffacet/algorithm-curves-cross':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/curves-cross
       '@ffacet/algorithm-cycle-blocks-order':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/cycle-blocks-order
@@ -2649,6 +2685,9 @@ importers:
       '@ffacet/algorithm-grow-one-tree':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/grow-one-tree
+      '@ffacet/algorithm-growth-outpaces':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/growth-outpaces
       '@ffacet/algorithm-guess-by-value':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/guess-by-value
@@ -2916,6 +2955,9 @@ importers:
       '@ffacet/algorithm-red-black-tree':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/red-black-tree
+      '@ffacet/algorithm-reduce-to-known':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/reduce-to-known
       '@ffacet/algorithm-relational-tables-and-keys':
         specifier: workspace:*
         version: link:../../facets/database/relational-tables-and-keys
@@ -3078,6 +3120,9 @@ importers:
       '@ffacet/algorithm-union-find':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/union-find
+      '@ffacet/algorithm-verify-vs-find':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/verify-vs-find
       '@ffacet/algorithm-vote-by-neighbors':
         specifier: workspace:*
         version: link:../../facets/ml-basics/vote-by-neighbors
