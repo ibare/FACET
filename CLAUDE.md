@@ -39,6 +39,27 @@ rules/
 
 대화 compaction 이후에도 `rules/principles.md` 와 `rules/INDEX.yaml` 을 우선 다시 읽어 맥락을 복구한다. 자세한 본문은 INDEX 의 trigger 로 재판단한다.
 
+## 작업 방식 문서 (`tasks/*-protocol.md`)
+
+`rules/` 가 **코드를 보고 위반을 판정하는 규칙**이라면, `tasks/` 의 프로토콜 문서는 **코드로는 판정할 수 없는 작업 방식**을 담는다. 무엇을 만들지 말지, 배치를 어떻게 돌릴지, 사양에 무엇을 적을지 같은 것이다.
+
+| 문서 | 다루는 것 |
+| --- | --- |
+| `tasks/piece-batch-protocol.md` | 조각을 여러 개 만들 때 — 격리 배치 · 사양 서식 · 관성 계측 |
+| `tasks/whole-batch-protocol.md` | **완제품을 만들지 말지 정하는 잣대 셋** · 조작 실측 · 완제품 배치 |
+| `tasks/concept-meta-batch-protocol.md` | 개념 메타를 여러 개 만들 때 — 완제품+조각 묶음 |
+| `tasks/catalog-scope.md` | 카탈로그에 항목을 넣을지 말지 |
+
+### 프로토콜이 규범이고, 배치 기록은 이야기다
+
+`tasks/` 에는 프로토콜 문서와 **배치 기록**(`graph-whole-batch.md` · `ml-supervised-batch.md` · `probabilistic-piece-batch.md` 등)이 함께 있다. 둘의 위상이 다르다.
+
+- **규범은 프로토콜 문서에만 있다.** 잣대나 절차가 바뀌면 프로토콜을 고친다.
+- **배치 기록은 그 배치에서 무엇을 시켰고 무엇이 나왔는지**를 남긴다. 거기 적힌 잣대는 그때의 것이라 낡았을 수 있다.
+- 둘이 어긋나면 **프로토콜이 이긴다.** 배치 기록끼리 어긋나면 새 것이 이긴다.
+
+이 구분이 없어서 실제로 오판이 났다 — 2026-09-11 확률적 자료구조 배치에서 `graph-whole-batch.md` 의 폐기된 잣대(IR 하나)를 집어 완제품 다섯 중 셋을 버릴 뻔했다. 정정된 잣대는 다른 배치 기록에 있었고 어느 쪽이 최신인지 문서가 스스로 말하지 않았다.
+
 ## rule-guard 서브에이전트
 
 코드 변경 후 의미/맥락 규칙 위반을 감사한다. `.claude/agents/rule-guard.md` 에 정의.
