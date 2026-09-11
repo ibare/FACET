@@ -55,11 +55,13 @@ import { circularBufferWrapConcept } from './circular-buffer-wrap.js';
 import { coinFlipHeightConcept } from './coin-flip-height.js';
 import { compareAndSwapConcept } from './compare-and-swap.js';
 import { conditionalStatementConcept } from './conditional-statement.js';
+import { constantFadesConcept } from './constant-fades.js';
 import { contextSwitchingConcept } from './context-switching.js';
 import { countMinSketchConcept } from './count-min-sketch.js';
 import { countThenPlaceConcept } from './count-then-place.js';
 import { countingSortConcept } from './counting-sort.js';
 import { crowdTheTailsConcept } from './crowd-the-tails.js';
+import { curvesCrossConcept } from './curves-cross.js';
 import { cycleBlocksOrderConcept } from './cycle-blocks-order.js';
 import { dbscanConcept } from './dbscan.js';
 import { decisionBoundaryConcept } from './decision-boundary.js';
@@ -91,6 +93,7 @@ import { greedyConcept } from './greedy.js';
 import { greedyCanFailConcept } from './greedy-can-fail.js';
 import { growAndCopyConcept } from './grow-and-copy.js';
 import { growOneTreeConcept } from './grow-one-tree.js';
+import { growthOutpacesConcept } from './growth-outpaces.js';
 import { guessByValueConcept } from './guess-by-value.js';
 import { halveTheRangeConcept } from './halve-the-range.js';
 import { hashAvalancheConcept } from './hash-avalanche.js';
@@ -180,6 +183,7 @@ import { radixSortConcept } from './radix-sort.js';
 import { randomForestConcept } from './random-forest.js';
 import { recolorThenRotateConcept } from './recolor-then-rotate.js';
 import { redBlackTreeConcept } from './red-black-tree.js';
+import { reduceToKnownConcept } from './reduce-to-known.js';
 import { relationalTablesAndKeysConcept } from './relational-tables-and-keys.js';
 import { relaxShorterPathConcept } from './relax-shorter-path.js';
 import { relinkInsertConcept } from './relink-insert.js';
@@ -234,6 +238,7 @@ import { twoColorConflictConcept } from './two-color-conflict.js';
 import { undoByBackEdgeConcept } from './undo-by-back-edge.js';
 import { unionByRankConcept } from './union-by-rank.js';
 import { unionFindConcept } from './union-find.js';
+import { verifyVsFindConcept } from './verify-vs-find.js';
 import { voteByNeighborsConcept } from './vote-by-neighbors.js';
 import { walkPerCharacterConcept } from './walk-per-character.js';
 import { widestMarginConcept } from './widest-margin.js';
@@ -277,11 +282,13 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   coinFlipHeightConcept,
   compareAndSwapConcept,
   conditionalStatementConcept,
+  constantFadesConcept,
   contextSwitchingConcept,
   countMinSketchConcept,
   countThenPlaceConcept,
   countingSortConcept,
   crowdTheTailsConcept,
+  curvesCrossConcept,
   cycleBlocksOrderConcept,
   dbscanConcept,
   decisionBoundaryConcept,
@@ -313,6 +320,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   greedyCanFailConcept,
   growAndCopyConcept,
   growOneTreeConcept,
+  growthOutpacesConcept,
   guessByValueConcept,
   halveTheRangeConcept,
   hashAvalancheConcept,
@@ -402,6 +410,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   randomForestConcept,
   recolorThenRotateConcept,
   redBlackTreeConcept,
+  reduceToKnownConcept,
   relationalTablesAndKeysConcept,
   relaxShorterPathConcept,
   relinkInsertConcept,
@@ -456,6 +465,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   undoByBackEdgeConcept,
   unionByRankConcept,
   unionFindConcept,
+  verifyVsFindConcept,
   voteByNeighborsConcept,
   walkPerCharacterConcept,
   widestMarginConcept,
