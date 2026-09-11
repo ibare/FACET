@@ -24,6 +24,7 @@ import { arrayConcept } from './array.js';
 import { arrayAsTreeConcept } from './array-as-tree.js';
 import { assignThenMoveConcept } from './assign-then-move.js';
 import { asymmetricRsaConcept } from './asymmetric-rsa.js';
+import { averageTheBucketsConcept } from './average-the-buckets.js';
 import { avlTreeConcept } from './avl-tree.js';
 import { bTreeConcept } from './b-tree.js';
 import { backtrackingConcept } from './backtracking.js';
@@ -32,6 +33,7 @@ import { bellmanFordConcept } from './bellman-ford.js';
 import { bfsConcept } from './bfs.js';
 import { binarySearchConcept } from './binary-search.js';
 import { blackHeightEqualConcept } from './black-height-equal.js';
+import { bloomFilterConcept } from './bloom-filter.js';
 import { bottleneckSetsFlowConcept } from './bottleneck-sets-flow.js';
 import { bottomUpTableConcept } from './bottom-up-table.js';
 import { boundAndCutConcept } from './bound-and-cut.js';
@@ -43,13 +45,17 @@ import { bstInorderSortedConcept } from './bst-inorder-sorted.js';
 import { bubbleAdjacentSwapConcept } from './bubble-adjacent-swap.js';
 import { bubbleSortConcept } from './bubble-sort.js';
 import { cachingCdnConcept } from './caching-cdn.js';
+import { cannotUnsetConcept } from './cannot-unset.js';
 import { chainingBucketConcept } from './chaining-bucket.js';
 import { circularBufferWrapConcept } from './circular-buffer-wrap.js';
+import { coinFlipHeightConcept } from './coin-flip-height.js';
 import { compareAndSwapConcept } from './compare-and-swap.js';
 import { conditionalStatementConcept } from './conditional-statement.js';
 import { contextSwitchingConcept } from './context-switching.js';
+import { countMinSketchConcept } from './count-min-sketch.js';
 import { countThenPlaceConcept } from './count-then-place.js';
 import { countingSortConcept } from './counting-sort.js';
+import { crowdTheTailsConcept } from './crowd-the-tails.js';
 import { cycleBlocksOrderConcept } from './cycle-blocks-order.js';
 import { dbscanConcept } from './dbscan.js';
 import { decisionBoundaryConcept } from './decision-boundary.js';
@@ -92,6 +98,7 @@ import { heightBalanceCheckConcept } from './height-balance-check.js';
 import { heightStaysLowConcept } from './height-stays-low.js';
 import { heuristicGuidesConcept } from './heuristic-guides.js';
 import { hierarchicalConcept } from './hierarchical.js';
+import { hyperloglogConcept } from './hyperloglog.js';
 import { impurityDropsConcept } from './impurity-drops.js';
 import { inPlaceVsExtraConcept } from './in-place-vs-extra.js';
 import { indegreeZeroFirstConcept } from './indegree-zero-first.js';
@@ -107,6 +114,7 @@ import { kernelLiftsConcept } from './kernel-lifts.js';
 import { kmeansConcept } from './kmeans.js';
 import { knnConcept } from './knn.js';
 import { kruskalMstConcept } from './kruskal-mst.js';
+import { leadingZerosTellConcept } from './leading-zeros-tell.js';
 import { leastSquaresConcept } from './least-squares.js';
 import { linearRegressionConcept } from './linear-regression.js';
 import { linearSearchConcept } from './linear-search.js';
@@ -165,6 +173,7 @@ import { sccConcept } from './scc.js';
 import { selectMinEachPassConcept } from './select-min-each-pass.js';
 import { selectionSortConcept } from './selection-sort.js';
 import { separateComponentsConcept } from './separate-components.js';
+import { severalHashesOneValueConcept } from './several-hashes-one-value.js';
 import { sharePrefixPathConcept } from './share-prefix-path.js';
 import { shellSortConcept } from './shell-sort.js';
 import { shiftOnInsertConcept } from './shift-on-insert.js';
@@ -173,8 +182,11 @@ import { siftDownConcept } from './sift-down.js';
 import { siftUpConcept } from './sift-up.js';
 import { signatureKeyDirectionConcept } from './signature-key-direction.js';
 import { signatureOnHashConcept } from './signature-on-hash.js';
+import { skipALayerConcept } from './skip-a-layer.js';
+import { skipListConcept } from './skip-list.js';
 import { sortEdgesAvoidCycleConcept } from './sort-edges-avoid-cycle.js';
 import { sortStabilityConcept } from './sort-stability.js';
+import { spaceErrorTradeoffConcept } from './space-error-tradeoff.js';
 import { splitByQuestionConcept } from './split-by-question.js';
 import { splitUntilOneConcept } from './split-until-one.js';
 import { splitWhenFullConcept } from './split-when-full.js';
@@ -182,6 +194,7 @@ import { squashToProbabilityConcept } from './squash-to-probability.js';
 import { stackConcept } from './stack.js';
 import { supportVectorsOnlyConcept } from './support-vectors-only.js';
 import { svmConcept } from './svm.js';
+import { tDigestConcept } from './t-digest.js';
 import { takeBestNowConcept } from './take-best-now.js';
 import { throughMiddleNodeConcept } from './through-middle-node.js';
 import { tokenizationConcept } from './tokenization.js';
@@ -189,6 +202,7 @@ import { topologicalSortConcept } from './topological-sort.js';
 import { traversalOrderConcept } from './traversal-order.js';
 import { traverseFromHeadConcept } from './traverse-from-head.js';
 import { trieConcept } from './trie.js';
+import { trustTheSmallestConcept } from './trust-the-smallest.js';
 import { tryAndUndoConcept } from './try-and-undo.js';
 import { tsneConcept } from './tsne.js';
 import { twoColorConflictConcept } from './two-color-conflict.js';
@@ -198,6 +212,7 @@ import { unionFindConcept } from './union-find.js';
 import { voteByNeighborsConcept } from './vote-by-neighbors.js';
 import { walkPerCharacterConcept } from './walk-per-character.js';
 import { widestMarginConcept } from './widest-margin.js';
+import { wrongInOneDirectionConcept } from './wrong-in-one-direction.js';
 
 export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   adjacencyListVsMatrixConcept,
@@ -205,6 +220,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   arrayAsTreeConcept,
   assignThenMoveConcept,
   asymmetricRsaConcept,
+  averageTheBucketsConcept,
   avlTreeConcept,
   bTreeConcept,
   backtrackingConcept,
@@ -213,6 +229,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   bfsConcept,
   binarySearchConcept,
   blackHeightEqualConcept,
+  bloomFilterConcept,
   bottleneckSetsFlowConcept,
   bottomUpTableConcept,
   boundAndCutConcept,
@@ -224,13 +241,17 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   bubbleAdjacentSwapConcept,
   bubbleSortConcept,
   cachingCdnConcept,
+  cannotUnsetConcept,
   chainingBucketConcept,
   circularBufferWrapConcept,
+  coinFlipHeightConcept,
   compareAndSwapConcept,
   conditionalStatementConcept,
   contextSwitchingConcept,
+  countMinSketchConcept,
   countThenPlaceConcept,
   countingSortConcept,
+  crowdTheTailsConcept,
   cycleBlocksOrderConcept,
   dbscanConcept,
   decisionBoundaryConcept,
@@ -273,6 +294,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   heightStaysLowConcept,
   heuristicGuidesConcept,
   hierarchicalConcept,
+  hyperloglogConcept,
   impurityDropsConcept,
   inPlaceVsExtraConcept,
   indegreeZeroFirstConcept,
@@ -288,6 +310,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   kmeansConcept,
   knnConcept,
   kruskalMstConcept,
+  leadingZerosTellConcept,
   leastSquaresConcept,
   linearRegressionConcept,
   linearSearchConcept,
@@ -346,6 +369,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   selectMinEachPassConcept,
   selectionSortConcept,
   separateComponentsConcept,
+  severalHashesOneValueConcept,
   sharePrefixPathConcept,
   shellSortConcept,
   shiftOnInsertConcept,
@@ -354,8 +378,11 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   siftUpConcept,
   signatureKeyDirectionConcept,
   signatureOnHashConcept,
+  skipALayerConcept,
+  skipListConcept,
   sortEdgesAvoidCycleConcept,
   sortStabilityConcept,
+  spaceErrorTradeoffConcept,
   splitByQuestionConcept,
   splitUntilOneConcept,
   splitWhenFullConcept,
@@ -363,6 +390,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   stackConcept,
   supportVectorsOnlyConcept,
   svmConcept,
+  tDigestConcept,
   takeBestNowConcept,
   throughMiddleNodeConcept,
   tokenizationConcept,
@@ -370,6 +398,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   traversalOrderConcept,
   traverseFromHeadConcept,
   trieConcept,
+  trustTheSmallestConcept,
   tryAndUndoConcept,
   tsneConcept,
   twoColorConflictConcept,
@@ -379,4 +408,5 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   voteByNeighborsConcept,
   walkPerCharacterConcept,
   widestMarginConcept,
+  wrongInOneDirectionConcept,
 ];
