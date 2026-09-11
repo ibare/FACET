@@ -1,0 +1,137 @@
+/**
+ * @piece 어긋난 글자가 얼마나 뛸지를 정한다.
+ *
+ * 답하는 질문 하나 — "패턴에 없는 글자를 만나면 왜 한 칸이 아니라 여러 칸을
+ * 한 번에 건너뛰어도 되는가."
+ *
+ * 그림의 좌표는 stage 가 셈한다. 여기 선언하는 것은 구조(텍스트·패턴)와
+ * 읽을 시간(stepMs)뿐이다 (S-piece).
+ */
+
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
+
+export const badCharSkipFacet: FacetJson = {
+  id: 'facet:badCharSkip',
+  title: {
+    en: 'The mismatched letter decides the jump',
+    ko: '어긋난 글자가 점프를 정한다',
+    ja: '一致しない文字が跳ぶ距離を決める',
+    zh: '不匹配的字符决定跳过多远',
+    ar: 'الحرف غير المطابق يحدد مقدار القفزة',
+    es: 'La letra que no coincide decide el salto',
+    fr: 'La lettre qui ne correspond pas décide du saut',
+    hi: 'जो अक्षर मेल नहीं खाता वही छलांग तय करता है',
+    id: 'Huruf yang tidak cocok menentukan lompatan',
+    pt: 'A letra que não coincide decide o salto',
+  },
+  description: {
+    en: 'A letter that never appears in the pattern lets the whole pattern jump past it.',
+    ko: '패턴에 아예 없는 글자를 만나면 패턴 길이만큼 통째로 건너뛴다.',
+    ja: 'パターンにまったく現れない文字に出会うと、パターンの長さの分だけ丸ごと飛び越える。',
+    zh: '遇到模式中完全不存在的字符时，可以整体跳过一个模式的长度。',
+    ar: 'عند مصادفة حرف لا يظهر في النمط إطلاقًا، يقفز النمط فوقه بطوله كاملًا.',
+    es: 'Al encontrar una letra que no aparece en el patrón, el patrón entero salta por encima de ella.',
+    fr: 'Quand on rencontre une lettre absente du motif, le motif entier saute par-dessus.',
+    hi: 'जब ऐसा अक्षर मिलता है जो पैटर्न में है ही नहीं, तो पूरा पैटर्न उसे लांघ जाता है।',
+    id: 'Ketika bertemu huruf yang tidak ada di dalam pola, pola melompatinya sepanjang dirinya sendiri.',
+    pt: 'Ao encontrar uma letra que não existe no padrão, o padrão inteiro salta por cima dela.',
+  },
+  algorithm: 'module:badCharSkip',
+  projector: 'module:badCharSkipProjector',
+  initialData: {
+    type: 'bad-char-skip',
+    text: 'here is a simple example',
+    pattern: 'example',
+    stepMs: 800,
+  },
+  blocks: {
+    stage: { type: 'bad-char-skip-stage' },
+    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+  },
+  messages: {
+    'label.table': {
+      en: 'last position in the pattern',
+      ko: '패턴에서 마지막으로 선 자리',
+      ja: 'パターン内で最後に現れた位置',
+      zh: '在模式中最后出现的位置',
+      ar: 'آخر موضع داخل النمط',
+      es: 'última posición en el patrón',
+      fr: 'dernière position dans le motif',
+      hi: 'पैटर्न में अंतिम स्थान',
+      id: 'posisi terakhir di dalam pola',
+      pt: 'última posição no padrão',
+    },
+    'caption.allMatch': {
+      en: 'All {n} letters match.',
+      ko: '모두 맞았다. 맞은 글자 수: {n}',
+      ja: 'すべて一致した。一致した文字数: {n}',
+      zh: '全部匹配。匹配的字符数：{n}',
+      ar: 'تطابقت كل الحروف. عددها: {n}',
+      es: 'Coinciden todas las letras. Cantidad: {n}',
+      fr: 'Toutes les lettres correspondent. Nombre : {n}',
+      hi: 'सभी अक्षर मेल खाए। संख्या: {n}',
+      id: 'Semua huruf cocok. Jumlahnya: {n}',
+      pt: 'Todas as letras coincidem. Quantidade: {n}',
+    },
+    'caption.missAtEnd': {
+      en: 'The last letter already differs: {ch}',
+      ko: '끝 글자부터 어긋난다: {ch}',
+      ja: '末尾の文字から一致しない: {ch}',
+      zh: '从末尾字符起就不匹配：{ch}',
+      ar: 'الحرف الأخير مختلف بالفعل: {ch}',
+      es: 'La última letra ya no coincide: {ch}',
+      fr: 'La dernière lettre diffère déjà : {ch}',
+      hi: 'आखिरी अक्षर ही अलग है: {ch}',
+      id: 'Huruf terakhir sudah berbeda: {ch}',
+      pt: 'A última letra já é diferente: {ch}',
+    },
+    'caption.missAfter': {
+      en: 'Matched from the right: {n}. Then this letter breaks it: {ch}',
+      ko: '오른쪽부터 맞은 글자 수: {n}. 여기서 어긋난다: {ch}',
+      ja: '右から一致した文字数: {n}。ここで一致しなくなる: {ch}',
+      zh: '从右侧匹配的字符数：{n}。到这里断开：{ch}',
+      ar: 'عدد الحروف المطابقة من اليمين: {n}. وهنا يختلف: {ch}',
+      es: 'Letras que coinciden por la derecha: {n}. Aquí se rompe: {ch}',
+      fr: 'Lettres qui correspondent à droite : {n}. Ici ça casse : {ch}',
+      hi: 'दाईं ओर से मेल खाए अक्षर: {n}। यहाँ टूटता है: {ch}',
+      id: 'Huruf yang cocok dari kanan: {n}. Di sini putus: {ch}',
+      pt: 'Letras que coincidem pela direita: {n}. Aqui quebra: {ch}',
+    },
+    'caption.skipKnown': {
+      en: '{ch} last stands in the pattern at {last}, so the slide is only {n}',
+      ko: '패턴 안 {ch} 가 마지막으로 선 자리: {last}. 미는 칸: {n}',
+      ja: 'パターン内の {ch} が最後に立つ位置: {last}。ずらす数: {n}',
+      zh: '{ch} 在模式中最后出现的位置：{last}。移动的格数：{n}',
+      ar: 'آخر موضع للحرف {ch} في النمط: {last}. عدد خانات الإزاحة: {n}',
+      es: 'Última posición de {ch} en el patrón: {last}. Casillas que se desliza: {n}',
+      fr: 'Dernière position de {ch} dans le motif : {last}. Cases décalées : {n}',
+      hi: 'पैटर्न में {ch} का अंतिम स्थान: {last}। खिसकाए गए खाने: {n}',
+      id: 'Posisi terakhir {ch} di dalam pola: {last}. Kotak yang digeser: {n}',
+      pt: 'Última posição de {ch} no padrão: {last}. Casas deslocadas: {n}',
+    },
+    'caption.skipNone': {
+      en: '{ch} is nowhere in the pattern, so nothing can overlap it. Cells jumped: {n}',
+      ko: '{ch} 는 패턴에 아예 없다. 겹칠 길이 없으니 통째로 뛴다: {n}',
+      ja: '{ch} はパターンに存在しない。重なりようがないので丸ごと飛ぶ: {n}',
+      zh: '{ch} 根本不在模式中，无法重叠，于是整体跳过：{n}',
+      ar: 'الحرف {ch} غير موجود في النمط، فلا تداخل ممكن. عدد الخانات: {n}',
+      es: '{ch} no está en el patrón, nada puede solaparse. Casillas saltadas: {n}',
+      fr: "{ch} n'est pas dans le motif, aucun recouvrement possible. Cases sautées : {n}",
+      hi: '{ch} पैटर्न में है ही नहीं, कोई ओवरलैप संभव नहीं। कूदे गए खाने: {n}',
+      id: '{ch} sama sekali tidak ada di pola, tidak mungkin bertumpang tindih. Kotak yang dilompati: {n}',
+      pt: '{ch} não está no padrão, nada pode se sobrepor. Casas saltadas: {n}',
+    },
+    'caption.found': {
+      en: 'The whole pattern matches. Position: {at}',
+      ko: '패턴이 통째로 맞았다. 자리: {at}',
+      ja: 'パターンが丸ごと一致した。位置: {at}',
+      zh: '整个模式完全匹配。位置：{at}',
+      ar: 'تطابق النمط بالكامل. الموضع: {at}',
+      es: 'El patrón coincide entero. Posición: {at}',
+      fr: 'Le motif correspond en entier. Position : {at}',
+      hi: 'पूरा पैटर्न मेल खाता है। स्थान: {at}',
+      id: 'Seluruh pola cocok. Posisi: {at}',
+      pt: 'O padrão coincide inteiro. Posição: {at}',
+    },
+  },
+};
