@@ -74,6 +74,7 @@ import { dijkstraConcept } from './dijkstra.js';
 import { directionOfMostSpreadConcept } from './direction-of-most-spread.js';
 import { diveThenBacktrackConcept } from './dive-then-backtrack.js';
 import { divideConquerCombineConcept } from './divide-conquer-combine.js';
+import { divisorPairsSqrtConcept } from './divisor-pairs-sqrt.js';
 import { dynamicProgrammingConcept } from './dynamic-programming.js';
 import { editDistanceConcept } from './edit-distance.js';
 import { editTableFillConcept } from './edit-table-fill.js';
@@ -183,6 +184,7 @@ import { requiresSortedConcept } from './requires-sorted.js';
 import { residualDistanceConcept } from './residual-distance.js';
 import { rollingHashConcept } from './rolling-hash.js';
 import { rotateToBalanceConcept } from './rotate-to-balance.js';
+import { rowTimesColumnConcept } from './row-times-column.js';
 import { scanUntilFoundConcept } from './scan-until-found.js';
 import { sccConcept } from './scc.js';
 import { selectMinEachPassConcept } from './select-min-each-pass.js';
@@ -205,6 +207,7 @@ import { spaceErrorTradeoffConcept } from './space-error-tradeoff.js';
 import { splitByQuestionConcept } from './split-by-question.js';
 import { splitUntilOneConcept } from './split-until-one.js';
 import { splitWhenFullConcept } from './split-when-full.js';
+import { squareAndHalveConcept } from './square-and-halve.js';
 import { squashToProbabilityConcept } from './squash-to-probability.js';
 import { stackConcept } from './stack.js';
 import { suffixArrayConcept } from './suffix-array.js';
@@ -288,6 +291,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   directionOfMostSpreadConcept,
   diveThenBacktrackConcept,
   divideConquerCombineConcept,
+  divisorPairsSqrtConcept,
   dynamicProgrammingConcept,
   editDistanceConcept,
   editTableFillConcept,
@@ -397,6 +401,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   residualDistanceConcept,
   rollingHashConcept,
   rotateToBalanceConcept,
+  rowTimesColumnConcept,
   scanUntilFoundConcept,
   sccConcept,
   selectMinEachPassConcept,
@@ -419,6 +424,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   splitByQuestionConcept,
   splitUntilOneConcept,
   splitWhenFullConcept,
+  squareAndHalveConcept,
   squashToProbabilityConcept,
   stackConcept,
   suffixArrayConcept,
