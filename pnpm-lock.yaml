@@ -668,11 +668,67 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/euclidean:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
+
   facets/cs-fundamentals/fail-link:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/cs-fundamentals/fast-power:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
 
   facets/cs-fundamentals/fewer-hops-not-shorter:
     dependencies:
@@ -1069,6 +1125,34 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/cs-fundamentals/matrix-mul:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
+
   facets/cs-fundamentals/max-flow:
     dependencies:
       '@ffacet/core':
@@ -1231,6 +1315,34 @@ importers:
         version: link:../../../packages/core
 
   facets/cs-fundamentals/prim-mst:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
+
+  facets/cs-fundamentals/primality:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -1540,6 +1652,34 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/cs-fundamentals/sieve:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
 
   facets/cs-fundamentals/sift-down:
     dependencies:
@@ -2473,9 +2613,15 @@ importers:
       '@ffacet/algorithm-enqueue-dequeue-ends':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/enqueue-dequeue-ends
+      '@ffacet/algorithm-euclidean':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/euclidean
       '@ffacet/algorithm-fail-link':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/fail-link
+      '@ffacet/algorithm-fast-power':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/fast-power
       '@ffacet/algorithm-fewer-hops-not-shorter':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/fewer-hops-not-shorter
@@ -2647,6 +2793,9 @@ importers:
       '@ffacet/algorithm-match-length-per-spot':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/match-length-per-spot
+      '@ffacet/algorithm-matrix-mul':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/matrix-mul
       '@ffacet/algorithm-matrix-transform-2d':
         specifier: workspace:*
         version: link:../../facets/graphics/matrix-transform-2d
@@ -2731,6 +2880,9 @@ importers:
       '@ffacet/algorithm-prim-mst':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/prim-mst
+      '@ffacet/algorithm-primality':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/primality
       '@ffacet/algorithm-project-and-lose':
         specifier: workspace:*
         version: link:../../facets/ml-basics/project-and-lose
@@ -2821,6 +2973,9 @@ importers:
       '@ffacet/algorithm-shift-on-remove':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/shift-on-remove
+      '@ffacet/algorithm-sieve':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/sieve
       '@ffacet/algorithm-sift-down':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/sift-down

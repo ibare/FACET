@@ -1175,23 +1175,28 @@
           "topics": [
             {
               "id": "euclidean",
-              "name": "유클리드 호제법"
+              "name": "유클리드 호제법",
+              "facetId": "facet:euclidean"
             },
             {
               "id": "fast-power",
-              "name": "빠른 거듭제곱"
+              "name": "빠른 거듭제곱",
+              "facetId": "facet:fastPower"
             },
             {
               "id": "sieve",
-              "name": "에라토스테네스의 체"
+              "name": "에라토스테네스의 체",
+              "facetId": "facet:sieve"
             },
             {
               "id": "primality",
-              "name": "소수 판정"
+              "name": "소수 판정",
+              "facetId": "facet:primality"
             },
             {
               "id": "matrix-mul",
-              "name": "행렬 곱셈"
+              "name": "행렬 곱셈",
+              "facetId": "facet:matrixMul"
             },
             {
               "id": "square-and-halve",

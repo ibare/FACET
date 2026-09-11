@@ -752,4 +752,21 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:rowTimesColumn', () =>
     import('@ffacet/algorithm-row-times-column').then((m) => m.registerRowTimesColumn()),
   );
+
+  // 수치 알고리즘 완제품 다섯 — 조각 셋을 잇고, euclidean·sieve 는 혼자 선다.
+  registerFacetLoader('facet:euclidean', () =>
+    import('@ffacet/algorithm-euclidean').then((m) => m.registerEuclidean()),
+  );
+  registerFacetLoader('facet:fastPower', () =>
+    import('@ffacet/algorithm-fast-power').then((m) => m.registerFastPower()),
+  );
+  registerFacetLoader('facet:sieve', () =>
+    import('@ffacet/algorithm-sieve').then((m) => m.registerSieve()),
+  );
+  registerFacetLoader('facet:primality', () =>
+    import('@ffacet/algorithm-primality').then((m) => m.registerPrimality()),
+  );
+  registerFacetLoader('facet:matrixMul', () =>
+    import('@ffacet/algorithm-matrix-mul').then((m) => m.registerMatrixMul()),
+  );
 }
