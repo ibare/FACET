@@ -288,7 +288,7 @@ describe('여섯 언어 emit (S-transpiler)', () => {
       expect(all).toContain('v[1] = wy / m');
       // 공분산은 가운데를 잡은 뒤 어긋남의 곱을 모은다.
       expect(all).toContain('sxy = sxy + (dx * dy)');
-      expect(all).toContain('out[1] = sxy / n');
+      expect(all).toContain('dst[1] = sxy / n');
       // 배열을 지어내지 않는다.
       expect(all).not.toContain('zeros');
     },
