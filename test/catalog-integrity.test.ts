@@ -143,8 +143,17 @@ describe('계획 카탈로그', () => {
     expect(hardcoded).toEqual([]);
   });
 
+  /*
+   * 하한을 내린 적이 한 번 있다. 2026-09-11 계산 복잡도 완제품 배치에서 `reduction`
+   * 토픽을 **판정에 따라 지웠다** — 손잡이 후보 둘이 다 무너졌고 주장이 `p-np` 와
+   * 포개져, 잣대 둘이 약한 것은 만들지 않는다는 선(`UMAP` · `A*`)에 걸렸다. 조각
+   * `reduce-to-known` 은 그대로 서고 `origin` 만 `p-np` 로 옮겼다.
+   *
+   * 그래서 1077 → 1076 이다. **이 검사가 제 할 일을 했다** — 줄어든 것을 잡았고,
+   * 그것이 실수인지 판정인지는 사람이 갈랐다. 다음에 또 줄면 같은 물음을 다시 한다.
+   */
   it('규모가 줄지 않았다 — 실수로 잘려 나간 것을 잡는다', () => {
     expect(domains.length).toBeGreaterThanOrEqual(16);
-    expect(rows.length).toBeGreaterThanOrEqual(1077);
+    expect(rows.length).toBeGreaterThanOrEqual(1076);
   });
 });
