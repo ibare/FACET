@@ -74,6 +74,10 @@ export const curvesCrossConcept: FacetConceptSource = {
 
     contrastWith: [
       {
+        concept: 'asymptotic',
+        note: 'One names the input size at which two costs trade places; the wider concept is that such a crossing is a single point while belonging to a growth class is a property of the whole range, so the crossing settles nothing about the class.',
+      },
+      {
         concept: 'growthOutpaces',
         note: 'One asks which term inside a single written cost survives; this one keeps two costs whole and asks at which input size the cheaper of the two changes identity.',
       },

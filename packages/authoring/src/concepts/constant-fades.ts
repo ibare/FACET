@@ -76,6 +76,10 @@ export const constantFadesConcept: FacetConceptSource = {
 
     contrastWith: [
       {
+        concept: 'bigO',
+        note: 'One fixes what a constant multiplier is able to buy and what it cannot; the wider concept takes the coefficients as given and settles which single term a cost expression gets written as.',
+      },
+      {
         concept: 'growthOutpaces',
         note: 'The other keeps a single expression and asks which of its terms survives; this one keeps two expressions whole and varies the multiplier in front of one, to fix what a multiplier is able to buy.',
       },

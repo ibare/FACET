@@ -73,6 +73,10 @@ export const growthOutpacesConcept: FacetConceptSource = {
 
     contrastWith: [
       {
+        concept: 'bigO',
+        note: 'One claim is that the highest-degree term ends up holding almost the whole of a single total; the wider concept is that the order those terms settle into is what a complexity notation records, and that naming the survivor is the operation itself.',
+      },
+      {
         concept: 'constantFades',
         note: 'Both explain a deletion in asymptotic notation, but one drops terms that a rival term inside the same expression outgrows, and the other drops a multiplier whose only power is to move where two sides meet.',
       },

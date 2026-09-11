@@ -73,6 +73,10 @@ export const verifyVsFindConcept: FacetConceptSource = {
 
     contrastWith: [
       {
+        concept: 'pNp',
+        note: 'One is the gap between the two jobs at a single instance; the wider concept is what that gap does as the instance grows — checking gaining one step per element while the candidates double.',
+      },
+      {
         concept: 'backtracking',
         note: 'Both face a space of candidates, but one is about cutting whole regions of that space away before they are entered, and this one is about the size of the space when nothing can be cut.',
       },

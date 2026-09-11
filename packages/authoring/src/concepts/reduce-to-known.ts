@@ -74,6 +74,10 @@ export const reduceToKnownConcept: FacetConceptSource = {
 
     contrastWith: [
       {
+        concept: 'pNp',
+        note: 'One carries a problem over to where methods already exist; the other is the cost of answering such a problem outright, which is what makes the carrying worth doing and what it fails to lower.',
+      },
+      {
         concept: 'twoColorConflict',
         note: 'That concept is colouring itself and the condition under which it fails; this one is about a different problem being turned into a colouring question in the first place.',
       },

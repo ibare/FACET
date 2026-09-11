@@ -26,6 +26,7 @@ import { arrayConcept } from './array.js';
 import { arrayAsTreeConcept } from './array-as-tree.js';
 import { assignThenMoveConcept } from './assign-then-move.js';
 import { asymmetricRsaConcept } from './asymmetric-rsa.js';
+import { asymptoticConcept } from './asymptotic.js';
 import { averageTheBucketsConcept } from './average-the-buckets.js';
 import { avlTreeConcept } from './avl-tree.js';
 import { bTreeConcept } from './b-tree.js';
@@ -34,6 +35,7 @@ import { badCharSkipConcept } from './bad-char-skip.js';
 import { baggingSampleConcept } from './bagging-sample.js';
 import { bellmanFordConcept } from './bellman-ford.js';
 import { bfsConcept } from './bfs.js';
+import { bigOConcept } from './big-o.js';
 import { binarySearchConcept } from './binary-search.js';
 import { blackHeightEqualConcept } from './black-height-equal.js';
 import { bloomFilterConcept } from './bloom-filter.js';
@@ -162,6 +164,7 @@ import { oneWayEdgeConcept } from './one-way-edge.js';
 import { openAddressingProbeConcept } from './open-addressing-probe.js';
 import { outOfBoundsConcept } from './out-of-bounds.js';
 import { overlappingSubproblemsConcept } from './overlapping-subproblems.js';
+import { pNpConcept } from './p-np.js';
 import { parentTwoChildrenConcept } from './parent-two-children.js';
 import { partitionAroundPivotConcept } from './partition-around-pivot.js';
 import { pathCompressionConcept } from './path-compression.js';
@@ -253,6 +256,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   arrayAsTreeConcept,
   assignThenMoveConcept,
   asymmetricRsaConcept,
+  asymptoticConcept,
   averageTheBucketsConcept,
   avlTreeConcept,
   bTreeConcept,
@@ -261,6 +265,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   baggingSampleConcept,
   bellmanFordConcept,
   bfsConcept,
+  bigOConcept,
   binarySearchConcept,
   blackHeightEqualConcept,
   bloomFilterConcept,
@@ -389,6 +394,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   openAddressingProbeConcept,
   outOfBoundsConcept,
   overlappingSubproblemsConcept,
+  pNpConcept,
   parentTwoChildrenConcept,
   partitionAroundPivotConcept,
   pathCompressionConcept,
