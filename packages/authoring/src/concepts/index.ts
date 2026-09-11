@@ -20,6 +20,7 @@
 
 import type { FacetConceptSource } from '../concept-types.js';
 import { adjacencyListVsMatrixConcept } from './adjacency-list-vs-matrix.js';
+import { allSuffixesSortedConcept } from './all-suffixes-sorted.js';
 import { arrayConcept } from './array.js';
 import { arrayAsTreeConcept } from './array-as-tree.js';
 import { assignThenMoveConcept } from './assign-then-move.js';
@@ -28,6 +29,7 @@ import { averageTheBucketsConcept } from './average-the-buckets.js';
 import { avlTreeConcept } from './avl-tree.js';
 import { bTreeConcept } from './b-tree.js';
 import { backtrackingConcept } from './backtracking.js';
+import { badCharSkipConcept } from './bad-char-skip.js';
 import { baggingSampleConcept } from './bagging-sample.js';
 import { bellmanFordConcept } from './bellman-ford.js';
 import { bfsConcept } from './bfs.js';
@@ -71,7 +73,9 @@ import { directionOfMostSpreadConcept } from './direction-of-most-spread.js';
 import { diveThenBacktrackConcept } from './dive-then-backtrack.js';
 import { divideConquerCombineConcept } from './divide-conquer-combine.js';
 import { dynamicProgrammingConcept } from './dynamic-programming.js';
+import { editTableFillConcept } from './edit-table-fill.js';
 import { enqueueDequeueEndsConcept } from './enqueue-dequeue-ends.js';
+import { failLinkConcept } from './fail-link.js';
 import { fewerHopsNotShorterConcept } from './fewer-hops-not-shorter.js';
 import { findRootConcept } from './find-root.js';
 import { floydWarshallConcept } from './floyd-warshall.js';
@@ -123,8 +127,11 @@ import { loadFactorRehashConcept } from './load-factor-rehash.js';
 import { logisticRegressionConcept } from './logistic-regression.js';
 import { lostLinkConcept } from './lost-link.js';
 import { lruCacheConcept } from './lru-cache.js';
+import { manyPatternsOnePassConcept } from './many-patterns-one-pass.js';
 import { manyTreesVoteConcept } from './many-trees-vote.js';
 import { markVisitedOrLoopConcept } from './mark-visited-or-loop.js';
+import { matchFromBackConcept } from './match-from-back.js';
+import { matchLengthPerSpotConcept } from './match-length-per-spot.js';
 import { matrixTransform2dConcept } from './matrix-transform-2d.js';
 import { maxFlowConcept } from './max-flow.js';
 import { memoWriteOnceConcept } from './memo-write-once.js';
@@ -134,6 +141,7 @@ import { mergeTwoSortedConcept } from './merge-two-sorted.js';
 import { merkleTreeConcept } from './merkle-tree.js';
 import { messagingPubsubConcept } from './messaging-pubsub.js';
 import { mutuallyReachableConcept } from './mutually-reachable.js';
+import { naiveShiftByOneConcept } from './naive-shift-by-one.js';
 import { negativeEdgeBreaksConcept } from './negative-edge-breaks.js';
 import { nodeHoldsManyConcept } from './node-holds-many.js';
 import { nodePointsNextConcept } from './node-points-next.js';
@@ -150,6 +158,7 @@ import { pcaConcept } from './pca.js';
 import { pickNearestUnsettledConcept } from './pick-nearest-unsettled.js';
 import { pigeonholeCollisionConcept } from './pigeonhole-collision.js';
 import { pivotChoiceMattersConcept } from './pivot-choice-matters.js';
+import { prefixSuffixJumpConcept } from './prefix-suffix-jump.js';
 import { primMstConcept } from './prim-mst.js';
 import { projectAndLoseConcept } from './project-and-lose.js';
 import { pruneBranchConcept } from './prune-branch.js';
@@ -167,6 +176,7 @@ import { relinkInsertConcept } from './relink-insert.js';
 import { repeatRelaxAllConcept } from './repeat-relax-all.js';
 import { requiresSortedConcept } from './requires-sorted.js';
 import { residualDistanceConcept } from './residual-distance.js';
+import { rollingHashConcept } from './rolling-hash.js';
 import { rotateToBalanceConcept } from './rotate-to-balance.js';
 import { scanUntilFoundConcept } from './scan-until-found.js';
 import { sccConcept } from './scc.js';
@@ -196,6 +206,7 @@ import { supportVectorsOnlyConcept } from './support-vectors-only.js';
 import { svmConcept } from './svm.js';
 import { tDigestConcept } from './t-digest.js';
 import { takeBestNowConcept } from './take-best-now.js';
+import { threeEditChoicesConcept } from './three-edit-choices.js';
 import { throughMiddleNodeConcept } from './through-middle-node.js';
 import { tokenizationConcept } from './tokenization.js';
 import { topologicalSortConcept } from './topological-sort.js';
@@ -216,6 +227,7 @@ import { wrongInOneDirectionConcept } from './wrong-in-one-direction.js';
 
 export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   adjacencyListVsMatrixConcept,
+  allSuffixesSortedConcept,
   arrayConcept,
   arrayAsTreeConcept,
   assignThenMoveConcept,
@@ -224,6 +236,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   avlTreeConcept,
   bTreeConcept,
   backtrackingConcept,
+  badCharSkipConcept,
   baggingSampleConcept,
   bellmanFordConcept,
   bfsConcept,
@@ -267,7 +280,9 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   diveThenBacktrackConcept,
   divideConquerCombineConcept,
   dynamicProgrammingConcept,
+  editTableFillConcept,
   enqueueDequeueEndsConcept,
+  failLinkConcept,
   fewerHopsNotShorterConcept,
   findRootConcept,
   floydWarshallConcept,
@@ -319,8 +334,11 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   logisticRegressionConcept,
   lostLinkConcept,
   lruCacheConcept,
+  manyPatternsOnePassConcept,
   manyTreesVoteConcept,
   markVisitedOrLoopConcept,
+  matchFromBackConcept,
+  matchLengthPerSpotConcept,
   matrixTransform2dConcept,
   maxFlowConcept,
   memoWriteOnceConcept,
@@ -330,6 +348,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   merkleTreeConcept,
   messagingPubsubConcept,
   mutuallyReachableConcept,
+  naiveShiftByOneConcept,
   negativeEdgeBreaksConcept,
   nodeHoldsManyConcept,
   nodePointsNextConcept,
@@ -346,6 +365,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   pickNearestUnsettledConcept,
   pigeonholeCollisionConcept,
   pivotChoiceMattersConcept,
+  prefixSuffixJumpConcept,
   primMstConcept,
   projectAndLoseConcept,
   pruneBranchConcept,
@@ -363,6 +383,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   repeatRelaxAllConcept,
   requiresSortedConcept,
   residualDistanceConcept,
+  rollingHashConcept,
   rotateToBalanceConcept,
   scanUntilFoundConcept,
   sccConcept,
@@ -392,6 +413,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   svmConcept,
   tDigestConcept,
   takeBestNowConcept,
+  threeEditChoicesConcept,
   throughMiddleNodeConcept,
   tokenizationConcept,
   topologicalSortConcept,
