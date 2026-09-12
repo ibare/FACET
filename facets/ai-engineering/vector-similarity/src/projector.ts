@@ -101,7 +101,13 @@ export const vectorSimilarityProjector: ProjectorFactory = (views, runtime): Pro
         case 'done': {
           stage?.setCaption?.(
             changed === 0
-              ? tr('caption.same', 'Nobody moved. This is the order to compare against.')
+              // 셈은 늘 **첫 잣대**와 견준다. 그래서 0 은 "아무도 안 움직였다" 가
+              // 아니라 "기준 차례로 돌아왔다" 는 뜻이다 — 직전 잣대에서 오면 다섯이
+              // 눈앞에서 미끄러진 직후라, 앞의 문안은 그 순간을 거짓으로 말한다.
+              ? tr(
+                  'caption.same',
+                  'Back to the reference order. This is the one the others are measured against.',
+                )
               : tr('caption.moved', 'Candidates that changed places: {n}.', { n: changed }),
           );
           return;
