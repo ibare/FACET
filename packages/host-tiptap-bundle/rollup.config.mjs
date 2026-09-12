@@ -4,7 +4,7 @@
  *
  * 정책 (논의 결과):
  *  - 단일 ESM entry (host-tiptap-bundle.js) + dynamic import 자동 chunk 추론.
- *  - inlineDynamicImports: false (기본 명시) — 21 facet 의 lazy 보존 핵심.
+ *  - inlineDynamicImports: false (기본 명시) — 카탈로그 facet 전부의 lazy 보존 핵심.
  *  - external: @tiptap/core, @tiptap/pm — 호스트의 단일 인스턴스 보장.
  *  - chunkFileNames 는 함수형 — facet/ 와 runtime/ 디렉터리 분리 (디버깅 노이즈 감소).
  *  - manualChunks 는 강제 분리가 아닌 chunk name 부여 hint 용. core/runtime 의 공용 chunk 추출은 rollup 자동 위임 후 visualizer 로 실측 조정.
