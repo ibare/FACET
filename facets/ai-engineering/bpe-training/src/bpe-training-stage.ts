@@ -331,6 +331,10 @@ export const bpeTrainingStageView: CanvasView = {
      * 삼켜진 조각은 자기를 삼킨 조각의 자리로 미끄러져 들어가 사라진다.
      */
     function paintWords(words: StageWord[], duration: number): Promise<void> {
+      // 움직임을 만드는 것은 CSS transition 인데 그 길이는 칩을 만들 때 한 번 박힌다.
+      // 그대로 두면 속도를 올려도 기다림(`wait`)만 짧아지고 움직임은 그대로라
+      // 걸음 경계를 넘어 이어진다. 넘어온 길이로 매번 맞춘다.
+      const fade = Math.max(16, Math.round(duration * 0.67));
       for (const w of words) {
         const row = wordRows.get(w.word);
         if (!row) continue;
@@ -366,6 +370,10 @@ export const bpeTrainingStageView: CanvasView = {
             row.chips.set(slot.start, chip);
             row.chipsG.appendChild(chip.g);
           }
+          // 갓 만든 칩은 옮겨 갈 옛 자리가 없다. 그래도 여기서 함께 길이를 맞춰 두면
+          // 다음 걸음부터 곧바로 지금 속도로 움직인다.
+          chip.g.style.transition = `transform ${duration}ms ease, opacity ${fade}ms ease`;
+          chip.rect.style.transition = `width ${duration}ms ease, fill ${fade}ms ease`;
           const whole = slot.token === wholeToken;
           chip.g.setAttribute('transform', `translate(${slot.x},0)`);
           chip.g.setAttribute('opacity', '1');
@@ -438,6 +446,10 @@ export const bpeTrainingStageView: CanvasView = {
       winner: string | null,
       duration: number,
     ): Promise<void> {
+      // 줄이 등수를 다투는 움직임도 CSS transition 이 만들고, 그 길이는 줄을 만들 때
+      // 한 번 박힌다. 그대로 두면 속도를 올려도 기다림만 짧아지고 움직임은 그대로라
+      // 걸음 경계를 넘는다. 넘어온 길이로 매번 맞춘다.
+      const fade = Math.max(16, Math.round(duration * 0.625));
       const top = rows.length > 0 ? rows[0].count : 1;
       const seen = new Set<string>();
       rows.forEach((r, i) => {
@@ -453,6 +465,8 @@ export const bpeTrainingStageView: CanvasView = {
         const width = Math.max(3, Math.round((r.count / Math.max(1, top)) * RANK_BAR_MAX));
         const isWinner = key === winner;
         row.y = y;
+        row.g.style.transition = `transform ${duration}ms ease, opacity ${duration}ms ease`;
+        row.bar.style.transition = `width ${duration}ms ease, fill ${fade}ms ease`;
         row.g.setAttribute('transform', `translate(${RANK_X},${y})`);
         row.g.setAttribute('opacity', visible ? '1' : '0');
         row.pair.textContent = `${show(r.left)}+${show(r.right)}`;

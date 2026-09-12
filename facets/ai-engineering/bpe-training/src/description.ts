@@ -45,10 +45,10 @@ export const bpeTrainingDescription = `## BPE 학습 — 어휘는 누가 정해
 8 에서 여섯째로 겨우 들어오며, 12 부터는 넷째로 올라온다. 그리고 그 순간 \`sing\` 은
 통째로 한 조각이 된다.
 
-| sing | sing | ring | sink | kind |
-| --- | --- | --- | --- | --- |
-| 2 · 5 | \`s ing_\` | \`r ing_\` | \`s ink_\` | \`k in d _\` |
-| 8 · 12 · 18 | **\`sing_\`** | \`r ing_\` | \`s ink_\` | \`k in d _\` |
+| \`sing\` 빈도 | sing | king | ring | sink | kind |
+| --- | --- | --- | --- | --- | --- |
+| 2 · 5 | \`s ing_\` | **\`king_\`** | \`r ing_\` | \`s ink_\` | \`k in d _\` |
+| 8 · 12 · 18 | **\`sing_\`** | \`k ing_\` | \`r ing_\` | \`s ink_\` | \`k in d _\` |
 
 빈도 2 와 5 에서 여섯째 걸음을 가져가는 것은 \`k+ing_\` 다 — \`king\` 의 6 이
 \`sing\` 의 2 나 5 보다 크기 때문이다. 그때 통째가 되는 낱말은 \`sing\` 이 아니라

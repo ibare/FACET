@@ -136,7 +136,10 @@ export const unknownBecomesKnownProjector: ProjectorFactory = (views, runtime) =
 
         case 'done': {
           stage.setCaption?.(
-            tr('caption.done', 'An unknown word is never turned away. Words taken in: {n}.', {
+            // 센 것은 **모르는 낱말만**이다 (algorithm 의 `received`). 화면에는 말뭉치
+            // 낱말까지 나란히 서 있으므로, "낱말" 이라고만 하면 독자가 세는 수와
+            // 캡션의 수가 어긋난다.
+            tr('caption.done', 'An unknown word is never turned away. Unknown words taken in: {n}.', {
               n: readCount(event.payload),
             }),
           );

@@ -178,8 +178,8 @@ export const unknownBecomesKnownFacet: FacetJson = {
       pt: '"{word}" é aceita, escrita com peças conhecidas: {pieces}.',
     },
     'caption.done': {
-      en: 'An unknown word is never turned away. Words taken in: {n}.',
-      ko: '모르는 낱말도 거절되지 않는다. 받아 낸 낱말: {n}.',
+      en: 'An unknown word is never turned away. Unknown words taken in: {n}.',
+      ko: '모르는 낱말도 거절되지 않는다. 받아 낸 모르는 낱말: {n}.',
       ja: '知らない語も追い返されない。受け取った語: {n}。',
       zh: '陌生的词也不会被拒之门外。接住的词: {n}。',
       ar: 'لا تُرفض الكلمة المجهولة أبدًا. الكلمات المستقبَلة: {n}.',
