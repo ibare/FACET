@@ -65,7 +65,10 @@ export async function probeAFewCellsAlgorithm(
   const counts = members.map((m) => m.length);
   const dists = centroids.map((c) => distance(query, c));
   // 여는 차례는 잰 거리가 정한다. 사람이 적은 걸음표가 아니다.
-  const order = centroids.map((_, i) => i).sort((a, b) => dists[a] - dists[b]);
+  // 거리가 같으면 **번호가 앞선 칸**을 먼저 연다. 지금 데이터에는 동점이 없지만
+  // (4.95 · 5.45 · 5.47 · 5.87), 정해 두지 않으면 대표를 손대는 순간 실행마다
+  // 다른 차례가 나온다.
+  const order = centroids.map((_, i) => i).sort((a, b) => dists[a] - dists[b] || a - b);
   const nprobe = Math.max(1, Math.min(ctx.data.nprobe, centroids.length));
 
   /** 자동 재생을 마친 뒤부터는 걸음마다 단추를 기다린다. */

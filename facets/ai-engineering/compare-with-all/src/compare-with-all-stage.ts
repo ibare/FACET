@@ -63,10 +63,15 @@ const SPOKE_PARK = -ARC_HALF - 16;
 const BASE_Y = 258;
 const CEIL_Y = 44;
 const CEIL_H = BASE_Y - CEIL_Y;
-const COL_X = 286;
-const COL_W = 84;
+/**
+ * 기둥과 눈금은 캔버스에서 역산한다. 상수로는 **상한**만 둔다 (S-piece "그 폭을
+ * 채운다"). 절대 픽셀로 못박으면 `PIECE_CANVAS_W` 가 바뀔 때 눈금선만 제자리에
+ * 남아 라벨과 어긋난다.
+ */
+const COL_W = Math.min(84, Math.round(W * 0.14));
+const COL_X = Math.round(W * 0.46);
 const LEVEL_X1 = COL_X - 10;
-const LEVEL_X2 = 556;
+const LEVEL_X2 = W - 64;
 const LEVEL_LABEL_X = W - 18;
 /** 화면 밖으로 자란 기둥을 자르는 자리. */
 const TOP_CUT = 12;

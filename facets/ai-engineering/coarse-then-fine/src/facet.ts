@@ -76,7 +76,7 @@ export const coarseThenFineFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'coarse-then-fine-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece ?? [] },
+    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
   },
   messages: {
     'caption.enter': {
@@ -93,7 +93,7 @@ export const coarseThenFineFacet: FacetJson = {
     },
     'caption.hop': {
       en: 'A neighbor sits nearer the cross. Move {from} to {to}.',
-      ko: '이웃 가운데 십자에 더 가까운 곳이 있다. {from} 에서 {to} 로.',
+      ko: '이웃 가운데 십자에 더 가까운 곳이 있다. 옮긴다: {from} → {to}.',
       ja: '隣の中に十字へより近い場所がある。{from} から {to} へ。',
       zh: '邻居中有更靠近十字的点。从 {from} 移到 {to}。',
       ar: 'أحد الجيران أقرب إلى الصليب. انتقل من {from} إلى {to}.',
