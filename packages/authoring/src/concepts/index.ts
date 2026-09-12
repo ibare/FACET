@@ -22,6 +22,7 @@ import type { FacetConceptSource } from '../concept-types.js';
 import { adjacencyListVsMatrixConcept } from './adjacency-list-vs-matrix.js';
 import { ahoCorasickConcept } from './aho-corasick.js';
 import { allSuffixesSortedConcept } from './all-suffixes-sorted.js';
+import { angleNotLengthConcept } from './angle-not-length.js';
 import { arrayConcept } from './array.js';
 import { arrayAsTreeConcept } from './array-as-tree.js';
 import { assignThenMoveConcept } from './assign-then-move.js';
@@ -64,8 +65,10 @@ import { cachingCdnConcept } from './caching-cdn.js';
 import { cannotUnsetConcept } from './cannot-unset.js';
 import { chainingBucketConcept } from './chaining-bucket.js';
 import { circularBufferWrapConcept } from './circular-buffer-wrap.js';
+import { coarseThenFineConcept } from './coarse-then-fine.js';
 import { coinFlipHeightConcept } from './coin-flip-height.js';
 import { compareAndSwapConcept } from './compare-and-swap.js';
+import { compareWithAllConcept } from './compare-with-all.js';
 import { conditionalStatementConcept } from './conditional-statement.js';
 import { conflictMissConcept } from './conflict-miss.js';
 import { constantFadesConcept } from './constant-fades.js';
@@ -96,6 +99,7 @@ import { editDistanceConcept } from './edit-distance.js';
 import { editTableFillConcept } from './edit-table-fill.js';
 import { enqueueDequeueEndsConcept } from './enqueue-dequeue-ends.js';
 import { euclideanConcept } from './euclidean.js';
+import { exhaustiveSearchConcept } from './exhaustive-search.js';
 import { failLinkConcept } from './fail-link.js';
 import { falseSharingConcept } from './false-sharing.js';
 import { fastPowerConcept } from './fast-power.js';
@@ -127,6 +131,7 @@ import { heightBalanceCheckConcept } from './height-balance-check.js';
 import { heightStaysLowConcept } from './height-stays-low.js';
 import { heuristicGuidesConcept } from './heuristic-guides.js';
 import { hierarchicalConcept } from './hierarchical.js';
+import { hnswConcept } from './hnsw.js';
 import { hyperloglogConcept } from './hyperloglog.js';
 import { impurityDropsConcept } from './impurity-drops.js';
 import { inPlaceVsExtraConcept } from './in-place-vs-extra.js';
@@ -137,6 +142,7 @@ import { insertIntoSortedPartConcept } from './insert-into-sorted-part.js';
 import { insertionSortConcept } from './insertion-sort.js';
 import { integerOverflowConcept } from './integer-overflow.js';
 import { interpolationSearchConcept } from './interpolation-search.js';
+import { invertedFileIndexConcept } from './inverted-file-index.js';
 import { ipRoutingConcept } from './ip-routing.js';
 import { kChangesBoundaryConcept } from './k-changes-boundary.js';
 import { kMustBeGivenConcept } from './k-must-be-given.js';
@@ -177,6 +183,7 @@ import { mutuallyReachableConcept } from './mutually-reachable.js';
 import { naiveShiftByOneConcept } from './naive-shift-by-one.js';
 import { negateAndAddOneConcept } from './negate-and-add-one.js';
 import { negativeEdgeBreaksConcept } from './negative-edge-breaks.js';
+import { neighborsLinkedAheadConcept } from './neighbors-linked-ahead.js';
 import { nodeHoldsManyConcept } from './node-holds-many.js';
 import { nodePointsNextConcept } from './node-points-next.js';
 import { noiseLeftOutConcept } from './noise-left-out.js';
@@ -197,6 +204,8 @@ import { positionalValueConcept } from './positional-value.js';
 import { prefixSuffixJumpConcept } from './prefix-suffix-jump.js';
 import { primMstConcept } from './prim-mst.js';
 import { primalityConcept } from './primality.js';
+import { probeAFewCellsConcept } from './probe-a-few-cells.js';
+import { productQuantizationConcept } from './product-quantization.js';
 import { projectAndLoseConcept } from './project-and-lose.js';
 import { pruneBranchConcept } from './prune-branch.js';
 import { pushPopTopConcept } from './push-pop-top.js';
@@ -206,6 +215,7 @@ import { quickSortConcept } from './quick-sort.js';
 import { rabinKarpConcept } from './rabin-karp.js';
 import { radixSortConcept } from './radix-sort.js';
 import { randomForestConcept } from './random-forest.js';
+import { recallSpeedTradeoffConcept } from './recall-speed-tradeoff.js';
 import { recolorThenRotateConcept } from './recolor-then-rotate.js';
 import { redBlackTreeConcept } from './red-black-tree.js';
 import { reduceToKnownConcept } from './reduce-to-known.js';
@@ -243,6 +253,7 @@ import { sortStabilityConcept } from './sort-stability.js';
 import { spaceErrorTradeoffConcept } from './space-error-tradeoff.js';
 import { spaceIsPartOfItConcept } from './space-is-part-of-it.js';
 import { spatialLocalityConcept } from './spatial-locality.js';
+import { splitAndNumberConcept } from './split-and-number.js';
 import { splitByQuestionConcept } from './split-by-question.js';
 import { splitUntilOneConcept } from './split-until-one.js';
 import { splitWhenFullConcept } from './split-when-full.js';
@@ -275,6 +286,7 @@ import { unionByRankConcept } from './union-by-rank.js';
 import { unionFindConcept } from './union-find.js';
 import { unknownBecomesKnownConcept } from './unknown-becomes-known.js';
 import { unrepresentableFractionConcept } from './unrepresentable-fraction.js';
+import { vectorSimilarityConcept } from './vector-similarity.js';
 import { verifyVsFindConcept } from './verify-vs-find.js';
 import { vocabularyConcept } from './vocabulary.js';
 import { voteByNeighborsConcept } from './vote-by-neighbors.js';
@@ -289,6 +301,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   adjacencyListVsMatrixConcept,
   ahoCorasickConcept,
   allSuffixesSortedConcept,
+  angleNotLengthConcept,
   arrayAsTreeConcept,
   arrayConcept,
   assignThenMoveConcept,
@@ -331,8 +344,10 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   cannotUnsetConcept,
   chainingBucketConcept,
   circularBufferWrapConcept,
+  coarseThenFineConcept,
   coinFlipHeightConcept,
   compareAndSwapConcept,
+  compareWithAllConcept,
   conditionalStatementConcept,
   conflictMissConcept,
   constantFadesConcept,
@@ -363,6 +378,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   editTableFillConcept,
   enqueueDequeueEndsConcept,
   euclideanConcept,
+  exhaustiveSearchConcept,
   failLinkConcept,
   falseSharingConcept,
   fastPowerConcept,
@@ -394,6 +410,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   heightStaysLowConcept,
   heuristicGuidesConcept,
   hierarchicalConcept,
+  hnswConcept,
   hyperloglogConcept,
   impurityDropsConcept,
   indegreeZeroFirstConcept,
@@ -404,6 +421,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   insertionSortConcept,
   integerOverflowConcept,
   interpolationSearchConcept,
+  invertedFileIndexConcept,
   ipRoutingConcept,
   kChangesBoundaryConcept,
   keepNeighborsCloseConcept,
@@ -444,6 +462,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   naiveShiftByOneConcept,
   negateAndAddOneConcept,
   negativeEdgeBreaksConcept,
+  neighborsLinkedAheadConcept,
   nodeHoldsManyConcept,
   nodePointsNextConcept,
   noiseLeftOutConcept,
@@ -464,6 +483,8 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   prefixSuffixJumpConcept,
   primalityConcept,
   primMstConcept,
+  probeAFewCellsConcept,
+  productQuantizationConcept,
   projectAndLoseConcept,
   pruneBranchConcept,
   pushPopTopConcept,
@@ -473,6 +494,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   rabinKarpConcept,
   radixSortConcept,
   randomForestConcept,
+  recallSpeedTradeoffConcept,
   recolorThenRotateConcept,
   redBlackTreeConcept,
   reduceToKnownConcept,
@@ -510,6 +532,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   spaceErrorTradeoffConcept,
   spaceIsPartOfItConcept,
   spatialLocalityConcept,
+  splitAndNumberConcept,
   splitByQuestionConcept,
   splitUntilOneConcept,
   splitWhenFullConcept,
@@ -542,6 +565,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   unionFindConcept,
   unknownBecomesKnownConcept,
   unrepresentableFractionConcept,
+  vectorSimilarityConcept,
   verifyVsFindConcept,
   vocabularyConcept,
   voteByNeighborsConcept,
