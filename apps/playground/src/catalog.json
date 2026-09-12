@@ -1745,19 +1745,23 @@
           "topics": [
             {
               "id": "twos-complement",
-              "name": "2의 보수"
+              "name": "2의 보수",
+              "facetId": "facet:twosComplement"
             },
             {
               "id": "floating-point",
-              "name": "부동소수점"
+              "name": "부동소수점",
+              "facetId": "facet:floatingPoint"
             },
             {
               "id": "bitwise-ops",
-              "name": "비트 연산"
+              "name": "비트 연산",
+              "facetId": "facet:bitwiseOps"
             },
             {
               "id": "integer-overflow",
-              "name": "오버플로"
+              "name": "오버플로",
+              "facetId": "facet:integerOverflow"
             },
             {
               "id": "positional-value",
@@ -1870,63 +1874,72 @@
               "name": "줄 단위로 올라온다",
               "desc": "하나를 부르면 이웃까지 딸려 온다",
               "kind": "piece",
-              "origin": "cache-line"
+              "origin": "cache-line",
+              "facetId": "facet:lineFill"
             },
             {
               "id": "temporal-locality",
               "name": "시간 지역성",
               "desc": "방금 쓴 것을 곧 또 쓴다",
               "kind": "piece",
-              "origin": "cache-line"
+              "origin": "cache-line",
+              "facetId": "facet:temporalLocality"
             },
             {
               "id": "spatial-locality",
               "name": "공간 지역성",
               "desc": "옆자리를 이어서 쓴다",
               "kind": "piece",
-              "origin": "cache-line"
+              "origin": "cache-line",
+              "facetId": "facet:spatialLocality"
             },
             {
               "id": "index-and-tag",
               "name": "인덱스와 태그",
               "desc": "주소를 쪼개 들어갈 자리를 정한다",
               "kind": "piece",
-              "origin": "direct-mapped-cache"
+              "origin": "direct-mapped-cache",
+              "facetId": "facet:indexAndTag"
             },
             {
               "id": "conflict-miss",
               "name": "충돌 실패",
               "desc": "빈 자리가 있는데도 밀려난다",
               "kind": "piece",
-              "origin": "direct-mapped-cache"
+              "origin": "direct-mapped-cache",
+              "facetId": "facet:conflictMiss"
             },
             {
               "id": "associativity-relief",
               "name": "연관도",
               "desc": "한 자리에 여럿을 두면 덜 밀린다",
               "kind": "piece",
-              "origin": "set-associative-cache"
+              "origin": "set-associative-cache",
+              "facetId": "facet:associativityRelief"
             },
             {
               "id": "latency-ladder",
               "name": "지연 계단",
               "desc": "한 계단 내려갈 때마다 수십 배",
               "kind": "piece",
-              "origin": "cache-line"
+              "origin": "cache-line",
+              "facetId": "facet:latencyLadder"
             },
             {
               "id": "write-back-vs-through",
               "name": "지금 내려보낼까 모아 둘까",
               "desc": "고친 것을 언제 아래로 보내는가",
               "kind": "piece",
-              "origin": "write-policy"
+              "origin": "write-policy",
+              "facetId": "facet:writeBackVsThrough"
             },
             {
               "id": "false-sharing",
               "name": "거짓 공유",
               "desc": "다른 값인데 같은 줄이라 부딪친다",
               "kind": "piece",
-              "origin": "write-policy"
+              "origin": "write-policy",
+              "facetId": "facet:falseSharing"
             }
           ]
         },

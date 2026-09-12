@@ -127,6 +127,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/computer-architecture/associativity-relief:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/computer-architecture/bit-mask:
     dependencies:
       '@ffacet/core':
@@ -139,7 +145,81 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/computer-architecture/bitwise-ops:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/computer-architecture/byte-order:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/conflict-miss:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/false-sharing:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/floating-point:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/index-and-tag:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/integer-overflow:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
+
+  facets/computer-architecture/latency-ladder:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/line-fill:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -175,6 +255,46 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/computer-architecture/spatial-locality:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/temporal-locality:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/twos-complement:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
+
   facets/computer-architecture/uneven-float-gaps:
     dependencies:
       '@ffacet/core':
@@ -182,6 +302,12 @@ importers:
         version: link:../../../packages/core
 
   facets/computer-architecture/unrepresentable-fraction:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/write-back-vs-through:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -2625,6 +2751,9 @@ importers:
       '@ffacet/algorithm-assign-then-move':
         specifier: workspace:*
         version: link:../../facets/ml-basics/assign-then-move
+      '@ffacet/algorithm-associativity-relief':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/associativity-relief
       '@ffacet/algorithm-asymmetric-rsa':
         specifier: workspace:*
         version: link:../../facets/security/asymmetric-rsa
@@ -2667,6 +2796,9 @@ importers:
       '@ffacet/algorithm-bit-shift':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/bit-shift
+      '@ffacet/algorithm-bitwise-ops':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/bitwise-ops
       '@ffacet/algorithm-black-height-equal':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/black-height-equal
@@ -2730,6 +2862,9 @@ importers:
       '@ffacet/algorithm-conditional-statement':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/conditional-statement
+      '@ffacet/algorithm-conflict-miss':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/conflict-miss
       '@ffacet/algorithm-constant-fades':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/constant-fades
@@ -2814,6 +2949,9 @@ importers:
       '@ffacet/algorithm-fail-link':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/fail-link
+      '@ffacet/algorithm-false-sharing':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/false-sharing
       '@ffacet/algorithm-fast-power':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/fast-power
@@ -2823,6 +2961,9 @@ importers:
       '@ffacet/algorithm-find-root':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/find-root
+      '@ffacet/algorithm-floating-point':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/floating-point
       '@ffacet/algorithm-floyd-warshall':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/floyd-warshall
@@ -2913,12 +3054,18 @@ importers:
       '@ffacet/algorithm-index-address-calc':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/index-address-calc
+      '@ffacet/algorithm-index-and-tag':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/index-and-tag
       '@ffacet/algorithm-insert-into-sorted-part':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/insert-into-sorted-part
       '@ffacet/algorithm-insertion-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/insertion-sort
+      '@ffacet/algorithm-integer-overflow':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/integer-overflow
       '@ffacet/algorithm-interpolation-search':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/interpolation-search
@@ -2949,12 +3096,18 @@ importers:
       '@ffacet/algorithm-kruskal-mst':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/kruskal-mst
+      '@ffacet/algorithm-latency-ladder':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/latency-ladder
       '@ffacet/algorithm-leading-zeros-tell':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/leading-zeros-tell
       '@ffacet/algorithm-least-squares':
         specifier: workspace:*
         version: link:../../facets/ml-basics/least-squares
+      '@ffacet/algorithm-line-fill':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/line-fill
       '@ffacet/algorithm-linear-regression':
         specifier: workspace:*
         version: link:../../facets/ml-basics/linear-regression
@@ -3222,6 +3375,9 @@ importers:
       '@ffacet/algorithm-space-error-tradeoff':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/space-error-tradeoff
+      '@ffacet/algorithm-spatial-locality':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/spatial-locality
       '@ffacet/algorithm-split-by-question':
         specifier: workspace:*
         version: link:../../facets/ml-basics/split-by-question
@@ -3255,6 +3411,9 @@ importers:
       '@ffacet/algorithm-take-best-now':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/take-best-now
+      '@ffacet/algorithm-temporal-locality':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/temporal-locality
       '@ffacet/algorithm-three-edit-choices':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/three-edit-choices
@@ -3288,6 +3447,9 @@ importers:
       '@ffacet/algorithm-two-color-conflict':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/two-color-conflict
+      '@ffacet/algorithm-twos-complement':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/twos-complement
       '@ffacet/algorithm-undo-by-back-edge':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/undo-by-back-edge
@@ -3315,6 +3477,9 @@ importers:
       '@ffacet/algorithm-widest-margin':
         specifier: workspace:*
         version: link:../../facets/ml-basics/widest-margin
+      '@ffacet/algorithm-write-back-vs-through':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/write-back-vs-through
       '@ffacet/algorithm-wrong-in-one-direction':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/wrong-in-one-direction

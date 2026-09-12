@@ -829,4 +829,48 @@ export function bootstrapFacet(): void {
     import('@ffacet/algorithm-unrepresentable-fraction').then((m) => m.registerUnrepresentableFraction()),
   );
 
+  // 캐시 계층 조각 아홉 — 캐시 라인 4 · 직접 사상 2 · 집합 연관 1 · 쓰기 정책 2.
+  registerFacetLoader('facet:lineFill', () =>
+    import('@ffacet/algorithm-line-fill').then((m) => m.registerLineFill()),
+  );
+  registerFacetLoader('facet:temporalLocality', () =>
+    import('@ffacet/algorithm-temporal-locality').then((m) => m.registerTemporalLocality()),
+  );
+  registerFacetLoader('facet:spatialLocality', () =>
+    import('@ffacet/algorithm-spatial-locality').then((m) => m.registerSpatialLocality()),
+  );
+  registerFacetLoader('facet:indexAndTag', () =>
+    import('@ffacet/algorithm-index-and-tag').then((m) => m.registerIndexAndTag()),
+  );
+  registerFacetLoader('facet:conflictMiss', () =>
+    import('@ffacet/algorithm-conflict-miss').then((m) => m.registerConflictMiss()),
+  );
+  registerFacetLoader('facet:associativityRelief', () =>
+    import('@ffacet/algorithm-associativity-relief').then((m) => m.registerAssociativityRelief()),
+  );
+  registerFacetLoader('facet:latencyLadder', () =>
+    import('@ffacet/algorithm-latency-ladder').then((m) => m.registerLatencyLadder()),
+  );
+  registerFacetLoader('facet:writeBackVsThrough', () =>
+    import('@ffacet/algorithm-write-back-vs-through').then((m) => m.registerWriteBackVsThrough()),
+  );
+  registerFacetLoader('facet:falseSharing', () =>
+    import('@ffacet/algorithm-false-sharing').then((m) => m.registerFalseSharing()),
+  );
+
+  // 수와 비트 표현 완제품 넷 — 손잡이가 모두 reactive 다 (S-piece 가 아니라
+  // CoroutineMechanism 에 위젯 액션 지원이 없기 때문이다).
+  registerFacetLoader('facet:twosComplement', () =>
+    import('@ffacet/algorithm-twos-complement').then((m) => m.registerTwosComplement()),
+  );
+  registerFacetLoader('facet:floatingPoint', () =>
+    import('@ffacet/algorithm-floating-point').then((m) => m.registerFloatingPoint()),
+  );
+  registerFacetLoader('facet:bitwiseOps', () =>
+    import('@ffacet/algorithm-bitwise-ops').then((m) => m.registerBitwiseOps()),
+  );
+  registerFacetLoader('facet:integerOverflow', () =>
+    import('@ffacet/algorithm-integer-overflow').then((m) => m.registerIntegerOverflow()),
+  );
+
 }
