@@ -12,7 +12,11 @@
  * 여는 차례도 좌표에서 나온다. 선언에 있는 1차 데이터는 점의 좌표 · 대표의
  * 좌표 · 질의의 좌표 · 열 칸 수뿐이다.
  *
- * 이벤트 (전부 facet 고유 확장. silent 인 것은 없다):
+ * 이벤트 (전부 facet 고유 확장. silent 인 것은 없다).
+ *   — 여기 실리는 `cell` 과 `order` 는 **배열 색인이라 0 부터** 센다. 화면과 글은
+ *     1 부터 세므로 projector 와 stage 가 읽는 자리에서 하나를 더한다. 같은 네
+ *     칸을 다루는 완제품(`invertedFileIndex`)이 그 규약을 쓰고, 두 화면이 한 글에
+ *     나란히 놓일 때 "칸 2" 가 서로 다른 칸을 가리키지 않게 하려는 것이다.
  *   query-placed      { total: number }
  *   cells-split       { counts: number[] }
  *   centroid-measured { cell: number; dist: number }

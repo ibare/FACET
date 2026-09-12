@@ -363,7 +363,11 @@ export const probeAFewCellsStageView: CanvasView = {
       // 이름표도 따라서 네 귀로 흩어진다.
       const ax = site.x < W / 2 ? 86 : W - 86;
       const ay = Math.max(58, Math.min(PLOT_H - 58, site.y));
-      const idText = label(String(i), ax, ay - 17, fontSizes.lg, colors.text, '600');
+      // 사람이 읽는 번호는 1 부터 센다. 배열 색인 `i` 는 0 부터이고 payload 도
+      // 그대로 싣지만, 화면과 글에서는 첫 칸이 "1" 이어야 한다 — 같은 네 칸을
+      // 다루는 완제품(`invertedFileIndex`)이 그 규약을 쓰므로, 두 화면이 한 글에
+      // 나란히 놓일 때 "칸 2" 가 서로 다른 칸을 가리키지 않게 맞춘다.
+      const idText = label(String(i + 1), ax, ay - 17, fontSizes.lg, colors.text, '600');
       const countText = label('', ax, ay + 3, fontSizes.xs, colors.textMuted);
       const rankText = label('', ax, ay + 22, fontSizes.sm, colors.textMuted);
       idText.setAttribute('opacity', '0');

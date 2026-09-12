@@ -66,8 +66,10 @@ export const probeAFewCellsProjector: ProjectorFactory = (views, runtime) => {
           const cell = numberOf(p.cell);
           const dist = numberOf(p.dist);
           stage?.setCaption?.(
+            // 사람이 읽는 번호는 1 부터다. 아래 `measureCell` 로 가는 `cell` 은
+            // 배열 색인이라 그대로 둔다 — 같은 값이 두 뜻으로 쓰이는 자리다.
             tr('caption.measure', 'Query to the centroid of cell {cell}: {dist}.', {
-              cell,
+              cell: cell + 1,
               dist: dist.toFixed(2),
             }),
           );
@@ -80,7 +82,9 @@ export const probeAFewCellsProjector: ProjectorFactory = (views, runtime) => {
           stage?.setCaption?.(
             tr('caption.rank', 'All {cells} centroids sit in one thin ring. Nearest first: {order}.', {
               cells: order.length,
-              order: order.join(' → '),
+              // 차례에 실린 것도 칸 번호라 읽는 자리에서 1 부터로 민다. 아래
+              // `rankCells` 로 가는 `order` 는 색인 그대로다.
+              order: order.map((c) => c + 1).join(' → '),
             }),
           );
           await stage?.rankCells?.({
@@ -95,7 +99,7 @@ export const probeAFewCellsProjector: ProjectorFactory = (views, runtime) => {
           const cell = numberOf(p.cell);
           stage?.setCaption?.(
             tr('caption.open', 'Cell {cell} opens. Points compared so far: {seen}.', {
-              cell,
+              cell: cell + 1,
               seen: numberOf(p.seen),
             }),
           );
