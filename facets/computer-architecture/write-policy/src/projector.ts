@@ -118,14 +118,17 @@ export const writePolicyProjector: ProjectorFactory = (
         }
 
         case 'mark-dirty': {
-          const p = event.payload as { slot?: unknown; pending?: unknown } | undefined;
+          const p = event.payload as
+            | { slot?: unknown; line?: unknown; pending?: unknown }
+            | undefined;
           const pending = numOf(p?.pending);
           stage?.markDirty?.(numOf(p?.slot), pending);
           // 이미 고쳐진 줄을 또 고쳤다 — write-back 이 아끼는 자리가 바로 여기다.
           if (pending > 1) {
             stage?.setCaption?.(
               tr('caption.fold', 'Line {line} is edited again. Still nothing goes down.', {
-                line: numOf(p?.slot),
+                // 줄 번호다. 칸 번호가 아니다 — 지금 데이터에서만 둘이 우연히 같다.
+                line: numOf(p?.line),
               }),
             );
           }

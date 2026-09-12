@@ -10,10 +10,6 @@
  * 언젠가는 내려가야 하므로 그것까지 세야 다섯이 된다. 세지 않으면 하나가 되고
  * 그것은 거짓이다.
  *
- * ── 식별자
- *   slot:<번호>    캐시 칸 (0 .. slots-1)
- *   index:<번호>   writes 배열에서 쓰기 차례의 자리
- *
  * ── 이벤트
  * 표준은 `done` 뿐이고 메타 `phase` 를 뺀 나머지는 이 facet 의 확장이다 (C2).
  *
@@ -23,7 +19,7 @@
  *   write-begin  { step, line }             쓰기 차례 하나를 집는다
  *   fill         { slot, line }             줄이 칸에 들어온다
  *   evict        { slot, line }             줄이 칸에서 쫓겨난다
- *   mark-dirty   { slot, pending }          안 내려간 고침이 그 칸에 쌓인다
+ *   mark-dirty   { slot, line, pending }    안 내려간 고침이 그 칸에 쌓인다
  *   descend      { slot, line, folded, reason }
  *                                           아래층으로 한 번 내려간다.
  *                                           folded 는 그 한 번에 실려 내려간 고침 수,
@@ -179,7 +175,13 @@ export const writePolicyAlgorithm = async (
       if (back) {
         dirty[s] = 1;
         pending[s] += 1;
-        await ctx.emit({ type: 'mark-dirty', payload: { slot: s, pending: pending[s] } });
+        // `line` 을 함께 싣는다 — 캡션이 "줄 N 을 또 고쳤다" 라고 말하므로 칸 번호로는
+        // 대신할 수 없다. 지금 데이터는 줄과 칸이 우연히 같은 자리에서만 되풀이 고침이
+        // 나서 드러나지 않았는데, `writes` 나 칸 수가 바뀌면 곧바로 거짓이 된다.
+        await ctx.emit({
+          type: 'mark-dirty',
+          payload: { slot: s, line: target, pending: pending[s] },
+        });
       } else {
         await descend(s, target, 1, 'through');
       }
