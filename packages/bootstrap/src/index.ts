@@ -937,5 +937,20 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:splitAndNumber', () =>
     import('@ffacet/algorithm-split-and-number').then((m) => m.registerSplitAndNumber()),
   );
+  registerFacetLoader('facet:exhaustiveSearch', () =>
+    import('@ffacet/algorithm-exhaustive-search').then((m) => m.registerExhaustiveSearch()),
+  );
+  registerFacetLoader('facet:hnsw', () =>
+    import('@ffacet/algorithm-hnsw').then((m) => m.registerHnsw()),
+  );
+  registerFacetLoader('facet:invertedFileIndex', () =>
+    import('@ffacet/algorithm-inverted-file-index').then((m) => m.registerInvertedFileIndex()),
+  );
+  registerFacetLoader('facet:productQuantization', () =>
+    import('@ffacet/algorithm-product-quantization').then((m) => m.registerProductQuantization()),
+  );
+  registerFacetLoader('facet:vectorSimilarity', () =>
+    import('@ffacet/algorithm-vector-similarity').then((m) => m.registerVectorSimilarity()),
+  );
 
 }

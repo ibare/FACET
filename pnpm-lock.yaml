@@ -157,6 +157,24 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ai-engineering/exhaustive-search:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/hnsw:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/inverted-file-index:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ai-engineering/merge-the-frequent-pair:
     dependencies:
       '@ffacet/core':
@@ -170,6 +188,12 @@ importers:
         version: link:../../../packages/core
 
   facets/ai-engineering/probe-a-few-cells:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/product-quantization:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -206,6 +230,12 @@ importers:
         version: link:../../../packages/core
 
   facets/ai-engineering/unknown-becomes-known:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/vector-similarity:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -3137,6 +3167,9 @@ importers:
       '@ffacet/algorithm-euclidean':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/euclidean
+      '@ffacet/algorithm-exhaustive-search':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/exhaustive-search
       '@ffacet/algorithm-fail-link':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/fail-link
@@ -3230,6 +3263,9 @@ importers:
       '@ffacet/algorithm-hierarchical':
         specifier: workspace:*
         version: link:../../facets/ml-basics/hierarchical
+      '@ffacet/algorithm-hnsw':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/hnsw
       '@ffacet/algorithm-hyperloglog':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/hyperloglog
@@ -3260,6 +3296,9 @@ importers:
       '@ffacet/algorithm-interpolation-search':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/interpolation-search
+      '@ffacet/algorithm-inverted-file-index':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/inverted-file-index
       '@ffacet/algorithm-ip-routing':
         specifier: workspace:*
         version: link:../../facets/network/ip-routing
@@ -3446,6 +3485,9 @@ importers:
       '@ffacet/algorithm-probe-a-few-cells':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/probe-a-few-cells
+      '@ffacet/algorithm-product-quantization':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/product-quantization
       '@ffacet/algorithm-project-and-lose':
         specifier: workspace:*
         version: link:../../facets/ml-basics/project-and-lose
@@ -3686,6 +3728,9 @@ importers:
       '@ffacet/algorithm-unrepresentable-fraction':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/unrepresentable-fraction
+      '@ffacet/algorithm-vector-similarity':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/vector-similarity
       '@ffacet/algorithm-verify-vs-find':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/verify-vs-find

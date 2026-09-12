@@ -5667,23 +5667,28 @@
           "topics": [
             {
               "id": "vector-similarity",
-              "name": "벡터 유사도"
+              "name": "벡터 유사도",
+              "facetId": "facet:vectorSimilarity"
             },
             {
               "id": "exhaustive-search",
-              "name": "완전 탐색"
+              "name": "완전 탐색",
+              "facetId": "facet:exhaustiveSearch"
             },
             {
               "id": "hnsw",
-              "name": "HNSW"
+              "name": "HNSW",
+              "facetId": "facet:hnsw"
             },
             {
               "id": "inverted-file-index",
-              "name": "역파일 색인"
+              "name": "역파일 색인",
+              "facetId": "facet:invertedFileIndex"
             },
             {
               "id": "product-quantization",
-              "name": "곱 양자화"
+              "name": "곱 양자화",
+              "facetId": "facet:productQuantization"
             },
             {
               "id": "angle-not-length",
