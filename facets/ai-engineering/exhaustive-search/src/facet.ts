@@ -1,0 +1,212 @@
+/**
+ * 완전 탐색 선언.
+ *
+ * 손잡이는 차원 하나뿐이다. 후보 수는 64 로 못박혀 움직이지 않는다 — 움직이지
+ * 않는 것이 이 화면의 절반이라, 그것을 손잡이로 내주면 주장이 흐려진다.
+ *
+ * 코드 패널을 두지 않는다. 까닭은 `irs.ts` 머리말에 적었다.
+ */
+
+import { CONTROL_SET } from '@ffacet/core/runtime';
+import type { FacetJson } from '@ffacet/core/runtime';
+
+export const exhaustiveSearchFacet: FacetJson = {
+  id: 'facet:exhaustiveSearch',
+  title: {
+    en: 'Exhaustive search',
+    ko: '완전 탐색',
+    ja: '全探索',
+    zh: '穷举搜索',
+    ar: 'البحث الشامل',
+    es: 'Búsqueda exhaustiva',
+    fr: 'Recherche exhaustive',
+    hi: 'संपूर्ण खोज',
+    id: 'Pencarian menyeluruh',
+    pt: 'Busca exaustiva',
+  },
+  description: {
+    en: 'Candidates stay at 64, but raising the dimension swells the work until it fills the plate.',
+    ko: '후보는 64 그대로인데, 차원을 키우면 훑어야 할 양이 판을 가득 채울 만큼 불어난다.',
+    ja: '候補は64のままだが、次元を上げると走査する量が板を埋め尽くすほど膨れ上がる。',
+    zh: '候选始终是 64，但提高维度后，需要遍历的量会膨胀到填满整块板。',
+    ar: 'يبقى عدد المرشحين 64، لكن زيادة الأبعاد تضخّم كمية العمل حتى تملأ اللوحة.',
+    es: 'Los candidatos siguen siendo 64, pero subir la dimensión infla el trabajo hasta llenar el tablero.',
+    fr: 'Les candidats restent 64, mais augmenter la dimension gonfle le travail jusqu’à remplir le plateau.',
+    hi: 'उम्मीदवार 64 ही रहते हैं, पर आयाम बढ़ाने पर काम इतना फूलता है कि पूरा पट भर जाता है।',
+    id: 'Kandidat tetap 64, tetapi menaikkan dimensi menggembungkan pekerjaan sampai memenuhi papan.',
+    pt: 'Os candidatos continuam 64, mas aumentar a dimensão incha o trabalho até preencher o quadro.',
+  },
+  algorithm: 'module:exhaustiveSearch',
+  projector: 'module:exhaustiveSearchProjector',
+  initialData: {
+    type: 'exhaustive-search',
+    /** 후보 수. 손잡이가 없는 쪽이다. */
+    candidates: 64,
+    /** 손잡이가 고를 수 있는 차원. 마지막 값이 실제 임베딩 크기에 가깝다. */
+    dims: [2, 8, 32, 128, 768],
+    dim: 32,
+    /** 한 걸음에 훑는 후보 수 — 여덟 걸음이면 한 회차를 읽을 만하다. */
+    batch: 8,
+    /** 걸음 사이의 정지 시간. 애니메이션이 끝난 뒤부터 센다. */
+    stepMs: 320,
+  },
+  layout: {
+    type: 'column',
+    gap: 8,
+    children: [{ ref: 'header' }, { ref: 'stage', padding: '8px 0' }, { ref: 'controls' }],
+  },
+  blocks: {
+    header: { type: 'title-block' },
+    stage: { type: 'exhaustive-search-stage' },
+    controls: {
+      type: 'control-bar',
+      controls: [
+        ...CONTROL_SET.playback,
+        {
+          widget: 'segmented-slider',
+          action: 'dims',
+          name: 'dims',
+          label: {
+            en: 'Dimensions',
+            ko: '차원',
+            ja: '次元',
+            zh: '维度',
+            ar: 'الأبعاد',
+            es: 'Dimensiones',
+            fr: 'Dimensions',
+            hi: 'आयाम',
+            id: 'Dimensi',
+            pt: 'Dimensões',
+          },
+          segments: [
+            { value: 2, label: '2' },
+            { value: 8, label: '8' },
+            { value: 32, label: '32', default: true },
+            { value: 128, label: '128' },
+            { value: 768, label: '768' },
+          ],
+        },
+      ],
+      metrics: [
+        {
+          name: 'multiply-count',
+          label: {
+            en: 'Multiplications',
+            ko: '곱셈',
+            ja: '掛け算',
+            zh: '乘法',
+            ar: 'عمليات الضرب',
+            es: 'Multiplicaciones',
+            fr: 'Multiplications',
+            hi: 'गुणा',
+            id: 'Perkalian',
+            pt: 'Multiplicações',
+          },
+          initial: 0,
+        },
+        {
+          name: 'byte-sum',
+          label: {
+            en: 'Bytes',
+            ko: '자리',
+            ja: 'バイト',
+            zh: '字节',
+            ar: 'بايت',
+            es: 'Bytes',
+            fr: 'Octets',
+            hi: 'बाइट',
+            id: 'Bita',
+            pt: 'Bytes',
+          },
+          initial: 0,
+        },
+      ],
+    },
+  },
+  messages: {
+    'caption.setup': {
+      en: 'Dimensions {d}. Candidates: {n}.',
+      ko: '차원 {d}. 후보: {n}.',
+      ja: '次元 {d}。候補: {n}。',
+      zh: '维度 {d}。候选：{n}。',
+      ar: 'الأبعاد {d}. المرشحون: {n}.',
+      es: 'Dimensiones {d}. Candidatos: {n}.',
+      fr: 'Dimensions {d}. Candidats : {n}.',
+      hi: 'आयाम {d}। उम्मीदवार: {n}।',
+      id: 'Dimensi {d}. Kandidat: {n}.',
+      pt: 'Dimensões {d}. Candidatos: {n}.',
+    },
+    'caption.scan': {
+      en: 'Scanned {done} of {n}. Multiplications: {mult}.',
+      ko: '훑은 후보 {done} / {n}. 곱셈: {mult}.',
+      ja: '走査済み {done} / {n}。掛け算: {mult}。',
+      zh: '已扫描 {done} / {n}。乘法：{mult}。',
+      ar: 'تم فحص {done} من {n}. عمليات الضرب: {mult}.',
+      es: 'Recorridos {done} de {n}. Multiplicaciones: {mult}.',
+      fr: 'Parcourus {done} sur {n}. Multiplications : {mult}.',
+      hi: 'देखे गए {done} / {n}। गुणा: {mult}।',
+      id: 'Dipindai {done} dari {n}. Perkalian: {mult}.',
+      pt: 'Percorridos {done} de {n}. Multiplicações: {mult}.',
+    },
+    'caption.done': {
+      en: 'All {n} scanned. Multiplications: {mult}, bytes: {bytes}.',
+      ko: '후보 {n} 전부 훑었다. 곱셈: {mult}, 자리: {bytes}.',
+      ja: '候補 {n} をすべて走査した。掛け算: {mult}、バイト: {bytes}。',
+      zh: '{n} 个候选全部扫描完毕。乘法：{mult}，字节：{bytes}。',
+      ar: 'تم فحص {n} من المرشحين بالكامل. عمليات الضرب: {mult}، البايتات: {bytes}.',
+      es: 'Los {n} candidatos recorridos. Multiplicaciones: {mult}, bytes: {bytes}.',
+      fr: 'Les {n} candidats parcourus. Multiplications : {mult}, octets : {bytes}.',
+      hi: 'सभी {n} उम्मीदवार देख लिए। गुणा: {mult}, बाइट: {bytes}।',
+      id: 'Semua {n} kandidat dipindai. Perkalian: {mult}, bita: {bytes}.',
+      pt: 'Todos os {n} candidatos percorridos. Multiplicações: {mult}, bytes: {bytes}.',
+    },
+    'label.candidates': {
+      en: 'Candidates: {n}',
+      ko: '후보: {n}',
+      ja: '候補: {n}',
+      zh: '候选：{n}',
+      ar: 'المرشحون: {n}',
+      es: 'Candidatos: {n}',
+      fr: 'Candidats : {n}',
+      hi: 'उम्मीदवार: {n}',
+      id: 'Kandidat: {n}',
+      pt: 'Candidatos: {n}',
+    },
+    'label.plate': {
+      en: 'Work to scan',
+      ko: '훑어야 할 양',
+      ja: '走査する量',
+      zh: '需要遍历的量',
+      ar: 'كمية العمل',
+      es: 'Trabajo por recorrer',
+      fr: 'Travail à parcourir',
+      hi: 'देखने का काम',
+      id: 'Pekerjaan yang dipindai',
+      pt: 'Trabalho a percorrer',
+    },
+    'label.unit': {
+      en: 'One tile = {u} multiplications',
+      ko: '타일 하나 = 곱셈 {u}',
+      ja: 'タイル1枚 = 掛け算 {u}',
+      zh: '一格 = 乘法 {u}',
+      ar: 'مربع واحد = {u} من عمليات الضرب',
+      es: 'Un mosaico = {u} multiplicaciones',
+      fr: 'Une tuile = {u} multiplications',
+      hi: 'एक टाइल = {u} गुणा',
+      id: 'Satu ubin = {u} perkalian',
+      pt: 'Um ladrilho = {u} multiplicações',
+    },
+    'label.vector': {
+      en: 'One vector: {vb} bytes',
+      ko: '벡터 하나: {vb} 바이트',
+      ja: 'ベクトル1本: {vb} バイト',
+      zh: '一个向量：{vb} 字节',
+      ar: 'متجه واحد: {vb} بايت',
+      es: 'Un vector: {vb} bytes',
+      fr: 'Un vecteur : {vb} octets',
+      hi: 'एक वेक्टर: {vb} बाइट',
+      id: 'Satu vektor: {vb} bita',
+      pt: 'Um vetor: {vb} bytes',
+    },
+  },
+};
