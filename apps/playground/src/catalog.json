@@ -5613,42 +5613,48 @@
               "name": "글자와 낱말 사이",
               "desc": "낱말도 글자도 아닌 크기로 자른다",
               "kind": "piece",
-              "origin": "subword-segmentation"
+              "origin": "subword-segmentation",
+              "facetId": "facet:betweenLetterAndWord"
             },
             {
               "id": "merge-the-frequent-pair",
               "name": "자주 붙어 다닌 둘",
               "desc": "가장 많이 붙은 짝을 하나로 합친다",
               "kind": "piece",
-              "origin": "bpe-training"
+              "origin": "bpe-training",
+              "facetId": "facet:mergeTheFrequentPair"
             },
             {
               "id": "unknown-becomes-known",
               "name": "모르는 낱말",
               "desc": "아는 조각으로 쪼개어 받아 낸다",
               "kind": "piece",
-              "origin": "vocabulary"
+              "origin": "vocabulary",
+              "facetId": "facet:unknownBecomesKnown"
             },
             {
               "id": "space-is-part-of-it",
               "name": "빈칸도 글자다",
               "desc": "띄어쓰기가 조각에 붙어 다닌다",
               "kind": "piece",
-              "origin": "subword-segmentation"
+              "origin": "subword-segmentation",
+              "facetId": "facet:spaceIsPartOfIt"
             },
             {
               "id": "tokens-per-language",
               "name": "언어마다 다른 값",
               "desc": "같은 뜻인데 조각 수가 몇 배 차이 난다",
               "kind": "piece",
-              "origin": "vocabulary"
+              "origin": "vocabulary",
+              "facetId": "facet:tokensPerLanguage"
             },
             {
               "id": "boundary-shift",
               "name": "한 글자 차이로",
               "desc": "자른 자리가 달라지면 뜻이 흔들린다",
               "kind": "piece",
-              "origin": "subword-segmentation"
+              "origin": "subword-segmentation",
+              "facetId": "facet:boundaryShift"
             }
           ]
         },

@@ -121,6 +121,42 @@ importers:
         specifier: ^5.4.11
         version: 5.4.21(@types/node@22.19.17)(lightningcss@1.32.0)
 
+  facets/ai-engineering/between-letter-and-word:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/boundary-shift:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/merge-the-frequent-pair:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/space-is-part-of-it:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/tokens-per-language:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/unknown-becomes-known:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/compilers/tokenization:
     dependencies:
       '@ffacet/core':
@@ -2849,6 +2885,9 @@ importers:
       '@ffacet/algorithm-bellman-ford':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bellman-ford
+      '@ffacet/algorithm-between-letter-and-word':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/between-letter-and-word
       '@ffacet/algorithm-bfs':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bfs
@@ -2882,6 +2921,9 @@ importers:
       '@ffacet/algorithm-bound-and-cut':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bound-and-cut
+      '@ffacet/algorithm-boundary-shift':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/boundary-shift
       '@ffacet/algorithm-boyer-moore':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/boyer-moore
@@ -3242,6 +3284,9 @@ importers:
       '@ffacet/algorithm-merge-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/merge-sort
+      '@ffacet/algorithm-merge-the-frequent-pair':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/merge-the-frequent-pair
       '@ffacet/algorithm-merge-two-sorted':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/merge-two-sorted
@@ -3455,6 +3500,9 @@ importers:
       '@ffacet/algorithm-space-error-tradeoff':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/space-error-tradeoff
+      '@ffacet/algorithm-space-is-part-of-it':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/space-is-part-of-it
       '@ffacet/algorithm-spatial-locality':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/spatial-locality
@@ -3503,6 +3551,9 @@ importers:
       '@ffacet/algorithm-tokenization':
         specifier: workspace:*
         version: link:../../facets/compilers/tokenization
+      '@ffacet/algorithm-tokens-per-language':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/tokens-per-language
       '@ffacet/algorithm-topological-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/topological-sort
@@ -3542,6 +3593,9 @@ importers:
       '@ffacet/algorithm-union-find':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/union-find
+      '@ffacet/algorithm-unknown-becomes-known':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/unknown-becomes-known
       '@ffacet/algorithm-unrepresentable-fraction':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/unrepresentable-fraction

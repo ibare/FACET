@@ -889,5 +889,23 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:writePolicy', () =>
     import('@ffacet/algorithm-write-policy').then((m) => m.registerWritePolicy()),
   );
+  registerFacetLoader('facet:betweenLetterAndWord', () =>
+    import('@ffacet/algorithm-between-letter-and-word').then((m) => m.registerBetweenLetterAndWord()),
+  );
+  registerFacetLoader('facet:boundaryShift', () =>
+    import('@ffacet/algorithm-boundary-shift').then((m) => m.registerBoundaryShift()),
+  );
+  registerFacetLoader('facet:mergeTheFrequentPair', () =>
+    import('@ffacet/algorithm-merge-the-frequent-pair').then((m) => m.registerMergeTheFrequentPair()),
+  );
+  registerFacetLoader('facet:spaceIsPartOfIt', () =>
+    import('@ffacet/algorithm-space-is-part-of-it').then((m) => m.registerSpaceIsPartOfIt()),
+  );
+  registerFacetLoader('facet:tokensPerLanguage', () =>
+    import('@ffacet/algorithm-tokens-per-language').then((m) => m.registerTokensPerLanguage()),
+  );
+  registerFacetLoader('facet:unknownBecomesKnown', () =>
+    import('@ffacet/algorithm-unknown-becomes-known').then((m) => m.registerUnknownBecomesKnown()),
+  );
 
 }
