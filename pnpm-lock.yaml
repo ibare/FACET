@@ -127,6 +127,66 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/computer-architecture/bit-mask:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/bit-shift:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/byte-order:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/mantissa-and-exponent:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/negate-and-add-one:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/positional-value:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/signed-wraparound:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/silent-truncation:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/uneven-float-gaps:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/unrepresentable-fraction:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/cs-fundamentals/adjacency-list-vs-matrix:
     dependencies:
       '@ffacet/core':
@@ -2601,6 +2661,12 @@ importers:
       '@ffacet/algorithm-binary-search':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/binary-search
+      '@ffacet/algorithm-bit-mask':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/bit-mask
+      '@ffacet/algorithm-bit-shift':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/bit-shift
       '@ffacet/algorithm-black-height-equal':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/black-height-equal
@@ -2640,6 +2706,9 @@ importers:
       '@ffacet/algorithm-bubble-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bubble-sort
+      '@ffacet/algorithm-byte-order':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/byte-order
       '@ffacet/algorithm-caching-cdn':
         specifier: workspace:*
         version: link:../../facets/system-design/caching-cdn
@@ -2907,6 +2976,9 @@ importers:
       '@ffacet/algorithm-lru-cache':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/lru-cache
+      '@ffacet/algorithm-mantissa-and-exponent':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/mantissa-and-exponent
       '@ffacet/algorithm-many-patterns-one-pass':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/many-patterns-one-pass
@@ -2955,6 +3027,9 @@ importers:
       '@ffacet/algorithm-naive-shift-by-one':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/naive-shift-by-one
+      '@ffacet/algorithm-negate-and-add-one':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/negate-and-add-one
       '@ffacet/algorithm-negative-edge-breaks':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/negative-edge-breaks
@@ -3006,6 +3081,9 @@ importers:
       '@ffacet/algorithm-pivot-choice-matters':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/pivot-choice-matters
+      '@ffacet/algorithm-positional-value':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/positional-value
       '@ffacet/algorithm-prefix-suffix-jump':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/prefix-suffix-jump
@@ -3123,6 +3201,12 @@ importers:
       '@ffacet/algorithm-signature-on-hash':
         specifier: workspace:*
         version: link:../../facets/security/signature-on-hash
+      '@ffacet/algorithm-signed-wraparound':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/signed-wraparound
+      '@ffacet/algorithm-silent-truncation':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/silent-truncation
       '@ffacet/algorithm-skip-a-layer':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/skip-a-layer
@@ -3207,12 +3291,18 @@ importers:
       '@ffacet/algorithm-undo-by-back-edge':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/undo-by-back-edge
+      '@ffacet/algorithm-uneven-float-gaps':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/uneven-float-gaps
       '@ffacet/algorithm-union-by-rank':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/union-by-rank
       '@ffacet/algorithm-union-find':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/union-find
+      '@ffacet/algorithm-unrepresentable-fraction':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/unrepresentable-fraction
       '@ffacet/algorithm-verify-vs-find':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/verify-vs-find

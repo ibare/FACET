@@ -1764,70 +1764,80 @@
               "name": "자리값과 진법",
               "desc": "같은 수를 다른 밑으로 적는다",
               "kind": "piece",
-              "origin": "twos-complement"
+              "origin": "twos-complement",
+              "facetId": "facet:positionalValue"
             },
             {
               "id": "negate-and-add-one",
               "name": "2의 보수 만들기",
               "desc": "뒤집고 하나 더하면 음수가 된다",
               "kind": "piece",
-              "origin": "twos-complement"
+              "origin": "twos-complement",
+              "facetId": "facet:negateAndAddOne"
             },
             {
               "id": "signed-wraparound",
               "name": "수의 끝과 끝",
               "desc": "가장 큰 수 다음이 가장 작은 수다",
               "kind": "piece",
-              "origin": "integer-overflow"
+              "origin": "integer-overflow",
+              "facetId": "facet:signedWraparound"
             },
             {
               "id": "silent-truncation",
               "name": "잘려 나간 윗자리",
               "desc": "넘친 비트는 조용히 버려진다",
               "kind": "piece",
-              "origin": "integer-overflow"
+              "origin": "integer-overflow",
+              "facetId": "facet:silentTruncation"
             },
             {
               "id": "mantissa-and-exponent",
               "name": "가수와 지수",
               "desc": "자릿수를 나눠 넓은 범위를 담는다",
               "kind": "piece",
-              "origin": "floating-point"
+              "origin": "floating-point",
+              "facetId": "facet:mantissaAndExponent"
             },
             {
               "id": "unrepresentable-fraction",
               "name": "끝나지 않는 소수",
               "desc": "0.1 은 2진법에서 딱 떨어지지 않는다",
               "kind": "piece",
-              "origin": "floating-point"
+              "origin": "floating-point",
+              "facetId": "facet:unrepresentableFraction"
             },
             {
               "id": "uneven-float-gaps",
               "name": "고르지 않은 눈금",
               "desc": "수가 클수록 이웃이 멀다",
               "kind": "piece",
-              "origin": "floating-point"
+              "origin": "floating-point",
+              "facetId": "facet:unevenFloatGaps"
             },
             {
               "id": "bit-mask",
               "name": "비트 마스크",
               "desc": "필요한 자리만 남긴다",
               "kind": "piece",
-              "origin": "bitwise-ops"
+              "origin": "bitwise-ops",
+              "facetId": "facet:bitMask"
             },
             {
               "id": "bit-shift",
               "name": "자리 옮기기",
               "desc": "옮기면 곱해지고 나뉜다",
               "kind": "piece",
-              "origin": "bitwise-ops"
+              "origin": "bitwise-ops",
+              "facetId": "facet:bitShift"
             },
             {
               "id": "byte-order",
               "name": "엔디언",
               "desc": "같은 값을 반대 순서로 늘어놓는다",
               "kind": "piece",
-              "origin": "bitwise-ops"
+              "origin": "bitwise-ops",
+              "facetId": "facet:byteOrder"
             }
           ]
         },

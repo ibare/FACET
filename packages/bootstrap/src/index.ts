@@ -797,4 +797,36 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:pNp', () =>
     import('@ffacet/algorithm-p-np').then((m) => m.registerPNp()),
   );
+  // 수와 비트 표현 조각 열 — 2의 보수 2 · 오버플로 2 · 부동소수점 3 · 비트 연산 3.
+  registerFacetLoader('facet:bitMask', () =>
+    import('@ffacet/algorithm-bit-mask').then((m) => m.registerBitMask()),
+  );
+  registerFacetLoader('facet:bitShift', () =>
+    import('@ffacet/algorithm-bit-shift').then((m) => m.registerBitShift()),
+  );
+  registerFacetLoader('facet:byteOrder', () =>
+    import('@ffacet/algorithm-byte-order').then((m) => m.registerByteOrder()),
+  );
+  registerFacetLoader('facet:mantissaAndExponent', () =>
+    import('@ffacet/algorithm-mantissa-and-exponent').then((m) => m.registerMantissaAndExponent()),
+  );
+  registerFacetLoader('facet:negateAndAddOne', () =>
+    import('@ffacet/algorithm-negate-and-add-one').then((m) => m.registerNegateAndAddOne()),
+  );
+  registerFacetLoader('facet:positionalValue', () =>
+    import('@ffacet/algorithm-positional-value').then((m) => m.registerPositionalValue()),
+  );
+  registerFacetLoader('facet:signedWraparound', () =>
+    import('@ffacet/algorithm-signed-wraparound').then((m) => m.registerSignedWraparound()),
+  );
+  registerFacetLoader('facet:silentTruncation', () =>
+    import('@ffacet/algorithm-silent-truncation').then((m) => m.registerSilentTruncation()),
+  );
+  registerFacetLoader('facet:unevenFloatGaps', () =>
+    import('@ffacet/algorithm-uneven-float-gaps').then((m) => m.registerUnevenFloatGaps()),
+  );
+  registerFacetLoader('facet:unrepresentableFraction', () =>
+    import('@ffacet/algorithm-unrepresentable-fraction').then((m) => m.registerUnrepresentableFraction()),
+  );
+
 }
