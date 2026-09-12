@@ -36,6 +36,15 @@ last_verified: 2026-04-21
   사라진다. facet 32 중 14 가 이 형태다. 금지하는 것은 `PHASES[i]` 나
   `` `${prefix}-end` `` 처럼 **이름 자체가 조립되어 grep 으로 안 잡히는** 경우다.
 
+  **phase 를 위치 인자로 받는 헬퍼도 같은 이유로 허용된다** — `irs.ts` 의
+  `decl(name, init, 'fill')` 이나 `put(target, expr, 'compare')` 처럼. 이름이
+  호출부에 리터럴로 서 있으므로 취지가 지켜진다.
+
+  다만 **`phase:` 라는 모양만 찾는 grep 에는 안 잡힌다.** 2026-09-12 감사에서
+  실제로 그 일이 있었다 — `write-policy` 의 phase 집합이 algorithm 과 어긋나
+  보였는데, 헬퍼 인자까지 세니 맞았다. 위치 인자 꼴을 쓸 자유는 그대로 두되,
+  **세는 쪽이 `phase:` 만 보고 판정하지 않도록** 이 문단을 둔다.
+
 ## PREFER
 
 - 표준화된 phase 이름 어휘 후보: `compare`, `swap`, `assign`, `loop-begin`, `loop-end`, `pass-begin`, `pass-end`, `recurse`, `return`, `done`.
