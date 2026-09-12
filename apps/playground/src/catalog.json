@@ -1851,23 +1851,28 @@
           "topics": [
             {
               "id": "cache-line",
-              "name": "캐시 라인"
+              "name": "캐시 라인",
+              "facetId": "facet:cacheLine"
             },
             {
               "id": "direct-mapped-cache",
-              "name": "직접 사상 캐시"
+              "name": "직접 사상 캐시",
+              "facetId": "facet:directMappedCache"
             },
             {
               "id": "set-associative-cache",
-              "name": "집합 연관 캐시"
+              "name": "집합 연관 캐시",
+              "facetId": "facet:setAssociativeCache"
             },
             {
               "id": "cache-replacement",
-              "name": "캐시 교체 정책"
+              "name": "캐시 교체 정책",
+              "facetId": "facet:cacheReplacement"
             },
             {
               "id": "write-policy",
-              "name": "쓰기 정책"
+              "name": "쓰기 정책",
+              "facetId": "facet:writePolicy"
             },
             {
               "id": "line-fill",

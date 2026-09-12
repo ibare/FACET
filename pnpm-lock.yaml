@@ -161,11 +161,41 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/computer-architecture/cache-line:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/computer-architecture/cache-replacement:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/computer-architecture/conflict-miss:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/computer-architecture/direct-mapped-cache:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/computer-architecture/false-sharing:
     dependencies:
@@ -243,6 +273,34 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/computer-architecture/set-associative-cache:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+      '@ffacet/transpiler-cpp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-cpp
+      '@ffacet/transpiler-csharp':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-csharp
+      '@ffacet/transpiler-java':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-java
+      '@ffacet/transpiler-javascript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-javascript
+      '@ffacet/transpiler-python':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-python
+      '@ffacet/transpiler-typescript':
+        specifier: workspace:*
+        version: link:../../../packages/transpiler-typescript
+
   facets/computer-architecture/signed-wraparound:
     dependencies:
       '@ffacet/core':
@@ -312,6 +370,16 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/computer-architecture/write-policy:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/cs-fundamentals/adjacency-list-vs-matrix:
     dependencies:
@@ -2841,6 +2909,12 @@ importers:
       '@ffacet/algorithm-byte-order':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/byte-order
+      '@ffacet/algorithm-cache-line':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/cache-line
+      '@ffacet/algorithm-cache-replacement':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/cache-replacement
       '@ffacet/algorithm-caching-cdn':
         specifier: workspace:*
         version: link:../../facets/system-design/caching-cdn
@@ -2919,6 +2993,9 @@ importers:
       '@ffacet/algorithm-dijkstra':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/dijkstra
+      '@ffacet/algorithm-direct-mapped-cache':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/direct-mapped-cache
       '@ffacet/algorithm-direction-of-most-spread':
         specifier: workspace:*
         version: link:../../facets/ml-basics/direction-of-most-spread
@@ -3324,6 +3401,9 @@ importers:
       '@ffacet/algorithm-separate-components':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/separate-components
+      '@ffacet/algorithm-set-associative-cache':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/set-associative-cache
       '@ffacet/algorithm-several-hashes-one-value':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/several-hashes-one-value
@@ -3480,6 +3560,9 @@ importers:
       '@ffacet/algorithm-write-back-vs-through':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/write-back-vs-through
+      '@ffacet/algorithm-write-policy':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/write-policy
       '@ffacet/algorithm-wrong-in-one-direction':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/wrong-in-one-direction

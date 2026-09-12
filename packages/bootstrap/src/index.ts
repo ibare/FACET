@@ -873,4 +873,21 @@ export function bootstrapFacet(): void {
     import('@ffacet/algorithm-integer-overflow').then((m) => m.registerIntegerOverflow()),
   );
 
+  // 캐시 계층 완제품 다섯 — 손잡이가 모두 reactive 다.
+  registerFacetLoader('facet:cacheLine', () =>
+    import('@ffacet/algorithm-cache-line').then((m) => m.registerCacheLine()),
+  );
+  registerFacetLoader('facet:directMappedCache', () =>
+    import('@ffacet/algorithm-direct-mapped-cache').then((m) => m.registerDirectMappedCache()),
+  );
+  registerFacetLoader('facet:setAssociativeCache', () =>
+    import('@ffacet/algorithm-set-associative-cache').then((m) => m.registerSetAssociativeCache()),
+  );
+  registerFacetLoader('facet:cacheReplacement', () =>
+    import('@ffacet/algorithm-cache-replacement').then((m) => m.registerCacheReplacement()),
+  );
+  registerFacetLoader('facet:writePolicy', () =>
+    import('@ffacet/algorithm-write-policy').then((m) => m.registerWritePolicy()),
+  );
+
 }
