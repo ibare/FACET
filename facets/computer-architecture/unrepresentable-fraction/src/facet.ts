@@ -1,0 +1,137 @@
+/**
+ * unrepresentable-fraction facet 선언.
+ *
+ * @piece 0.1 은 2진법에서 딱 떨어지지 않는다 — 2 를 곱해 자리를 뽑으면 네 자리
+ * 무늬가 되풀이되고, 그릇이 차면 거기서 잘린다.
+ *
+ * 걸음 간격만 선언에 둔다. 읽을 시간을 주는 것은 저작 결정이고, 좌표는 그림의
+ * 몫이다 (S-piece). 분수는 정수 둘로 둔다 — 되풀이를 정수 비교로 잡기 위함이다.
+ */
+
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
+
+export const unrepresentableFractionFacet: FacetJson = {
+  id: 'facet:unrepresentableFraction',
+  title: {
+    en: 'A fraction with no end',
+    ko: '끝나지 않는 소수',
+    ja: '終わらない小数',
+    zh: '永不终止的小数',
+    ar: 'كسر لا ينتهي',
+    es: 'Una fracción sin fin',
+    fr: 'Une fraction sans fin',
+    hi: 'कभी न खत्म होने वाला भिन्न',
+    id: 'Pecahan yang tak pernah habis',
+    pt: 'Uma fração sem fim',
+  },
+  description: {
+    en: 'In base 2, 0.1 does not divide evenly. Doubling peels off one digit at a time, and the same pattern of four returns forever.',
+    ko: '0.1 은 2진법에서 딱 떨어지지 않는다. 2 를 곱해 자리를 하나씩 뽑으면 네 자리 무늬가 끝없이 되돌아온다.',
+    ja: '0.1 は 2 進法では割り切れない。2 を掛けて桁を一つずつ取り出すと、四桁の模様が永遠に戻ってくる。',
+    zh: '0.1 在二进制中无法整除。乘以 2 逐位取出后，四位的图样会无休止地重复。',
+    ar: 'الكسر 0.1 لا ينتهي في النظام الثنائي. الضرب في 2 يستخرج رقمًا واحدًا في كل مرة، ويعود النمط نفسه المكون من أربعة أرقام إلى الأبد.',
+    es: 'En base 2, 0.1 no se divide de forma exacta. Multiplicar por 2 extrae un dígito cada vez y el mismo patrón de cuatro vuelve para siempre.',
+    fr: 'En base 2, 0,1 ne se divise pas exactement. Multiplier par 2 extrait un chiffre à la fois et le même motif de quatre revient sans fin.',
+    hi: 'आधार 2 में 0.1 पूरी तरह विभाजित नहीं होता। 2 से गुणा करने पर एक-एक अंक निकलता है और चार अंकों का वही पैटर्न हमेशा लौटता रहता है।',
+    id: 'Dalam basis 2, 0,1 tidak habis dibagi. Mengalikan dengan 2 mengambil satu digit setiap kali, dan pola empat digit yang sama kembali tanpa henti.',
+    pt: 'Na base 2, 0,1 não se divide de forma exata. Multiplicar por 2 extrai um dígito de cada vez e o mesmo padrão de quatro volta para sempre.',
+  },
+  algorithm: 'module:unrepresentableFraction',
+  projector: 'module:unrepresentableFractionProjector',
+  initialData: {
+    type: 'unrepresentable-fraction',
+    numerator: 1,
+    denominator: 10,
+    stepMs: 650,
+  },
+  blocks: {
+    stage: { type: 'unrepresentable-fraction-stage' },
+    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+  },
+  messages: {
+    'caption.seed': {
+      en: 'Start from {rest}. Multiply by 2 and peel off one digit.',
+      ko: '시작은 {rest}. 2 를 곱해 자리를 하나씩 뽑는다.',
+      ja: '始まりは {rest}。2 を掛けて桁を一つずつ取り出す。',
+      zh: '从 {rest} 开始。乘以 2，每次取出一位。',
+      ar: 'نبدأ من {rest}. اضرب في 2 واستخرج رقمًا واحدًا.',
+      es: 'Empezamos en {rest}. Multiplica por 2 y extrae un dígito.',
+      fr: 'On part de {rest}. Multiplier par 2 et extraire un chiffre.',
+      hi: 'शुरुआत {rest} से। 2 से गुणा करो और एक अंक निकालो।',
+      id: 'Mulai dari {rest}. Kalikan dengan 2 lalu ambil satu digit.',
+      pt: 'Começamos em {rest}. Multiplique por 2 e extraia um dígito.',
+    },
+    'caption.peel': {
+      en: '{from} × 2 = {product} — the digit taken is {digit}, and what is left is {rest}.',
+      ko: '{from} × 2 = {product} — 뽑은 자리는 {digit}, 남은 것은 {rest}.',
+      ja: '{from} × 2 = {product} — 取り出した桁は {digit}、残りは {rest}。',
+      zh: '{from} × 2 = {product} — 取出的位是 {digit}，剩下的是 {rest}。',
+      ar: '{from} × 2 = {product} — الرقم المستخرج هو {digit}، والباقي هو {rest}.',
+      es: '{from} × 2 = {product}: el dígito extraído es {digit} y lo que queda es {rest}.',
+      fr: '{from} × 2 = {product} : le chiffre extrait est {digit} et il reste {rest}.',
+      hi: '{from} × 2 = {product} — निकाला गया अंक है {digit}, और बचा हुआ है {rest}।',
+      id: '{from} × 2 = {product} — digit yang diambil adalah {digit}, dan sisanya adalah {rest}.',
+      pt: '{from} × 2 = {product} — o dígito extraído é {digit} e o que resta é {rest}.',
+    },
+    'caption.repeat': {
+      en: 'This remainder has appeared before: {rest}. The pattern closes here.',
+      ko: '앞에 나온 남은 값이 다시 나왔다: {rest}. 여기서 무늬가 닫힌다.',
+      ja: '前に出た残りがまた出た: {rest}。ここで模様が閉じる。',
+      zh: '之前出现过的余数又出现了：{rest}。图样在这里闭合。',
+      ar: 'ظهر هذا الباقي من قبل: {rest}. هنا ينغلق النمط.',
+      es: 'Este resto ya apareció antes: {rest}. El patrón se cierra aquí.',
+      fr: 'Ce reste est déjà apparu : {rest}. Le motif se referme ici.',
+      hi: 'यह शेष पहले आ चुका है: {rest}। पैटर्न यहीं बंद हो जाता है।',
+      id: 'Sisa ini sudah pernah muncul: {rest}. Polanya menutup di sini.',
+      pt: 'Este resto já apareceu antes: {rest}. O padrão se fecha aqui.',
+    },
+    'caption.lap': {
+      en: 'Around the loop again: {digits}. It never ends.',
+      ko: '고리를 다시 돈다: {digits}. 끝나지 않는다.',
+      ja: '輪をまた回る: {digits}。終わらない。',
+      zh: '再绕一圈：{digits}。永远不会结束。',
+      ar: 'دورة أخرى حول الحلقة: {digits}. لا تنتهي أبدًا.',
+      es: 'Otra vuelta al bucle: {digits}. No termina nunca.',
+      fr: 'Encore un tour de boucle : {digits}. Cela ne finit jamais.',
+      hi: 'फिर से चक्र पूरा: {digits}। यह कभी खत्म नहीं होता।',
+      id: 'Berputar lagi: {digits}. Tidak pernah berhenti.',
+      pt: 'Mais uma volta no ciclo: {digits}. Nunca termina.',
+    },
+    'caption.cut': {
+      en: 'float32 holds only this many digits: {keep}. The rest is cut off, and the last digit rounds up.',
+      ko: 'float32 가 담는 자리는 {keep}. 나머지는 잘리고 마지막 자리가 올림된다.',
+      ja: 'float32 が入れられる桁はここまで: {keep}。残りは切られ、最後の桁は繰り上がる。',
+      zh: 'float32 能装下的位数只有 {keep}。其余被截断，最后一位向上进位。',
+      ar: 'لا يحتفظ float32 إلا بهذا العدد من الأرقام: {keep}. ويقطع الباقي ويقرب الرقم الأخير إلى أعلى.',
+      es: 'float32 solo guarda esta cantidad de dígitos: {keep}. El resto se corta y el último dígito se redondea hacia arriba.',
+      fr: 'float32 ne garde que ce nombre de chiffres : {keep}. Le reste est coupé et le dernier chiffre est arrondi vers le haut.',
+      hi: 'float32 केवल इतने अंक रखता है: {keep}। बाकी कट जाता है और आखिरी अंक ऊपर की ओर गोल हो जाता है।',
+      id: 'float32 hanya menyimpan sebanyak ini digit: {keep}. Sisanya dipotong dan digit terakhir dibulatkan ke atas.',
+      pt: 'float32 guarda apenas esta quantidade de dígitos: {keep}. O resto é cortado e o último dígito é arredondado para cima.',
+    },
+    'caption.done': {
+      en: 'This value has no end in base 2: {value}. What is stored is the cut value.',
+      ko: '이 값은 2진법에서 끝나지 않는다: {value}. 담긴 것은 잘린 값이다.',
+      ja: 'この値は 2 進法で終わらない: {value}。保存されるのは切られた値だ。',
+      zh: '这个值在二进制中没有尽头：{value}。存下来的是被截断的值。',
+      ar: 'هذه القيمة لا تنتهي في النظام الثنائي: {value}. والمخزن هو القيمة المقطوعة.',
+      es: 'Este valor no termina en base 2: {value}. Lo que se guarda es el valor cortado.',
+      fr: 'Cette valeur ne se termine pas en base 2 : {value}. Ce qui est stocké est la valeur coupée.',
+      hi: 'यह मान आधार 2 में कभी खत्म नहीं होता: {value}। जो संग्रहित होता है वह कटा हुआ मान है।',
+      id: 'Nilai ini tidak pernah berakhir dalam basis 2: {value}. Yang tersimpan adalah nilai terpotong.',
+      pt: 'Este valor não termina na base 2: {value}. O que fica guardado é o valor cortado.',
+    },
+    'label.repeat': {
+      en: 'repeats',
+      ko: '되풀이',
+      ja: '繰り返し',
+      zh: '重复',
+      ar: 'يتكرر',
+      es: 'se repite',
+      fr: 'se répète',
+      hi: 'दोहराव',
+      id: 'berulang',
+      pt: 'repete',
+    },
+  },
+};
