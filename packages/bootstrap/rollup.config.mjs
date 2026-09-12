@@ -56,7 +56,9 @@ const jsBundle = {
     entryFileNames: 'bootstrap.js',
     chunkFileNames: chunkFileName,
     inlineDynamicImports: false,
-    sourcemap: true,
+    // 발행본에는 소스맵을 넣지 않는다 (core 와 같은 판단). 이 번들은 대부분 shiki
+    // 문법 데이터라 단계 실행할 자리가 아닌데, 맵이 tarball 의 3분의 2 를 차지했다.
+    sourcemap: false,
     generatedCode: 'es2015',
     manualChunks,
   },
@@ -67,7 +69,7 @@ const jsBundle = {
     json({ compact: true, namedExports: false }),
     esbuild({
       target: 'es2022',
-      sourceMap: true,
+      sourceMap: false,
       tsconfig: '../../tsconfig.base.json',
     }),
   ],

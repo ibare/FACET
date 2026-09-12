@@ -28,14 +28,17 @@ const jsBundle = {
     format: 'es',
     entryFileNames: '[name].js',
     chunkFileNames: 'chunks/[name]-[hash].js',
-    sourcemap: true,
+    // 발행본에는 소스맵을 넣지 않는다. 소비자가 이 코드를 단계 실행할 일이 없고,
+    // 맵은 `sourcesContent` 로 원본까지 실어 나르며 tarball 을 두 배 이상 키운다.
+    // 켜져 있던 것은 판단의 결과가 아니라 개발 기본값이 발행으로 흘러든 것이었다.
+    sourcemap: false,
     generatedCode: 'es2015',
   },
   plugins: [
     nodeResolve({ extensions: ['.ts', '.tsx', '.mjs', '.js'], preferBuiltins: false }),
     esbuild({
       target: 'es2022',
-      sourceMap: true,
+      sourceMap: false,
       tsconfig: '../../tsconfig.base.json',
       // 타입체크는 pnpm typecheck (tsc --noEmit) 담당. 여기는 transpile only.
     }),

@@ -8,7 +8,9 @@
  *  - external: @tiptap/core, @tiptap/pm — 호스트의 단일 인스턴스 보장.
  *  - chunkFileNames 는 함수형 — facet/ 와 runtime/ 디렉터리 분리 (디버깅 노이즈 감소).
  *  - manualChunks 는 강제 분리가 아닌 chunk name 부여 hint 용. core/runtime 의 공용 chunk 추출은 rollup 자동 위임 후 visualizer 로 실측 조정.
- *  - sourcemap: true.
+ *  - sourcemap: false — 발행본에 소스맵을 넣지 않는다. 소비자가 단계 실행할 자리가
+ *    아니고, 맵이 tarball 의 3분의 2 를 차지했다. 켜져 있던 것은 판단의 결과가
+ *    아니라 개발 기본값이 발행으로 흘러든 것이었다.
  *  - VISUALIZE=1 환경변수일 때만 stats.html 생성 (PR 시 size 회귀 점검용).
  *  - .d.ts 는 별도 빌드 패스 (rollup-plugin-dts) 로 단일 dist/host-tiptap-bundle.d.ts 생성.
  */
@@ -68,7 +70,7 @@ const jsBundle = {
     entryFileNames: 'host-tiptap-bundle.js',
     chunkFileNames: chunkFileName,
     inlineDynamicImports: false,
-    sourcemap: true,
+    sourcemap: false,
     generatedCode: 'es2015',
     /** facet 별 chunk 분리 + 공용 runtime chunk 명시. */
     manualChunks,
@@ -84,7 +86,7 @@ const jsBundle = {
     }),
     esbuild({
       target: 'es2022',
-      sourceMap: true,
+      sourceMap: false,
       tsconfig: '../../tsconfig.base.json',
       // 타입체크는 pnpm typecheck (tsc --noEmit) 가 담당. 여기는 transpile only.
     }),

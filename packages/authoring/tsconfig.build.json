@@ -3,6 +3,17 @@
   "compilerOptions": {
     "noEmit": false,
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "src",
+
+    // 발행본에는 소스맵을 넣지 않는다. `tsconfig.base.json` 이 sourceMap 과
+    // declarationMap 을 켜 두는데 그것은 개발용이고, 여기서 물려받으면 발행
+    // 산출물로 그대로 흘러간다. 게다가 `files: ["dist"]` 라 맵이 가리키는
+    // `../src/*.ts` 가 tarball 에 없어 열어도 원본을 찾지 못했다 — 쓸모가
+    // 없으면서 자리만 차지하던 셈이다.
+    //
+    // 개발 쪽(`tsconfig.base.json`)은 건드리지 않는다. 이 파일은 발행 빌드
+    // 전용이므로 범위가 정확히 여기까지다.
+    "sourceMap": false,
+    "declarationMap": false
   }
 }
