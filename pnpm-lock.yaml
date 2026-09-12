@@ -121,6 +121,12 @@ importers:
         specifier: ^5.4.11
         version: 5.4.21(@types/node@22.19.17)(lightningcss@1.32.0)
 
+  facets/ai-engineering/angle-not-length:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ai-engineering/between-letter-and-word:
     dependencies:
       '@ffacet/core':
@@ -139,13 +145,49 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ai-engineering/coarse-then-fine:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/compare-with-all:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ai-engineering/merge-the-frequent-pair:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ai-engineering/neighbors-linked-ahead:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/probe-a-few-cells:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/recall-speed-tradeoff:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ai-engineering/space-is-part-of-it:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/split-and-number:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -2864,6 +2906,9 @@ importers:
       '@ffacet/algorithm-all-suffixes-sorted':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/all-suffixes-sorted
+      '@ffacet/algorithm-angle-not-length':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/angle-not-length
       '@ffacet/algorithm-array':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/array
@@ -2990,12 +3035,18 @@ importers:
       '@ffacet/algorithm-circular-buffer-wrap':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/circular-buffer-wrap
+      '@ffacet/algorithm-coarse-then-fine':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/coarse-then-fine
       '@ffacet/algorithm-coin-flip-height':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/coin-flip-height
       '@ffacet/algorithm-compare-and-swap':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/compare-and-swap
+      '@ffacet/algorithm-compare-with-all':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/compare-with-all
       '@ffacet/algorithm-conditional-statement':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/conditional-statement
@@ -3329,6 +3380,9 @@ importers:
       '@ffacet/algorithm-negative-edge-breaks':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/negative-edge-breaks
+      '@ffacet/algorithm-neighbors-linked-ahead':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/neighbors-linked-ahead
       '@ffacet/algorithm-node-holds-many':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/node-holds-many
@@ -3389,6 +3443,9 @@ importers:
       '@ffacet/algorithm-primality':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/primality
+      '@ffacet/algorithm-probe-a-few-cells':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/probe-a-few-cells
       '@ffacet/algorithm-project-and-lose':
         specifier: workspace:*
         version: link:../../facets/ml-basics/project-and-lose
@@ -3416,6 +3473,9 @@ importers:
       '@ffacet/algorithm-random-forest':
         specifier: workspace:*
         version: link:../../facets/ml-basics/random-forest
+      '@ffacet/algorithm-recall-speed-tradeoff':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/recall-speed-tradeoff
       '@ffacet/algorithm-recolor-then-rotate':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/recolor-then-rotate
@@ -3527,6 +3587,9 @@ importers:
       '@ffacet/algorithm-spatial-locality':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/spatial-locality
+      '@ffacet/algorithm-split-and-number':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/split-and-number
       '@ffacet/algorithm-split-by-question':
         specifier: workspace:*
         version: link:../../facets/ml-basics/split-by-question

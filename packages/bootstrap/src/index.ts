@@ -916,5 +916,26 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:vocabulary', () =>
     import('@ffacet/algorithm-vocabulary').then((m) => m.registerVocabulary()),
   );
+  registerFacetLoader('facet:angleNotLength', () =>
+    import('@ffacet/algorithm-angle-not-length').then((m) => m.registerAngleNotLength()),
+  );
+  registerFacetLoader('facet:coarseThenFine', () =>
+    import('@ffacet/algorithm-coarse-then-fine').then((m) => m.registerCoarseThenFine()),
+  );
+  registerFacetLoader('facet:compareWithAll', () =>
+    import('@ffacet/algorithm-compare-with-all').then((m) => m.registerCompareWithAll()),
+  );
+  registerFacetLoader('facet:neighborsLinkedAhead', () =>
+    import('@ffacet/algorithm-neighbors-linked-ahead').then((m) => m.registerNeighborsLinkedAhead()),
+  );
+  registerFacetLoader('facet:probeAFewCells', () =>
+    import('@ffacet/algorithm-probe-a-few-cells').then((m) => m.registerProbeAFewCells()),
+  );
+  registerFacetLoader('facet:recallSpeedTradeoff', () =>
+    import('@ffacet/algorithm-recall-speed-tradeoff').then((m) => m.registerRecallSpeedTradeoff()),
+  );
+  registerFacetLoader('facet:splitAndNumber', () =>
+    import('@ffacet/algorithm-split-and-number').then((m) => m.registerSplitAndNumber()),
+  );
 
 }

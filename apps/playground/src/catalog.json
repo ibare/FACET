@@ -5690,49 +5690,56 @@
               "name": "각도로 재는 닮음",
               "desc": "길이를 빼고 방향만 견준다",
               "kind": "piece",
-              "origin": "vector-similarity"
+              "origin": "vector-similarity",
+              "facetId": "facet:angleNotLength"
             },
             {
               "id": "compare-with-all",
               "name": "전부 견주기",
               "desc": "정확하지만 수가 늘면 못 버틴다",
               "kind": "piece",
-              "origin": "exhaustive-search"
+              "origin": "exhaustive-search",
+              "facetId": "facet:compareWithAll"
             },
             {
               "id": "neighbors-linked-ahead",
               "name": "이웃을 미리 이어 둔다",
               "desc": "길이 있으면 걸어서 찾아간다",
               "kind": "piece",
-              "origin": "hnsw"
+              "origin": "hnsw",
+              "facetId": "facet:neighborsLinkedAhead"
             },
             {
               "id": "coarse-then-fine",
               "name": "위층에서 내려오기",
               "desc": "성긴 층에서 크게, 아래층에서 촘촘히",
               "kind": "piece",
-              "origin": "hnsw"
+              "origin": "hnsw",
+              "facetId": "facet:coarseThenFine"
             },
             {
               "id": "probe-a-few-cells",
               "name": "무리 몇 개만 연다",
               "desc": "가까워 보이는 칸만 뒤진다",
               "kind": "piece",
-              "origin": "inverted-file-index"
+              "origin": "inverted-file-index",
+              "facetId": "facet:probeAFewCells"
             },
             {
               "id": "split-and-number",
               "name": "쪼개서 번호로",
               "desc": "토막마다 가장 닮은 대표로 바꾼다",
               "kind": "piece",
-              "origin": "product-quantization"
+              "origin": "product-quantization",
+              "facetId": "facet:splitAndNumber"
             },
             {
               "id": "recall-speed-tradeoff",
               "name": "덜 뒤지면 놓친다",
               "desc": "빠를수록 빠뜨리는 것이 는다",
               "kind": "piece",
-              "origin": "inverted-file-index"
+              "origin": "inverted-file-index",
+              "facetId": "facet:recallSpeedTradeoff"
             }
           ]
         },
