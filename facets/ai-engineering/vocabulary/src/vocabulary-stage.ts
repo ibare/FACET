@@ -43,7 +43,14 @@ const CAPTION_Y = 302;
 const FRAME_MS = 16;
 const MOVE_MS = 380;
 
-/** 캔버스 세로가 정해져 있으므로 담을 수 있는 줄 수도 정해져 있다 (S-view). */
+/**
+ * 캔버스 세로가 정해져 있으므로 담을 수 있는 줄 수도 정해져 있다 (S-view).
+ *
+ * **지금 이 값은 시험 낱말 여섯과 정확히 같아 여유가 0 이다.** 선언에 일곱째를
+ * 더하면 아래 `slice` 가 **말없이 잘라** 그 낱말이 화면에서 사라지는데, 알고리즘은
+ * 일곱을 셈하고 계기도 일곱으로 말하므로 그림과 수가 어긋난 채 아무 오류도 나지
+ * 않는다. 낱말을 늘릴 일이 생기면 `CAPTION_Y` 와 캔버스 세로를 함께 키운다.
+ */
 const MAX_ROWS = Math.floor((CAPTION_Y - 22 - ROW_TOP - BOX_H) / ROW_H) + 1;
 
 function el<K extends keyof SVGElementTagNameMap>(
