@@ -907,5 +907,14 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:unknownBecomesKnown', () =>
     import('@ffacet/algorithm-unknown-becomes-known').then((m) => m.registerUnknownBecomesKnown()),
   );
+  registerFacetLoader('facet:bpeTraining', () =>
+    import('@ffacet/algorithm-bpe-training').then((m) => m.registerBpeTraining()),
+  );
+  registerFacetLoader('facet:subwordSegmentation', () =>
+    import('@ffacet/algorithm-subword-segmentation').then((m) => m.registerSubwordSegmentation()),
+  );
+  registerFacetLoader('facet:vocabulary', () =>
+    import('@ffacet/algorithm-vocabulary').then((m) => m.registerVocabulary()),
+  );
 
 }

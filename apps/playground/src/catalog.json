@@ -5598,15 +5598,18 @@
           "topics": [
             {
               "id": "subword-segmentation",
-              "name": "서브워드 분할"
+              "name": "서브워드 분할",
+              "facetId": "facet:subwordSegmentation"
             },
             {
               "id": "bpe-training",
-              "name": "BPE 학습"
+              "name": "BPE 학습",
+              "facetId": "facet:bpeTraining"
             },
             {
               "id": "vocabulary",
-              "name": "어휘 사전"
+              "name": "어휘 사전",
+              "facetId": "facet:vocabulary"
             },
             {
               "id": "between-letter-and-word",

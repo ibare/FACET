@@ -133,6 +133,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ai-engineering/bpe-training:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ai-engineering/merge-the-frequent-pair:
     dependencies:
       '@ffacet/core':
@@ -145,6 +151,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ai-engineering/subword-segmentation:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ai-engineering/tokens-per-language:
     dependencies:
       '@ffacet/core':
@@ -152,6 +164,12 @@ importers:
         version: link:../../../packages/core
 
   facets/ai-engineering/unknown-becomes-known:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/vocabulary:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -2927,6 +2945,9 @@ importers:
       '@ffacet/algorithm-boyer-moore':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/boyer-moore
+      '@ffacet/algorithm-bpe-training':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/bpe-training
       '@ffacet/algorithm-branch-and-bound':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/branch-and-bound
@@ -3524,6 +3545,9 @@ importers:
       '@ffacet/algorithm-stack':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/stack
+      '@ffacet/algorithm-subword-segmentation':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/subword-segmentation
       '@ffacet/algorithm-suffix-array':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/suffix-array
@@ -3602,6 +3626,9 @@ importers:
       '@ffacet/algorithm-verify-vs-find':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/verify-vs-find
+      '@ffacet/algorithm-vocabulary':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/vocabulary
       '@ffacet/algorithm-vote-by-neighbors':
         specifier: workspace:*
         version: link:../../facets/ml-basics/vote-by-neighbors
