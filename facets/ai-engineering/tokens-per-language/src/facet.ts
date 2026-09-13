@@ -106,7 +106,7 @@ export const tokensPerLanguageFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'tokens-per-language-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.vocab': {

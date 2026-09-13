@@ -51,7 +51,7 @@ export const spaceIsPartOfItFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'space-is-part-of-it-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.gaps': {

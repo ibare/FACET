@@ -90,7 +90,7 @@ export const boundaryShiftFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'boundary-shift-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.whole': {

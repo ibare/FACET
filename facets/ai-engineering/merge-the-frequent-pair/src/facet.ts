@@ -56,7 +56,7 @@ export const mergeTheFrequentPairFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'merge-the-frequent-pair-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.split': {

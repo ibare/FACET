@@ -90,7 +90,7 @@ export const unknownBecomesKnownFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'unknown-becomes-known-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.vocab': {

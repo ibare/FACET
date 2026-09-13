@@ -10,9 +10,15 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@ffacet/algorithm-between-letter-and-word": "workspace:*",
+    "@ffacet/algorithm-boundary-shift": "workspace:*",
     "@ffacet/algorithm-bst-degenerate": "workspace:*",
     "@ffacet/algorithm-hash-avalanche": "workspace:*",
+    "@ffacet/algorithm-merge-the-frequent-pair": "workspace:*",
+    "@ffacet/algorithm-space-is-part-of-it": "workspace:*",
     "@ffacet/algorithm-split-and-number": "workspace:*",
+    "@ffacet/algorithm-tokens-per-language": "workspace:*",
+    "@ffacet/algorithm-unknown-becomes-known": "workspace:*",
     "@ffacet/bootstrap": "workspace:*",
     "@ffacet/core": "workspace:*",
     "@ffacet/host-tiptap": "workspace:*",

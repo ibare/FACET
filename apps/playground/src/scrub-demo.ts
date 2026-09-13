@@ -16,10 +16,22 @@ import { runFacet, getFacetById, getColors } from '@ffacet/core/runtime';
 import { registerHashAvalanche } from '@ffacet/algorithm-hash-avalanche';
 import { registerSplitAndNumber } from '@ffacet/algorithm-split-and-number';
 import { registerBstDegenerate } from '@ffacet/algorithm-bst-degenerate';
+import { registerTokensPerLanguage } from '@ffacet/algorithm-tokens-per-language';
+import { registerBetweenLetterAndWord } from '@ffacet/algorithm-between-letter-and-word';
+import { registerUnknownBecomesKnown } from '@ffacet/algorithm-unknown-becomes-known';
+import { registerBoundaryShift } from '@ffacet/algorithm-boundary-shift';
+import { registerMergeTheFrequentPair } from '@ffacet/algorithm-merge-the-frequent-pair';
+import { registerSpaceIsPartOfIt } from '@ffacet/algorithm-space-is-part-of-it';
 
 registerHashAvalanche();
 registerSplitAndNumber();
 registerBstDegenerate();
+registerTokensPerLanguage();
+registerBetweenLetterAndWord();
+registerUnknownBecomesKnown();
+registerBoundaryShift();
+registerMergeTheFrequentPair();
+registerSpaceIsPartOfIt();
 
 const mount = document.getElementById('stage-a');
 const mountB = document.getElementById('stage-b');
@@ -37,6 +49,20 @@ mountFacet('facet:hashAvalanche', mount);
 // 걸음이 길고 stage 가 rAF 로 직접 그리는 부류. 되짚을 때 tween 이 겹치는지 본다.
 mountFacet('facet:splitAndNumber', mountB);
 mountFacet('facet:bstDegenerate', mountC);
+
+/** id 로 자리를 찾아 건다. 토큰화 여섯처럼 수가 많을 때. */
+function mountFacetAt(id: string, elementId: string): void {
+  const el = document.getElementById(elementId);
+  if (!el) throw new Error(`마운트 지점을 찾지 못했다: ${elementId}`);
+  mountFacet(id, el);
+}
+
+mountFacetAt('facet:tokensPerLanguage', 'stage-tokens-per-language');
+mountFacetAt('facet:betweenLetterAndWord', 'stage-between-letter-and-word');
+mountFacetAt('facet:unknownBecomesKnown', 'stage-unknown-becomes-known');
+mountFacetAt('facet:boundaryShift', 'stage-boundary-shift');
+mountFacetAt('facet:mergeTheFrequentPair', 'stage-merge-the-frequent-pair');
+mountFacetAt('facet:spaceIsPartOfIt', 'stage-space-is-part-of-it');
 
 /** 출력 격자에서 칠해진 칸 수 — 걸음이 나아갈수록 늘어난다. */
 function paintedCells(): number {

@@ -36,9 +36,27 @@
       "verdict": "stable",
       "steps": 9,
       "roundTrip": "same"
+    },
+    {
+      "id": "facet:hashAvalanche",
+      "verdict": "stable",
+      "steps": 5,
+      "roundTrip": "same"
+    },
+    {
+      "id": "facet:splitAndNumber",
+      "verdict": "stable",
+      "steps": 11,
+      "roundTrip": "same"
+    },
+    {
+      "id": "facet:bstDegenerate",
+      "verdict": "stable",
+      "steps": 46,
+      "roundTrip": "same"
     }
   ],
   "done": true,
   "current": "끝",
-  "total": 6
+  "total": 9
 }

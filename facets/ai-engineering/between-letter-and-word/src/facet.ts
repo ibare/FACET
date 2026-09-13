@@ -73,7 +73,7 @@ export const betweenLetterAndWordFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'between-letter-and-word-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.word': {
