@@ -187,6 +187,8 @@ export class Timeline {
 
   /** 자취를 버린다. 되돌리기(replay) 로 처음부터 다시 걸을 때. */
   clear(): void {
+    // 처음부터 다시 걷는다 — 즉시 모드를 붙들고 있으면 자동 재생이 순식간에 지나간다.
+    this.hooks.onInstant?.(false);
     this.log = [];
     this.ends = [];
     this.cursorStep = 0;
@@ -253,6 +255,8 @@ export class Timeline {
   private async forwardOne(): Promise<void> {
     const inner = this.inner;
     if (!inner) return;
+    // 되짚은 뒤로 켜져 있던 즉시 모드를 여기서 내린다 (`rewindTo` 참고).
+    this.hooks.onInstant?.(false);
     const s = this.cursorStep + 1;
     const from = s === 1 ? 0 : this.ends[s - 2];
     const to = this.ends[s - 1];
@@ -299,6 +303,13 @@ export class Timeline {
    * 뒤가 된다.
    */
   private async rewindTo(target: number): Promise<void> {
+    // 즉시 모드는 여기서 켜고 **끄지 않는다.** 되짚기가 언제 끝났는지 알 수 없기
+    // 때문이다 — projector 가 stage 를 기다리지 않는 조각에서는 아직 돌아오지 않은
+    // 걸음 흐름이 남고, 그것이 깃발이 내려간 뒤 `wait` 를 새로 걸면 1 초쯤 뒤에
+    // 깨어나 화면을 고친다. 활성으로 세워 둔 행이 슬그머니 꺼지는 식이다.
+    //
+    // 되짚은 뒤는 멈춰 있는 자리라 깃발이 켜져 있어도 보이는 차이가 없다. 앞으로
+    // 끌 때(`forwardOne`)와 되돌릴 때(`clear`) 내린다.
     const inner = this.inner;
     if (!inner) return;
     this.hooks.onInstant?.(true);
@@ -314,7 +325,7 @@ export class Timeline {
       }
       this.cursorStep = target;
       this.hooks.onCursor?.(target);
-    } finally {
+    } catch {
       this.hooks.onInstant?.(false);
     }
   }

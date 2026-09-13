@@ -191,10 +191,26 @@ export function runFacet(
 
   // 7. View mount — dispatch 콜백 주입으로 View 입력 → mechanism.dispatch 경로 확보.
   const dispatchToMechanism = (event: { type: string; payload?: unknown }) => mechanism.dispatch(event);
+  /**
+   * 되짚는 중인가. Timeline 이 켜고 끄고, stage 가 `params.isInstant()` 로 읽는다.
+   *
+   * 클로저라 mount 시점 이후의 값도 그대로 보인다.
+   */
+  let instantMode = false;
+  /** 되짚기 직전에 걸어 둔 것을 거두라고 view 들이 맡긴 함수. */
+  const scrubCleaners: Array<() => void> = [];
   const views = mountBlocks({
     blocks: enrichedBlocks,
     blockMounts: built.blockMounts,
-    mountParams: { initialData: initialDataClone, locale, theme, t: tr, dispatch: dispatchToMechanism },
+    mountParams: {
+      initialData: initialDataClone,
+      locale,
+      theme,
+      t: tr,
+      dispatch: dispatchToMechanism,
+      isInstant: () => instantMode,
+      onScrubStart: (fn: () => void) => scrubCleaners.push(fn),
+    },
   });
 
   // 8. goal-preview(computeFrom: 'sorted') 블록에 알고리즘의 computeResult 결과 주입
@@ -244,9 +260,15 @@ export function runFacet(
       if (controlBar) callMethod(controlBar, 'setTimelineCursor', step);
     },
     onInstant(on) {
-      // 스스로 진행률을 그리는 stage 만 이 메서드를 둔다. 없는 view 는 그냥 지나간다.
-      for (const v of Object.values(views)) {
-        if (hasMethod(v, 'setInstant')) callMethod(v, 'setInstant', on);
+      instantMode = on;
+      // 켜질 때 걸어 둔 것을 거둔다. 두면 되짚기가 끝난 뒤 깨어나 옛 목표를 그린다.
+      if (!on) return;
+      for (const clean of scrubCleaners) {
+        try {
+          clean();
+        } catch {
+          // 한 view 가 실패해도 나머지는 거둔다.
+        }
       }
     },
   });

@@ -67,12 +67,10 @@ function hash(s: string): string {
   return (h >>> 0).toString(16);
 }
 
-function shot(el: HTMLElement): string {
-  return hash(
-    Array.from(el.querySelectorAll('svg'))
-      .map((s) => s.innerHTML)
-      .join('\n'),
-  );
+function raw(el: HTMLElement): string {
+  return Array.from(el.querySelectorAll('svg'))
+    .map((s) => s.innerHTML)
+    .join('\n');
 }
 
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
@@ -80,6 +78,7 @@ const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms
 type Result = { id: string; verdict: 'stable' | 'drifts' | 'no-timeline' | 'never-settled'; steps?: number };
 
 const audit = {
+  diffs: [] as Array<{ id: string; at: number; before: string; drifted: string }>,
   results: [] as Result[],
   done: false,
   current: '',
@@ -125,11 +124,29 @@ async function measureOne(facet: FacetJson): Promise<Result> {
       t.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft', bubbles: true, cancelable: true }));
     }
 
-    // 되짚기는 한 묶음이라 두 프레임이면 끝난다.
-    await new Promise<void>((r) => requestAnimationFrame(() => requestAnimationFrame(() => r())));
-    const after = shot(box);
-    await sleep(1_500);
-    const later = shot(box);
+    // 되짚기가 앉기를 기다린다.
+    //
+    // 두 프레임만 두었더니 되짚기 자체가 아직 끝나지 않은 과도기를 "직후" 로
+    // 잡았다. 되짚기는 몰아 먹이기라 짧지만, 그 뒤 걸음 흐름이 마이크로태스크로
+    // 마저 풀리는 데 몇 프레임이 더 걸린다. 잣대가 겨냥한 것은 **그보다 훨씬
+    // 뒤에** 깨어나 화면을 고치는 지연 발화다.
+    await sleep(400);
+    const afterRaw = raw(box);
+    const after = hash(afterRaw);
+    await sleep(1_800);
+    const laterRaw = raw(box);
+    const later = hash(laterRaw);
+
+    if (after !== later && new URLSearchParams(location.search).has('diff')) {
+      let i = 0;
+      while (i < afterRaw.length && i < laterRaw.length && afterRaw[i] === laterRaw[i]) i++;
+      audit.diffs.push({
+        id: facet.id,
+        at: i,
+        before: afterRaw.slice(Math.max(0, i - 110), i + 150),
+        drifted: laterRaw.slice(Math.max(0, i - 110), i + 150),
+      });
+    }
 
     return { id: facet.id, verdict: after === later ? 'stable' : 'drifts', steps: n };
   } finally {
