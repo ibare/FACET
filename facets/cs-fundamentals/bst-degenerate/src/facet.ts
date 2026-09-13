@@ -54,7 +54,7 @@ export const bstDegenerateFacet: FacetJson = {
     stage: { type: 'bst-degenerate-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: [CONTROL.replay, CONTROL.timeline],
     },
   },
   messages: {

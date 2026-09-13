@@ -62,6 +62,9 @@ importers:
 
   apps/playground:
     dependencies:
+      '@ffacet/algorithm-bst-degenerate':
+        specifier: workspace:*
+        version: link:../../facets/cs-fundamentals/bst-degenerate
       '@ffacet/algorithm-hash-avalanche':
         specifier: workspace:*
         version: link:../../facets/security/hash-avalanche

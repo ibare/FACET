@@ -16,7 +16,8 @@
       h1 { font-size: 18px; font-weight: 600; margin: 0 0 4px; }
       p.lead { font-size: 13px; color: #737373; margin: 0 0 28px; line-height: 1.7; }
       section { margin-bottom: 40px; }
-      h2 { font-size: 13px; font-weight: 600; color: #737373; margin: 0 0 10px; }
+      h2 { font-size: 13px; font-weight: 600; color: #171717; margin: 0 0 10px; }
+      h2 small { font-weight: 400; color: #a3a3a3; margin-left: 8px; }
       #probe {
         font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
         font-size: 12px;
@@ -34,17 +35,22 @@
     <main>
       <h1>스크럽 띠 실험</h1>
       <p class="lead">
-        자동 재생이 끝나면 띠를 끌 수 있다. 앞으로 끌면 걸음마다 애니메이션이
-        지나가며 화면이 뒤따라오고, 뒤로 끌면 지금 화면에서 목표 화면으로 곧장
-        건너간다. 핸들과 화면 사이의 얇아지는 구간이 그 간격이다.
+        셋 다 장면(Scene) 방식으로 옮긴 조각이다. 자동 재생이 끝나면 띠를 끌 수 있다.
+        앞으로 끌면 걸음마다 애니메이션이 지나가며 화면이 뒤따라오고, 뒤로 끌면 곧바로
+        그 걸음에 선다. 핸들과 화면 사이의 얇아지는 구간이 그 간격이다.
+        아래 둘은 옮기기 전에는 되짚으면 화면이 어긋나던 것들이다.
       </p>
       <section>
-        <h2>조각 — 해시 눈사태 효과</h2>
+        <h2>해시 눈사태 효과 <small>고정 격자 · CSS 전환 · 5 걸음</small></h2>
         <div id="stage-a"></div>
       </section>
       <section>
-        <h2>조각 — 쪼개고 번호 붙이기 (걸음이 길고 rAF 로 그리는 부류)</h2>
+        <h2>쪼개고 번호 붙이기 <small>rAF 궤적 · 좌표 이동 · 11 걸음</small></h2>
         <div id="stage-b"></div>
+      </section>
+      <section>
+        <h2>한쪽으로 자란 나무 <small>동적 마디 · 46 걸음</small></h2>
+        <div id="stage-c"></div>
       </section>
       <section>
         <h2>계측</h2>

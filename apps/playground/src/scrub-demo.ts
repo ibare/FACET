@@ -15,14 +15,17 @@
 import { runFacet, getFacetById, getColors } from '@ffacet/core/runtime';
 import { registerHashAvalanche } from '@ffacet/algorithm-hash-avalanche';
 import { registerSplitAndNumber } from '@ffacet/algorithm-split-and-number';
+import { registerBstDegenerate } from '@ffacet/algorithm-bst-degenerate';
 
 registerHashAvalanche();
 registerSplitAndNumber();
+registerBstDegenerate();
 
 const mount = document.getElementById('stage-a');
 const mountB = document.getElementById('stage-b');
+const mountC = document.getElementById('stage-c');
 const probeEl = document.getElementById('probe');
-if (!mount || !mountB || !probeEl) throw new Error('마운트 지점을 찾지 못했다');
+if (!mount || !mountB || !mountC || !probeEl) throw new Error('마운트 지점을 찾지 못했다');
 
 function mountFacet(id: string, el: HTMLElement): void {
   const f = getFacetById(id);
@@ -33,6 +36,7 @@ function mountFacet(id: string, el: HTMLElement): void {
 mountFacet('facet:hashAvalanche', mount);
 // 걸음이 길고 stage 가 rAF 로 직접 그리는 부류. 되짚을 때 tween 이 겹치는지 본다.
 mountFacet('facet:splitAndNumber', mountB);
+mountFacet('facet:bstDegenerate', mountC);
 
 /** 출력 격자에서 칠해진 칸 수 — 걸음이 나아갈수록 늘어난다. */
 function paintedCells(): number {

@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@ffacet/algorithm-bst-degenerate": "workspace:*",
     "@ffacet/algorithm-hash-avalanche": "workspace:*",
     "@ffacet/algorithm-split-and-number": "workspace:*",
     "@ffacet/bootstrap": "workspace:*",
