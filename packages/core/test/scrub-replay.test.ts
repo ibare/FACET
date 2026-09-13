@@ -55,8 +55,15 @@ const DEFAULT_ATTRS: Record<string, string> = {
   'font-weight': '400',
 };
 
-/** 아무 데도 옮기지 않는 변형과 전환. */
-const NEUTRAL = /^(?:translate\(\s*0(?:px)?[\s,]+0(?:px)?\s*\)|none)$/;
+/**
+ * 아무 것도 하지 않는 변형과 전환.
+ *
+ * `translate(0,0)` · `scale(1)` · `rotate(0)` 은 있으나 없으나 같은 그림이다.
+ * 되감은 쪽은 한 번 건드린 자리라 중립값이 명시로 남고, 순방향 쪽은 아직 안 건드려
+ * 없을 뿐이다.
+ */
+const NEUTRAL =
+  /^(?:translate\(\s*0(?:px)?[\s,]+0(?:px)?\s*\)|scale\(\s*1(?:\s*,\s*1)?\s*\)|rotate\(\s*0(?:deg)?\s*\)|none)$/;
 
 function normalizeStyle(value: string): string {
   return value
@@ -75,8 +82,11 @@ function normalizeStyle(value: string): string {
 
 function serialize(el: Element): string {
   const attrs: string[] = [];
+  // 선을 안 그리면 선 굵기는 뜻이 없다.
+  const noStroke = el.getAttribute('stroke') === 'none';
   for (const a of Array.from(el.attributes)) {
     if (DEFAULT_ATTRS[a.name] === a.value) continue;
+    if (noStroke && (a.name === 'stroke-width' || a.name === 'stroke-dasharray')) continue;
     if (a.name === 'transform' && NEUTRAL.test(a.value)) continue;
     if (a.name === 'style') {
       const st = normalizeStyle(a.value);
@@ -105,8 +115,13 @@ function stageHtml(container: HTMLElement): string {
     .map((svg) => {
       const copy = svg.cloneNode(true) as SVGElement;
       for (const el of Array.from(copy.querySelectorAll('*'))) {
-        const inline = (el as unknown as { style?: { opacity?: string } }).style?.opacity;
-        if (inline === '0' || el.getAttribute('opacity') === '0') el.remove();
+        const st = (el as unknown as { style?: { opacity?: string; display?: string } }).style;
+        const hidden =
+          st?.opacity === '0' ||
+          el.getAttribute('opacity') === '0' ||
+          st?.display === 'none' ||
+          el.getAttribute('display') === 'none';
+        if (hidden) el.remove();
       }
       return serialize(copy);
     })
@@ -160,6 +175,7 @@ type Candidate = {
 };
 
 async function collect(limit?: number): Promise<Candidate[]> {
+  const only = new Set((process.env.SCRUB_ONLY ?? '').split(',').filter(Boolean));
   const out: Candidate[] = [];
   for (const [, load] of MODULES) {
     const mod = await load();
@@ -168,12 +184,13 @@ async function collect(limit?: number): Promise<Candidate[]> {
     }
     for (const facet of facetsOf(mod)) {
       if (!isPiece(facet)) continue;
+      if (only.size > 0 && !only.has(facet.id)) continue;
       if (typeof facet.projector !== 'string') continue;
       const projectorName = facet.projector.replace(/^module:/, '');
       const originalProjector = getProjector(projectorName);
       if (!originalProjector) continue;
       out.push({ id: facet.id, facet, projectorName, originalProjector });
-      if (limit !== undefined && out.length >= limit) return out;
+      if (only.size === 0 && limit !== undefined && out.length >= limit) return out;
     }
   }
   return out;
@@ -189,6 +206,8 @@ type Row = {
   ends: number[];
   /** 걸음 s 의 안정된 끝 화면 해시. 다음 걸음을 먹이기 직전에 찍는다. */
   stepHash: string[];
+  /** 진단할 때만 쥐는 그림 원본. 어긋난 자리를 눈으로 보려면 해시로는 모자란다. */
+  stepHtml: string[];
   instance: ProjectorInstance | null;
   initialData: unknown;
   /** 되짚어 가 본 걸음. */
@@ -209,6 +228,7 @@ async function measure(batch: Candidate[]): Promise<Map<string, Verdict>> {
         log: [],
         ends: [],
         stepHash: [],
+        stepHtml: [],
         instance: null,
         initialData: undefined,
       };
@@ -219,13 +239,17 @@ async function measure(batch: Candidate[]): Promise<Map<string, Verdict>> {
         return {
           ...inner,
           onInit(initialData: unknown) {
-            row.initialData = initialData;
+            // Timeline 과 같이 사본을 쥔다. 참조를 쥐면 algorithm 이 제자리에서
+            // 고친 뒤의 자료로 되짚게 되어, 실제 구현과 다른 것을 재게 된다.
+            row.initialData = structuredClone(initialData);
             inner.onInit?.(initialData);
           },
           async onEvent(event: FacetRuntimeEvent) {
             // 먹이기 직전이 앞 걸음의 안정된 끝 상태다.
             if (row.ends.length > row.stepHash.length) {
-              row.stepHash.push(hash(stageHtml(row.container)));
+              const html = stageHtml(row.container);
+              row.stepHash.push(hash(html));
+              if (process.env.SCRUB_DIFF) row.stepHtml.push(html);
             }
             row.log.push(event);
             await inner.onEvent(event);
@@ -257,7 +281,9 @@ async function measure(batch: Candidate[]): Promise<Map<string, Verdict>> {
     await delay(1_300);
     for (const row of rows) {
       while (row.stepHash.length < row.ends.length) {
-        row.stepHash.push(hash(stageHtml(row.container)));
+        const html = stageHtml(row.container);
+        row.stepHash.push(hash(html));
+        if (process.env.SCRUB_DIFF) row.stepHtml.push(html);
       }
     }
 
@@ -271,7 +297,7 @@ async function measure(batch: Candidate[]): Promise<Map<string, Verdict>> {
       const k = Math.max(1, Math.floor(n / 2));
       row.k = k;
       row.instance.onReset?.();
-      row.instance.onInit?.(row.initialData);
+      row.instance.onInit?.(structuredClone(row.initialData));
       for (let i = 0; i < row.ends[k - 1]; i++) await row.instance.onEvent(row.log[i]);
     }
 
@@ -283,9 +309,14 @@ async function measure(batch: Candidate[]): Promise<Map<string, Verdict>> {
       const want = row.stepHash[row.k - 1];
       verdicts.set(row.c.id, after === want ? 'same' : 'differ');
       if (after !== want && process.env.SCRUB_DIFF) {
+        const fwd = row.stepHtml[row.k - 1] ?? '';
+        const back = stageHtml(row.container);
+        let i = 0;
+        while (i < fwd.length && i < back.length && fwd[i] === back[i]) i++;
         console.log(
-          '\n── ' + row.c.id + '  걸음 ' + row.k + '/' + row.ends.length +
-            '  순방향 ' + want + ' → 되짚기 ' + after,
+          '\n── ' + row.c.id + '  걸음 ' + row.k + '/' + row.ends.length + '\n' +
+            '  순방향: …' + fwd.slice(Math.max(0, i - 100), i + 130) + '\n' +
+            '  되짚기: …' + back.slice(Math.max(0, i - 100), i + 130),
         );
       }
     }

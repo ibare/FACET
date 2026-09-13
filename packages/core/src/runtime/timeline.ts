@@ -44,6 +44,11 @@
 import type { FacetRuntimeEvent } from '../types/event.js';
 import type { ProjectorInstance } from './projector.js';
 
+function deepClone<T>(value: T): T {
+  if (typeof structuredClone === 'function') return structuredClone(value);
+  return JSON.parse(JSON.stringify(value)) as T;
+}
+
 export type TimelineHooks = {
   /** 적어 둔 걸음 수가 늘었다. 첫 재생 동안 스크럽 띠가 이것으로 채워진다. */
   onLength?(steps: number): void;
@@ -80,11 +85,17 @@ export class Timeline {
   private ends: number[] = [];
   private inner: ProjectorInstance | null = null;
   /**
-   * `onInit` 이 받았던 자료.
+   * `onInit` 이 받았던 자료의 **사본**.
    *
    * 되감기는 `onReset` 다음에 `onInit` 을 부른다 — S-runtime 이 못박은 순서이고,
    * projector 가 `onInit` 에서 stage 의 바탕(축·눈금·라벨)을 그리기 때문이다.
    * `onReset` 만 부르고 로그를 먹이면 그 바탕이 사라진 채로 걸음만 얹힌다.
+   *
+   * **참조를 쥐면 안 된다.** 러너가 넘기는 것은 mechanism 과 view 가 함께 쓰는
+   * 한 객체이고, algorithm 이 그것을 제자리에서 고친다 (`values[i] = …`). 참조를
+   * 쥐고 있으면 되짚을 때 **이미 다 굴러간 자료**로 바탕을 다시 그리게 된다 —
+   * 정렬 조각이 되짚은 뒤 정렬된 배열을 처음 배치라고 그리는 식이다. 조각 181 을
+   * 전수로 재어 어긋난 14 중 여럿이 이 하나였다.
    */
   private initialData: unknown = undefined;
 
@@ -139,7 +150,7 @@ export class Timeline {
     const self = this;
     return {
       onInit(initialData: unknown) {
-        self.initialData = initialData;
+        self.initialData = deepClone(initialData);
         projector.onInit?.(initialData);
       },
       async onEvent(event: FacetRuntimeEvent) {
@@ -293,7 +304,9 @@ export class Timeline {
     this.hooks.onInstant?.(true);
     try {
       inner.onReset?.();
-      inner.onInit?.(this.initialData);
+      // 사본을 또 복제해 넘긴다. 그대로 주면 stage 가 그것을 고쳐 다음 되짚기가
+      // 어긋난다 — 쥔 것이 원본이 아니게 되는 같은 덫이다.
+      inner.onInit?.(deepClone(this.initialData));
       const to = target === 0 ? 0 : this.ends[target - 1];
       for (let i = 0; i < to; i++) {
         if (this.destroyed) return;
