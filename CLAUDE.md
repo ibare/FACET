@@ -49,6 +49,17 @@ rules/
 | `tasks/whole-batch-protocol.md` | **완제품을 만들지 말지 정하는 잣대 셋** · 조작 실측 · 완제품 배치 |
 | `tasks/concept-meta-batch-protocol.md` | 개념 메타를 여러 개 만들 때 — 완제품+조각 묶음 |
 | `tasks/catalog-scope.md` | 카탈로그에 항목을 넣을지 말지 |
+| `tasks/scene-migration-protocol.md` | **진행 중** — 조각 181 을 장면(Scene) 방식으로 옮기는 절차 |
+
+### 진행 중인 대형 이행 — Scene
+
+조각의 화면을 **명령**(projector 가 stage 메서드를 부른다) 에서 **상태**(이벤트를 장면으로
+잇고 화면은 그 장면에서 만든다) 로 옮기는 중이다. 되짚기·걸음 계약·검사 비용이 함께
+풀리고 projector 층이 사라진다.
+
+- 절차와 진행: `tasks/scene-migration-protocol.md` — **이어서 작업하려면 이 문서부터 읽는다.**
+- 규범 판정: `rules/specifics/S-scene.md`
+- 두 방식은 공존한다. facet 이 `projector` 또는 `scene` 중 하나를 선언한다.
 
 ### 프로토콜이 규범이고, 배치 기록은 이야기다
 

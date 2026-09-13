@@ -201,6 +201,21 @@ specifics:
         - "@piece"
         - "PIECE_CANVAS_W"
 
+  - id: S-scene
+    file: specifics/S-scene.md
+    description: 장면(Scene) 방식의 규율 — ScenePlan 의 순수성 · render 의 전량 세우기 · animate 의 뜻 · 장면에 담지 않는 것(좌표 · 문안 · DOM)
+    triggers:
+      paths:
+        - "facets/**/scene.ts"
+        - "packages/core/src/runtime/scene.ts"
+      patterns:
+        - "ScenePlan"
+        - "SceneRenderer"
+        - "registerScenePlan"
+        - "scene: 'module:"
+      imports:
+        - "@ffacet/core/runtime"
+
   - id: S-view
     file: specifics/S-view.md
     description: View 인터페이스 계약 (mount/destroy), design-tokens 경유 색상, theme/locale 파라미터 준수, dispatch 채널을 통한 사용자 입력 발신, 색 토큰 결정 트리 (state/severity/categorical/LED/iso-body/region)
