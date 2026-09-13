@@ -2,13 +2,43 @@
   "diffs": [],
   "results": [
     {
-      "id": "facet:bstDegenerate",
+      "id": "facet:betweenLetterAndWord",
       "verdict": "stable",
-      "steps": 46,
+      "steps": 4,
+      "roundTrip": "same"
+    },
+    {
+      "id": "facet:mergeTheFrequentPair",
+      "verdict": "stable",
+      "steps": 12,
+      "roundTrip": "same"
+    },
+    {
+      "id": "facet:unknownBecomesKnown",
+      "verdict": "stable",
+      "steps": 12,
+      "roundTrip": "same"
+    },
+    {
+      "id": "facet:tokensPerLanguage",
+      "verdict": "stable",
+      "steps": 8,
+      "roundTrip": "same"
+    },
+    {
+      "id": "facet:boundaryShift",
+      "verdict": "stable",
+      "steps": 7,
+      "roundTrip": "same"
+    },
+    {
+      "id": "facet:spaceIsPartOfIt",
+      "verdict": "stable",
+      "steps": 9,
       "roundTrip": "same"
     }
   ],
   "done": true,
   "current": "끝",
-  "total": 1
+  "total": 6
 }

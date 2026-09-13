@@ -27,10 +27,20 @@
  *
  * 자르는 규칙 자체는 여기 없다. 그것은 algorithm 의 몫이고 stage 는 갈라진
  * 결과만 받는다.
+ *
+ * ── 장면을 그린다
+ *
+ * 걸음마다 부르는 메서드를 두지 않고 `render(next, prev, {animate})` 하나로 산다.
+ * 늘 비우고 그 장면이 말하는 것을 전부 다시 세우므로 되돌릴 명령이 필요 없고,
+ * 어느 걸음에서 오든 같은 화면이 선다 (S-scene). `prev` 는 **무엇을 흐르게 할지**
+ * 고르는 데에만 쓴다 — 방금 하나 달라진 것만 애니메이션으로 건너고 나머지는
+ * 곧바로 제자리에 선다. 걸음 함수는 버리지 않고 `withAnim` 을 받게 고쳐 정적으로
+ * 세우는 길과 흐르게 하는 길을 겸하게 했다.
  */
 
-import { fonts, getColors, PIECE_CANVAS_W } from '@ffacet/core/runtime';
+import { fonts, getColors, makeTranslator, PIECE_CANVAS_W } from '@ffacet/core/runtime';
 import type { CanvasView, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import type { UnknownBecomesKnownScene, UnknownCaption } from './scene.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -39,8 +49,8 @@ const STAGE_H = 292;
 
 /**
  * 선반에 새긴 라벨. 소문자 한 낱말짜리 도식 라벨이라 **표식**이고, 키를 만들지
- * 않는다 (C10 판정 1·2항). 이 stage 가 그리는 유일한 글자이며 나머지 문안은
- * projector 가 완성해 넘긴다.
+ * 않는다 (C10 판정 1·2항). 이 stage 가 상수로 쥔 유일한 글자이고, 나머지 문안은
+ * 장면이 말하려는 것을 `captionFor` 가 `params.t` 로 옮겨 만든다.
  */
 const SHELF_MARK = 'vocabulary';
 
@@ -90,17 +100,21 @@ const clamp01 = (v: number): number => (v < 0 ? 0 : v > 1 ? 1 : v);
 const ease = (t: number): number => (t < 0.5 ? 2 * t * t : 1 - ((2 - 2 * t) * (2 - 2 * t)) / 2);
 const lerp = (a: number, b: number, e: number): number => a + (b - a) * e;
 
-type Scene = {
+/**
+ * 캔버스에 자리를 잡는 데 쓰는 밑감. 걸음이 무엇을 보였는지를 담는 **장면**과는
+ * 다른 것이라 이름을 가른다 — 이쪽은 mount 때 한 번 정해지고 변하지 않는다.
+ */
+type Layout = {
   vocab: string[];
   /** 낱말 줄에 자리를 잡을 낱말들 — 말뭉치의 낱말 하나와 처음 보는 낱말들. */
   words: string[];
 };
 
 /**
- * `initialData` 를 좁힌다. 이 일이 일어나는 자리는 mount 다 — projector 가 없어도
- * 반드시 불리는 유일한 경로이기 때문이다 (S-piece).
+ * `initialData` 를 좁힌다. 이 일이 일어나는 자리는 mount 다 — 장면은 캔버스를
+ * 모르므로 자리를 셈할 밑감은 여기서 얻는다 (S-piece).
  */
-function readScene(initialData: Record<string, unknown> | undefined): Scene {
+function readLayout(initialData: Record<string, unknown> | undefined): Layout {
   const raw = (initialData ?? {}) as Record<string, unknown>;
   const strings = (v: unknown): string[] =>
     Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : [];
@@ -135,10 +149,13 @@ export const unknownBecomesKnownStageView: CanvasView = {
     while (svg.firstChild) svg.removeChild(svg.firstChild);
 
     const palette = getColors(params.theme);
-    const scene = readScene(params.initialData);
+    // 문안은 그리는 쪽이 만든다. 장면은 무엇을 말할지만 담는다 — 저작자
+    // 오버라이드는 `params.t` 로만 온다 (C10).
+    const t = params.t ?? makeTranslator(params.locale);
+    const layout = readLayout(params.initialData);
 
     // ── 글자 너비 역산 ────────────────────────────────────────────────
-    const rows = shelfRows(scene.vocab);
+    const rows = shelfRows(layout.vocab);
     let fit = CHAR_MAX;
     for (const row of rows) {
       const chars = row.reduce((sum, token) => sum + token.length, 0);
@@ -146,11 +163,11 @@ export const unknownBecomesKnownStageView: CanvasView = {
       const avail = W - 2 * SIDE - (row.length - 1) * CHIP_GAP - row.length * 2 * PAD_X;
       fit = Math.min(fit, avail / chars);
     }
-    if (scene.words.length > 0) {
+    if (layout.words.length > 0) {
       // 조각을 이으면 낱말 + 끝 표식이 된다. 어떻게 갈릴지 몰라도 글자 수는 안다.
-      const chars = scene.words.reduce((sum, word) => sum + word.length + END.length, 0);
+      const chars = layout.words.reduce((sum, word) => sum + word.length + END.length, 0);
       // 낱말마다 조각 둘을 기준으로 여백과 이음매를 잡아 둔다.
-      const slack = scene.words.length * (2 * 2 * PAD_X + SEAM) + (scene.words.length - 1) * WORD_GAP;
+      const slack = layout.words.length * (2 * 2 * PAD_X + SEAM) + (layout.words.length - 1) * WORD_GAP;
       fit = Math.min(fit, (W - 2 * SIDE - slack) / chars);
     }
     const CHAR = Math.max(4, fit);
@@ -289,10 +306,10 @@ export const unknownBecomesKnownStageView: CanvasView = {
     // ── 낱말 줄의 칸 ────────────────────────────────────────────────
     const cells = new Map<string, Cell>();
     {
-      const widths = scene.words.map((word) => (word.length + END.length) * CHAR + 2 * 2 * PAD_X + SEAM);
-      const total = widths.reduce((a, b) => a + b, 0) + (scene.words.length - 1) * WORD_GAP;
+      const widths = layout.words.map((word) => (word.length + END.length) * CHAR + 2 * 2 * PAD_X + SEAM);
+      const total = widths.reduce((a, b) => a + b, 0) + (layout.words.length - 1) * WORD_GAP;
       let x = (W - total) / 2;
-      scene.words.forEach((word, i) => {
+      layout.words.forEach((word, i) => {
         cells.set(word, { x, w: widths[i] });
         x += widths[i] + WORD_GAP;
       });
@@ -397,23 +414,69 @@ export const unknownBecomesKnownStageView: CanvasView = {
       });
     }
 
-    // ── 상태 ────────────────────────────────────────────────────────
-    /** 낱말 줄에 서 있는 통짜 낱말. */
-    const wordTiles = new Map<string, Tile>();
-    /** 토막 줄에 갈라져 있는 조각. */
-    const pieceTiles = new Map<string, Tile[]>();
-    /** 받아 내어 낱말 줄에 남은 조각들. */
-    const parked = new Map<string, Tile[]>();
-    /** 이미 어휘와 맞물린 낱말. */
-    const locked = new Set<string>();
+    // ── 화면에 서 있는 것 ────────────────────────────────────────────
+    //
+    // 걸음마다 쌓이는 상태가 아니다. `render` 가 매번 비우고 다시 채우는, 지금
+    // 그려져 있는 것들의 목록일 뿐이다 — 무엇을 보였는지는 장면이 안다.
 
-    async function arriveWord(word: string): Promise<Tile> {
+    /** 받아 내어 낱말 줄에 남은 조각들. 마무리에서 한 번 들어 보인다. */
+    let parked: Tile[] = [];
+
+    /** 늘 비우고 시작한다. 그래야 되돌릴 명령을 따로 둘 필요가 없다 (S-scene). */
+    function rewind(): void {
+      while (gWork.firstChild) gWork.removeChild(gWork.firstChild);
+      while (gWords.firstChild) gWords.removeChild(gWords.firstChild);
+      parked = [];
+      shelfMark.setAttribute('opacity', '0');
+      for (const chip of chips.values()) {
+        lightChip(chip, false);
+        chip.g.setAttribute('opacity', '0');
+        setPos(chip, chip.homeX, chip.homeY + 12);
+      }
+      setCaption('');
+    }
+
+    // ── 선반 ────────────────────────────────────────────────────────
+
+    /** 어휘가 선다. `withAnim` 이 거짓이면 이미 서 있는 꼴로 곧바로 놓는다. */
+    function layVocab(withAnim: boolean): Promise<void> {
+      const list = [...chips.values()];
+      if (list.length === 0) return Promise.resolve();
+      const OVERLAP = 3;
+      const draw = (p: number): void => {
+        shelfMark.setAttribute('opacity', String(clamp01(p * 3)));
+        list.forEach((chip, i) => {
+          const local = clamp01((p * (list.length + OVERLAP) - i) / OVERLAP);
+          const e = ease(local);
+          chip.g.setAttribute('opacity', String(e));
+          setPos(chip, chip.homeX, chip.homeY + (1 - e) * 12);
+        });
+      };
+      if (!withAnim) {
+        draw(1);
+        return Promise.resolve();
+      }
+      return animate(520, draw);
+    }
+
+    /** 어휘 조각 여럿을 한꺼번에 켜거나 끈다. */
+    function litChips(pieces: string[], lit: boolean): void {
+      for (const piece of pieces) {
+        const chip = chips.get(piece);
+        if (chip) lightChip(chip, lit);
+      }
+    }
+
+    // ── 낱말 줄 ─────────────────────────────────────────────────────
+
+    /** 통짜 낱말이 낱말 줄에 선다. `withAnim` 이면 살짝 내려오며 나타난다. */
+    function arriveWord(word: string, withAnim: boolean): { tile: Tile; done: Promise<void> } {
       const cell = cells.get(word) ?? { x: SIDE, w: W - 2 * SIDE };
       const w = word.length * WORD_CHAR + 2 * PAD_X;
       const x = cell.x + (cell.w - w) / 2;
       const tile = makeTile(gWork, word, {
         x,
-        y: WORD_Y - 20,
+        y: withAnim ? WORD_Y - 20 : WORD_Y,
         w,
         h: WORD_H,
         charW: WORD_CHAR,
@@ -422,18 +485,26 @@ export const unknownBecomesKnownStageView: CanvasView = {
         ink: palette.text,
         stroke: palette.border,
       });
-      wordTiles.set(word, tile);
-      await animate(240, (p) => {
+      if (!withAnim) return { tile, done: Promise.resolve() };
+      const done = animate(240, (p) => {
         const e = ease(p);
         tile.g.setAttribute('opacity', String(e));
         setPos(tile, x, lerp(WORD_Y - 20, WORD_Y, e));
       });
-      return tile;
+      return { tile, done };
+    }
+
+    /**
+     * 통째로는 어휘 밖이라는 표시. **머무는 강조**라 정적 그리기에도 넣는다 —
+     * 빠뜨리면 되짚었을 때 붉은 기가 사라진다 (S-scene).
+     */
+    function markMissed(tile: Tile): void {
+      tile.rect.setAttribute('stroke', palette.danger);
+      tile.label.setAttribute('fill', palette.danger);
     }
 
     /** 통째로 어휘를 훑는다 — 그리고 아무것도 맞지 않는다. */
-    async function probeWhole(word: string): Promise<void> {
-      const tile = wordTiles.get(word) ?? (await arriveWord(word));
+    async function probeWhole(tile: Tile, word: string): Promise<void> {
       const ghost = makeTile(gWork, word, {
         x: tile.x,
         y: tile.y,
@@ -464,8 +535,7 @@ export const unknownBecomesKnownStageView: CanvasView = {
         from = to;
       }
       // 맞는 것이 없었다. 낱말이 통째로는 어휘 밖이라는 표시를 남긴다.
-      tile.rect.setAttribute('stroke', palette.danger);
-      tile.label.setAttribute('fill', palette.danger);
+      markMissed(tile);
       await animate(180, (p) => {
         ghost.g.setAttribute('opacity', String(1 - p));
         tile.rect.setAttribute('stroke-width', String(1.4 + Math.sin(Math.PI * p) * 1.6));
@@ -474,30 +544,37 @@ export const unknownBecomesKnownStageView: CanvasView = {
       tile.rect.setAttribute('stroke-width', '1.4');
     }
 
-    /** 낱말이 갈라진다 — 통짜 하나가 조각 여럿이 되어 벌어지며 내려간다. */
-    async function splitWord(word: string, pieces: string[]): Promise<void> {
-      if (pieces.length === 0) return;
-      const cell = cells.get(word) ?? { x: SIDE, w: W - 2 * SIDE };
-      const tile = wordTiles.get(word) ?? (await arriveWord(word));
+    // ── 토막 줄 ─────────────────────────────────────────────────────
 
-      const widths = pieces.map((p) => tileW(p));
+    /** 갈라진 토막의 자리 — 통짜에 붙어 있을 때(`froms`)와 벌어졌을 때(`tos`). */
+    function splitLayout(
+      word: string,
+      pieces: string[],
+    ): { widths: number[]; froms: number[]; tos: number[]; y0: number } {
+      const cell = cells.get(word) ?? { x: SIDE, w: W - 2 * SIDE };
+      const widths = pieces.map((piece) => tileW(piece));
       const sum = widths.reduce((a, b) => a + b, 0);
       const joinedW = sum + (pieces.length - 1) * SEAM;
       const spreadW = sum + (pieces.length - 1) * SPLIT_GAP;
       const cx = cell.x + cell.w / 2;
-      const fromX0 = cx - joinedW / 2;
-      const toX0 = Math.min(Math.max(cx - spreadW / 2, SIDE), W - SIDE - spreadW);
-      const y0 = WORD_Y + (WORD_H - TILE_H) / 2;
-
-      const tiles: Tile[] = [];
       const froms: number[] = [];
       const tos: number[] = [];
-      let fx = fromX0;
-      let tx = toX0;
-      pieces.forEach((piece, i) => {
-        const made = makeTile(gWork, piece, {
-          x: fx,
-          y: y0,
+      let fx = cx - joinedW / 2;
+      let tx = Math.min(Math.max(cx - spreadW / 2, SIDE), W - SIDE - spreadW);
+      widths.forEach((w) => {
+        froms.push(fx);
+        tos.push(tx);
+        fx += w + SEAM;
+        tx += w + SPLIT_GAP;
+      });
+      return { widths, froms, tos, y0: WORD_Y + (WORD_H - TILE_H) / 2 };
+    }
+
+    function makePieceTiles(pieces: string[], widths: number[], xs: number[], y: number): Tile[] {
+      return pieces.map((piece, i) =>
+        makeTile(gWork, piece, {
+          x: xs[i],
+          y,
           w: widths[i],
           h: TILE_H,
           charW: CHAR,
@@ -505,33 +582,37 @@ export const unknownBecomesKnownStageView: CanvasView = {
           fill: palette.itemComparing,
           ink: palette.stateInk,
           stroke: palette.itemComparing,
-        });
-        made.g.setAttribute('opacity', '0');
-        tiles.push(made);
-        froms.push(fx);
-        tos.push(tx);
-        fx += widths[i] + SEAM;
-        tx += widths[i] + SPLIT_GAP;
-      });
-      pieceTiles.set(word, tiles);
-      locked.delete(word);
+        }),
+      );
+    }
+
+    /** 갈라진 채로 토막 줄에 곧바로 세운다. */
+    function placeSplit(word: string, pieces: string[]): Tile[] {
+      const { widths, tos } = splitLayout(word, pieces);
+      return makePieceTiles(pieces, widths, tos, SPLIT_Y);
+    }
+
+    /** 낱말이 갈라진다 — 통짜 하나가 조각 여럿이 되어 벌어지며 내려간다. */
+    async function splitWord(word: string, pieces: string[], whole: Tile): Promise<void> {
+      if (pieces.length === 0) return;
+      const { widths, froms, tos, y0 } = splitLayout(word, pieces);
+      const tiles = makePieceTiles(pieces, widths, froms, y0);
+      for (const tile of tiles) tile.g.setAttribute('opacity', '0');
 
       await animate(440, (p) => {
         const e = ease(p);
-        tile.g.setAttribute('opacity', String(Math.max(0, 1 - p * 3)));
+        whole.g.setAttribute('opacity', String(Math.max(0, 1 - p * 3)));
         tiles.forEach((piece, i) => {
           piece.g.setAttribute('opacity', String(Math.min(1, p * 3)));
           setPos(piece, lerp(froms[i], tos[i], e), lerp(y0, SPLIT_Y, e));
         });
       });
-      tile.g.remove();
-      wordTiles.delete(word);
+      whole.g.remove();
     }
 
-    /** 토막이 선반으로 내려가 제 조각과 맞물린다. */
-    async function lockPieces(word: string, pieces: string[]): Promise<void> {
-      const tiles = pieceTiles.get(word);
-      if (!tiles || tiles.length === 0) return;
+    /** 토막이 선반으로 내려가 제 조각과 맞물린다. 끝에서 그 조각이 켜진다. */
+    async function lockPieces(pieces: string[], tiles: Tile[]): Promise<void> {
+      if (tiles.length === 0) return;
       const froms = tiles.map((tile) => ({ x: tile.x, y: tile.y }));
       const targets = pieces.map((piece) => chips.get(piece));
       const SPAN = 360;
@@ -555,16 +636,16 @@ export const unknownBecomesKnownStageView: CanvasView = {
       });
 
       for (const tile of tiles) tile.g.remove();
-      pieceTiles.delete(word);
-      locked.add(word);
     }
 
-    /** 맞물린 조각이 다시 올라와 낱말을 이룬다 — 아는 조각으로 적은 낱말이다. */
-    async function receiveWord(word: string, pieces: string[]): Promise<void> {
-      if (!locked.has(word)) await lockPieces(word, pieces);
-      if (pieces.length === 0) return;
-      const cell = cells.get(word) ?? { x: SIDE, w: W - 2 * SIDE };
+    // ── 받아 낸 낱말 ────────────────────────────────────────────────
 
+    /** 받아 낸 낱말이 낱말 줄에 앉을 자리. */
+    function parkLayout(
+      word: string,
+      pieces: string[],
+    ): { widths: number[]; xs: number[]; restY: number } {
+      const cell = cells.get(word) ?? { x: SIDE, w: W - 2 * SIDE };
       const chars = pieces.reduce((sum, piece) => sum + piece.length, 0);
       const seams = (pieces.length - 1) * SEAM;
       let pad = PAD_X;
@@ -576,67 +657,94 @@ export const unknownBecomesKnownStageView: CanvasView = {
         groupW = chars * CHAR + pieces.length * 2 * pad + seams;
       }
       const widths = pieces.map((piece) => tileW(piece, pad));
-      const restY = WORD_Y + (WORD_H - TILE_H) / 2;
-
-      const flying: Tile[] = [];
-      const starts: Array<{ x: number; y: number; w: number }> = [];
-      const ends: Array<{ x: number; y: number; w: number }> = [];
+      const xs: number[] = [];
       let gx = cell.x + (cell.w - groupW) / 2;
+      for (const w of widths) {
+        xs.push(gx);
+        gx += w + SEAM;
+      }
+      return { widths, xs, restY: WORD_Y + (WORD_H - TILE_H) / 2 };
+    }
+
+    /** 받아 낸 낱말을 앉은 자리에 곧바로 세운다. */
+    function parkWord(word: string, pieces: string[]): void {
+      if (pieces.length === 0) return;
+      const { widths, xs, restY } = parkLayout(word, pieces);
       pieces.forEach((piece, i) => {
-        const chip = chips.get(piece);
-        const start = chip
-          ? { x: chip.homeX, y: chip.homeY, w: chip.w }
-          : { x: gx, y: SPLIT_Y, w: widths[i] };
-        const end = { x: gx, y: restY, w: widths[i] };
-        starts.push(start);
-        ends.push(end);
-        flying.push(
+        parked.push(
           makeTile(gWords, piece, {
-            x: start.x,
-            y: start.y,
-            w: start.w,
+            x: xs[i],
+            y: restY,
+            w: widths[i],
             h: TILE_H,
             charW: CHAR,
             fontSize: CHIP_FS,
-            fill: palette.itemPivot,
-            ink: palette.stateInk,
-            stroke: palette.itemPivot,
+            fill: palette.itemSorted,
+            ink: palette.textInverse,
+            stroke: palette.itemSorted,
           }),
         );
-        gx += widths[i] + SEAM;
       });
+    }
+
+    /**
+     * 맞물린 조각이 다시 올라와 낱말을 이룬다 — 아는 조각으로 적은 낱말이다.
+     *
+     * `viaLock` 이면 아직 갈라진 채라 먼저 선반으로 내려보내 맞물린다. 말뭉치에
+     * 있던 낱말은 맞물리는 순간을 따로 떼어 보이지 않으므로 이 길로 온다.
+     */
+    async function receiveWord(word: string, pieces: string[], viaLock: boolean): Promise<void> {
+      if (pieces.length === 0) return;
+      if (viaLock) await lockPieces(pieces, placeSplit(word, pieces));
+      // 맞물려 있던 자리에서 출발한다. 앞 장면에서 켜져 있던 조각을 그대로 세운다.
+      else litChips(pieces, true);
+
+      const { widths, xs, restY } = parkLayout(word, pieces);
+      const starts = pieces.map((piece, i) => {
+        const chip = chips.get(piece);
+        return chip
+          ? { x: chip.homeX, y: chip.homeY, w: chip.w }
+          : { x: xs[i], y: SPLIT_Y, w: widths[i] };
+      });
+      const flying = pieces.map((piece, i) =>
+        makeTile(gWords, piece, {
+          x: starts[i].x,
+          y: starts[i].y,
+          w: starts[i].w,
+          h: TILE_H,
+          charW: CHAR,
+          fontSize: CHIP_FS,
+          fill: palette.itemPivot,
+          ink: palette.stateInk,
+          stroke: palette.itemPivot,
+        }),
+      );
 
       await animate(460, (p) => {
         const e = ease(p);
         flying.forEach((tile, i) => {
           setBox(
             tile,
-            lerp(starts[i].x, ends[i].x, e),
-            lerp(starts[i].y, ends[i].y, e),
-            lerp(starts[i].w, ends[i].w, e),
+            lerp(starts[i].x, xs[i], e),
+            lerp(starts[i].y, restY, e),
+            lerp(starts[i].w, widths[i], e),
           );
         });
       });
 
       // 조각은 어휘에 그대로 남는다 — 한 번 쓰였다고 없어지지 않는다.
-      for (const piece of pieces) {
-        const chip = chips.get(piece);
-        if (chip) lightChip(chip, false);
-      }
+      litChips(pieces, false);
       for (const tile of flying) {
         tile.rect.setAttribute('fill', palette.itemSorted);
         tile.rect.setAttribute('stroke', palette.itemSorted);
         tile.label.setAttribute('fill', palette.textInverse);
       }
-      const old = parked.get(word);
-      if (old) for (const tile of old) tile.g.remove();
-      parked.set(word, flying);
-      locked.delete(word);
+      parked.push(...flying);
     }
 
     /** 받아 낸 낱말들을 한 번 들어 보인다. */
     async function finish(): Promise<void> {
-      const tiles = [...parked.values()].flat();
+      const tiles = [...parked];
       if (tiles.length === 0) return;
       const homes = tiles.map((tile) => ({ x: tile.x, y: tile.y }));
       const SPAN = 360;
@@ -652,50 +760,151 @@ export const unknownBecomesKnownStageView: CanvasView = {
       tiles.forEach((tile, i) => setPos(tile, homes[i].x, homes[i].y));
     }
 
-    /** 어휘가 선다. */
-    async function layVocab(): Promise<void> {
-      const list = [...chips.values()];
-      if (list.length === 0) return;
-      const OVERLAP = 3;
-      await animate(520, (p) => {
-        shelfMark.setAttribute('opacity', String(clamp01(p * 3)));
-        list.forEach((chip, i) => {
-          const local = clamp01((p * (list.length + OVERLAP) - i) / OVERLAP);
-          const e = ease(local);
-          chip.g.setAttribute('opacity', String(e));
-          setPos(chip, chip.homeX, chip.homeY + (1 - e) * 12);
-        });
-      });
+    // ── 문안 ────────────────────────────────────────────────────────
+
+    /** 조각 글자는 데이터라 문안이 아니다. 이어 붙이는 모양만 여기서 정한다. */
+    const spell = (pieces: string[]): string => pieces.join(' · ');
+
+    /** 장면이 말하려는 것을 이 locale 의 글로 옮긴다. */
+    function captionFor(caption: UnknownCaption | null): string {
+      if (caption === null) return '';
+      switch (caption.kind) {
+        case 'vocab':
+          return t('caption.vocab', 'These pieces are all it knows. Pieces: {n}.', {
+            n: caption.count,
+          });
+        case 'missed':
+          return t(
+            'caption.missed',
+            '"{word}" never appeared in the corpus. Swept whole across the vocabulary, it matches nothing.',
+            { word: caption.word },
+          );
+        case 'seenSplit':
+          return t(
+            'caption.seenSplit',
+            '"{word}" was in the corpus. Reading it just means cutting it into pieces: {pieces}.',
+            { word: caption.word, pieces: spell(caption.pieces) },
+          );
+        case 'split':
+          return t('caption.split', 'So "{word}" is cut apart: {pieces}.', {
+            word: caption.word,
+            pieces: spell(caption.pieces),
+          });
+        case 'lock':
+          return t(
+            'caption.lock',
+            'Each half meets a piece that is already in the vocabulary: {pieces}.',
+            { pieces: spell(caption.pieces) },
+          );
+        case 'seenTaken':
+          return t(
+            'caption.seenTaken',
+            'Both pieces are in the vocabulary, so "{word}" comes back whole. Nothing unusual yet.',
+            { word: caption.word },
+          );
+        case 'received':
+          return t('caption.received', '"{word}" is taken in, spelled out of known pieces: {pieces}.', {
+            word: caption.word,
+            pieces: spell(caption.pieces),
+          });
+        case 'done':
+          // 센 것은 **모르는 낱말만**이다 (algorithm 의 `received`). 화면에는 말뭉치
+          // 낱말까지 나란히 서 있으므로, "낱말" 이라고만 하면 독자가 세는 수와
+          // 캡션의 수가 어긋난다.
+          return t('caption.done', 'An unknown word is never turned away. Unknown words taken in: {n}.', {
+            n: caption.count,
+          });
+      }
     }
 
-    function resetScene(): void {
-      while (gWork.firstChild) gWork.removeChild(gWork.firstChild);
-      while (gWords.firstChild) gWords.removeChild(gWords.firstChild);
-      wordTiles.clear();
-      pieceTiles.clear();
-      parked.clear();
-      locked.clear();
-      shelfMark.setAttribute('opacity', '0');
-      for (const chip of chips.values()) {
-        lightChip(chip, false);
-        chip.g.setAttribute('opacity', '0');
-        setPos(chip, chip.homeX, chip.homeY + 12);
+    // ── 장면 그리기 ─────────────────────────────────────────────────
+    //
+    // 늘 비우고 그 장면이 말하는 것을 전부 다시 세운다. 그런 뒤 `prev` 와 견주어
+    // **방금 달라진 하나만** 흐르게 한다 — 되짚기(`animate` 거짓)는 정적으로 선
+    // 화면에서 곧바로 끝나므로 타이머가 남지 않는다 (S-scene).
+    async function render(
+      next: UnknownBecomesKnownScene,
+      prev: UnknownBecomesKnownScene | null,
+      opts: { animate: boolean },
+    ): Promise<void> {
+      rewind();
+
+      /** 흐르게 할 것 하나. 걸음 하나는 화면의 한 곳만 바꾸므로 둘이 겹치지 않는다. */
+      let flowing: Promise<void> | null = null;
+
+      // ── 선반 ──
+      if (next.shelfLaid) {
+        const laying = opts.animate && prev?.shelfLaid !== true;
+        const done = layVocab(laying);
+        if (laying) flowing = done;
       }
-      setCaption('');
+
+      // ── 받아 낸 낱말 ──
+      const lastIndex = next.received.length - 1;
+      const justReceived =
+        opts.animate && prev !== null && next.received.length === prev.received.length + 1;
+      next.received.forEach((entry, i) => {
+        // 방금 받아 낸 것은 곧바로 앉히지 않는다. 선반에서 날아와 앉는다.
+        if (justReceived && i === lastIndex) return;
+        parkWord(entry.word, entry.pieces);
+      });
+
+      // ── 지금 다루는 낱말 ──
+      //
+      // 앞 장면이 **같은 낱말**을 다루고 있었을 때만 그 단계를 견준다. 걸음을
+      // 건너뛰어 `prev` 가 이어지지 않으면 여기서 저절로 걸러져 정적으로 선다.
+      const before = prev?.active ?? null;
+      const active = next.active;
+      const prevPhase =
+        active !== null && before !== null && before.word === active.word ? before.phase : null;
+
+      if (active !== null) {
+        if (active.phase === 'missed') {
+          const { tile, done } = arriveWord(active.word, opts.animate && prevPhase === null);
+          if (opts.animate && prevPhase !== 'missed') {
+            flowing = done.then(() => probeWhole(tile, active.word));
+          } else {
+            markMissed(tile);
+          }
+        } else if (active.phase === 'split') {
+          if (opts.animate && prevPhase !== 'split') {
+            // 통짜에서 갈라진다. 앞이 `missed` 였다면 이미 붉게 물든 채로 시작한다.
+            const { tile, done } = arriveWord(active.word, prevPhase === null);
+            if (prevPhase === 'missed') markMissed(tile);
+            flowing = done.then(() => splitWord(active.word, active.pieces, tile));
+          } else {
+            placeSplit(active.word, active.pieces);
+          }
+        } else {
+          // 맞물린 선반 조각은 머무는 강조다 — 정적 그리기에도 넣어야 되짚었을 때 남는다.
+          litChips(active.pieces, true);
+          if (opts.animate && prevPhase === 'split') {
+            // 내려가 맞물리는 것을 보일 참이다. 켜는 일은 그 끝에 맡긴다.
+            litChips(active.pieces, false);
+            flowing = lockPieces(active.pieces, placeSplit(active.word, active.pieces));
+          }
+        }
+      }
+
+      if (justReceived) {
+        const entry = next.received[lastIndex];
+        // 갈라진 채였다면 먼저 선반으로 내려가 맞물린 뒤 올라온다.
+        const viaLock = before !== null && before.word === entry.word && before.phase !== 'locked';
+        flowing = receiveWord(entry.word, entry.pieces, viaLock);
+      }
+
+      setCaption(captionFor(next.caption));
+
+      if (!opts.animate) return;
+      if (flowing !== null) await flowing;
+      if (next.finished && prev?.finished !== true) await finish();
     }
 
     // 처음 화면 — 선반은 아직 서지 않았다. 첫 걸음이 그것을 세운다.
-    resetScene();
+    rewind();
 
     return {
-      layVocab,
-      probeWhole,
-      splitWord,
-      lockPieces,
-      receiveWord,
-      finish,
-      setCaption,
-      resetScene,
+      render,
 
       destroy(): void {
         destroyed = true;

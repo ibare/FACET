@@ -9,7 +9,7 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
@@ -18,7 +18,7 @@ import type { UnknownBecomesKnownData } from './algorithm.js';
 import { unknownBecomesKnownDescription } from './description.js';
 import { unknownBecomesKnownFacet } from './facet.js';
 import { unknownBecomesKnownIRs } from './irs.js';
-import { unknownBecomesKnownProjector } from './projector.js';
+import { unknownBecomesKnownScene } from './scene.js';
 import { unknownBecomesKnownStageView } from './unknown-becomes-known-stage.js';
 
 export { unknownBecomesKnownAlgorithm } from './algorithm.js';
@@ -26,14 +26,21 @@ export type { UnknownBecomesKnownData } from './algorithm.js';
 export { unknownBecomesKnownDescription } from './description.js';
 export { unknownBecomesKnownFacet } from './facet.js';
 export { unknownBecomesKnownIRs } from './irs.js';
-export { unknownBecomesKnownProjector } from './projector.js';
+export { unknownBecomesKnownScene } from './scene.js';
+export type {
+  ActiveWord,
+  ReceivedWord,
+  UnknownBecomesKnownScene,
+  UnknownCaption,
+  WordPhase,
+} from './scene.js';
 export { unknownBecomesKnownStageView } from './unknown-becomes-known-stage.js';
 
 export function registerUnknownBecomesKnown(): void {
   registerAlgorithm<UnknownBecomesKnownData>('unknownBecomesKnown', unknownBecomesKnownAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('unknownBecomesKnownProjector', unknownBecomesKnownProjector);
+  registerScenePlan('unknownBecomesKnownScene', unknownBecomesKnownScene);
   for (const ir of unknownBecomesKnownIRs) registerIR(ir.id, ir);
   registerView('unknown-becomes-known-stage', unknownBecomesKnownStageView);
   registerFacets([unknownBecomesKnownFacet]);

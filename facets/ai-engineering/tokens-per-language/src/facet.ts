@@ -37,7 +37,7 @@ export const tokensPerLanguageFacet: FacetJson = {
     pt: 'A mesma frase se parte em muito mais peças em um idioma do que em outro.',
   },
   algorithm: 'module:tokensPerLanguage',
-  projector: 'module:tokensPerLanguageProjector',
+  scene: 'module:tokensPerLanguageScene',
   initialData: {
     type: 'tokens-per-language',
     stepMs: 900,

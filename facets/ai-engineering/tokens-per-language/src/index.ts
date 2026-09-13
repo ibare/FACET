@@ -9,12 +9,12 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { tokensPerLanguageAlgorithm, type TokensPerLanguageData } from './algorithm.js';
-import { tokensPerLanguageProjector } from './projector.js';
+import { tokensPerLanguageScene } from './scene.js';
 import { tokensPerLanguageIRs } from './irs.js';
 import { tokensPerLanguageStageView } from './tokens-per-language-stage.js';
 import { tokensPerLanguageFacet } from './facet.js';
@@ -25,7 +25,9 @@ export function registerTokensPerLanguage(): void {
   registerAlgorithm<TokensPerLanguageData>('tokensPerLanguage', tokensPerLanguageAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('tokensPerLanguageProjector', tokensPerLanguageProjector);
+  // algorithm 과 같은 이름으로 등록하지 않는다 — `module:` 참조가 어느 쪽인지
+  // 말하지 못하게 된다 (C4).
+  registerScenePlan('tokensPerLanguageScene', tokensPerLanguageScene);
   for (const ir of tokensPerLanguageIRs) registerIR(ir.id, ir);
   registerView('tokens-per-language-stage', tokensPerLanguageStageView);
   registerFacets([tokensPerLanguageFacet]);
@@ -34,7 +36,7 @@ export function registerTokensPerLanguage(): void {
 
 export {
   tokensPerLanguageAlgorithm,
-  tokensPerLanguageProjector,
+  tokensPerLanguageScene,
   tokensPerLanguageIRs,
   tokensPerLanguageStageView,
   tokensPerLanguageFacet,

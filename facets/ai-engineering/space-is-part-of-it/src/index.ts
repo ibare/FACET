@@ -3,12 +3,12 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { spaceIsPartOfItAlgorithm, type SpaceIsPartOfItData } from './algorithm.js';
-import { spaceIsPartOfItProjector } from './projector.js';
+import { spaceIsPartOfItScene } from './scene.js';
 import { spaceIsPartOfItIRs } from './irs.js';
 import { spaceIsPartOfItStageView } from './space-is-part-of-it-stage.js';
 import { spaceIsPartOfItFacet } from './facet.js';
@@ -24,7 +24,7 @@ import { spaceIsPartOfItDescription } from './description.js';
  */
 export function registerSpaceIsPartOfIt(): void {
   registerAlgorithm('spaceIsPartOfIt', spaceIsPartOfItAlgorithm, { mechanismKind: 'reactive' });
-  registerProjector('spaceIsPartOfItProjector', spaceIsPartOfItProjector);
+  registerScenePlan('spaceIsPartOfItScene', spaceIsPartOfItScene);
   for (const ir of spaceIsPartOfItIRs) registerIR(ir.id, ir);
   registerView('space-is-part-of-it-stage', spaceIsPartOfItStageView);
   registerFacets([spaceIsPartOfItFacet]);
@@ -33,7 +33,7 @@ export function registerSpaceIsPartOfIt(): void {
 
 export {
   spaceIsPartOfItAlgorithm,
-  spaceIsPartOfItProjector,
+  spaceIsPartOfItScene,
   spaceIsPartOfItIRs,
   spaceIsPartOfItStageView,
   spaceIsPartOfItFacet,

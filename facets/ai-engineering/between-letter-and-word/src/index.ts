@@ -9,12 +9,12 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { betweenLetterAndWordAlgorithm } from './algorithm.js';
-import { betweenLetterAndWordProjector } from './projector.js';
+import { betweenLetterAndWordScene } from './scene.js';
 import { betweenLetterAndWordIRs } from './irs.js';
 import { betweenLetterAndWordStageView } from './between-letter-and-word-stage.js';
 import { betweenLetterAndWordFacet } from './facet.js';
@@ -22,7 +22,7 @@ import { betweenLetterAndWordDescription } from './description.js';
 
 export {
   betweenLetterAndWordAlgorithm,
-  betweenLetterAndWordProjector,
+  betweenLetterAndWordScene,
   betweenLetterAndWordIRs,
   betweenLetterAndWordStageView,
   betweenLetterAndWordFacet,
@@ -45,7 +45,7 @@ export function registerBetweenLetterAndWord(): void {
   registerAlgorithm('betweenLetterAndWord', betweenLetterAndWordAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('betweenLetterAndWordProjector', betweenLetterAndWordProjector);
+  registerScenePlan('betweenLetterAndWordScene', betweenLetterAndWordScene);
   for (const ir of betweenLetterAndWordIRs) registerIR(ir.id, ir);
   registerView('between-letter-and-word-stage', betweenLetterAndWordStageView);
   registerFacets([betweenLetterAndWordFacet]);

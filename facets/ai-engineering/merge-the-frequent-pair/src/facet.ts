@@ -39,7 +39,7 @@ export const mergeTheFrequentPairFacet: FacetJson = {
     pt: 'O par que mais aparece junto vira uma peça, e a mesma costura fecha de uma vez em todo o corpus.',
   },
   algorithm: 'module:mergeTheFrequentPair',
-  projector: 'module:mergeTheFrequentPairProjector',
+  scene: 'module:mergeTheFrequentPairScene',
   initialData: {
     type: 'mergeTheFrequentPair',
     // 1차 데이터. 낱말과 빈도뿐이고 쪼개기·셈·합치기는 algorithm 의 몫이다.

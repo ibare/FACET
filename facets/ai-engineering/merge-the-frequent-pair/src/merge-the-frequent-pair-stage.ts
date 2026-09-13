@@ -21,6 +21,13 @@
  *
  * 좌표는 전부 캔버스에서 역산한다. 이음매 폭은 가장 넓은 줄(첫 걸음의 낱글자)이
  * 폭을 채우도록 정하고, 조각은 합쳐지기만 하므로 그 뒤로는 줄어들기만 한다.
+ *
+ * ── 장면 하나로 화면을 세운다
+ *
+ * 걸음마다 부르는 메서드는 없다. `render(next, prev, { animate })` 하나가 그 장면이
+ * 말하는 화면을 통째로 세우고, `prev` 는 무엇을 흐르게 할지 고르는 데만 쓴다. 그래서
+ * 어느 걸음에서 어느 걸음으로 가든 결과가 같고, 되돌릴 명령을 따로 둘 필요가 없다
+ * (S-scene). 장면의 모양은 `scene.ts`.
  */
 
 import {
@@ -28,11 +35,14 @@ import {
   fontSizes,
   fonts,
   getColors,
+  makeTranslator,
   type CanvasView,
   type Palette,
   type ViewInstance,
   type ViewMountParams,
 } from '@ffacet/core/runtime';
+
+import type { MergeScene } from './scene.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 
@@ -83,12 +93,12 @@ type Row = {
   seams: SVGTextElement[];
 };
 
+/**
+ * 걸음마다 부르는 메서드를 두지 않는다. `render` 하나가 장면이 말하는 화면을 통째로
+ * 세우므로, 되돌릴 명령이 있을 자리가 없다 (S-scene).
+ */
 export type MergeTheFrequentPairStage = ViewInstance & {
-  paint(rows: string[][]): Promise<void>;
-  weigh(counts: number[][], winner: boolean[][]): Promise<void>;
-  fuse(rows: string[][], token: string): Promise<void>;
-  rewind(): void;
-  setCaption(text: string): void;
+  render(next: MergeScene, prev: MergeScene | null, opts: { animate: boolean }): Promise<void>;
 };
 
 function el<K extends keyof SVGElementTagNameMap>(name: K): SVGElementTagNameMap[K] {
@@ -128,6 +138,8 @@ export const mergeTheFrequentPairStageView: CanvasView = {
 
   mount(_container, params): ViewInstance {
     const canvas = params.canvas;
+    // 문안은 장면이 아니라 여기서 만든다. 저작자 오버라이드도 이 통로로만 온다 (C10).
+    const t = params.t ?? makeTranslator(params.locale);
     const colors: Palette = getColors(params.theme);
     const words = readScene(params.initialData);
     const W = PIECE_CANVAS_W;
@@ -151,7 +163,7 @@ export const mergeTheFrequentPairStageView: CanvasView = {
 
     const chipW = (text: string): number => text.length * CHAR_W + CHIP_PAD * 2;
 
-    /** 합쳐져 나온 조각. 어휘가 자라는 것이 여기 쌓인다. */
+    /** 합쳐져 나온 조각. 장면이 쥔 자취를 `render` 가 그릴 때마다 여기 옮겨 담는다. */
     const learned = new Set<string>();
 
     // ── 뼈대.
@@ -238,8 +250,11 @@ export const mergeTheFrequentPairStageView: CanvasView = {
     }
 
     // ── 조각.
-    function paintChip(chip: Chip, chosen: boolean): void {
-      const isLearned = learned.has(chip.text);
+    //
+    // `known` 은 그 조각이 그려지는 시점의 어휘다. 합치는 운동을 그릴 때는 합쳐지기
+    // 전의 어휘로 옛 조각을 칠해야 하므로 바깥에서 다른 것을 건넬 수 있게 둔다.
+    function paintChip(chip: Chip, chosen: boolean, known: Set<string> = learned): void {
+      const isLearned = known.has(chip.text);
       const fill = chosen ? colors.itemPivot : isLearned ? colors.itemSorted : colors.itemDefault;
       const ink = chosen ? colors.stateInk : isLearned ? colors.textInverse : colors.text;
       chip.rect.setAttribute('fill', fill);
@@ -316,9 +331,6 @@ export const mergeTheFrequentPairStageView: CanvasView = {
       seamGap = Math.max(SEAM_MIN, gap);
     }
 
-    /** 이번에 닫힐 이음매. `weigh` 가 받아 두었다가 `fuse` 가 쓴다. */
-    let marked: boolean[][] = [];
-
     function wrapCaption(text: string): [string, string] {
       const max = Math.max(8, Math.floor((W - SIDE * 2) / CAPTION_CHAR_W));
       if (text.length <= max) return [text, ''];
@@ -328,207 +340,328 @@ export const mergeTheFrequentPairStageView: CanvasView = {
       return [text.slice(0, cut), text.slice(cut + 1)];
     }
 
-    const instance: MergeTheFrequentPairStage = {
-      setCaption(text: string): void {
-        const [first, second] = wrapCaption(text);
-        captionLine1.textContent = first;
-        captionLine2.textContent = second;
-      },
+    function setCaption(text: string): void {
+      const [first, second] = wrapCaption(text);
+      captionLine1.textContent = first;
+      captionLine2.textContent = second;
+    }
 
-      /**
-       * 낱말이 낱글자로 쪼개진다. 조각을 낱말 모양 그대로 붙여 세운 뒤 이음매만큼
-       * 벌린다 — 쪼개는 일 자체가 운동이다.
-       */
-      async paint(tokenRows: string[][]): Promise<void> {
-        fitSeam(tokenRows);
-        marked = [];
-        const plans: { row: Row; from: number[]; to: number[] }[] = [];
+    /** 처음으로 되감는다. 그리기는 늘 여기서 출발하므로 되돌릴 명령이 필요 없다. */
+    function rewind(): void {
+      learned.clear();
+      for (const row of rows) clearRow(row);
+      captionLine1.textContent = '';
+      captionLine2.textContent = '';
+    }
 
-        for (let r = 0; r < rows.length; r++) {
-          const row = rows[r];
-          const tokens = tokenRows[r] ?? [];
-          clearRow(row);
-          const to = layout(tokens);
-          const from: number[] = [];
-          let packed = originX;
-          for (const token of tokens) {
-            row.chips.push(makeChip(row, token));
-            from.push(packed);
-            packed += chipW(token);
-          }
-          row.chips.forEach((chip, i) => place(chip, from[i]));
-          plans.push({ row, from, to });
-        }
+    /** 고른 짝은 서로에게 기운다. 닫히기 전의 당김이고, 걸음이 끝난 뒤에도 남는 자세다. */
+    function leanOf(flags: boolean[], i: number): number {
+      if (flags[i] === true) return LEAN;
+      if (flags[i - 1] === true) return -LEAN;
+      return 0;
+    }
 
-        await tween(SPREAD_MS, (p) => {
-          const e = easeOut(p);
-          for (const plan of plans) {
-            plan.row.chips.forEach((chip, i) => {
-              place(chip, plan.from[i] + (plan.to[i] - plan.from[i]) * e);
-            });
-          }
-        });
-      },
+    /** 이음매 위의 수. 잰 값은 재는 자리에 남긴다 (S-piece). */
+    function putSeam(
+      row: Row,
+      xs: number[],
+      tokens: string[],
+      i: number,
+      count: number,
+      chosen: boolean,
+    ): SVGTextElement {
+      const seam = el('text');
+      seam.setAttribute('x', String(Math.round((xs[i] + chipW(tokens[i]) + xs[i + 1]) / 2)));
+      seam.setAttribute('y', '0');
+      seam.setAttribute('text-anchor', 'middle');
+      seam.setAttribute('dominant-baseline', 'central');
+      seam.setAttribute('font-family', fonts.mono);
+      seam.setAttribute('font-size', fontSizes.xs);
+      seam.setAttribute('fill', chosen ? colors.text : colors.textMuted);
+      seam.setAttribute('font-weight', chosen ? '700' : '400');
+      seam.setAttribute('opacity', '1');
+      seam.textContent = String(count);
+      row.seamLayer.appendChild(seam);
+      return seam;
+    }
 
-      /**
-       * 이음매마다 그 짝의 셈이 내려앉고, 가장 무거운 이음매의 두 조각이 서로에게
-       * 기운다. 닫히기 전의 당김이다.
-       */
-      async weigh(counts: number[][], winner: boolean[][]): Promise<void> {
-        marked = winner;
-        const leaning: { chip: Chip; from: number; to: number }[] = [];
+    // ── 장면 그리기 ─────────────────────────────────────────────────────────
+    //
+    // 걸음마다 부르는 메서드 대신 이 아래가 화면 전체를 세운다. 늘 `rewind()` 로
+    // 처음에 돌린 뒤 그 장면이 말하는 것만 다시 그리므로, 어느 걸음에서 어느
+    // 걸음으로 가든 같은 길이다.
 
-        for (let r = 0; r < rows.length; r++) {
-          const row = rows[r];
-          row.seamLayer.textContent = '';
-          row.seams = [];
-          const line = counts[r] ?? [];
-          const flags = winner[r] ?? [];
+    /** 장면이 말하는 줄과 이음매를 통째로 세운다. 앞 화면과 견주지 않는다. */
+    function stand(s: MergeScene): void {
+      learned.clear();
+      for (const token of s.learned) learned.add(token);
+      // 이음매 폭은 쪼갠 직후의 줄이 정한다. 조각은 합쳐지기만 하므로 그 뒤로는
+      // 줄어들기만 하고, 걸음마다 다시 재면 같은 열이 네 줄에서 함께 닫히는
+      // 그림이 흔들린다.
+      fitSeam(s.baseRows);
 
-          for (let i = 0; i < line.length && i + 1 < row.chips.length; i++) {
-            const left = row.chips[i];
-            const right = row.chips[i + 1];
-            const chosen = flags[i] === true;
-            const seam = el('text');
-            seam.setAttribute('x', String(Math.round((left.x + left.w + right.x) / 2)));
-            seam.setAttribute('y', '0');
-            seam.setAttribute('text-anchor', 'middle');
-            seam.setAttribute('dominant-baseline', 'central');
-            seam.setAttribute('font-family', fonts.mono);
-            seam.setAttribute('font-size', fontSizes.xs);
-            seam.setAttribute('fill', chosen ? colors.text : colors.textMuted);
-            seam.setAttribute('font-weight', chosen ? '700' : '400');
-            seam.setAttribute('opacity', '0');
-            seam.textContent = String(line[i]);
-            row.seamLayer.appendChild(seam);
-            row.seams.push(seam);
+      for (let r = 0; r < rows.length; r++) {
+        const row = rows[r];
+        const tokens = s.rows[r] ?? [];
+        if (tokens.length === 0) continue;
+        const xs = layout(tokens);
+        const flags = s.seams?.winner[r] ?? [];
 
-            if (chosen) {
-              leaning.push({ chip: left, from: left.x, to: left.x + LEAN });
-              leaning.push({ chip: right, from: right.x, to: right.x - LEAN });
-              paintChip(left, true);
-              paintChip(right, true);
-            }
-          }
-        }
-
-        await tween(WEIGH_MS, (p) => {
-          const e = easeOut(p);
-          for (const row of rows) {
-            for (const seam of row.seams) seam.setAttribute('opacity', String(e));
-          }
-          for (const lean of leaning) {
-            place(lean.chip, lean.from + (lean.to - lean.from) * e);
-          }
-        });
-      },
-
-      /**
-       * 두 조각이 서로에게 미끄러져 하나가 되고, 뒤따르던 것들이 같이 당겨 온다.
-       * 닫히는 틈에서 셈이 밀려 나가고, 맞붙은 자리에서 합쳐진 조각으로 바뀐다.
-       */
-      async fuse(tokenRows: string[][], token: string): Promise<void> {
-        const plans: {
-          row: Row;
-          tokens: string[];
-          from: number[];
-          to: number[];
-          fading: SVGTextElement[];
-          closing: SVGTextElement[];
-          merging: Chip[];
-        }[] = [];
-
-        for (let r = 0; r < rows.length; r++) {
-          const row = rows[r];
-          const tokens = tokenRows[r] ?? [];
-          const flags = marked[r] ?? [];
-          const xs = layout(tokens);
-          const from = row.chips.map((chip) => chip.x);
-          const to = new Array<number>(row.chips.length).fill(0);
-          const fading: SVGTextElement[] = [];
-          const closing: SVGTextElement[] = [];
-          const merging: Chip[] = [];
-
-          let i = 0;
-          let j = 0;
-          while (i < row.chips.length && j < tokens.length) {
-            if (flags[i] === true && i + 1 < row.chips.length) {
-              // 왼쪽은 합쳐진 자리의 왼쪽 끝으로, 오른쪽은 그 오른쪽 끝으로.
-              to[i] = xs[j];
-              to[i + 1] = xs[j] + chipW(tokens[j]) - row.chips[i + 1].w;
-              merging.push(row.chips[i], row.chips[i + 1]);
-              if (row.seams[i]) closing.push(row.seams[i]);
-              i += 2;
-              j += 1;
-            } else {
-              to[i] = xs[j];
-              i += 1;
-              j += 1;
-            }
-          }
-          for (const seam of row.seams) {
-            if (!closing.includes(seam)) fading.push(seam);
-          }
-          plans.push({ row, tokens, from, to, fading, closing, merging });
-        }
-
-        await tween(SLIDE_MS, (p) => {
-          const slide = easeOut(p);
-          const gone = segment(p, 0, 0.35);
-          const squeezed = segment(p, 0.45, 0.9);
-          const seamless = 1 - segment(p, 0.6, 1);
-          for (const plan of plans) {
-            plan.row.chips.forEach((chip, i) => {
-              place(chip, plan.from[i] + (plan.to[i] - plan.from[i]) * slide);
-            });
-            for (const seam of plan.fading) seam.setAttribute('opacity', String(1 - gone));
-            for (const seam of plan.closing) seam.setAttribute('opacity', String(1 - squeezed));
-            for (const chip of plan.merging) chip.rect.setAttribute('stroke-opacity', String(seamless));
-          }
+        tokens.forEach((text, i) => {
+          const chip = makeChip(row, text);
+          place(chip, xs[i] + leanOf(flags, i));
+          paintChip(chip, flags[i] === true || flags[i - 1] === true);
+          row.chips.push(chip);
         });
 
-        // 맞붙은 자리에 합쳐진 조각을 세운다. 글자가 이미 제자리에 있으므로
-        // 바꿔치기는 아주 짧은 겹침만으로 끝난다.
-        learned.add(token);
-        const swaps: { row: Row; old: Chip[]; fresh: Chip[] }[] = [];
-        for (let r = 0; r < rows.length; r++) {
-          const row = rows[r];
-          const plan = plans[r];
-          const xs = layout(plan.tokens);
-          const old = row.chips;
-          const fresh: Chip[] = [];
-          plan.tokens.forEach((text, index) => {
-            const chip = makeChip(row, text);
-            place(chip, xs[index]);
-            chip.g.setAttribute('opacity', '0');
-            fresh.push(chip);
+        if (!s.seams) continue;
+        const line = s.seams.counts[r] ?? [];
+        for (let i = 0; i < line.length && i + 1 < tokens.length; i++) {
+          row.seams.push(putSeam(row, xs, tokens, i, line[i], flags[i] === true));
+        }
+      }
+    }
+
+    /** 캡션은 장면이 무엇을 말할지만 담는다. 문자는 여기서 만든다 (C10). */
+    function drawCaption(cap: MergeScene['caption']): void {
+      if (!cap) {
+        setCaption('');
+        return;
+      }
+      switch (cap.kind) {
+        case 'split':
+          setCaption(
+            t('caption.split', 'Each word is cut into letters, closed by the end mark {mark}.', {
+              mark: cap.mark,
+            }),
+          );
+          return;
+        case 'weigh':
+          setCaption(
+            t(
+              'caption.weigh',
+              'Count every neighbouring pair across the whole corpus. Heaviest seam: {pair} at {count}.',
+              { pair: `${cap.a}+${cap.b}`, count: cap.count },
+            ),
+          );
+          return;
+        case 'merge':
+          setCaption(
+            t('caption.merge', 'The seam closes: {pair} becomes {token}, in every word at once.', {
+              pair: `${cap.a}+${cap.b}`,
+              token: cap.token,
+            }),
+          );
+          return;
+        case 'done':
+          setCaption(
+            t('caption.done', 'Five merges, and the vocabulary stops here. Distinct pieces: {n}.', {
+              n: cap.pieces,
+            }),
+          );
+          return;
+      }
+    }
+
+    // ── 흐르게 하는 셋. 정적으로 이미 서 있는 화면을 출발 자리로 되돌린 뒤 되짚어 온다.
+
+    /**
+     * 쪼개진다. 조각을 낱말 모양 그대로 붙여 세운 뒤 이음매만큼 벌린다 — 쪼개는 일
+     * 자체가 운동이다.
+     */
+    function spread(): Promise<void> {
+      const plans: { chips: Chip[]; from: number[]; to: number[] }[] = [];
+      for (const row of rows) {
+        const to = row.chips.map((chip) => chip.x);
+        const from: number[] = [];
+        let packed = originX;
+        for (const chip of row.chips) {
+          from.push(packed);
+          packed += chip.w;
+        }
+        row.chips.forEach((chip, i) => place(chip, from[i]));
+        plans.push({ chips: row.chips, from, to });
+      }
+
+      return tween(SPREAD_MS, (p) => {
+        const e = easeOut(p);
+        for (const plan of plans) {
+          plan.chips.forEach((chip, i) => {
+            place(chip, plan.from[i] + (plan.to[i] - plan.from[i]) * e);
           });
-          swaps.push({ row, old, fresh });
         }
+      });
+    }
 
-        await tween(SWAP_MS, (p) => {
-          for (const swap of swaps) {
-            for (const chip of swap.fresh) chip.g.setAttribute('opacity', String(p));
-            for (const chip of swap.old) chip.g.setAttribute('opacity', String(1 - p));
+    /** 이음매마다 셈이 내려앉고, 가장 무거운 이음매의 두 조각이 서로에게 기운다. */
+    function leanIn(s: MergeScene): Promise<void> {
+      const leaning: { chip: Chip; from: number; to: number }[] = [];
+      for (let r = 0; r < rows.length; r++) {
+        const flags = s.seams?.winner[r] ?? [];
+        rows[r].chips.forEach((chip, i) => {
+          const lean = leanOf(flags, i);
+          if (lean === 0) return;
+          leaning.push({ chip, from: chip.x - lean, to: chip.x });
+        });
+      }
+      for (const lean of leaning) place(lean.chip, lean.from);
+      for (const row of rows) for (const seam of row.seams) seam.setAttribute('opacity', '0');
+
+      return tween(WEIGH_MS, (p) => {
+        const e = easeOut(p);
+        for (const row of rows) {
+          for (const seam of row.seams) seam.setAttribute('opacity', String(e));
+        }
+        for (const lean of leaning) {
+          place(lean.chip, lean.from + (lean.to - lean.from) * e);
+        }
+      });
+    }
+
+    /**
+     * 두 조각이 서로에게 미끄러져 하나가 되고, 뒤따르던 것들이 같이 당겨 온다.
+     * 닫히는 틈에서 셈이 밀려 나가고, 맞붙은 자리에서 합쳐진 조각으로 바뀐다.
+     *
+     * 합치기 직전의 줄은 `merged.at` 을 되짚어 세운다 — 합쳐져 나온 조각을 다시 둘로
+     * 풀면 그때의 줄이 그대로 나오므로, 앞 장면을 뒤지지 않고도 출발 자리를 안다.
+     */
+    async function closeSeam(s: MergeScene): Promise<void> {
+      const m = s.merged;
+      if (!m) return;
+
+      // 합쳐지기 전의 어휘. 이번에 나온 조각은 아직 없었다.
+      const before = new Set(s.learned);
+      before.delete(m.token);
+
+      const plans: {
+        row: Row;
+        old: Chip[];
+        from: number[];
+        to: number[];
+        fading: SVGTextElement[];
+        closing: SVGTextElement[];
+        merging: Chip[];
+      }[] = [];
+
+      for (let r = 0; r < rows.length; r++) {
+        const row = rows[r];
+        const tokens = s.rows[r] ?? [];
+        const at = m.at[r] ?? [];
+        const xsNew = layout(tokens);
+
+        const pre: string[] = [];
+        const preFlags: boolean[] = [];
+        const to: number[] = [];
+        tokens.forEach((text, i) => {
+          if (at[i] !== true) {
+            to.push(xsNew[i]);
+            pre.push(text);
+            return;
           }
+          preFlags[pre.length] = true;
+          // 왼쪽은 합쳐진 자리의 왼쪽 끝으로, 오른쪽은 그 오른쪽 끝으로.
+          to.push(xsNew[i], xsNew[i] + chipW(text) - chipW(m.b));
+          pre.push(m.a, m.b);
         });
 
-        for (const swap of swaps) {
-          for (const chip of swap.old) chip.g.remove();
-          swap.row.chips = swap.fresh;
-          swap.row.seamLayer.textContent = '';
-          swap.row.seams = [];
-        }
-        marked = [];
-      },
+        const xsPre = layout(pre);
+        const old: Chip[] = [];
+        const from: number[] = [];
+        const merging: Chip[] = [];
+        pre.forEach((text, k) => {
+          const chip = makeChip(row, text);
+          const x = xsPre[k] + leanOf(preFlags, k);
+          place(chip, x);
+          paintChip(chip, preFlags[k] === true || preFlags[k - 1] === true, before);
+          old.push(chip);
+          from.push(x);
+          if (preFlags[k] === true || preFlags[k - 1] === true) merging.push(chip);
+        });
 
-      rewind(): void {
-        learned.clear();
-        marked = [];
-        for (const row of rows) clearRow(row);
-        captionLine1.textContent = '';
-        captionLine2.textContent = '';
-      },
+        const line = m.counts[r] ?? [];
+        const fading: SVGTextElement[] = [];
+        const closing: SVGTextElement[] = [];
+        for (let k = 0; k < line.length && k + 1 < pre.length; k++) {
+          const seam = putSeam(row, xsPre, pre, k, line[k], preFlags[k] === true);
+          (preFlags[k] === true ? closing : fading).push(seam);
+        }
+
+        plans.push({ row, old, from, to, fading, closing, merging });
+      }
+
+      // 합쳐진 조각은 이미 제자리에 서 있다. 맞붙을 때까지 감춰 둔다.
+      for (const row of rows) {
+        for (const chip of row.chips) chip.g.setAttribute('opacity', '0');
+      }
+
+      await tween(SLIDE_MS, (p) => {
+        const slide = easeOut(p);
+        const gone = segment(p, 0, 0.35);
+        const squeezed = segment(p, 0.45, 0.9);
+        const seamless = 1 - segment(p, 0.6, 1);
+        for (const plan of plans) {
+          plan.old.forEach((chip, k) => {
+            place(chip, plan.from[k] + (plan.to[k] - plan.from[k]) * slide);
+          });
+          for (const seam of plan.fading) seam.setAttribute('opacity', String(1 - gone));
+          for (const seam of plan.closing) seam.setAttribute('opacity', String(1 - squeezed));
+          for (const chip of plan.merging) chip.rect.setAttribute('stroke-opacity', String(seamless));
+        }
+      });
+
+      // 맞붙은 자리에서 바꿔치기. 글자가 이미 제자리에 있으므로 아주 짧은 겹침만으로
+      // 끝난다.
+      await tween(SWAP_MS, (p) => {
+        for (const plan of plans) {
+          for (const chip of plan.row.chips) chip.g.setAttribute('opacity', String(p));
+          for (const chip of plan.old) chip.g.setAttribute('opacity', String(1 - p));
+        }
+      });
+
+      // 흐르게 하려고 얹었던 것을 남김없이 거둔다. 남으면 같은 장면인데 흐르게
+      // 그렸을 때와 곧바로 세웠을 때의 화면이 갈린다.
+      for (const plan of plans) {
+        for (const chip of plan.old) chip.g.remove();
+        for (const chip of plan.row.chips) chip.g.removeAttribute('opacity');
+        plan.row.seamLayer.textContent = '';
+      }
+    }
+
+    /**
+     * 장면 하나를 그린다.
+     *
+     * 정적으로 세우는 것이 먼저다. 흐르게 하는 것은 그 위에 덧대고, 되짚기
+     * (`animate` 가 거짓) 는 덧대지 않는다 — 지나온 걸음을 되밟을 까닭이 없고,
+     * 되밟으면 그 운동이 되짚기보다 오래 남아 화면이 흔들린다.
+     */
+    async function render(
+      next: MergeScene,
+      prev: MergeScene | null,
+      opts: { animate: boolean },
+    ): Promise<void> {
+      rewind();
+      stand(next);
+      drawCaption(next.caption);
+      if (!opts.animate) return;
+
+      // 방금 달라진 것만 흐르게 한다. 걸음이 이어지지 않으면 (스크럽이 건너뛰면)
+      // 셋 다 거짓이 되어 저절로 걸러진다.
+      const justSplit =
+        next.rows.length > 0 &&
+        next.seams === null &&
+        next.merged === null &&
+        (prev === null || prev.rows.length === 0);
+      const justWeighed = next.seams !== null && (prev === null || prev.seams === null);
+      const justMerged =
+        next.merged !== null && prev !== null && prev.merged === null && prev.seams !== null;
+
+      if (justSplit) await spread();
+      else if (justWeighed) await leanIn(next);
+      else if (justMerged) await closeSeam(next);
+    }
+
+    const instance: MergeTheFrequentPairStage = {
+      render,
 
       destroy(): void {
         destroyed = true;

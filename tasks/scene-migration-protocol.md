@@ -104,7 +104,7 @@ git show <이 커밋>:facets/cs-fundamentals/bst-degenerate/src/scene.ts
 git diff main -- facets/cs-fundamentals/bst-degenerate/src/
 ```
 
-### 3-1. 이벤트와 화면을 나란히 놓는다
+### 3-1. 이벤트와 화면을 나란히 놓고, 숨은 상태를 찾는다
 
 ```sh
 d=facets/<domain>/<name>
@@ -113,9 +113,27 @@ sed -n '/^    return {$/,/^    };$/p' $d/src/*-stage.ts     # stage 가 내놓�
 cat $d/src/projector.ts                                     # 그 사이의 번역
 ```
 
-**projector 안의 `let` 을 특히 본다.** 거기 있는 것이 곧 숨은 상태이고, 되짚기가
-어긋나던 자리다. `bst-degenerate` 는 `growingShown` · `searchingShown` · `results` 를
-쥐고 있었고 그것이 축 1 실패의 정체였다.
+**이 절이 이 문서에서 가장 중요하다.** 옮기는 일의 어려움은 그리기를 다시 짜는 데
+있지 않고 **화면이 어디에 상태를 숨겨 두었는지 찾는 데** 있다. 숨은 상태는 되짚기가
+어긋나던 자리이고, 장면으로 끌어올리는 순간 그 문제가 사라진다.
+
+여섯을 옮기며 세 자리에서 나왔다. **한 자리만 보면 놓친다.**
+
+```sh
+grep -nE "^    let |^  let " $d/src/projector.ts $d/src/*-stage.ts   # ① ②
+grep -nE "\.has\(|\.get\(|includes\(" $d/src/projector.ts        # ③
+```
+
+- **① projector 의 `let`** — `bst-degenerate` 의 `growingShown` · `results`. 논증
+  단계와 셈을 쥐고 있어 되감아도 지난 캡션이 남았다.
+- **② stage 의 `let`** — `tokens-per-language` 의 `activeCode`, `merge-the-frequent-pair`
+  의 `learned`. "앞 줄을 찾아 강조를 지우는" 명령형 코드가 딸려 있다. 장면이 그것을
+  말하게 하면 그 코드가 통째로 사라진다.
+- **③ 조회로 갈리는 암묵 분기** — `unknown-becomes-known` 의 `if (!locked.has(word))`.
+  `let` 이 아니라 `Set`/`Map` 조회라 눈에 안 띈다. 그 분기가 곧 상태다.
+
+찾은 것을 장면 필드로 올리면 대개 그 자리의 명령형 코드가 함께 없어진다. **줄어드는
+쪽이 그 조각의 숨은 상태였다는 신호다.**
 
 ### 3-2. 장면을 설계한다
 
@@ -181,6 +199,41 @@ const grewOne = opts.animate && prev !== null && next.nodes.length === prev.node
 const justAssigned = opts.animate && prev?.active?.assigned == null;
 ```
 
+**한 걸음에 흐르게 할 것은 하나라고 전제한다.** 러너가 이벤트를 하나씩 주므로 아홉
+조각 모두 그러했다. 한 걸음에 두 곳이 동시에 달라지는 조각이 나오면 이 관용구가
+깨지니, 그때는 그 사실을 여기 적는다.
+
+**운동의 방향이 뒤집힌다.** 정적 그리기가 정본이 되므로 요소는 이미 끝 자리에 서 있고,
+애니메이션은 **아직 못 온 만큼을 뒤로 물리는** 꼴이 된다 — `translate(dx*e)` 가 아니라
+`translate(dx*(e-1))`. 생성 시점에 그 물림을 미리 박아 두지 않으면 첫 프레임에 끝
+자리가 번쩍인다 (`space-is-part-of-it`).
+
+**`isInstant` / `onScrubStart` 를 둘지 가르는 잣대.**
+
+> 운동이 **`render` 가 다시 만드는 자료를 프레임마다 제자리에서 고쳐 쓰면** 필요하다.
+
+되짚기가 요소를 새로 세운 뒤에도 앞 운동이 살아 있으면 새 노드에 옛 값을 덮어쓰기
+때문이다. rAF 로 좌표를 흐르게 하는 조각은 대개 해당하고 (`split-and-number` ·
+`boundary-shift`), 속성만 세팅하고 CSS 전환에 맡기는 조각은 필요 없다
+(`hash-avalanche`). 판단이 서지 않으면 다는 편이 안전하다 — 달아서 해로운 경우는 없다.
+
+```ts
+const isInstant = params.isInstant ?? ((): boolean => false);
+params.onScrubStart?.(() => {
+  for (const id of frames) cancelAnimationFrame(id);
+  frames.clear();
+  for (const id of timers) clearTimeout(id);
+  timers.clear();
+  for (const wake of [...waiters]) wake();
+  waiters.clear();
+});
+```
+
+**지나간 것에서 출발하는 운동은 표식으로 되짚는다.** "합쳐지며 미끄러지는" 운동처럼
+출발 그림 전체가 있어야 그릴 수 있는 경우가 있다. `prev` 를 그대로 쓰면 "`prev` 는
+고르는 데만" 을 어기므로, **무엇이 이번에 달라졌는지 가리키는 표식**과 그 계기값을
+장면에 담아 출발 그림을 셈으로 복원한다 (`merge-the-frequent-pair` 의 `merged.at`).
+
 ### 3-5. 선언을 바꾸고 projector 를 지운다
 
 ```sh
@@ -211,6 +264,23 @@ const t = params.t ?? makeTranslator(params.locale);
   "방금 하나 늘었나" 로 애니메이션을 가리면 그런 경우 저절로 걸러진다.
 - **머무는 강조를 빠뜨리지 않는다.** `bst-degenerate` 의 `match` 는 반짝이고 **남는다**.
   정적 그리기에도 넣어야 되짚었을 때 남는다.
+- **운동이 남긴 속성 하나가 화면을 가른다.** 흐르며 선 화면과 곧바로 세운 화면이
+  `opacity="1"` 같은 **속성의 유무**만큼 달라 되짚기 판정에서 어긋난다. 눈에는 안
+  보이지만 DOM 을 견주는 감사는 잡는다. 운동 끝에서 값을 되돌릴 때 `setAttribute(…, '1')`
+  이 아니라 `removeAttribute(…)` 로 거둔다. **여섯 중 셋이 독립적으로 여기 걸렸다** —
+  `enter()` · 크로스페이드 같은 관용구에 딸려 있다.
+
+  계측기(`scrub-replay`)는 이런 차이를 "화면에 뜻이 없다" 며 걷어내지만, **이행하는
+  쪽에서는 걷어내면 안 된다.** 계측의 관용을 이행의 기준으로 삼지 않는다.
+
+- **정적 경로가 두 번 그려도 깜빡이지 않는다.** `rewind()` 뒤에 옛 자리로 세웠다가
+  끝 자리로 옮겨도 그 사이에 타이머도 프레임도 없어 마이크로태스크만 돈다 — 페인트가
+  끼지 않는다. 그러니 정적 경로를 단순하게 짜도 된다.
+
+- **이름이 부딪힌다.** 기존 stage 에 `Scene` · `readScene` 같은 이름이 이미 쓰이는
+  조각이 있다 (`tokens-per-language` · `unknown-becomes-known`). 배치 밑감이면
+  `Layout`, 문장 읽기면 `readSentences` 처럼 갈라 준다.
+
 - **전수 검사가 새 구조를 모른다.** `piece-first-advance` 는 projector 만 감싸 발신을
   세던 탓에 scene 조각을 "발신 없음" 으로 잘못 잡았다. 이미 고쳤지만, 다른 검사에서
   비슷한 것이 나올 수 있다.
@@ -271,12 +341,18 @@ grep -l "projector: 'module:" facets/*/*/src/facet.ts | wc -l
 grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 ```
 
-2026-09-13 기준 **3 / 181**.
+2026-09-13 기준 **9 / 181**.
 
 ```
-security/hash-avalanche        ai-engineering/split-and-number
-cs-fundamentals/bst-degenerate
+security/hash-avalanche            ai-engineering/split-and-number
+cs-fundamentals/bst-degenerate     ai-engineering/tokens-per-language
+ai-engineering/between-letter-and-word    ai-engineering/unknown-becomes-known
+ai-engineering/boundary-shift      ai-engineering/merge-the-frequent-pair
+ai-engineering/space-is-part-of-it
 ```
+
+`ai-engineering` 의 토큰화 여섯은 한 배치로 옮겼다 (2026-09-13). 옮기기 전 여섯 다
+되짚기가 흔들렸고, 옮긴 뒤 **흔들림 0 · 왕복어긋남 0** 이 됐다.
 
 ### 순서에 대한 권고
 
@@ -286,26 +362,53 @@ cs-fundamentals/bst-degenerate
 - 두 방식이 **공존한다.** facet 이 `projector` 또는 `scene` 중 하나를 선언하고 러너가
   갈라 받는다. 한 번에 다 옮기지 않아도 검사가 통과한다.
 
-### 규모 (실측)
+### 규모 (실측 9 종)
+
+**시간** — 토큰화 여섯을 서로 모르는 에이전트 여섯이 동시에 옮겼다.
 
 ```
-hash-avalanche    520 → 486   (-34)
-bst-degenerate    461 → 511   (+50)
-split-and-number  945 → 1101  (+156)
+tokens-per-language       5:19
+between-letter-and-word   6:31
+unknown-becomes-known     8:35
+boundary-shift           10:51
+merge-the-frequent-pair  12:50
+space-is-part-of-it      20:21     ← stage 722 줄, 여섯 중 가장 큼
+                        ──────
+             하나당 평균 10:44 · 여섯 동시에 21:46
 ```
 
-평균 +57 줄 (+8%). 늘어난 쪽은 걸음 함수를 그대로 두고 정적으로 그리는 길을 덧댄
-탓이다. 걸음 함수를 장면에서 바로 그리도록 합치면 줄어든다 — `hash-avalanche` 를
-그렇게 했더니 줄었다. 다만 그것은 재작성 분량을 키우므로, 급하지 않으면 덧대는
-쪽으로 간다.
+여섯을 **동시에** 돌린 값이라 서로 CPU 와 타입 검사를 다툰다. 순차라면 하나당 더
+짧다. 다만 181 개를 옮길 때도 병렬로 할 것이므로 이 값이 실제에 가깝다.
 
-파일당 1~2 시간.
+**줄수** — 조각의 성격에 따라 갈렸다.
+
+```
+hash-avalanche     520 →  486   -34   -7%
+space-is-part-of-it 853 → 1004  +151  +18%
+bst-degenerate     461 →  511   +50  +11%
+tokens-per-language 703 →  797   +94  +13%
+between-letter-and-word 485 → 627 +142 +29%
+unknown-becomes-known 870 → 1100 +230 +26%
+boundary-shift     678 →  863  +185  +27%
+merge-the-frequent-pair 671 → 875 +204 +30%
+split-and-number   945 → 1101  +156  +17%
+                                ─────
+                       아홉 평균 +131 줄 (+18%)
+```
+
+늘어난 쪽은 걸음 함수를 그대로 두고 정적으로 그리는 길을 덧댄 몫이다. `hash-avalanche`
+처럼 걸음 함수를 장면에서 바로 그리도록 합치면 줄어들지만 재작성 분량이 커진다.
+급하지 않으면 덧대는 쪽으로 간다.
+
+**181 개로 미루면** 대략 +2 만 줄, 병렬 여섯으로 30 배치.
 
 ---
 
 ## 7. 이행이 끝난 뒤
 
-- `ProjectorFactory` 와 그 배선을 러너에서 걷어낸다.
+- `ProjectorFactory` 와 그 배선을 러너에서 걷어낸다. **`ViewMountParams.isInstant` 와
+  `onScrubStart` 는 걷어내지 않는다** — projector 시절의 보조 장치로 보이지만 scene
+  조각에서도 여전히 쓴다.
 - `rules/principles.md` 의 "Projector 단일 번역기" 를 장면 방식으로 다시 쓴다.
 - `S-facet` 의 6 파일 구성에서 `projector.ts` 를 `scene.ts` 로 바꾼다.
 - 스크럽 띠를 전 조각에 단다 (`CONTROL_SET.piece` → `pieceScrub`). 그때 조각

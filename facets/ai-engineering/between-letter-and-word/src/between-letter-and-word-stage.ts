@@ -18,10 +18,17 @@
  * 가로는 러너가 `PIECE_CANVAS_W` 로 정하므로 적지 않고, 세로만 여기 상수로 둔다
  * (S-piece). 글자 칸 폭은 상수로 못박지 않고 **가장 넓은 줄(글자 줄)이 캔버스를
  * 채우도록** 역산하며, 상수는 상한으로만 둔다.
+ *
+ * ── 그리는 방식
+ *
+ * 걸음마다 부르는 메서드 대신 `render` 하나가 장면을 통째로 세운다. 늘 `rewind()`
+ * 로 문장 한 덩이에 돌린 뒤 그 장면이 말하는 것만 다시 그리므로, 어느 걸음에서
+ * 어느 걸음으로 가든 같은 길이고 되돌릴 명령이 필요 없다 (S-scene).
  */
 
-import { fonts, fontSizes, getColors, PIECE_CANVAS_W } from '@ffacet/core/runtime';
+import { fonts, fontSizes, getColors, makeTranslator, PIECE_CANVAS_W } from '@ffacet/core/runtime';
 import type { CanvasView, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import type { BetweenScene, RowKey } from './scene.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -53,7 +60,6 @@ const SPLIT_MS = 480;
 const SEAM_MS = 320;
 const TICK_W = 5;
 
-type RowKey = 'word' | 'piece' | 'letter';
 const ROW_ORDER: readonly RowKey[] = ['word', 'piece', 'letter'];
 
 type Span = readonly [number, number];
@@ -80,8 +86,8 @@ function el<K extends keyof SVGElementTagNameMap>(
 type Scene = { sentence: string };
 
 /**
- * `initialData` 를 좁히는 자리는 여기다 — projector 가 같은 것을 다시 좁혀 밀어
- * 넣지 않는다 (S-piece).
+ * `initialData` 를 좁히는 자리는 여기다 — 장면이 같은 것을 다시 담지 않는다.
+ * 장면이 말하는 것은 문장이 아니라 그 문장이 어떻게 갈렸는가다 (S-piece).
  */
 function readScene(initialData: Record<string, unknown> | undefined): Scene {
   const sentence = initialData?.sentence;
@@ -93,6 +99,8 @@ export const betweenLetterAndWordStageView: CanvasView = {
 
   mount(_container: HTMLElement, params: ViewMountParams & { canvas: SVGSVGElement }): ViewInstance {
     const colors = getColors(params.theme);
+    // 문안을 만드는 자리가 여기로 왔다 — 장면은 무엇을 말할지만 담는다 (C10).
+    const t = params.t ?? makeTranslator(params.locale);
     const svg = params.canvas;
 
     const root = el('g', {});
@@ -279,9 +287,28 @@ export const betweenLetterAndWordStageView: CanvasView = {
     const waiters = new Set<() => void>();
     const frames = new Set<number>();
 
+    /**
+     * 되짚는 중인가. 러너가 `params` 로 흘린다 (`ViewMountParams.isInstant`).
+     *
+     * `render` 는 `opts.animate` 로 이미 갈라지지만, 앞 걸음의 프레임이 아직 돌고
+     * 있는 중에 사용자가 띠를 끌면 그 프레임이 되짚은 화면 위에 옛 목표를 마저
+     * 그린다. 그래서 이 문도 함께 둔다.
+     */
+    const isInstant = params.isInstant ?? ((): boolean => false);
+    // 되짚기 직전에 걸어 둔 것을 거둔다 (destroy 규약과 같은 모양, 화면은 그대로).
+    params.onScrubStart?.(() => {
+      for (const id of frames) cancelAnimationFrame(id);
+      frames.clear();
+      for (const wake of [...waiters]) wake();
+      waiters.clear();
+    });
+
     function animate(ms: number, step: (progress: number) => void): Promise<void> {
       return new Promise<void>((resolve) => {
-        if (destroyed) return resolve();
+        if (destroyed || isInstant()) {
+          step(1);
+          return resolve();
+        }
         const started = Date.now();
         const finish = (): void => {
           waiters.delete(finish);
@@ -310,70 +337,147 @@ export const betweenLetterAndWordStageView: CanvasView = {
       });
     }
 
-    return {
-      setCaption(text: string): void {
-        caption.textContent = text;
-      },
+    /** 한 줄을 자른 자리대로 세운다. 갈라지는 운동은 `withAnim` 일 때만 보인다. */
+    async function cutRow(
+      key: RowKey,
+      segments: readonly string[],
+      withAnim: boolean,
+    ): Promise<void> {
+      const row = rows.get(key);
+      if (!row || destroyed || letters.length === 0 || segments.length === 0) return;
 
-      async cutRow(key: string, segments: string[]): Promise<void> {
-        const row = rows.get(key as RowKey);
-        if (!row || destroyed || letters.length === 0 || segments.length === 0) return;
+      const from = row.xs;
+      const to = xsFor(cutsOf(segments));
+      // 새 조각들을 **옛 자리에** 먼저 세운다 — 그래야 갈라지는 순간이 보인다.
+      row.spans = spansOf(segments);
+      renderTiles(row, from);
+      row.count.textContent = String(segments.length);
+      placeRow(row, from);
 
-        const from = row.xs;
-        const to = xsFor(cutsOf(segments));
-        // 새 조각들을 **옛 자리에** 먼저 세운다 — 그래야 갈라지는 순간이 보인다.
-        row.spans = spansOf(segments);
-        renderTiles(row, from);
-        row.count.textContent = String(segments.length);
-        placeRow(row, from);
-
+      // 이미 갈라져 있던 줄은 끝 자리에 곧바로 앉힌다 — 되짚을 때 지나온 걸음을
+      // 다시 밟으면 그 애니메이션이 되짚기보다 오래 남는다 (S-scene).
+      if (withAnim) {
         await animate(SPLIT_MS, (p) => {
           placeRow(
             row,
             from.map((x, i) => x + (to[i] - x) * p),
           );
         });
+      }
 
-        row.xs = to;
-        placeRow(row, to);
-      },
+      row.xs = to;
+      placeRow(row, to);
+    }
 
-      async markSeams(seams: number[]): Promise<void> {
-        const row = rows.get('piece');
-        if (!row || destroyed) return;
+    /**
+     * 조각 줄의 낱말 안쪽 이음매를 짚는다.
+     *
+     * 이 표시는 돋아났다 사라지는 것이 아니라 **남는다.** 그래서 정적으로 오는
+     * 길에서도 다 자란 높이로 세워야 되짚었을 때 그대로 서 있다 (S-scene).
+     */
+    async function markSeams(seams: readonly number[], withAnim: boolean): Promise<void> {
+      const row = rows.get('piece');
+      if (!row || destroyed) return;
 
-        const ticks = seams
-          .filter((at) => at > 0 && at < letters.length)
-          .map((at) => {
-            const middle = (row.xs[at - 1] + cellW + row.xs[at]) / 2;
-            const tick = el('rect', {
-              x: STRIP_X + middle - TICK_W / 2,
-              y: row.top + TILE_H / 2,
-              width: TICK_W,
-              height: 0,
-              rx: 1,
-              fill: colors.accent,
-            });
-            seamGroup.appendChild(tick);
-            return tick;
+      const ticks = seams
+        .filter((at) => at > 0 && at < letters.length)
+        .map((at) => {
+          const middle = (row.xs[at - 1] + cellW + row.xs[at]) / 2;
+          const tick = el('rect', {
+            x: STRIP_X + middle - TICK_W / 2,
+            y: row.top + TILE_H / 2,
+            width: TICK_W,
+            height: 0,
+            rx: 1,
+            fill: colors.accent,
           });
-        if (ticks.length === 0) return;
-
-        const full = TILE_H + 8;
-        await animate(SEAM_MS, (p) => {
-          const height = full * p;
-          for (const tick of ticks) {
-            tick.setAttribute('y', String(row.top + TILE_H / 2 - height / 2));
-            tick.setAttribute('height', String(height));
-          }
+          seamGroup.appendChild(tick);
+          return tick;
         });
-      },
+      if (ticks.length === 0) return;
 
-      rewind(): void {
-        seamGroup.textContent = '';
+      const full = TILE_H + 8;
+      const draw = (p: number): void => {
+        const height = full * p;
+        for (const tick of ticks) {
+          tick.setAttribute('y', String(row.top + TILE_H / 2 - height / 2));
+          tick.setAttribute('height', String(height));
+        }
+      };
+      if (!withAnim) {
+        draw(1);
+        return;
+      }
+      await animate(SEAM_MS, draw);
+    }
+
+    /** 처음으로 되감는다 — 세 줄이 다시 문장 한 덩이가 되고 이음매가 걷힌다. */
+    function rewind(): void {
+      seamGroup.textContent = '';
+      caption.textContent = '';
+      for (const row of rows.values()) resetRow(row);
+    }
+
+    /** 캡션은 장면이 무엇을 말할지만 담는다. 문자는 여기서 만든다 (C10). */
+    function drawCaption(cap: BetweenScene['caption']): void {
+      if (!cap) {
         caption.textContent = '';
-        for (const row of rows.values()) resetRow(row);
-      },
+        return;
+      }
+      if (cap.kind === 'between') {
+        caption.textContent = t(
+          'caption.between',
+          'Pieces land in between — words {word}, pieces {piece}, letters {letter}.',
+          { word: cap.word, piece: cap.piece, letter: cap.letter },
+        );
+        return;
+      }
+      if (cap.row === 'word') {
+        caption.textContent = t('caption.word', 'Cut at the spaces — words {n}.', { n: cap.n });
+        return;
+      }
+      if (cap.row === 'piece') {
+        caption.textContent = t(
+          'caption.piece',
+          'Same sentence, cut into pieces — pieces {n}.',
+          { n: cap.n },
+        );
+        return;
+      }
+      caption.textContent = t('caption.letter', 'Cut at every letter — letters {n}.', { n: cap.n });
+    }
+
+    /**
+     * 장면 하나를 화면에 세운다.
+     *
+     * 앞 장면과 견주어 달라진 것만 고치지 않는다 — 늘 비우고 전부 세운다. `prev`
+     * 는 **무엇을 흐르게 할지 고르는 데만** 쓴다 (S-scene).
+     */
+    async function render(
+      next: BetweenScene,
+      prev: BetweenScene | null,
+      opts: { animate: boolean },
+    ): Promise<void> {
+      rewind();
+      drawCaption(next.caption);
+
+      for (const key of ROW_ORDER) {
+        const segments = next.rows[key];
+        if (!segments) continue;
+        // 방금 갈라진 줄에서만 벌어지는 운동을 보인다. 걸음을 건너뛰어 왔으면
+        // 앞 장면에서 이미 갈라져 있으므로 이 잣대에 저절로 걸러진다.
+        const justCut = opts.animate && prev !== null && prev.rows[key] === null;
+        await cutRow(key, segments, justCut);
+      }
+
+      if (next.seams) {
+        const justMarked = opts.animate && prev !== null && prev.seams === null;
+        await markSeams(next.seams, justMarked);
+      }
+    }
+
+    return {
+      render,
 
       destroy(): void {
         destroyed = true;

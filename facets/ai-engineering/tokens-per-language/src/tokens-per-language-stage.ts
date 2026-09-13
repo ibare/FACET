@@ -9,6 +9,9 @@
  * 하려는 말이다.
  *
  * 좌표는 전부 여기서 셈한다. 선언에는 말뭉치와 문장만 있고 자리는 없다 (S-piece).
+ *
+ * 걸음마다 부르는 메서드는 두지 않는다. `render` 하나가 장면을 받아 화면 전체를
+ * 세운다 — 되돌릴 명령이 없어야 어느 걸음으로든 갈 수 있다 (S-scene).
  */
 
 import type { CanvasView, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
@@ -19,6 +22,8 @@ import {
   getColors,
   makeTranslator,
 } from '@ffacet/core/runtime';
+
+import type { CutRow, TokensScene, VocabBand } from './scene.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -79,16 +84,14 @@ type RowView = {
   words: string[];
   letters: LetterView[];
   group: SVGGElement;
-  boxes: SVGRectElement[];
-  badge: SVGGElement | null;
   /** 자르기 전 줄의 오른쪽 끝. */
   tightEnd: number;
   cy: number;
   top: number;
 };
 
-/** 선언의 초기 데이터를 좁힌다. 러너 밖에서 빈 config 로 띄워도 던지지 않는다. */
-function readScene(initialData: Record<string, unknown> | undefined): SentenceSpec[] {
+/** 선언의 초기 데이터에서 문장 목록을 좁힌다. 러너 밖에서 빈 config 로 띄워도 던지지 않는다. */
+function readSentences(initialData: Record<string, unknown> | undefined): SentenceSpec[] {
   if (initialData === undefined) return [];
   const raw = initialData.sentences;
   if (!Array.isArray(raw)) return [];
@@ -162,7 +165,7 @@ export const tokensPerLanguageStageView: CanvasView = {
     const canvas = params.canvas;
     const colors = getColors(params.theme);
     const t = params.t ?? makeTranslator(params.locale);
-    const sentences = readScene(params.initialData);
+    const sentences = readSentences(params.initialData);
 
     const smallFs = px(fontSizes.xs);
 
@@ -250,15 +253,14 @@ export const tokensPerLanguageStageView: CanvasView = {
     let caption: SVGTextElement | null = null;
     let vocabGroup: SVGGElement | null = null;
     let markLine: SVGLineElement | null = null;
-    let activeCode = '';
     const rows = new Map<string, RowView>();
 
+    /** 화면을 처음으로 되돌린다. 늘 비우고 시작하므로 되돌릴 명령이 없다 (S-scene). */
     function build(): void {
       canvas.textContent = '';
       rows.clear();
       vocabGroup = null;
       markLine = null;
-      activeCode = '';
 
       caption = mk('text', {
         x: PAD_X,
@@ -325,8 +327,6 @@ export const tokensPerLanguageStageView: CanvasView = {
           words,
           letters,
           group,
-          boxes: [],
-          badge: null,
           tightEnd,
           cy,
           top,
@@ -340,9 +340,12 @@ export const tokensPerLanguageStageView: CanvasView = {
       if (caption !== null) caption.textContent = text;
     }
 
-    // ── 걸음마다 하는 일
+    // ── 장면의 조각들을 세우는 일
+    //
+    // 걸음마다 부르던 함수를 버리지 않고 `withAnim` 을 받게 고쳤다. 참이면 흐르게
+    // 그리고, 거짓이면 곧바로 끝 자리에 세운다 — 되짚기가 거짓으로 온다 (S-scene).
 
-    function showVocab(v: { corpusWords: number; tokens: string[] }): Promise<void> {
+    function drawVocab(v: VocabBand, withAnim: boolean): Promise<void> {
       if (vocabGroup !== null) vocabGroup.remove();
       const group = mk('g', {});
       canvas.appendChild(group);
@@ -403,42 +406,46 @@ export const tokensPerLanguageStageView: CanvasView = {
       });
 
       // 칩이 차례로 내려앉는다.
-      return animate(ANIM_MS, (p) => {
+      const draw = (p: number): void => {
         chips.forEach((chip, i) => {
           const stagger = chips.length <= 1 ? p : Math.min(1, Math.max(0, p * 2 - i / chips.length));
           chip.setAttribute('opacity', String(stagger));
           chip.setAttribute('transform', `translate(0, ${((1 - stagger) * -5).toFixed(2)})`);
         });
-      });
+      };
+      if (!withAnim) {
+        draw(1);
+        return Promise.resolve();
+      }
+      return animate(ANIM_MS, draw);
     }
 
-    function showSentences(): Promise<void> {
+    function revealLetters(withAnim: boolean): Promise<void> {
       const all = [...rows.values()].flatMap((row) => row.letters);
-      return animate(ANIM_MS, (p) => {
+      const draw = (p: number): void => {
         for (const letter of all) {
           letter.el.setAttribute('opacity', String(p));
           letter.el.setAttribute('transform', `translate(0, ${((1 - p) * -6).toFixed(2)})`);
         }
-      });
+      };
+      if (!withAnim) {
+        draw(1);
+        return Promise.resolve();
+      }
+      return animate(ANIM_MS, draw);
     }
 
-    function scatter(v: {
-      code: string;
-      pieces: string[];
-      pieceCount: number;
-      ratioTenths: number;
-    }): Promise<void> {
-      const row = rows.get(v.code);
+    /**
+     * 한 줄을 조각으로 가른다.
+     *
+     * `highlight` 는 지나가는 강조다 — 지금 자르는 줄만 물들고, 다음 줄로 넘어가면
+     * 거둬진다. 장면이 그 줄이 어디인지 말해 주므로 여기서 앞줄을 찾아 지울 것이 없다.
+     */
+    function cutRow(cut: CutRow, withAnim: boolean, highlight: boolean): Promise<void> {
+      const row = rows.get(cut.code);
       if (row === undefined) return Promise.resolve();
 
-      // 앞줄의 강조는 거둔다 — 지금 자르는 줄만 물든다.
-      const previous = rows.get(activeCode);
-      if (previous !== undefined && previous !== row) {
-        for (const box of previous.boxes) box.setAttribute('stroke', colors.border);
-      }
-      activeCode = v.code;
-
-      const { letterGaps, boxes, total } = shiftsFor(row.words, row.letters.length, v.pieces);
+      const { letterGaps, boxes, total } = shiftsFor(row.words, row.letters.length, cut.pieces);
 
       const rects = boxes.map((box) => {
         const first = row.letters[box.start];
@@ -450,13 +457,12 @@ export const tokensPerLanguageStageView: CanvasView = {
           height: CELL_H,
           rx: 4,
           fill: 'none',
-          stroke: colors.itemActive,
+          stroke: highlight ? colors.itemActive : colors.border,
           opacity: 0,
         });
         row.group.insertBefore(rect, row.group.firstChild);
         return { rect, from: x, to: x + box.gaps * PIECE_GAP };
       });
-      row.boxes = rects.map((item) => item.rect);
 
       const badge = mk('g', { opacity: 0 });
       const count = mk('text', {
@@ -467,7 +473,7 @@ export const tokensPerLanguageStageView: CanvasView = {
         'dominant-baseline': 'central',
         fill: colors.text,
       });
-      count.textContent = String(v.pieceCount);
+      count.textContent = String(cut.pieceCount);
       badge.appendChild(count);
       const ratio = mk('text', {
         x: 0,
@@ -478,16 +484,15 @@ export const tokensPerLanguageStageView: CanvasView = {
         fill: colors.textMuted,
       });
       // 수식 표기는 문안이 아니라 표식이다 (C10).
-      ratio.textContent = `×${Math.floor(v.ratioTenths / 10)}.${v.ratioTenths % 10}`;
+      ratio.textContent = `×${Math.floor(cut.ratioTenths / 10)}.${cut.ratioTenths % 10}`;
       badge.appendChild(ratio);
       row.group.appendChild(badge);
-      row.badge = badge;
 
       const badgeFrom = row.tightEnd + BADGE_GAP;
       const badgeTo = badgeFrom + total * PIECE_GAP;
 
       // 조각이 벌어지면서 글자가 오른쪽으로 밀리고, 줄 끝의 수도 함께 밀려난다.
-      return animate(ANIM_MS, (p) => {
+      const draw = (p: number): void => {
         row.letters.forEach((letter, i) => {
           const dx = letterGaps[i] * PIECE_GAP * p;
           letter.el.setAttribute('opacity', '1');
@@ -502,17 +507,23 @@ export const tokensPerLanguageStageView: CanvasView = {
           'transform',
           `translate(${(badgeFrom + (badgeTo - badgeFrom) * p).toFixed(2)}, 0)`,
         );
-      });
+      };
+      if (!withAnim) {
+        draw(1);
+        return Promise.resolve();
+      }
+      return animate(ANIM_MS, draw);
     }
 
-    function markContrast(baseCode: string): Promise<void> {
+    /**
+     * 으뜸 언어의 끝에 표시선을 내린다.
+     *
+     * 자를 때 물들었던 테두리를 거두는 일은 여기서 하지 않는다 — 장면이 그때
+     * `activeCode` 를 비우므로 `cutRow` 가 처음부터 물들이지 않는다.
+     */
+    function drawMarker(baseCode: string, withAnim: boolean): Promise<void> {
       const base = rows.get(baseCode);
       if (base === undefined) return Promise.resolve();
-
-      // 강조는 하나로 모은다 — 자를 때 물들었던 테두리는 거둔다.
-      for (const row of rows.values()) {
-        for (const box of row.boxes) box.setAttribute('stroke', colors.border);
-      }
 
       const last = [...rows.values()].reduce((deepest, row) => Math.max(deepest, row.top), ROWS_TOP);
       const x = base.tightEnd + 1;
@@ -534,16 +545,94 @@ export const tokensPerLanguageStageView: CanvasView = {
       canvas.appendChild(line);
       markLine = line;
 
-      return animate(ANIM_MS, (p) => {
+      const draw = (p: number): void => {
         line.setAttribute('y2', String((from + (to - from) * p).toFixed(2)));
-      });
+      };
+      if (!withAnim) {
+        draw(1);
+        return Promise.resolve();
+      }
+      return animate(ANIM_MS, draw);
     }
 
-    function reset(): void {
+    /** 캡션은 장면이 무엇을 말할지만 담는다. 문자는 여기서 만든다 (C10). */
+    function drawCaption(cap: TokensScene['caption']): void {
+      if (cap === null) {
+        setCaption('');
+        return;
+      }
+      switch (cap.kind) {
+        case 'vocab':
+          setCaption(
+            t(
+              'caption.vocab',
+              'A vocabulary learned from English words only — words: {words}, vocabulary pieces: {n}.',
+              { words: cap.words, n: cap.n },
+            ),
+          );
+          return;
+        case 'sentences':
+          setCaption(t('caption.sentences', 'These sentences all mean the same thing.'));
+          return;
+        case 'scatter':
+          setCaption(
+            t('caption.scatter', 'Cut with that vocabulary — letters: {chars}, pieces: {pieces}.', {
+              chars: cap.chars,
+              pieces: cap.pieces,
+            }),
+          );
+          return;
+        case 'done':
+          setCaption(
+            t(
+              'caption.done',
+              'Same meaning, similar length. Pieces — fewest: {min}, most: {max}.',
+              { min: cap.min, max: cap.max },
+            ),
+          );
+          return;
+      }
+    }
+
+    // ── 장면 그리기 ─────────────────────────────────────────────────────────
+    //
+    // 걸음마다 부르는 메서드 대신 이 하나가 화면 전체를 세운다. 늘 `build()` 로
+    // 처음에 돌린 뒤 그 장면이 말하는 것만 다시 그리므로, 어느 걸음에서 어느
+    // 걸음으로 가든 같은 길이고 되돌릴 명령을 따로 둘 필요가 없다.
+
+    async function render(
+      next: TokensScene,
+      prev: TokensScene | null,
+      opts: { animate: boolean },
+    ): Promise<void> {
       build();
+      drawCaption(next.caption);
+
+      if (next.vocab !== null) {
+        // 방금 배웠을 때만 칩이 내려앉는다.
+        await drawVocab(next.vocab, opts.animate && prev?.vocab == null);
+      }
+
+      if (next.lettersShown) {
+        await revealLetters(opts.animate && prev?.lettersShown !== true);
+      }
+
+      // 자른 줄들. 방금 하나 늘었을 때만 그 마지막 줄이 벌어지는 것을 보인다 —
+      // 걸음을 건너뛰어 왔으면 늘어난 수가 맞지 않아 저절로 걸러진다.
+      const grewOne = opts.animate && next.cuts.length === (prev?.cuts.length ?? 0) + 1;
+      for (const [i, cut] of next.cuts.entries()) {
+        const isLast = i === next.cuts.length - 1;
+        await cutRow(cut, grewOne && isLast, cut.code === next.activeCode);
+      }
+
+      if (next.baseCode !== null) {
+        await drawMarker(next.baseCode, opts.animate && prev?.baseCode == null);
+      }
     }
 
     return {
+      render,
+
       destroy(): void {
         destroyed = true;
         for (const id of frames) cancelAnimationFrame(id);
@@ -552,12 +641,6 @@ export const tokensPerLanguageStageView: CanvasView = {
         waiters.clear();
         canvas.textContent = '';
       },
-      setCaption,
-      showVocab,
-      showSentences,
-      scatter,
-      markContrast,
-      reset,
     };
   },
 };

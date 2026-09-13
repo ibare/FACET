@@ -3,7 +3,7 @@
  *
  * 동사가 "달라붙는다" 이므로 표식은 실제로 **움직인다.** 처음에는 낱말 사이의
  * 빈칸 한복판에 홀로 서 있다가, 걸음 하나 동안 뒤 낱말의 왼쪽 끝으로 미끄러져
- * 가 붙는다 (`attach`). 낱말들도 함께 죄어들어 여섯 조각이 된다. 색만 바뀌는
+ * 가 붙는다 (`attached`). 낱말들도 함께 죄어들어 여섯 조각이 된다. 색만 바뀌는
  * 걸음으로는 이 말을 할 수 없다 (S-piece).
  *
  * 화면은 위에서 아래로 세 층이다.
@@ -13,6 +13,16 @@
  *
  * 짝을 세로로 세우는 것이 이 그림의 요지다 — 같은 낱말이 위아래 두 자리를
  * 차지하는 것이 한눈에 보여야 한다.
+ *
+ * ── 장면을 그린다
+ *
+ * 걸음마다 부르는 메서드를 두지 않고 `render` 하나로 산다 (S-scene). 화면은 늘
+ * 비우고 그 장면의 단계가 쌓아 올린 것을 통째로 다시 세운다. 그래서 되돌릴 명령이
+ * 필요 없고, 어느 걸음에서 오든 같은 그림이 선다.
+ *
+ * 걸음의 운동(미끄러짐 · 들어섬 · 쪼개짐)은 버리지 않고 각 그리기 함수 안에 남겨
+ * 두었다. `withAnim` 이 거짓이면 같은 함수가 곧바로 끝 자리를 세운다 — 되짚기가
+ * 그 길로 오므로 거기서는 타이머도 프레임도 걸지 않는다.
  */
 
 import {
@@ -25,6 +35,7 @@ import {
   type ViewInstance,
   type ViewMountParams,
 } from '@ffacet/core/runtime';
+import { PHASE_RANK, type SpaceScene, type UnseenSplit } from './scene.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 
@@ -61,6 +72,9 @@ const LINK_MS = 260;
 const SPLIT_MS = 380;
 const FINISH_MS = 280;
 
+/** 짝을 잇는 선이 다 서고 나서의 굵기. `done` 이 물들이며 여기까지 굵어진다. */
+const LINK_DONE_WIDTH = 2;
+
 const px = (value: string): number => Number.parseFloat(value);
 
 const SENT_FS = px(fontSizes.lg);
@@ -91,7 +105,8 @@ const textW = (s: string, fs: number): number => s.length * fs * MONO_RATIO;
 
 type Span = { x: number; w: number };
 
-export type SpaceScene = {
+/** 선언이 주는 말뭉치. 장면(`SpaceScene`) 과 달리 걸음 내내 바뀌지 않는다. */
+export type SpaceData = {
   mark: string;
   lineA: string[];
   lineB: string[];
@@ -106,11 +121,12 @@ function strings(value: unknown): string[] {
 }
 
 /**
- * `initialData` 를 좁히는 자리는 mount 다 — projector 가 없어도 반드시 불리는
- * 유일한 경로이기 때문이다 (S-piece). 단언 뒤에 필드마다 검사가 따르므로
- * `Record<string, unknown>` 은 회피가 아니라 좁히개다 (C9).
+ * `initialData` 를 좁히는 자리는 mount 다 — 장면은 말뭉치를 담지 않으므로
+ * (담으면 되짚을 때 굴러간 자료를 보게 된다, S-scene) 여기가 유일한 경로다.
+ * 단언 뒤에 필드마다 검사가 따르므로 `Record<string, unknown>` 은 회피가 아니라
+ * 좁히개다 (C9).
  */
-function readScene(data: unknown): SpaceScene {
+function readData(data: unknown): SpaceData {
   if (typeof data !== 'object' || data === null) {
     return { mark: FALLBACK_MARK, lineA: [], lineB: [], bareStems: [], spacedStems: [] };
   }
@@ -166,16 +182,16 @@ export const spaceIsPartOfItStageView: CanvasView = {
     const svg = params.canvas;
     const colors = getColors(params.theme);
     const tr = params.t ?? makeTranslator(params.locale);
-    const scene = readScene(params.initialData);
+    const data = readData(params.initialData);
 
-    const markW = textW(scene.mark, SENT_FS);
-    const piecesA = scene.lineA.map((word, i) => (i === 0 ? word : scene.mark + word));
-    const piecesB = scene.lineB.map((word, i) => (i === 0 ? word : scene.mark + word));
-    const looseA = looseRow(scene.lineA, SENT_FS);
+    const markW = textW(data.mark, SENT_FS);
+    const piecesA = data.lineA.map((word, i) => (i === 0 ? word : data.mark + word));
+    const piecesB = data.lineB.map((word, i) => (i === 0 ? word : data.mark + word));
+    const looseA = looseRow(data.lineA, SENT_FS);
     const tightA = tightRow(piecesA, SENT_FS);
     const tightB = tightRow(piecesB, SENT_FS);
 
-    const colCount = Math.max(1, scene.spacedStems.length);
+    const colCount = Math.max(1, data.spacedStems.length);
     const colW = Math.min(COL_MAX_W, Math.floor((W - SHELF_X - SIDE_MIN) / colCount));
     const colX = (j: number): number => SHELF_X + j * colW;
     const chipW = colW - 6;
@@ -245,17 +261,18 @@ export const spaceIsPartOfItStageView: CanvasView = {
     const caption = label('', W / 2, CAPTION_Y, CAP_FS, colors.textMuted, fonts.body, 'middle');
     svg.appendChild(caption);
 
-    /** 붙기 전 자리에서 붙은 뒤 자리로 옮겨 갈 것들. */
+    /** 붙기 전 자리에서 붙은 뒤 자리로 옮겨 갈 것들. 붙는 걸음에서만 생긴다. */
     type Mover = { node: SVGElement; dx: number; snap: boolean };
-    const movers: Mover[] = [];
-    const gapSlots: SVGElement[] = [];
-    const linkLines: SVGLineElement[] = [];
+
+    /**
+     * 짝을 잇는 세로 선. `bare` 가 세우고 `done` 이 물들이므로 두 그리기가
+     * 나눠 쓴다 — 한 번의 `render` 안에서만이라 장면이 상태를 쥐는 것과는 다르다.
+     */
+    let linkLines: SVGLineElement[] = [];
 
     function clearScene(): void {
       while (dyn.firstChild) dyn.removeChild(dyn.firstChild);
-      movers.length = 0;
-      gapSlots.length = 0;
-      linkLines.length = 0;
+      linkLines = [];
     }
 
     /** 여럿을 조금씩 어긋나게 들여보낸다. */
@@ -271,9 +288,11 @@ export const spaceIsPartOfItStageView: CanvasView = {
           node.setAttribute('transform', `translate(${(1 - e) * dx}, ${(1 - e) * dy})`);
         });
       });
+      // 들어서기가 남긴 자국을 걷는다. 놓아두면 흐르며 선 화면과 곧바로 세운
+      // 화면이 속성 하나만큼 달라지고, 되짚기를 견주는 검사가 그것을 잡는다.
       for (const node of nodes) {
         node.removeAttribute('transform');
-        node.setAttribute('opacity', '1');
+        node.removeAttribute('opacity');
       }
     }
 
@@ -281,7 +300,7 @@ export const spaceIsPartOfItStageView: CanvasView = {
     function markGroup(x: number, centerY: number, fs: number): SVGGElement {
       const group = el('g');
       const tileH = fs + 6;
-      const glyphW = textW(scene.mark, fs);
+      const glyphW = textW(data.mark, fs);
       group.appendChild(
         el('rect', {
           x: x - 2,
@@ -293,7 +312,7 @@ export const spaceIsPartOfItStageView: CanvasView = {
         }),
       );
       group.appendChild(
-        label(scene.mark, x, centerY + fs * 0.35, fs, colors.stateInk, fonts.mono, 'start'),
+        label(data.mark, x, centerY + fs * 0.35, fs, colors.stateInk, fonts.mono, 'start'),
       );
       return group;
     }
@@ -312,7 +331,7 @@ export const spaceIsPartOfItStageView: CanvasView = {
           'stroke-width': 1,
         }),
       );
-      const glyphW = withMark ? textW(scene.mark, CHIP_FS) : 0;
+      const glyphW = withMark ? textW(data.mark, CHIP_FS) : 0;
       const stemW = textW(stem, CHIP_FS);
       const startX = x + (chipW - (glyphW + stemW)) / 2;
       const centerY = y + SHELF_CHIP_H / 2;
@@ -330,7 +349,7 @@ export const spaceIsPartOfItStageView: CanvasView = {
         );
         group.appendChild(
           label(
-            scene.mark,
+            data.mark,
             startX,
             centerY + CHIP_FS * 0.35,
             CHIP_FS,
@@ -354,19 +373,55 @@ export const spaceIsPartOfItStageView: CanvasView = {
       return group;
     }
 
-    // ── 걸음들 ────────────────────────────────────────────────────────────
+    // ── 층마다의 그리기 ───────────────────────────────────────────────────
+    //
+    // 저마다 그 층을 통째로 세우고, 방금 넘어온 단계일 때만 운동을 얹는다.
 
-    async function showSentence(): Promise<void> {
-      clearScene();
-      const nodes: SVGElement[] = [];
-      const baseline = ROW_A_Y + SENT_CHIP_H / 2 + SENT_FS * 0.35;
+    /** 이 조각의 동사. 표식이 뒤 낱말로 미끄러져 가 붙는다. */
+    async function slideAttach(movers: Mover[], slots: SVGElement[]): Promise<void> {
+      await tween(ATTACH_MS, (p) => {
+        const slide = easeInOutCubic(p);
+        const snap = easeOutBack(p);
+        for (const mover of movers) {
+          const e = mover.snap ? snap : slide;
+          // 이미 붙은 자리에 세워 두었으므로 아직 못 온 만큼을 뒤로 물려 잡는다.
+          mover.node.setAttribute('transform', `translate(${mover.dx * (e - 1)}, 0)`);
+        }
+        for (const slot of slots) slot.setAttribute('opacity', String(clamp01(1 - p * 2)));
+      });
+      for (const mover of movers) mover.node.removeAttribute('transform');
+      for (const slot of slots) slot.remove();
+    }
 
-      scene.lineA.forEach((word, i) => {
+    /**
+     * 첫 줄. 한 함수가 세 단계를 겸한다 — 낱말만(`sentence`) · 표식까지(`marked`) ·
+     * 붙은 뒤(`attached`). 붙기 전과 뒤는 서는 자리가 다를 뿐 그리는 것이 같아서다.
+     */
+    async function drawFirstLine(
+      rank: number,
+      animWords: boolean,
+      animMarks: boolean,
+      animAttach: boolean,
+    ): Promise<void> {
+      const attached = rank >= PHASE_RANK.attached;
+      const showMarks = rank >= PHASE_RANK.marked;
+      const centerY = ROW_A_Y + SENT_CHIP_H / 2;
+      const baseline = centerY + SENT_FS * 0.35;
+
+      const movers: Mover[] = [];
+      const slots: SVGElement[] = [];
+      const wordNodes: SVGElement[] = [];
+      const markNodes: SVGElement[] = [];
+
+      data.lineA.forEach((word, i) => {
+        const looseX = looseA.chips[i].x + SENT_PAD;
+        // 붙고 나면 표식이 낱말 앞자리를 차지하므로 낱말은 그만큼 오른쪽에 선다.
+        const tightX = tightA[i].x + SENT_PAD + (i === 0 ? 0 : markW);
         const group = el('g');
         group.appendChild(
           label(
             word,
-            looseA.chips[i].x + SENT_PAD,
+            attached ? tightX : looseX,
             baseline,
             SENT_FS,
             colors.text,
@@ -375,69 +430,70 @@ export const spaceIsPartOfItStageView: CanvasView = {
           ),
         );
         dyn.appendChild(group);
-        nodes.push(group);
+        wordNodes.push(group);
         // 낱말도 죄어들며 제자리를 찾는다.
-        const to = tightA[i].x + SENT_PAD + (i === 0 ? 0 : markW);
-        movers.push({ node: group, dx: to - (looseA.chips[i].x + SENT_PAD), snap: false });
-      });
-
-      // 낱말 사이의 빈칸 — 아직 아무것도 아닌 자리.
-      for (let i = 1; i < scene.lineA.length; i += 1) {
-        const center = looseA.chips[i].x - looseA.gap / 2;
-        const slotW = Math.max(14, Math.min(26, looseA.gap - 10));
-        const slot = el('rect', {
-          x: center - slotW / 2,
-          y: ROW_A_Y + 3,
-          width: slotW,
-          height: SENT_CHIP_H - 6,
-          rx: 4,
-          fill: 'none',
-          stroke: colors.ghostOutline,
-          'stroke-width': 1,
-          'stroke-dasharray': '3 3',
-        });
-        dyn.appendChild(slot);
-        gapSlots.push(slot);
-        nodes.push(slot);
-      }
-
-      await enter(nodes, 0, -10);
-    }
-
-    async function markGaps(): Promise<void> {
-      const nodes: SVGElement[] = [];
-      const centerY = ROW_A_Y + SENT_CHIP_H / 2;
-      for (let i = 1; i < scene.lineA.length; i += 1) {
-        const from = looseA.chips[i].x - looseA.gap / 2 - markW / 2;
-        const group = markGroup(from, centerY, SENT_FS);
-        dyn.appendChild(group);
-        nodes.push(group);
-        movers.push({ node: group, dx: tightA[i].x + SENT_PAD - from, snap: true });
-      }
-      await enter(nodes, 0, -14);
-    }
-
-    /** 이 조각의 동사. 표식이 뒤 낱말로 미끄러져 가 붙는다. */
-    async function attach(): Promise<void> {
-      await tween(ATTACH_MS, (p) => {
-        const slide = easeInOutCubic(p);
-        const snap = easeOutBack(p);
-        for (const mover of movers) {
-          const e = mover.snap ? snap : slide;
-          mover.node.setAttribute('transform', `translate(${mover.dx * e}, 0)`);
+        if (animAttach) {
+          const dx = tightX - looseX;
+          group.setAttribute('transform', `translate(${-dx}, 0)`);
+          movers.push({ node: group, dx, snap: false });
         }
-        for (const slot of gapSlots) slot.setAttribute('opacity', String(clamp01(1 - p * 2)));
       });
-      for (const slot of gapSlots) slot.remove();
-      gapSlots.length = 0;
+
+      // 낱말 사이의 빈칸 — 아직 아무것도 아닌 자리. 붙으면서 사라지므로 붙는
+      // 걸음에서는 마지막으로 한 번 더 세워 지워지는 것을 보인다.
+      if (!attached || animAttach) {
+        for (let i = 1; i < data.lineA.length; i += 1) {
+          const center = looseA.chips[i].x - looseA.gap / 2;
+          const slotW = Math.max(14, Math.min(26, looseA.gap - 10));
+          const slot = el('rect', {
+            x: center - slotW / 2,
+            y: ROW_A_Y + 3,
+            width: slotW,
+            height: SENT_CHIP_H - 6,
+            rx: 4,
+            fill: 'none',
+            stroke: colors.ghostOutline,
+            'stroke-width': 1,
+            'stroke-dasharray': '3 3',
+          });
+          dyn.appendChild(slot);
+          slots.push(slot);
+        }
+      }
+
+      if (showMarks) {
+        for (let i = 1; i < data.lineA.length; i += 1) {
+          const looseX = looseA.chips[i].x - looseA.gap / 2 - markW / 2;
+          const tightX = tightA[i].x + SENT_PAD;
+          const group = markGroup(attached ? tightX : looseX, centerY, SENT_FS);
+          dyn.appendChild(group);
+          markNodes.push(group);
+          if (animAttach) {
+            const dx = tightX - looseX;
+            group.setAttribute('transform', `translate(${-dx}, 0)`);
+            movers.push({ node: group, dx, snap: true });
+          }
+        }
+      }
+
+      if (animWords) {
+        await enter([...wordNodes, ...slots], 0, -10);
+        return;
+      }
+      if (animMarks) {
+        await enter(markNodes, 0, -14);
+        return;
+      }
+      if (animAttach) await slideAttach(movers, slots);
     }
 
-    async function cutPieces(): Promise<void> {
+    /** 붙은 채로 잘린 조각의 테두리. 가운데에서 좌우로 벌어지며 그어진다. */
+    async function drawCutFrames(withAnim: boolean): Promise<void> {
       const frames = tightA.map((chip) => {
         const rect = el('rect', {
-          x: chip.x + chip.w / 2,
+          x: withAnim ? chip.x + chip.w / 2 : chip.x,
           y: ROW_A_Y,
-          width: 0,
+          width: withAnim ? 0 : chip.w,
           height: SENT_CHIP_H,
           rx: 5,
           fill: 'none',
@@ -447,7 +503,7 @@ export const spaceIsPartOfItStageView: CanvasView = {
         dyn.appendChild(rect);
         return rect;
       });
-      if (frames.length === 0) return;
+      if (!withAnim || frames.length === 0) return;
       const total = ENTER_MS + STAGGER_MS * (frames.length - 1);
       await tween(total, (p) => {
         const now = p * total;
@@ -459,12 +515,13 @@ export const spaceIsPartOfItStageView: CanvasView = {
       });
     }
 
-    async function showSecond(): Promise<void> {
+    /** 둘째 줄. 처음부터 붙은 꼴로 선다 — 맨 앞 낱말만 표식이 없다. */
+    async function drawSecondLine(withAnim: boolean): Promise<void> {
       const nodes: SVGElement[] = [];
       const centerY = ROW_B_Y + SENT_CHIP_H / 2;
       const baseline = centerY + SENT_FS * 0.35;
 
-      scene.lineB.forEach((word, i) => {
+      data.lineB.forEach((word, i) => {
         const chip = tightB[i];
         const group = el('g');
         group.appendChild(
@@ -493,7 +550,7 @@ export const spaceIsPartOfItStageView: CanvasView = {
             }),
           );
           group.appendChild(
-            label(scene.mark, textX, baseline, SENT_FS, colors.stateInk, fonts.mono, 'start'),
+            label(data.mark, textX, baseline, SENT_FS, colors.stateInk, fonts.mono, 'start'),
           );
           textX += markW;
         }
@@ -502,10 +559,11 @@ export const spaceIsPartOfItStageView: CanvasView = {
         nodes.push(group);
       });
 
-      await enter(nodes, -24, 0);
+      if (withAnim) await enter(nodes, -24, 0);
     }
 
-    async function fillSpaced(): Promise<void> {
+    /** 선반 아래 칸 — 붙은 꼴. 어휘의 자리가 여기서부터 세어진다. */
+    async function drawSpacedShelf(withAnim: boolean): Promise<void> {
       dyn.appendChild(
         el('line', {
           x1: SIDE_MIN,
@@ -528,15 +586,16 @@ export const spaceIsPartOfItStageView: CanvasView = {
         ),
       );
       const nodes: SVGElement[] = [];
-      scene.spacedStems.forEach((stem, j) => {
+      data.spacedStems.forEach((stem, j) => {
         const group = shelfChip(stem, colX(j) + 3, SPACED_Y, true);
         dyn.appendChild(group);
         nodes.push(group);
       });
-      await enter(nodes, 0, -18);
+      if (withAnim) await enter(nodes, 0, -18);
     }
 
-    async function fillBare(): Promise<void> {
+    /** 선반 위 칸 — 안 붙은 꼴, 그리고 짝을 잇는 세로 선. */
+    async function drawBareShelf(withAnim: boolean): Promise<void> {
       dyn.appendChild(
         label(
           tr('label.bare', 'no blank'),
@@ -553,8 +612,8 @@ export const spaceIsPartOfItStageView: CanvasView = {
       // 짝 없는 안 붙은 꼴은 이 말뭉치에 없다 (bareStems ⊂ spacedStems).
       const nodes: SVGElement[] = [];
       const twinCols: number[] = [];
-      scene.spacedStems.forEach((stem, j) => {
-        if (scene.bareStems.includes(stem)) {
+      data.spacedStems.forEach((stem, j) => {
+        if (data.bareStems.includes(stem)) {
           const group = shelfChip(stem, colX(j) + 3, BARE_Y, false);
           dyn.appendChild(group);
           nodes.push(group);
@@ -575,7 +634,7 @@ export const spaceIsPartOfItStageView: CanvasView = {
           }),
         );
       });
-      await enter(nodes, 0, -18);
+      if (withAnim) await enter(nodes, 0, -18);
 
       const from = BARE_Y + SHELF_CHIP_H;
       for (const j of twinCols) {
@@ -584,62 +643,74 @@ export const spaceIsPartOfItStageView: CanvasView = {
           x1: x,
           y1: from,
           x2: x,
-          y2: from,
+          y2: withAnim ? from : SPACED_Y,
           stroke: colors.textMuted,
           'stroke-width': 1,
         });
         dyn.appendChild(line);
         linkLines.push(line);
       }
+      if (!withAnim) return;
       await tween(LINK_MS, (p) => {
         const y2 = from + (SPACED_Y - from) * easeOutCubic(p);
         for (const line of linkLines) line.setAttribute('y2', String(y2));
       });
     }
 
-    async function splitUnseen(token: string, parts: string[]): Promise<void> {
-      const j = scene.spacedStems.indexOf(token);
-      if (j < 0 || token === '' || parts.length === 0) return;
+    /**
+     * 한 번도 안 붙은 꼴로 나오지 않은 낱말. 통째로 위 칸에 들어가려다 쪼개진다.
+     *
+     * 통째인 유령은 그 걸음에서만 보이고 사라지는 것이라, 정적으로 세울 때는
+     * 남는 조각들만 끝 자리에 앉힌다 (S-scene 의 "머무는 것과 지나가는 것").
+     */
+    async function drawSplit(split: UnseenSplit, withAnim: boolean): Promise<void> {
+      const j = data.spacedStems.indexOf(split.token);
+      if (j < 0) return;
 
       const x = colX(j) + 3;
       const centerX = x + chipW / 2;
-      const ghost = el('g');
-      ghost.appendChild(
-        el('rect', {
-          x,
-          y: BARE_Y,
-          width: chipW,
-          height: SHELF_CHIP_H,
-          rx: 4,
-          fill: colors.bg,
-          stroke: colors.danger,
-          'stroke-width': 1,
-          'stroke-dasharray': '3 3',
-        }),
-      );
-      ghost.appendChild(
-        label(
-          token,
-          centerX,
-          BARE_Y + SHELF_CHIP_H / 2 + CHIP_FS * 0.35,
-          CHIP_FS,
-          colors.danger,
-          fonts.mono,
-          'middle',
-        ),
-      );
-      dyn.appendChild(ghost);
 
-      // 빈 자리로 내려온다.
-      await tween(ENTER_MS, (p) => {
-        const e = easeOutCubic(p);
-        ghost.setAttribute('transform', `translate(0, ${(1 - e) * -26})`);
-        ghost.setAttribute('opacity', String(clamp01(p * 2)));
-      });
+      let ghost: SVGGElement | null = null;
+      if (withAnim) {
+        ghost = el('g');
+        ghost.appendChild(
+          el('rect', {
+            x,
+            y: BARE_Y,
+            width: chipW,
+            height: SHELF_CHIP_H,
+            rx: 4,
+            fill: colors.bg,
+            stroke: colors.danger,
+            'stroke-width': 1,
+            'stroke-dasharray': '3 3',
+          }),
+        );
+        ghost.appendChild(
+          label(
+            split.token,
+            centerX,
+            BARE_Y + SHELF_CHIP_H / 2 + CHIP_FS * 0.35,
+            CHIP_FS,
+            colors.danger,
+            fonts.mono,
+            'middle',
+          ),
+        );
+        dyn.appendChild(ghost);
+
+        // 빈 자리로 내려온다.
+        const descending = ghost;
+        await tween(ENTER_MS, (p) => {
+          const e = easeOutCubic(p);
+          descending.setAttribute('transform', `translate(0, ${(1 - e) * -26})`);
+          descending.setAttribute('opacity', String(clamp01(p * 2)));
+        });
+      }
 
       // 통째로는 못 들어간다 — 쪼개져 좌우로 밀려난다.
       const partH = SHELF_CHIP_H - 2;
-      const pieces = parts.map((part) => {
+      const pieces = split.parts.map((part) => {
         const partW = textW(part, CHIP_FS) + 14;
         const group = el('g', { opacity: 0 });
         group.appendChild(
@@ -670,47 +741,109 @@ export const spaceIsPartOfItStageView: CanvasView = {
       });
 
       const spread = pieces.length > 1 ? pieces.length - 1 : 1;
+      /** 밀려난 정도 `e` 에서의 자리. 1 이 다 밀려난 끝 자리다. */
+      const place = (group: SVGGElement, k: number, e: number): void => {
+        const dir = pieces.length === 1 ? 0 : (k / spread) * 2 - 1;
+        group.setAttribute('transform', `translate(${dir * 22 * e}, ${14 * e})`);
+        group.setAttribute('opacity', String(e));
+      };
+
+      if (ghost === null) {
+        pieces.forEach((group, k) => place(group, k, 1));
+        return;
+      }
+
+      const fading = ghost;
       await tween(SPLIT_MS, (p) => {
         const e = easeOutCubic(p);
-        ghost.setAttribute('opacity', String(1 - e));
-        pieces.forEach((group, k) => {
-          const dir = pieces.length === 1 ? 0 : (k / spread) * 2 - 1;
-          group.setAttribute('transform', `translate(${dir * 22 * e}, ${14 * e})`);
-          group.setAttribute('opacity', String(e));
-        });
+        fading.setAttribute('opacity', String(1 - e));
+        pieces.forEach((group, k) => place(group, k, e));
       });
-      ghost.remove();
+      fading.remove();
     }
 
-    async function finish(): Promise<void> {
+    /** 마지막 걸음. 짝을 잇는 선이 물들고 굵어진 채 **남는다.** */
+    async function markDone(withAnim: boolean): Promise<void> {
       for (const line of linkLines) line.setAttribute('stroke', colors.accent);
+      if (!withAnim) {
+        for (const line of linkLines) line.setAttribute('stroke-width', String(LINK_DONE_WIDTH));
+        return;
+      }
       await tween(FINISH_MS, (p) => {
-        for (const line of linkLines) line.setAttribute('stroke-width', String(1 + p));
+        const width = 1 + (LINK_DONE_WIDTH - 1) * p;
+        for (const line of linkLines) line.setAttribute('stroke-width', String(width));
       });
+    }
+
+    /** 단계가 정하는 캡션. 문안은 여기서 만든다 — 장면은 무엇을 말할지만 안다 (C10). */
+    function captionFor(next: SpaceScene): string {
+      switch (next.phase) {
+        case 'sentence':
+          return tr('caption.gaps', 'A blank sits between the words.');
+        case 'marked':
+          return tr('caption.mark', 'Write each blank as a character of its own.');
+        case 'attached':
+          return tr('caption.attach', 'The blank slides onto the word that follows it.');
+        case 'cut':
+          return tr('caption.cut', 'Pieces the sentence is cut into: {n}.', { n: next.pieceCount });
+        case 'second':
+          return tr('caption.second', 'Only the first word carries no blank.');
+        case 'spaced':
+          return tr('caption.spaced', 'Each form with a blank takes one slot in the vocabulary.');
+        case 'bare':
+          return tr('caption.bare', 'The bare form takes a slot of its own. Pairs: {n}.', {
+            n: next.pairCount,
+          });
+        case 'split':
+          return tr('caption.split', 'A form never seen without its blank cannot stay whole.');
+        case 'done':
+          return tr(
+            'caption.done',
+            'Whether the blank is attached decides the piece. Vocabulary: {n}.',
+            { n: next.vocabSize },
+          );
+        default:
+          return '';
+      }
+    }
+
+    // ── 장면 그리기 ───────────────────────────────────────────────────────
+    //
+    // 늘 비우고 그 장면의 단계가 쌓아 올린 층을 위에서 아래로 다시 세운다. 화면이
+    // 쌓이기만 하는 조각이라 "이 단계 이하" 라는 견줌 하나로 무엇을 그릴지 정해진다.
+    async function render(
+      next: SpaceScene,
+      prev: SpaceScene | null,
+      opts: { animate: boolean },
+    ): Promise<void> {
+      clearScene();
+      caption.textContent = captionFor(next);
+
+      const rank = PHASE_RANK[next.phase];
+      if (rank === PHASE_RANK.idle) return; // 되감은 뒤의 빈 화면
+
+      // 걸음 하나만큼 앞으로 온 것이 확실할 때만 그 단계의 운동을 보인다. 걸음이
+      // 이어지지 않은 채로 오면 (되짚은 뒤 다시 재생 등) 저절로 걸러진다.
+      const advanced = opts.animate && prev !== null && rank === PHASE_RANK[prev.phase] + 1;
+      const just = (phase: SpaceScene['phase']): boolean => advanced && next.phase === phase;
+
+      await drawFirstLine(rank, just('sentence'), just('marked'), just('attached'));
+      if (rank >= PHASE_RANK.cut) await drawCutFrames(just('cut'));
+      if (rank >= PHASE_RANK.second) await drawSecondLine(just('second'));
+      if (rank >= PHASE_RANK.spaced) await drawSpacedShelf(just('spaced'));
+      if (rank >= PHASE_RANK.bare) await drawBareShelf(just('bare'));
+      if (rank >= PHASE_RANK.split && next.split) await drawSplit(next.split, just('split'));
+      if (rank >= PHASE_RANK.done) await markDone(just('done'));
     }
 
     return {
-      setCaption(text: string): void {
-        caption.textContent = text;
-      },
-      resetScene(): void {
-        clearScene();
-      },
-      showSentence,
-      markGaps,
-      attach,
-      cutPieces,
-      showSecond,
-      fillSpaced,
-      fillBare,
-      splitUnseen,
-      finish,
+      render,
 
       destroy(): void {
         destroyed = true;
         for (const id of timers) clearTimeout(id);
         timers.clear();
-        // 기다리던 것을 깨우지 않으면 projector 가 붙들려 알고리즘이 영영
+        // 기다리던 것을 깨우지 않으면 render 가 붙들려 알고리즘이 영영
         // 돌아오지 않는다 (S-piece).
         for (const wake of [...waiters]) wake();
         waiters.clear();

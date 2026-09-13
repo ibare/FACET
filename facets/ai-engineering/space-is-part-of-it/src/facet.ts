@@ -37,7 +37,7 @@ export const spaceIsPartOfItFacet: FacetJson = {
     pt: 'Escrito como um caractere próprio, o espaço viaja colado ao fragmento e a mesma palavra acaba ocupando dois lugares distintos no vocabulário.',
   },
   algorithm: 'module:spaceIsPartOfIt',
-  projector: 'module:spaceIsPartOfItProjector',
+  scene: 'module:spaceIsPartOfItScene',
   initialData: {
     type: 'space-is-part-of-it',
     mark: '▁',
