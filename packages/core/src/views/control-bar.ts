@@ -111,8 +111,14 @@ function makeTimeline(
   label: string,
   onSeek: (step: number) => void,
 ): TimelineWidget {
-  const TRACK_H = 6;
-  const HANDLE_D = 13;
+  const TRACK_H = 9;
+  /**
+   * 손잡이 지름.
+   *
+   * 처음에 13 이었는데 눈에 띄지도 잡히지도 않았다. 끄는 것이 이 위젯의 전부이므로
+   * 손잡이는 손가락이 닿는 크기여야 한다 — 권장 터치 대상(44) 에 가깝게 둔다.
+   */
+  const HANDLE_D = 38;
 
   const root = document.createElement('div');
   root.className = 'facet-control-bar__timeline';
@@ -141,6 +147,20 @@ function makeTimeline(
   track.setAttribute('aria-valuemin', '0');
   track.setAttribute('aria-label', label);
 
+  /**
+   * 손잡이가 오가는 자리.
+   *
+   * 손잡이는 제 중심이 위치를 가리키므로, 양 끝에서 반지름만큼 밖으로 나간다.
+   * 그만큼 안쪽으로 들인 레일을 두고 그 안에서 셈하면 끝에서도 온전히 담긴다 —
+   * 손잡이를 키우고 나서야 드러난 어긋남이다.
+   */
+  const rail = document.createElement('div');
+  rail.style.position = 'absolute';
+  rail.style.left = `${HANDLE_D / 2}px`;
+  rail.style.right = `${HANDLE_D / 2}px`;
+  rail.style.top = '0';
+  rail.style.bottom = '0';
+
   /** 바탕 홈. */
   const groove = document.createElement('div');
   groove.style.position = 'absolute';
@@ -160,7 +180,17 @@ function makeTimeline(
   ticks.style.opacity = '0.5';
   groove.appendChild(ticks);
 
-  /** 화면이 지나온 구간. */
+  /**
+   * 화면이 지나온 구간.
+   *
+   * 첫 재생 동안에는 이 띠가 자라며 걸음을 모은다. 자라는 것만으로는 "무언가 모으는
+   * 중" 이 잘 읽히지 않아 신호를 둘 얹는다 — **끝을 흐리게 번지게** 해서 그 자리가
+   * 끝이 아님을 말하고, 아주 옅게 **맥동**시켜 살아 있음을 말한다.
+   *
+   * 둘 다 절제해야 한다. 조각은 글에 여럿 박히고, 그 띠들이 저마다 요란하면 읽는
+   * 흐름을 방해한다 (S-piece). 그래서 흐림은 끝 16px 뿐이고 맥동은 opacity 0.72
+   * 까지만 내려간다.
+   */
   const filled = document.createElement('div');
   filled.style.position = 'absolute';
   filled.style.left = '0';
@@ -203,7 +233,8 @@ function makeTimeline(
   handle.style.opacity = '0';
   handle.style.transition = 'left 200ms cubic-bezier(0.22, 1, 0.36, 1), opacity 140ms linear';
 
-  track.append(groove, stretch, filled, handle);
+  rail.append(groove, stretch, filled, handle);
+  track.appendChild(rail);
   root.append(track, readout);
 
   let length = 0;
@@ -211,6 +242,22 @@ function makeTimeline(
   let held = 0;
   let seekable = false;
   let dragging = false;
+  /** 모으는 동안의 맥동. 다 모으면 거둔다. happy-dom 에는 `animate` 가 없다. */
+  let breath: Animation | null = null;
+
+  function startBreath(): void {
+    if (breath || typeof filled.animate !== 'function') return;
+    breath = filled.animate(
+      [{ opacity: '1' }, { opacity: '0.72' }, { opacity: '1' }],
+      { duration: 1600, iterations: Infinity, easing: 'ease-in-out' },
+    );
+  }
+
+  function stopBreath(): void {
+    breath?.cancel();
+    breath = null;
+    filled.style.opacity = '1';
+  }
 
   function pct(step: number): number {
     return length === 0 ? 0 : (step / length) * 100;
@@ -220,6 +267,11 @@ function makeTimeline(
     const c = pct(cursor);
     const h = pct(held);
     filled.style.width = `${c}%`;
+    // 모으는 동안에는 끝이 번져 사라진다. 다 모으면 또렷한 끝이 선다.
+    filled.style.maskImage = seekable
+      ? 'none'
+      : 'linear-gradient(to right, #000 0, #000 calc(100% - 16px), transparent 100%)';
+    filled.style.webkitMaskImage = filled.style.maskImage;
     handle.style.left = `${h}%`;
     handle.style.opacity = seekable ? '1' : '0';
 
@@ -254,7 +306,7 @@ function makeTimeline(
 
   /** 포인터 x 를 걸음으로. 띠 밖으로 나가도 양 끝에서 멈춘다. */
   function stepAt(clientX: number): number {
-    const box = track.getBoundingClientRect();
+    const box = rail.getBoundingClientRect();
     if (box.width === 0) return held;
     const ratio = (clientX - box.left) / box.width;
     return Math.max(0, Math.min(length, Math.round(ratio * length)));
@@ -308,6 +360,7 @@ function makeTimeline(
   });
 
   paint();
+  startBreath();
 
   return {
     root,
@@ -329,8 +382,10 @@ function makeTimeline(
       if (on) {
         held = cursor;
         track.tabIndex = 0;
+        stopBreath();
       } else {
         track.removeAttribute('tabindex');
+        startBreath();
       }
       paint();
     },
