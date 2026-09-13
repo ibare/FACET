@@ -10,8 +10,12 @@
  * 를 감싸 조각이 내보내는 이벤트를 센다 — `advance` 한 번에 **둘 이상**이 나와야
  * 한다. 하나만 나오면 그것이 되감기이고 걸음은 오지 않은 것이다.
  *
- * 조각인지는 컨트롤로 가린다 — replay 와 advance 둘뿐인 것이 조각이다
+ * 조각인지는 컨트롤로 가린다 — replay 와 advance 둘뿐인 것이 이 검사의 조각이다
  * (`CONTROL_SET.piece`). facet 전수를 `facet-modules.ts` 에서 받아 그중 조각만 고른다.
+ *
+ * 스크럽 띠를 단 조각 (`CONTROL_SET.pieceScrub`) 은 누를 `advance` 가 없어 이
+ * 검사의 대상이 아니다. 다만 표식 수 대조에는 넣는다 — 대조를 느슨하게 하면
+ * 컨트롤이 규범을 벗어난 조각이 소리 없이 빠져나간다.
  */
 // @vitest-environment happy-dom
 import { describe, expect, it } from 'vitest';
@@ -74,19 +78,30 @@ function facetsOf(mod: Record<string, unknown>): FacetJson[] {
 }
 
 /**
- * 컨트롤이 다시 보기 + 한 걸음 뿐인 facet 이 조각이다 (S-piece).
+ * 조각의 컨트롤 갈래를 가린다 (S-piece).
  *
  * 다시 보기의 action 은 `'replay'` 가 아니라 `'reset'` 이다 — 되감는 일 자체는
  * reset 과 같고 라벨만 다르게 부른다 (`CONTROL.replay`).
+ *
+ * 짝이 되는 둘째 컨트롤로 갈래가 갈린다.
+ *   `advance`  한 걸음 단추. 이 검사가 겨냥하는 것.
+ *   `seek`     스크럽 띠. 띠가 `advance` 를 대신하므로 누를 단추가 없다.
+ *
+ * 띠 갈래를 여기서 세지 않으면 아래의 표식 수 대조가 어긋난다 — 그 대조는
+ * "검사가 목록의 성실함에 기대지 않게" 두려고 있는 것이라, 갈래가 늘었으면
+ * 갈래를 적어야지 대조를 느슨하게 할 일이 아니다.
  */
-function isPiece(facet: FacetJson): boolean {
+function pieceKind(facet: FacetJson): 'advance' | 'seek' | null {
   for (const block of Object.values(facet.blocks)) {
     const spec = block as { type?: unknown; controls?: unknown };
     if (spec.type !== 'control-bar' || !Array.isArray(spec.controls)) continue;
     const actions = spec.controls.map((c) => (c as { action?: unknown }).action);
-    return actions.length === 2 && actions.includes('reset') && actions.includes('advance');
+    if (actions.length !== 2 || !actions.includes('reset')) return null;
+    if (actions.includes('advance')) return 'advance';
+    if (actions.includes('seek')) return 'seek';
+    return null;
   }
-  return false;
+  return null;
 }
 
 /**
@@ -118,6 +133,8 @@ describe('조각의 첫 advance', () => {
     const stalled: string[] = [];   // 되감기 하나로 끝난 것
     const deaf: string[] = [];      // 아무것도 안 나온 것
     const noButton: string[] = [];
+    /** 띠를 단 조각 — 셈에만 넣고 누르지 않는다. */
+    const scrubPieces: string[] = [];
     let settled = false;          // 자동 재생이 정말 멎은 뒤에 눌렀는가
 
     const original = console.error;
@@ -130,7 +147,14 @@ describe('조각의 첫 advance', () => {
           if (k.startsWith('register') && typeof v === 'function') (v as () => void)();
         }
         for (const facet of facetsOf(mod)) {
-          if (!isPiece(facet)) continue;
+          const kind = pieceKind(facet);
+          if (kind === null) continue;
+          if (kind === 'seek') {
+            // 띠를 단 조각. 누를 `advance` 가 없으므로 이 검사의 대상이 아니지만,
+            // 표식 수 대조에는 들어가야 한다.
+            scrubPieces.push(facet.id);
+            continue;
+          }
           const counter = { n: 0 };
           if (typeof facet.projector === 'string') countEmits(facet.projector, counter);
           const container = document.createElement('div');
@@ -175,7 +199,7 @@ describe('조각의 첫 advance', () => {
     // 컨트롤 모양으로 고른 수와 소스의 `@piece` 표식 수가 같아야 한다.
     // 어긋나면 컨트롤이 규범을 벗어난 조각이 있다는 뜻이고, 그 조각은 이
     // 검사에서 스스로를 지운 채 통과하고 있었다는 뜻이다.
-    expect(rows.length).toBe(PIECE_MARKED_COUNT);
+    expect(rows.length + scrubPieces.length).toBe(PIECE_MARKED_COUNT);
     // 멎지 않은 채 눌렀다면 아래 셋이 비어 있어도 그것을 통과라 부를 수 없다.
     expect(settled).toBe(true);
     expect({ stalled, deaf, noButton }).toEqual({ stalled: [], deaf: [], noButton: [] });
