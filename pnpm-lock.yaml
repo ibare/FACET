@@ -62,6 +62,12 @@ importers:
 
   apps/playground:
     dependencies:
+      '@ffacet/algorithm-hash-avalanche':
+        specifier: workspace:*
+        version: link:../../facets/security/hash-avalanche
+      '@ffacet/algorithm-split-and-number':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/split-and-number
       '@ffacet/bootstrap':
         specifier: workspace:*
         version: link:../../packages/bootstrap

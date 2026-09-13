@@ -10,8 +10,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ffacet/core": "workspace:*",
+    "@ffacet/algorithm-hash-avalanche": "workspace:*",
+    "@ffacet/algorithm-split-and-number": "workspace:*",
     "@ffacet/bootstrap": "workspace:*",
+    "@ffacet/core": "workspace:*",
     "@ffacet/host-tiptap": "workspace:*",
     "@phosphor-icons/react": "^2.1.7",
     "@radix-ui/react-accordion": "^1.2.1",
