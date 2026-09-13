@@ -70,6 +70,15 @@ export const CONTROL: Record<string, ControlSpec> = {
   /** 재생 속도. coroutine facet 의 표준 컨트롤. */
   speed: { widget: 'speed-slider', action: 'speed' },
 
+  /**
+   * 스크럽 띠 — 걸어간 자취를 펼쳐 놓고 임의의 걸음으로 끈다.
+   *
+   * 액션은 `seek` 이지만 mechanism 을 타지 않는다. 되짚기는 알고리즘을 다시
+   * 돌리는 일이 아니라 러너가 적어 둔 자취를 projector 에 다시 먹이는 일이라,
+   * control-bar 의 `onSeek` 전용 통로로 러너에 곧장 닿는다 (`runtime/timeline.ts`).
+   */
+  timeline: { widget: 'timeline', action: 'seek' },
+
   // ── 자료구조 연산. 세 facet 이 글자 하나 다르지 않게 같은 말을 써 왔다.
   //    다르게 부르고 싶은 facet 은 label 로 덮는다.
 
@@ -108,4 +117,14 @@ export const CONTROL_SET: Record<string, ControlSpec[]> = {
 
   /** 조각(piece) facet 의 표준 묶음 — 다시 보기와 한 걸음 (S-piece). */
   piece: [CONTROL.replay, CONTROL.advance],
+
+  /**
+   * 스크럽 띠를 단 조각 묶음 — 다시 보기와 띠.
+   *
+   * 띠가 `advance` 를 대신한다. 한 걸음 단추는 앞으로만 갈 수 있어 곱씹으려면
+   * 한 바퀴를 다 돌아야 했는데, 띠는 어느 걸음으로든 곧장 간다. 단추를 함께 두면
+   * 같은 일을 하는 조작이 둘이 되고 둘이 서로 다른 자리를 가리키게 된다 —
+   * 알고리즘의 걸음 셈과 자취의 걸음 셈이 갈리기 때문이다.
+   */
+  pieceScrub: [CONTROL.replay, CONTROL.timeline],
 };

@@ -16,6 +16,10 @@
  *                                                            value-input 들의 현재 값 모음
  *                                                            ({ [name]: value }).
  *   widget='speed-slider', action='speed', default?=number, steps?=number[]
+ *   widget='timeline', action='seek'                       — 스크럽 띠. 걸어간 자취를 펼쳐
+ *                                                            놓고 임의 걸음으로 끈다. 러너의
+ *                                                            Timeline 이 자취를 쥐고 onSeek /
+ *                                                            setTimeline* 로 오간다.
  *   widget='value-input', name=<key>, action='input', label?, placeholder?=LocaleStr, default?=string
  *                                                          — 텍스트 입력 박스. 입력 변경 시
  *                                                            params.dispatch({ type: 'input',
@@ -34,6 +38,8 @@
  *   onPlay/onStep/onPause/onReset(cb)  — 표준 핸들러 등록 (러너가 wire-up)
  *   onAction(cb: (action, payload) => void) — facet 고유 button 통과 채널.
  *   onSpeedChange(cb)
+ *   onSeek(cb: (step) => void) — 스크럽 띠 전용 통로. control-bar 액션 어휘와 섞지 않는다.
+ *   setTimelineLength(n) / setTimelineCursor(n) / setTimelineSeekable(bool)
  *   updateMetric(name, value)
  *   setRunning(bool), setComplete(bool)
  *   resetMetrics()
@@ -77,6 +83,260 @@ function makeButton(id: string, label: string, colors: Palette): HTMLButtonEleme
   return btn;
 }
 
+/** 스크럽 띠의 바깥 손잡이. control-bar 가 쥐고 러너가 값을 흘린다. */
+type TimelineWidget = {
+  root: HTMLElement;
+  /** 적어 둔 걸음 수. 첫 재생 동안 이것이 자라며 띠가 채워진다. */
+  setLength(n: number): void;
+  /** 화면이 실제로 선 걸음. 핸들이 아니라 화면 쪽이다. */
+  setCursor(n: number): void;
+  /** 자취가 닫혀 끌 수 있게 되었는가. */
+  setSeekable(on: boolean): void;
+};
+
+/**
+ * 스크럽 띠 — 걸음을 낱낱이 쪼갠 칸이 아니라 **이어진 하나의 띠**로 그린다.
+ *
+ * 조각은 걸음이 대여섯에서 스무 남짓이라, 칸으로 쪼개면 다섯 칸짜리 조각이
+ * 큼직한 블록 다섯이 되어 길이마다 인상이 갈린다. 띠로 두면 길이 차이를 띠가
+ * 흡수하고 걸음은 그 위의 옅은 눈금으로만 남는다.
+ *
+ * 손을 따라가는 것은 **핸들**이고, 화면은 그보다 늦게 온다. 둘 사이를 비워 두면
+ * 화면이 굼뜬 것으로 읽히므로 그 간격을 **늘어난 띠**로 그린다 — 화면 쪽이 두껍고
+ * 손 쪽으로 갈수록 얇아져, 당긴 만큼 늘어난 고무줄로 보인다. 실제로 그 사이는
+ * 걸음의 애니메이션이 차례로 지나가는 구간이다.
+ */
+function makeTimeline(
+  colors: Palette,
+  label: string,
+  onSeek: (step: number) => void,
+): TimelineWidget {
+  const TRACK_H = 6;
+  const HANDLE_D = 13;
+
+  const root = document.createElement('div');
+  root.className = 'facet-control-bar__timeline';
+  root.style.display = 'flex';
+  root.style.alignItems = 'center';
+  root.style.gap = space.sm;
+  root.style.flex = '1 1 180px';
+  root.style.minWidth = '120px';
+
+  const readout = document.createElement('span');
+  readout.style.fontSize = fontSizes.xs;
+  readout.style.fontFamily = fonts.mono;
+  readout.style.color = colors.textMuted;
+  readout.style.whiteSpace = 'nowrap';
+  readout.style.flexShrink = '0';
+  readout.style.minWidth = '46px';
+  readout.style.textAlign = 'right';
+
+  const track = document.createElement('div');
+  track.style.position = 'relative';
+  track.style.flex = '1 1 auto';
+  track.style.height = `${HANDLE_D + 6}px`;
+  track.style.cursor = 'default';
+  track.style.touchAction = 'none';
+  track.setAttribute('role', 'slider');
+  track.setAttribute('aria-valuemin', '0');
+  track.setAttribute('aria-label', label);
+
+  /** 바탕 홈. */
+  const groove = document.createElement('div');
+  groove.style.position = 'absolute';
+  groove.style.left = '0';
+  groove.style.right = '0';
+  groove.style.top = '50%';
+  groove.style.height = `${TRACK_H}px`;
+  groove.style.marginTop = `${-TRACK_H / 2}px`;
+  groove.style.borderRadius = `${TRACK_H}px`;
+  groove.style.background = colors.border;
+
+  /** 걸음 눈금. 띠 위에 바탕색으로 얇게 새겨 칸을 세지 않고도 길이를 느끼게 한다. */
+  const ticks = document.createElement('div');
+  ticks.style.position = 'absolute';
+  ticks.style.inset = '0';
+  ticks.style.borderRadius = `${TRACK_H}px`;
+  ticks.style.opacity = '0.5';
+  groove.appendChild(ticks);
+
+  /** 화면이 지나온 구간. */
+  const filled = document.createElement('div');
+  filled.style.position = 'absolute';
+  filled.style.left = '0';
+  filled.style.top = '50%';
+  filled.style.height = `${TRACK_H}px`;
+  filled.style.marginTop = `${-TRACK_H / 2}px`;
+  filled.style.borderRadius = `${TRACK_H}px`;
+  filled.style.background = colors.primary;
+  filled.style.width = '0%';
+  filled.style.transition = 'width 200ms cubic-bezier(0.22, 1, 0.36, 1)';
+
+  /** 화면과 손 사이 — 당긴 만큼 늘어나는 구간. */
+  const stretch = document.createElement('div');
+  stretch.style.position = 'absolute';
+  stretch.style.top = '50%';
+  stretch.style.height = `${TRACK_H}px`;
+  stretch.style.marginTop = `${-TRACK_H / 2}px`;
+  stretch.style.background = colors.textMuted;
+  stretch.style.width = '0%';
+  stretch.style.left = '0%';
+  stretch.style.opacity = '0';
+  // 채움과 **같은 곡선으로** 움직여야 한다. 채움에만 전환을 걸고 늘어남은 논리
+  // 위치에 곧바로 그리면, 채움이 아직 따라오는 동안 둘 사이가 벌어져 띠가
+  // 끊겨 보인다 — 늘어난 고무줄이 아니라 끊어진 고무줄이 된다.
+  stretch.style.transition =
+    'left 200ms cubic-bezier(0.22, 1, 0.36, 1), width 200ms cubic-bezier(0.22, 1, 0.36, 1), opacity 140ms linear';
+
+  const handle = document.createElement('div');
+  handle.style.position = 'absolute';
+  handle.style.top = '50%';
+  handle.style.width = `${HANDLE_D}px`;
+  handle.style.height = `${HANDLE_D}px`;
+  handle.style.marginTop = `${-HANDLE_D / 2}px`;
+  handle.style.marginLeft = `${-HANDLE_D / 2}px`;
+  handle.style.borderRadius = '50%';
+  handle.style.background = colors.bg;
+  handle.style.border = `2px solid ${colors.primary}`;
+  handle.style.boxSizing = 'border-box';
+  handle.style.left = '0%';
+  handle.style.opacity = '0';
+  handle.style.transition = 'left 200ms cubic-bezier(0.22, 1, 0.36, 1), opacity 140ms linear';
+
+  track.append(groove, stretch, filled, handle);
+  root.append(track, readout);
+
+  let length = 0;
+  let cursor = 0;
+  let held = 0;
+  let seekable = false;
+  let dragging = false;
+
+  function pct(step: number): number {
+    return length === 0 ? 0 : (step / length) * 100;
+  }
+
+  function paint(): void {
+    const c = pct(cursor);
+    const h = pct(held);
+    filled.style.width = `${c}%`;
+    handle.style.left = `${h}%`;
+    handle.style.opacity = seekable ? '1' : '0';
+
+    const lo = Math.min(c, h);
+    const hi = Math.max(c, h);
+    const gap = hi - lo;
+    stretch.style.left = `${lo}%`;
+    stretch.style.width = `${gap}%`;
+    stretch.style.opacity = gap > 0.5 ? '1' : '0';
+    // 화면 쪽이 두껍고 손 쪽이 얇다. 어느 쪽으로 당겼는지에 따라 사다리꼴을 뒤집는다.
+    stretch.style.clipPath =
+      h >= c
+        ? 'polygon(0 0, 100% 30%, 100% 70%, 0 100%)'
+        : 'polygon(0 30%, 100% 0, 100% 100%, 0 70%)';
+
+    readout.textContent = length === 0 ? '' : `${held} / ${length}`;
+    track.setAttribute('aria-valuemax', String(length));
+    track.setAttribute('aria-valuenow', String(held));
+    track.style.cursor = seekable ? 'pointer' : 'default';
+  }
+
+  function paintTicks(): void {
+    if (length <= 1) {
+      ticks.style.background = 'none';
+      return;
+    }
+    const step = 100 / length;
+    ticks.style.background =
+      `repeating-linear-gradient(to right, transparent 0, transparent calc(${step}% - 1px), ` +
+      `${colors.bg} calc(${step}% - 1px), ${colors.bg} ${step}%)`;
+  }
+
+  /** 포인터 x 를 걸음으로. 띠 밖으로 나가도 양 끝에서 멈춘다. */
+  function stepAt(clientX: number): number {
+    const box = track.getBoundingClientRect();
+    if (box.width === 0) return held;
+    const ratio = (clientX - box.left) / box.width;
+    return Math.max(0, Math.min(length, Math.round(ratio * length)));
+  }
+
+  function moveTo(step: number, immediate: boolean): void {
+    if (step === held) return;
+    held = step;
+    // 끄는 동안 핸들은 손을 곧바로 따라야 한다. 여기에 전환을 걸면 손보다 늦어
+    // 늘어나는 것이 화면이 아니라 핸들로 보인다.
+    handle.style.transition = immediate
+      ? 'opacity 140ms linear'
+      : 'left 200ms cubic-bezier(0.22, 1, 0.36, 1), opacity 140ms linear';
+    paint();
+    onSeek(step);
+  }
+
+  track.addEventListener('pointerdown', (ev) => {
+    if (!seekable) return;
+    dragging = true;
+    track.setPointerCapture(ev.pointerId);
+    moveTo(stepAt(ev.clientX), true);
+  });
+  track.addEventListener('pointermove', (ev) => {
+    if (!dragging) return;
+    moveTo(stepAt(ev.clientX), true);
+  });
+  const endDrag = (ev: PointerEvent): void => {
+    if (!dragging) return;
+    dragging = false;
+    if (track.hasPointerCapture(ev.pointerId)) track.releasePointerCapture(ev.pointerId);
+  };
+  track.addEventListener('pointerup', endDrag);
+  track.addEventListener('pointercancel', endDrag);
+
+  track.addEventListener('keydown', (ev) => {
+    if (!seekable) return;
+    if (ev.key === 'ArrowLeft' || ev.key === 'ArrowDown') {
+      ev.preventDefault();
+      moveTo(Math.max(0, held - 1), false);
+    } else if (ev.key === 'ArrowRight' || ev.key === 'ArrowUp') {
+      ev.preventDefault();
+      moveTo(Math.min(length, held + 1), false);
+    } else if (ev.key === 'Home') {
+      ev.preventDefault();
+      moveTo(0, false);
+    } else if (ev.key === 'End') {
+      ev.preventDefault();
+      moveTo(length, false);
+    }
+  });
+
+  paint();
+
+  return {
+    root,
+    setLength(n: number) {
+      length = n;
+      paintTicks();
+      paint();
+    },
+    setCursor(n: number) {
+      cursor = n;
+      // 끌지 않는 동안에는 핸들이 화면을 따라간다 — 자동 재생 중 띠가 채워지는 것도
+      // 되돌리기로 처음으로 튀는 것도 이 경로다.
+      if (!dragging && !seekable) held = n;
+      paint();
+    },
+    setSeekable(on: boolean) {
+      if (seekable === on) return;
+      seekable = on;
+      if (on) {
+        held = cursor;
+        track.tabIndex = 0;
+      } else {
+        track.removeAttribute('tabindex');
+      }
+      paint();
+    },
+  };
+}
+
 /** View 자체 고정 라벨. 키 + en 원본 (i18n.ts). */
 const K = {
   play: 'view.controlBar.play',
@@ -90,6 +350,7 @@ const K = {
   search: 'view.controlBar.search',
   insert: 'view.controlBar.insert',
   remove: 'view.controlBar.remove',
+  timeline: 'view.controlBar.timeline',
 } as const;
 
 function buttonLabels(tr: Translate): Record<ButtonId, string> {
@@ -162,6 +423,8 @@ export const controlBarView: View = {
     };
     let speedInput: HTMLInputElement | null = null;
     let speedLabel: HTMLSpanElement | null = null;
+    let timelineWidget: TimelineWidget | null = null;
+    const seekHandlers: Array<(step: number) => void> = [];
 
     function nearestSpeedIndex(steps: number[], target: number): number {
       let bestIdx = 0;
@@ -401,6 +664,13 @@ export const controlBarView: View = {
           wrap.appendChild(track);
           buttonGroup.appendChild(wrap);
         }
+      } else if (c.widget === 'timeline') {
+        // 저작자가 적은 label 이 언제나 이긴다 (C10 의 조회 순서). 띠에는 글자가
+        // 서지 않으므로 그 값은 aria-label 로 간다.
+        const label = labelFor(c, tr(K.timeline, 'Playback position'));
+        timelineWidget = makeTimeline(colors, label, (step) => {
+          for (const h of seekHandlers) h(step);
+        });
       } else if (c.widget === 'speed-slider' && c.action === 'speed') {
         const customSteps = Array.isArray(c.steps) ? (c.steps as number[]) : null;
         const def = typeof c.default === 'number' ? c.default : 1;
@@ -445,6 +715,8 @@ export const controlBarView: View = {
     }
 
     root.appendChild(buttonGroup);
+    // 띠는 남는 가로를 다 쓴다. 단추 묶음 뒤, 메트릭 앞이 그 자리다.
+    if (timelineWidget) root.appendChild(timelineWidget.root);
 
     const metricsWrap = document.createElement('div');
     metricsWrap.style.display = 'flex';
@@ -549,6 +821,18 @@ export const controlBarView: View = {
       },
       resetInputs() {
         for (const back of inputResetters) back();
+      },
+      onSeek(cb: (step: number) => void) {
+        seekHandlers.push(cb);
+      },
+      setTimelineLength(n: number) {
+        timelineWidget?.setLength(n);
+      },
+      setTimelineCursor(n: number) {
+        timelineWidget?.setCursor(n);
+      },
+      setTimelineSeekable(on: boolean) {
+        timelineWidget?.setSeekable(on);
       },
       setRunning,
       setComplete,

@@ -17,6 +17,7 @@ import type { Theme } from '../views/design-tokens.js';
 import type { ProjectorViews } from './projector.js';
 import { CoroutineMechanism, ReactiveMechanism, type Mechanism, type MechanismHooks } from './mechanism.js';
 import type { ReactiveContext } from './context.js';
+import { Timeline } from './timeline.js';
 import { buildLayout, defaultLayout, mountBlocks } from './layout-builder.js';
 import {
   getAlgorithm,
@@ -80,11 +81,21 @@ function findControlBarSpec(blocks: Record<string, BlockSpec>): ControlSpec[] | 
   return null;
 }
 
+/**
+ * 러너가 스스로 처리하는 컨트롤 어휘 — mechanism 에 닿지 않는다.
+ *
+ * `seek` 은 알고리즘을 다시 돌리는 일이 아니라 러너가 쥔 자취를 projector 에
+ * 다시 먹이는 일이라, 어느 mechanism 의 `supportedControls` 에도 없다. 걸러 두지
+ * 않으면 `'*'` 와일드카드가 없는 coroutine facet 에서 미지원으로 throw 한다.
+ */
+const RUNNER_CONTROLS = new Set(['seek']);
+
 function assertControlsSupported(controls: ControlSpec[], mechanism: Mechanism): void {
   // 메커니즘이 '*' 와일드카드를 supportedControls 에 두면 facet 고유 어휘를 자유 허용.
   const supported = new Set<string>(mechanism.supportedControls);
   const allowAny = supported.has('*');
   for (const c of controls) {
+    if (RUNNER_CONTROLS.has(c.action)) continue;
     if (allowAny) continue;
     if (!supported.has(c.action)) {
       throw new Error(
@@ -211,7 +222,7 @@ export function runFacet(
   }
 
   // 9. Projector 인스턴스화 — getSpeed 는 mechanism 위임, t 는 현재 locale 로 해석.
-  const projector = projectorFactory(views, {
+  const rawProjector = projectorFactory(views, {
     getSpeed: () => mechanism.getSpeed(),
     t: tr,
   });
@@ -219,17 +230,48 @@ export function runFacet(
   // 10. control-bar wire-up + hooks 정의.
   const controlBar = findControlBar(views);
 
+  /**
+   * 걸어간 자취. 스크럽 띠를 단 facet 만 쓴다.
+   *
+   * 자취는 언제나 적는다 — 띠가 없으면 흘려보낼 곳이 없을 뿐이다. 띠가 있는지로
+   * 기록 여부를 가르면, 같은 facet 이 컨트롤 선언에 따라 다른 경로를 타게 된다.
+   */
+  const timeline = new Timeline({
+    onLength(steps) {
+      if (controlBar) callMethod(controlBar, 'setTimelineLength', steps);
+    },
+    onCursor(step) {
+      if (controlBar) callMethod(controlBar, 'setTimelineCursor', step);
+    },
+    onInstant(on) {
+      // 스스로 진행률을 그리는 stage 만 이 메서드를 둔다. 없는 view 는 그냥 지나간다.
+      for (const v of Object.values(views)) {
+        if (hasMethod(v, 'setInstant')) callMethod(v, 'setInstant', on);
+      }
+    },
+  });
+  const projector = timeline.wrap(rawProjector);
+
   const hooks: MechanismHooks = {
     onRunningChange(running) {
       if (controlBar) callMethod(controlBar, 'setRunning', running);
     },
     onComplete(complete) {
       if (controlBar) callMethod(controlBar, 'setComplete', complete);
+      // 알고리즘이 입력을 기다리기 시작하면 자동 재생이 완주한 것이다
+      // (`ReactiveMechanism.enterAwaiting`). 그 순간 자취가 닫히고 띠를 끌 수 있다.
+      if (complete) timeline.seal();
+      if (controlBar) callMethod(controlBar, 'setTimelineSeekable', timeline.complete);
     },
     onMetric(name, value) {
       if (controlBar) callMethod(controlBar, 'updateMetric', name, value);
     },
     onMetricsReset() {
+      // 되돌리기는 처음부터 다시 걷는 일이다 — 지난 자취를 버려야 같은 걸음이
+      // 두 번 쌓이지 않는다. `onComplete(false)` 는 손짚기로 깨어날 때도 오므로
+      // 되돌리기만 오는 이 훅에서 버린다.
+      timeline.clear();
+      if (controlBar) callMethod(controlBar, 'setTimelineSeekable', false);
       if (controlBar) {
         callMethod(controlBar, 'resetMetrics');
         // 위젯도 처음 자리로. 슬라이더가 가리키는 값과 화면이 어긋나지 않게 한다.
@@ -252,6 +294,10 @@ export function runFacet(
     callMethod(controlBar, 'onAction', (action: string, payload?: unknown) =>
       mechanism.onControl(action, payload),
     );
+    // 스크럽 띠는 mechanism 을 타지 않는다 — 되짚기는 알고리즘을 다시 돌리는 일이
+    // 아니라 적어 둔 자취를 projector 에 다시 먹이는 일이다. `onSpeedChange` 처럼
+    // 전용 통로를 둬 control-bar 액션 어휘와 섞이지 않게 한다 (S-runtime).
+    callMethod(controlBar, 'onSeek', (step: number) => timeline.seek(step));
     const initSpeed = (callMethod(controlBar, 'getSpeed') as number | undefined) ?? 1;
     mechanism.setSpeed(initSpeed);
   }
@@ -263,6 +309,7 @@ export function runFacet(
   }
 
   function destroy() {
+    timeline.destroy();
     mechanism.destroy();
     projector.onDestroy?.();
     for (const v of Object.values(views)) {

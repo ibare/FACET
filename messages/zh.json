@@ -18,6 +18,7 @@
   "view.controlBar.search": "查找",
   "view.controlBar.speed": "速度",
   "view.controlBar.step": "⏭ 单步",
+  "view.controlBar.timeline": "播放位置",
   "view.conveyorQueue.empty": "(空)",
   "view.conveyorQueue.size": "大小: {n}",
   "view.conveyorQueue.sizeBounded": "大小: {n} / {cap}",
