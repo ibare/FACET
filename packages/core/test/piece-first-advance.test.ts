@@ -20,7 +20,12 @@
 // @vitest-environment happy-dom
 import { describe, expect, it } from 'vitest';
 import { runFacet, clearRegistry } from '../src/runtime/index.js';
-import { getProjector, registerProjector } from '../src/runtime/registry.js';
+import {
+  getProjector,
+  registerProjector,
+  getScenePlan,
+  registerScenePlan,
+} from '../src/runtime/registry.js';
 import type { FacetJson } from '../src/types/facet-json.js';
 import type { FacetRunHandle } from '../src/runtime/runner.js';
 
@@ -105,23 +110,42 @@ function pieceKind(facet: FacetJson): 'advance' | 'seek' | null {
 }
 
 /**
- * projector 를 감싸 발신 수를 센다. 원본을 레지스트리에서 꺼내 덮어쓰는 방식이라
- * facet 쪽 코드는 자기가 감싸였다는 것을 모른다.
+ * 발신 수를 센다. 원본을 레지스트리에서 꺼내 덮어쓰는 방식이라 facet 쪽 코드는
+ * 자기가 감싸였다는 것을 모른다.
+ *
+ * 조각은 화면을 두 길로 만든다 — projector 로 View 를 부르거나, scene 으로 장면을
+ * 잇거나 (`runtime/scene.ts`). 세는 자리가 다르므로 둘 다 감싼다. 한쪽만 감싸면
+ * 다른 쪽 조각이 "아무 발신도 없다" 로 잘못 잡힌다.
  */
-function countEmits(projectorRef: string, counter: { n: number }): void {
-  const name = projectorRef.replace(/^module:/, '');
-  const original = getProjector(name);
-  if (!original) return;
-  registerProjector(name, (views, runtime) => {
-    const inner = original(views, runtime);
-    return {
-      ...inner,
-      async onEvent(event) {
+function countEmits(facet: FacetJson, counter: { n: number }): void {
+  if (typeof facet.projector === 'string') {
+    const name = facet.projector.replace(/^module:/, '');
+    const original = getProjector(name);
+    if (!original) return;
+    registerProjector(name, (views, runtime) => {
+      const inner = original(views, runtime);
+      return {
+        ...inner,
+        async onEvent(event) {
+          counter.n += 1;
+          await inner.onEvent(event);
+        },
+      };
+    });
+    return;
+  }
+  if (typeof facet.scene === 'string') {
+    const name = facet.scene.replace(/^module:/, '');
+    const original = getScenePlan(name);
+    if (!original) return;
+    registerScenePlan(name, {
+      initial: (data) => original.initial(data),
+      reduce: (scene, event) => {
         counter.n += 1;
-        await inner.onEvent(event);
+        return original.reduce(scene, event);
       },
-    };
-  });
+    });
+  }
 }
 
 describe('조각의 첫 advance', () => {
@@ -156,7 +180,7 @@ describe('조각의 첫 advance', () => {
             continue;
           }
           const counter = { n: 0 };
-          if (typeof facet.projector === 'string') countEmits(facet.projector, counter);
+          countEmits(facet, counter);
           const container = document.createElement('div');
           document.body.appendChild(container);
           handles.push(runFacet(facet, container));

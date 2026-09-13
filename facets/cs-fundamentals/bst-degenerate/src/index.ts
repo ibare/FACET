@@ -6,7 +6,7 @@
  */
 
 export { bstDegenerate, type BstDegenerateData } from './algorithm.js';
-export { bstDegenerateProjector } from './projector.js';
+export { bstDegenerateScene } from './scene.js';
 export { bstDegenerateIRs } from './irs.js';
 export { bstDegenerateFacet } from './facet.js';
 export { bstDegenerateDescription } from './description.js';
@@ -14,14 +14,14 @@ export { bstDegenerateStageView } from './bst-degenerate-stage.js';
 
 import {
   registerAlgorithm,
-  registerProjector,
+  registerScenePlan,
   registerIR,
   registerFacets,
   registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { bstDegenerate, type BstDegenerateData } from './algorithm.js';
-import { bstDegenerateProjector } from './projector.js';
+import { bstDegenerateScene } from './scene.js';
 import { bstDegenerateIRs } from './irs.js';
 import { bstDegenerateFacet } from './facet.js';
 import { bstDegenerateDescription } from './description.js';
@@ -31,7 +31,7 @@ export function registerBstDegenerate(): void {
   registerAlgorithm<BstDegenerateData>('bstDegenerate', bstDegenerate, {
     mechanismKind: 'reactive',
   });
-  registerProjector('bstDegenerateProjector', bstDegenerateProjector);
+  registerScenePlan('bstDegenerateScene', bstDegenerateScene);
   for (const ir of bstDegenerateIRs) registerIR(ir.id, ir);
   registerView('bst-degenerate-stage', bstDegenerateStageView);
   registerFacets([bstDegenerateFacet]);
