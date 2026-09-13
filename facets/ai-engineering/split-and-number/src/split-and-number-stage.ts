@@ -179,9 +179,19 @@ export const splitAndNumberStageView: CanvasView = {
     const timers = new Set<ReturnType<typeof setTimeout>>();
     const frames = new Set<number>();
 
+    /**
+     * 되짚는 동안에는 진행률을 그리지 않고 끝 상태로 건너뛴다.
+     *
+     * 스크럽이 뒤로 갈 때 러너는 목표까지의 발신을 기다리지 않고 몰아 먹인다
+     * (`runtime/timeline.ts`). 그때 걸음마다 tween 이 하나씩 떠서 같은 요소에
+     * 서로 다른 값을 쓰면 화면이 엉킨다 — 되짚은 직후가 아니라 1초쯤 뒤에
+     * 무너지므로 눈으로도 늦게야 잡힌다.
+     */
+    let instant = false;
+
     function animate(ms: number, draw: (p: number) => void): Promise<void> {
       return new Promise<void>((resolve) => {
-        if (destroyed) {
+        if (destroyed || instant) {
           draw(1);
           return resolve();
         }
@@ -214,7 +224,7 @@ export const splitAndNumberStageView: CanvasView = {
 
     function wait(ms: number): Promise<void> {
       return new Promise<void>((resolve) => {
-        if (destroyed) return resolve();
+        if (destroyed || instant) return resolve();
         const finish = (): void => {
           waiters.delete(finish);
           resolve();
@@ -801,6 +811,19 @@ export const splitAndNumberStageView: CanvasView = {
       showSummary,
       rewind,
       setCaption,
+
+      /** 되짚는 동안 애니메이션을 끝 상태로 건너뛴다 (러너의 Timeline 이 켠다). */
+      setInstant(on: boolean): void {
+        instant = on;
+        if (!on) return;
+        // 이미 돌던 tween 은 거둔다. 두면 몰아 먹인 끝 상태를 나중에 덮어쓴다.
+        for (const id of frames) cancelAnimationFrame(id);
+        frames.clear();
+        for (const id of timers) clearTimeout(id);
+        timers.clear();
+        for (const wake of [...waiters]) wake();
+        waiters.clear();
+      },
 
       destroy(): void {
         destroyed = true;

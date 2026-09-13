@@ -67,7 +67,7 @@ export const splitAndNumberFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'split-and-number-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'label.frontHalf': {
