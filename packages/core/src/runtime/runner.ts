@@ -14,10 +14,12 @@ import type { LocaleStr } from '../types/locale.js';
 import { resolveLocale } from '../types/locale.js';
 import { makeTranslator } from './i18n.js';
 import type { Theme } from '../views/design-tokens.js';
-import type { ProjectorViews } from './projector.js';
+import type { ProjectorViews, ProjectorInstance } from './projector.js';
+import type { FacetRuntimeEvent } from '../types/event.js';
 import { CoroutineMechanism, ReactiveMechanism, type Mechanism, type MechanismHooks } from './mechanism.js';
 import type { ReactiveContext } from './context.js';
 import { Timeline } from './timeline.js';
+import { SceneTrack, type SceneRenderer } from './scene.js';
 import { buildLayout, defaultLayout, mountBlocks } from './layout-builder.js';
 import {
   getAlgorithm,
@@ -27,6 +29,7 @@ import {
   getIR,
   listTranspilers,
   stripPrefix,
+  getScenePlan,
 } from './registry.js';
 
 export type FacetRunHandle = {
@@ -105,19 +108,49 @@ function assertControlsSupported(controls: ControlSpec[], mechanism: Mechanism):
   }
 }
 
+/** 장면을 그릴 View 를 고른다 — `render` 를 가진 첫 View. */
+function findSceneView(
+  blocks: Record<string, BlockSpec>,
+  views: ProjectorViews,
+): SceneRenderer | null {
+  for (const ref of Object.keys(blocks)) {
+    const v = views[ref];
+    if (v && typeof (v as { render?: unknown }).render === 'function') {
+      return v as unknown as SceneRenderer;
+    }
+  }
+  return null;
+}
+
 export function runFacet(
   json: FacetJson,
   mountEl: HTMLElement,
   options?: RunFacetOptions,
 ): FacetRunHandle {
   // 1. 모듈 조회
+  //
+  // 조각은 둘 중 한 길로 화면을 만든다.
+  //   projector  이벤트를 View 메서드 호출로 옮긴다 (본래의 길).
+  //   scene      이벤트를 장면 **상태**로 옮긴다 (`runtime/scene.ts`).
+  // 둘 다 없거나 둘 다 있으면 선언이 모호하므로 세우지 않는다.
   const algorithmName = stripPrefix(json.algorithm, 'module');
-  const projectorName = stripPrefix(json.projector, 'module');
   const algorithmFnRaw = getAlgorithm(algorithmName);
-  const projectorFactory = getProjector(projectorName);
   if (!algorithmFnRaw) throw new Error(`알고리즘 모듈 미등록: ${algorithmName}`);
-  if (!projectorFactory) throw new Error(`Projector 모듈 미등록: ${projectorName}`);
   const algorithmFn = algorithmFnRaw;
+
+  if ((json.projector === undefined) === (json.scene === undefined)) {
+    throw new Error(`화면 선언이 모호함: projector 와 scene 중 하나만 두어야 한다 — ${json.id}`);
+  }
+  const scenePlanName = json.scene !== undefined ? stripPrefix(json.scene, 'module') : null;
+  const scenePlan = scenePlanName !== null ? getScenePlan(scenePlanName) : null;
+  if (scenePlanName !== null && !scenePlan) {
+    throw new Error(`장면 설계 미등록: ${scenePlanName}`);
+  }
+  const projectorName = json.projector !== undefined ? stripPrefix(json.projector, 'module') : null;
+  const projectorFactory = projectorName !== null ? getProjector(projectorName) : null;
+  if (projectorName !== null && !projectorFactory) {
+    throw new Error(`Projector 모듈 미등록: ${projectorName}`);
+  }
 
   // 2. 메커니즘 인스턴스화 — algorithm 등록 시 지정된 mechanismKind 로 분기.
   //    init 은 projector / view mount 가 끝난 뒤에 호출.
@@ -237,11 +270,39 @@ export function runFacet(
     }
   }
 
-  // 9. Projector 인스턴스화 — getSpeed 는 mechanism 위임, t 는 현재 locale 로 해석.
-  const rawProjector = projectorFactory(views, {
-    getSpeed: () => mechanism.getSpeed(),
-    t: tr,
-  });
+  // 9. 화면을 만드는 이를 세운다.
+  //
+  // scene 조각은 projector 를 두지 않는다. 대신 장면을 쌓는 `SceneTrack` 과 그것을
+  // 그리는 View 를 어댑터로 묶어 같은 자리에 끼운다 — mechanism 은 자기가 무엇과
+  // 이야기하는지 몰라도 된다 (원칙 1 의 층 분리).
+  let sceneTrack: SceneTrack | null = null;
+  /** 장면을 그리는 View. 스크럽이 걸음을 건너뛸 때 곧바로 부른다. */
+  let sceneView: SceneRenderer | null = null;
+
+  const rawProjector: ProjectorInstance = projectorFactory
+    ? projectorFactory(views, { getSpeed: () => mechanism.getSpeed(), t: tr })
+    : (() => {
+        const plan = scenePlan;
+        if (!plan) throw new Error('장면 설계가 없다');
+        const stageRef = findSceneView(enrichedBlocks, views);
+        if (!stageRef) throw new Error(`장면을 그릴 View 를 찾지 못했다 — ${json.id}`);
+        sceneView = stageRef;
+        return {
+          onInit(initialData: unknown) {
+            sceneTrack = new SceneTrack(plan, initialData);
+            void stageRef.render(sceneTrack.at(0), null, { animate: false });
+          },
+          async onEvent(event: FacetRuntimeEvent) {
+            if (!sceneTrack) return;
+            const prev = sceneTrack.at(sceneTrack.length);
+            const next = sceneTrack.push(event);
+            await stageRef.render(next, prev, { animate: true });
+          },
+          onReset() {
+            sceneTrack?.reset(initialDataClone);
+          },
+        };
+      })();
 
   // 10. control-bar wire-up + hooks 정의.
   const controlBar = findControlBar(views);
@@ -258,6 +319,10 @@ export function runFacet(
     },
     onCursor(step) {
       if (controlBar) callMethod(controlBar, 'setTimelineCursor', step);
+    },
+    async renderStep(step, from, animate) {
+      if (!sceneTrack || !sceneView) return;
+      await sceneView.render(sceneTrack.at(step), sceneTrack.at(from), { animate });
     },
     onInstant(on) {
       instantMode = on;

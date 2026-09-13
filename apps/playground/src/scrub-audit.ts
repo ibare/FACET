@@ -67,6 +67,10 @@ function hash(s: string): string {
   return (h >>> 0).toString(16);
 }
 
+function shotRaw(el: HTMLElement): string {
+  return hash(raw(el));
+}
+
 function raw(el: HTMLElement): string {
   return Array.from(el.querySelectorAll('svg'))
     .map((s) => s.innerHTML)
@@ -75,7 +79,13 @@ function raw(el: HTMLElement): string {
 
 const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
 
-type Result = { id: string; verdict: 'stable' | 'drifts' | 'no-timeline' | 'never-settled'; steps?: number };
+type Result = {
+  id: string;
+  verdict: 'stable' | 'drifts' | 'no-timeline' | 'never-settled';
+  steps?: number;
+  /** 되짚었다 끝으로 돌아왔을 때 처음 완주 화면과 같은가 (축 1 의 왕복 판). */
+  roundTrip?: 'same' | 'differ';
+};
 
 const audit = {
   diffs: [] as Array<{ id: string; at: number; before: string; drifted: string }>,
@@ -88,9 +98,10 @@ const audit = {
 
 function render(): void {
   const drift = audit.results.filter((r) => r.verdict === 'drifts');
+  const rt = audit.results.filter((r) => r.roundTrip === 'differ');
   logEl!.textContent =
     `${audit.results.length} / ${audit.total}   ${audit.current}\n` +
-    `흔들림 ${drift.length}\n` +
+    `흔들림 ${drift.length}   왕복어긋남 ${rt.length}\n` +
     drift.map((r) => `  ${r.id}`).join('\n');
 }
 
@@ -116,6 +127,7 @@ async function measureOne(facet: FacetJson): Promise<Result> {
 
     // 마지막 걸음의 지연 발화가 앉기를 기다린다.
     await sleep(1_500);
+    const atEnd = shotRaw(box);
     const n = Number(t.getAttribute('aria-valuemax') ?? 0);
     const k = Math.max(1, Math.floor(n / 2));
 
@@ -148,7 +160,19 @@ async function measureOne(facet: FacetJson): Promise<Result> {
       });
     }
 
-    return { id: facet.id, verdict: after === later ? 'stable' : 'drifts', steps: n };
+    // 왕복 — 다시 끝으로 끌면 처음 완주 화면으로 돌아와야 한다.
+    for (let i = 0; i < n; i++) {
+      t.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true }));
+    }
+    await sleep(Math.min(9_000, 700 + n * 400));
+    const back = shotRaw(box);
+
+    return {
+      id: facet.id,
+      verdict: after === later ? 'stable' : 'drifts',
+      steps: n,
+      roundTrip: back === atEnd ? 'same' : 'differ',
+    };
   } finally {
     handle?.destroy();
     box.remove();

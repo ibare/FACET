@@ -15,6 +15,17 @@
  *   입력을 글자로만 두면 출력의 비트 차이와 견줄 수가 없다. 같은 형식이어야
  *   12.5% → 51.2% 라는 증폭이 한 화면에서 읽힌다.
  *
+ * ## 장면을 받아 그린다
+ *
+ * 걸음마다 부르는 메서드(`revealInputs()` · `markInputDiff()` …) 를 두지 않는다.
+ * 그 메서드들은 되돌릴 수 없는 명령이라, 임의의 걸음으로 가려면 처음부터 다시
+ * 밟는 수밖에 없었다. 대신 `render(next, prev)` 하나가 **그 장면의 화면 전체**를
+ * 세운다 — 어느 걸음에서 어느 걸음으로 가든 같은 길이다.
+ *
+ * 부드러움은 `opts.animate` 가 정한다. 참이면 CSS transition 이 흐르고 격자는
+ * 행마다 시차를 두어 물든다. 거짓이면 전환을 잠깐 끄고 곧바로 그 자리에 세운다 —
+ * 되짚기와 첫 그림이 그 길이다.
+ *
  * 색 토큰 (S-view 결정 트리):
  *   - 다른 비트 — palette.accent (변화 강조)
  *   - 켜진 비트(1) — palette.textMuted
@@ -22,8 +33,9 @@
  *   - 캡션 — palette.text
  */
 
-import type { CanvasView, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
-import { getColors, fonts, fontSizes, PIECE_CANVAS_W } from '@ffacet/core/runtime';
+import type { CanvasView, ViewInstance, ViewMountParams, Translate } from '@ffacet/core/runtime';
+import { getColors, fonts, fontSizes, PIECE_CANVAS_W, makeTranslator } from '@ffacet/core/runtime';
+import type { AvalancheScene } from './scene.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -58,20 +70,10 @@ const ARROW_Y = 172;
 const OUT_COUNT_Y = 356;
 const NOTE_Y = 382;
 
-/** 한 행이 물드는 간격 (ms). 위에서 아래로 훑는 느낌을 준다. */
+/** 격자가 행마다 물드는 시차. 한 줄씩 번지는 것이 눈사태의 운동이다. */
 const PAINT_ROW_MS = 40;
-
-type InitPayload = {
-  algorithmLabel: string;
-  inputA: string;
-  inputB: string;
-  inputBitsA: boolean[];
-  inputBitsB: boolean[];
-  inputFlipped: boolean[];
-  outputBitsA: boolean[];
-  outputBitsB: boolean[];
-  outputFlipped: boolean[];
-};
+const FADE_MS = 220;
+const CELL_MS = 160;
 
 function el<K extends keyof SVGElementTagNameMap>(
   name: K,
@@ -82,7 +84,7 @@ function el<K extends keyof SVGElementTagNameMap>(
   return node;
 }
 
-/** 한 격자. 비트 값으로 칠해 두고, 나중에 다른 자리만 강조색으로 덮는다. */
+/** 한 격자. 비트 값으로 칠해 두고, 다른 자리만 강조색으로 덮는다. */
 type Grid = {
   group: SVGGElement;
   cells: SVGRectElement[];
@@ -95,6 +97,7 @@ export const avalancheStageView: CanvasView = {
     params: ViewMountParams & { canvas: SVGSVGElement },
   ): ViewInstance {
     const palette = getColors(params.theme);
+    const tr: Translate = params.t ?? makeTranslator(params.locale);
 
     const BIT_ON = palette.textMuted;
     const BIT_OFF = palette.bgSubtle;
@@ -147,12 +150,15 @@ export const avalancheStageView: CanvasView = {
     let inB: Grid | null = null;
     let outA: Grid | null = null;
     let outB: Grid | null = null;
-    let inputFlipped: boolean[] = [];
-    let outputFlipped: boolean[] = [];
 
-    // ── 타이머 ──────────────────────────────────────────────────────────
+    /** 지금 화면이 세워진 장면의 자료. 이것이 바뀌면 격자를 다시 짓는다. */
+    let built: AvalancheScene | null = null;
+    let destroyed = false;
+
+    // ── 시차 칠하기에 걸어 둔 것 ────────────────────────────────────────
     const timers = new Set<ReturnType<typeof setTimeout>>();
     function later(fn: () => void, ms: number): void {
+      if (destroyed) return;
       const id = setTimeout(() => {
         timers.delete(id);
         fn();
@@ -187,12 +193,9 @@ export const avalancheStageView: CanvasView = {
           stroke: 'none',
           'stroke-width': 1.2,
         });
-        rect.style.transition = 'fill 160ms ease-out, stroke 160ms ease-out';
         group.appendChild(rect);
         cells.push(rect);
       });
-      group.style.opacity = '0';
-      group.style.transition = 'opacity 220ms ease-out';
       gridsGroup.appendChild(group);
       return { group, cells };
     }
@@ -212,149 +215,150 @@ export const avalancheStageView: CanvasView = {
       });
     }
 
+    /** 자료가 바뀌었으면 격자를 다시 짓는다. 같은 자료면 그대로 쓴다. */
+    function build(scene: AvalancheScene): void {
+      clearTimers();
+      gridsGroup.textContent = '';
+      charLabelsGroup.textContent = '';
+
+      labelA.textContent = scene.inputA;
+      labelB.textContent = scene.inputB;
+
+      inA = makeGrid(scene.inputBitsA, COL_A_CX, IN_Y, IN_COLS, IN_CELL, IN_PITCH, IN_W);
+      inB = makeGrid(scene.inputBitsB, COL_B_CX, IN_Y, IN_COLS, IN_CELL, IN_PITCH, IN_W);
+      outA = makeGrid(scene.outputBitsA, COL_A_CX, OUT_Y, OUT_COLS, OUT_CELL, OUT_PITCH, OUT_W);
+      outB = makeGrid(scene.outputBitsB, COL_B_CX, OUT_Y, OUT_COLS, OUT_CELL, OUT_PITCH, OUT_W);
+      makeCharLabels(scene.inputA, COL_A_CX);
+      makeCharLabels(scene.inputB, COL_B_CX);
+
+      built = scene;
+    }
+
+    /** 자료가 같은 장면인가 — 같으면 격자를 다시 짓지 않는다. */
+    function sameData(a: AvalancheScene | null, b: AvalancheScene): boolean {
+      return (
+        a !== null &&
+        a.inputA === b.inputA &&
+        a.inputB === b.inputB &&
+        a.inputBitsA.length === b.inputBitsA.length &&
+        a.outputBitsA.length === b.outputBitsA.length
+      );
+    }
+
     /**
-     * 다른 자리를 강조한다. 두 격자에 같은 색을 칠하면 안 된다 — 다른 자리의
-     * *위치* 는 양쪽이 같으므로, 위치만 칠하면 두 격자가 똑같아져 차이가 사라진다.
+     * 격자의 칠을 그 장면의 자리로 세운다.
      *
-     * 다른 자리는 정의상 한쪽이 1이고 다른 쪽이 0이다. 그래서 1 은 채우고 0 은
-     * 테두리만 남기면 두 격자가 서로 반전된 무늬가 되어, 같은 강조색을 쓰면서도
-     * 어느 쪽이 켜졌는지가 보인다.
+     * 물들일 자리를 고르는 잣대는 `marked` 하나다. 참이면 다른 자리를 강조색으로,
+     * 거짓이면 본래 비트 색으로 — **덮는 것이 아니라 통째로 세운다.** 그래서
+     * 어느 장면에서 어느 장면으로 가든 한 길이다.
+     *
+     * 다른 자리에 같은 색을 칠하면 안 된다 — 다른 자리의 *위치* 는 양쪽이 같으므로,
+     * 위치만 칠하면 두 격자가 똑같아져 차이가 사라진다. 다른 자리는 정의상 한쪽이
+     * 1이고 다른 쪽이 0이라, 1 은 채우고 0 은 테두리만 남기면 두 격자가 서로 반전된
+     * 무늬가 되어 같은 강조색을 쓰면서도 어느 쪽이 켜졌는지가 보인다.
      */
-    function paintDiff(
-      pairs: { grid: Grid | null; bits: boolean[] }[],
+    function paintGrid(
+      grid: Grid | null,
+      bits: boolean[],
       flipped: boolean[],
       cols: number,
+      marked: boolean,
+      stagger: boolean,
     ): void {
-      flipped.forEach((isDiff, i) => {
-        if (!isDiff) return;
-        const row = Math.floor(i / cols);
-        later(() => {
-          for (const { grid, bits } of pairs) {
-            const cell = grid?.cells[i];
-            if (!cell) continue;
-            const on = bits[i] === true;
-            cell.setAttribute('fill', on ? BIT_DIFF : BIT_OFF);
-            cell.setAttribute('stroke', BIT_DIFF);
-          }
-        }, row * PAINT_ROW_MS);
-      });
-    }
-
-    function restoreBits(grid: Grid | null, bits: boolean[]): void {
       if (!grid) return;
       grid.cells.forEach((rect, i) => {
-        rect.setAttribute('fill', bits[i] ? BIT_ON : BIT_OFF);
-        rect.setAttribute('stroke', 'none');
+        const isDiff = marked && flipped[i] === true;
+        const on = bits[i] === true;
+        const fill = isDiff ? (on ? BIT_DIFF : BIT_OFF) : on ? BIT_ON : BIT_OFF;
+        const stroke = isDiff ? BIT_DIFF : 'none';
+        const set = (): void => {
+          rect.setAttribute('fill', fill);
+          rect.setAttribute('stroke', stroke);
+        };
+        // 물드는 걸음에서만 행마다 늦춘다. 되짚을 때는 한꺼번에 세운다.
+        if (stagger && isDiff) later(set, Math.floor(i / cols) * PAINT_ROW_MS);
+        else set();
       });
     }
 
-    let snapshot: InitPayload | null = null;
-
-    function resetAll(): void {
-      clearTimers();
-      captionEvent.textContent = '';
-      inCount.textContent = '';
-      outCount.textContent = '';
-      arrow.textContent = '';
+    /** 전환을 걸거나 끊는다. 되짚을 때는 흐르지 않고 곧바로 앉아야 한다. */
+    function setTransitions(on: boolean): void {
+      const fade = on ? `opacity ${FADE_MS}ms ease-out` : 'none';
+      const cellTr = on ? `fill ${CELL_MS}ms ease-out, stroke ${CELL_MS}ms ease-out` : 'none';
+      for (const node of [labelA, labelB, charLabelsGroup]) node.style.transition = fade;
       for (const g of [inA, inB, outA, outB]) {
-        if (g) g.group.style.opacity = '0';
-      }
-      if (snapshot) {
-        restoreBits(inA, snapshot.inputBitsA);
-        restoreBits(inB, snapshot.inputBitsB);
-        restoreBits(outA, snapshot.outputBitsA);
-        restoreBits(outB, snapshot.outputBitsB);
+        if (!g) continue;
+        g.group.style.transition = fade;
+        for (const c of g.cells) c.style.transition = cellTr;
       }
     }
 
     return {
       destroy() {
+        destroyed = true;
         clearTimers();
         if (svg.parentNode) svg.parentNode.removeChild(svg);
       },
 
-      reset: resetAll,
-
-      init(p: InitPayload) {
+      /**
+       * 장면 하나를 화면에 세운다.
+       *
+       * 지난 장면을 보고 무엇이 달라졌는지 따지지 않는다 — 늘 전부 세운다. 그래야
+       * 어느 걸음에서 오든 결과가 같고, 되돌릴 명령을 따로 둘 필요가 없다.
+       */
+      render(next: AvalancheScene, _prev: AvalancheScene | null, opts: { animate: boolean }): void {
+        // 앞서 걸어 둔 시차 칠하기는 거둔다. 두면 새 장면 위에 옛 칠이 내려앉는다.
         clearTimers();
-        snapshot = p;
-        gridsGroup.textContent = '';
-        charLabelsGroup.textContent = '';
+        if (!sameData(built, next)) build(next);
+        built = next;
 
-        labelA.textContent = p.inputA;
-        labelB.textContent = p.inputB;
-        labelA.style.opacity = '0';
-        labelB.style.opacity = '0';
-        labelA.style.transition = 'opacity 220ms ease-out';
-        labelB.style.transition = 'opacity 220ms ease-out';
+        setTransitions(opts.animate);
 
-        inA = makeGrid(p.inputBitsA, COL_A_CX, IN_Y, IN_COLS, IN_CELL, IN_PITCH, IN_W);
-        inB = makeGrid(p.inputBitsB, COL_B_CX, IN_Y, IN_COLS, IN_CELL, IN_PITCH, IN_W);
-        outA = makeGrid(p.outputBitsA, COL_A_CX, OUT_Y, OUT_COLS, OUT_CELL, OUT_PITCH, OUT_W);
-        outB = makeGrid(p.outputBitsB, COL_B_CX, OUT_Y, OUT_COLS, OUT_CELL, OUT_PITCH, OUT_W);
-        makeCharLabels(p.inputA, COL_A_CX);
-        makeCharLabels(p.inputB, COL_B_CX);
-        charLabelsGroup.style.opacity = '0';
-        charLabelsGroup.style.transition = 'opacity 220ms ease-out';
+        const shown = next.phase >= 1;
+        labelA.style.opacity = shown ? '1' : '0';
+        labelB.style.opacity = shown ? '1' : '0';
+        charLabelsGroup.style.opacity = shown ? '1' : '0';
+        if (inA) inA.group.style.opacity = shown ? '1' : '0';
+        if (inB) inB.group.style.opacity = shown ? '1' : '0';
 
-        inputFlipped = p.inputFlipped;
-        outputFlipped = p.outputFlipped;
+        const outShown = next.phase >= 3;
+        if (outA) outA.group.style.opacity = outShown ? '1' : '0';
+        if (outB) outB.group.style.opacity = outShown ? '1' : '0';
 
-        captionEvent.textContent = '';
-        inCount.textContent = '';
-        outCount.textContent = '';
-        arrow.textContent = '';
-      },
+        const markedIn = next.phase >= 2;
+        const markedOut = next.phase >= 4;
+        // 시차는 **그 걸음에 막 물드는 층**에서만. 이미 물든 채 지나가는 층은 즉시.
+        paintGrid(inA, next.inputBitsA, next.inputFlipped, IN_COLS, markedIn, opts.animate && next.phase === 2);
+        paintGrid(inB, next.inputBitsB, next.inputFlipped, IN_COLS, markedIn, opts.animate && next.phase === 2);
+        paintGrid(outA, next.outputBitsA, next.outputFlipped, OUT_COLS, markedOut, opts.animate && next.phase === 4);
+        paintGrid(outB, next.outputBitsB, next.outputFlipped, OUT_COLS, markedOut, opts.animate && next.phase === 4);
 
-      setBaseCaption(value: string) {
-        captionBase.textContent = value;
-      },
+        const bitDiff = (flipped: number, total: number): string =>
+          tr('label.bitDiff', '{flipped} / {total} bits differ', {
+            flipped: String(flipped),
+            total: String(total),
+          });
 
-      setCaption(value: string) {
-        captionEvent.textContent = value;
-      },
-
-      /** 견줄 두 항을 함께 놓는다 — 순서를 매기지 않는다. */
-      revealInputs() {
-        labelA.style.opacity = '1';
-        labelB.style.opacity = '1';
-        charLabelsGroup.style.opacity = '1';
-        if (inA) inA.group.style.opacity = '1';
-        if (inB) inB.group.style.opacity = '1';
-      },
-
-      markInputDiff(countLabel: string) {
-        if (snapshot) {
-          paintDiff(
-            [
-              { grid: inA, bits: snapshot.inputBitsA },
-              { grid: inB, bits: snapshot.inputBitsB },
-            ],
-            inputFlipped,
-            IN_COLS,
-          );
-        }
-        inCount.textContent = countLabel;
-      },
-
-      revealOutputs(arrowLabel: string) {
-        arrow.textContent = arrowLabel;
-        if (outA) outA.group.style.opacity = '1';
-        if (outB) outB.group.style.opacity = '1';
-      },
-
-      markOutputDiff(countLabel: string) {
-        if (snapshot) {
-          paintDiff(
-            [
-              { grid: outA, bits: snapshot.outputBitsA },
-              { grid: outB, bits: snapshot.outputBitsB },
-            ],
-            outputFlipped,
-            OUT_COLS,
-          );
-        }
-        outCount.textContent = countLabel;
+        inCount.textContent = markedIn ? bitDiff(next.inputFlippedBits, next.inputTotalBits) : '';
+        outCount.textContent = markedOut ? bitDiff(next.outputFlippedBits, next.outputTotalBits) : '';
+        arrow.textContent = outShown
+          ? tr('label.through', '↓  {algorithm}  ↓', { algorithm: next.algorithmLabel })
+          : '';
+        captionEvent.textContent =
+          next.phase >= 4
+            ? tr(
+                'caption.result',
+                'Only {inputFlipped} of {inputTotal} input bits differ, but {outputFlipped} of {outputTotal} output bits do.',
+                {
+                  inputFlipped: String(next.inputFlippedBits),
+                  inputTotal: String(next.inputTotalBits),
+                  outputFlipped: String(next.outputFlippedBits),
+                  outputTotal: String(next.outputTotalBits),
+                },
+              )
+            : '';
+        note.textContent = '';
+        captionBase.textContent = '';
       },
     };
   },

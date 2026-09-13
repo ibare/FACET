@@ -10,7 +10,7 @@
  */
 
 export { hashAvalanche, type HashAvalancheFacetData } from './algorithm.js';
-export { hashAvalancheProjector } from './projector.js';
+export { hashAvalancheScene, type AvalancheScene } from './scene.js';
 export { hashAvalancheIRs } from './irs.js';
 export { hashAvalancheFacet } from './facet.js';
 export { hashAvalancheDescription } from './description.js';
@@ -18,14 +18,14 @@ export { avalancheStageView } from './avalanche-stage.js';
 
 import {
   registerAlgorithm,
-  registerProjector,
+  registerScenePlan,
   registerIR,
   registerFacets,
   registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { hashAvalanche, type HashAvalancheFacetData } from './algorithm.js';
-import { hashAvalancheProjector } from './projector.js';
+import { hashAvalancheScene } from './scene.js';
 import { hashAvalancheIRs } from './irs.js';
 import { hashAvalancheFacet } from './facet.js';
 import { hashAvalancheDescription } from './description.js';
@@ -35,7 +35,7 @@ export function registerHashAvalanche(): void {
   registerAlgorithm<HashAvalancheFacetData>('hashAvalanche', hashAvalanche, {
     mechanismKind: 'reactive',
   });
-  registerProjector('hashAvalancheProjector', hashAvalancheProjector);
+  registerScenePlan('hashAvalancheScene', hashAvalancheScene);
   for (const ir of hashAvalancheIRs) registerIR(ir.id, ir);
   registerView('avalanche-stage', avalancheStageView);
   registerFacets([hashAvalancheFacet]);

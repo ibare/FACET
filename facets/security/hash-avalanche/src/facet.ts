@@ -59,7 +59,7 @@ export const hashAvalancheFacet: FacetJson = {
     pt: 'Trocar um único caractere inverte cerca de metade da saída do hash',
   },
   algorithm: 'module:hashAvalanche',
-  projector: 'module:hashAvalancheProjector',
+  scene: 'module:hashAvalancheScene',
   initialData: {
     type: 'hash-avalanche',
     algorithmLabel: 'SHA-256',

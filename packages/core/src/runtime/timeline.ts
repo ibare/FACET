@@ -65,6 +65,14 @@ export type TimelineHooks = {
    * 잡힌다 — 실제로 그렇게 잡았다.
    */
   onInstant?(on: boolean): void;
+  /**
+   * 장면 기반 조각의 걸음 그리기.
+   *
+   * 있으면 자취를 다시 먹이는 대신 이것을 부른다. 장면은 걸음마다 통째로 쥐고
+   * 있으므로 **어느 걸음이든 한 번에 그린다** — 되짚기가 앞으로 가기와 같은
+   * 연산이 되고, 몰아 먹이기도 즉시 모드도 필요 없다 (`runtime/scene.ts`).
+   */
+  renderStep?(step: number, from: number, animate: boolean): void | Promise<void>;
 };
 
 /**
@@ -258,6 +266,17 @@ export class Timeline {
     // 되짚은 뒤로 켜져 있던 즉시 모드를 여기서 내린다 (`rewindTo` 참고).
     this.hooks.onInstant?.(false);
     const s = this.cursorStep + 1;
+    if (this.hooks.renderStep) {
+      const startedAt = Date.now();
+      await this.hooks.renderStep(s, this.cursorStep, true);
+      this.cursorStep = s;
+      this.hooks.onCursor?.(s);
+      const remaining = Math.max(1, this.targetStep - this.cursorStep);
+      const beat = Math.max(Timeline.STEP_BEAT_MIN_MS, Timeline.STEP_BEAT_MS / remaining);
+      const owed = beat - (Date.now() - startedAt);
+      if (owed > 0) await this.rest(owed);
+      return;
+    }
     const from = s === 1 ? 0 : this.ends[s - 2];
     const to = this.ends[s - 1];
     const startedAt = Date.now();
@@ -312,6 +331,16 @@ export class Timeline {
     // 끌 때(`forwardOne`)와 되돌릴 때(`clear`) 내린다.
     const inner = this.inner;
     if (!inner) return;
+    if (this.hooks.renderStep) {
+      // 장면을 쥐고 있으면 한 번에 그린다. 되감고 다시 먹일 일이 없다.
+      const from = this.cursorStep;
+      this.cursorStep = target;
+      this.hooks.onCursor?.(target);
+      // 뒤로는 흐르지 않고 곧바로 그 장면에 세운다. 장면을 쥐고 있으므로 지나온
+      // 걸음을 되밟을 까닭이 없고, 되밟으면 그 애니메이션이 되짚기보다 오래 남는다.
+      await this.hooks.renderStep(target, from, false);
+      return;
+    }
     this.hooks.onInstant?.(true);
     try {
       inner.onReset?.();

@@ -24,6 +24,7 @@ import {
   makeTranslator,
 } from '@ffacet/core/runtime';
 import type { CanvasView, ViewInstance } from '@ffacet/core/runtime';
+import type { SplitScene, SettledRow } from './scene.js';
 
 const W = PIECE_CANVAS_W;
 const H = 248;
@@ -497,7 +498,7 @@ export const splitAndNumberStageView: CanvasView = {
     }
 
     // ── 걸음 1. 쪼갠다 — 값이 평면 위의 점이 되어 날아간다.
-    function splitRow(p: SplitPayload): Promise<void> {
+    function splitRow(p: SplitPayload, withAnim: boolean): Promise<void> {
       clearTransient();
       const nodes = rowNodes[p.row];
       if (!nodes) return Promise.resolve();
@@ -550,7 +551,7 @@ export const splitAndNumberStageView: CanvasView = {
         );
       }
 
-      return animate(420, (p2) => {
+      const drawSplit = (p2: number): void => {
         const grow = phase(p2, 0, 0.28);
         cut.setAttribute(
           'd',
@@ -568,11 +569,25 @@ export const splitAndNumberStageView: CanvasView = {
           dot.setAttribute('r', (DOT_R * Math.min(1, fly * 4)).toFixed(2));
           trail.setAttribute('d', quadHead(leg.from, leg.ctrl, leg.to, fly));
         }
-      });
+      };
+      // 되짚을 때는 흐르지 않고 곧바로 그 자리에 선다.
+      if (!withAnim) {
+        drawSplit(1);
+        return Promise.resolve();
+      }
+      return animate(420, drawSplit);
     }
 
     // ── 걸음 2. 갈아탄다 — 대표 넷까지 재고, 가장 가까운 것으로 옮겨 붙는다.
-    async function assignRow(p: AssignPayload): Promise<void> {
+    async function assignRow(p: AssignPayload, withAnim: boolean): Promise<void> {
+      /** 흐르게 하거나, 곧바로 끝 자리에 세우거나. */
+      const run = (ms: number, draw: (p2: number) => void): Promise<void> => {
+        if (!withAnim) {
+          draw(1);
+          return Promise.resolve();
+        }
+        return animate(ms, draw);
+      };
       const nodes = rowNodes[p.row];
       if (!nodes) return;
 
@@ -609,7 +624,7 @@ export const splitAndNumberStageView: CanvasView = {
       }
 
       // 재기 — 대표 넷까지 선을 뻗는다.
-      await animate(260, (p2) => {
+      await run(260, (p2) => {
         for (let plane = 0; plane < 2; plane += 1) {
           const from = froms[plane];
           if (!from) continue;
@@ -667,7 +682,7 @@ export const splitAndNumberStageView: CanvasView = {
         hops.push({ from, ctrl: { x: mid.x + (nx / len) * 16, y: mid.y + (ny / len) * 16 }, to });
       }
 
-      await animate(400, (p2) => {
+      await run(400, (p2) => {
         for (let plane = 0; plane < 2; plane += 1) {
           const hop = hops[plane];
           const dot = dots[plane];
@@ -696,7 +711,7 @@ export const splitAndNumberStageView: CanvasView = {
         parked.push(park);
       }
 
-      await animate(180, (p2) => {
+      await run(180, (p2) => {
         for (let i = 0; i < 4; i += 1) {
           const cell = nodes.cells[i];
           const text = nodes.texts[i];
@@ -725,7 +740,14 @@ export const splitAndNumberStageView: CanvasView = {
     }
 
     // ── 마지막 걸음. 값의 자리와 번호의 자리를 견준다.
-    async function showSummary(p: SummaryPayload): Promise<void> {
+    async function showSummary(p: SummaryPayload, withAnim: boolean): Promise<void> {
+      const run = (ms: number, draw: (p2: number) => void): Promise<void> => {
+        if (!withAnim) {
+          draw(1);
+          return Promise.resolve();
+        }
+        return animate(ms, draw);
+      };
       clearTransient();
       const bracket = (x0: number, x1: number, label: string): {
         path: SVGPathElement;
@@ -760,7 +782,7 @@ export const splitAndNumberStageView: CanvasView = {
         t('label.bytes', '{n} bytes', { n: p.codeBytes }),
       );
 
-      await animate(320, (p2) => {
+      await run(320, (p2) => {
         const draw = (
           node: { path: SVGPathElement; text: SVGTextElement },
           x0: number,
@@ -776,7 +798,7 @@ export const splitAndNumberStageView: CanvasView = {
         draw(plain, SIDE, VALUE_RIGHT);
         draw(code, BADGE_X[0] ?? 0, (BADGE_X[1] ?? 0) + BADGE_W);
       });
-      await wait(60);
+      if (withAnim) await wait(60);
     }
 
     // ── 처음으로 되감는다.
@@ -814,12 +836,126 @@ export const splitAndNumberStageView: CanvasView = {
       caption.textContent = text;
     }
 
+
+    // ── 장면 그리기 ─────────────────────────────────────────────────────────
+    //
+    // 걸음마다 부르는 메서드 대신 이 하나가 화면 전체를 세운다. 늘 `rewind()` 로
+    // 처음에 돌린 뒤 그 장면이 말하는 것만 다시 그리므로, 어느 걸음에서 어느
+    // 걸음으로 가든 같은 길이고 되돌릴 명령을 따로 둘 필요가 없다.
+
+    /** 번호를 받아 자리에 앉은 줄. 값 칸이 비고 번호 칸이 찬다. */
+    function drawSettled(s: SettledRow): void {
+      const nodes = rowNodes[s.row];
+      if (!nodes) return;
+      const codes = [s.frontCode, s.backCode];
+      for (let i = 0; i < 4; i += 1) {
+        nodes.cells[i]?.setAttribute('fill-opacity', '0');
+        nodes.cells[i]?.setAttribute('stroke-dasharray', '3 3');
+        nodes.texts[i]?.setAttribute('opacity', '0');
+      }
+      for (let plane = 0; plane < 2; plane += 1) {
+        const code = codes[plane] ?? 0;
+        const badge = nodes.badges[plane];
+        const badgeText = nodes.badgeTexts[plane];
+        badge?.setAttribute('fill', codeColors[code % codeColors.length] ?? c.itemDefault);
+        badge?.setAttribute('fill-opacity', '1');
+        badge?.setAttribute('stroke-dasharray', 'none');
+        if (badgeText) {
+          badgeText.textContent = String(code);
+          badgeText.setAttribute('opacity', '1');
+        }
+        // 대표 곁에 앉은 자국. 줄마다 각을 달리해 겹치지 않는다.
+        const at = repAt(plane, code);
+        const angle = (-70 + s.row * 26) * (Math.PI / 180);
+        const park = el('circle', {
+          cx: at.x + Math.cos(angle) * (REP_R + 5),
+          cy: at.y + Math.sin(angle) * (REP_R + 5),
+          r: PARK_R,
+          fill: c.textMuted,
+        });
+        root.appendChild(park);
+        parked.push(park);
+      }
+      nodes.error.textContent = fmt2(s.error);
+      nodes.error.setAttribute('opacity', '1');
+    }
+
+    /** 캡션은 장면이 무엇을 말할지만 담는다. 문자는 여기서 만든다 (C10). */
+    function drawCaption(cap: SplitScene['caption']): void {
+      if (!cap) {
+        setCaption('');
+        return;
+      }
+      switch (cap.kind) {
+        case 'split':
+          setCaption(
+            t('caption.split', 'Cut into two halves: ({a}) and ({b}).', {
+              a: cap.front.join(', '),
+              b: cap.back.join(', '),
+            }),
+          );
+          return;
+        case 'pick':
+          setCaption(
+            t('caption.pick', 'Each half switches to its nearest centroid. What is left: {a}, {b}.', {
+              a: cap.a,
+              b: cap.b,
+            }),
+          );
+          return;
+        case 'pickSplit':
+          setCaption(
+            t('caption.pickSplit', 'The two halves land on different centroids: {a}, {b}.', {
+              a: cap.a,
+              b: cap.b,
+            }),
+          );
+          return;
+        case 'summary':
+          setCaption(
+            t('caption.summary', 'Four values per row become two numbers — {from} bytes down to {to} bytes.', {
+              from: cap.plainBytes,
+              to: cap.codeBytes,
+            }),
+          );
+          return;
+      }
+    }
+
+    async function render(
+      next: SplitScene,
+      prev: SplitScene | null,
+      opts: { animate: boolean },
+    ): Promise<void> {
+      rewind();
+
+      // 앉은 줄들. 지금 다루는 줄은 아래에서 점·선과 함께 그리므로 뺀다.
+      for (const s of next.settled) {
+        if (s.row === next.active?.row) continue;
+        drawSettled(s);
+      }
+
+      drawCaption(next.caption);
+
+      if (next.active) {
+        const a = next.active;
+        // 방금 이 줄로 넘어왔을 때만 날아가는 운동을 보인다.
+        const justSplit =
+          opts.animate && a.assigned === null && (!prev?.active || prev.active.row !== a.row);
+        await splitRow({ row: a.row, front: a.front, back: a.back }, justSplit);
+        if (a.assigned) {
+          const justAssigned = opts.animate && prev?.active?.assigned == null;
+          await assignRow({ row: a.row, ...a.assigned }, justAssigned);
+        }
+      }
+
+      if (next.summary) {
+        await showSummary(next.summary, opts.animate && !prev?.summary);
+      }
+    }
+
     return {
-      splitRow,
-      assignRow,
-      showSummary,
-      rewind,
-      setCaption,
+      render,
 
       destroy(): void {
         destroyed = true;

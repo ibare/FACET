@@ -10,13 +10,13 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { splitAndNumberAlgorithm } from './algorithm.js';
 import type { SplitAndNumberData } from './algorithm.js';
-import { splitAndNumberProjector } from './projector.js';
+import { splitAndNumberScene } from './scene.js';
 import { splitAndNumberIRs } from './irs.js';
 import { splitAndNumberStageView } from './split-and-number-stage.js';
 import { splitAndNumberFacet } from './facet.js';
@@ -30,7 +30,7 @@ export function registerSplitAndNumber(): void {
   });
   // algorithm 과 같은 이름으로 등록하지 않는다 — `module:` 참조가 어느 쪽인지
   // 말하지 못하게 된다 (C4).
-  registerProjector('splitAndNumberProjector', splitAndNumberProjector);
+  registerScenePlan('splitAndNumberScene', splitAndNumberScene);
   for (const ir of splitAndNumberIRs) registerIR(ir.id, ir);
   registerView('split-and-number-stage', splitAndNumberStageView);
   registerFacets([splitAndNumberFacet]);
@@ -39,7 +39,7 @@ export function registerSplitAndNumber(): void {
 
 export {
   splitAndNumberAlgorithm,
-  splitAndNumberProjector,
+  splitAndNumberScene,
   splitAndNumberIRs,
   splitAndNumberStageView,
   splitAndNumberFacet,
