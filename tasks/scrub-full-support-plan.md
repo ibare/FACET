@@ -15,8 +15,16 @@ stage 의 되돌림(`onReset` / `rewind`)이 그 걸음이 바꾼 것을 다 되
 `onReset` 은 처음으로 되감을 때만 쓰였고 뒤이어 `onInit` 이 다시 그리므로 완전하지
 않아도 됐다. 스크럽이 그 완전성을 처음으로 요구한다.
 
-- **실측**: 조각 72 종 중 65 통과, **7 실패**. 181 로 미루면 **18 안팎**.
+- **전수 실측 (2026-09-13)**: 조각 **181 중 167 통과 (92%), 14 실패.**
 - 실패 예: `bubbleAdjacentSwap` 은 되짚은 뒤 칸에 `7` 이 남는데 순방향에서는 `2` 다.
+- 확정 목록:
+
+  ```
+  bstDegenerate      bubbleAdjacentSwap   chainingBucket        coinFlipHeight
+  editTableFill      partitionAroundPivot pickNearestUnsettled  pushPopTop
+  recolorThenRotate  requiresSorted       directionOfMostSpread noiseLeftOut
+  projectAndLose     hashIntegrityCheck
+  ```
 
 ### 축 2 — 되짚는 동안 화면이 깨지지 않는가
 
@@ -31,8 +39,8 @@ stage 의 되돌림(`onReset` / `rewind`)이 그 걸음이 바꾼 것을 다 되
 
 ### 두 축의 관계
 
-겹친다. 손봐야 하는 조각은 두 집합의 합집합이고, 대략 **90 안팎**이다. 반은 그대로
-되고 반은 손이 간다.
+겹친다. 손봐야 하는 조각은 두 집합의 합집합이다. 축 1 은 14 로 확정됐고 축 2 는
+측정 중이다.
 
 ---
 
@@ -83,7 +91,7 @@ if (destroyed || isInstant()) { apply(1); return resolve(); }   // ② 헬퍼 �
 
 ### 0 단계 — 대상을 확정한다 (선행. 이것 없이는 나머지가 추정이다)
 
-**0-1. 축 1 하네스를 가볍게 하고 전수로 돌린다.**
+**0-1. 축 1 하네스를 가볍게 하고 전수로 돌린다.** ✅ 끝났다 (181 중 14 실패).
 
 지금 하네스는 조각당 **두 벌**을 띄운다 (A: 되짚은 것 / B: 순방향으로 거기까지 간
 것). 그래서 배치 24 에서 멎었고 72 종에 7 분 반이 걸렸다.
@@ -94,7 +102,8 @@ if (destroyed || isInstant()) { apply(1); return resolve(); }   // ② 헬퍼 �
 쥐지 않고 해시만 쥐므로 조각 181 을 재도 메모리가 늘지 않는다 — 어긋난 조각은
 따로 다시 돌려 diff 를 본다.
 
-산출물: 축 1 실패 조각의 **확정 목록** (지금은 18 안팎이라는 추정뿐).
+걸린 시간 12 분 반 (배치 12 씩 16 배치). 두 벌 하네스로는 배치 24 에서 멎던 것이
+전수를 완주했다.
 
 **0-2. 축 2 를 재는 브라우저 하네스를 만든다.**
 

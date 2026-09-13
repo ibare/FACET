@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>FACET — 스크럽 축 2 감사</title>
+    <style>
+      body { margin: 0; padding: 16px; font-family: system-ui, sans-serif; background: #fff; color: #171717; }
+      #log { font-family: ui-monospace, Menlo, monospace; font-size: 12px; white-space: pre-wrap; line-height: 1.6; }
+      #pen { position: absolute; left: -20000px; top: 0; width: 700px; }
+    </style>
+  </head>
+  <body>
+    <div id="log">준비 중…</div>
+    <!-- 재는 동안 조각이 실제로 그려져야 하므로 화면 밖에 둔다. display:none 이면
+         레이아웃도 애니메이션도 돌지 않아 잴 것이 사라진다. -->
+    <div id="pen"></div>
+    <script type="module" src="/src/scrub-audit.ts"></script>
+  </body>
+</html>
