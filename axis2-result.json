@@ -8,12 +8,6 @@
       "roundTrip": "same"
     },
     {
-      "id": "facet:splitAndNumber",
-      "verdict": "stable",
-      "steps": 11,
-      "roundTrip": "same"
-    },
-    {
       "id": "facet:bstDegenerate",
       "verdict": "stable",
       "steps": 46,
@@ -22,5 +16,5 @@
   ],
   "done": true,
   "current": "끝",
-  "total": 3
+  "total": 2
 }

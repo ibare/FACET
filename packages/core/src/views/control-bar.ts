@@ -116,9 +116,11 @@ function makeTimeline(
    * 손잡이 지름.
    *
    * 처음에 13 이었는데 눈에 띄지도 잡히지도 않았다. 끄는 것이 이 위젯의 전부이므로
-   * 손잡이는 손가락이 닿는 크기여야 한다 — 권장 터치 대상(44) 에 가깝게 둔다.
+   * 손잡이는 손가락이 닿는 크기여야 한다. 38 까지 키워 보고 26 으로 내렸다 — 조각의
+   * 컨트롤바는 글 옆에 놓이는 작은 것이라, 터치 대상 권장치(44) 를 채우려 들면
+   * 손잡이가 조각보다 커 보인다.
    */
-  const HANDLE_D = 38;
+  const HANDLE_D = 26;
 
   const root = document.createElement('div');
   root.className = 'facet-control-bar__timeline';
