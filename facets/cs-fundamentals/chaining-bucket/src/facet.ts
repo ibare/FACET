@@ -98,7 +98,7 @@ export const chainingBucketFacet: FacetJson = {
     },
     'caption.probeMiss': {
       en: '{key} is not it. Step one link down the chain.',
-      ko: '찾는 것과 다르다. 사슬을 한 칸 내려간다.',
+      ko: '여기 있는 것은 {key} — 찾는 것과 다르다. 사슬을 한 칸 내려간다.',
       ja: '{key} ではない。鎖をひと駒だけ下る。',
       zh: '不是 {key}。沿着链往下走一环。',
       ar: 'ليس {key}. انزل حلقة واحدة على السلسلة.',

@@ -4,9 +4,13 @@
  * @piece 조각 — "깊이가 하나 늘면 자리는 두 배" 라는 주장 하나에만 답한다.
  * 제목은 글의 문단이 주므로 title-block 을 두지 않고, 셀 것이 없으므로
  * metrics 도 두지 않는다 (S-piece).
+ *
+ * 화면은 장면(Scene) 방식이다 — projector 대신 `scene.ts` 의 `ScenePlan` 을
+ * 선언하고 stage 가 `render` 하나로 산다 (S-scene). 그래서 어느 걸음의 화면이든
+ * 셈으로 얻고, 띠를 끌어 아무 걸음으로나 갈 수 있다.
  */
 
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 import type { FacetJson } from '@ffacet/core/runtime';
 
 export const depthDoublesCountFacet: FacetJson = {
@@ -36,7 +40,7 @@ export const depthDoublesCountFacet: FacetJson = {
     pt: 'Um nível mais abaixo duplica quantos lugares uma árvore comporta.',
   },
   algorithm: 'module:depthDoublesCount',
-  projector: 'module:depthDoublesCountProjector',
+  scene: 'module:depthDoublesCountScene',
   initialData: {
     type: 'depth-doubles-count',
     /** 0층부터 9층까지. 합이 2^10 - 1 = 1023 이 되는 깊이다. */
@@ -46,10 +50,7 @@ export const depthDoublesCountFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'depth-doubles-count-stage' },
-    controls: {
-      type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
-    },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.root': {

@@ -6,8 +6,11 @@
  *
  * @piece — 이 표식이 S-piece 의 적용 범위를 정한다.
  *
- * 조각의 규범: 필수 조작 없음(다시 보기 하나) / 제목 없음 / 한 주장 /
+ * 조각의 규범: 필수 조작 없음(다시 보기와 스크럽 띠) / 제목 없음 / 한 주장 /
  * 메트릭 없음 / 캔버스 폭 620 / 전제를 각주 대신 이 설명에 남긴다.
+ *
+ * 화면은 장면(Scene) 방식이다 — 걸음을 상태로 잡고 그 상태에서 화면을 만들므로
+ * 띠를 끌어 어느 걸음으로 가도 같은 화면이 선다 (`scene.ts`, S-scene).
  *
  * 데이터는 호스트가 확정한 실측 트리다. 50, 30, 70, 20, 40, 60, 80 을 이
  * 순서로 넣어 만든 이진 탐색 트리 — 노드 일곱, 높이 3층. 찾는 값은 40.
@@ -44,7 +47,7 @@ export const bstCompareAndGoFacet: FacetJson = {
     pt: 'Cada comparação tira um ramo inteiro dos candidatos e desce um nível',
   },
   algorithm: 'module:bstCompareAndGo',
-  projector: 'module:bstCompareAndGoProjector',
+  scene: 'module:bstCompareAndGoScene',
   initialData: {
     type: 'bst-compare-and-go',
     // 50, 30, 70, 20, 40, 60, 80 순서로 삽입한 실측 트리. 노드 일곱, 높이 3층.
@@ -65,7 +68,7 @@ export const bstCompareAndGoFacet: FacetJson = {
   messages: {
     'caption.target': {
       en: 'Looking for {needle}.',
-      ko: '{needle}을 찾는다.',
+      ko: '찾는 값: {needle}.',
       ja: '{needle} を探す。',
       zh: '要找 {needle}。',
       ar: 'نبحث عن {needle}.',
@@ -128,7 +131,7 @@ export const bstCompareAndGoFacet: FacetJson = {
     stage: { type: 'bst-compare-and-go-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

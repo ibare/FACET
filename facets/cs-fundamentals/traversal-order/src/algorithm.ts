@@ -24,9 +24,11 @@
  *                발이 그 노드의 세 접점 중 하나에 닿았다. counted 면 이번
  *                차례가 세기로 한 접점이다.
  *   record       target  'node:<값>'
- *                payload { order: 'pre'|'in'|'post'; slot: number; value: number }
- *                세는 접점에 닿았으므로 값이 그 차례의 결과 줄 slot 번째 칸으로
- *                떨어진다. 언제나 직전 touch 와 같은 걸음 안에서 온다.
+ *                payload { order: 'pre'|'in'|'post'; value: number }
+ *                세는 접점에 닿았으므로 값이 그 차례의 결과 줄로 떨어진다. 언제나
+ *                직전 touch 와 같은 걸음 안에서 온다. **몇 번째 칸인지는 싣지
+ *                않는다** — 그것은 그 줄에 이미 몇이 앉았나이고, 화면이 그것을
+ *                쥐고 있다. 두 자리에서 세면 언젠가 갈린다.
  *   order-end    payload { order: 'pre'|'in'|'post'; index: number }
  *                한 차례를 마쳤다. 그 줄이 완성된다.
  *   done         payload 없음. 세 차례를 다 마쳤다.
@@ -74,8 +76,6 @@ type Beat =
       moment: TraversalMoment;
       order: TraversalMoment;
       counted: boolean;
-      /** counted 일 때 값이 떨어질 칸. 아니면 -1. */
-      slot: number;
     }
   | { kind: 'end'; order: TraversalMoment; index: number }
   | { kind: 'finish' };
@@ -95,12 +95,8 @@ function buildBeats(values: number[], orders: TraversalMoment[]): Beat[] {
     if (order === undefined) continue;
     beats.push({ kind: 'begin', order, index: i });
 
-    let filled = 0;
     const touch = (node: number, moment: TraversalMoment): void => {
-      const counted = moment === order;
-      const slot = counted ? filled : -1;
-      if (counted) filled += 1;
-      beats.push({ kind: 'touch', node, moment, order, counted, slot });
+      beats.push({ kind: 'touch', node, moment, order, counted: moment === order });
     };
     const walk = (idx: number): void => {
       const node = values[idx];
@@ -154,7 +150,7 @@ async function emitBeat(ctx: ReactiveContext<TraversalOrderData>, beat: Beat): P
       await ctx.emit({
         type: 'record',
         target: `node:${beat.node}`,
-        payload: { order: beat.order, slot: beat.slot, value: beat.node },
+        payload: { order: beat.order, value: beat.node },
       });
     }
     return;

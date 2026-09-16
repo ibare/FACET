@@ -37,7 +37,7 @@ export const traversalOrderFacet: FacetJson = {
     pt: 'Uma mesma árvore percorrida de três modos. Só muda o momento de pisar no próprio lugar.',
   },
   algorithm: 'module:traversalOrder',
-  projector: 'module:traversalOrderProjector',
+  scene: 'module:traversalOrderScene',
   initialData: {
     type: 'traversal-order',
     // 값이 곧 이름인 이진 탐색 트리. 레벨 순서로 적었다.
@@ -52,8 +52,8 @@ export const traversalOrderFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'traversal-order-stage' },
-    // 조각의 표준 묶음 — 다시 보기 · 한 걸음 (S-piece).
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    // 장면 방식의 조각이라 띠를 단다 — 어느 걸음의 화면이든 셈으로 얻는다 (S-piece).
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'label.preorder': {

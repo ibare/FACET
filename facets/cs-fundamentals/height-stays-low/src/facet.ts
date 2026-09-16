@@ -6,7 +6,10 @@
  *
  * @piece — 이 표식이 S-piece 의 적용 범위를 정한다.
  *
- * 조각의 규범: 필수 조작 없음(다시 보기 + 한 걸음 둘) / 제목 없음 / 한 주장 /
+ * 화면은 장면(Scene) 방식이다 — projector 대신 `scene.ts` 의 `ScenePlan` 을 선언하고,
+ * stage 가 `render` 하나로 산다 (S-scene). 그래서 띠를 끌어 아무 걸음으로나 갈 수 있다.
+ *
+ * 조각의 규범: 필수 조작 없음(다시 보기 + 스크럽 띠 둘) / 제목 없음 / 한 주장 /
  * 메트릭 없음 / 캔버스 폭은 러너가 정함(PIECE_CANVAS_W) / 전제는 이 글이 밝힌다.
  *
  * 데이터는 실측이 아니라 계산이다 — 자식 수(2, 100)와 목표 잎 수(1,000,000)만
@@ -46,7 +49,7 @@ export const heightStaysLowFacet: FacetJson = {
     pt: 'Duas árvores cobrem o mesmo milhão de folhas — a mais larga termina em muito menos níveis',
   },
   algorithm: 'module:heightStaysLow',
-  projector: 'module:heightStaysLowProjector',
+  scene: 'module:heightStaysLowScene',
   initialData: {
     type: 'height-stays-low',
     algorithmLabel: 'level walk',
@@ -88,7 +91,7 @@ export const heightStaysLowFacet: FacetJson = {
     stage: { type: 'height-stays-low-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

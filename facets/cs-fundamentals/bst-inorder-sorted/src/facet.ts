@@ -9,6 +9,9 @@
  * 조각의 규범: 필수 조작 없음(다시 보기 하나) / 제목 없음 / 한 주장 /
  * 메트릭 없음 / 캔버스 폭 620 / 전제를 각주로 밝히지 않음.
  *
+ * 화면은 걸음마다의 장면에서 만들어진다 (`scene.ts`). 어느 걸음의 화면이든 셈으로
+ * 얻으므로 재생 자리를 끄는 띠를 단다 (S-scene · S-piece 의 컨트롤 표).
+ *
  * 데이터는 8, 3, 10, 1, 6, 14, 4, 7, 13 을 이 순서로 넣어 만든 이진 탐색
  * 트리다 (노드 아홉, 높이 4 층). 뿌리 8 은 화면 위에서 가운데 자리를
  * 차지하지만, 중위로 걸으면 아홉 중 여섯째로 나온다 — 트리 위의 자리와
@@ -49,7 +52,7 @@ export const bstInorderSortedFacet: FacetJson = {
     pt: 'Percorra em ordem — esvazie a esquerda, deponha-se, passe à direita — e os valores saem do menor ao maior',
   },
   algorithm: 'module:bstInorderSorted',
-  projector: 'module:bstInorderSortedProjector',
+  scene: 'module:bstInorderSortedScene',
   initialData: {
     type: 'bst-inorder-sorted',
     rootValue: 8,
@@ -83,7 +86,7 @@ export const bstInorderSortedFacet: FacetJson = {
     },
     'caption.output': {
       en: '{value} flows out — {n} placed so far.',
-      ko: '{value} 가 흘러나온다 — 지금까지 {n} 개 쌓였다.',
+      ko: '흘러나온 값: {value} — 지금까지 쌓인 것 {n} 개.',
       ja: '{value} が流れ出る — ここまでで {n} 個。',
       zh: '{value} 流出来了 — 到目前为止 {n} 个。',
       ar: '{value} يخرج — {n} حتى الآن.',
@@ -108,7 +111,7 @@ export const bstInorderSortedFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'bst-inorder-sorted-stage' },
-    // 조각의 표준 묶음 — 다시 보기 · 한 걸음 (S-piece).
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    // 장면 방식 조각의 표준 묶음 — 다시 보기 · 재생 자리 띠 (S-piece).
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
 };

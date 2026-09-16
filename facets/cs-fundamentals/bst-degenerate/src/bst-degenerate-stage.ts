@@ -338,7 +338,10 @@ export const bstDegenerateStageView: CanvasView = {
 
       if (growing) await growing;
 
-      if (next.pulse && next.pulse.kind !== 'match' && next.pulse !== prev?.pulse) {
+      // 걸음을 건너뛰어 온 길은 `animate` 가 거짓이라 위에서 이미 돌아갔다. `pulse` 는
+      // 걸음마다 새로 짓는 객체라 그것끼리 견주는 것으로는 아무것도 가려지지 않는다
+      // (프로토콜 4 절의 죽은 비교).
+      if (next.pulse && next.pulse.kind !== 'match') {
         const entry = nodes.get(next.pulse.nodeId);
         if (entry) await pulse(entry, colors.itemComparing, colors.stateInk, false);
       }
