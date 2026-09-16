@@ -21,15 +21,20 @@
  *
  * | type            | target        | payload |
  * |-----------------|---------------|---------|
- * | `routes-found`  | —             | `{ source: string; target: string; routes: { id, nodes: string[], edgeIds: string[], hops: number }[]; maxHops: number; maxTotalWeight: number }` |
- * | `hops-counted`  | —             | `{ routeId: string; hops: number }` |
- * | `hops-verdict`  | —             | `{ routeId: string; hops: number; rivalId?: string; rivalHops?: number }` |
- * | `edge-weighed`  | `edge:<a>-<b>`| `{ routeId: string; weight: number; total: number }` |
- * | `weight-verdict`| —             | `{ routeId: string; total: number; rivalId?: string; rivalTotal?: number }` |
+ * | `routes-found`  | —             | `{ routes: { id, nodes: string[], edgeIds: string[] }[] }` |
+ * | `hops-counted`  | —             | `{ routeId: string }` |
+ * | `hops-verdict`  | —             | `{ routeId: string; rivalId?: string }` |
+ * | `edge-weighed`  | `edge:<a>-<b>`| `{ routeId: string }` |
+ * | `weight-verdict`| —             | `{ routeId: string; rivalId?: string }` |
  * | `rewind`        | —             | 없음 — 처음 상태로 되감는다 |
  *
- * `maxHops` / `maxTotalWeight` 는 화면에 뜨지 않는다. 무대가 축척(픽셀/간선,
- * 픽셀/무게)을 처음에 한 번 정하고 재생 도중 바꾸지 않기 위한 값이다.
+ * **수는 싣지 않는다.** 간선 수는 `edgeIds.length`, 무게는 선언된 간선, 무게 합은
+ * 지금까지 잰 간선에서 나오므로 장면이 센다 (`scene.ts` 의 `hopsOf` ·
+ * `weighedTotalOf` · `maxHopsOf` · `maxWeightOf`). 화면에 함께 뜨는 수가 발신과
+ * 구조 두 곳에서 나오면 언젠가 갈린다.
+ *
+ * 싣는 것은 **걸음이 내리는 판정**뿐이다 — 어느 길을 어느 길과 견주어 골랐나
+ * (`routeId` · `rivalId`), 지금 재는 것이 어느 길의 어느 간선인가.
  *
  * ## 진행
  * `mechanismKind: 'reactive'`. mount 시 스스로 자동 재생하고, 끝난 뒤에는
@@ -152,16 +157,11 @@ async function argue(
     {
       type: 'routes-found',
       payload: {
-        source: ctx.data.source,
-        target: ctx.data.target,
         routes: routes.map((r) => ({
           id: r.id,
           nodes: r.nodes,
           edgeIds: r.edges.map((e) => e.id),
-          hops: r.hops,
         })),
-        maxHops: Math.max(...routes.map((r) => r.hops)),
-        maxTotalWeight: Math.max(...routes.map((r) => r.total)),
       },
     },
     gate,
@@ -172,7 +172,7 @@ async function argue(
   for (const r of routes) {
     const ok = await step(
       ctx,
-      { type: 'hops-counted', payload: { routeId: r.id, hops: r.hops } },
+      { type: 'hops-counted', payload: { routeId: r.id } },
       gate,
     );
     if (!ok) return;
@@ -183,7 +183,7 @@ async function argue(
     ctx,
     {
       type: 'hops-verdict',
-      payload: { routeId: lead.id, hops: lead.hops, rivalId: rival?.id, rivalHops: rival?.hops },
+      payload: { routeId: lead.id, rivalId: rival?.id },
     },
     gate,
   );
@@ -191,12 +191,10 @@ async function argue(
 
   // 무게를 하나씩 잰다. 짧아 보이던 쪽부터 재야 그 길이 부풀어 오르는 것이 먼저 보인다.
   for (const r of routes) {
-    let total = 0;
     for (const e of r.edges) {
-      total += e.weight;
       const ok = await step(
         ctx,
-        { type: 'edge-weighed', target: e.id, payload: { routeId: r.id, weight: e.weight, total } },
+        { type: 'edge-weighed', target: e.id, payload: { routeId: r.id } },
         gate,
       );
       if (!ok) return;
@@ -210,7 +208,7 @@ async function argue(
   if (!best) return;
   await ctx.emit({
     type: 'weight-verdict',
-    payload: { routeId: best.id, total: best.total, rivalId: worse?.id, rivalTotal: worse?.total },
+    payload: { routeId: best.id, rivalId: worse?.id },
   });
 }
 

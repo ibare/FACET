@@ -10,25 +10,27 @@
  *
  * ── 이벤트 (전부 facet 고유 확장. 화면 변화가 있으므로 silent 를 쓰지 않는다)
  *   walk-step   target node:<id>
- *               { node: string; prev: string | null; edge: string | null;
- *                 color: number; step: number; total: number }
- *               prev 자리에서 변을 타고 건너와 node 를 color 로 칠한다.
- *               prev 가 null 이면 출발 정점이라 건너올 변이 없다.
+ *               { node: string; color: number }
+ *               이 정점을 이 색으로 칠한다. **걸음이 내리는 판정**이라 싣는다 —
+ *               "이웃끼리 다른 색" 이 곧 이 조각의 알고리즘이므로, 장면이 차례의
+ *               홀짝으로 되셈하면 규칙이 두 곳에 적히고 발신이 장식이 된다.
  *
  *   close-edge  target edge:<a>-<b>
- *               { a: string; b: string; edge: string;
- *                 colorA: number; colorB: number; same: boolean }
+ *               { a: string; b: string }
  *               마지막 남은 변. 양 끝에서 각자의 색이 마주 온다.
  *
- *   done        { ringLength: number; odd: boolean; conflict: boolean;
- *                 conflictEdge: string; a: string; b: string }
- *               고리의 길이와 홀짝. 둘 다 구조에서 셈한 값이다. `conflict` 는
- *               닫는 변의 두 끝이 실제로 같은 색이었는가 — 홀짝에서 따라 나오는
- *               값이지만, 화면이 말하는 것은 셈한 홀짝이 아니라 이쪽이다.
+ *   done        payload 없음. 할 말을 마쳤다.
  *
  *   rewind      payload 없음. 처음 상태로 되감는다 (advance 진입 시).
  *
- * 화면 문안은 하나도 싣지 않는다 — 캡션 문구는 projector 가 정한다 (C10).
+ * ── 장면이 셀 수 있는 것은 싣지 않는다
+ *   한때 `prev` · `edge` · `step` · `total` · `colorA` · `colorB` · `same` ·
+ *   `ringLength` · `odd` · `conflict` · `conflictEdge` 를 실었다. 어느 것도 화면이
+ *   믿지 않았고 — stage 는 색을 제 칠에서 도로 읽었다 — 같은 물음에 답이 둘이었다.
+ *   전부 칠해진 차례에서 나오므로 장면이 센다 (`scene.ts`).
+ *
+ * 화면 문안은 하나도 싣지 않는다 — 무엇을 말할지는 장면이, 문자는 stage 가 정한다
+ * (C10).
  *
  * ── 메커니즘
  *   reactive. 마운트 즉시 자동 재생하고, 끝난 뒤 advance 입력을 기다린다 (S-piece).
@@ -61,8 +63,6 @@ export type TwoColorWalk = {
   colors: number[];
   /** 답사가 끝난 뒤 남는 변 — 끝 정점과 시작 정점을 잇는 변. */
   closing: TwoColorEdge | null;
-  /** 그 변의 두 끝이 같은 색인가. 고리의 길이가 홀수일 때 참이 된다. */
-  conflict: boolean;
 };
 
 function adjacency(edges: TwoColorEdge[]): Map<string, string[]> {
@@ -82,8 +82,9 @@ function adjacency(edges: TwoColorEdge[]): Map<string, string[]> {
 /**
  * 고리를 한 바퀴 답사하며 색을 번갈아 매긴다.
  *
- * 화면에 뜨는 값 — 고리의 길이 · 홀짝 · 마지막 변의 두 끝 색 — 은 전부 여기서
- * 구조를 셈해 얻는다. 어느 것도 미리 적어 두지 않는다 (S-piece).
+ * 어느 정점을 어느 차례로 밟고 어떤 색을 매길지를 여기서 구조로 셈해 얻는다.
+ * 미리 적어 두는 걸음표가 아니다 (S-piece). 고리의 길이 · 홀짝 · 두 끝이 같은
+ * 색인가는 여기서 세지 않는다 — 그것은 칠해진 차례에서 나오므로 장면의 몫이다.
  */
 export function computeTwoColorWalk(data: TwoColorConflictData): TwoColorWalk {
   const adj = adjacency(data.edges);
@@ -106,10 +107,7 @@ export function computeTwoColorWalk(data: TwoColorConflictData): TwoColorWalk {
           (e) => (e.a === last && e.b === first) || (e.a === first && e.b === last),
         ) ?? null)
       : null;
-  const conflict =
-    closing !== null && colors[0] === colors[colors.length - 1];
-
-  return { order, colors, closing, conflict };
+  return { order, colors, closing };
 }
 
 /** 걸음을 내보내기 전에 통과해야 하는 문. false 면 취소된 것이다. */
@@ -126,59 +124,31 @@ async function playRing(
   walk: TwoColorWalk,
   gate: Gate,
 ): Promise<void> {
-  const { order, colors, closing, conflict } = walk;
-  const total = order.length;
+  const { order, colors, closing } = walk;
 
-  for (let i = 0; i < total; i += 1) {
+  for (let i = 0; i < order.length; i += 1) {
     const node = order[i];
     const color = colors[i];
     if (node === undefined || color === undefined) continue;
     if (!(await gate())) return;
-    const prev = i === 0 ? null : (order[i - 1] ?? null);
     await ctx.emit({
       type: 'walk-step',
       target: `node:${node}`,
-      payload: {
-        node,
-        prev,
-        edge: prev === null ? null : `${prev}-${node}`,
-        color,
-        step: i + 1,
-        total,
-      },
+      payload: { node, color },
     });
   }
 
   if (closing === null) return;
-  const colorA = colors[order.indexOf(closing.a)] ?? 0;
-  const colorB = colors[order.indexOf(closing.b)] ?? 0;
 
   if (!(await gate())) return;
   await ctx.emit({
     type: 'close-edge',
     target: `edge:${closing.a}-${closing.b}`,
-    payload: {
-      a: closing.a,
-      b: closing.b,
-      edge: `${closing.a}-${closing.b}`,
-      colorA,
-      colorB,
-      same: colorA === colorB,
-    },
+    payload: { a: closing.a, b: closing.b },
   });
 
   if (!(await gate())) return;
-  await ctx.emit({
-    type: 'done',
-    payload: {
-      ringLength: total,
-      odd: total % 2 === 1,
-      conflictEdge: `${closing.a}-${closing.b}`,
-      a: closing.a,
-      b: closing.b,
-      conflict,
-    },
-  });
+  await ctx.emit({ type: 'done' });
 }
 
 export const twoColorConflictAlgorithm = async (

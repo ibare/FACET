@@ -12,7 +12,7 @@
  * 기본 배치로 족하다.
  */
 
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 import type { FacetJson } from '@ffacet/core/runtime';
 import type { OneWayEdgeData } from './algorithm.js';
 
@@ -43,7 +43,7 @@ export const oneWayEdgeFacet: FacetJson = {
     pt: 'A mesma linha, assim que ganha uma seta, perde o caminho de volta.',
   },
   algorithm: 'module:oneWayEdge',
-  projector: 'module:oneWayEdgeProjector',
+  scene: 'module:oneWayEdgeScene',
   initialData: {
     type: 'one-way-edge',
     // 다섯 정점이 이룬 고리. 아래 다섯 선은 무방향으로 먼저 놓이고,
@@ -63,10 +63,7 @@ export const oneWayEdgeFacet: FacetJson = {
   } satisfies OneWayEdgeData,
   blocks: {
     stage: { type: 'one-way-edge-stage' },
-    controls: {
-      type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
-    },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.undirected': {
