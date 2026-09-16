@@ -34,11 +34,7 @@ export function registerTrustTheSmallest(): void {
 }
 
 export { trustTheSmallestAlgorithm, trustTheSmallestCellsOf } from './algorithm.js';
-export type {
-  TrustTheSmallestCell,
-  TrustTheSmallestData,
-  TrustTheSmallestStreamItem,
-} from './algorithm.js';
+export type { TrustTheSmallestData, TrustTheSmallestStreamItem } from './algorithm.js';
 export { trustTheSmallestScene } from './scene.js';
 export type {
   TrustCellRef,

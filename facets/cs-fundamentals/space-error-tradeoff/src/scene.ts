@@ -25,22 +25,27 @@
  * 여기서는 그 넷이 `passes` 하나다. 폭마다 표 하나이고, 그 목록의 차례가 곧
  * "몇 번째로 좁은 표인가" 다. 지금 폭도, 앞 폭도, 남은 눈금도 여기서 나온다.
  *
- * ── 수는 한 출처에서만 나온다 — 표의 칸
+ * ── 수는 한 출처에서만 나온다 — 걸음이 실어 오는 것이 없다
  *
  * 이 조각은 **자리 수와 부푼 양을 화면에 나란히 띄운다.** 그 둘이 갈리면 그림이
- * 제 안에서 거짓이 된다. 그래서 걸음이 실어 오는 것은 둘뿐이다 — 표의 칸 값
- * (`counts`) 과 키가 앉는 칸(`slots`). 나머지는 전부 여기서 센다.
+ * 제 안에서 거짓이 된다. 그래서 **네 발신 모두 payload 가 비어 있다.**
  *
- * - **읽힌 값을 받지 않는다.** 읽힌 값은 "그 키가 앉은 칸들 중 가장 작은 것" 이고,
- *   그 칸들은 화면에 그려져 있다. `estimatesOf` 가 그린 칸에서 직접 읽으므로
- *   막대의 높이가 표의 값과 갈릴 자리가 없다.
- * - **부푼 양과 정확히 맞은 수를 받지 않는다.** 읽힌 값에서 파생되는 셈이다
- *   (`overshootOf` · `exactCountOf`).
- * - **폭 · 줄 수 · 칸 수 · 센 항목 수를 받지 않는다.** 표의 꼴은 `counts` 행렬이
- *   그대로 말하고 (줄 수는 행렬의 길이, 폭은 한 줄의 길이), 센 항목 수는 키와
+ * 수는 두 갈래로 나온다 (프로토콜 4 절의 잣대).
+ *
+ * - **바탕 + 순수 함수로 나오는 것은 `algorithm.ts` 의 함수를 부른다.** 해시 자리
+ *   (`slotsFor`) · 표의 칸 값(`countsFor`) · 폭의 좁히개(`widthsOf`) 가 그것이다.
+ *   폭이 정해지면 표의 모든 것이 결정되므로 걸음이 판정할 것이 하나도 없다. 장면이
+ *   `algorithm.ts` 를 import 하는 방향은 원칙 1 이 허용한다 — 장면이 projector
+ *   자리를 잇는다.
+ * - **구조에서 세지는 것은 여기서 센다.** 읽힌 값은 "그 키가 앉은 칸들 중 가장
+ *   작은 것"(`estimatesOf`), 부푼 양과 정확히 맞은 수는 거기서 파생되고
+ *   (`overshootOf` · `exactCountOf`), 칸 수는 줄 수 × 폭이며, 센 항목 수는 키와
  *   반복 횟수가 정한다.
+ * - **몇 번째 폭인가는 발신이 온 차례가 말한다.** `stage-begin` 이 올 때마다 표가
+ *   하나 쌓이므로 `passes.length` 가 곧 그 표의 번호이고, 그 번호의 폭은 바탕의
+ *   `widths` 가 쥐고 있다.
  * - **`done` 의 네 수를 받지 않는다.** 견줌의 양 끝은 첫 폭과 마지막 폭이고
- *   둘 다 `passes` 에 그대로 있다. `done` 은 payload 가 없다.
+ *   둘 다 `passes` 에 그대로 있다.
  *
  * ── 담는 것과 담지 않는 것
  *
@@ -52,22 +57,17 @@
 
 import type { FacetRuntimeEvent, ScenePlan } from '@ffacet/core/runtime';
 
+import { countsFor, slotsFor, widthsOf } from './algorithm.js';
+
 /**
  * 한 폭에서의 표.
  *
- * 표의 꼴을 따로 담지 않는다 — `counts` 행렬이 곧 표다. 줄 수는 `counts.length`,
- * 폭은 `counts[0].length` 이므로 두 자리에서 셀 여지가 없다.
+ * 칸 값도 앉는 자리도 담지 않는다 — 폭 하나가 정해지면 둘 다 결정되므로
+ * `countsFor` · `slotsFor` 가 낸다. 담는 것은 **어느 폭이었나**와 **되읽었나**뿐이다.
  */
 export type SketchPass = {
-  /** 줄 × 칸 의 칸 값. 스트림을 다 센 뒤의 값이다. */
-  counts: readonly (readonly number[])[];
-  /**
-   * `slots[k][r]` — 키 k 가 줄 r 에서 앉는 칸 번호.
-   *
-   * 이중 해싱의 결과라 장면이 스스로 셀 수 없는 유일한 구조다. 이것이 있어야
-   * 읽힌 값을 **그려진 칸에서** 읽을 수 있다.
-   */
-  slots: readonly (readonly number[])[];
+  /** 이 표의 폭. 바탕의 `widths` 에서 차례대로 온다. */
+  width: number;
   /** 키를 모두 되읽었나. 읽기 전에는 막대가 앞 폭의 높이에 서 있다. */
   read: boolean;
 };
@@ -100,11 +100,13 @@ export type SpaceErrorTradeoffScene = {
   keys: readonly string[];
   /** 키 하나가 흐르는 횟수 = 그 키의 참값. */
   repeats: number;
+  /** 표의 줄 수 (해시 함수의 수). 세 폭 내내 고정이다. */
+  depth: number;
   /**
-   * 견줘 볼 폭, 선언된 순서대로.
+   * 견줘 볼 폭, 좁은 것부터. `widthsOf` 를 지난 값이라 그리는 쪽이 다시 자르지 않는다.
    *
-   * 칸 폭을 고정하려면 가장 넓은 폭을 미리 알아야 해서 바탕에 둔다. 표가 지금
-   * 몇 칸인지는 여기서 꺼내지 않고 `passes` 의 `counts` 가 말한다.
+   * 몇 번째 걸음이 어느 폭인가를 이 배열이 정하고, algorithm 도 같은 함수로 좁힌
+   * 목록을 걸어가므로 걸음 수와 폭이 갈릴 수 없다.
    */
   widths: readonly number[];
 
@@ -127,7 +129,7 @@ export type SpaceErrorTradeoffScene = {
  * `passes` 는 걸어온 자취라 여기 넣지 않는다 — 넣으면 되감은 화면이 앞 주행의
  * 표와 눈금을 단 채로 서고 그 위에 algorithm 이 새로 세는 것이 겹친다 (S-scene).
  */
-type Base = Pick<SpaceErrorTradeoffScene, 'keys' | 'repeats' | 'widths'>;
+type Base = Pick<SpaceErrorTradeoffScene, 'keys' | 'repeats' | 'depth' | 'widths'>;
 
 /**
  * 아무 표도 갈라지지 않은 처음 화면.
@@ -139,6 +141,7 @@ function atStart(base: Base): SpaceErrorTradeoffScene {
   return {
     keys: base.keys,
     repeats: base.repeats,
+    depth: base.depth,
     widths: base.widths,
     passes: [],
     step: null,
@@ -161,11 +164,6 @@ function strs(v: unknown): string[] {
   return Array.isArray(v) ? (v as unknown[]).filter((s): s is string => typeof s === 'string') : [];
 }
 
-/** 수의 행렬. 줄마다 새 배열을 낸다 — 넘겨받은 배열을 쥐지 않는다. */
-function matrix(v: unknown): number[][] {
-  return Array.isArray(v) ? (v as unknown[]).map((row) => nums(row)) : [];
-}
-
 // ── 장면에서 셈해지는 수들 ────────────────────────────────────────────────
 //
 // 화면에 뜨는 수는 전부 여기를 지난다. 캡션도 막대도 표도 같은 함수를 부르므로
@@ -176,34 +174,40 @@ export function totalOf(scene: SpaceErrorTradeoffScene): number {
   return Math.max(1, scene.keys.length * scene.repeats);
 }
 
-/** 그 표의 줄 수. */
-export function depthOf(pass: SketchPass): number {
-  return pass.counts.length;
+/**
+ * 그 폭에서 스트림을 다 센 표. 화면에 그려지는 그 행렬이다.
+ *
+ * 걸음이 실어 오지 않는다 — 폭이 정해지면 결정되는 셈이라 `algorithm.ts` 가 내준
+ * 함수를 부른다 (프로토콜 4 절의 B 갈래).
+ */
+export function countsOf(scene: SpaceErrorTradeoffScene, pass: SketchPass): number[][] {
+  return countsFor(scene.keys, scene.repeats, scene.depth, pass.width);
 }
 
-/** 그 표의 폭. 줄이 하나도 없으면 0. */
-export function widthOf(pass: SketchPass): number {
-  return pass.counts[0]?.length ?? 0;
+/** 키가 줄마다 앉는 칸. 위와 같은 까닭으로 `algorithm.ts` 의 함수를 부른다. */
+export function slotsOf(scene: SpaceErrorTradeoffScene, pass: SketchPass): number[][] {
+  return slotsFor(scene.keys, scene.depth, pass.width);
 }
 
 /** 그 표의 칸 수. 캡션의 `{cells}` 와 견줌의 양 끝이 이 한 함수에서 나온다. */
-export function cellsOf(pass: SketchPass): number {
-  return depthOf(pass) * widthOf(pass);
+export function cellsOf(scene: SpaceErrorTradeoffScene, pass: SketchPass): number {
+  return scene.depth * pass.width;
 }
 
 /**
  * 키마다 읽히는 값 — 그 키가 앉은 칸들 중 **가장 작은 것**.
  *
- * `counts` 는 화면에 그려지는 그 행렬이다. 막대의 높이가 그린 칸에서 직접 나오므로
- * 둘이 갈릴 수 없다.
+ * 화면에 그려지는 바로 그 표에서 읽으므로 막대의 높이와 칸의 값이 갈릴 수 없다.
  */
 export function estimatesOf(scene: SpaceErrorTradeoffScene, pass: SketchPass): number[] {
+  const counts = countsOf(scene, pass);
+  const slots = slotsOf(scene, pass);
   return scene.keys.map((_key, k) => {
-    const rows = pass.slots[k] ?? [];
+    const rows = slots[k] ?? [];
     let est = Number.POSITIVE_INFINITY;
-    for (let r = 0; r < pass.counts.length; r += 1) {
+    for (let r = 0; r < counts.length; r += 1) {
       const col = rows[r];
-      const value = col === undefined ? undefined : pass.counts[r]?.[col];
+      const value = col === undefined ? undefined : counts[r]?.[col];
       if (value !== undefined && value < est) est = value;
     }
     // 앉은 칸을 하나도 못 찾았으면 셀 것이 없다 — 0 으로 떨어뜨린다.
@@ -250,31 +254,34 @@ export const spaceErrorTradeoffScene: ScenePlan<SpaceErrorTradeoffScene> = {
    */
   initial(initialData: unknown): SpaceErrorTradeoffScene {
     const d = (initialData ?? {}) as Record<string, unknown>;
-    const widths = nums(d.widths)
-      .map((w) => Math.trunc(w))
-      .filter((w) => w > 0);
+    // unknown 을 수의 배열로 만드는 것까지가 경계의 일이고 (C9), 자르는 잣대는
+    // algorithm 이 내준 `widthsOf` 하나다 — 두 군데서 자르면 갈린다.
+    const widths = widthsOf(nums(d.widths));
     return atStart({
       keys: strs(d.keys),
       repeats: Math.max(1, Math.trunc(num(d.repeats) ?? 1)),
+      depth: Math.max(1, Math.trunc(num(d.depth) ?? 1)),
       // 폭이 하나도 안 왔으면 칸 하나짜리 표로 둔다 — 칸 폭 역산이 0 으로 나눌 수 없게.
       widths: widths.length > 0 ? widths : [1],
     });
   },
 
   reduce(scene: SpaceErrorTradeoffScene, event: FacetRuntimeEvent): SpaceErrorTradeoffScene {
-    const p = (event.payload ?? {}) as Record<string, unknown>;
-
     switch (event.type) {
       /*
-       * 새 폭의 표가 선다. 표의 꼴은 `counts` 가 그대로 말하므로 폭도 줄 수도
-       * payload 에서 받지 않는다.
+       * 다음 폭의 표가 선다.
+       *
+       * 몇 번째 폭인가는 **이 발신이 온 차례**가 말하고 (표가 하나씩 쌓이므로
+       * `passes.length` 가 곧 그 번호다), 그 번호의 폭은 바탕이 쥐고 있다.
+       * algorithm 도 같은 목록을 걸어가므로 어긋날 수 없다.
        */
       case 'stage-begin': {
-        const counts = matrix(p.counts);
-        if (counts.length === 0) return scene;
+        const width = scene.widths[scene.passes.length];
+        // 선언된 폭보다 많이 오면 그릴 표가 없다. 조용히 흘린다 (C2).
+        if (width === undefined) return scene;
         return {
           ...scene,
-          passes: [...scene.passes, { counts, slots: matrix(p.slots), read: false }],
+          passes: [...scene.passes, { width, read: false }],
           step: { kind: 'split' },
           caption: { kind: 'stage' },
         };
@@ -301,7 +308,12 @@ export const spaceErrorTradeoffScene: ScenePlan<SpaceErrorTradeoffScene> = {
 
       case 'rewind':
         // 바탕만 남기고 자취를 턴다. 변수가 아니라 객체 리터럴을 넘긴다 (S-scene).
-        return atStart({ keys: scene.keys, repeats: scene.repeats, widths: scene.widths });
+        return atStart({
+          keys: scene.keys,
+          repeats: scene.repeats,
+          depth: scene.depth,
+          widths: scene.widths,
+        });
 
       default:
         // 이 algorithm 이 발신하는 것은 위 넷이 전부다. 그 밖은 조용히 흘린다 (C2).

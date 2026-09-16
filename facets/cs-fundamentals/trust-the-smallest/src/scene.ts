@@ -40,9 +40,20 @@
  *   (`truthOf`). 점선의 높이와 캡션의 `{truth}` 가 한 출처가 된다.
  * - `done` 의 `keys` 를 받지 않는다 — 물어본 키의 수는 `stream.length` 다.
  *
- * 남기는 것은 **칸 자리**(`row`/`col`) 하나뿐이다. 그것은 표의 구조에서 세는 값이
- * 아니라 **해시 함수가 정하는** 값이고, 이 조각의 algorithm 이 실제로 하는 일이다.
- * 장면이 해시를 다시 돌리면 오히려 출처가 둘이 된다.
+ * ── 바탕에서 결정되는 셈은 받지 않고 같은 함수를 부른다
+ *
+ * 칸 자리는 표의 구조에서 셀 수 없다 — 해시가 정한다. 그렇다고 걸음이 실어 오게
+ * 두지는 않는다. algorithm 이 `trustTheSmallestCellsOf` 를 내주므로 **장면이 그것을
+ * 그대로 부른다** (프로토콜 4 절의 B). 두 길 다 출처는 하나라 갈리지 않지만, 싣는
+ * 쪽은 payload 를 무겁게 두어 *다음 사람이 집어 쓸 문*을 열어 둔 채다 — 그 문이
+ * "두 자리에서 세기" 가 들어오는 길이다. 여기서 `scene.ts` 가 `algorithm.ts` 를
+ * import 하는 것은 원칙 1 의 허용 방향이다 (장면이 projector 자리를 잇는다).
+ *
+ * 그래서 걸음이 싣는 것은 **어느 키를 다루는 걸음인가** 하나뿐이다. 그것은 구조에서
+ * 세지는 수도 바탕에 함수를 먹여 얻는 값도 아니라 **걸음이 고른 것**이라 싣는다
+ * (같은 배치의 `wrong-in-one-direction` 이 `word` 를 남긴 것과 같은 자리다). 스트림을
+ * 차례대로 도니 발신 순서로도 짐작할 수 있지만, 그러면 장면이 algorithm 의 루프
+ * 모양에 매여 걸음이 하나 끼거나 순서가 바뀔 때 조용히 엉뚱한 키를 그린다.
  *
  * ── 나눠 쓰는 칸을 장면이 센다 — 옮기며 드러난 주장
  *
@@ -66,7 +77,9 @@
 
 import type { FacetRuntimeEvent, ScenePlan } from '@ffacet/core/runtime';
 
-/** 표의 한 자리. 해시가 정하는 값이라 걸음이 실어 온다. */
+import { trustTheSmallestCellsOf } from './algorithm.js';
+
+/** 표의 한 자리. 해시가 정하는 값이라 `trustTheSmallestCellsOf` 가 낸다. */
 export type TrustCellRef = { row: number; col: number };
 
 /** 들어오는 것 하나. 빈도가 곧 참값이다. */
@@ -170,19 +183,15 @@ function num(v: unknown): number | null {
   return typeof v === 'number' && Number.isFinite(v) ? v : null;
 }
 
-/** 칸 자리 배열을 좁힌다. 하나라도 모양이 어긋나면 통째로 버린다. */
-function readRefs(value: unknown): TrustCellRef[] | null {
-  if (!Array.isArray(value)) return null;
-  const out: TrustCellRef[] = [];
-  for (const raw of value as unknown[]) {
-    if (typeof raw !== 'object' || raw === null) return null;
-    const cell = raw as Record<string, unknown>;
-    const row = num(cell.row);
-    const col = num(cell.col);
-    if (row === null || col === null) return null;
-    out.push({ row: Math.trunc(row), col: Math.trunc(col) });
-  }
-  return out;
+/**
+ * 키 하나가 줄마다 짚는 자리.
+ *
+ * **걸음에서 받지 않고 여기서 센다.** algorithm 이 내주는 한 함수를 부르므로
+ * 화면이 짚는 칸과 algorithm 이 셈한 칸이 갈릴 수 없고, payload 에 자리를 실어
+ * 두어 다음 사람이 집어 쓸 문도 닫힌다 (프로토콜 4 절).
+ */
+function refsFor(base: TrustBase, key: string): TrustCellRef[] {
+  return trustTheSmallestCellsOf(key, base.depth, base.width).map((col, row) => ({ row, col }));
 }
 
 /** 들어오는 것들을 좁힌다. 넘겨받은 배열을 쥐지 않고 새로 낸다 (S-scene). */
@@ -305,11 +314,11 @@ export const trustTheSmallestScene: ScenePlan<TrustTheSmallestScene> = {
        * 횟수도 여기서 함께 센다.
        */
       case 'ingest': {
-        const cells = readRefs(p.cells);
-        if (typeof p.key !== 'string' || cells === null) return scene;
+        if (typeof p.key !== 'string') return scene;
         const index = scene.stream.findIndex((item) => item.key === p.key);
         // 선언에 없는 키는 칩도 참값도 없다. 조용히 흘린다 (C2).
         if (index < 0) return scene;
+        const cells = refsFor(scene, p.key);
 
         const table = scene.table.map((row) => [...row]);
         const shares = scene.shares.map((row) => [...row]);
@@ -335,12 +344,12 @@ export const trustTheSmallestScene: ScenePlan<TrustTheSmallestScene> = {
        * 여기서 셈하지 않는다** — `minOf` 가 표에서 센다.
        */
       case 'probe': {
-        const reads = readRefs(p.reads);
-        if (typeof p.key !== 'string' || reads === null) return scene;
+        if (typeof p.key !== 'string') return scene;
         const index = scene.stream.findIndex((item) => item.key === p.key);
         if (index < 0) return scene;
 
-        const probe: TrustProbe = { index, reads };
+        // 올릴 때와 읽을 때가 같은 자리다 — 같은 함수를 부르므로 그것이 보장된다.
+        const probe: TrustProbe = { index, reads: refsFor(scene, p.key) };
         return {
           ...scene,
           touch: null,

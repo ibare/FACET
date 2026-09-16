@@ -34,8 +34,9 @@
  * ── 화면에 뜨는 수는 모두 표에서 나온다
  *
  * 막대의 높이는 `estimatesOf` 가 **그려진 칸에서** 읽고, 캡션의 부푼 양 · 정확히
- * 맞은 수 · 칸 수 · 센 항목 수도 모두 `scene.ts` 의 같은 함수를 지난다. 걸음이
- * 실어 오는 것은 칸 값과 앉는 자리뿐이다 (`scene.ts` 의 "수는 한 출처에서만").
+ * 맞은 수 · 칸 수 · 센 항목 수도 모두 `scene.ts` 의 같은 함수를 지난다. 표 자체도
+ * 걸음이 실어 온 것이 아니라 폭에서 셈해 낸 것이다 (`countsOf` → `algorithm.ts` 의
+ * `countsFor`). 네 발신 모두 payload 가 비어 있다.
  *
  * 가로는 러너가 `PIECE_CANVAS_W` 로 정하므로 적지 않고, 세로는 그림이 정하는
  * 값이라 이 파일이 상수로 갖는다 (S-piece). 색은 전부 design-tokens 경유다 (S-view).
@@ -57,14 +58,13 @@ import {
 
 import {
   cellsOf,
+  countsOf,
   currentPass,
-  depthOf,
   estimatesOf,
   exactCountOf,
   overshootOf,
   readPasses,
   totalOf,
-  widthOf,
   type SpaceErrorTradeoffScene,
   type TradeoffStep,
 } from './scene.js';
@@ -367,9 +367,9 @@ export const spaceErrorTradeoffStageView: CanvasView = {
             'caption.stage',
             'Width {width}: {depth} rows x {width} columns = {cells} cells. Items counted: {total}.',
             {
-              width: widthOf(pass),
-              depth: depthOf(pass),
-              cells: cellsOf(pass),
+              width: pass.width,
+              depth: scene.depth,
+              cells: cellsOf(scene, pass),
               total: totalOf(scene),
             },
           );
@@ -399,9 +399,9 @@ export const spaceErrorTradeoffStageView: CanvasView = {
             'caption.done',
             'Narrower table, more swollen reads. Overshoot at {cellsMin} cells: {errorMax}. At {cellsMax} cells: {errorMin}.',
             {
-              cellsMin: cellsOf(narrowest),
+              cellsMin: cellsOf(scene, narrowest),
               errorMax: overshootOf(scene, estimatesOf(scene, narrowest)),
-              cellsMax: cellsOf(widest),
+              cellsMax: cellsOf(scene, widest),
               errorMin: overshootOf(scene, estimatesOf(scene, widest)),
             },
           );
@@ -485,10 +485,12 @@ export const spaceErrorTradeoffStageView: CanvasView = {
       const rowLabels: SVGTextElement[] = [];
 
       if (pass !== null) {
-        const width = widthOf(pass);
+        const width = pass.width;
         const origin = geom.originX(width);
+        // 표는 걸음이 실어 온 것이 아니라 폭에서 셈해 낸다 (`scene.ts` 의 `countsOf`).
+        const counts = countsOf(scene, pass);
 
-        for (let r = 0; r < depthOf(pass); r += 1) {
+        for (let r = 0; r < scene.depth; r += 1) {
           const top = TABLE_TOP + r * CELL_H;
 
           const rowLabel = el('text', {
@@ -534,7 +536,7 @@ export const spaceErrorTradeoffStageView: CanvasView = {
             gTable.appendChild(label);
 
             const cell: DrawnCell = { rect, label, strip, row: r, col: j };
-            paintCount(scene, geom, cell, pass.counts[r]?.[j] ?? 0);
+            paintCount(scene, geom, cell, counts[r]?.[j] ?? 0);
             cells.push(cell);
           }
         }
@@ -635,10 +637,11 @@ export const spaceErrorTradeoffStageView: CanvasView = {
       if (pass === null) return Promise.resolve();
 
       const { geom } = drawn;
-      const width = widthOf(pass);
+      const width = pass.width;
       const prev = scene.passes[scene.passes.length - 2];
-      const prevWidth = prev === undefined ? 0 : widthOf(prev);
+      const prevWidth = prev === undefined ? 0 : prev.width;
       const origin = geom.originX(width);
+      const counts = countsOf(scene, pass);
       const fromLabelX = geom.originX(prevWidth) - ROW_LABEL_GAP;
       const toLabelX = origin - ROW_LABEL_GAP;
       const total = SPLIT_MS + FILL_MS;
@@ -670,7 +673,7 @@ export const spaceErrorTradeoffStageView: CanvasView = {
         setLabels(toLabelX);
         for (const cell of drawn.cells) {
           setCellX(geom, cell, origin + cell.col * geom.cellW);
-          const target = pass.counts[cell.row]?.[cell.col] ?? 0;
+          const target = counts[cell.row]?.[cell.col] ?? 0;
           // 끝에서는 보간값 대신 목표값을 그대로 쓴다 — 부동소수 끝자리가 화면을 가른다.
           paintCount(scene, geom, cell, p >= 1 ? target : target * e);
         }

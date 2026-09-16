@@ -16,23 +16,28 @@
  * 거짓을 말하게 된다 (S-piece "화면에 쓰는 값은 실측한다"). 1차 데이터는 키
  * 문자열과 빈도뿐이다.
  *
- * ## 표의 값은 여기서 세지 않는다
+ * ## 걸음은 무엇을 싣나 — 고른 것 하나뿐
  *
  * 화면에 나란히 뜨는 수 — 칸 값 · 최솟값 · 참값 · 물어본 키 수 — 는 전부 장면이
  * 표와 선언에서 센다 (`scene.ts`). 여기서 함께 세어 실어 보내면 같은 수의 출처가
- * 둘이 되고 언젠가 갈린다. 그래서 이 발신이 싣는 것은 **해시가 정하는 칸 자리**
- * 하나뿐이다 — 그것만이 구조에서 셀 수 없는 값이다.
+ * 둘이 되고 언젠가 갈린다.
+ *
+ * **자리도 싣지 않는다.** 칸 자리는 구조에서 셀 수는 없지만 바탕에 순수 함수를
+ * 먹이면 나오는 값이라, 싣는 대신 `trustTheSmallestCellsOf` 를 **내주고 장면이
+ * 부르게** 한다 (프로토콜 4 절). 그러면 payload 가 가벼워져 다음 사람이 자리를
+ * 집어 쓸 문이 닫힌다.
+ *
+ * 남는 것은 **어느 키를 다루는 걸음인가** 하나 — 그것은 셈의 결과가 아니라 걸음이
+ * 고른 것이다.
  *
  * ## 이벤트
  *
- *   Cell = { row: number; col: number }
- *
- *   ingest  { key: string; cells: Cell[] }
- *           키 하나가 들어와 줄마다 한 칸씩 올랐다. 얼마나 올랐는지는 선언의
- *           `stream` 이 정하므로 싣지 않는다.
- *   probe   { key: string; reads: Cell[] }
- *           키 하나를 물었다. `reads[r]` 는 줄 r 에서 읽은 칸. 읽은 값도, 셋 중 가장
- *           작은 값도, 참값도 장면이 표에서 센다.
+ *   ingest  { key: string }
+ *           키 하나가 들어와 줄마다 한 칸씩 올랐다. 어느 칸이 올랐는지도, 얼마나
+ *           올랐는지도 장면이 바탕에서 셈한다.
+ *   probe   { key: string }
+ *           키 하나를 물었다. 읽은 칸도, 읽은 값도, 셋 중 가장 작은 값도, 참값도
+ *           장면이 표에서 센다.
  *   rewind  {}
  *           처음으로 되감았다. 자동 재생이 끝난 뒤 `advance` 를 처음 받았을 때 나간다.
  *   done    {}
@@ -66,12 +71,6 @@ export type TrustTheSmallestData = {
   stream: TrustTheSmallestStreamItem[];
 };
 
-/**
- * 표의 한 자리. **값을 싣지 않는다** — 그 칸에 얼마가 적혀 있는지는 장면의 표가
- * 쥐고 있고, 여기 함께 실으면 화면에 뜨는 수의 출처가 둘이 된다.
- */
-export type TrustTheSmallestCell = { row: number; col: number };
-
 /** 부호 비트를 떨어내는 자리. */
 const INT31 = 0x7fffffff;
 
@@ -95,7 +94,11 @@ function fnv1a32(text: string): number {
 }
 
 /**
- * 키 하나가 줄마다 짚는 자리.
+ * 키 하나가 줄마다 짚는 자리 — 이중 해싱 `(h1 + r·h2) mod width`.
+ *
+ * **장면도 이 함수를 부른다.** 화면이 짚는 칸과 이 파일이 셈하는 칸이 같은 셈에서
+ * 나와야 하므로 규칙을 두 벌로 두지 않고 여기 하나만 둔다. 걸음이 자리를 실어
+ * 나르는 대신 함수를 내주는 쪽을 고른 까닭은 위 머리말에 적었다.
  *
  * `h1 + r·h2` 는 r 이 2 여도 3·2^31 을 넘지 않아 배정도 안에서 정확하다.
  */
@@ -111,7 +114,8 @@ export const trustTheSmallestAlgorithm = async (
   ctx: FacetContext<TrustTheSmallestData>,
 ): Promise<void> => {
   const rx = ctx as ReactiveContext<TrustTheSmallestData>;
-  const { depth, width, stepMs, stream } = ctx.data;
+  // 표의 크기는 장면이 쓴다 — 여기서는 걸음의 차례와 간격만 정한다.
+  const { stepMs, stream } = ctx.data;
 
   /** 수동 진행으로 넘어갔는가. 자동 재생이 끝난 뒤 `advance` 를 받으면 참이 된다. */
   let manual = false;
@@ -139,26 +143,22 @@ export const trustTheSmallestAlgorithm = async (
     }
   };
 
-  /** 키 하나가 줄마다 짚는 자리. 올릴 때와 읽을 때가 같은 자리다. */
-  const cellsOf = (key: string): TrustTheSmallestCell[] =>
-    trustTheSmallestCellsOf(key, depth, width).map((col, row) => ({ row, col }));
-
   /**
    * 한 회차. 자동 재생과 되감은 뒤의 수동 진행이 같은 길을 지난다 — 두 벌이 되면
    * 언젠가 어긋난다.
    */
   const runScene = async (): Promise<void> => {
-    // ── 세는 동안. 한 키가 들어오면 줄 각각에서 한 칸씩 올린다. 얼마나 오르는지는
-    //    선언의 `stream` 이 정하므로 여기서 표를 들고 있지 않는다.
+    // ── 세는 동안. 한 키가 들어오면 줄 각각에서 한 칸씩 오른다. 어느 칸이 오르는지는
+    //    장면이 `trustTheSmallestCellsOf` 로 셈하고, 얼마나 오르는지는 선언이 정한다.
     for (const item of stream) {
       if (!(await gate())) return;
-      await ctx.emit({ type: 'ingest', payload: { key: item.key, cells: cellsOf(item.key) } });
+      await ctx.emit({ type: 'ingest', payload: { key: item.key } });
     }
 
     // ── 읽는 동안. 같은 자리를 다시 짚는다. 무엇이 가장 작은지는 장면이 표에서 센다.
     for (const item of stream) {
       if (!(await gate())) return;
-      await ctx.emit({ type: 'probe', payload: { key: item.key, reads: cellsOf(item.key) } });
+      await ctx.emit({ type: 'probe', payload: { key: item.key } });
     }
 
     if (!(await gate())) return;

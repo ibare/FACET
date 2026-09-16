@@ -13,20 +13,29 @@
  *   h1  Java `String.hashCode` 를 `& 0x7FFFFFFF`
  *   h2  FNV-1a 32bit 를 `& 0x7FFFFFFF` 한 뒤 `| 1` 로 홀수화
  *
- * 두 해시와 자리와 표의 값은 **전부 여기서 셈한다.** 화면에 뜨는 수는 이 셈의
- * 결과이지 어딘가 적어 둔 값이 아니다 (S-piece "화면에 쓰는 값은 실측한다").
+ * ── 셈은 함수로 내주고, 발신은 차례만 말한다
  *
- * **읽히는 값은 여기서 셈하지 않는다.** 그것은 "그 키가 앉은 칸들 중 가장 작은 것"
- * 이고 그 칸들은 화면에 그려져 있다. 장면이 `slots` 로 그 칸을 찾아 직접 읽으므로
- * (`scene.ts` 의 `estimatesOf`) 막대의 높이와 표의 값이 갈릴 자리가 없다. 부푼 양 ·
- * 정확히 맞은 수 · 칸 수 · 센 항목 수도 모두 거기서 파생되는 셈이라 싣지 않는다.
+ * 폭이 정해지면 **표의 모든 것이 결정된다.** 어느 키가 어느 칸에 앉을지는 해시가
+ * 정하고, 그 칸에 얼마가 얹힐지는 반복 횟수가 정한다. 스트림의 순서도 상관이 없다
+ * (더하기라 어느 차례로 얹어도 같은 표가 된다). 걸음이 내리는 판정이 하나도 없다는
+ * 뜻이므로, 표를 payload 로 실어 보내지 않고 **셈하는 함수를 내주어 장면이 부르게
+ * 한다** (`widthsOf` · `slotsFor` · `countsFor`, 프로토콜 4 절의 B 갈래).
+ *
+ * 그래서 발신은 넷 다 payload 가 비어 있다. 실어 보내면 출처가 갈리지는 않아도
+ * **다음 사람이 집어 쓸 문**이 열린 채로 남는다 — 그 문이 "두 자리에서 세기" 가
+ * 들어오는 길이다.
+ *
+ * 읽히는 값 · 부푼 양 · 정확히 맞은 수 · 칸 수 · 센 항목 수는 그 표와 키 목록에서
+ * 파생되는 셈이라 장면이 직접 센다 (`scene.ts` 의 `estimatesOf` · `overshootOf`).
+ * 어느 쪽이든 화면에 뜨는 수는 지어낸 것이 아니라 이 파일의 셈을 지난 값이다
+ * (S-piece "화면에 쓰는 값은 실측한다").
  *
  * ── 이벤트 목록 + payload 스키마 ─────────────────────────────────────────
  *
- *   stage-begin   { counts: number[][]; slots: number[][] }
- *                 silent: 아니다. 표가 새 폭으로 갈라지고 스트림이 칸에 담긴다.
- *                 counts 는 depth × width 의 최종 칸 값 — 표의 꼴이 이 행렬이다.
- *                 slots[k][r] 은 키 k 가 줄 r 에서 앉는 칸.
+ *   stage-begin   payload 없음
+ *                 silent: 아니다. 표가 다음 폭으로 갈라지고 스트림이 칸에 담긴다.
+ *                 몇 번째 폭인가는 이 발신이 온 차례가 말하고, 그 폭이 무엇인가는
+ *                 `widthsOf(initialData.widths)` 가 말한다.
  *
  *   reads-taken   payload 없음
  *                 silent: 아니다. 키를 모두 되읽어 막대가 새 높이로 옮겨 간다.
@@ -80,14 +89,71 @@ function slotOf(h1: number, h2: number, row: number, width: number): number {
   return (h1 + row * h2) % width;
 }
 
+/**
+ * 견줘 볼 폭을 1 이상의 정수로 좁힌다 — **자르는 잣대의 정본.**
+ *
+ * 폭의 개수가 곧 걸음 수이고, 몇 번째 걸음이 어느 폭인가도 이 목록이 정한다.
+ * 이 파일과 장면이 같은 함수를 부르므로 걸음 수와 화면의 폭이 갈릴 수 없다.
+ */
+export function widthsOf(widths: readonly number[]): number[] {
+  return widths.map((w) => Math.trunc(w)).filter((w) => Number.isFinite(w) && w > 0);
+}
+
+/**
+ * 키가 줄마다 앉는 칸 — `slots[k][r]`.
+ *
+ * **장면도 이 함수를 부른다.** 화면에 그려지는 칸과 셈이 얹히는 칸이 같은 자리라야
+ * 하므로 규칙을 두 벌로 두지 않고 여기 하나만 둔다 (프로토콜 4 절의 B 갈래).
+ */
+export function slotsFor(keys: readonly string[], depth: number, width: number): number[][] {
+  if (width <= 0) return keys.map(() => []);
+  return keys.map((key) => {
+    const h1 = hash1(key);
+    const h2 = hash2(key);
+    const rows: number[] = [];
+    for (let r = 0; r < depth; r += 1) rows.push(slotOf(h1, h2, r, width));
+    return rows;
+  });
+}
+
+/**
+ * 그 폭에서 스트림을 다 센 표 — `counts[r][c]`.
+ *
+ * 키 하나는 줄마다 한 칸을 골라 제 셈을 통째로 얹는다. 더하기라 어느 차례로
+ * 얹어도 같은 표가 되므로, 이 표는 걸음이 내리는 판정이 아니라 **바탕에서
+ * 결정되는 셈**이다. 그래서 싣지 않고 내준다.
+ */
+export function countsFor(
+  keys: readonly string[],
+  repeats: number,
+  depth: number,
+  width: number,
+): number[][] {
+  const slots = slotsFor(keys, depth, width);
+  const counts: number[][] = [];
+  for (let r = 0; r < depth; r += 1) counts.push(new Array<number>(Math.max(0, width)).fill(0));
+  for (let k = 0; k < keys.length; k += 1) {
+    for (let r = 0; r < depth; r += 1) {
+      const col = slots[k][r];
+      if (col !== undefined) counts[r][col] += repeats;
+    }
+  }
+  return counts;
+}
+
 export async function spaceErrorTradeoffAlgorithm(
   ctx: FacetContext<SpaceErrorTradeoffData>,
 ): Promise<void> {
   const rx = ctx as ReactiveContext<SpaceErrorTradeoffData>;
-  const { keys, repeats, depth, widths, stepMs } = ctx.data;
+  const { widths, stepMs } = ctx.data;
 
-  const h1 = keys.map(hash1);
-  const h2 = keys.map(hash2);
+  /**
+   * 걸어갈 폭들. 이 목록의 길이가 곧 걸음 수다.
+   *
+   * 표를 여기서 세지 않는 것은 셀 것이 없어서가 아니라 **셈이 전부 결정되어 있어서**다.
+   * 화면이 같은 함수(`countsFor`)를 불러 세므로 지어낸 수가 화면에 뜰 길은 없다.
+   */
+  const stages = widthsOf(widths);
 
   /** 자동 재생을 마쳤는가. 마친 뒤로는 걸음마다 advance 를 기다린다. */
   let manual = false;
@@ -127,22 +193,10 @@ export async function spaceErrorTradeoffAlgorithm(
   }
 
   async function pass(): Promise<boolean> {
-    for (const width of widths) {
-      // 키가 줄마다 앉는 칸. 표를 채우는 것도 되읽는 것도 이 한 자리에서 나온다.
-      const slots = keys.map((_key, k) => {
-        const rows: number[] = [];
-        for (let r = 0; r < depth; r += 1) rows.push(slotOf(h1[k], h2[k], r, width));
-        return rows;
-      });
-
-      const counts: number[][] = [];
-      for (let r = 0; r < depth; r += 1) counts.push(new Array<number>(width).fill(0));
-      for (let k = 0; k < keys.length; k += 1) {
-        for (let r = 0; r < depth; r += 1) counts[r][slots[k][r]] += repeats;
-      }
-
+    // 폭 하나가 두 걸음이다 — 표가 갈라지고, 키를 되읽는다.
+    for (let i = 0; i < stages.length; i += 1) {
       if (!(await gate())) return false;
-      await ctx.emit({ type: 'stage-begin', payload: { counts, slots } });
+      await ctx.emit({ type: 'stage-begin' });
 
       if (!(await gate())) return false;
       await ctx.emit({ type: 'reads-taken' });
