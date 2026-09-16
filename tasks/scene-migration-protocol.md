@@ -162,6 +162,9 @@ grep -nE "getAttribute|getBBox|getBoundingClientRect|Number\(" $d/src/*-stage.ts
   | stage 의 `headLeft`/`headRight` | 두 줄의 커서 — **algorithm 의 `i`/`j` 와 두 벌** | 사본을 애니메이션 도중에 올려 복원할 길이 없다 |
   | `ghost.getAttribute('opacity') !== '0'` | **끝내 안 연 자리가 어디인가**(그 조각의 결론) | 화면을 도로 읽어 **결론을 셈한다** |
   | `const lanes: Lane[]` 한 줄 | 실린 칸 · 각 · 수 · 자식 유무 · opacity · 부모 — **일곱** | 이름이 부품이라 어떤 낱말 목록에도 안 든다 |
+  | `paintNode(item, tone: 'idle'\|'ready'\|'taken'\|'stuck')` | 마디의 형편 | **`type` 선언조차 아닌 함수 인자의 인라인 유니온.** 타입 선언 훑기로도 안 걸리고 함수 서명을 읽어야 보인다 |
+  | `const matchedNodes = new Set<number>()` | 어디서 무늬를 거뒀나 | **`.add`/`.clear` 되는데 어디서도 읽히지 않는다.** 진짜 답은 `circle` 의 `fill` 에만 있었다 |
+  | `let slotCount` | (없다) | **대입만 되고 읽히지 않는 죽은 변수.** 위와 짝이다 |
 
   `const tags` 아래 넷이 요점이다. 찾는 것은 특정 낱말이 아니라 **"이 조각이 화면에
   대해 아는 것을 어디에 적어 두었나"** 이고, 그 자리가 `let` 이 아닐 때가 많다.
@@ -170,11 +173,17 @@ grep -nE "getAttribute|getBBox|getBoundingClientRect|Number\(" $d/src/*-stage.ts
   타입 선언과 모듈 스코프 선언을 전부 뽑아 **눈으로 읽는 것**이 유일하게 통한 방법이다.
 
   ```sh
-  grep -nE "^(type|interface)|^  (const|let) |new (Map|Set)<" $d/src/*-stage.ts
+  grep -nE "^(type|interface)|^ +(const|let) |new (Map|Set)<" $d/src/*-stage.ts
   ```
 
   그중 **DOM 손잡이와 뜻·수치가 한 객체에 묶인 것**, 그리고 **선언되었는데 저장되는
   곳이 없는 타입**을 의심한다.
+
+  **이 한 줄도 다 잡지는 못한다.** 들여쓰기를 `^  ` 두 칸으로 박아 두었던 동안
+  `mount` 안(네 칸 이상)의 선언을 통째로 놓쳤다 — 조각의 상태는 대개 거기 있는데도.
+  `many-patterns-one-pass` 의 `const lanes` 가 stage 201 줄에서 **눈으로** 나왔고,
+  그것이 `taken.push` 로 알맹이가 제자리에서 고쳐지는 자리였다. 패턴은 `^ +` 로
+  고쳤지만, 요점은 **grep 을 믿지 말라**는 것이다.
 
 **변수가 하나도 없는 조각이 가장 위험하다.** `traverse-from-head` 는 `let` 이 전부 DOM
 핸들이었고 지나온 자취는 `rect` 의 `stroke` 칠에, 옮김 횟수는 `textContent` 에,
@@ -714,6 +723,74 @@ const t = params.t ?? makeTranslator(params.locale);
   고치려면 걸음 열일곱의 박자를 다시 잡아야 한다 — 이행이 건드릴 자리가 아니다.
   얇은 걸음을 만났을 때 **이행이 드러낸 것인지 원래 사양이 그런 것인지** 먼저 본다.
 
+- **DOM 의 *거울*을 되읽는 것도 ④ 다.** `chipNowY` · `spinDeg` · `torchBox` · `Card.at`
+  처럼 화면의 지금 자리·값을 따로 적어 둔 표를 운동의 **출발값**으로 삼으면,
+  `getAttribute` 도 `textContent` 도 안 쓰니 ④ 의 grep 을 통과하고 `const` 로 묶여
+  있으면 ② 도 통과한다. 되짚어 세운 직후에는 그 거울이 옛 화면의 것이다.
+  **그래프·문자열·복잡도 예순두 조각 중 스물이 여기 걸렸다** — 줄·창·표지·저울이
+  움직이는 조각은 화면의 좌표를 거울에 적어 두는 것이 자연스러운 설계라 그렇다.
+  출발 그림이 필요하면 `step` 에 계기값을 실어 장면이 말하게 한다.
+
+- **한 축에 값을 셋 이상 욱여넣지 않는다 — 결론이 형편을 덮는다.**
+  `type EdgeVisual = 'tree'|'candidate'|'idle'` 은 고른 간선이 `tree` 가 되는 순간
+  *그것이 후보 중에서 골라졌다*는 사실을 지운다. `grow-one-tree` 는 조각 이름이
+  "가장 가벼운 것을 붙인다" 인데 **가장**이 사라지고 있었고, `all-suffixes-sorted` 는
+  앞머리 표식이 채움이라 덩어리를 짚는 순간 "줄에 앉았다" 가 사라졌으며,
+  `three-edit-choices` 는 진 칩 둘을 지워 **셋 중**도 **가장**도 안 남았다.
+  **형편(채움)과 표식(테두리)을 각각 제 축에 두면** 이긴 것과 진 것이 한 화면에 선다.
+
+- **상시 도는 rAF 루프는 CSS `transition` 과 같은 병이다 (MUST NOT).**
+  `pick-nearest-unsettled` 가 mount 부터 destroy 까지 쉬지 않고 돌며 정점의
+  `transform` 을 **벽시계로** 고쳤다 — 되짚기는 `animate:false` 로 오는데 그 뒤에도
+  화면이 저 혼자 흔들려 **흔들림 축을 구조적으로 통과할 수 없다.** 떨림·맥놀이·물결은
+  **걸음의 운동 안으로 접어** `e`(0→1)로만 진폭이 정해지게 한다 (양 끝에서 0).
+
+- **결론을 셈하지 않고 적어 둔 자리가 있다.** 이 계열에서 셋이 나왔고 셋 다 화면이
+  거짓을 말하고 있었다. `growth-outpaces` 의 캡션은 "the largest term holds {pct}%"
+  라고 써 놓고 언제나 **n² 의 몫**을 넣어, n = 1 에서 가장 큰 항이 상수 100(90.1%)인데
+  화면은 **0.9%** 라고 말했다 — 조각의 주장과 정반대다. `constant-fades` 의
+  `moveBoundary` 는 `settleChips(c, value, value, 'tie')` 로 같은 값을 두 번 넘겨
+  **만남을 단정**했다. `verify-vs-find` 의 `setup` 은 `answers: 3` 을 실어
+  **다 훑기 전에는 알 수 없어야 할 수**로 선반 폭을 정했다.
+  **큰 n 에서는 우연히 맞아 여태 안 드러나는 종류다.**
+
+- **`silent` 를 쓰면 자체 검증 축 1 에 구멍이 생긴다.** `SceneTrack` 은 조용한 발신에
+  대해 걸음을 늘리지 않고 앞 걸음의 장면을 갈아 끼우므로, 접히기 직전 장면이 track 에
+  남지 않는다. 축 1 이 track 을 훑으면 그 `render` 를 **아예 안 잰다** — `done` 을 접은
+  조각에서 가장 무거운 운동(1400ms)이 검사를 그냥 지나갔다. 접은 걸음이 있으면 **그
+  직전 장면을 따로 `reduce` 해** 견주는 검사를 덧붙인다.
+
+- **자체 검증 축 3 은 기본값으로 두면 이빨이 없다.** 끊은 뒤 "풀렸나" 를 **프레임
+  대기**로 재면 `destroy` 가 Promise 를 안 풀어도 **다음 rAF 가 대신 깨워** 통과한다.
+  **마이크로태스크 안에 풀리는지**로 조여야 한다. `undo-by-back-edge` 는 `destroy` 가
+  rAF 를 취소조차 하지 않아 그 상태였고 — 비활성 탭·헤드리스에서는 영영 안 풀린다 —
+  프레임 대기로 재던 `row-times-column` 의 **커밋된 테스트**도 `delay(800)` 으로 재서
+  같은 구멍이 있었다.
+
+- **운동이 happy-dom 에서 실제로 도는지 확인한다.** 운동이 안 돌면 "흘려 세운 화면" 과
+  "곧바로 세운 화면" 이 같아지는 것이 당연해져 축 1 이 통과해 버린다. stage 를 rAF 로
+  옮기면 `canAnimate` 가 거짓이 되는 조각이 있어 `setTimeout` 기반을 그대로 둔 담당이
+  둘 있었다. **마지막 `drawStatic(next)` 를 뺐을 때 축 1 이 여러 건을 잡으면 보간
+  경로가 돌았다는 증거다** — 음성 대조가 이 확인을 겸한다.
+
+- **payload 를 걷어내면 검사의 헛단언이 드러난다.** 이번 계열에서 **일곱 개**가 나왔다.
+  전부 같은 뿌리다 — **알고리즘이 방금 적어 보낸 수를 테스트가 같은 식으로 다시 셈해
+  견주는 것.** `folds.map(f => f.row)` 가 `[1,2,3]` 인지 보는 것은 `row` 가 정의상 접은
+  횟수라 늘 참이고, `expect(names).toEqual(subjects)` 는 발신이 `subjects` 를 그대로
+  되돌려준 배열이며, `schedule.payload.total === color.payload.total` 은 같은 변수를
+  두 발신에 실은 것이다. **통과하는데 아무것도 지키지 않는다.** payload 가 사라지면
+  그 단언이 죽어서 드러나므로, 지우지 말고 **화면이 세는 수와 알고리즘이 세는 수**라는
+  서로 다른 두 구조를 견주게 고친다.
+
+- **문안은 두 자리에 산다.** `facet.ts` 의 선언을 고치면 stage 호출부의 **en 원본**도
+  함께 고쳐야 한다 (`t(key, '<en 원본>', args)`). `rolling-hash` 가 열 로캘을 다 고치고
+  호출부를 빠뜨려 `en-original-matches-declaration` 이 잡았다. 선언이 정본이다.
+
+- **`origin` 이 서브도메인을 가로지른다.** `adjacency-list-vs-matrix` 는 카탈로그상
+  `data-structures` 인데 `origin: graph` 라 자료구조 배치에서도 그래프 배치에서도
+  빠졌다. **대상을 셀 때 서브도메인만 보면 놓친다** — `kind: 'piece'` 를 전부 세고
+  `grep -L "scene: 'module:"` 로 교차 확인한다.
+
 - **전수 검사가 새 구조를 모른다.** `piece-first-advance` 는 projector 만 감싸 발신을
   세던 탓에 scene 조각을 "발신 없음" 으로 잘못 잡았다. 이미 고쳤지만, 다른 검사에서
   비슷한 것이 나올 수 있다.
@@ -832,15 +909,18 @@ node scripts/scene-audit.mjs --port <포트>    # 전수. 30 분~1 시간
 목록을 손으로 적지 않는다. 낡기 때문이다.
 
 ```sh
-# 옮긴 조각
-grep -l "scene: 'module:" facets/*/*/src/facet.ts | wc -l
-# 남은 조각
-grep -l "projector: 'module:" facets/*/*/src/facet.ts | wc -l
+# 옮긴 조각 — **커밋된 것만 센다**
+git grep -l "scene: 'module:" HEAD -- 'facets/**/facet.ts' | sed 's|^HEAD:||' \
+  | grep -Fx -f <(git grep -l "@piece" HEAD -- 'facets/**/facet.ts' | sed 's|^HEAD:||') | wc -l
 # 어느 것이 남았나
 grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 ```
 
-2026-09-16 기준 **87 / 181**.
+**워킹트리로 세면 틀린다.** 배치를 겹쳐 돌리면 다음 배치의 미커밋분이 섞여 앞선 수가
+나온다. 실제로 두 번 걸렸고 한 번은 커밋을 amend 로 고쳤다 — 배치를 닫는 시점에는
+형제 배치가 이미 `facet.ts` 를 고쳐 놓았기 때문이다.
+
+2026-09-16 기준 **124 / 181**.
 
 옮긴 배치는 셋이다. 셋 다 **흔들림 0 · 왕복어긋남 0** 으로 닫았다.
 
@@ -863,13 +943,25 @@ grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 | 알고리즘 · 탐색 넷 | 2026-09-16 | `scan-until-found` · `requires-sorted` · `halve-the-range` · `guess-by-value` |
 | 알고리즘 · 동적 계획법과 그리디 다섯 | 2026-09-16 | `overlapping-subproblems` · `memo-write-once` · `bottom-up-table` · `greedy-can-fail` · `take-best-now` |
 | 알고리즘 · 백트래킹 셋 | 2026-09-16 | `try-and-undo` · `prune-branch` · `bound-and-cut` |
+| 그래프 · 기본 다섯 | 2026-09-16 | `one-way-edge` · `fewer-hops-not-shorter` · `dive-then-backtrack` · `mark-visited-or-loop` · `two-color-conflict` |
+| 그래프 · 최단경로 다섯 | 2026-09-16 | `relax-shorter-path` · `pick-nearest-unsettled` · `negative-edge-breaks` · `repeat-relax-all` · `one-more-round-drops` |
+| 그래프 · MST 와 위상 다섯 | 2026-09-16 | `heuristic-guides` · `grow-one-tree` · `sort-edges-avoid-cycle` · `indegree-zero-first` · `cycle-blocks-order` |
+| 그래프 · SCC 와 최대 유량 셋 | 2026-09-16 | `mutually-reachable` · `bottleneck-sets-flow` · `undo-by-back-edge` |
+| 문자열 · 탐색 다섯 | 2026-09-16 | `naive-shift-by-one` · `prefix-suffix-jump` · `match-from-back` · `bad-char-skip` · `rolling-hash` |
+| 문자열 · 접미사와 아호코라식 넷 | 2026-09-16 | `all-suffixes-sorted` · `match-length-per-spot` · `many-patterns-one-pass` · `fail-link` |
+| 편집 거리 둘 + 수치 셋 | 2026-09-16 | `edit-table-fill` · `three-edit-choices` · `square-and-halve` · `divisor-pairs-sqrt` · `row-times-column` |
+| 계산 복잡도 다섯 | 2026-09-16 | `growth-outpaces` · `constant-fades` · `curves-cross` · `verify-vs-find` · `reduce-to-known` |
 
 **자료 구조 42 · 확률적 자료구조 10 · 알고리즘 27 이 닫혔다.** 확률적 열 중 스킵
 리스트 둘(`skip-a-layer` · `coin-flip-height`)은 자료 구조 배치에 섞여 이미 옮겨져
 있었다. 배치마다 병렬 에이전트 셋~아홉.
 
-`cs-fundamentals` 의 서브도메인 일곱 중 **셋이 닫혔다** — 자료구조 · 확률적 자료구조 ·
-알고리즘. 남은 넷은 그래프 알고리즘 · 문자열 알고리즘 · 수치 알고리즘 · 계산 복잡도다.
+**`cs-fundamentals` 가 닫혔다 — 조각 117 개 전부 Scene 이다.** 서브도메인 일곱이
+모두 끝났다: 자료구조 40 · 확률적 자료구조 10 · 알고리즘 27 · 그래프 21 · 문자열 11 ·
+수치 3 · 복잡도 5.
+
+남은 57 은 다른 도메인이다 — `ml-basics` 23 · `computer-architecture` 19 ·
+`security` 8 · `ai-engineering` 6 · `databases` 1.
 
 ### 배치를 돌리는 법
 
@@ -957,8 +1049,23 @@ BST 와 순회 다섯    4265 → 5965   +1700  +40%
 마지막 아홉        8694 → 12331  +3637  +42%
 확률적 여덟        8773 → 12449  +3676  +41%
 알고리즘 스물일곱  29578 → 40117 +10539  +35%
+그래프 기본 다섯    5979 → 7804   +1825  +31%
+최단경로 다섯       6768 → 9003   +2235  +33%
+MST 와 위상 다섯    6434 → 8339   +1905  +30%
+SCC·최대유량 셋     4484 → 5580   +1096  +24%
+문자열 탐색 다섯    5463 → 7806   +2343  +43%
+접미사·아호 넷      5067 → 6805   +1738  +34%
+편집거리 2+수치 3   5326 → 7570   +2244  +42%
+계산 복잡도 다섯    6371 → 8491   +2120  +33%
                                  ─────
-                  일흔여덟 조각 평균 +348 줄 (+35%)
+                 백열여섯 조각 평균 +342 줄 (+34%)
+
+**이 여덟 배치(37 조각)의 `algorithm.ts` 는 7615 → 7362 (−253)** 이다. 앞 계열들보다
+덜 줄었는데, **B 갈래로 내준 순수 함수와 판단 근거 주석이 그만큼 들어왔기** 때문이다.
+`divisor-pairs-sqrt` 는 발신 다섯이 전부 비었는데도 `readN`·`sqrtLimit` 를 내주며
+110 → 135 로 늘었다. **줄이 아니라 무엇이 남았는가로 읽는다** — `edit-table-fill` 은
+139 → 211 이 되었지만 그 몫이 `editTableDiagonal`·`editLetterMatch`·`editStepCost`
+셋이고, 그 덕에 `i`·`j`·`cost` 가 payload 에서 사라졌다.
 
 늘어나는 것은 `scene.ts` 와 stage 이고 **`algorithm.ts` 는 대개 줄어든다.** 확률적
 여덟에서 1269 → 1201 (−68), 알고리즘 스물일곱에서 **5108 → 4795 (−313)** 이었다. payload 를 걷어내면 그것을 만들던
