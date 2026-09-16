@@ -7,10 +7,14 @@
  *
  * 진행 모델은 reactive — mount 하면 스스로 펼치기 시작하고, 걸음 간격은
  * `initialData.stepMs` 가 정한다.
+ *
+ * 화면은 장면(Scene) 방식이다 — 걸음마다의 화면이 `scene.ts` 의 상태에서
+ * 셈해지므로 어느 걸음으로든 곧장 갈 수 있다. 그래서 컨트롤은 띠가 선
+ * `CONTROL_SET.pieceScrub` 이다 (S-scene / S-piece).
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const overlappingSubproblemsFacet: FacetJson = {
   id: 'facet:overlappingSubproblems',
@@ -39,7 +43,7 @@ export const overlappingSubproblemsFacet: FacetJson = {
     pt: 'Siga a definição recursiva à risca e o mesmo termo brota vezes sem conta em ramos diferentes',
   },
   algorithm: 'module:overlappingSubproblems',
-  projector: 'module:overlappingSubproblemsProjector',
+  scene: 'module:overlappingSubproblemsScene',
   initialData: {
     type: 'overlapping-subproblems',
     n: 5,
@@ -87,7 +91,7 @@ export const overlappingSubproblemsFacet: FacetJson = {
     stage: { type: 'overlapping-subproblems-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

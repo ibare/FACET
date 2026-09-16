@@ -9,7 +9,7 @@
  * 제목 블록도 메트릭도 두지 않는다. 배치는 러너가 만든다.
  */
 
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 import type { FacetJson } from '@ffacet/core/runtime';
 
 export const memoWriteOnceFacet: FacetJson = {
@@ -40,7 +40,7 @@ export const memoWriteOnceFacet: FacetJson = {
     pt: 'Um termo resolvido passa para a tabela; reencontrá-lo é ler o valor de lá em vez de ramificar.',
   },
   algorithm: 'module:memoWriteOnce',
-  projector: 'module:memoWriteOnceProjector',
+  scene: 'module:memoWriteOnceScene',
   initialData: {
     type: 'memo-write-once',
     n: 5,
@@ -50,7 +50,7 @@ export const memoWriteOnceFacet: FacetJson = {
     stage: { type: 'memo-write-once-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {
