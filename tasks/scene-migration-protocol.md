@@ -153,9 +153,14 @@ grep -nE "getAttribute|getBBox|getBoundingClientRect|Number\(" $d/src/*-stage.ts
   | `Map<string, { path, head }>` | 어디까지 밀려났나 | `new Map<…>` 한 줄이라 `type` 선언조차 없다 |
   | `const tags: Tag[]` | **어느 키가 어느 칸에 앉았나** | `const` 라 `let` grep 을 통과한다 |
   | `type NodeState = 'default' \| 'comparing' \| …` | 마디의 형편 | **선언만 있고 값이 어디에도 저장되지 않는다.** 칠에만 쓰인다 |
+  | `const cellOn = [...scene.bits]` | 지금 비트열 | **`const` 인데 `cellOn[s] = 0` 으로 제자리에서 고쳐진다.** 묶음이 상수일 뿐 알맹이는 변수다 |
+  | `Cell = { g, fills, value, x, owners: number[] }` | **누가 이 칸을 켰나** (그 조각의 결론) | DOM 손잡이와 결론이 한 객체. `const cells: Cell[]` 이라 grep 을 통과한다 |
+  | `tok.g` 의 `transform` | 그 칸이 셋 중 **어디에 서 있나** | 좌표가 아니라 *어느 단계에 있나* 를 화면이 혼자 안다 |
 
-  마지막 둘이 요점이다. 찾는 것은 특정 낱말이 아니라 **"이 조각이 화면에 대해 아는
-  것을 어디에 적어 두었나"** 이고, 그 자리가 `let` 이 아닐 때가 많다. 아래 한 줄로
+  `const tags` 아래 넷이 요점이다. 찾는 것은 특정 낱말이 아니라 **"이 조각이 화면에
+  대해 아는 것을 어디에 적어 두었나"** 이고, 그 자리가 `let` 이 아닐 때가 많다.
+  `const` 로 묶인 배열, 칠에만 쓰이는 타입, 그리고 **좌표가 아니라 단계를 말하는
+  `transform`** 이 그렇다. 아래 한 줄로
   타입 선언과 모듈 스코프 선언을 전부 뽑아 **눈으로 읽는 것**이 유일하게 통한 방법이다.
 
   ```sh
@@ -436,6 +441,29 @@ const t = params.t ?? makeTranslator(params.locale);
   옮길 때 "이 조각이 말하려는 것이 마지막 화면에 남아 있나" 를 따로 묻는다. 없으면
   장면에 올려 정적 그리기가 세우게 한다. 이행이 화면을 고치는 자리다.
 
+  **계열에 따라 이것이 예외가 아니라 통례다.** 자료 구조 마흔둘에서는 한 건이었는데
+  확률적 자료구조 여덟에서는 **여섯**이 여기 걸렸다. 우연이 아니다 — 그 계열의 조각은
+  하나같이 *여럿이 한 자리를 나눠 써서 생기는 일*을 말하는데, 겹침이란 **칸 하나에
+  누적으로만 드러나는 것**이라 명령형 stage 가 그것을 잠깐 물들였다 다음 걸음에서
+  지우고 있었다. 지운 자리가 곧 그 조각의 결론이었다.
+
+  | 조각 | 지워지던 것 | 지운 명령 |
+  | --- | --- | --- |
+  | `several-hashes-one-value` | 이 칸을 나눠 썼다 | 260ms 두드리는 테 |
+  | `cannot-unset` | 어느 칸이 이번에 꺼진 것인가 | `clear` 의 `marked.delete(s)` |
+  | `wrong-in-one-direction` | 이 셋을 켠 것은 누구인가 | `enterQuery` 의 `clearOwners()` |
+  | `trust-the-smallest` | 어느 칸이 부딪혔나 | 걸음마다 `clearCellMarks()` |
+  | `leading-zeros-tell` | 끝에 남는 눈금 | `clearAll()` 의 `notchY = null` |
+  | `space-error-tradeoff` | 앞서 이만큼 부풀어 있었다 | `ghostGroup` 이 명령으로만 쌓임 |
+
+  **소재를 먼저 보고 의심의 세기를 정한다.** 조각의 주장에 "나눠 쓴다 · 부딪힌다 ·
+  겹친다 · 쌓인다 · 남는다" 가 들어 있으면, 명령형 stage 가 그것을 지우고 있다고
+  먼저 가정하고 반증을 찾는다.
+
+  고치는 길은 한 갈래로 모였다 — **채움은 값의 형편, 테두리는 겹침·짚음의 표식**으로
+  갈라 두 칠이 부딪히지 않게 한다 (함정 "되돌림이 지우던 것이 정보였을 수 있다" 의
+  갈래와 같다). 서로 모르는 에이전트 다섯이 각자 이 갈래에 이르렀다.
+
 - **색판의 크기를 "지금까지 드러난 수" 로 정하지 않는다.** `categorical(n)` 은 `n` 이
   바뀌면 hue 간격이 통째로 갈린다. `find-root` 는 걸음마다 자라는 셈을 씨앗으로 써서
   **무리가 하나 더 드러날 때 이미 칠한 무리의 색이 바뀌었다.** 바탕 자료에서 한 번에
@@ -462,6 +490,43 @@ const t = params.t ?? makeTranslator(params.locale);
   절반으로 줄었고(`parentId`·`char`·`depth` 가 아무 데서도 안 읽히게 됐다),
   `walk-per-character` 는 인덱스 루프가 죽으며 UTF-16 과 코드 포인트로 갈려 있던
   어휘가 맞아졌다.
+
+- **차례는 발신이 오는 순서가 이미 말한다.** `index` · `row` · `probeIndex` 처럼
+  "몇 번째 걸음인가" 를 싣는 필드는 장면이 세는 것으로 늘 대신할 수 있다 — 줄은 올
+  때마다 하나씩 쌓이므로 `rows.length` 가 곧 그 줄의 번호다. 걷어내면 algorithm 의
+  인덱스 루프가 함께 죽어 `for (const key of keys)` 가 된다. 확률적 여덟에서 이것만
+  네 조각에 있었고, 한 배치 안에서 같은 물음에 두 답이 남아 감사가 잡았다.
+
+- **바탕에서 결정되는 셈은 싣지 말고 같은 함수를 부르게 한다.** 해시 자리처럼
+  *구조에서는 셀 수 없지만 바탕 자료에 순수 함수를 먹이면 나오는* 값이 있다. 두 길이
+  있고 확률적 여덟이 넷 대 넷으로 갈렸다 — 규범이 말하지 않아서 갈린 것이다.
+
+  ```ts
+  // A — algorithm 이 세어 싣는다
+  await ctx.emit({ type: 'probe', payload: { key, reads: cellsOf(key) } });
+
+  // B — algorithm 이 함수를 내주고 장면이 부른다
+  export function cellsOf(key: string, depth: number, width: number): Cell[] { … }
+  ```
+
+  **B 로 간다.** 둘 다 출처가 하나라 갈리지는 않지만, A 는 payload 를 무겁게 두어
+  *다음 사람이 집어 쓸 문*을 열어 둔 채다 — 그 문이 바로 "두 자리에서 세기" 가
+  들어오는 길이다. B 는 `scene.ts` 가 `algorithm.ts` 를 import 하는데 **원칙 1 의
+  허용 방향**이다 (장면이 projector 자리를 잇는다).
+
+  잣대는 이렇게 읽는다.
+
+  | 무엇 | 어디서 | 보기 |
+  | --- | --- | --- |
+  | 구조에서 세지는 것 | **장면이 센다** | 켜진 칸 수 · 최솟값 · 층별 노드 수 |
+  | 바탕 + 순수 함수로 나오는 것 | **함수를 내주고 장면이 부른다** | 해시 자리 · 척도 경계 · 좁히개 |
+  | 걸음이 내리는 판정 | **싣는다** | 어느 칸이 부딪혔다고 볼 것인가 · 어느 값을 지울 것인가 |
+
+- **길이 0 짜리 선이 둥근 끝을 만나면 점이 된다.** `average-the-buckets` 는 가운데 벽을
+  `y1 = y2` 로 미리 지어 두고 나중에 `y2` 만 늘렸는데, `stroke-linecap: 'round'` ·
+  `stroke-width: 2` 라 **아직 나누지 않은 화면에 2px 점 셋이 찍혀 있었다.** 나눌 자리를
+  미리 광고한 셈이다. 아직 없는 것은 **숨기지 말고 짓지 않는다** — 숨기기만 하면 앞
+  걸음의 `y2` 도 함께 남아 되짚기 판정까지 어긋난다.
 
 - **정적 그리기가 이웃의 "지금 좌표" 를 읽으면 순서가 화면을 가른다.** `recolor-then-rotate`
   는 마디를 목록 순서로 돌며 가지의 위 끝을 `parentEl.x` 에서 읽었는데, 부모가 목록
@@ -582,7 +647,20 @@ node scripts/scene-audit.mjs --port <포트> --only facet:<id>
 - *흔들림* — 되짚은 뒤 화면이 나중에 저 혼자 바뀐다 (지연 발화가 덮어썼다)
 - *왕복어긋남* — 되짚었다 끝으로 돌아왔을 때 처음 완주 화면과 다르다
 
-어긋나면 `--diff` 를 붙여 어느 자리가 다른지 본다.
+어긋나면 `--diff` 를 붙여 어느 자리가 다른지 본다. **다만 `--diff` 가 자리를 남기는
+것은 흔들림뿐이다** — 왕복어긋남은 견준 두 화면을 버리므로 자리를 보려면 그 기록을
+`apps/playground/src/scrub-audit.ts` 에 잠깐 붙여야 한다. 붙일 때 `shotRaw` 는 해시를
+돌려주니 `raw` 쪽을 견줘야 첫 갈리는 자리가 나온다.
+
+**계측기를 먼저 의심한다.** 왕복 대기가 `700 + n*400` 이라는 고정값이었고, 걸음마다의
+운동이 400ms 를 넘는 조각에서 구조적으로 모자랐다. `average-the-buckets` 는 여섯 걸음에
+걸음당 640ms 라 마지막 운동이 `p ≈ 0.75` 에서 찍혀 **멀쩡한 조각이 왕복어긋남으로
+잡혔다** (남은 속성이 `opacity="0.4333…"` 이라는 보간 중간값인 것이 단서였다). 지금은
+화면이 두 번 연속 같을 때까지 기다리는 **정착 대기**로 고쳤다. 나중에 저 혼자 바뀌는
+것은 축 1 이 따로 재므로 여기서 기다려도 축이 흐려지지 않는다.
+
+어긋남이 나오면 **남은 값이 보간 중간값인지 먼저 본다.** 중간값이면 대개 계측이 이른
+것이고, 끝값·상수면 조각이 거둘 것을 안 거둔 것이다.
 
 띠가 없는 조각은 감사가 `띠없음` 으로 건너뛴다. 재려면 그 facet 의 컨트롤을
 `CONTROL_SET.pieceScrub` 으로 바꾼다.
@@ -614,7 +692,7 @@ grep -l "projector: 'module:" facets/*/*/src/facet.ts | wc -l
 grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 ```
 
-2026-09-16 기준 **52 / 181**.
+2026-09-16 기준 **60 / 181**.
 
 옮긴 배치는 셋이다. 셋 다 **흔들림 0 · 왕복어긋남 0** 으로 닫았다.
 
@@ -630,8 +708,11 @@ grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 | 자료 구조 · BST 와 순회 다섯 | 2026-09-16 | `bst-compare-and-go` · `bst-inorder-sorted` · `traversal-order` · `height-stays-low` · `depth-doubles-count` |
 | 자료 구조 · 균형 트리 다섯 | 2026-09-16 | `height-balance-check` · `rotate-to-balance` · `black-height-equal` · `recolor-then-rotate` · `coin-flip-height` |
 | 자료 구조 · B트리 · 트라이 · 스킵 · 유니온 파인드 아홉 | 2026-09-16 | `node-holds-many` · `split-when-full` · `share-prefix-path` · `walk-per-character` · `skip-a-layer` · `find-root` · `union-by-rank` · `path-compression` · `separate-components` |
+| 확률적 자료구조 여덟 | 2026-09-16 | `several-hashes-one-value` · `wrong-in-one-direction` · `cannot-unset` · `trust-the-smallest` · `space-error-tradeoff` · `leading-zeros-tell` · `average-the-buckets` · `crowd-the-tails` |
 
-**자료 구조 계열 42 개가 이것으로 닫혔다.** 아홉 배치, 배치마다 병렬 에이전트 넷~아홉.
+**자료 구조 계열 42 개가 아홉 배치로 닫혔고, 확률적 자료구조 열도 닫혔다** — 그중
+스킵 리스트 둘(`skip-a-layer` · `coin-flip-height`)은 자료 구조 배치에 섞여 이미
+옮겨져 있었다. 배치마다 병렬 에이전트 넷~아홉.
 
 ### 배치를 돌리는 법
 
@@ -717,8 +798,16 @@ split-and-number   945 → 1101  +156  +17%
 BST 와 순회 다섯    4265 → 5965   +1700  +40%
 균형 트리 다섯      4945 → 6684   +1739  +35%
 마지막 아홉        8694 → 12331  +3637  +42%
+확률적 여덟        8773 → 12375  +3602  +41%
                                  ─────
-                  마흔셋 조각 평균 +352 줄 (+34%)
+                  쉰하나 조각 평균 +353 줄 (+35%)
+
+늘어나는 것은 `scene.ts` 와 stage 이고 **`algorithm.ts` 는 줄어든다.** 확률적 여덟에서
+1269 → 1147 (−122) 이었고, 여덟 중 다섯이 줄었다. payload 를 걷어내면 그것을 만들던
+셈이 연쇄로 죽기 때문이다 — 가장 많이 준 `crowd-the-tails` 는 발신 넷의 payload 가
+전부 비면서 `quantileAt` · `evenBounds` · `bucketOf` · `countsIn` · `centroidsIn`
+다섯 함수가 통째로 죽었다. 줄이 오히려 는 셋은 주석이 늘어난 몫이고 payload 는
+비었다 — **보고를 믿지 말고 `git diff -- .../algorithm.ts` 를 본다.**
 
 가장 적게 는 것은 `rotate-to-balance` 였다 (+17%). projector 가 238 줄로 그 배치에서 가장
 무거웠는데도 그렇다 — 회전 걸음이 장면을 통째로 갈아 `layout(base) → layout(next)`
