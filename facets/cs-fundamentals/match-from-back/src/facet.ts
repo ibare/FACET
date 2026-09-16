@@ -37,7 +37,7 @@ export const matchFromBackFacet: FacetJson = {
     pt: 'Comparar o padrão a partir do último caractere descarta posições inteiras sem ler o começo.',
   },
   algorithm: 'module:matchFromBack',
-  projector: 'module:matchFromBackProjector',
+  scene: 'module:matchFromBackScene',
   initialData: {
     type: 'match-from-back',
     text: 'here is a simple example',
@@ -49,7 +49,11 @@ export const matchFromBackFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'match-from-back-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: {
+      type: 'control-bar',
+      // 스크럽 띠. 장면 방식이라 어느 걸음이든 셈으로 얻으므로 끌어 볼 수 있다.
+      controls: CONTROL_SET.pieceScrub,
+    },
   },
   messages: {
     'caption.land': {

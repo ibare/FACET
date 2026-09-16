@@ -38,7 +38,7 @@ export const naiveShiftByOneFacet: FacetJson = {
     pt: 'Compare desde o início; ao primeiro desencontro, descarte tudo o que já combinou e desloque o padrão uma posição.',
   },
   algorithm: 'module:naiveShiftByOne',
-  projector: 'module:naiveShiftByOneProjector',
+  scene: 'module:naiveShiftByOneScene',
   initialData: {
     type: 'naive-shift-by-one',
     text: 'abababcabab',
@@ -47,7 +47,11 @@ export const naiveShiftByOneFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'naive-shift-by-one-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: {
+      type: 'control-bar',
+      // 스크럽 띠. 장면 방식이라 어느 걸음이든 셈으로 얻으므로 끌어 볼 수 있다.
+      controls: CONTROL_SET.pieceScrub,
+    },
   },
   messages: {
     'caption.align': {

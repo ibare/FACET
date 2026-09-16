@@ -37,7 +37,7 @@ export const rollingHashFacet: FacetJson = {
     pt: 'Desloque a janela um passo: tire a letra da frente, some a de trás, e o hash rola para o próximo valor.',
   },
   algorithm: 'module:rollingHash',
-  projector: 'module:rollingHashProjector',
+  scene: 'module:rollingHashScene',
   initialData: {
     type: 'rolling-hash',
     text: 'abracadabra',
@@ -48,7 +48,7 @@ export const rollingHashFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'rolling-hash-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.pattern': {
@@ -112,16 +112,16 @@ export const rollingHashFacet: FacetJson = {
       pt: 'As mesmas letras voltam, e o mesmo hash: {h}.',
     },
     'caption.done': {
-      en: '{windows} windows, {rolls} rolls — each roll touched two letters.',
-      ko: '창의 수는 {windows}, 구르기는 {rolls}. 구를 때마다 만진 글자는 둘.',
-      ja: '窓は {windows}、転がりは {rolls}。一度ごとに触れた文字は二つ。',
-      zh: '窗口 {windows} 个, 滚动 {rolls} 次; 每次只碰两个字母。',
-      ar: 'النوافذ {windows} والتدحرجات {rolls}؛ كل تدحرج يلمس حرفين فقط.',
-      es: '{windows} ventanas, {rolls} desplazamientos: cada uno tocó dos letras.',
-      fr: '{windows} fenêtres, {rolls} roulements : chacun n’a touché que deux lettres.',
-      hi: '{windows} खिड़कियाँ, {rolls} सरकाव — हर बार सिर्फ़ दो अक्षर छुए गए।',
-      id: '{windows} jendela, {rolls} gulingan — tiap gulingan menyentuh dua huruf.',
-      pt: '{windows} janelas, {rolls} rolagens — cada uma tocou duas letras.',
+      en: '{windows} windows, {rolls} rolls — letters touched per roll: {touches}.',
+      ko: '창의 수는 {windows}, 구르기는 {rolls}. 구를 때마다 만진 글자는 {touches}.',
+      ja: '窓は {windows}、転がりは {rolls}。一度ごとに触れた文字は {touches}。',
+      zh: '窗口 {windows} 个, 滚动 {rolls} 次; 每次碰到的字母: {touches}。',
+      ar: 'النوافذ {windows} والتدحرجات {rolls}؛ عدد الحروف الملموسة في كل تدحرج: {touches}.',
+      es: '{windows} ventanas, {rolls} desplazamientos; letras tocadas por cada uno: {touches}.',
+      fr: '{windows} fenêtres, {rolls} roulements ; lettres touchées à chaque fois : {touches}.',
+      hi: '{windows} खिड़कियाँ, {rolls} सरकाव; हर बार छुए गए अक्षर: {touches}.',
+      id: '{windows} jendela, {rolls} gulingan; huruf yang disentuh tiap gulingan: {touches}.',
+      pt: '{windows} janelas, {rolls} rolagens; letras tocadas em cada uma: {touches}.',
     },
   },
 };

@@ -9,20 +9,20 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { badCharSkipAlgorithm, type BadCharSkipData } from './algorithm.js';
-import { badCharSkipProjector } from './projector.js';
+import { badCharSkipScene } from './scene.js';
 import { badCharSkipIRs } from './irs.js';
 import { badCharSkipStageView } from './bad-char-skip-stage.js';
 import { badCharSkipFacet } from './facet.js';
 import { badCharSkipDescription } from './description.js';
 
-export { badCharSkipAlgorithm, buildLastIndex } from './algorithm.js';
-export type { BadCharSkipData } from './algorithm.js';
-export { badCharSkipProjector } from './projector.js';
+export { badCharSkipAlgorithm, badCharSlots, lastStandOf } from './algorithm.js';
+export type { BadCharSkipData, BadCharSlot } from './algorithm.js';
+export { badCharSkipScene, type BadCharSkipScene } from './scene.js';
 export { badCharSkipIRs } from './irs.js';
 export { badCharSkipStageView } from './bad-char-skip-stage.js';
 export { badCharSkipFacet } from './facet.js';
@@ -33,7 +33,7 @@ export function registerBadCharSkip(): void {
   registerAlgorithm<BadCharSkipData>('badCharSkip', badCharSkipAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('badCharSkipProjector', badCharSkipProjector);
+  registerScenePlan('badCharSkipScene', badCharSkipScene);
   for (const ir of badCharSkipIRs) registerIR(ir.id, ir);
   registerView('bad-char-skip-stage', badCharSkipStageView);
   registerFacets([badCharSkipFacet]);

@@ -11,19 +11,28 @@
  *   구르기   h ← (h − val(빠지는 글자)·base^(m-1)) mod mod
  *            h ← (h·base + val(들어오는 글자)) mod mod
  *
+ * ── 무엇을 싣고 무엇을 내주나 (프로토콜 4 절)
+ *
+ * 창의 차례 · 빠지는 글자와 들어오는 글자의 자리 · 조각과 맞았나 · 한 바퀴 돌아
+ * 같은 글자로 왔나 — 이것들은 전부 **바탕과 지나온 창 수에서 나오는 것**이라
+ * 싣지 않는다. 장면이 센다.
+ *
+ * 처음부터 셈하는 해시(`hashOf`)는 **함수로 내주고 장면이 부른다** — 이 조각이
+ * 피하려는 셈이므로 내주어도 조각이 말하려는 바가 그대로 남는다.
+ *
+ * 반대로 굴리는 식 `(h − 빠지는 글자값·밑^(m-1))·밑 + 들어오는 글자값` 은 이
+ * 조각의 알고리즘 그 자체라 내주지 않는다. 그 두 항과 결과만 싣는다.
+ *
  * ── 이벤트 (전부 step boundary. silent 없음)
- *   pattern-hash  { pattern: string; hash: number }
- *                 찾는 조각의 해시를 셈해 화면 위쪽 기준 자리에 올린다.
- *   window-init   { start: number; hash: number; match: boolean }
- *                 첫 창. 창 안의 글자를 모두 읽어 처음부터 셈한다.
- *   window-roll   { start: number; outIndex: number; outLetter: string; outTerm: number;
- *                   inIndex: number; inLetter: string; inValue: number;
- *                   hash: number; match: boolean; wrapped: boolean }
+ *   pattern-hash  payload 없음. 찾는 조각의 해시가 기준 자리에 오른다.
+ *                 값은 `hashOf(pattern, base, mod)` 가 낸다.
+ *   window-init   payload 없음. 첫 창은 창 안의 글자를 모두 읽어 처음부터 셈한다.
+ *                 값은 `hashOf(text.slice(0, m), base, mod)` 가 낸다.
+ *   window-roll   { outTerm: number; inValue: number; hash: number }
  *                 창이 한 칸 구른다. outTerm 은 빼는 값(val·base^(m-1) mod mod),
- *                 inValue 는 더하는 글자값. wrapped 는 창의 글자가 첫 창과 같아
- *                 해시가 처음 값으로 돌아왔음을 뜻한다.
+ *                 inValue 는 더하는 글자값, hash 는 둘을 거쳐 나온 다음 값이다.
  *   rewind        payload 없음. 자동 재생 뒤 `advance` 를 받아 처음으로 되감는다.
- *   done          { windows: number; rolls: number }
+ *   done          payload 없음. 창의 수와 구르기 수는 자취에서 세진다.
  *
  * 메트릭은 없다 — 조각은 셀 것이 없으므로 `ctx.metric` 을 부르지 않는다 (S-piece).
  */
@@ -51,8 +60,14 @@ function letterValue(ch: string): number {
   return ch.charCodeAt(0) - LETTER_ORIGIN;
 }
 
-/** 처음부터 셈하는 해시 — 첫 창과 찾는 조각에만 쓴다. */
-function hashOf(s: string, base: number, mod: number): number {
+/**
+ * 처음부터 셈하는 해시 — 첫 창과 찾는 조각에만 쓴다.
+ *
+ * **장면도 이 함수를 부른다.** 화면에 뜨는 수와 굴리기의 출발값이 같은 자리에서
+ * 나와야 하므로 규칙을 두 벌로 두지 않고 여기 하나만 둔다 (프로토콜 4 절 B 갈래).
+ * 이 조각이 *피하려는* 셈이라 내주어도 주장이 그대로 남는다.
+ */
+export function hashOf(s: string, base: number, mod: number): number {
   let h = 0;
   for (const ch of s) h = (h * base + letterValue(ch)) % mod;
   return h;
@@ -75,7 +90,6 @@ export async function rollingHashAlgorithm(
   if (m === 0 || text.length < m) return;
 
   const weight = leadWeight(m, base, mod);
-  const patternHash = hashOf(pattern, base, mod);
   const firstWindow = text.slice(0, m);
   const lastStart = text.length - m;
 
@@ -110,23 +124,12 @@ export async function rollingHashAlgorithm(
   /** 한 회차 — 조각의 해시 → 첫 창 → 구르기 → 총평. 끝까지 갔으면 true. */
   async function runPass(): Promise<boolean> {
     if (!(await gate())) return false;
-    await ctx.emit({
-      type: 'pattern-hash',
-      payload: { pattern, hash: patternHash },
-    });
+    await ctx.emit({ type: 'pattern-hash' });
 
     let hash = hashOf(firstWindow, base, mod);
     if (!(await gate())) return false;
-    await ctx.emit({
-      type: 'window-init',
-      payload: {
-        start: 0,
-        hash,
-        match: hash === patternHash,
-      },
-    });
+    await ctx.emit({ type: 'window-init' });
 
-    let rolls = 0;
     for (let start = 1; start <= lastStart; start += 1) {
       const outIndex = start - 1;
       const inIndex = start + m - 1;
@@ -138,28 +141,16 @@ export async function rollingHashAlgorithm(
       // 뒤를 더한다
       const inValue = letterValue(inLetter);
       hash = (hash * base + inValue) % mod;
-      rolls += 1;
 
       if (!(await gate())) return false;
       await ctx.emit({
         type: 'window-roll',
-        payload: {
-          start,
-          outIndex,
-          outLetter,
-          outTerm,
-          inIndex,
-          inLetter,
-          inValue,
-          hash,
-          match: hash === patternHash,
-          wrapped: text.slice(start, start + m) === firstWindow,
-        },
+        payload: { outTerm, inValue, hash },
       });
     }
 
     if (!(await gate())) return false;
-    await ctx.emit({ type: 'done', payload: { windows: lastStart + 1, rolls } });
+    await ctx.emit({ type: 'done' });
     return true;
   }
 

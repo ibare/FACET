@@ -11,31 +11,37 @@
  *
  * ── 이벤트 (전부 이 facet 고유 확장. silent 없음 — 모두 시각 변화가 있다)
  *
- *   prefix-focus    { end: number }
- *       앞 `end + 1` 글자를 보기 시작한다.
+ * **차례는 발신이 오는 순서가 이미 말한다.** 몇 번째 자리를 보고 있나, 패턴이 지금
+ * 어느 칸에 놓여 있나, 앞 몇 글자를 물려받았나 — 전부 장면이 세므로 싣지 않는다.
+ * 싣는 것은 걸음이 내리는 판정뿐이다 (프로토콜 4 절의 잣대 표).
  *
- *   overlap-try     { end: number; border: number; matched: boolean }
- *       앞 `end + 1` 글자의 복제를 오른쪽으로 밀어 겹침 길이 `border` 를 견주었다.
- *       `matched` 는 맨 앞 `border` 글자와 맨 뒤 `border` 글자가 같은가.
- *       `border` 0 은 끝까지 민 자리 — 겹칠 것이 없다.
+ *   prefix-focus    payload 없음
+ *       다음 자리를 보기 시작한다. 그 자리는 표에 이미 찬 칸 수가 말한다.
  *
- *   fail-set        { index: number; value: number }
- *       자리 `index` 의 표 값이 `value` 로 정해졌다.
+ *   overlap-try     { border: number; matched: boolean }
+ *       복제를 오른쪽으로 밀어 겹침 길이 `border` 를 견주었다. `matched` 는 맨 앞
+ *       `border` 글자와 맨 뒤 `border` 글자가 같은가 — **이 걸음의 판정**이라 싣는다.
+ *       `border` 0 은 끝까지 민 자리로, 겹칠 것이 없다.
  *
- *   scan-align      { start: number; from: number; matched: number; mismatch: number }
- *       텍스트 `start` 자리에 패턴을 두고 `from` 번째 글자부터 이어 견주어
- *       `matched` 글자가 맞았다. `mismatch` 는 어긋난 패턴 자리이며 전부 맞았으면 -1.
+ *   fail-set        payload 없음
+ *       지금 자리의 값이 정해져 표로 떨어진다. 그 값은 방금 맞은 시험의 `border`
+ *       라 장면이 제 자취에서 읽는다 — 같은 수를 두 자리에 적지 않는다.
  *
- *   borrow-overlap  { start: number; matched: number; border: number }
- *       맞은 `matched` 글자의 끝 `border` 글자가 그 앞 `border` 글자와 같다.
- *       표가 준 값이다.
+ *   scan-align      { matched: number }
+ *       패턴을 지금 자리에 두고 이어 견주어 `matched` 글자가 맞았다. 어디까지
+ *       맞았다고 볼 것인가가 이 걸음의 판정이다. 어긋난 자리는 `matched` 이고,
+ *       `matched` 가 패턴 길이면 통째로 맞은 것이다.
  *
- *   jump            { from: number; to: number; keep: number; skipped: number[] }
- *       패턴을 `from` 에서 `to` 로 민다. 앞 `keep` 글자는 맞은 것으로 두고,
- *       `skipped` 는 건너뛴 정렬 자리다.
+ *   borrow-overlap  payload 없음
+ *       맞은 부분의 끝 몇 글자가 그 앞 몇 글자와 같다 — 그 수는 **장면이 세운 표**
+ *       에서 온다. 표가 화면에 이미 서 있으므로 다시 실어 보내지 않는다.
  *
- *   found           { start: number }
- *       패턴이 통째로 맞은 자리.
+ *   jump            { to: number }
+ *       패턴을 `to` 칸으로 민다. 어디에 내려 놓을 것인가가 이 걸음의 판정이다.
+ *       떠나온 자리 · 물려받는 글자 수 · 건너뛴 자리는 장면이 셈한다.
+ *
+ *   found           payload 없음
+ *       패턴이 통째로 맞았다. 그 자리는 장면이 쥔 정렬 칸이다.
  *
  *   rewind          payload 없음
  *       처음 상태로 되돌린다. 자동 재생이 끝난 뒤 첫 `advance` 에서 한 번.
@@ -98,7 +104,7 @@ export async function prefixSuffixJumpAlgorithm(
     const fail: number[] = [];
     for (let i = 0; i < m; i += 1) {
       if (!(await gate())) return false;
-      await ctx.emit({ type: 'prefix-focus', payload: { end: i } });
+      await ctx.emit({ type: 'prefix-focus' });
 
       let value = 0;
       for (let border = i; border >= 0; border -= 1) {
@@ -108,14 +114,14 @@ export async function prefixSuffixJumpAlgorithm(
         const matched =
           border === 0 ||
           pattern.slice(0, border) === pattern.slice(i + 1 - border, i + 1);
-        await ctx.emit({ type: 'overlap-try', payload: { end: i, border, matched } });
+        await ctx.emit({ type: 'overlap-try', payload: { border, matched } });
         if (matched) {
           value = border;
           break;
         }
       }
       fail.push(value);
-      await ctx.emit({ type: 'fail-set', payload: { index: i, value } });
+      await ctx.emit({ type: 'fail-set' });
     }
 
     // ── 표가 섰다. 이제 그 표가 텍스트에서 무엇을 아끼는지 본다.
@@ -128,36 +134,25 @@ export async function prefixSuffixJumpAlgorithm(
       // 맞는 데까지 이어 센다. 발신 없는 순수 셈이라 문을 둘 자리가 아니다.
       let k = keep;
       while (k < m && text[start + k] === pattern[k]) k += 1;
-      await ctx.emit({
-        type: 'scan-align',
-        payload: { start, from: keep, matched: k, mismatch: k < m ? k : -1 },
-      });
+      await ctx.emit({ type: 'scan-align', payload: { matched: k } });
       if (k === m) {
-        await ctx.emit({ type: 'found', payload: { start } });
+        await ctx.emit({ type: 'found' });
         return true;
       }
 
       if (!(await gate())) return false;
       if (k === 0) {
         // 맞은 것이 없으면 빌릴 겹침도 없다.
-        await ctx.emit({
-          type: 'jump',
-          payload: { from: start, to: start + 1, keep: 0, skipped: [] },
-        });
+        await ctx.emit({ type: 'jump', payload: { to: start + 1 } });
         start += 1;
         keep = 0;
         continue;
       }
 
       const border = fail[k - 1] ?? 0;
-      await ctx.emit({ type: 'borrow-overlap', payload: { start, matched: k, border } });
+      await ctx.emit({ type: 'borrow-overlap' });
       const shift = k - border;
-      const skipped: number[] = [];
-      for (let s = start + 1; s < start + shift; s += 1) skipped.push(s);
-      await ctx.emit({
-        type: 'jump',
-        payload: { from: start, to: start + shift, keep: border, skipped },
-      });
+      await ctx.emit({ type: 'jump', payload: { to: start + shift } });
       start += shift;
       keep = border;
     }

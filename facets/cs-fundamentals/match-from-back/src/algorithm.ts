@@ -7,22 +7,30 @@
  *
  * ── 이벤트 (facet 고유 확장, C2)
  *
- * | type     | payload                                            | silent |
- * | -------- | -------------------------------------------------- | ------ |
- * | `land`   | `{ shift: number }`                                | no     |
- * | `probe`  | `{ shift: number; patIndex: number; matched: boolean }` | no |
- * | `reject` | `{ shift: number; tailMatched: number; unread: number }` | no |
- * | `found`  | `{ shift: number }`                                | no     |
- * | `done`   | `{ comparisons: number; never: number }`           | no     |
- * | `rewind` | 없음                                                | no     |
+ * | type     | payload | silent |
+ * | -------- | ------- | ------ |
+ * | `land`   | 없음    | no     |
+ * | `probe`  | 없음    | no     |
+ * | `reject` | 없음    | no     |
+ * | `found`  | 없음    | no     |
+ * | `done`   | 없음    | no     |
+ * | `rewind` | 없음    | no     |
  *
- * `target` 은 쓰지 않는다. 짚는 자리는 글의 인덱스와 패턴의 인덱스 두 축으로
- * 정해져서 `index:N` 하나로는 말이 되지 않는다 — payload 가 정규 경로다.
+ * **여섯 다 payload 가 비었다.** 화면이 쓰는 수가 전부 구조나 바탕에서 나오기
+ * 때문이다 — 자리는 차례가 정하고(`shifts[밟은 자리 수]`), 짚는 자리는 뒤에서부터라
+ * 짚은 횟수가 정하고(`m - 1 - k`), 같더냐 다르더냐는 바탕 두 글자를 견주면 나오고,
+ * 견줌 횟수와 한 번도 안 본 글자 수는 자취에서 센다 (`scene.ts` 의 `comparisonsOf`
+ * · `neverOf`). 실어 보내면 같은 물음에 답이 둘 생기고, 다음 사람이 집어 쓸 문이
+ * 열린 채로 남는다.
+ *
+ * `target` 도 쓰지 않는다. 짚는 자리는 글의 인덱스와 패턴의 인덱스 두 축으로
+ * 정해져서 `index:N` 하나로는 말이 되지 않는데, 그 둘이 다 구조에서 나오므로
+ * 애초에 실을 것이 없다.
  *
  * ── 메트릭
  *
  * 없다. 조각이므로 `ctx.metric` 을 부르지 않는다 (S-piece). 견줌 횟수와 한 번도
- * 보지 않은 글자 수는 `done` 의 payload 로 화면 안에 남는다 — 재는 자리가 곧
+ * 보지 않은 글자 수는 장면이 자취에서 세어 화면 안에 남는다 — 재는 자리가 곧
  * 그림 안이다.
  */
 
@@ -98,22 +106,17 @@ export async function matchFromBackAlgorithm(
   }
 
   async function run(): Promise<void> {
-    const looked = new Set<number>();
-    let comparisons = 0;
-
     for (const shift of shifts) {
       if (!(await gate())) return;
-      await ctx.emit({ type: 'land', payload: { shift } });
+      await ctx.emit({ type: 'land' });
       if (!(await rest(hold.land))) return;
 
       // 오른쪽 끝에서 왼쪽으로. 어긋나면 거기서 멈춘다.
       let j = pattern.length - 1;
       while (j >= 0) {
         const matched = pattern[j] === text[shift + j];
-        comparisons += 1;
-        looked.add(shift + j);
         if (!(await gate())) return;
-        await ctx.emit({ type: 'probe', payload: { shift, patIndex: j, matched } });
+        await ctx.emit({ type: 'probe' });
         if (!(await rest(hold.probe))) return;
         if (!matched) break;
         j -= 1;
@@ -121,24 +124,18 @@ export async function matchFromBackAlgorithm(
 
       if (j < 0) {
         if (!(await gate())) return;
-        await ctx.emit({ type: 'found', payload: { shift } });
+        await ctx.emit({ type: 'found' });
         if (!(await rest(hold.verdict))) return;
         break;
       }
 
       if (!(await gate())) return;
-      await ctx.emit({
-        type: 'reject',
-        payload: { shift, tailMatched: pattern.length - 1 - j, unread: j },
-      });
+      await ctx.emit({ type: 'reject' });
       if (!(await rest(hold.verdict))) return;
     }
 
     if (!(await gate())) return;
-    await ctx.emit({
-      type: 'done',
-      payload: { comparisons, never: text.length - looked.size },
-    });
+    await ctx.emit({ type: 'done' });
     await rest(hold.tally);
   }
 
