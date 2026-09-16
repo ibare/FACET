@@ -9,7 +9,7 @@
  * 문단이 주고, 셀 것은 없고, 적을 배치는 하나뿐이다.
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const queueVsStackOrderFacet: FacetJson = {
   id: 'facet:queueVsStackOrder',
@@ -38,7 +38,7 @@ export const queueVsStackOrderFacet: FacetJson = {
     pt: 'Mesmo grafo, mesma ordem de vizinhos — trocar o recipiente separa a ordem de visita.',
   },
   algorithm: 'module:queueVsStackOrder',
-  projector: 'module:queueVsStackOrderProjector',
+  scene: 'module:queueVsStackOrderScene',
 
   initialData: {
     type: 'queue-vs-stack-order',
@@ -56,7 +56,7 @@ export const queueVsStackOrderFacet: FacetJson = {
 
   blocks: {
     stage: { type: 'queue-vs-stack-order-stage' },
-    controls: { type: 'control-bar', controls: [CONTROL.replay, CONTROL.advance] },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
 
   messages: {

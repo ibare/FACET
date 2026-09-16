@@ -4,15 +4,16 @@
  * @piece 질문 하나에만 답한다 — "드나드는 문이 하나뿐이면 무슨 일이 벌어지는가".
  *
  * 완결형 자료구조 facet 이 아니다. 제목도 메트릭도 두지 않는다. 제목은 글의
- * 문단이 주고, 조각은 셀 것이 없다 (S-piece). 컨트롤은 다시 보기와 한 걸음
+ * 문단이 주고, 조각은 셀 것이 없다 (S-piece). 컨트롤은 다시 보기와 스크럽 띠
  * 둘뿐이며 둘 다 눌러야 완성되는 조작이 아니다 — 자동 재생만 보고 지나가도
- * 화면은 할 말을 마친다.
+ * 화면은 할 말을 마친다. 걸음을 되짚어도 화면이 온전한 것은 이 조각이 장면
+ * (Scene) 방식이기 때문이다 (S-scene).
  *
- * 화면에 뜨는 문안은 전부 여기 `messages` 에 있다. projector 와 stage 에는 키만
+ * 화면에 뜨는 문안은 전부 여기 `messages` 에 있다. scene 과 stage 에는 키만
  * 남는다 (C10).
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const pushPopTopFacet: FacetJson = {
   id: 'facet:pushPopTop',
@@ -41,7 +42,7 @@ export const pushPopTopFacet: FacetJson = {
     pt: 'Uma única abertura: o último valor a entrar é o primeiro a sair.',
   },
   algorithm: 'module:pushPopTop',
-  projector: 'module:pushPopTopProjector',
+  scene: 'module:pushPopTopScene',
   initialData: {
     type: 'push-pop-top',
     /** 넣는 차례. 마지막 값이 꼭대기가 된다. */
@@ -55,10 +56,7 @@ export const pushPopTopFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'push-pop-top-stage' },
-    controls: {
-      type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
-    },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.oneOpening': {
