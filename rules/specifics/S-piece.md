@@ -100,7 +100,22 @@ last_verified: 2026-09-10
   - 예외인지 가리는 물음: **데이터가 순서를 정하는가, 저작자가 정하는가.**
     나무를 중위로 밟는 순서는 나무가 정하고, 배열의 어느 칸을 짚어 보일지는
     사람이 정한다.
-- **control-bar 는 `CONTROL_SET.piece` 다** (= `[CONTROL.replay, CONTROL.advance]`).
+- **control-bar 는 `CONTROL_SET.piece` 또는 `CONTROL_SET.pieceScrub` 다.** 조각이
+  화면을 어느 방식으로 만드느냐가 그것을 정한다.
+
+  | 화면 방식 | 묶음 | 내용 |
+  | --- | --- | --- |
+  | projector (`projector:`) | `CONTROL_SET.piece` | `[replay, advance]` |
+  | 장면 (`scene:`) | `CONTROL_SET.pieceScrub` | `[replay, timeline]` |
+
+  띠(`timeline`)는 명령이 아니라 상태로 화면을 만드는 조각에서만 선다 — 어느 걸음의
+  화면이든 계산으로 얻을 수 있어야 임의의 자리로 갈 수 있다 (S-scene). 그래서 장면
+  방식으로 옮기는 것과 띠를 다는 것이 한 몸이다. 이행 중이라 두 묶음이 공존하며,
+  `tasks/scene-migration-protocol.md` 가 그 진행을 적는다.
+
+  **띠와 `advance` 를 함께 두지 않는다.** 같은 일을 하는 조작이 둘이 되고, 둘이 서로
+  다른 자리를 가리키게 된다 — 알고리즘의 걸음 셈과 자취의 걸음 셈이 갈리기 때문이다.
+
   둘을 펴 적어도 값은 같지만 프리셋으로 통일한다 — 여든여섯 중 마흔하나가 편 채로
   남아 저장소가 반반으로 갈렸다. 라벨을 손으로 적지
   않는다 — 같은 컨트롤을 아홉 번 적으면 문안이 갈라진다 (실제로 `reset` 이 29곳에
@@ -108,8 +123,12 @@ last_verified: 2026-09-10
   - `CONTROL.replay` — 액션은 `reset` 이다. `ReactiveMechanism.reset()` 이 끝에
     `ensureStarted()` 를 부르므로 되돌리는 일이 곧 다시 재생하는 일이다.
     놓친 사람을 위한 것이다.
+  - `CONTROL.timeline` — 띠. 어느 걸음으로든 곧장 간다. 한 걸음 단추는 앞으로만 갈
+    수 있어 곱씹으려면 한 바퀴를 다 돌아야 했다. 장면 방식의 조각에만 단다.
   - `CONTROL.advance` — 자동 재생이 끝난 뒤 처음부터 한 걸음씩 짚어 볼 수 있게
-    한다. 곱씹으며 읽고 싶은 사람을 위한 것이다. `onControl` 이 reset/speed 외
+    한다. 아래 문(gate) 관련 조항들은 **`advance` 를 둔 조각에만** 해당한다. 띠를 단
+    조각은 누를 `advance` 가 없어 손짚기 루프가 도달 불능이 된다 (이행이 끝난 뒤
+    일괄로 걷어낸다 — 프로토콜 7절). 곱씹으며 읽고 싶은 사람을 위한 것이다. `onControl` 이 reset/speed 외
     액션을 `dispatch` 로 보내므로 (`supportedControls` 의 `'*'`) 코어 변경 없이
     통한다. algorithm 은 자동 재생을 마친 뒤 `waitForInput` 루프에서 이것을 받고,
     처음으로 돌아갈 때 `rewind` 를 발신한다.

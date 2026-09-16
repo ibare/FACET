@@ -117,11 +117,12 @@ cat $d/src/projector.ts                                     # 그 사이의 번�
 있지 않고 **화면이 어디에 상태를 숨겨 두었는지 찾는 데** 있다. 숨은 상태는 되짚기가
 어긋나던 자리이고, 장면으로 끌어올리는 순간 그 문제가 사라진다.
 
-여섯을 옮기며 세 자리에서 나왔다. **한 자리만 보면 놓친다.**
+열아홉을 옮기며 **네 자리**에서 나왔다. **한 자리만 보면 놓친다.**
 
 ```sh
-grep -nE "^    let |^  let " $d/src/projector.ts $d/src/*-stage.ts   # ① ②
-grep -nE "\.has\(|\.get\(|includes\(" $d/src/projector.ts        # ③
+grep -nE "^    let |^  let " $d/src/projector.ts $d/src/*-stage.ts        # ① ②
+grep -nE "\.has\(|\.get\(|includes\(" $d/src/projector.ts             # ③
+grep -nE "getAttribute|getBBox|getBoundingClientRect|Number\(" $d/src/*-stage.ts   # ④
 ```
 
 - **① projector 의 `let`** — `bst-degenerate` 의 `growingShown` · `results`. 논증
@@ -131,6 +132,17 @@ grep -nE "\.has\(|\.get\(|includes\(" $d/src/projector.ts        # ③
   말하게 하면 그 코드가 통째로 사라진다.
 - **③ 조회로 갈리는 암묵 분기** — `unknown-becomes-known` 의 `if (!locked.has(word))`.
   `let` 이 아니라 `Set`/`Map` 조회라 눈에 안 띈다. 그 분기가 곧 상태다.
+- **④ 화면을 도로 읽어 갈리는 분기** — `out-of-bounds` 의 `probeLabelWidth()` 가 커서
+  딱지의 `width` **속성을 되읽어** 멎을 자리를 셈했고, `through-middle-node` 는 거리표를
+  배지의 문자열로 얹어 두고 `Number(chord.label)` 로 도로 꺼내 썼다. `let` 도 `Set.has`
+  도 아니라 ①~③ 의 grep 에 걸리지 않는다. 되감아 세운 직후에는 그 값이 아직 옛
+  화면의 것이라 셈이 틀어진다.
+
+**변수가 하나도 없는 조각이 가장 위험하다.** `traverse-from-head` 는 `let` 이 전부 DOM
+핸들이었고 지나온 자취는 `rect` 의 `stroke` 칠에, 옮김 횟수는 `textContent` 에,
+커서 자리는 `transform` 에 있었다. `node-points-next` 도 "지금까지 무엇이 그려졌나" 를
+말하는 자리가 코드 어디에도 없었다. ①~③ 이 0 건이라고 "숨은 상태가 없다" 고 읽으면
+안 된다 — **화면이 통째로 상태라는 뜻이다.**
 
 찾은 것을 장면 필드로 올리면 대개 그 자리의 명령형 코드가 함께 없어진다. **줄어드는
 쪽이 그 조각의 숨은 상태였다는 신호다.**
@@ -208,26 +220,49 @@ const justAssigned = opts.animate && prev?.active?.assigned == null;
 `translate(dx*(e-1))`. 생성 시점에 그 물림을 미리 박아 두지 않으면 첫 프레임에 끝
 자리가 번쩍인다 (`space-is-part-of-it`).
 
-**`isInstant` / `onScrubStart` 를 둘지 가르는 잣대.**
+**지연 발화를 무엇으로 막나 — `isInstant` 가 아니라 세대 빗장이다.**
 
-> 운동이 **`render` 가 다시 만드는 자료를 프레임마다 제자리에서 고쳐 쓰면** 필요하다.
+> **러너는 장면 조각에서 `isInstant` 와 `onScrubStart` 를 부르지 않는다.**
 
-되짚기가 요소를 새로 세운 뒤에도 앞 운동이 살아 있으면 새 노드에 옛 값을 덮어쓰기
-때문이다. rAF 로 좌표를 흐르게 하는 조각은 대개 해당하고 (`split-and-number` ·
-`boundary-shift`), 속성만 세팅하고 CSS 전환에 맡기는 조각은 필요 없다
-(`hash-avalanche`). 판단이 서지 않으면 다는 편이 안전하다 — 달아서 해로운 경우는 없다.
+`timeline.ts` 의 `rewindTo` 는 `renderStep` 이 있으면 장면을 꺼내 그리고 **`onInstant`
+앞에서 돌아간다**. 그러니 장면 조각에서 `instantMode` 는 늘 거짓이고 `scrubCleaners`
+도 돌지 않는다. 달아 두는 것이 해롭지는 않고 (projector 조각과 코드를 나눠 쓰는 자리도
+있다) 앞 배치들이 그렇게 했지만, **그것을 빗장으로 믿으면 안 된다.** 세 조각이 그것을
+"지연 발화를 막는 유일한 장치" 라고 주석에 적어 두었는데 사실이 아니었다.
 
-```ts
-const isInstant = params.isInstant ?? ((): boolean => false);
-params.onScrubStart?.(() => {
-  for (const id of frames) cancelAnimationFrame(id);
-  frames.clear();
-  for (const id of timers) clearTimeout(id);
-  timers.clear();
-  for (const wake of [...waiters]) wake();
-  waiters.clear();
-});
-```
+실효 있는 것은 둘뿐이다.
+
+- **`opts.animate` 검사** — 되짚기는 이 길로 온다. 거짓이면 타이머도 프레임도 걸지
+  않고 곧바로 돌아온다. 이것만으로 충분한 조각이 많다.
+- **세대 빗장** — `render` 첫머리에서 `gen += 1` 하고, 걸음 함수가 `await` 뒤마다 자기
+  세대가 아직 유효한지 보아 아니면 **화면에 손대지 않고 물러난다.** `destroy` 도 `gen`
+  을 올린다.
+
+  ```ts
+  let gen = 0;
+  const alive = (mine: number): boolean => mine === gen && !destroyed;
+
+  async function render(next, _prev, opts) {
+    const mine = (gen += 1);
+    drawStatic(next);
+    if (!opts.animate) return;          // 되짚기는 여기서 끝
+    await flow(next, mine);
+  }
+  ```
+
+**세대 빗장이 언제 필요한가.** `node-points-next` 가 그 갈림을 정확히 짚었다.
+
+> 걸음이 만지는 요소를 **정적 그리기가 매번 새로 만들면** 필요 없고, **바탕이 바뀔
+> 때만 짓고 속성만 덮어쓰면** 필요하다.
+
+매번 새로 만드는 요소라면 살아남은 옛 운동이 쥔 것은 이미 떨어져 나간 노드라 무해하다.
+반대로 배치 밑감처럼 계속 쓰는 요소를 프레임마다 고치는 걸음은 stale 프레임이 **살아
+있는 화면**에 쓴다. 고정 자리에 둔 캡션·집계처럼 재건 밖에 있는 요소도 마찬가지다.
+
+운동이 `wait` 나 rAF 로 여러 마디를 이어 달리는 조각은 대개 필요하다 — 되짚기가 가운데
+끼어들면 남은 마디들이 깨어나 이미 새로 선 화면을 덮는다. 걷어내는 뒷마디가 특히
+위험하다 (`through-middle-node` 의 `fadeProbe` 는 앞 세대의 뒷마디가 `textContent = ''`
+를 돌려 **새 세대가 막 세운 점을 지웠다**).
 
 **지나간 것에서 출발하는 운동은 표식으로 되짚는다.** "합쳐지며 미끄러지는" 운동처럼
 출발 그림 전체가 있어야 그릴 수 있는 경우가 있다. `prev` 를 그대로 쓰면 "`prev` 는
@@ -272,6 +307,65 @@ const t = params.t ?? makeTranslator(params.locale);
 
   계측기(`scrub-replay`)는 이런 차이를 "화면에 뜻이 없다" 며 걷어내지만, **이행하는
   쪽에서는 걷어내면 안 된다.** 계측의 관용을 이행의 기준으로 삼지 않는다.
+
+- **속성을 하나씩 거두는 대신 운동이 끝나면 장면을 통째로 다시 세운다.** 위 함정의
+  정식 해법이다. 서로를 모르는 에이전트 셋이 독립적으로 같은 곳에 이르렀다
+  (`grow-and-copy` 의 `settle(next)` · `traverse-from-head` 의 `drawScene(next)` ·
+  `node-points-next`).
+
+  ```ts
+  await animateWhatChanged(next, mine);
+  drawStatic(next);        // 흐르며 남은 전환·opacity·임시 노드가 통째로 사라진다
+  ```
+
+  되돌릴 목록을 손으로 관리하면 반드시 하나를 빠뜨리는데, 이 길은 그 목록 자체를
+  없앤다. 보간의 끝자리(`translate(44 116.00)` 대 `translate(44 116)`)도 함께 지워진다.
+  정적 경로가 두 번 그려도 그 사이에 타이머도 프레임도 없어 깜빡이지 않는다 (아래
+  "정적 경로가 두 번 그려도" 를 보라). 다만 **세대 빗장을 대신하지는 못한다** — 정적
+  그리기가 다시 만들지 않는 요소는 여전히 stale 프레임에 노출된다.
+
+  `probeLayer` 처럼 **자식을 비워도 자신의 `opacity` 는 남는** 레이어를 조심한다.
+  레이어를 비우는 것과 레이어를 되돌리는 것은 다른 일이다.
+
+- **애니메이션의 출발값을 `prev` 에서 꺼내면 위반이다.** S-scene 은 `prev` 를 "무엇을
+  흐르게 할지 **고르는 데만**" 쓰라고 못박는다. `settleBracket(prev.usedLength, …)` 이
+  실제로 감사에 걸렸다. 출발 그림이 필요하면 `step` 에 계기값을 실어 장면이 말하게
+  한다 — `step.from` · `mark.gone` · `step.before` · `mark.was` 가 모두 그 관용구다.
+  그렇게 하면 `render` 가 `prev` 를 아예 안 쓰게 되는 조각도 많다 (`_prev`).
+
+- **`step` 이 객체면 `step === prev?.step` 은 언제나 거짓이다.** "걸음을 건너뛰어
+  왔으면 여기서 걸러진다" 는 주석을 달고 아무것도 거르지 못하는 조건이 세 조각에
+  있었다. 건너뛰기는 `opts.animate` 가 거짓으로 오므로 그것으로 거르거나, 갈래마다
+  `prev` 를 견주어 (그 칸에 그 값이 있었나) 판정한다.
+
+- **운동 둘을 나란히 돌릴 때 하나를 `void` 로 던지지 않는다.** `render` 가 돌려주는
+  Promise 는 그 장면이 다 선 뒤에 풀려야 한다 — 그것이 바깥이 걸음의 끝을 아는 유일한
+  통로다. `await Promise.all([...])` 로 묶는다.
+
+- **`-0` 과 부동소수 끝자리가 문자열을 가른다.** `translate(0px, ${-R * (1 - e)}px)` 는
+  `e === 1` 에서 `-0` 이 되고, `RETIRED_OPACITY` 를 보간했다 되돌리면 `'0.55'` 가
+  `'0.5500000000000001'` 이 된다. 끝에서는 보간값 대신 목표값·상수를 그대로 쓴다.
+
+- **`rewind` 갈래가 걸음이 고치는 바탕을 그대로 넘기지 않는다.** `through-middle-node`
+  는 걸음이 고치는 거리표(`roads`)를 `nodes`·`edges` 와 같은 급의 바탕으로 묶어
+  되감기에 넘겼다. 되감은 화면이 줄은 이미 굵고 배지는 최종 거리를 단 채로 서고, 그
+  위에 algorithm 이 새로 셈한 처음 거리가 겹쳐 **화면 안에서 두 수가 어긋났다.**
+
+  ```ts
+  // 걸음이 고치는 것은 바탕이 아니다. 선언에서 다시 셈한다.
+  type Base = Pick<Scene, 'nodes' | 'edges'>;          // roads 를 넣지 않는다
+  function atStart(base: Base): Scene {
+    return { ...base, roads: openingRoads(base.edges), … };
+  }
+  ```
+
+  **이 대목은 전수 검사로 세울 수 없다.** 세 가지 잣대를 짜 보고 셋 다 접었다 — 첫
+  장면에 곧바로 `rewind` 를 먹이면 바탕이 아직 안 고쳐져 아무것도 못 잡고, 걸어간 뒤
+  첫 장면과 견주면 되감은 뒤에도 남아야 옳은 것(`lost-link` 의 노드 명부,
+  `index-address-calc` 의 놓인 칸)까지 틀렸다고 잡으며, 두 주행을 견주는 것은 걸음이
+  절대값을 실어 오는 조각에서 `reduce` 가 멱등이라 통과해 버린다. **무엇이 걸어온
+  자취이고 무엇이 남아도 되는 바탕인지는 그 조각만 안다.** 옮길 때 눈으로 가리고,
+  rule-guard 감사에 맡긴다 (실제로 감사가 잡았다).
 
 - **정적 경로가 두 번 그려도 깜빡이지 않는다.** `rewind()` 뒤에 옛 자리로 세웠다가
   끝 자리로 옮겨도 그 사이에 타이머도 프레임도 없어 마이크로태스크만 돈다 — 페인트가
@@ -341,18 +435,34 @@ grep -l "projector: 'module:" facets/*/*/src/facet.ts | wc -l
 grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 ```
 
-2026-09-13 기준 **9 / 181**.
+2026-09-16 기준 **19 / 181**.
 
-```
-security/hash-avalanche            ai-engineering/split-and-number
-cs-fundamentals/bst-degenerate     ai-engineering/tokens-per-language
-ai-engineering/between-letter-and-word    ai-engineering/unknown-becomes-known
-ai-engineering/boundary-shift      ai-engineering/merge-the-frequent-pair
-ai-engineering/space-is-part-of-it
-```
+옮긴 배치는 셋이다. 셋 다 **흔들림 0 · 왕복어긋남 0** 으로 닫았다.
 
-`ai-engineering` 의 토큰화 여섯은 한 배치로 옮겼다 (2026-09-13). 옮기기 전 여섯 다
-되짚기가 흔들렸고, 옮긴 뒤 **흔들림 0 · 왕복어긋남 0** 이 됐다.
+| 배치 | 날짜 | 조각 |
+| --- | --- | --- |
+| 첫 셋 (성격 검증) | 2026-09-13 | `hash-avalanche` · `split-and-number` · `bst-degenerate` |
+| 토큰화 여섯 | 2026-09-13 | `ai-engineering` 의 여섯. 옮기기 전 여섯 다 되짚기가 흔들렸다 |
+| 자료 구조 · 배열 다섯 | 2026-09-16 | `index-address-calc` · `shift-on-insert` · `shift-on-remove` · `out-of-bounds` · `grow-and-copy` |
+| 자료 구조 · 연결 리스트 다섯 | 2026-09-16 | `node-points-next` · `traverse-from-head` · `relink-insert` · `lost-link` · `through-middle-node` |
+
+### 배치를 돌리는 법
+
+조각 하나에 에이전트 하나, 한 배치에 다섯. 서로를 모른 채 같은 워킹트리에서 동시에
+고친다. 조각이 서로 독립이라 파일이 겹치지 않는다.
+
+- **`git stash` 를 쓰지 않는다.** 회귀를 보려고 `git stash -u` 를 한 번 썼다가 형제
+  넷의 미커밋 작업을 통째로 치웠다 (`stash pop` 으로 복구). 옛 파일이 필요하면
+  `git show HEAD:<path>`.
+- **전수 검사는 배치 도중에 뜻이 없다.** 형제 조각이 반쯤 옮겨진 상태라
+  `stage.init is not a function` 으로 멎는다. 배치가 다 끝난 뒤 돌린다.
+- **되짚기 감사는 호스트가 일괄로 돌린다.** 에이전트마다 dev 서버를 띄우면 포트를
+  다툰다. 조각별 `tsc` 까지 에이전트가 통과시키고, `scene-audit --only <다섯>` 은
+  배치가 닫힐 때 한 번 돈다.
+- **앞 배치가 걸린 것을 다음 배치의 지시문에 싣는다.** 4 절의 함정 목록이 그대로
+  지시문이 된다. 배열 다섯에서 나온 넷(`prev` 출발값 · `void` 운동 · 죽은 `step`
+  비교 · `isInstant` 오해)을 연결 리스트 다섯의 지시문에 넣었더니 그 넷이 한 건도
+  재발하지 않았다.
 
 ### 순서에 대한 권고
 
@@ -380,6 +490,18 @@ space-is-part-of-it      20:21     ← stage 722 줄, 여섯 중 가장 큼
 여섯을 **동시에** 돌린 값이라 서로 CPU 와 타입 검사를 다툰다. 순차라면 하나당 더
 짧다. 다만 181 개를 옮길 때도 병렬로 할 것이므로 이 값이 실제에 가깝다.
 
+자료 구조 두 배치(다섯씩)도 같은 결이었다. 한 배치가 **닫히는 데 14 분 남짓** 이고
+(가장 큰 조각이 배치의 길이를 정한다) 하나당 9~14 분에 고르게 들어왔다.
+
+```
+배열 다섯          9:32 ~ 12:58    배치 12:58
+연결 리스트 다섯    9:25 ~ 14:03    배치 14:03
+```
+
+여기에 배치를 닫는 검증이 더 붙는다 — 전체 `typecheck` + `test` 로 약 3 분,
+`scene-audit --only <다섯>` 이 약 1 분, rule-guard 감사가 약 10 분. 감사는 다섯을
+옮기는 동안 함께 돌릴 수 없다 (미커밋 상태를 읽어야 한다).
+
 **줄수** — 조각의 성격에 따라 갈렸다.
 
 ```
@@ -396,6 +518,27 @@ split-and-number   945 → 1101  +156  +17%
                        아홉 평균 +131 줄 (+18%)
 ```
 
+자료 구조 두 배치는 `src/` 전체를 기준으로 쟀다 (위 아홉은 projector+stage 기준이라
+바로 견줄 수 없다).
+
+```
+배열 다섯          5123 → 6435   +1312  +26%
+연결 리스트 다섯    6241 → 7890   +1649  +26%
+                                 ─────
+                    열 조각 평균 +296 줄 (+26%)
+```
+
+늘어난 몫의 정체는 배치마다 같았다 — 걸음 함수를 버리지 않고 **정적으로 그리는 길을
+덧댄** 것, 그리고 캡션 문안 만들기가 projector 에서 stage 로 넘어온 것이다. 줄이려면
+`hash-avalanche` 처럼 걸음 함수를 장면에서 바로 그리도록 합쳐야 하는데 재작성 분량이
+커진다. 열 조각 모두 덧대는 쪽을 골랐다.
+
+다만 **줄이 늘어도 사라지는 것이 있다.** `relink-insert` 는 화살표를 하나하나 고쳐
+쓰던 코드가 통째로 없어지고, 마지막 걸음의 사슬 훑기가 손으로 적어 둔 좌표 배열 대신
+**링크를 실제로 밟아** 길을 낸다 — 조각의 주장과 그림이 같은 자료를 쓰게 됐다.
+`lost-link` 는 배치가 달라지는 네 걸음이 `layout(was) → layout(next)` 를 보간하는
+`glide` 하나로 합쳐졌다.
+
 늘어난 쪽은 걸음 함수를 그대로 두고 정적으로 그리는 길을 덧댄 몫이다. `hash-avalanche`
 처럼 걸음 함수를 장면에서 바로 그리도록 합치면 줄어들지만 재작성 분량이 커진다.
 급하지 않으면 덧대는 쪽으로 간다.
@@ -407,8 +550,13 @@ split-and-number   945 → 1101  +156  +17%
 ## 7. 이행이 끝난 뒤
 
 - `ProjectorFactory` 와 그 배선을 러너에서 걷어낸다. **`ViewMountParams.isInstant` 와
-  `onScrubStart` 는 걷어내지 않는다** — projector 시절의 보조 장치로 보이지만 scene
-  조각에서도 여전히 쓴다.
+  `onScrubStart` 는 걷어내지 않는다** — projector 조각이 남아 있는 동안 쓴다. 다만
+  **장면 조각에서는 러너가 그 둘을 부르지 않는다** (3-4 절). 그 사실을 모른 채 걷어낼
+  자리를 고르면 엉뚱한 것을 지운다.
+- `packages/authoring/src/screen-labels.generated.ts` 를 다시 만든다 (`pnpm screen:gen`).
+  띠를 단 조각은 `advance` 단추가 없는데 생성물이 아직 `⏭ 한 걸음` 을 담고 있다. 호스트
+  쪽에 없는 조작이 광고되는 셈이다. 배치마다 다시 만들면 커밋 잡음만 커지므로 이행이
+  끝난 뒤 한 번에 한다.
 - `rules/principles.md` 의 "Projector 단일 번역기" 를 장면 방식으로 다시 쓴다.
 - `S-facet` 의 6 파일 구성에서 `projector.ts` 를 `scene.ts` 로 바꾼다.
 - 스크럽 띠를 전 조각에 단다 (`CONTROL_SET.piece` → `pieceScrub`). 그때 조각
