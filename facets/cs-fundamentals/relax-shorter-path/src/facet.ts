@@ -7,7 +7,9 @@
  * @piece — 이 표식이 S-piece 의 적용 범위를 정한다.
  *
  * 조각의 규범: 제목 없음 / 메트릭 없음 / layout 없음 / 캔버스 폭 620 /
- * 컨트롤은 다시 보기와 한 걸음 둘뿐이며 눌러야 완성되는 화면이 아니다.
+ * 컨트롤은 다시 보기와 띠 둘뿐이며 눌러야 완성되는 화면이 아니다. 화면을 명령이
+ * 아니라 장면(Scene)으로 만들므로 어느 걸음으로든 곧장 갈 수 있고, 그래서 띠를
+ * 단다 (S-piece · S-scene).
  *
  * 데이터는 구조만 적는다. 화면에 뜨는 수 — 7 이 5 로, 11 이 6 으로 내려가는
  * 그 수들 — 은 하나도 여기 없다. 전부 algorithm 이 이 구조를 순회하며 셈한다.
@@ -21,7 +23,7 @@
  * 않는다. 눈금을 어디까지 그릴지는 화면을 읽는 속도를 정하는 저작 결정이라 선언에 둔다.
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const relaxShorterPathFacet: FacetJson = {
   id: 'facet:relaxShorterPath',
@@ -50,7 +52,7 @@ export const relaxShorterPathFacet: FacetJson = {
     pt: 'Quando aparece um caminho mais curto, a distância anotada é apagada e reescrita menor. Nunca volta a subir.',
   },
   algorithm: 'module:relaxShorterPath',
-  projector: 'module:relaxShorterPathProjector',
+  scene: 'module:relaxShorterPathScene',
   initialData: {
     type: 'relax-shorter-path',
     vertices: ['S', 'A', 'B', 'C'],
@@ -70,7 +72,7 @@ export const relaxShorterPathFacet: FacetJson = {
     stage: { type: 'relax-shorter-path-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {

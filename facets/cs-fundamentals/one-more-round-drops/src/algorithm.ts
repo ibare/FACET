@@ -17,25 +17,30 @@
  *     payload { nodes: string[];
  *               edges: { from: string; to: string; w: number }[];
  *               source: string;
- *               entries: { node: string; value: number | null; delta: null }[];
  *               vMax: number; vMin: number }         // 세로 눈금의 위아래 끝
- *     value 가 null 이면 아직 닿지 못한 정점(∞)이다.
+ *
+ *     처음 값(출발점만 0, 나머지 ∞)은 싣지 않는다 — `oneMoreRoundDropsOpening` 이
+ *     `nodes` 와 `source` 만으로 셈하므로 장면이 같은 함수를 부른다. 눈금의 끝은
+ *     **재생 전체를 굴려야 나오는 값**이라 장면이 셀 수 없어 여기서 싣는다. 이것이
+ *     없으면 바퀴마다 축이 따라 늘어나 "계속 내려간다" 가 보이지 않는다.
  *
  *   round-dropped
  *     target  이 바퀴에 값을 낮춘 간선들 (`edge:A-B` 배열)
- *     payload { round: number;
- *               beyond: boolean;                     // bound 를 넘긴 바퀴인가
- *               entries: { node: string; value: number | null; delta: number | null }[] }
- *     delta 는 이 바퀴에 내려간 폭. 안 움직였거나 ∞ 에서 처음 정해졌으면 null.
+ *     payload { entries: { node: string; value: number | null }[] }
+ *
+ *     몇 바퀴째인가는 싣지 않는다 — 바퀴는 올 때마다 하나씩 쌓이므로 장면이 센다.
+ *     bound 를 넘겼는가도 싣지 않는다 — `oneMoreRoundDropsBound` 가 유일한 잣대다.
+ *     낙폭(delta)도 싣지 않는다 — 앞 바퀴의 값이 장면에 남아 있어 견주면 나온다.
  *
  *   bound-marked
- *     target  없음
- *     payload { round: number; entries: { node, value, delta }[] }
- *     n−1 바퀴를 마친 자리. 여기가 바닥이어야 한다.
+ *     target/payload 없음
+ *     n−1 바퀴를 마친 자리. 여기가 바닥이어야 한다. 몇 바퀴째인지도 그 바퀴의
+ *     값들도 장면이 이미 쥐고 있다.
  *
  *   keeps-falling
- *     target  마지막 바퀴에도 다시 걸린 간선들 (= 음수 고리)
- *     payload 없음. 할 말은 target 이 다 한다.
+ *     target/payload 없음
+ *     마지막 바퀴에도 다시 걸린 간선은 **그 바퀴의 자취 그 자체**라 장면이 꺼낸다.
+ *     이 조각의 결론이 화면에 남은 자취와 같은 자료를 쓰게 하는 자리다.
  *
  *   rewind
  *     target/payload 없음. 되감아 처음 화면으로 돌린다 (advance 첫 누름).
@@ -71,11 +76,9 @@ const MAX_ROUNDS = 12;
 export type OneMoreRoundDropsEntry = {
   node: string;
   value: number | null;
-  delta: number | null;
 };
 
 type RoundSnapshot = {
-  round: number;
   entries: OneMoreRoundDropsEntry[];
   /** 이 바퀴에 값을 낮춘 간선의 target 식별자. */
   relaxed: string[];
@@ -86,7 +89,6 @@ export type OneMoreRoundDropsRun = {
   rounds: number;
   /** n−1. 여기까지면 다 정해졌어야 한다. */
   bound: number;
-  initial: OneMoreRoundDropsEntry[];
   snapshots: RoundSnapshot[];
   vMax: number;
   vMin: number;
@@ -97,31 +99,52 @@ function edgeTarget(edge: OneMoreRoundDropsEdge): string {
 }
 
 /**
+ * 다 정해졌어야 할 바퀴 수 — n−1.
+ *
+ * **이 조각에서 유일한 잣대다.** 바닥을 어디에 긋고 어느 바퀴부터 "한 번 더" 인지를
+ * 여기 하나가 정한다. 그림 쪽이 같은 식을 제 손으로 다시 적으면 정점 수가 바뀌는
+ * 날 두 답이 갈린다 (프로토콜 4 절 "자르는 잣대가 두 군데면 갈린다").
+ */
+export function oneMoreRoundDropsBound(nodes: readonly string[]): number {
+  return Math.max(1, nodes.length - 1);
+}
+
+/**
+ * 아직 한 바퀴도 돌기 전의 값 — 출발점만 0 이고 나머지는 ∞ 다.
+ *
+ * 바탕(정점 이름과 출발점)에 먹이면 나오는 순수한 값이라 발신에 싣지 않고 함수를
+ * 내준다. 떼어 내도 이 조각이 말하려는 바는 남으므로 내주어도 되는 쪽이다
+ * (프로토콜 4 절의 잣대 표 가운데 줄).
+ */
+export function oneMoreRoundDropsOpening(
+  nodes: readonly string[],
+  source: string,
+): (number | null)[] {
+  return nodes.map((node) => (node === source ? 0 : null));
+}
+
+/**
  * 바퀴마다 모든 간선을 한 번씩 완화한 결과를 미리 셈한다 (순수 함수, C8 예외).
  *
- * 화면에 뜰 수는 전부 여기서 나온다 — 눈금의 위아래 끝(vMax/vMin)까지 포함해서다.
- * 세로 자리가 곧 값이므로 눈금을 먼저 정하지 않으면 그림을 그릴 수 없고, 그 값을
- * 손으로 적으면 화면이 거짓을 말하게 된다 (S-piece).
+ * 눈금의 위아래 끝(vMax/vMin)도 여기서 나온다. 세로 자리가 곧 값이므로 눈금을 먼저
+ * 정하지 않으면 그림을 그릴 수 없고, 그 값을 손으로 적으면 화면이 거짓을 말하게
+ * 된다 (S-piece).
  */
 export function simulateOneMoreRoundDrops(data: OneMoreRoundDropsData): OneMoreRoundDropsRun {
   const nodes = data.nodes;
   const edges = data.edges;
   const rounds = Math.max(1, Math.min(MAX_ROUNDS, Math.floor(data.rounds)));
-  const bound = Math.max(1, nodes.length - 1);
+  const bound = oneMoreRoundDropsBound(nodes);
 
+  const opening = oneMoreRoundDropsOpening(nodes, data.source);
   const dist = new Map<string, number | null>();
-  for (const node of nodes) dist.set(node, node === data.source ? 0 : null);
+  nodes.forEach((node, i) => dist.set(node, opening[i]));
 
   const finite: number[] = [];
-  const initial: OneMoreRoundDropsEntry[] = nodes.map((node) => {
-    const value = dist.get(node) ?? null;
-    if (value !== null) finite.push(value);
-    return { node, value, delta: null };
-  });
+  for (const value of opening) if (value !== null) finite.push(value);
 
   const snapshots: RoundSnapshot[] = [];
-  for (let round = 1; round <= rounds; round++) {
-    const before = new Map(dist);
+  for (let i = 0; i < rounds; i++) {
     const relaxed: string[] = [];
     for (const edge of edges) {
       const from = dist.get(edge.from) ?? null;
@@ -135,18 +158,15 @@ export function simulateOneMoreRoundDrops(data: OneMoreRoundDropsData): OneMoreR
     }
     const entries: OneMoreRoundDropsEntry[] = nodes.map((node) => {
       const value = dist.get(node) ?? null;
-      const was = before.get(node) ?? null;
       if (value !== null) finite.push(value);
-      const delta = value !== null && was !== null && value !== was ? value - was : null;
-      return { node, value, delta };
+      return { node, value };
     });
-    snapshots.push({ round, entries, relaxed });
+    snapshots.push({ entries, relaxed });
   }
 
   return {
     rounds,
     bound,
-    initial,
     snapshots,
     vMax: finite.length > 0 ? Math.max(...finite) : 0,
     vMin: finite.length > 0 ? Math.min(...finite) : 0,
@@ -209,40 +229,33 @@ async function playRun(ctx: ReactiveContext<OneMoreRoundDropsData>, gate: Gate):
       nodes: data.nodes,
       edges: data.edges,
       source: data.source,
-      entries: run.initial,
       vMax: run.vMax,
       vMin: run.vMin,
     },
   });
 
-  let lastRelaxed: string[] = [];
-  for (const snapshot of run.snapshots) {
+  for (let i = 0; i < run.snapshots.length; i++) {
     if (ctx.cancelled) return;
+    const snapshot = run.snapshots[i];
 
     if (!(await gate())) return;
     await ctx.emit({
       type: 'round-dropped',
       target: snapshot.relaxed,
-      payload: {
-        round: snapshot.round,
-        beyond: snapshot.round > run.bound,
-        entries: snapshot.entries,
-      },
+      payload: { entries: snapshot.entries },
     });
-    lastRelaxed = snapshot.relaxed;
 
-    if (snapshot.round === run.bound) {
+    // 바퀴 수를 세는 자리는 여기 하나뿐이다. 발신은 그 셈을 실어 보내지 않고
+    // 장면이 쌓인 바퀴로 다시 센다.
+    if (i + 1 === run.bound) {
       if (!(await gate())) return;
-      await ctx.emit({
-        type: 'bound-marked',
-        payload: { round: run.bound, entries: snapshot.entries },
-      });
+      await ctx.emit({ type: 'bound-marked' });
     }
   }
 
   if (ctx.cancelled) return;
   if (!(await gate())) return;
-  await ctx.emit({ type: 'keeps-falling', target: lastRelaxed });
+  await ctx.emit({ type: 'keeps-falling' });
 }
 
 export const oneMoreRoundDropsAlgorithm = async (

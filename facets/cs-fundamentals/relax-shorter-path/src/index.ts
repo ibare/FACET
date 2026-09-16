@@ -9,12 +9,12 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { relaxShorterPathAlgorithm, type RelaxShorterPathData } from './algorithm.js';
-import { relaxShorterPathProjector } from './projector.js';
+import { relaxShorterPathScene } from './scene.js';
 import { relaxShorterPathIRs } from './irs.js';
 import { relaxShorterPathStageView } from './relax-shorter-path-stage.js';
 import { relaxShorterPathFacet } from './facet.js';
@@ -22,7 +22,7 @@ import { relaxShorterPathDescription } from './description.js';
 
 export { relaxShorterPathAlgorithm } from './algorithm.js';
 export type { RelaxShorterPathData, RelaxEdge } from './algorithm.js';
-export { relaxShorterPathProjector } from './projector.js';
+export { relaxShorterPathScene, type RelaxShorterPathScene } from './scene.js';
 export { relaxShorterPathIRs } from './irs.js';
 export { relaxShorterPathStageView } from './relax-shorter-path-stage.js';
 export { relaxShorterPathFacet } from './facet.js';
@@ -32,7 +32,7 @@ export function registerRelaxShorterPath(): void {
   registerAlgorithm<RelaxShorterPathData>('relaxShorterPath', relaxShorterPathAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('relaxShorterPathProjector', relaxShorterPathProjector);
+  registerScenePlan('relaxShorterPathScene', relaxShorterPathScene);
   for (const ir of relaxShorterPathIRs) registerIR(ir.id, ir);
   registerView('relax-shorter-path-stage', relaxShorterPathStageView);
   registerFacets([relaxShorterPathFacet]);

@@ -21,19 +21,31 @@
  *
  * ── 이벤트 목록 (표준은 `done` 뿐, 나머지는 이 facet 고유)
  *
- * | type      | target             | payload                                                    | silent |
- * |-----------|--------------------|------------------------------------------------------------|--------|
- * | `settle`  | `node:<v>`         | `{ vertex: string; dist: number }`                           | no |
- * | `write`   | `edge:<from>-<to>` | `{ vertex: string; from: string; weight: number; value: number }` | no |
- * | `probe`   | `edge:<from>-<to>` | `{ from: string; to: string; weight: number; candidate: number; current: number }` | no |
- * | `descend` | `node:<v>`         | `{ vertex: string; fromValue: number; toValue: number }`      | no |
- * | `keep`    | `node:<v>`         | `{ vertex: string; candidate: number; current: number }`      | no |
- * | `rewind`  | —                  | —                                                            | no |
- * | `done`    | —                  | —                                                            | no |
+ * | type      | target             | payload              | silent |
+ * |-----------|--------------------|----------------------|--------|
+ * | `settle`  | `node:<v>`         | `{ vertex: string }` | no |
+ * | `write`   | `edge:<from>-<to>` | —                    | no |
+ * | `probe`   | `edge:<from>-<to>` | —                    | no |
+ * | `descend` | `node:<v>`         | —                    | no |
+ * | `keep`    | `node:<v>`         | —                    | no |
+ * | `rewind`  | —                  | —                    | no |
+ * | `done`    | —                  | —                    | no |
  *
  * `write` 와 `probe` 가 갈리는 자리가 이 조각의 요지다. 적힌 수가 없으면 견줄
  * 것이 없으므로 `probe` 를 내지 않고 곧장 `write` 다 — 처음 적는 일과 이미 적힌
  * 수가 내려가는 일은 서로 다른 사건이며, 화면에서도 다르게 보여야 한다.
+ *
+ * ── 수를 싣지 않는 까닭
+ *
+ * 화면에 뜨는 수는 하나도 싣지 않는다. 거리표는 장면(`scene.ts`)이 쥐고 있고
+ * 후보 거리는 `dist[from] + weight` 라 장면이 셈하며, 지금 짚는 간선의 차례는
+ * **발신이 오는 순서가 이미 말한다** — 한 정점을 펴는 동안 나가는 간선을 선언된
+ * 차례대로 하나씩 짚기 때문이다. 같은 수를 여기서도 세면 화면과 출처가 둘이 되어
+ * 언젠가 갈린다.
+ *
+ * 남긴 것은 `settle` 의 `vertex` 하나다. "지금까지 적힌 수가 가장 작은 정점을
+ * 고른다" 는 **이 조각의 알고리즘 그 자체**이고, 그것을 내주면 장면이 알고리즘을
+ * 되풀이하는 꼴이 된다. 그래서 고른 결과만 싣는다.
  *
  * silent 이벤트는 없다. 일곱 모두 화면이 바뀌는 걸음이다.
  */
@@ -111,7 +123,7 @@ async function playOnce(ctx: ReactiveContext<RelaxShorterPathData>, mode: Mode):
     if (outgoing.length === 0) continue;
 
     if (!(await gate())) return false;
-    await ctx.emit({ type: 'settle', target: `node:${pick}`, payload: { vertex: pick, dist: smallest } });
+    await ctx.emit({ type: 'settle', target: `node:${pick}`, payload: { vertex: pick } });
 
     for (const edge of outgoing) {
       const candidate = smallest + edge.weight;
@@ -121,36 +133,20 @@ async function playOnce(ctx: ReactiveContext<RelaxShorterPathData>, mode: Mode):
         // 적힌 수가 없으면 견줄 것이 없다 — 비교 걸음 없이 그대로 적는다.
         written.set(edge.to, candidate);
         if (!(await gate())) return false;
-        await ctx.emit({
-          type: 'write',
-          target: `edge:${edge.from}-${edge.to}`,
-          payload: { vertex: edge.to, from: edge.from, weight: edge.weight, value: candidate },
-        });
+        await ctx.emit({ type: 'write', target: `edge:${edge.from}-${edge.to}` });
         continue;
       }
 
       if (!(await gate())) return false;
-      await ctx.emit({
-        type: 'probe',
-        target: `edge:${edge.from}-${edge.to}`,
-        payload: { from: edge.from, to: edge.to, weight: edge.weight, candidate, current },
-      });
+      await ctx.emit({ type: 'probe', target: `edge:${edge.from}-${edge.to}` });
 
       if (candidate < current) {
         written.set(edge.to, candidate);
         if (!(await gate())) return false;
-        await ctx.emit({
-          type: 'descend',
-          target: `node:${edge.to}`,
-          payload: { vertex: edge.to, fromValue: current, toValue: candidate },
-        });
+        await ctx.emit({ type: 'descend', target: `node:${edge.to}` });
       } else {
         if (!(await gate())) return false;
-        await ctx.emit({
-          type: 'keep',
-          target: `node:${edge.to}`,
-          payload: { vertex: edge.to, candidate, current },
-        });
+        await ctx.emit({ type: 'keep', target: `node:${edge.to}` });
       }
     }
   }

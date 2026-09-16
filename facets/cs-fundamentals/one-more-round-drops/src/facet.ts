@@ -40,7 +40,7 @@ export const oneMoreRoundDropsFacet: FacetJson = {
     pt: 'Se uma distância ainda cai depois da rodada n−1, o grafo tem um ciclo negativo.',
   },
   algorithm: 'module:oneMoreRoundDrops',
-  projector: 'module:oneMoreRoundDropsProjector',
+  scene: 'module:oneMoreRoundDropsScene',
   initialData: {
     type: 'one-more-round-drops',
     nodes: ['S', 'A', 'B', 'C'],
@@ -58,7 +58,7 @@ export const oneMoreRoundDropsFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'one-more-round-drops-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'label.round': {

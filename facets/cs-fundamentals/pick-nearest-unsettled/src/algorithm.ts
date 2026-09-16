@@ -14,12 +14,18 @@
  *   "어떤 항목의 상태가 바뀌었다" 라는 일반 어휘라, 굳음의 단호함(다시는 안
  *   바뀐다)이 그 이름에 담기지 않는다 (C2).
  *
- *   seed    { nodeId: string; value: number }
+ *   발신은 **판정만** 싣는다. 거리값 · 내미는 수 · 굳은 개수 · 굳은 차례는 전부
+ *   장면이 거리표와 굳은 차례 배열에서 센다 (`scene.ts`). 걸음이 실어 오면 화면과
+ *   수가 두 출처를 갖게 되고, 그 문이 열려 있는 한 언젠가 갈린다.
+ *
+ *   seed    { nodeId: string }
  *           출발점이 0 을 인다. 이때부터 그 정점은 흔들리는 후보다.
  *           target: `node:<id>`
  *
- *   harden  { nodeId: string; value: number; order: number }
- *           흔들리는 것 중 가장 작은 수를 인 정점이 굳는다. order 는 굳은 차례(1부터).
+ *   harden  { nodeId: string }
+ *           흔들리는 것 중 가장 작은 수를 인 정점이 굳는다. **어느 것을 고를
+ *           것인가**가 이 조각의 판정이라 그 이름만 싣는다. 몇 번째로 굳었나는
+ *           장면이 센다.
  *           target: `node:<id>`
  *
  *   spread  { from: string; probes: Probe[] }
@@ -33,15 +39,11 @@
  *   rewind  {}
  *           한 걸음씩 다시 볼 때 처음으로 되감는다.
  *
- *   done    { hardened: string[] }  (표준)
- *           모두 굳었다. `hardened` 는 굳은 차례다.
+ *   done    {}  (표준)
+ *           모두 굳었다. 몇이 굳었는지는 장면이 센다.
  *
  *   Probe = {
  *     to: string;                 이웃 정점
- *     weight: number;             건너가는 간선의 무게
- *     offered: number;            굳은 수 + 무게 = 내미는 수
- *     before: number | null;      이웃이 이고 있던 수. 아직 닿지 않았으면 null (∞)
- *     after: number | null;       이 걸음 뒤 이웃이 이게 될 수
  *     outcome: 'lower' | 'keep' | 'blocked';
  *              lower   더 작아서 받는다 (∞ 에 처음 닿는 것도 포함)
  *              keep    이 길로는 나아지지 않아 그대로 둔다
@@ -54,20 +56,17 @@
 
 import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
 
-/** 정점. x/y 는 0~1 로 정규화한 배치 — 픽셀 환산은 stage 가 캔버스 크기에서 한다. */
-export type PickNearestUnsettledNode = { id: string; x: number; y: number };
+/** 정점. 어디에 놓을지는 그림의 결정이라 선언에는 이름만 있다 (S-piece). */
+export type PickNearestUnsettledNode = { id: string };
 
 /** 무방향 간선. from/to 의 순서는 선언 편의일 뿐 방향이 아니다. */
 export type PickNearestUnsettledEdge = { from: string; to: string; weight: number };
 
 export type PickNearestUnsettledProbeOutcome = 'lower' | 'keep' | 'blocked';
 
+/** 한 이웃이 받은 답. 판정만 싣는다 — 수는 장면이 거리표에서 셈한다. */
 export type PickNearestUnsettledProbe = {
   to: string;
-  weight: number;
-  offered: number;
-  before: number | null;
-  after: number | null;
   outcome: PickNearestUnsettledProbeOutcome;
 };
 
@@ -146,13 +145,8 @@ export async function pickNearestUnsettledAlgorithm(
 
     if (!(await gate())) return false;
     dist.set(source, 0);
-    await ctx.emit({
-      type: 'seed',
-      target: `node:${source}`,
-      payload: { nodeId: source, value: 0 },
-    });
+    await ctx.emit({ type: 'seed', target: `node:${source}`, payload: { nodeId: source } });
 
-    let order = 0;
     for (;;) {
       // 흔들리는 것 중 가장 작은 수. 없으면 더 굳힐 것이 없다.
       let pick: string | null = null;
@@ -168,29 +162,24 @@ export async function pickNearestUnsettledAlgorithm(
 
       if (!(await gate())) return false;
       stone.add(pick);
-      order += 1;
-      await ctx.emit({
-        type: 'harden',
-        target: `node:${pick}`,
-        payload: { nodeId: pick, value: smallest, order },
-      });
+      await ctx.emit({ type: 'harden', target: `node:${pick}`, payload: { nodeId: pick } });
 
       // 굳은 자리에서 이웃 전부로 수를 내민다. 굳은 이웃도 건너뛰지 않고 훑는다 —
       // 닿아도 꿈쩍하지 않는 장면이 이 조각의 주장이라, 그것을 생략하면 주장이 사라진다.
       const probes: PickNearestUnsettledProbe[] = [];
       for (const { other, weight } of neighborsOf(pick)) {
+        if (stone.has(other)) {
+          probes.push({ to: other, outcome: 'blocked' });
+          continue;
+        }
         const offered = smallest + weight;
         const before = dist.get(other) ?? null;
-        if (stone.has(other)) {
-          probes.push({ to: other, weight, offered, before, after: before, outcome: 'blocked' });
-          continue;
-        }
         if (before === null || offered < before) {
           dist.set(other, offered);
-          probes.push({ to: other, weight, offered, before, after: offered, outcome: 'lower' });
+          probes.push({ to: other, outcome: 'lower' });
           continue;
         }
-        probes.push({ to: other, weight, offered, before, after: before, outcome: 'keep' });
+        probes.push({ to: other, outcome: 'keep' });
       }
 
       if (probes.length > 0) {
@@ -200,7 +189,7 @@ export async function pickNearestUnsettledAlgorithm(
     }
 
     if (!(await gate())) return false;
-    await ctx.emit({ type: 'done', payload: { hardened: order } });
+    await ctx.emit({ type: 'done' });
     return true;
   };
 

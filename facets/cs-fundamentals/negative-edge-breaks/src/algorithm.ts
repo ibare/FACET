@@ -8,38 +8,44 @@
  *
  * ── 발신 이벤트 (전부 facet 고유. silent 없음 — 모두 걸음 경계다)
  *
- *   settle        { node: string; dist: number }
+ * payload 에는 **걸음이 내리는 판정만** 싣는다 — 어느 정점을 굳혔는가, 어느 간선을
+ * 폈는가, 어느 길이 참 최단인가. 화면에 뜨는 **수**는 하나도 싣지 않는다. 거리표도
+ * 후보값도 누계도 전부 장면이 구조에서 셈한다 (`scene.ts`). 수를 실으면 화면의 칸과
+ * 캡션이 서로 다른 출처를 갖게 되어 언젠가 갈린다.
+ *
+ *   settle        { node: string }
  *                 target `node:<id>`. 아직 굳지 않은 것 중 가장 가까운 정점을 굳힌다.
+ *                 그 거리는 장면의 거리표가 이미 쥐고 있다.
  *
- *   relax-accept  { from: string; to: string; weight: number;
- *                   candidate: number; previous: number | null }
+ *   relax-accept  { from: string; to: string }
  *                 target `edge:<from>-<to>`. 굳지 않은 정점이 더 짧은 후보를 받는다.
- *                 previous 가 null 이면 그때까지 ∞ 였다는 뜻.
+ *                 후보값은 `거리표[from] + 무게` 라 장면이 셈한다.
  *
- *   relax-sealed  { from: string; to: string; weight: number;
- *                   candidate: number; kept: number }
+ *   relax-sealed  { from: string; to: string }
  *                 target `edge:<from>-<to>`. 후보가 더 짧은데 상대가 이미 굳어 거절한다.
  *                 이 조각이 보이려는 그 순간이다.
  *
- *   relax-kept    { from: string; to: string; weight: number;
- *                   candidate: number; kept: number }
+ *   relax-kept    { from: string; to: string }
  *                 target `edge:<from>-<to>`. 후보가 지금 값보다 낫지 않아 그대로 둔다.
  *
- *   news-blocked  { node: string; to: string; wouldBe: number; stays: number }
+ *   news-blocked  { node: string; to: string }
  *                 target `edge:<node>-<to>`. 거절당한 소식이 그 정점 밖으로 나갔다면
- *                 고쳤을 이웃과, 대신 남는 값.
+ *                 고쳤을 이웃. 얼마가 되었을지도, 대신 남는 값도 장면이 셈한다.
  *
- *   truth-trace   { path: string[]; running: number[]; total: number }
+ *   truth-trace   { path: string[] }
  *                 음수 간선을 견디는 방법(벨만-포드)으로 다시 센 참 최단 경로.
+ *                 **이것만은 싣는다** — 어느 길이 참 최단인가는 구조를 통째로 훑어야
+ *                 나오는 판정이고, 그 판정이 곧 이 조각이 견줄 잣대다. 다리마다의
+ *                 누계는 경로와 간선 무게에서 더해지므로 장면의 몫이다.
  *
- *   verdict       { goal: string; settled: number; truth: number }
- *                 굳혀 놓은 수와 참값을 나란히 놓는다.
+ *   verdict       payload 없음. 굳혀 놓은 수와 참값을 나란히 놓으라는 신호다.
+ *                 두 수는 장면의 거리표와 참 최단 경로에 이미 있다.
  *
  *   rewind        payload 없음. 자동 재생이 끝난 뒤 `advance` 를 처음 눌렀을 때
  *                 화면을 처음으로 되돌린다.
  *
- * 화면 문안은 하나도 싣지 않는다 — 캡션은 projector 가 이벤트 종류에서 정한다 (C10).
- * 화면에 뜨는 수는 전부 여기서 구조를 셈해 얻은 것이다 (S-piece).
+ * 화면 문안은 하나도 싣지 않는다 — 캡션은 장면이 종류만 말하고 문자는 stage 가
+ * `params.t` 로 만든다 (C10).
  */
 
 import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
@@ -56,12 +62,18 @@ export type NegativeEdgeBreaksData = {
   stepMs: number;
 };
 
-/** 음수 간선을 견디는 방법으로 센 참 최단 — 벨만-포드. */
+/**
+ * 음수 간선을 견디는 방법으로 센 참 최단 — 벨만-포드.
+ *
+ * 거리표가 아니라 **거슬러 올라갈 앞자리**만 돌려준다. 참 최단의 누계는 경로와
+ * 간선 무게에서 더해지므로 장면이 셈하고, 여기서 실어 보내면 같은 수를 두 자리에서
+ * 세는 꼴이 된다.
+ */
 function trueShortest(
   nodes: string[],
   edges: NegativeEdge[],
   start: string,
-): { best: Map<string, number>; prev: Map<string, string> } {
+): Map<string, string> {
   const best = new Map<string, number>();
   const prev = new Map<string, string>();
   for (const n of nodes) best.set(n, n === start ? 0 : Infinity);
@@ -79,7 +91,7 @@ function trueShortest(
     }
     if (!changed) break;
   }
-  return { best, prev };
+  return prev;
 }
 
 /** prev 를 거슬러 start → goal 경로를 편다. 못 닿으면 빈 배열. */
@@ -141,7 +153,7 @@ export const negativeEdgeBreaksAlgorithm = async (
       const base = dist.get(pick) ?? 0;
       sealed.add(pick);
       if (!(await gate())) return;
-      await rx.emit({ type: 'settle', target: `node:${pick}`, payload: { node: pick, dist: base } });
+      await rx.emit({ type: 'settle', target: `node:${pick}`, payload: { node: pick } });
 
       for (const e of edges) {
         if (e.from !== pick) continue;
@@ -155,7 +167,7 @@ export const negativeEdgeBreaksAlgorithm = async (
           await rx.emit({
             type: 'relax-sealed',
             target: `edge:${e.from}-${e.to}`,
-            payload: { from: e.from, to: e.to, weight: e.w, candidate: cand, kept: cur },
+            payload: { from: e.from, to: e.to },
           });
           // 거절당한 소식이 그 자리 밖으로 나갔다면 고쳤을 이웃을 짚는다.
           for (const out of edges) {
@@ -167,7 +179,7 @@ export const negativeEdgeBreaksAlgorithm = async (
             await rx.emit({
               type: 'news-blocked',
               target: `edge:${out.from}-${out.to}`,
-              payload: { node: out.from, to: out.to, wouldBe: would, stays },
+              payload: { node: out.from, to: out.to },
             });
           }
           continue;
@@ -179,13 +191,7 @@ export const negativeEdgeBreaksAlgorithm = async (
           await rx.emit({
             type: 'relax-accept',
             target: `edge:${e.from}-${e.to}`,
-            payload: {
-              from: e.from,
-              to: e.to,
-              weight: e.w,
-              candidate: cand,
-              previous: Number.isFinite(cur) ? cur : null,
-            },
+            payload: { from: e.from, to: e.to },
           });
         } else {
           // 이 그래프에서는 나지 않는 갈래다. 그래도 편 값이 더 나쁜 경우는
@@ -193,31 +199,20 @@ export const negativeEdgeBreaksAlgorithm = async (
           await rx.emit({
             type: 'relax-kept',
             target: `edge:${e.from}-${e.to}`,
-            payload: { from: e.from, to: e.to, weight: e.w, candidate: cand, kept: cur },
+            payload: { from: e.from, to: e.to },
           });
         }
       }
     }
 
-    const { best, prev } = trueShortest(nodes, edges, start);
-    const path = walkBack(prev, start, goal, nodes.length);
+    const path = walkBack(trueShortest(nodes, edges, start), start, goal, nodes.length);
     if (path.length > 0) {
       if (!(await gate())) return;
-      await rx.emit({
-        type: 'truth-trace',
-        payload: {
-          path,
-          running: path.map((n) => best.get(n) ?? 0),
-          total: best.get(goal) ?? 0,
-        },
-      });
+      await rx.emit({ type: 'truth-trace', payload: { path } });
     }
 
     if (!(await gate())) return;
-    await rx.emit({
-      type: 'verdict',
-      payload: { goal, settled: dist.get(goal) ?? 0, truth: best.get(goal) ?? 0 },
-    });
+    await rx.emit({ type: 'verdict' });
   };
 
   await play();
