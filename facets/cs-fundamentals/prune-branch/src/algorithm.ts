@@ -23,18 +23,23 @@
  *
  * ── 이벤트 (전부 facet 고유 확장. silent 는 하나도 없다)
  *
- * | type            | payload                                                      |
- * |-----------------|--------------------------------------------------------------|
- * | `task-set`      | `{ values: number[]; target: number }`                        |
- * | `branch-grow`   | `{ id, parentId, level, sum, value, took, opened, skipped }`   |
- * | `branch-cut`    | 위 + `{ target: number; below: number }`                       |
- * | `branch-leaf`   | 위 + `{ target: number }`  (끝까지 정했으나 합이 목표가 아님)  |
- * | `branch-answer` | 위 + `{ target: number; picked: number[] }`                    |
- * | `rewind`        | `{}`  (자동 재생을 마친 뒤 첫 `advance` 가 처음으로 되돌린다)  |
- * | `done`          | `{ opened, skipped, total, target, answer: number[] }`         |
+ * | type            | target          | payload |
+ * |-----------------|-----------------|---------|
+ * | `task-set`      | 없음            | 없음    |
+ * | `branch-grow`   | `node:r<경로>`  | 없음    |
+ * | `branch-cut`    | `node:r<경로>`  | 없음    |
+ * | `branch-leaf`   | `node:r<경로>`  | 없음    |
+ * | `branch-answer` | `node:r<경로>`  | 없음    |
+ * | `done`          | 없음            | 없음    |
+ * | `rewind`        | 없음            | 없음    |
  *
  * `branch-*` 넷은 모두 "가지가 부모에서 이 자리까지 뻗어 나와 판정을 받는다" 는
  * 한 걸음이며, 갈리는 것은 판정뿐이라 type 을 넷으로 나눈다 (C2 — type 은 리터럴).
+ *
+ * **payload 가 하나도 없다.** 층도 합도 고른 수도 연 자리 수도 안 연 자리 수도
+ * 전부 결정 경로와 바탕 자료에서 나오므로 장면이 셈한다. 실어 오면 화면의 구조와
+ * 다른 출처가 되어 언젠가 갈린다. 다만 합을 내는 규칙만은 **닫는 잣대 그 자체**라
+ * 여기서 순수 함수로 내주고 (`pathSum`) 장면이 같은 것을 부른다.
  *
  * ── 메트릭
  *
@@ -52,6 +57,31 @@ export type PruneBranchData = {
   /** 걸음 간격 (S-piece). 아래 HOLD 배수가 이 값에 곱해진다. */
   stepMs: number;
 };
+
+/**
+ * 결정 경로가 고른 수들. `'1'` 인 자리의 값만 왼쪽부터.
+ *
+ * 화면도 이것을 부른다 — 답에 무엇이 들었는지가 두 곳에 적히지 않게 (S-scene).
+ */
+export function pickedOnPath(values: readonly number[], path: string): number[] {
+  const out: number[] = [];
+  for (let i = 0; i < path.length; i += 1) {
+    if (path[i] === '1') out.push(values[i]);
+  }
+  return out;
+}
+
+/**
+ * 결정 경로까지의 합. **닫는 잣대가 보는 수**다.
+ *
+ * 걸음에 실어 보내지 않고 함수를 내준다. 싣는 순간 다음 사람이 집어 쓸 문이
+ * 열리고, 그 문이 곧 "두 자리에서 세기" 가 들어오는 길이다.
+ */
+export function pathSum(values: readonly number[], path: string): number {
+  let sum = 0;
+  for (const v of pickedOnPath(values, path)) sum += v;
+  return sum;
+}
 
 /**
  * 걸음마다 머무는 시간의 배수.
@@ -75,11 +105,6 @@ const HOLD = {
   /** 답. */
   answer: 1.4,
 } as const;
-
-/** 깊이 `n` 의 완전 이진 결정나무에서, `level` 에 선 자리 **아래**에 있는 자리 수. */
-function nodesBelow(level: number, n: number): number {
-  return 2 ** (n - level + 1) - 2;
-}
 
 export async function pruneBranch(ctx: FacetContext<PruneBranchData>): Promise<void> {
   const rc = ctx as ReactiveContext<PruneBranchData>;
@@ -113,97 +138,46 @@ export async function pruneBranch(ctx: FacetContext<PruneBranchData>): Promise<v
   }
 
   async function run(): Promise<void> {
-    let opened = 0;
-    let skipped = 0;
-    let answer: number[] = [];
     nextHold = HOLD.ghost;
 
-    await beat(
-      { type: 'task-set', payload: { values: [...values], target } },
-      HOLD.task,
-    );
+    await beat({ type: 'task-set' }, HOLD.task);
 
     /**
      * 깊이 우선으로 내려간다. `path` 의 글자 하나가 결정 하나 —
      * `'1'` 넣는다 / `'0'` 안 넣는다.
      */
-    async function walk(path: string, level: number, sum: number, picked: number[]): Promise<void> {
+    async function walk(path: string): Promise<void> {
       const id = `r${path}`;
-      const parentId = level === 0 ? '' : `r${path.slice(0, -1)}`;
-      const took = path.endsWith('1');
-      const value = level === 0 ? 0 : values[level - 1];
-      opened += 1;
+      const level = path.length;
+      const sum = pathSum(values, path);
 
       // 닫는 판정은 셈 하나다. 합이 이미 목표를 넘었으면 아래를 볼 이유가 없다.
       if (sum > target) {
-        const below = nodesBelow(level, n);
-        skipped += below;
-        await beat(
-          {
-            type: 'branch-cut',
-            target: `node:${id}`,
-            payload: { id, parentId, level, sum, value, took, target, below, opened, skipped },
-          },
-          HOLD.cut,
-        );
+        await beat({ type: 'branch-cut', target: `node:${id}` }, HOLD.cut);
         return;
       }
 
       if (level === n) {
         if (sum === target) {
-          answer = [...picked];
-          await beat(
-            {
-              type: 'branch-answer',
-              target: `node:${id}`,
-              payload: { id, parentId, level, sum, value, took, target, picked: [...picked], opened, skipped },
-            },
-            HOLD.answer,
-          );
+          await beat({ type: 'branch-answer', target: `node:${id}` }, HOLD.answer);
         } else {
-          await beat(
-            {
-              type: 'branch-leaf',
-              target: `node:${id}`,
-              payload: { id, parentId, level, sum, value, took, target, opened, skipped },
-            },
-            HOLD.leaf,
-          );
+          await beat({ type: 'branch-leaf', target: `node:${id}` }, HOLD.leaf);
         }
         return;
       }
 
       await beat(
-        {
-          type: 'branch-grow',
-          target: `node:${id}`,
-          payload: { id, parentId, level, sum, value, took, opened, skipped },
-        },
+        { type: 'branch-grow', target: `node:${id}` },
         level === 0 ? HOLD.root : HOLD.step,
       );
 
-      const v = values[level];
-      picked.push(v);
-      await walk(`${path}1`, level + 1, sum + v, picked);
-      picked.pop();
-      await walk(`${path}0`, level + 1, sum, picked);
+      await walk(`${path}1`);
+      await walk(`${path}0`);
     }
 
-    await walk('', 0, 0, []);
+    await walk('');
 
-    await beat(
-      {
-        type: 'done',
-        payload: {
-          opened,
-          skipped,
-          total: 2 ** (n + 1) - 1,
-          target,
-          answer,
-        },
-      },
-      HOLD.task,
-    );
+    await beat({ type: 'done' }, HOLD.task);
   }
 
   try {

@@ -6,9 +6,12 @@
  * 그 아래는 볼 것이 없다. 최고가 일찍 높아질수록 더 많이 잘린다.
  *
  * 조각이므로 header · metrics · code-view · layout 을 두지 않는다 (S-piece).
+ *
+ * 화면은 걸음마다의 **장면**에서 만들어진다 (`scene.ts`). 그래서 재생 자리를 끄는
+ * 띠를 달아도 어느 걸음으로 끌든 같은 그림이 선다 (S-scene).
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const boundAndCutFacet: FacetJson = {
   id: 'facet:boundAndCut',
@@ -37,7 +40,7 @@ export const boundAndCutFacet: FacetJson = {
     pt: 'Um ramo cujo melhor resultado possível não supera o melhor atual é podado antes de ser explorado.',
   },
   algorithm: 'module:boundAndCut',
-  projector: 'module:boundAndCutProjector',
+  scene: 'module:boundAndCutScene',
   initialData: {
     type: 'bound-and-cut',
     capacity: 5,
@@ -52,7 +55,7 @@ export const boundAndCutFacet: FacetJson = {
     stage: { type: 'bound-and-cut-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {

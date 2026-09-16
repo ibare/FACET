@@ -10,7 +10,7 @@
  * 셀 것은 패널에 걸지 않는다 — 놓기와 물리기의 수는 마지막 캡션이 말한다.
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const tryAndUndoFacet: FacetJson = {
   id: 'facet:tryAndUndo',
@@ -40,7 +40,7 @@ export const tryAndUndoFacet: FacetJson = {
     pt: 'Porque desfazer uma jogada faz parte do procedimento, e não é limpeza depois do falhanço.',
   },
   algorithm: 'module:tryAndUndo',
-  projector: 'module:tryAndUndoProjector',
+  scene: 'module:tryAndUndoScene',
 
   initialData: {
     type: 'try-and-undo',
@@ -53,7 +53,7 @@ export const tryAndUndoFacet: FacetJson = {
 
   blocks: {
     stage: { type: 'try-and-undo-stage' },
-    controls: { type: 'control-bar', controls: [CONTROL.replay, CONTROL.advance] },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
 
   messages: {

@@ -14,7 +14,7 @@
  * 열린 자리·안 연 자리의 수는 나무 구조에서 셈해 stage 가 그린다.
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const pruneBranchFacet: FacetJson = {
   id: 'facet:pruneBranch',
@@ -43,7 +43,7 @@ export const pruneBranchFacet: FacetJson = {
     pt: 'Por que pular uma subárvore inteira não perde nenhuma resposta.',
   },
   algorithm: 'module:pruneBranch',
-  projector: 'module:pruneBranchProjector',
+  scene: 'module:pruneBranchScene',
 
   initialData: {
     type: 'prune-branch',
@@ -57,7 +57,7 @@ export const pruneBranchFacet: FacetJson = {
 
   blocks: {
     stage: { type: 'prune-branch-stage' },
-    controls: { type: 'control-bar', controls: [CONTROL.replay, CONTROL.advance] },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
 
   messages: {
