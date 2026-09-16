@@ -1,6 +1,10 @@
 /**
  * height-balance-check — FacetJson 선언. 로직 없음, 선언만 (S-facet).
  *
+ * 화면은 **장면**에서 만들어진다 (`scene.ts`) — projector 가 stage 메서드를 부르는
+ * 대신, 이벤트가 장면이 되고 `render` 가 그 장면의 화면을 통째로 세운다. 그래서 띠를
+ * 끌어 어느 걸음으로 가도 같은 화면이 선다 (S-scene).
+ *
  * @piece
  */
 
@@ -34,7 +38,7 @@ export const heightBalanceCheckFacet: FacetJson = {
     pt: 'O fator de equilíbrio não se lê de cima: ele sobe a partir das folhas.',
   },
   algorithm: 'module:heightBalanceCheck',
-  projector: 'module:heightBalanceCheckProjector',
+  scene: 'module:heightBalanceCheckScene',
   initialData: {
     type: 'height-balance-check',
     stepMs: 680,
@@ -57,7 +61,7 @@ export const heightBalanceCheckFacet: FacetJson = {
     stage: { type: 'height-balance-check-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

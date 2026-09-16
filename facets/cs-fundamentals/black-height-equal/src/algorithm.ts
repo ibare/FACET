@@ -11,13 +11,13 @@
  *
  * 이벤트 (전부 화면이 바뀌는 step boundary — silent 없음)
  *   walk-step     { id, kind: 'node' | 'nil', color: 'red' | 'black',
- *                   counted: boolean, runningCount: number, pathIndex: number }
+ *                   counted: boolean }
  *                 커서가 한 자리 내려간다. counted 는 이 자리가 검어서(또는
  *                 nil 이라서) 셈에 들어갔는지. nil 은 항상 counted:true.
- *   path-settled  { pathIndex, blackCount, nilId }
+ *   path-settled  payload 없음. target 이 그 nil 을 가리킨다.
  *                 경로 하나를 다 내려갔다. 그 경로의 검은 수를 nilId 곁에
  *                 남기고 커서가 뿌리로 돌아간다.
- *   all-settled   { blackCount }
+ *   all-settled   payload 없음. 검은 수는 화면이 길에서 센다.
  *                 네 경로를 다 돌았다. 남은 수가 전부 같다는 것을 강조한다.
  *   rewind        {}
  *                 자동 재생이 끝난 뒤 처음 누르는 advance 가 처음으로 되감는다.
@@ -96,57 +96,37 @@ function buildPaths(root: RBNode): WalkPath[] {
 type StepAction = () => Promise<void>;
 
 /**
- * 경로마다 걸음을 실제 ctx.emit 호출로 편다. counted / runningCount 는 이
- * 걸음에서 계산한 값이지 미리 적어 둔 표가 아니다 — 세는 것이 이 조각의
- * 동사다.
+ * 경로마다 걸음을 실제 ctx.emit 호출로 편다.
+ *
+ * **검은 수를 여기서 세지 않는다.** 화면이 자기가 쥔 길(`trail`)에서 세므로
+ * (`scene.ts` 의 `countBlack`) 여기서도 세면 셈이 둘이 되고, 갈리는 날 배지의 수와
+ * 캡션의 수가 화면 안에서 다툰다. 걸음이 말하는 것은 "어느 자리를 밟았고 그것이
+ * 세는 자리인가" 하나다.
  */
 function buildActions(ctx: ReactiveContext<BlackHeightEqualData>, paths: WalkPath[]): StepAction[] {
   const actions: StepAction[] = [];
-  let lastBlackCount = 0;
 
   for (const path of paths) {
-    // 셈은 여기서, 길을 실제로 밟으며 한다. 걸음 함수 안에서 세면 그 변수가
-    // 클로저에 남아 되짚기 두 바퀴째에 첫 바퀴 끝값에서 이어진다 — 화면에
-    // "지금까지 4" 같은 거짓이 뜬다 (S-piece: 화면이 거짓을 말하지 않게).
-    let runningCount = 0;
-
     for (const step of path.steps) {
       const counted = step.kind === 'nil' || step.color === 'black';
-      if (counted) runningCount += 1;
-      const at = runningCount; // 이 걸음 시점의 값으로 굳힌다.
-      const color = step.kind === 'nil' ? ('black' as const) : step.color;
       const target = step.kind === 'nil' ? `nil:${step.id}` : `node:${step.id}`;
 
       actions.push(async () => {
         await ctx.emit({
           type: 'walk-step',
           target,
-          payload: {
-            id: step.id,
-            kind: step.kind,
-            color,
-            counted,
-            runningCount: at,
-            pathIndex: path.pathIndex,
-          },
+          payload: { id: step.id, kind: step.kind, counted },
         });
       });
     }
 
-    const blackCount = runningCount;
-    lastBlackCount = blackCount;
     actions.push(async () => {
-      await ctx.emit({
-        type: 'path-settled',
-        target: `nil:${path.nilId}`,
-        payload: { pathIndex: path.pathIndex, blackCount, nilId: path.nilId },
-      });
+      await ctx.emit({ type: 'path-settled', target: `nil:${path.nilId}` });
     });
   }
 
-  const finalBlackCount = lastBlackCount;
   actions.push(async () => {
-    await ctx.emit({ type: 'all-settled', payload: { blackCount: finalBlackCount } });
+    await ctx.emit({ type: 'all-settled' });
   });
 
   return actions;

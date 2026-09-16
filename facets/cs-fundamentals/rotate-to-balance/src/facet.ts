@@ -40,7 +40,7 @@ export const rotateToBalanceFacet: FacetJson = {
     pt: 'Uma única rotação endireita uma árvore inclinada.',
   },
   algorithm: 'module:rotateToBalance',
-  projector: 'module:rotateToBalanceProjector',
+  scene: 'module:rotateToBalanceScene',
   initialData: {
     type: 'rotateToBalance',
     stepMs: 760,
@@ -57,12 +57,12 @@ export const rotateToBalanceFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'rotate-to-balance-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.imbalance': {
       en: 'Node {value} has balance factor {balance} — outside the [-1, 1] range.',
-      ko: '노드 {value}의 균형 인수가 {balance}로 [-1, 1] 범위를 벗어났습니다.',
+      ko: '노드 {value} 의 균형 인수 {balance} — [-1, 1] 범위를 벗어났다.',
       ja: 'ノード {value} の均衡係数が {balance} で、[-1, 1] の範囲を外れた。',
       zh: '节点 {value} 的平衡因子为 {balance} — 超出 [-1, 1] 范围。',
       ar: 'العقدة {value} معامل توازنها {balance} — خارج المدى [-1, 1].',
@@ -98,7 +98,7 @@ export const rotateToBalanceFacet: FacetJson = {
     },
     'caption.rotating': {
       en: '{newRootValue} rises to the top, {pivotValue} settles below it, and {movedValue} changes parent.',
-      ko: '{newRootValue}가 위로 올라가고 {pivotValue}는 그 아래로 내려가며, {movedValue}는 부모를 바꿉니다.',
+      ko: '위로 올라가는 것은 {newRootValue}, 그 아래로 내려가는 것은 {pivotValue}, 부모를 바꾸는 것은 {movedValue}.',
       ja: '{newRootValue} が上に上がり、{pivotValue} はその下に収まり、{movedValue} は親を変える。',
       zh: '{newRootValue} 升到上面，{pivotValue} 落到它下面，{movedValue} 换了父节点。',
       ar: 'يصعد {newRootValue} إلى الأعلى، ويستقر {pivotValue} تحته، ويغيّر {movedValue} أباه.',
@@ -110,7 +110,7 @@ export const rotateToBalanceFacet: FacetJson = {
     },
     'caption.rotatingSimple': {
       en: '{newRootValue} rises to the top and {pivotValue} settles below it.',
-      ko: '{newRootValue}가 위로 올라가고 {pivotValue}는 그 아래로 내려갑니다.',
+      ko: '위로 올라가는 것은 {newRootValue}, 그 아래로 내려가는 것은 {pivotValue}.',
       ja: '{newRootValue} が上に上がり、{pivotValue} はその下に収まる。',
       zh: '{newRootValue} 升到上面，{pivotValue} 落到它下面。',
       ar: 'يصعد {newRootValue} إلى الأعلى ويستقر {pivotValue} تحته.',
@@ -134,7 +134,7 @@ export const rotateToBalanceFacet: FacetJson = {
     },
     'caption.done': {
       en: 'Height drops from {before} to {after}; in-order sequence stays {order}.',
-      ko: '높이가 {before}에서 {after}로 줄고, 중위 순회 순서는 {order} 그대로입니다.',
+      ko: '높이가 줄었다 — {before} 에서 {after}. 중위 순회 순서는 그대로 {order}.',
       ja: '高さは {before} から {after} に減り、中順の並びは {order} のままだ。',
       zh: '高度从 {before} 降到 {after}；中序序列仍是 {order}。',
       ar: 'ينخفض الارتفاع من {before} إلى {after}، ويبقى الترتيب الوسطي {order} كما هو.',

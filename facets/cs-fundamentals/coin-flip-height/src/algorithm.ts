@@ -14,10 +14,10 @@
  *
  * ── 이벤트 (넷 다 화면이 바뀌므로 silent 없음)
  *   stack         { index: number; value: number; flips: ('H'|'T')[];
- *                   heads: number; height: number }
- *                 heads 는 층으로 이어진 앞면 수 (= height - 1). 상한에 걸려
+ *                   }
+ *                 높이와 앞면 수는 싣지 않는다 — 화면이 flips 에서 센다. 상한에 걸려
  *                 쓰이지 못한 앞면은 세지 않는다.
- *   level-counts  { counts: number[] }   층 0..꼭대기의 노드 수
+ *   level-counts  payload 없음. 층별 노드 수는 화면이 기둥에서 센다.
  *   done          {}
  *   rewind        {}                     되감아 처음부터 다시 짚는다
  *
@@ -45,48 +45,27 @@ export type CoinFlipHeightData = {
 };
 
 /** 한 값이 차지하는 기둥. */
-type Row = { index: number; value: number; flips: CoinFace[]; height: number };
+type Row = { index: number; value: number; flips: CoinFace[] };
 
 const DEFAULT_STEP_MS = 600;
-const DEFAULT_MAX_LEVELS = 4;
 
-/** 앞면이 이어지는 동안 한 층씩 올린다. 뒷면이 나오면 거기서 멈춘다. */
-function heightOf(flips: readonly CoinFace[], maxLevels: number): number {
-  let height = 1;
-  for (const face of flips) {
-    if (face !== 'H' || height >= maxLevels) break;
-    height += 1;
-  }
-  return height;
-}
-
-/** 층 L 에 놓이는 것은 높이가 L 보다 큰 값이다. */
-function levelCounts(rows: readonly Row[]): number[] {
-  let top = 1;
-  for (const row of rows) if (row.height > top) top = row.height;
-  const counts: number[] = [];
-  for (let level = 0; level < top; level += 1) {
-    let n = 0;
-    for (const row of rows) if (row.height > level) n += 1;
-    counts.push(n);
-  }
-  return counts;
-}
-
+/**
+ * 값마다 던진 자취를 추린다.
+ *
+ * **높이를 세지 않는다.** 화면이 `flips` 에서 세고 (`scene.ts` 의 `heightOf`) 상한도
+ * 거기서 한 번만 자른다. 여기서 또 세면 상한이 두 자리에서 다르게 읽혀, 선언이
+ * 상한을 넘는 날 층 옆의 수와 그려진 블록 수가 갈린다.
+ */
 function readRows(data: CoinFlipHeightData): Row[] {
   const values = Array.isArray(data.values) ? data.values : [];
   const flips = Array.isArray(data.flips) ? data.flips : [];
-  const maxLevels =
-    typeof data.maxLevels === 'number' && data.maxLevels >= 1
-      ? data.maxLevels
-      : DEFAULT_MAX_LEVELS;
 
   return values.map((value, index) => {
     const raw: unknown = flips[index];
     const faces: CoinFace[] = Array.isArray(raw)
       ? (raw as unknown[]).filter((f): f is CoinFace => f === 'H' || f === 'T')
       : [];
-    return { index, value, flips: faces, height: heightOf(faces, maxLevels) };
+    return { index, value, flips: faces };
   });
 }
 
@@ -95,7 +74,6 @@ export async function coinFlipHeight(ctx: FacetContext<CoinFlipHeightData>): Pro
   const rows = readRows(rc.data);
   if (rows.length === 0) return;
 
-  const counts = levelCounts(rows);
   const stepMs = typeof rc.data.stepMs === 'number' ? rc.data.stepMs : DEFAULT_STEP_MS;
 
   /** 걸음 사이의 문. 열리면 true, 취소됐으면 false. */
@@ -128,6 +106,9 @@ export async function coinFlipHeight(ctx: FacetContext<CoinFlipHeightData>): Pro
   const play = async (gate: Gate): Promise<boolean> => {
     for (const row of rows) {
       if (row.index > 0 && !(await gate())) return false;
+      // 높이도 앞면 수도 싣지 않는다. 화면이 던진 자취에서 세므로 (`scene.ts` 의
+      // `heightOf`) 여기서도 세면 셈이 둘이 되고, 갈리는 날 층 옆의 수와 그려진
+      // 블록 수가 화면 안에서 다툰다.
       await rc.emit({
         type: 'stack',
         target: `index:${row.index}`,
@@ -135,15 +116,14 @@ export async function coinFlipHeight(ctx: FacetContext<CoinFlipHeightData>): Pro
           index: row.index,
           value: row.value,
           flips: row.flips,
-          heads: row.height - 1,
-          height: row.height,
         },
       });
       if (rc.cancelled) return false;
     }
 
     if (!(await gate())) return false;
-    await rc.emit({ type: 'level-counts', payload: { counts } });
+    // 층별 셈도 싣지 않는다 — 화면이 기둥에서 센다.
+    await rc.emit({ type: 'level-counts' });
     if (rc.cancelled) return false;
 
     if (!(await gate())) return false;
