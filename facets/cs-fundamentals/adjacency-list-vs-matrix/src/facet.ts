@@ -9,16 +9,18 @@
  * "A 의 이웃을 모두 대라" 는 리스트가 싸다(2번 vs 5번). 어느 하나가 나은 게
  * 아니라 무엇을 자주 묻느냐가 고른다.
  *
- * 조각의 규범: 필수 조작 없음(다시 보기 + 한 걸음) / 제목 없음 / 메트릭 없음 /
+ * 조각의 규범: 필수 조작 없음(다시 보기 + 띠) / 제목 없음 / 메트릭 없음 /
  * 캔버스 폭 620.
  *
  * 데이터는 호스트가 확정한 실측값이다 — 정점 A~E, 간선 A-B·A-C·B-D·C-D·D-E.
- * 걸음이 실제로 세는 값(목록 길이 2·2·2·3·1, 물음 비용 2/1 과 2/5)은 전부
- * algorithm 이 이 데이터를 순회해 낸다.
+ * 목록 길이 2·2·2·3·1 은 algorithm 이 이 데이터를 순회해 낸 인접 리스트에서
+ * 나오고, 물음 비용 2/1 과 2/5 는 **화면에 남은 짚음의 표식을 장면이 센 것**이다
+ * (`scene.ts` 의 `costOf`). 발신은 어느 칸을 짚는지만 말하고 수를 싣지 않는다 —
+ * 조각의 결론이 그림과 다른 출처를 갖지 않게 한다.
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 
 export const adjacencyListVsMatrixFacet: FacetJson = {
   id: 'facet:adjacencyListVsMatrix',
@@ -47,7 +49,7 @@ export const adjacencyListVsMatrixFacet: FacetJson = {
     pt: 'As mesmas arestas caem numa lista que cresce e numa tabela já reservada',
   },
   algorithm: 'module:adjacencyListVsMatrix',
-  projector: 'module:adjacencyListVsMatrixProjector',
+  scene: 'module:adjacencyListVsMatrixScene',
   initialData: {
     type: 'adjacency-list-vs-matrix',
     vertices: ['A', 'B', 'C', 'D', 'E'],
@@ -164,7 +166,7 @@ export const adjacencyListVsMatrixFacet: FacetJson = {
     stage: { type: 'adjacency-list-vs-matrix-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };
