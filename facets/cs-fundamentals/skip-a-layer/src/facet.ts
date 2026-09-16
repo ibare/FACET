@@ -34,7 +34,7 @@ export const skipALayerFacet: FacetJson = {
     pt: 'Salte longe nos níveis altos; se passar do ponto, desça um nível e refine.',
   },
   algorithm: 'module:skipALayer',
-  projector: 'module:skipALayerProjector',
+  scene: 'module:skipALayerScene',
   initialData: {
     type: 'skip-a-layer',
     values: [3, 7, 12, 19, 25, 31, 38, 44, 50, 57, 63, 70],
@@ -44,7 +44,7 @@ export const skipALayerFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'skip-a-layer-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.start': {

@@ -8,27 +8,31 @@
  *
  * ── 이벤트 어휘 (C2) — 전부 리터럴로 emit, silent 없음 (전부 화면 변화 동반)
  *
- *   prefix-word-begin  { word: string; wordIndex: number }
+ * payload 는 **장면이 읽는 것만** 싣는다. 낱말 이름·깊이·탄 자리 수·총 자리 수는
+ * 한때 여기 실려 있었으나 장면이 자기 트라이에서 셈하므로 걷어냈다 — 같은 수를 두
+ * 자리에서 내보내면 언젠가 갈린다 (`scene.ts` 의 `tallyWord` · `tallySeats`).
+ * 낱말 이름도 마찬가지로 `wordIndex` 로 `initialData.words` 에서 찾는다.
+ *
+ *   prefix-word-begin  { wordIndex: number }
  *     새 낱말을 넣기 시작. 커서를 뿌리로 되돌리고 낱말 칩을 활성화.
  *
  *   prefix-ride         target: 'tree:<nodeId>'
- *                        { nodeId: string; parentId: string; char: string; word: string; wordIndex: number }
+ *                        { nodeId: string; wordIndex: number }
  *     이미 난 자리를 그대로 탄다 — 새 자리를 만들지 않는다.
  *
  *   prefix-grow          target: 'tree:<nodeId>'
- *                        { nodeId: string; parentId: string; char: string; depth: number; word: string; wordIndex: number }
- *     글자가 갈라져 새 자리가 돋는다.
+ *                        { nodeId: string; parentId: string; char: string; wordIndex: number }
+ *     글자가 갈라져 새 자리가 돋는다. 깊이는 싣지 않는다 — 부모에서 셈해진다.
  *
  *   prefix-mark           target: 'tree:<nodeId>'
- *                        { nodeId: string; word: string; wordIndex: number }
+ *                        { nodeId: string; wordIndex: number }
  *     그 자리에서 낱말이 끝난다는 표시.
  *
- *   prefix-word-end     { word: string; wordIndex: number; rode: number; grown: number }
- *     한 낱말을 다 넣었다 — 이번 낱말이 탄 자리 수 / 새로 낸 자리 수.
+ *   prefix-word-end     { wordIndex: number }
+ *     한 낱말을 다 넣었다. 탄 자리 수와 새 자리 수는 장면이 센다.
  *
- *   prefix-summary      { wordCount: number; totalSeats: number; rawChars: number; saved: number }
- *     넷을 다 넣은 뒤의 총결산 — 뿌리를 포함한 총 자리 수, 낱말 글자를 따로
- *     담았다면 들었을 자리 수, 아낀 자리 수.
+ *   prefix-summary      payload 없음
+ *     넷을 다 넣었다. 총 자리 수 · 따로 담았을 글자 수 · 아낀 수는 장면이 센다.
  *
  *   rewind              payload 없음
  *     `advance` 를 처음 누른 순간 화면을 뿌리만 남은 처음 상태로 되돌린다
@@ -43,39 +47,33 @@ export type SharePrefixPathData = {
   stepMs: number;
 };
 
+/** 트라이를 실제로 짓는 데 필요한 것만 남는다. 깊이·부모·글자는 걸음이 안 싣는다. */
 type TrieNode = {
   id: string;
-  parentId: string | null;
-  char: string;
-  depth: number;
   children: Map<string, string>;
   isWord: boolean;
 };
 
 type StepFact =
-  | { kind: 'wordBegin'; word: string; wordIndex: number }
-  | { kind: 'ride'; nodeId: string; parentId: string; char: string; word: string; wordIndex: number }
-  | { kind: 'grow'; nodeId: string; parentId: string; char: string; depth: number; word: string; wordIndex: number }
-  | { kind: 'mark'; nodeId: string; word: string; wordIndex: number }
-  | { kind: 'wordEnd'; word: string; wordIndex: number; rode: number; grown: number }
-  | { kind: 'summary'; wordCount: number; totalSeats: number; rawChars: number; saved: number };
+  | { kind: 'wordBegin'; wordIndex: number }
+  | { kind: 'ride'; nodeId: string; wordIndex: number }
+  | { kind: 'grow'; nodeId: string; parentId: string; char: string; wordIndex: number }
+  | { kind: 'mark'; nodeId: string; wordIndex: number }
+  | { kind: 'wordEnd'; wordIndex: number }
+  | { kind: 'summary' };
 
 /** ctx.data.words 를 실제로 순회하며 트라이를 짓고, 그 결과를 걸음 사실로 모은다. */
 function buildFacts(words: string[]): StepFact[] {
   const nodes = new Map<string, TrieNode>();
-  nodes.set('', { id: '', parentId: null, char: '', depth: 0, children: new Map(), isWord: false });
+  nodes.set('', { id: '', children: new Map(), isWord: false });
 
   const facts: StepFact[] = [];
-  let rawChars = 0;
 
   words.forEach((word, wordIndex) => {
-    rawChars += word.length;
-    facts.push({ kind: 'wordBegin', word, wordIndex });
+    facts.push({ kind: 'wordBegin', wordIndex });
 
     let cur = nodes.get('');
     if (!cur) return;
-    let rode = 0;
-    let grown = 0;
 
     for (let i = 0; i < word.length; i++) {
       const ch = word[i];
@@ -83,43 +81,28 @@ function buildFacts(words: string[]): StepFact[] {
       const existingId = cur.children.get(ch);
 
       if (existingId !== undefined) {
-        facts.push({ kind: 'ride', nodeId: existingId, parentId: cur.id, char: ch, word, wordIndex });
-        rode += 1;
+        facts.push({ kind: 'ride', nodeId: existingId, wordIndex });
         const next = nodes.get(existingId);
         if (!next) break;
         cur = next;
         continue;
       }
 
-      const node: TrieNode = {
-        id: prefix,
-        parentId: cur.id,
-        char: ch,
-        depth: cur.depth + 1,
-        children: new Map(),
-        isWord: false,
-      };
+      const node: TrieNode = { id: prefix, children: new Map(), isWord: false };
       nodes.set(prefix, node);
       cur.children.set(ch, prefix);
-      facts.push({ kind: 'grow', nodeId: prefix, parentId: cur.id, char: ch, depth: node.depth, word, wordIndex });
-      grown += 1;
+      facts.push({ kind: 'grow', nodeId: prefix, parentId: cur.id, char: ch, wordIndex });
       cur = node;
     }
 
     if (!cur.isWord) {
       cur.isWord = true;
-      facts.push({ kind: 'mark', nodeId: cur.id, word, wordIndex });
+      facts.push({ kind: 'mark', nodeId: cur.id, wordIndex });
     }
-    facts.push({ kind: 'wordEnd', word, wordIndex, rode, grown });
+    facts.push({ kind: 'wordEnd', wordIndex });
   });
 
-  facts.push({
-    kind: 'summary',
-    wordCount: words.length,
-    totalSeats: nodes.size,
-    rawChars,
-    saved: rawChars - nodes.size,
-  });
+  facts.push({ kind: 'summary' });
 
   return facts;
 }
@@ -134,22 +117,13 @@ async function pause(ctx: ReactiveContext<SharePrefixPathData>, ms: number): Pro
 async function emitFact(ctx: ReactiveContext<SharePrefixPathData>, fact: StepFact): Promise<void> {
   switch (fact.kind) {
     case 'wordBegin':
-      await ctx.emit({
-        type: 'prefix-word-begin',
-        payload: { word: fact.word, wordIndex: fact.wordIndex },
-      });
+      await ctx.emit({ type: 'prefix-word-begin', payload: { wordIndex: fact.wordIndex } });
       return;
     case 'ride':
       await ctx.emit({
         type: 'prefix-ride',
         target: `tree:${fact.nodeId}`,
-        payload: {
-          nodeId: fact.nodeId,
-          parentId: fact.parentId,
-          char: fact.char,
-          word: fact.word,
-          wordIndex: fact.wordIndex,
-        },
+        payload: { nodeId: fact.nodeId, wordIndex: fact.wordIndex },
       });
       return;
     case 'grow':
@@ -160,8 +134,6 @@ async function emitFact(ctx: ReactiveContext<SharePrefixPathData>, fact: StepFac
           nodeId: fact.nodeId,
           parentId: fact.parentId,
           char: fact.char,
-          depth: fact.depth,
-          word: fact.word,
           wordIndex: fact.wordIndex,
         },
       });
@@ -170,25 +142,14 @@ async function emitFact(ctx: ReactiveContext<SharePrefixPathData>, fact: StepFac
       await ctx.emit({
         type: 'prefix-mark',
         target: `tree:${fact.nodeId}`,
-        payload: { nodeId: fact.nodeId, word: fact.word, wordIndex: fact.wordIndex },
+        payload: { nodeId: fact.nodeId, wordIndex: fact.wordIndex },
       });
       return;
     case 'wordEnd':
-      await ctx.emit({
-        type: 'prefix-word-end',
-        payload: { word: fact.word, wordIndex: fact.wordIndex, rode: fact.rode, grown: fact.grown },
-      });
+      await ctx.emit({ type: 'prefix-word-end', payload: { wordIndex: fact.wordIndex } });
       return;
     case 'summary':
-      await ctx.emit({
-        type: 'prefix-summary',
-        payload: {
-          wordCount: fact.wordCount,
-          totalSeats: fact.totalSeats,
-          rawChars: fact.rawChars,
-          saved: fact.saved,
-        },
-      });
+      await ctx.emit({ type: 'prefix-summary', payload: {} });
       return;
   }
 }

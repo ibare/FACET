@@ -6,8 +6,11 @@
  *
  * @piece — 이 표식이 S-piece 의 적용 범위를 정한다.
  *
- * 조각의 규범: 필수 조작 없음(다시 보기 하나 + 한 걸음씩 짚기 하나) / 제목
+ * 조각의 규범: 필수 조작 없음(다시 보기 하나 + 재생 자리를 끄는 띠 하나) / 제목
  * 없음 / 한 주장 / 메트릭 없음 / 캔버스 폭 620 / 전제를 글에서 밝힌다.
+ *
+ * 화면은 걸음마다의 장면에서 만들어진다 (`scene.ts`) — 어느 걸음으로 끌어도 같은
+ * 그림이 서므로 띠(`pieceScrub`)를 단다 (S-scene · S-piece).
  *
  * words 는 실측 순서 그대로다 — car → cart → cat → dog. 결과 자리 수(뿌리 포함
  * 아홉), 따로 담았을 때의 글자 수(3+4+3+3=13), 아낀 수(4)는 전부 algorithm 이
@@ -44,7 +47,7 @@ export const sharePrefixPathFacet: FacetJson = {
     pt: 'Palavras que começam igual seguem o mesmo caminho até as letras se separarem',
   },
   algorithm: 'module:sharePrefixPath',
-  projector: 'module:sharePrefixPathProjector',
+  scene: 'module:sharePrefixPathScene',
   initialData: {
     type: 'share-prefix-path',
     words: ['car', 'cart', 'cat', 'dog'],
@@ -54,7 +57,7 @@ export const sharePrefixPathFacet: FacetJson = {
   messages: {
     'caption.begin': {
       en: "Inserting '{word}'.",
-      ko: "'{word}' 를 넣는다.",
+      ko: "'{word}' 넣는 차례.",
       ja: '「{word}」を入れる。',
       zh: '插入 “{word}”。',
       ar: 'ندخل «{word}».',
@@ -93,7 +96,7 @@ export const sharePrefixPathFacet: FacetJson = {
     stage: { type: 'share-prefix-path-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

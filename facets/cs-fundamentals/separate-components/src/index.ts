@@ -6,7 +6,7 @@
  */
 
 export { separateComponents, type SeparateComponentsData } from './algorithm.js';
-export { separateComponentsProjector } from './projector.js';
+export { separateComponentsScene, type SeparateComponentsScene } from './scene.js';
 export { separateComponentsIRs } from './irs.js';
 export { separateComponentsFacet } from './facet.js';
 export { separateComponentsDescription } from './description.js';
@@ -14,14 +14,14 @@ export { separateComponentsStageView } from './separate-components-stage.js';
 
 import {
   registerAlgorithm,
-  registerProjector,
+  registerScenePlan,
   registerIR,
   registerFacets,
   registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { separateComponents, type SeparateComponentsData } from './algorithm.js';
-import { separateComponentsProjector } from './projector.js';
+import { separateComponentsScene } from './scene.js';
 import { separateComponentsIRs } from './irs.js';
 import { separateComponentsFacet } from './facet.js';
 import { separateComponentsDescription } from './description.js';
@@ -31,7 +31,7 @@ export function registerSeparateComponents(): void {
   registerAlgorithm<SeparateComponentsData>('separateComponents', separateComponents, {
     mechanismKind: 'reactive',
   });
-  registerProjector('separateComponentsProjector', separateComponentsProjector);
+  registerScenePlan('separateComponentsScene', separateComponentsScene);
   for (const ir of separateComponentsIRs) registerIR(ir.id, ir);
   registerView('separate-components-stage', separateComponentsStageView);
   registerFacets([separateComponentsFacet]);

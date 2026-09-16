@@ -36,7 +36,7 @@ export const walkPerCharacterFacet: FacetJson = {
     pt: 'A palavra nunca é comparada inteira: cada caractere escolhe um ramo e, se faltar, ali termina.',
   },
   algorithm: 'module:walkPerCharacter',
-  projector: 'module:walkPerCharacterProjector',
+  scene: 'module:walkPerCharacterScene',
   initialData: {
     type: 'walk-per-character',
     words: ['to', 'tea', 'ten', 'in', 'inn'],
@@ -45,7 +45,11 @@ export const walkPerCharacterFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'walk-per-character-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: {
+      type: 'control-bar',
+      // 스크럽 띠. 장면 방식이라 어느 걸음이든 셈으로 얻으므로 끌어 볼 수 있다.
+      controls: CONTROL_SET.pieceScrub,
+    },
   },
   messages: {
     'caption.searchBegin': {
@@ -62,7 +66,7 @@ export const walkPerCharacterFacet: FacetJson = {
     },
     'caption.stepDown': {
       en: "follow '{char}' down one level",
-      ko: "'{char}' 를 따라 한 칸 내려간다",
+      ko: "'{char}' 가지를 따라 한 칸 내려간다",
       ja: "'{char}' をたどって一段下りる",
       zh: "沿 '{char}' 向下走一层",
       ar: "اتبع '{char}' نزولًا مستوى واحدًا",
@@ -86,7 +90,7 @@ export const walkPerCharacterFacet: FacetJson = {
     },
     'caption.noWord': {
       en: 'the path exists, but "{query}" isn’t a stored word',
-      ko: '길은 있지만 "{query}" 는 담긴 말이 아니다',
+      ko: '길은 있지만 "{query}" 자체는 담긴 말이 아니다',
       ja: '道はあるが "{query}" は登録された語ではない',
       zh: '路径存在，但 "{query}" 不是已存的词',
       ar: 'المسار موجود، لكن "{query}" ليست كلمة مخزَّنة',
@@ -98,7 +102,7 @@ export const walkPerCharacterFacet: FacetJson = {
     },
     'caption.blocked': {
       en: "no branch for '{char}' — \"{query}\" stops here",
-      ko: "'{char}' 가지가 없다 — \"{query}\" 는 여기서 멈춘다",
+      ko: "'{char}' 가지가 없다 — \"{query}\" 찾기는 여기서 멈춘다",
       ja: "'{char}' の枝がない — \"{query}\" はここで止まる",
       zh: "没有 '{char}' 这条分支 — \"{query}\" 到此为止",
       ar: "لا فرع لـ '{char}' — \"{query}\" تقف هنا",

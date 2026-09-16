@@ -14,16 +14,21 @@
  * ── 이벤트 (facet 고유 확장. 전부 silent 아님 = 걸음 경계)
  *
  * | type        | target      | payload                                                                             |
- * | ----------- | ----------- | ----------------------------------------------------------------------------------- |
- * | `seed`      | `node:<id>` | `{ node: string; round: number; component: number; lit: number; remaining: number }` |
- * | `spread`    | `node:<to>` | `{ from: string; to: string; component: number; lit: number; remaining: number }`    |
- * | `sweep-end` | 없음        | `{ round: number; size: number; lit: number; remaining: number }`                    |
- * | `done`      | 없음        | `{ starts: number; sizes: number[]; total: number }`                                 |
- * | `rewind`    | 없음        | 없음 — 자동 재생을 마친 뒤 처음으로 되감을 때                                        |
+ * | ----------- | ----------- | ---------------------------------------------- |
+ * | `seed`      | `node:<id>` | `{ node: string }`                             |
+ * | `spread`    | `node:<to>` | `{ from: string; to: string }`                  |
+ * | `sweep-end` | 없음        | 없음                                           |
+ * | `done`      | 없음        | 없음                                           |
+ * | `rewind`    | 없음        | 없음 — 자동 재생을 마친 뒤 처음으로 되감을 때   |
  *
- * `component` 는 0 부터 매기는 덩어리 번호 (round - 1). 화면의 색이 그것으로 갈린다.
- * `lit` · `remaining` · `size` · `sizes` · `starts` 는 전부 이 순회가 구조에서
- * 셈한 값이다. 선언에 적어 둔 것이 아니다 — 선언에 있는 것은 정점·간선·걸음 간격뿐.
+ * **싣는 것은 누가 켜졌나뿐이다.** 한때 `round` · `component` · `lit` · `remaining` ·
+ * `size` · `sizes` · `starts` · `total` 을 함께 실었지만, 장면(`scene.ts`)이 그것을
+ * 소속에서 다시 셈하므로 같은 수를 세는 자리가 둘이 됐다. 화면에 뜨는 "무리 몇 개 ·
+ * 크기 얼마" 와 실제로 갈린 덩어리는 한 출처를 써야 하고, 그 출처는 장면의 소속이다.
+ * 여기서 싣지 않으면 다음 사람이 "있으니 쓰자" 고 집을 것도 없다.
+ *
+ * 덩어리 번호도 여기서 매기지 않는다 — 장면이 `seed` 마다 새 번호를 열고 `spread` 는
+ * `from` 의 번호를 물려받는다. 선언에 있는 것은 정점·간선·걸음 간격뿐이다.
  *
  * 메커니즘은 reactive. 조각이므로 metric 은 부르지 않는다.
  */
@@ -75,10 +80,8 @@ async function sweepAll(
 ): Promise<boolean> {
   const data = ctx.data;
   const adj = adjacencyOf(data);
-  const total = data.nodes.length;
+  /** 이미 켜진 것. 어디서 다시 출발할지와 어디로 번지지 않을지를 이것이 가른다. */
   const lit = new Set<string>();
-  const sizes: number[] = [];
-  let round = 0;
   /** 직전 걸음이 sweep-end 였는지. 참이면 다음 문을 오래 연다. */
   let holdNext = false;
 
@@ -87,22 +90,10 @@ async function sweepAll(
 
     if (!(await gate(holdNext))) return false;
     holdNext = false;
-    round += 1;
     lit.add(start);
-    await ctx.emit({
-      type: 'seed',
-      target: `node:${start}`,
-      payload: {
-        node: start,
-        round,
-        component: round - 1,
-        lit: lit.size,
-        remaining: total - lit.size,
-      },
-    });
+    await ctx.emit({ type: 'seed', target: `node:${start}`, payload: { node: start } });
 
     const queue: string[] = [start];
-    let size = 1;
     while (queue.length > 0) {
       const from = queue.shift();
       if (from === undefined) break;
@@ -110,37 +101,19 @@ async function sweepAll(
         if (lit.has(to)) continue;
         if (!(await gate())) return false;
         lit.add(to);
-        size += 1;
         queue.push(to);
-        await ctx.emit({
-          type: 'spread',
-          target: `node:${to}`,
-          payload: {
-            from,
-            to,
-            component: round - 1,
-            lit: lit.size,
-            remaining: total - lit.size,
-          },
-        });
+        await ctx.emit({ type: 'spread', target: `node:${to}`, payload: { from, to } });
       }
     }
-    sizes.push(size);
 
     if (!(await gate())) return false;
-    await ctx.emit({
-      type: 'sweep-end',
-      payload: { round, size, lit: lit.size, remaining: total - lit.size },
-    });
+    await ctx.emit({ type: 'sweep-end' });
     // 여기서 화면이 멈춘다. 다 훑었는데 켜지지 않은 것들이 그대로 남아 있다.
     holdNext = true;
   }
 
   if (!(await gate(holdNext))) return false;
-  await ctx.emit({
-    type: 'done',
-    payload: { starts: round, sizes: [...sizes], total: lit.size },
-  });
+  await ctx.emit({ type: 'done' });
   return true;
 }
 
