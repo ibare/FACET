@@ -9,12 +9,12 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { wrongInOneDirectionAlgorithm, type WrongInOneDirectionData } from './algorithm.js';
-import { wrongInOneDirectionProjector } from './projector.js';
+import { wrongInOneDirectionScene } from './scene.js';
 import { wrongInOneDirectionIRs } from './irs.js';
 import { wrongInOneDirectionStageView } from './wrong-in-one-direction-stage.js';
 import { wrongInOneDirectionFacet } from './facet.js';
@@ -22,19 +22,20 @@ import { wrongInOneDirectionDescription } from './description.js';
 
 export {
   wrongInOneDirectionAlgorithm,
-  wrongInOneDirectionProjector,
+  wrongInOneDirectionScene,
   wrongInOneDirectionIRs,
   wrongInOneDirectionStageView,
   wrongInOneDirectionFacet,
   wrongInOneDirectionDescription,
 };
 export type { WrongInOneDirectionData };
+export type { WrongInOneDirectionScene } from './scene.js';
 
 export function registerWrongInOneDirection(): void {
   registerAlgorithm<WrongInOneDirectionData>('wrongInOneDirection', wrongInOneDirectionAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('wrongInOneDirectionProjector', wrongInOneDirectionProjector);
+  registerScenePlan('wrongInOneDirectionScene', wrongInOneDirectionScene);
   for (const ir of wrongInOneDirectionIRs) registerIR(ir.id, ir);
   registerView('wrong-in-one-direction-stage', wrongInOneDirectionStageView);
   registerFacets([wrongInOneDirectionFacet]);

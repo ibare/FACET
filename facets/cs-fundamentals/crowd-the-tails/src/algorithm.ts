@@ -7,24 +7,22 @@
  *
  * ── 식별자
  *
- * 쓰지 않는다. 이 조각이 말하는 것은 낱낱의 점이 아니라 **경계와 뭉치의 크기**라
- * payload 로만 오간다 (target 없음).
+ * 쓰지 않는다. 이 조각이 말하는 것은 낱낱의 점이 아니라 **경계와 뭉치의 크기**이고,
+ * 그 둘은 전부 δ 와 점의 수에서 나오므로 발신이 실어 올 것이 없다 (target 없음).
  *
  * ── 이벤트 (전부 이 facet 고유. silent 인 것은 없다)
  *
- *   cut-evenly     { bounds: number[]; counts: number[] }
- *                  q 를 고르게 자른 경계(0…1, 오름차순)와 그때 각 뭉치에 드는 점의 수.
- *   cut-by-scale   { bounds: number[]; counts: number[] }
- *                  k 를 한 칸씩 끊어 되돌린 경계와 그때의 점의 수.
- *   fill-pair      { left: number; right: number; leftCount: number; rightCount: number }
- *                  마주 보는 두 뭉치에 점을 담는다. left/right 는 뭉치 번호.
- *                  가운데 짝부터 꼬리 짝으로 나아간다.
- *   digest-formed  { qs: number[]; counts: number[];
- *                    tailCount: number; middleCount: number; ratio: number }
- *                  뭉치마다 자국 하나. qs 는 그 뭉치에 든 점들의 분위 평균이고
- *                  ratio 는 가장 굵은 뭉치 ÷ 가장 얇은 뭉치다.
- *   rewind         {}
- *                  처음으로 되감는다. 자동 재생을 마친 뒤 처음 advance 를 받을 때.
+ * **payload 가 비어 있다.** 경계·뭉치의 크기·자국의 자리·꼬리와 가운데의 비는
+ * 전부 `initialData` 의 δ 와 점의 수에서 셈해지므로, 그것을 걸음이 함께 실어 오면
+ * 같은 수의 출처가 둘이 된다 — 타입도 통과하고 화면도 맞아 보이지만 언젠가 갈린다.
+ * 자르는 잣대의 정본은 아래 `scaledBoundsOf` 하나이고 `scene.ts` 가 그것을 쓴다.
+ *
+ *   cut-evenly     {}  q 를 고르게 자른다. 뭉치마다 같은 수가 든다 — 문제.
+ *   cut-by-scale   {}  k 를 한 칸씩 끊어 되돌린 자리로 자른다 — 장치.
+ *   fill-pair      {}  마주 보는 두 뭉치에 점을 담는다. 가운데 짝부터 꼬리 짝으로
+ *                      나아가므로 **몇 번째 짝인지는 이 발신의 차례**가 말한다.
+ *   digest-formed  {}  뭉치마다 자국 하나로 접는다 — 결과.
+ *   rewind         {}  처음으로 되감는다. 자동 재생을 마친 뒤 처음 advance 를 받을 때.
  *
  * ── 메트릭
  *
@@ -45,11 +43,6 @@ export type CrowdTheTailsData = {
 
 const DEFAULT_STEP_MS = 850;
 
-/** i 번째 점이 서 있는 분위. 표본의 한가운데를 잡는 흔한 규약이다. */
-function quantileAt(i: number, n: number): number {
-  return (i + 0.5) / n;
-}
-
 /** k(q) = (δ / 2π) · asin(2q − 1) — 분위를 자의 눈금으로 옮긴다. */
 function scaleAt(q: number, delta: number): number {
   return (delta / (2 * Math.PI)) * Math.asin(2 * q - 1);
@@ -61,11 +54,16 @@ function quantileAtScale(k: number, delta: number): number {
 }
 
 /**
- * 눈금을 1 씩 끊어 되돌린 경계.
+ * 눈금을 1 씩 끊어 되돌린 경계 — **자르는 잣대의 정본.**
  *
  * 양 끝 눈금은 q = 0 과 q = 1 에 정확히 닿으므로 겹치지 않게 0 과 1 을 직접 둔다.
+ *
+ * 걸음의 수(짝이 몇인가)와 화면의 그릇 수가 여기 하나에서 나온다. 부동소수 척도
+ * 함수라 두 군데에서 각자 자르면 끝자리가 갈릴 수 있으므로 `scene.ts` 가 이 함수를
+ * 그대로 불러 쓴다 — 방향은 Scene → Algorithm 이라 맞다 (원칙 1).
  */
-function scaledBounds(delta: number): number[] {
+export function scaledBoundsOf(delta: number): number[] {
+  if (!Number.isFinite(delta) || delta <= 0) return [0, 1];
   const kMin = scaleAt(0, delta);
   const kMax = scaleAt(1, delta);
   const out: number[] = [0];
@@ -77,57 +75,29 @@ function scaledBounds(delta: number): number[] {
   return out;
 }
 
-/** 같은 수의 뭉치로 q 를 고르게 자른 경계. 견줄 상대다. */
-function evenBounds(parts: number): number[] {
-  const out: number[] = [];
-  for (let i = 0; i <= parts; i += 1) out.push(i / parts);
-  return out;
-}
-
-/** 분위 q 가 드는 뭉치 번호. 경계는 왼쪽을 품고 오른쪽을 넘긴다. */
-function bucketOf(q: number, bounds: number[]): number {
-  let b = 0;
-  while (b < bounds.length - 2 && q >= bounds[b + 1]) b += 1;
-  return b;
-}
-
-/** 뭉치마다 몇 점이 드는가. */
-function countsIn(bounds: number[], n: number): number[] {
-  const out = new Array<number>(bounds.length - 1).fill(0);
-  for (let i = 0; i < n; i += 1) out[bucketOf(quantileAt(i, n), bounds)] += 1;
-  return out;
-}
-
-/** 뭉치가 남기는 자국의 자리 — 그 뭉치에 든 점들의 분위 평균. */
-function centroidsIn(bounds: number[], n: number): number[] {
-  const sum = new Array<number>(bounds.length - 1).fill(0);
-  const hit = new Array<number>(bounds.length - 1).fill(0);
-  for (let i = 0; i < n; i += 1) {
-    const q = quantileAt(i, n);
-    const b = bucketOf(q, bounds);
-    sum[b] += q;
-    hit[b] += 1;
+/**
+ * 담아 나가는 짝의 차례 — 가운데 짝이 먼저이고 꼬리 짝이 마지막이다.
+ *
+ * 걸음의 수(`length`)와 그 걸음이 어느 두 뭉치를 담는가(`[j]`)가 한 함수에서
+ * 나온다. 발신이 뭉치 번호를 싣지 않는 까닭이 이것이다 — 차례가 곧 짝이다.
+ */
+export function pairsOf(parts: number): Array<{ left: number; right: number }> {
+  const out: Array<{ left: number; right: number }> = [];
+  for (let left = Math.floor((parts - 1) / 2); left >= 0; left -= 1) {
+    out.push({ left, right: parts - 1 - left });
   }
-  return sum.map((s, b) => (hit[b] === 0 ? (bounds[b] + bounds[b + 1]) / 2 : s / hit[b]));
+  return out;
 }
 
 export async function crowdTheTailsAlgorithm(
   base: FacetContext<CrowdTheTailsData>,
 ): Promise<void> {
   const ctx = base as ReactiveContext<CrowdTheTailsData>;
-  const n = Math.max(1, Math.floor(ctx.data.count));
-  const delta = ctx.data.delta;
   const stepMs = typeof ctx.data.stepMs === 'number' ? ctx.data.stepMs : DEFAULT_STEP_MS;
 
-  const scaled = scaledBounds(delta);
-  const parts = scaled.length - 1;
-  const even = evenBounds(parts);
-  const evenCounts = countsIn(even, n);
-  const counts = countsIn(scaled, n);
-  const qs = centroidsIn(scaled, n);
-  const tailCount = Math.min(...counts);
-  const middleCount = Math.max(...counts);
-  const ratio = tailCount === 0 ? 0 : middleCount / tailCount;
+  // 뭉치 수는 척도 함수가 정한다. 화면도 같은 함수로 세므로 갈릴 수 없다.
+  const parts = scaledBoundsOf(ctx.data.delta).length - 1;
+  const pairs = pairsOf(parts);
 
   /** 자동 재생을 마친 뒤로는 손으로 짚는다. */
   let manual = false;
@@ -155,27 +125,20 @@ export async function crowdTheTailsAlgorithm(
   for (;;) {
     // 문제 — 고르게 자르면 뭉치마다 같은 수가 든다.
     if (!(await gate())) return;
-    await ctx.emit({ type: 'cut-evenly', payload: { bounds: even, counts: evenCounts } });
+    await ctx.emit({ type: 'cut-evenly', payload: {} });
 
     // 장치 — 자를 눕히면 자리가 꼬리로 몰린다.
     if (!(await gate())) return;
-    await ctx.emit({ type: 'cut-by-scale', payload: { bounds: scaled, counts } });
+    await ctx.emit({ type: 'cut-by-scale', payload: {} });
 
     // 결과 — 가운데 짝에서 꼬리 짝으로 담아 나간다. 짝은 뭉치 수가 정한다.
-    for (let left = Math.floor((parts - 1) / 2); left >= 0; left -= 1) {
-      const right = parts - 1 - left;
+    for (let j = 0; j < pairs.length; j += 1) {
       if (!(await gate())) return;
-      await ctx.emit({
-        type: 'fill-pair',
-        payload: { left, right, leftCount: counts[left], rightCount: counts[right] },
-      });
+      await ctx.emit({ type: 'fill-pair', payload: {} });
     }
 
     if (!(await gate())) return;
-    await ctx.emit({
-      type: 'digest-formed',
-      payload: { qs, counts, tailCount, middleCount, ratio },
-    });
+    await ctx.emit({ type: 'digest-formed', payload: {} });
 
     // 할 말을 마쳤다. 다음 advance 는 되감고 첫 걸음까지 간다 (S-piece).
     if (!(await waitForAdvance())) return;

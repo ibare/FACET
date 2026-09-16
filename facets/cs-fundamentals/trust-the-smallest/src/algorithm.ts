@@ -12,23 +12,31 @@
  *   h2 = FNV-1a 32bit 를 `& 0x7FFFFFFF` 한 뒤 홀수로 만든(`| 1`) 값
  * 이다.
  *
- * **자리도 표의 값도 여기서 직접 셈한다.** 선언에 박아 두면 데이터를 고칠 때
- * 화면이 조용히 거짓을 말하게 된다 (S-piece "화면에 쓰는 값은 실측한다").
- * 1차 데이터는 키 문자열과 빈도뿐이다.
+ * **자리는 여기서 직접 셈한다.** 선언에 박아 두면 데이터를 고칠 때 화면이 조용히
+ * 거짓을 말하게 된다 (S-piece "화면에 쓰는 값은 실측한다"). 1차 데이터는 키
+ * 문자열과 빈도뿐이다.
+ *
+ * ## 표의 값은 여기서 세지 않는다
+ *
+ * 화면에 나란히 뜨는 수 — 칸 값 · 최솟값 · 참값 · 물어본 키 수 — 는 전부 장면이
+ * 표와 선언에서 센다 (`scene.ts`). 여기서 함께 세어 실어 보내면 같은 수의 출처가
+ * 둘이 되고 언젠가 갈린다. 그래서 이 발신이 싣는 것은 **해시가 정하는 칸 자리**
+ * 하나뿐이다 — 그것만이 구조에서 셀 수 없는 값이다.
  *
  * ## 이벤트
  *
- *   Cell = { row: number; col: number; value: number }
+ *   Cell = { row: number; col: number }
  *
- *   ingest  { key: string; count: number; cells: Cell[] }
- *           키 하나가 들어와 줄마다 한 칸씩 올랐다. `cells[r].value` 는 오른 **뒤**의 값.
- *   probe   { key: string; truth: number; min: number; reads: Cell[] }
- *           키 하나를 물었다. `reads[r]` 는 줄 r 에서 읽은 칸, `min` 은 셋 중 가장
- *           작은 값, `truth` 는 실제로 들어온 횟수.
+ *   ingest  { key: string; cells: Cell[] }
+ *           키 하나가 들어와 줄마다 한 칸씩 올랐다. 얼마나 올랐는지는 선언의
+ *           `stream` 이 정하므로 싣지 않는다.
+ *   probe   { key: string; reads: Cell[] }
+ *           키 하나를 물었다. `reads[r]` 는 줄 r 에서 읽은 칸. 읽은 값도, 셋 중 가장
+ *           작은 값도, 참값도 장면이 표에서 센다.
  *   rewind  {}
  *           처음으로 되감았다. 자동 재생이 끝난 뒤 `advance` 를 처음 받았을 때 나간다.
- *   done    { keys: number }
- *           다 물어봤다. `keys` 는 물어본 키의 수.
+ *   done    {}
+ *           다 물어봤다. 물어본 키의 수는 `stream.length` 다.
  *
  * 넷 다 `silent` 가 아니다 — 모두 화면이 바뀌는 걸음이다.
  * 조각이므로 `ctx.metric` 은 부르지 않는다 (S-piece).
@@ -58,7 +66,11 @@ export type TrustTheSmallestData = {
   stream: TrustTheSmallestStreamItem[];
 };
 
-export type TrustTheSmallestCell = { row: number; col: number; value: number };
+/**
+ * 표의 한 자리. **값을 싣지 않는다** — 그 칸에 얼마가 적혀 있는지는 장면의 표가
+ * 쥐고 있고, 여기 함께 실으면 화면에 뜨는 수의 출처가 둘이 된다.
+ */
+export type TrustTheSmallestCell = { row: number; col: number };
 
 /** 부호 비트를 떨어내는 자리. */
 const INT31 = 0x7fffffff;
@@ -127,40 +139,30 @@ export const trustTheSmallestAlgorithm = async (
     }
   };
 
+  /** 키 하나가 줄마다 짚는 자리. 올릴 때와 읽을 때가 같은 자리다. */
+  const cellsOf = (key: string): TrustTheSmallestCell[] =>
+    trustTheSmallestCellsOf(key, depth, width).map((col, row) => ({ row, col }));
+
   /**
    * 한 회차. 자동 재생과 되감은 뒤의 수동 진행이 같은 길을 지난다 — 두 벌이 되면
    * 언젠가 어긋난다.
    */
   const runScene = async (): Promise<void> => {
-    const table: number[][] = Array.from({ length: depth }, () => new Array<number>(width).fill(0));
-
-    // ── 세는 동안. 한 키가 들어오면 줄 각각에서 한 칸씩 올린다.
+    // ── 세는 동안. 한 키가 들어오면 줄 각각에서 한 칸씩 올린다. 얼마나 오르는지는
+    //    선언의 `stream` 이 정하므로 여기서 표를 들고 있지 않는다.
     for (const item of stream) {
       if (!(await gate())) return;
-      const cells: TrustTheSmallestCell[] = trustTheSmallestCellsOf(item.key, depth, width).map(
-        (col, row) => {
-          table[row][col] += item.count;
-          return { row, col, value: table[row][col] };
-        },
-      );
-      await ctx.emit({ type: 'ingest', payload: { key: item.key, count: item.count, cells } });
+      await ctx.emit({ type: 'ingest', payload: { key: item.key, cells: cellsOf(item.key) } });
     }
 
-    // ── 읽는 동안. 같은 자리를 다시 짚어 읽고, 셋 중 가장 작은 것을 답으로 삼는다.
+    // ── 읽는 동안. 같은 자리를 다시 짚는다. 무엇이 가장 작은지는 장면이 표에서 센다.
     for (const item of stream) {
       if (!(await gate())) return;
-      const reads: TrustTheSmallestCell[] = trustTheSmallestCellsOf(item.key, depth, width).map(
-        (col, row) => ({ row, col, value: table[row][col] }),
-      );
-      const min = reads.reduce((acc, cell) => Math.min(acc, cell.value), Number.POSITIVE_INFINITY);
-      await ctx.emit({
-        type: 'probe',
-        payload: { key: item.key, truth: item.count, min, reads },
-      });
+      await ctx.emit({ type: 'probe', payload: { key: item.key, reads: cellsOf(item.key) } });
     }
 
     if (!(await gate())) return;
-    await ctx.emit({ type: 'done', payload: { keys: stream.length } });
+    await ctx.emit({ type: 'done', payload: {} });
   };
 
   await runScene();

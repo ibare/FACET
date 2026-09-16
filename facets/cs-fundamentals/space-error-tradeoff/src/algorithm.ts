@@ -13,24 +13,28 @@
  *   h1  Java `String.hashCode` 를 `& 0x7FFFFFFF`
  *   h2  FNV-1a 32bit 를 `& 0x7FFFFFFF` 한 뒤 `| 1` 로 홀수화
  *
- * 두 해시와 자리와 표의 값과 읽히는 값은 **전부 여기서 셈한다.** 화면에 뜨는 수는
- * 이 셈의 결과이지 어딘가 적어 둔 값이 아니다 (S-piece "화면에 쓰는 값은 실측한다").
+ * 두 해시와 자리와 표의 값은 **전부 여기서 셈한다.** 화면에 뜨는 수는 이 셈의
+ * 결과이지 어딘가 적어 둔 값이 아니다 (S-piece "화면에 쓰는 값은 실측한다").
+ *
+ * **읽히는 값은 여기서 셈하지 않는다.** 그것은 "그 키가 앉은 칸들 중 가장 작은 것"
+ * 이고 그 칸들은 화면에 그려져 있다. 장면이 `slots` 로 그 칸을 찾아 직접 읽으므로
+ * (`scene.ts` 의 `estimatesOf`) 막대의 높이와 표의 값이 갈릴 자리가 없다. 부푼 양 ·
+ * 정확히 맞은 수 · 칸 수 · 센 항목 수도 모두 거기서 파생되는 셈이라 싣지 않는다.
  *
  * ── 이벤트 목록 + payload 스키마 ─────────────────────────────────────────
  *
- *   stage-begin   { index: number; width: number; cells: number; depth: number;
- *                   total: number; counts: number[][] }
- *                 silent: 아니다. 표가 width 칸으로 갈라지고 스트림이 칸에 담긴다.
- *                 counts 는 depth × width 의 최종 칸 값.
+ *   stage-begin   { counts: number[][]; slots: number[][] }
+ *                 silent: 아니다. 표가 새 폭으로 갈라지고 스트림이 칸에 담긴다.
+ *                 counts 는 depth × width 의 최종 칸 값 — 표의 꼴이 이 행렬이다.
+ *                 slots[k][r] 은 키 k 가 줄 r 에서 앉는 칸.
  *
- *   reads-taken   { index: number; estimates: number[]; truth: number;
- *                   errorSum: number; exact: number; keyCount: number }
+ *   reads-taken   payload 없음
  *                 silent: 아니다. 키를 모두 되읽어 막대가 새 높이로 옮겨 간다.
- *                 estimates 는 keys 와 같은 순서. errorSum = Σ(estimate − truth).
+ *                 읽힌 값은 방금 선 표에서 나오므로 실어 올 것이 없다.
  *
- *   done          { cellsMin: number; errorMax: number;
- *                   cellsMax: number; errorMin: number }
+ *   done          payload 없음
  *                 silent: 아니다. 가장 좁을 때와 가장 넓을 때의 부푼 양을 나란히 둔다.
+ *                 견줌의 양 끝은 첫 폭과 마지막 폭이고 둘 다 장면이 쥐고 있다.
  *
  *   rewind        payload 없음
  *                 silent: 아니다. 자동 재생이 끝난 뒤 첫 advance 에서 처음으로 되돌린다.
@@ -84,7 +88,6 @@ export async function spaceErrorTradeoffAlgorithm(
 
   const h1 = keys.map(hash1);
   const h2 = keys.map(hash2);
-  const total = keys.length * repeats;
 
   /** 자동 재생을 마쳤는가. 마친 뒤로는 걸음마다 advance 를 기다린다. */
   let manual = false;
@@ -124,63 +127,29 @@ export async function spaceErrorTradeoffAlgorithm(
   }
 
   async function pass(): Promise<boolean> {
-    const ledger: { cells: number; errorSum: number }[] = [];
-
-    for (let i = 0; i < widths.length; i += 1) {
-      const width = widths[i];
+    for (const width of widths) {
+      // 키가 줄마다 앉는 칸. 표를 채우는 것도 되읽는 것도 이 한 자리에서 나온다.
+      const slots = keys.map((_key, k) => {
+        const rows: number[] = [];
+        for (let r = 0; r < depth; r += 1) rows.push(slotOf(h1[k], h2[k], r, width));
+        return rows;
+      });
 
       const counts: number[][] = [];
       for (let r = 0; r < depth; r += 1) counts.push(new Array<number>(width).fill(0));
       for (let k = 0; k < keys.length; k += 1) {
-        for (let r = 0; r < depth; r += 1) {
-          counts[r][slotOf(h1[k], h2[k], r, width)] += repeats;
-        }
+        for (let r = 0; r < depth; r += 1) counts[r][slots[k][r]] += repeats;
       }
 
       if (!(await gate())) return false;
-      await ctx.emit({
-        type: 'stage-begin',
-        payload: { index: i, width, cells: depth * width, depth, total, counts },
-      });
-
-      const estimates = keys.map((_key, k) => {
-        let est = Number.POSITIVE_INFINITY;
-        for (let r = 0; r < depth; r += 1) {
-          est = Math.min(est, counts[r][slotOf(h1[k], h2[k], r, width)]);
-        }
-        return est;
-      });
-      const errorSum = estimates.reduce((sum, est) => sum + (est - repeats), 0);
-      const exact = estimates.filter((est) => est === repeats).length;
-      ledger.push({ cells: depth * width, errorSum });
+      await ctx.emit({ type: 'stage-begin', payload: { counts, slots } });
 
       if (!(await gate())) return false;
-      await ctx.emit({
-        type: 'reads-taken',
-        payload: {
-          index: i,
-          estimates,
-          truth: repeats,
-          errorSum,
-          exact,
-          keyCount: keys.length,
-        },
-      });
+      await ctx.emit({ type: 'reads-taken' });
     }
 
-    const narrowest = ledger[0];
-    const widest = ledger[ledger.length - 1];
-
     if (!(await gate())) return false;
-    await ctx.emit({
-      type: 'done',
-      payload: {
-        cellsMin: narrowest.cells,
-        errorMax: narrowest.errorSum,
-        cellsMax: widest.cells,
-        errorMin: widest.errorSum,
-      },
-    });
+    await ctx.emit({ type: 'done' });
     return true;
   }
 

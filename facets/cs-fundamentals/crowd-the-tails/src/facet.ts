@@ -34,7 +34,7 @@ export const crowdTheTailsFacet: FacetJson = {
     pt: 'Um resumo de quantis dá mais baldes às caudas do que ao meio.',
   },
   algorithm: 'module:crowdTheTails',
-  projector: 'module:crowdTheTailsProjector',
+  scene: 'module:crowdTheTailsScene',
   initialData: {
     type: 'crowd-the-tails',
     /** 정렬된 점의 수. */
@@ -46,7 +46,7 @@ export const crowdTheTailsFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'crowd-the-tails-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.even': {

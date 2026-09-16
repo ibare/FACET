@@ -38,7 +38,7 @@ export const wrongInOneDirectionFacet: FacetJson = {
     pt: 'Um filtro de Bloom pode dizer "presente" sobre algo que nunca foi inserido, mas nunca diz "ausente" sobre algo que foi.',
   },
   algorithm: 'module:wrongInOneDirection',
-  projector: 'module:wrongInOneDirectionProjector',
+  scene: 'module:wrongInOneDirectionScene',
   initialData: {
     type: 'wrong-in-one-direction',
     slotCount: 16,
@@ -58,7 +58,7 @@ export const wrongInOneDirectionFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'wrong-in-one-direction-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'label.inserted': {

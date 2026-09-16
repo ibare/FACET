@@ -3,7 +3,7 @@
  *
  * 통 번호와 ρ 는 murmur3 32bit (seed 0) 실측이다. 앞 2비트가 통 번호이고
  * 나머지 30비트의 앞자리 0 개수 + 1 이 ρ 다. 통별 최댓값 · 통별 추정값 ·
- * 모은 값은 여기 적지 않는다 — algorithm 이 이 1차 데이터에서 셈한다.
+ * 모은 값은 여기 적지 않는다 — 장면이 이 1차 데이터에서 셈한다 (`scene.ts`).
  *
  * @piece 질문 하나에 답하고 멈추는 조각.
  */
@@ -40,7 +40,7 @@ export const averageTheBucketsFacet: FacetJson = {
   },
 
   algorithm: 'module:averageTheBuckets',
-  projector: 'module:averageTheBucketsProjector',
+  scene: 'module:averageTheBucketsScene',
 
   initialData: {
     type: 'average-the-buckets',
@@ -68,7 +68,7 @@ export const averageTheBucketsFacet: FacetJson = {
 
   blocks: {
     stage: { type: 'average-the-buckets-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
 
   messages: {
