@@ -6,12 +6,15 @@
  * 조각의 규범대로 `header` 도 `metrics` 도 `layout` 도 두지 않는다 (S-piece).
  * 러너가 `column · gap 8 · blocks 키 순서` 로 배치한다.
  *
+ * 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`). 어느 걸음의 화면이든 셈으로
+ * 얻으므로 스크럽 띠로 아무 자리나 끌어 볼 수 있다 (S-scene). 그래서 컨트롤은
+ * `CONTROL_SET.pieceScrub` 이다 — 띠와 `advance` 를 함께 두지 않는다 (S-piece).
+ *
  * `initialData` 는 **구조만** 담는다. 각 정점이 이고 있는 수 같은 파생값은
  * algorithm 이 `edges` 를 세어 얻는다 — 손으로 적은 표는 언젠가 구조와 어긋난다.
  */
 
-import type { FacetJson } from '@ffacet/core/runtime';
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const cycleBlocksOrderFacet: FacetJson = {
   id: 'facet:cycleBlocksOrder',
@@ -40,7 +43,7 @@ export const cycleBlocksOrderFacet: FacetJson = {
     pt: 'Vértices presos em um ciclo esperam uns pelos outros, e no fim nada consegue sair',
   },
   algorithm: 'module:cycleBlocksOrder',
-  projector: 'module:cycleBlocksOrderProjector',
+  scene: 'module:cycleBlocksOrderScene',
   initialData: {
     type: 'digraph',
     vertices: ['p', 'q', 'r', 's', 't'],
@@ -57,7 +60,7 @@ export const cycleBlocksOrderFacet: FacetJson = {
     stage: { type: 'cycle-blocks-order-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {

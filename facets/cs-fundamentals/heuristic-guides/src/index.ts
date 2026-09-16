@@ -9,13 +9,13 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 import type { FacetContext } from '@ffacet/core/runtime';
 
 import { heuristicGuidesAlgorithm, type HeuristicGuidesData } from './algorithm.js';
-import { heuristicGuidesProjector } from './projector.js';
+import { heuristicGuidesScene } from './scene.js';
 import { heuristicGuidesIRs } from './irs.js';
 import { heuristicGuidesStageView } from './heuristic-guides-stage.js';
 import { heuristicGuidesFacet } from './facet.js';
@@ -27,8 +27,13 @@ export {
   type HeuristicGuidesData,
   type Cell,
   type Move,
+  remainingGuess,
 } from './algorithm.js';
-export { heuristicGuidesProjector } from './projector.js';
+export {
+  heuristicGuidesScene,
+  type HeuristicGuidesScene,
+  type HeuristicGuidesSceneBoard,
+} from './scene.js';
 export { heuristicGuidesIRs } from './irs.js';
 export { heuristicGuidesStageView } from './heuristic-guides-stage.js';
 export { heuristicGuidesFacet } from './facet.js';
@@ -40,7 +45,7 @@ export function registerHeuristicGuides(): void {
     heuristicGuidesAlgorithm as unknown as (ctx: FacetContext<HeuristicGuidesData>) => Promise<void>,
     { mechanismKind: 'reactive' },
   );
-  registerProjector('heuristicGuidesProjector', heuristicGuidesProjector);
+  registerScenePlan('heuristicGuidesScene', heuristicGuidesScene);
   for (const ir of heuristicGuidesIRs) registerIR(ir.id, ir);
   registerView('heuristic-guides-stage', heuristicGuidesStageView);
   registerFacets([heuristicGuidesFacet]);

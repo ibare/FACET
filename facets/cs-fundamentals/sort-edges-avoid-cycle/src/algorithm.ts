@@ -12,35 +12,36 @@
  *
  * ── 이벤트 (전부 facet 고유 확장. 표준 어휘는 done 뿐)
  *
+ * payload 에는 **걸음이 내리는 판정만** 싣는다. 양 끝 · 무게 · 무리의 구성원 ·
+ * 고리 경로 · 놓은 수 · 버린 수 · 무게 합은 전부 바탕 명부와 장면의 구조에서
+ * 나오므로 (`scene.ts`), 실어 보내면 같은 수가 두 출처를 갖는다.
+ *
  *  queue-ordered   무게 오름차순으로 줄이 선다. 재생 시작 시 한 번.
- *    payload { order: { id: string; u: string; v: string; weight: number }[] }
+ *    payload { order: string[] }   줄 선 차례, id 만
+ *      무게 순으로 줄 세우는 일이 크루스칼의 첫 절반이라 이것만은 싣는다.
+ *      제원까지 실으면 바탕 명부와 두 벌이 된다.
  *    silent: 아니다 (줄이 실제로 재배열된다)
  *
  *  edge-picked     줄 맨 위 간선을 집어 그래프의 제 자리로 옮긴다.
  *    target  'edge:<id>'
- *    payload { id: string; u: string; v: string; weight: number }
+ *    payload 없음 — 몇째 칸을 집는지는 발신이 오는 순서가 이미 말한다.
  *    silent: 아니다
  *
  *  edge-kept       양 끝이 서로 다른 무리라 간선을 놓는다. 두 무리가 하나가 된다.
  *    target  'edge:<id>'
- *    payload { id: string; u: string; v: string; weight: number;
- *              groupId: string; members: string[] }
- *      groupId 합쳐진 뒤 무리의 대표 정점, members 그 무리에 속한 모든 정점
+ *    payload { groupId: string }   합쳐진 뒤 무리의 대표 정점
+ *      어느 쪽이 이기는가는 유니온 파인드의 크기 규칙이라 걸음의 판정이다.
  *    silent: 아니다
  *
  *  edge-discarded  양 끝이 이미 같은 무리라 버린다.
  *    target  'edge:<id>'
- *    payload { id: string; u: string; v: string; weight: number;
- *              groupId: string; cyclePath: string[] }
- *      cyclePath 이미 놓인 간선만 밟아 u 에서 v 로 가는 경로 (양 끝 포함).
- *                집어 든 간선을 보태면 닫히는 고리 그 자체다.
+ *    payload 없음 — 무엇을 버렸는지도, 고리가 어느 길을 닫는지도 장면이 셈한다.
  *    silent: 아니다
  *
  *  rewind          자동 재생을 마친 뒤 처음으로 되돌린다. payload 없음.
  *    silent: 아니다
  *
- *  done            재생 종료. 파생값은 전부 여기서 셈한 것이다.
- *    payload { kept: number; discarded: number; totalWeight: number }
+ *  done            재생 종료. payload 없음 — 결론은 장면이 제 자취에서 센다.
  *    silent: 아니다
  *
  * ── 메트릭
@@ -65,46 +66,6 @@ export type SortEdgesAvoidCycleData = {
 };
 
 const DEFAULT_STEP_MS = 800;
-
-/** 이미 놓인 간선만 밟아 from → to 경로를 찾는다. 없으면 빈 배열. */
-function pathThroughKept(
-  from: string,
-  to: string,
-  kept: SortEdgesAvoidCycleEdge[],
-): string[] {
-  const adjacency = new Map<string, string[]>();
-  for (const e of kept) {
-    const a = adjacency.get(e.u) ?? [];
-    a.push(e.v);
-    adjacency.set(e.u, a);
-    const b = adjacency.get(e.v) ?? [];
-    b.push(e.u);
-    adjacency.set(e.v, b);
-  }
-  const previous = new Map<string, string>();
-  const seen = new Set<string>([from]);
-  const queue: string[] = [from];
-  while (queue.length > 0) {
-    const cur = queue.shift() as string;
-    if (cur === to) break;
-    for (const next of adjacency.get(cur) ?? []) {
-      if (seen.has(next)) continue;
-      seen.add(next);
-      previous.set(next, cur);
-      queue.push(next);
-    }
-  }
-  if (!seen.has(to)) return [];
-  const path: string[] = [to];
-  let cursor = to;
-  while (cursor !== from) {
-    const p = previous.get(cursor);
-    if (p === undefined) return [];
-    path.push(p);
-    cursor = p;
-  }
-  return path.reverse();
-}
 
 export const sortEdgesAvoidCycleAlgorithm = async (
   baseCtx: FacetContext<SortEdgesAvoidCycleData>,
@@ -146,9 +107,8 @@ export const sortEdgesAvoidCycleAlgorithm = async (
     if (!(await gate())) return false;
     await ctx.emit({
       type: 'queue-ordered',
-      payload: {
-        order: order.map((e) => ({ id: e.id, u: e.u, v: e.v, weight: e.weight })),
-      },
+      // 차례만 싣는다. 양 끝과 무게는 바탕 명부에 이미 있다.
+      payload: { order: order.map((e) => e.id) },
     });
 
     // 무리 = union-find. 대표는 큰 쪽이 이기고, 크기가 같으면 먼저 온 쪽이 이긴다.
@@ -167,37 +127,16 @@ export const sortEdgesAvoidCycleAlgorithm = async (
       }
     };
 
-    const kept: SortEdgesAvoidCycleEdge[] = [];
-    let discarded = 0;
-    let totalWeight = 0;
-
     for (const edge of order) {
       if (!(await gate())) return false;
-      await ctx.emit({
-        type: 'edge-picked',
-        target: `edge:${edge.id}`,
-        payload: { id: edge.id, u: edge.u, v: edge.v, weight: edge.weight },
-      });
+      await ctx.emit({ type: 'edge-picked', target: `edge:${edge.id}` });
 
       const ru = find(edge.u);
       const rv = find(edge.v);
 
       if (!(await gate())) return false;
       if (ru === rv) {
-        const cyclePath = pathThroughKept(edge.u, edge.v, kept);
-        discarded += 1;
-        await ctx.emit({
-          type: 'edge-discarded',
-          target: `edge:${edge.id}`,
-          payload: {
-            id: edge.id,
-            u: edge.u,
-            v: edge.v,
-            weight: edge.weight,
-            groupId: ru,
-            cyclePath,
-          },
-        });
+        await ctx.emit({ type: 'edge-discarded', target: `edge:${edge.id}` });
         continue;
       }
 
@@ -207,28 +146,15 @@ export const sortEdgesAvoidCycleAlgorithm = async (
       const loser = winner === ru ? rv : ru;
       parent.set(loser, winner);
       size.set(winner, su + sv);
-      kept.push(edge);
-      totalWeight += edge.weight;
-      const members = ctx.data.nodes.filter((n) => find(n) === winner);
       await ctx.emit({
         type: 'edge-kept',
         target: `edge:${edge.id}`,
-        payload: {
-          id: edge.id,
-          u: edge.u,
-          v: edge.v,
-          weight: edge.weight,
-          groupId: winner,
-          members,
-        },
+        payload: { groupId: winner },
       });
     }
 
     if (!(await gate())) return false;
-    await ctx.emit({
-      type: 'done',
-      payload: { kept: kept.length, discarded, totalWeight },
-    });
+    await ctx.emit({ type: 'done' });
     return true;
   };
 

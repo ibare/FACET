@@ -18,26 +18,27 @@
  *   좌표를 target 문자열로 옮길 이유가 없다 (S-piece).
  *
  * ── 이벤트 (전부 facet 고유. silent 없음 — 모두 화면이 바뀐다)
- *   'search-begin'     { frontier: Cell[] }
- *                      두 판 모두 출발 칸 하나가 후보로 올라간 상태.
- *   'frontier-spread'  { step: number;
- *                        plain: Move | null; guided: Move | null;
- *                        plainFinished: boolean; guidedFinished: boolean }
+ *   'search-begin'     {}
+ *                      두 판 모두 출발 칸 하나가 후보로 올라간다. 어느 칸인지는
+ *                      선언에 적힌 start 라 싣지 않는다.
+ *   'frontier-spread'  { plain: Move | null; guided: Move | null }
  *                      한 걸음. 각 판에서 칸 하나를 꺼내고 이웃을 연다.
- *                      먼저 목표에 닿은 판은 그 뒤로 null 이 된다. `finished` 는
- *                      **이번 걸음이 그 판의 마지막이다** 라는 뜻이라 도착하는 그
- *                      걸음에서 이미 참이고, 그 뒤로도 참으로 남는다. projector 가
- *                      이것으로 도착 캡션을 고른다.
- *   'route-drawn'      { plain: Cell[]; guided: Cell[]; steps: number }
- *                      되짚은 길 둘. steps 는 걸음 수(칸 수 - 1)이며 양쪽이 같다.
+ *                      먼저 목표에 닿은 판은 그 뒤로 null 이 된다.
+ *   'route-drawn'      { plain: Cell[]; guided: Cell[] }
+ *                      되짚은 길 둘. 양쪽의 길이는 같다.
  *   'rewind'           {}
  *                      되감기. 자동 재생이 끝난 뒤 처음 누른 advance 가 발신한다.
  *
  * ── Move
- *   { cell: Cell; opened: Cell[]; count: number }
+ *   { cell: Cell; opened: Cell[] }
  *   cell   이번에 꺼낸 칸
  *   opened 이번에 새로 후보가 된 이웃 칸
- *   count  그 판이 지금까지 꺼낸(열어 본) 칸의 누계
+ *
+ * ── 싣지 않는 것
+ *   몇 번째 걸음인가 · 열어 본 칸의 누계 · 길의 걸음 수는 **구조에서 세지므로**
+ *   화면이 센다. 닿았는가도 꺼낸 칸이 목표인가로 판정되니 싣지 않는다. 짐작 h 는
+ *   바탕과 순수 함수에서 나오므로 `remainingGuess` 를 내주고 화면이 부른다 —
+ *   화면에 뜨는 숫자와 꺼내는 차례를 정하는 수가 같은 함수를 지나야 한다.
  *
  * 메트릭은 부르지 않는다 (조각 — S-piece).
  */
@@ -61,7 +62,6 @@ export type HeuristicGuidesData = {
 export type Move = {
   cell: Cell;
   opened: Cell[];
-  count: number;
 };
 
 type Trace = {
@@ -69,8 +69,15 @@ type Trace = {
   route: Cell[];
 };
 
-/** 목표까지의 가로 차이 + 세로 차이. 막힌 칸이 없으므로 실제 남은 거리와 같다. */
-function guess(col: number, row: number, goal: Cell): number {
+/**
+ * 목표까지의 가로 차이 + 세로 차이. 막힌 칸이 없으므로 실제 남은 거리와 같다.
+ *
+ * 화면도 이 수를 숫자로 드러내므로 내준다. 바탕(목표 자리)과 좌표만 있으면 나오는
+ * 순수 함수라 발신에 실을 것이 아니고, 두 벌로 셈하면 그림과 탐색이 갈린다.
+ * 이 함수만 떼어 내도 "짐작을 더하면 좁게 뻗는다" 는 주장은 남는다 — 꺼내는
+ * 차례를 정하는 것은 아래 `sweep` 이다.
+ */
+export function remainingGuess(col: number, row: number, goal: Cell): number {
   return Math.abs(goal.col - col) + Math.abs(goal.row - row);
 }
 
@@ -92,7 +99,6 @@ function sweep(data: HeuristicGuidesData, useGuess: boolean): Trace {
   open.add(idOf(start.col, start.row));
 
   const moves: Move[] = [];
-  let count = 0;
 
   while (open.size > 0) {
     let bestId = -1;
@@ -104,7 +110,7 @@ function sweep(data: HeuristicGuidesData, useGuess: boolean): Trace {
       const col = id % cols;
       const row = (id - col) / cols;
       const g = cost.get(id) ?? 0;
-      const h = guess(col, row, goal);
+      const h = remainingGuess(col, row, goal);
       const key = useGuess ? g + h : g;
       const better =
         bestId < 0 ||
@@ -124,7 +130,6 @@ function sweep(data: HeuristicGuidesData, useGuess: boolean): Trace {
 
     open.delete(bestId);
     closed.add(bestId);
-    count += 1;
 
     const opened: Cell[] = [];
     const reachedGoal = bestCol === goal.col && bestRow === goal.row;
@@ -152,7 +157,7 @@ function sweep(data: HeuristicGuidesData, useGuess: boolean): Trace {
       }
     }
 
-    moves.push({ cell: { col: bestCol, row: bestRow }, opened, count });
+    moves.push({ cell: { col: bestCol, row: bestRow }, opened });
     if (reachedGoal) break;
   }
 
@@ -183,35 +188,21 @@ async function playThrough(
   plan: { plain: Trace; guided: Trace },
   gate: Gate,
 ): Promise<void> {
-  const { start } = ctx.data;
   const total = Math.max(plan.plain.moves.length, plan.guided.moves.length);
 
-  await ctx.emit({ type: 'search-begin', payload: { frontier: [{ ...start }] } });
+  await ctx.emit({ type: 'search-begin', payload: {} });
 
   for (let i = 0; i < total; i += 1) {
     if (!(await gate())) return;
     const plain: Move | null = i < plan.plain.moves.length ? plan.plain.moves[i] : null;
     const guided: Move | null = i < plan.guided.moves.length ? plan.guided.moves[i] : null;
-    await ctx.emit({
-      type: 'frontier-spread',
-      payload: {
-        step: i + 1,
-        plain,
-        guided,
-        plainFinished: i + 1 >= plan.plain.moves.length,
-        guidedFinished: i + 1 >= plan.guided.moves.length,
-      },
-    });
+    await ctx.emit({ type: 'frontier-spread', payload: { plain, guided } });
   }
 
   if (!(await gate())) return;
   await ctx.emit({
     type: 'route-drawn',
-    payload: {
-      plain: plan.plain.route,
-      guided: plan.guided.route,
-      steps: plan.plain.route.length - 1,
-    },
+    payload: { plain: plan.plain.route, guided: plan.guided.route },
   });
 }
 
