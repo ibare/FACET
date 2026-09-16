@@ -8,7 +8,7 @@
  * metrics 도 없다. 배치는 stage 와 controls 뿐이라 러너의 기본 배치를 쓴다 (S-piece).
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const guessByValueFacet: FacetJson = {
   id: 'facet:guessByValue',
@@ -38,7 +38,7 @@ export const guessByValueFacet: FacetJson = {
     pt: 'Com valores espalhados por igual, o próprio valor diz onde olhar.',
   },
   algorithm: 'module:guessByValue',
-  projector: 'module:guessByValueProjector',
+  scene: 'module:guessByValueScene',
   initialData: {
     type: 'guess-by-value',
     // 고르게 퍼진 열 개. 두 줄이 같은 배열을 훑는다.
@@ -48,10 +48,7 @@ export const guessByValueFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'guess-by-value-stage' },
-    controls: {
-      type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
-    },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'label.laneMiddle': {

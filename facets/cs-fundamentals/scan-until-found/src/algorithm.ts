@@ -12,19 +12,23 @@
  *   index:<i>   줄의 i 번째 칸
  *
  * ── 이벤트 (전부 step boundary — silent 없음)
- *   scan-begin  { pass: number; target: number }
- *               새 훑기가 시작된다. 칸 표시가 지워지고 눈길이 줄 앞에 선다.
- *   highlight   target `index:<i>`
- *               { pass: number; index: number; value: number; target: number; seen: number }
- *               눈길이 i 번 칸으로 옮겨 가 들여다본다. seen 은 이번 훑기에서
- *               지금까지 들여다본 칸 수.
- *   mark        target `index:<i>`
- *               { pass: number; index: number; target: number; seen: number }
+ *
+ * **payload 가 하나도 없다.** 걸음이 실어 오던 수 — 몇 번째 훑기인가 · 어느 칸인가 ·
+ * 그 칸의 값 · 찾는 값 · 지금까지 본 칸 수 · 두 훑기의 셈 — 이 전부 장면의 구조에서
+ * 나온다. 차례는 발신이 오는 순서가 이미 말하고, 짚은 칸은 식별자가 말하고, 본 칸
+ * 수는 짚은 칸 목록의 길이이고, 값과 찾는 값은 바탕 자료에 있다. 실어 보내면 같은
+ * 물음에 두 답이 생겨 언젠가 갈린다.
+ *
+ *   scan-begin  {}
+ *               새 훑기가 시작된다. 무엇을 찾는지는 `queries` 의 그 차례 값이다.
+ *   highlight   target `index:<i>`   {}
+ *               눈길이 i 번 칸으로 옮겨 가 들여다본다.
+ *   mark        target `index:<i>`   {}
  *               찾았다. 눈길이 그 자리에서 멎는다.
- *   overrun     { pass: number; target: number; seen: number }
+ *   overrun     {}
  *               끝까지 갔는데 없다. 눈길이 줄 밖으로 빠져나간다.
- *   done        { stopped: number; exhausted: number }
- *               두 자취의 길이를 견준다. 값은 훑기가 실제로 센 수다.
+ *   done        {}
+ *               두 자취의 길이를 견준다.
  *   rewind      {}
  *               자동 재생이 끝난 뒤 advance 를 받아 처음으로 되감는다.
  *
@@ -73,47 +77,25 @@ export const scanUntilFound = async (ctx: FacetContext<ScanUntilFoundData>): Pro
    * @returns 끝까지 갔으면 true, 취소로 끊겼으면 false.
    */
   const sweepAll = async (): Promise<boolean> => {
-    /** 찾아서 멎은 훑기가 들여다본 칸 수. */
-    let stopped = 0;
-    /** 없다고 답한 훑기가 들여다본 칸 수. */
-    let exhausted = 0;
-
-    for (let pass = 0; pass < c.data.queries.length; pass++) {
-      const target = c.data.queries[pass];
-
+    for (const target of c.data.queries) {
       if (!(await gate())) return false;
-      await c.emit({ type: 'scan-begin', payload: { pass, target } });
+      await c.emit({ type: 'scan-begin' });
 
-      let seen = 0;
+      // 찾은 칸. 훑기를 멈출 근거이자 식별자에 실어 보낼 자리다.
       let hit = -1;
       for (let i = 0; i < c.data.values.length && hit < 0; i++) {
-        const value = c.data.values[i];
         if (!(await gate())) return false;
-        seen = i + 1;
-        await c.emit({
-          type: 'highlight',
-          target: `index:${i}`,
-          payload: { pass, index: i, value, target, seen },
-        });
-        if (value === target) hit = i;
+        await c.emit({ type: 'highlight', target: `index:${i}` });
+        if (c.data.values[i] === target) hit = i;
       }
 
       if (!(await gate())) return false;
-      if (hit >= 0) {
-        stopped = seen;
-        await c.emit({
-          type: 'mark',
-          target: `index:${hit}`,
-          payload: { pass, index: hit, target, seen },
-        });
-      } else {
-        exhausted = seen;
-        await c.emit({ type: 'overrun', payload: { pass, target, seen } });
-      }
+      if (hit >= 0) await c.emit({ type: 'mark', target: `index:${hit}` });
+      else await c.emit({ type: 'overrun' });
     }
 
     if (!(await gate())) return false;
-    await c.emit({ type: 'done', payload: { stopped, exhausted } });
+    await c.emit({ type: 'done' });
     return true;
   };
 
