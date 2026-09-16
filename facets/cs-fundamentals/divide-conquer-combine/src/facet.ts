@@ -14,8 +14,12 @@
  * 맨 처음 자른 자리가 맨 마지막에 합쳐진 것을 남긴다(1걸음). 합침부터 보이면
  * 무엇이 되짚어 오르는 것인지 알 수 없다.
  *
- * 화면에 뜨는 쪼갬/합침 횟수는 algorithm 의 `computeDivideConquerCombinePlan` 이
- * 실제로 센 값이다 — 선언에 박아 둔 수가 아니다 (S-piece).
+ * 화면에 뜨는 쪼갬/합침 횟수는 장면이 쪼개진/합쳐진 자리를 실제로 센 값이다 —
+ * 선언에 박아 둔 수도, 걸음이 실어 온 수도 아니다 (S-piece). 대조용 실측은
+ * algorithm 의 `computeDivideConquerCombinePlan` 이 낸다.
+ *
+ * 화면은 걸음마다의 **장면**에서 만들어진다 (`scene.ts`). 그래서 재생 자리를 끄는
+ * 띠를 달아도 어느 걸음으로 끌든 같은 그림이 선다 (S-scene).
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
@@ -48,7 +52,7 @@ export const divideConquerCombineFacet: FacetJson = {
     pt: 'A divisão desce e as respostas sobem — os mesmos lugares, na ordem inversa',
   },
   algorithm: 'module:divideConquerCombine',
-  projector: 'module:divideConquerCombineProjector',
+  scene: 'module:divideConquerCombineScene',
   initialData: {
     type: 'divide-conquer-combine',
     values: [3, 1, 4, 2],
@@ -146,7 +150,7 @@ export const divideConquerCombineFacet: FacetJson = {
     stage: { type: 'divide-conquer-combine-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

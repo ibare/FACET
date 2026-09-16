@@ -18,26 +18,27 @@
  *
  * ── 이벤트 (전부 facet 고유 확장, silent 아님)
  *
+ * **걸음이 내리는 판정만 싣는다.** 차례(`order`)도 깊이(`depth`)도 값의 사본도 싣지
+ * 않는다 — 차례는 발신이 오는 순서가 이미 말하고, 깊이는 부모-자식 잇기가 말하고,
+ * 값은 이어 붙인 구조에서 나온다. 실으면 같은 물음에 두 답이 생겨 언젠가 갈린다.
+ *
  *   seed           target `node:<id>`   payload { nodeId: string; values: number[] }
- *                  뿌리에 문제 하나가 놓인다.
- *   split          target `node:<id>`   payload { nodeId: string; depth: number; order: number;
- *                                                 leftId: string; leftValues: number[];
- *                                                 rightId: string; rightValues: number[] }
- *                  한 자리가 절반씩 두 자리로 갈라져 내려간다. order 는 몇 번째 쪼갬인지.
- *   layer-settled  target `node:<id>[]` payload { depth: number; nodes: string[] }
+ *                  뿌리에 문제 하나가 놓인다. 뿌리의 이름도 여기서 정한다.
+ *   split          target `node:<id>`   payload { nodeId: string; leftId: string;
+ *                                                 rightId: string; mid: number }
+ *                  한 자리가 두 자리로 갈라져 내려간다. **자를 자리(`mid`)만이
+ *                  판정이고** 자식의 값은 부모의 값을 거기서 자르면 나온다.
+ *   layer-settled  target `node:<id>[]` payload { nodes: string[] }
  *                  그 층의 잎이 한꺼번에 답이 된다 (낱개는 이미 정렬된 것이므로).
  *                  C2 의 집합 이벤트 계열(`layer-*`)에 얹은 이름 — 한 층이 동시에
  *                  전이하는 장면을 낱개 emit 으로 풀면 동시성이 훼손된다.
- *   merge          target `node:<id>`   payload { nodeId: string; depth: number; order: number;
- *                                                 leftId: string; rightId: string;
- *                                                 values: number[];
- *                                                 fromSide: string[]; fromSlot: number[] }
- *                  두 답이 부모 자리로 되짚어 올라 하나가 된다. fromSide/fromSlot 은
- *                  values[k] 가 어느 자식의 몇 번 칸에서 왔는지 — 합침의 출처이며
- *                  화면에서 값이 엇갈려 오르는 경로가 된다.
- *   merge          (depth 0) 맨 처음 쪼갠 자리의 합침. 이 조각의 요점.
+ *   merge          target `node:<id>`   payload { nodeId: string; leftId: string;
+ *                                                 rightId: string; from: DcSide[] }
+ *                  두 답이 부모 자리로 되짚어 올라 하나가 된다. **`from` 만이
+ *                  판정이다** — 값이 어느 쪽에서 차례로 올라왔는가. 부모의 값도,
+ *                  각 값이 온 칸 번호도 거기서 풀린다.
  *   rewind         payload 없음. 자동 재생이 끝난 뒤 advance 로 처음부터 되짚을 때.
- *   done           payload { splits: number; merges: number; values: number[] }
+ *   done           payload 없음. 쪼갬/합침 횟수는 발신을 센 쪽이 안다.
  *
  * 메트릭은 없다 — 조각은 셀 것이 없다 (S-piece).
  */
@@ -52,12 +53,13 @@ export type DivideConquerCombineData = {
   stepMs: number;
 };
 
+/** 값이 올라온 쪽. 합침의 유일한 판정이라 장면도 이 어휘를 그대로 쓴다. */
+export type DcSide = 'L' | 'R';
+
 /** 재귀 나무의 한 자리. 내려갈 때 problem 을, 올라올 때 answer 를 들고 있다. */
 export type DcNode = {
   id: string;
   depth: number;
-  /** 같은 깊이에서 왼쪽부터 센 자리 번호. */
-  index: number;
   problem: number[];
   answer: number[];
   left: DcNode | null;
@@ -78,51 +80,50 @@ export type DivideConquerPlan = {
 const ROOT_ID = 'r';
 const DEFAULT_STEP_MS = 750;
 
-/** 줄 선 둘을 하나로. 어느 칸에서 왔는지도 함께 낸다 — 그것이 올라오는 경로다. */
+/**
+ * 줄 선 둘을 하나로. 어느 **쪽**에서 꺼냈는지도 함께 낸다 — 그것이 올라오는 길이다.
+ *
+ * 칸 번호는 내지 않는다. `from` 을 왼쪽부터 훑으며 L/R 을 따로 세면 그대로 나오고,
+ * 둘 다 내면 같은 것을 두 자리에서 세는 꼴이 된다.
+ */
 function combine(
   left: number[],
   right: number[],
-): { values: number[]; fromSide: string[]; fromSlot: number[] } {
+): { values: number[]; from: DcSide[] } {
   const values: number[] = [];
-  const fromSide: string[] = [];
-  const fromSlot: number[] = [];
+  const from: DcSide[] = [];
   let i = 0;
   let j = 0;
   while (i < left.length && j < right.length) {
     if (left[i] <= right[j]) {
       values.push(left[i]);
-      fromSide.push('L');
-      fromSlot.push(i);
+      from.push('L');
       i += 1;
     } else {
       values.push(right[j]);
-      fromSide.push('R');
-      fromSlot.push(j);
+      from.push('R');
       j += 1;
     }
   }
   while (i < left.length) {
     values.push(left[i]);
-    fromSide.push('L');
-    fromSlot.push(i);
+    from.push('L');
     i += 1;
   }
   while (j < right.length) {
     values.push(right[j]);
-    fromSide.push('R');
-    fromSlot.push(j);
+    from.push('R');
     j += 1;
   }
-  return { values, fromSide, fromSlot };
+  return { values, from };
 }
 
 /** 절반씩 갈라 나무를 세운다. 답은 올라오면서 정해지므로 자식 답의 합침이다. */
-function buildTree(values: number[], id: string, depth: number, index: number): DcNode {
+function buildTree(values: number[], id: string, depth: number): DcNode {
   if (values.length <= 1) {
     return {
       id,
       depth,
-      index,
       problem: values.slice(),
       answer: values.slice(),
       left: null,
@@ -130,12 +131,11 @@ function buildTree(values: number[], id: string, depth: number, index: number): 
     };
   }
   const mid = Math.floor(values.length / 2);
-  const left = buildTree(values.slice(0, mid), `${id}L`, depth + 1, index * 2);
-  const right = buildTree(values.slice(mid), `${id}R`, depth + 1, index * 2 + 1);
+  const left = buildTree(values.slice(0, mid), `${id}L`, depth + 1);
+  const right = buildTree(values.slice(mid), `${id}R`, depth + 1);
   return {
     id,
     depth,
-    index,
     problem: values.slice(),
     answer: combine(left.answer, right.answer).values,
     left,
@@ -169,7 +169,7 @@ function isBranch(node: DcNode): boolean {
  */
 export function computeDivideConquerCombinePlan(data: DivideConquerCombineData): DivideConquerPlan {
   const values = Array.isArray(data.values) ? data.values.slice() : [];
-  const root = buildTree(values, ROOT_ID, 0, 0);
+  const root = buildTree(values, ROOT_ID, 0);
   const order = levelOrder(root);
   const branches = order.filter(isBranch);
 
@@ -218,26 +218,22 @@ function buildSteps(ctx: FacetContext<DivideConquerCombineData>, root: DcNode): 
     });
   });
 
-  // 내려감 — 층 순서 그대로.
-  let splitOrder = 0;
+  // 내려감 — 층 순서 그대로. 몇 번째 쪼갬인지는 세지 않는다. 발신이 오는 순서가
+  // 이미 그것이고, 여기서 또 세면 같은 물음에 두 답이 생긴다.
   for (const node of branches) {
     const left = node.left;
     const right = node.right;
     if (!left || !right) continue;
-    splitOrder += 1;
-    const at = splitOrder;
     steps.push(async () => {
       await ctx.emit({
         type: 'split',
         target: `node:${node.id}`,
         payload: {
           nodeId: node.id,
-          depth: node.depth,
-          order: at,
           leftId: left.id,
-          leftValues: left.problem.slice(),
           rightId: right.id,
-          rightValues: right.problem.slice(),
+          // 자를 자리만이 판정이다. 자식의 값은 부모의 값을 여기서 자르면 나온다.
+          mid: left.problem.length,
         },
       });
     });
@@ -251,22 +247,19 @@ function buildSteps(ctx: FacetContext<DivideConquerCombineData>, root: DcNode): 
       await ctx.emit({
         type: 'layer-settled',
         target: ids.map((id) => `node:${id}`),
-        payload: { depth, nodes: ids },
+        payload: { nodes: ids },
       });
     });
   }
 
   // 올라옴 — 깊은 층부터. 맨 처음 쪼갠 자리가 맨 마지막이다.
   const maxBranchDepth = branches.reduce((acc, n) => Math.max(acc, n.depth), 0);
-  let mergeOrder = 0;
   for (let d = maxBranchDepth; d >= 0; d -= 1) {
     for (const node of branches) {
       if (node.depth !== d) continue;
       const left = node.left;
       const right = node.right;
       if (!left || !right) continue;
-      mergeOrder += 1;
-      const at = mergeOrder;
       const combined = combine(left.answer, right.answer);
       steps.push(async () => {
         await ctx.emit({
@@ -274,27 +267,20 @@ function buildSteps(ctx: FacetContext<DivideConquerCombineData>, root: DcNode): 
           target: `node:${node.id}`,
           payload: {
             nodeId: node.id,
-            depth: node.depth,
-            order: at,
             leftId: left.id,
             rightId: right.id,
-            values: combined.values,
-            fromSide: combined.fromSide,
-            fromSlot: combined.fromSlot,
+            // 어느 쪽에서 차례로 꺼냈는가. 부모의 값도 각 값이 온 칸 번호도
+            // 이것 하나에서 풀린다.
+            from: combined.from,
           },
         });
       });
     }
   }
 
-  const splitCount = splitOrder;
-  const mergeCount = mergeOrder;
+  // 쪼갬/합침 횟수도 최종 배열도 싣지 않는다 — 발신을 센 쪽이 이미 안다.
   steps.push(async () => {
-    await ctx.emit({
-      type: 'done',
-      target: `node:${root.id}`,
-      payload: { splits: splitCount, merges: mergeCount, values: root.answer.slice() },
-    });
+    await ctx.emit({ type: 'done', target: `node:${root.id}` });
   });
 
   return steps;
@@ -308,7 +294,7 @@ export const divideConquerCombineAlgorithm = async (
   const stepMs = typeof ctx.data.stepMs === 'number' ? ctx.data.stepMs : DEFAULT_STEP_MS;
   if (values.length === 0) return;
 
-  const root = buildTree(values, ROOT_ID, 0, 0);
+  const root = buildTree(values, ROOT_ID, 0);
   const steps = buildSteps(ctx, root);
 
   // 스스로 시작해 끝까지 간다. 누르지 않아도 화면은 할 말을 마친다 (S-piece).

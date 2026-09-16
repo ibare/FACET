@@ -11,23 +11,22 @@
  *                     이진 분할이 만드는 구간은 서로 겹치지 않으므로 구간이 곧 유일 id.
  *
  * ── 이벤트 (전부 이 facet 고유. 표준 어휘로 표현되는 장면이 아니다)
- *   group-appear    target `group:<id>`
- *                   payload { groupId: string; lo: number; hi: number;
- *                             depth: number; size: number }
- *                   맨 위에 묶음 하나가 생긴다. 아직 아무 일도 일어나지 않은 상태.
+ *
+ * **발신은 payload 를 하나도 싣지 않는다.** 구간도 층도 가른 자리도 전부
+ * `computeSplitUntilOnePlan` 에서 나오고, 장면이 같은 함수를 부른다 — 싣는 순간
+ * 같은 수가 두 자리에서 셈해지는 문이 열린다. 갈라짐의 차례조차 싣지 않는다.
+ * **발신이 오는 순서가 이미 그것을 말한다.**
+ *
+ *   group-appear    target `group:<id>`, payload 없음.
+ *                   맨 위 묶음이 선다. 아직 아무 일도 일어나지 않은 상태.
  *                   silent: 아니다.
  *
- *   split           target `group:<parentId>`
- *                   payload { parentId: string; parentDepth: number;
- *                             parentLo: number; parentHi: number;
- *                             cutAfter: number;
- *                             leftId: string; leftLo: number; leftHi: number;
- *                             rightId: string; rightLo: number; rightHi: number }
- *                   한 묶음이 둘로 갈라진다. `cutAfter` 는 가른 자리 — 왼쪽 묶음의
- *                   마지막 칸 번호이며, 화면의 찢어지는 지점이 그 칸의 오른쪽 경계다.
+ *   split           target `group:<parentId>`, payload 없음.
+ *                   한 묶음이 둘로 갈라진다. 어느 묶음인지는 층 순서로 정해져
+ *                   있으므로 몇 번째 `split` 인가가 곧 그 답이다.
  *                   silent: 아니다.
  *
- *   leaves-reached  payload { depth: number; groupIds: string[] }
+ *   leaves-reached  payload 없음.
  *                   모든 묶음이 낱개가 되어 더 가를 자리가 없다. 이 조각의 끝.
  *                   silent: 아니다.
  *
@@ -78,8 +77,6 @@ export type SplitPlan = {
   root: SplitGroup;
   /** 갈라짐을 층 순서(너비 우선)로 늘어놓은 것. 층이 위에서 아래로 쌓이는 순서다. */
   splits: SplitStep[];
-  /** 더 가를 수 없는 낱개 묶음들. 왼쪽에서 오른쪽 순. */
-  leaves: SplitGroup[];
   /** 가장 깊은 층 번호. 층 수는 이 값 + 1. */
   maxDepth: number;
 };
@@ -94,24 +91,27 @@ function groupId(lo: number, hi: number): string {
  * 순수 함수이며 값을 보지 않는다 — 갈라짐은 값과 무관하게 자리만으로 정해진다는
  * 것이 이 조각의 주장이므로, 셈하는 쪽도 값을 받지 않는 편이 정직하다.
  *
+ * **이 함수를 장면도 부른다** (`scene.ts`). 가르는 자리를 payload 로 실어 나르는
+ * 대신 같은 함수를 양쪽이 부르게 해 두면, 화면에 뜨는 구간과 알고리즘이 아는
+ * 구간이 갈릴 수가 없다.
+ *
  * 층 순서(너비 우선)로 훑는다. 한 층이 다 갈라진 뒤 다음 층이 갈라져야 화면에서
  * 층이 위에서 아래로 쌓이는 것으로 보인다.
+ *
+ * 낱개 목록은 내놓지 않는다 — 낱개인지는 `lo === hi` 로 구간 자체가 말하므로,
+ * 여기서 한 번 더 추려 두면 같은 판정이 두 곳에 적힌다.
  */
 export function computeSplitUntilOnePlan(count: number): SplitPlan {
   const root: SplitGroup = { id: groupId(0, count - 1), lo: 0, hi: count - 1, depth: 0 };
   const splits: SplitStep[] = [];
-  const leaves: SplitGroup[] = [];
   let maxDepth = 0;
-  if (count <= 0) return { root, splits, leaves, maxDepth };
+  if (count <= 0) return { root, splits, maxDepth };
 
   const queue: SplitGroup[] = [root];
   while (queue.length > 0) {
     const g = queue.shift() as SplitGroup;
     if (g.depth > maxDepth) maxDepth = g.depth;
-    if (g.lo === g.hi) {
-      leaves.push(g);
-      continue;
-    }
+    if (g.lo === g.hi) continue;
     const cutAfter = Math.floor((g.lo + g.hi) / 2);
     const left: SplitGroup = {
       id: groupId(g.lo, cutAfter),
@@ -140,7 +140,7 @@ export function computeSplitUntilOnePlan(count: number): SplitPlan {
     });
     queue.push(left, right);
   }
-  return { root, splits, leaves, maxDepth };
+  return { root, splits, maxDepth };
 }
 
 /**
@@ -156,47 +156,15 @@ async function play(
   plan: SplitPlan,
   gate: Gate,
 ): Promise<boolean> {
-  await ctx.emit({
-    type: 'group-appear',
-    target: `group:${plan.root.id}`,
-    payload: {
-      groupId: plan.root.id,
-      lo: plan.root.lo,
-      hi: plan.root.hi,
-      depth: plan.root.depth,
-      size: plan.root.hi - plan.root.lo + 1,
-    },
-  });
+  await ctx.emit({ type: 'group-appear', target: `group:${plan.root.id}` });
   if (!(await gate())) return false;
 
   for (const s of plan.splits) {
-    await ctx.emit({
-      type: 'split',
-      target: `group:${s.parentId}`,
-      payload: {
-        parentId: s.parentId,
-        parentDepth: s.parentDepth,
-        parentLo: s.parentLo,
-        parentHi: s.parentHi,
-        cutAfter: s.cutAfter,
-        leftId: s.leftId,
-        leftLo: s.leftLo,
-        leftHi: s.leftHi,
-        rightId: s.rightId,
-        rightLo: s.rightLo,
-        rightHi: s.rightHi,
-      },
-    });
+    await ctx.emit({ type: 'split', target: `group:${s.parentId}` });
     if (!(await gate())) return false;
   }
 
-  await ctx.emit({
-    type: 'leaves-reached',
-    payload: {
-      depth: plan.maxDepth,
-      groupIds: plan.leaves.map((l) => l.id),
-    },
-  });
+  await ctx.emit({ type: 'leaves-reached' });
   return true;
 }
 
