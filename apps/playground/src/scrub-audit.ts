@@ -164,8 +164,21 @@ async function measureOne(facet: FacetJson): Promise<Result> {
     for (let i = 0; i < n; i++) {
       t.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true }));
     }
-    await sleep(Math.min(9_000, 700 + n * 400));
-    const back = shotRaw(box);
+    // 왕복이 **정착하기를** 기다린다. 고정 대기(`700 + n*400`)로 두었더니 걸음마다의
+    // 운동이 400ms 를 넘는 조각에서 구조적으로 모자랐다 — `average-the-buckets` 는
+    // 여섯 걸음에 걸음당 640ms 라 3.1 초 대기로는 마지막 운동이 p≈0.75 에서 찍혀
+    // 멀쩡한 조각이 왕복어긋남으로 잡혔다. 화면이 두 번 연속 같으면 정착으로 본다.
+    // 나중에 저 혼자 바뀌는 것은 축 1(흔들림)이 따로 재므로 여기서 기다려도 된다.
+    const settleBy = Date.now() + 20_000;
+    let backRaw = '';
+    for (;;) {
+      await sleep(400);
+      const shot = raw(box);
+      if (shot === backRaw) break;
+      backRaw = shot;
+      if (Date.now() > settleBy) break;
+    }
+    const back = hash(backRaw);
 
     return {
       id: facet.id,
