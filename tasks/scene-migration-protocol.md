@@ -146,8 +146,14 @@ grep -nE "getAttribute|getBBox|getBoundingClientRect|Number\(" $d/src/*-stage.ts
   않으면 "문 넷이 다 켜진다" 는 주장이 화면에서 사라진다.
 
   ```sh
-  grep -nE "\.(used|active|done|seen|visited|station|slot|at) *=" $d/src/*-stage.ts   # ⑤
+  grep -nE "\.(used|active|done|seen|visited|station|slot|at) *=" $d/src/*-stage.ts   # ⑤ (대입만 잡는다)
   ```
+
+  **이 grep 으로는 절반만 잡힌다.** 생성 시점에 한 번 묶고 읽기만 하는 필드는 대입이
+  없어 걸리지 않는다 — `parent-two-children` 의 `Branch = { parent, side, line, badge }`
+  가 그랬다. `side` 는 뜻이고 `line`·`badge` 는 DOM 손잡이인데 한 타입에 묶여 있어,
+  칠을 되돌릴 때 `branch.side` 로 도로 꺼내 썼다. **stage 의 타입 선언을 직접 읽어
+  DOM 손잡이와 수치·뜻이 한 객체에 묶인 자리를 찾는다.**
 
 **변수가 하나도 없는 조각이 가장 위험하다.** `traverse-from-head` 는 `let` 이 전부 DOM
 핸들이었고 지나온 자취는 `rect` 의 `stroke` 칠에, 옮김 횟수는 `textContent` 에,
@@ -388,6 +394,35 @@ const t = params.t ?? makeTranslator(params.locale);
   `e === 1` 에서 `-0` 이 되고, `RETIRED_OPACITY` 를 보간했다 되돌리면 `'0.55'` 가
   `'0.5500000000000001'` 이 된다. 끝에서는 보간값 대신 목표값·상수를 그대로 쓴다.
 
+- **명령형 코드가 남긴 "누적" 이 사실은 정보였을 수 있다.** 되돌리는 명령이 없어
+  칠이 쌓이던 자리를 버그로 읽고 장면에서 깔끔히 지우면 **화면이 말하던 것이 줄어든다.**
+  `sift-down` 의 `swap` 은 두 마디만 기본색으로 되돌려 진 자식이 계속 물들어 있었는데,
+  그것이 "이 둘을 견주어 이쪽으로 내려갔다" 를 남기고 있었다. 장면으로 옮기면 그 누적이
+  저절로 사라지므로, **정말 남아야 할 것은 일부러 장면에 올려야 한다.**
+
+  갈라 두면 부딪히지 않는다 — 채움은 *값의 형편*(내려가는 중 / 멈춤), 테두리는 *견줌의
+  표식*. 값이 자리를 옮기는 조각에서 고른 쪽을 채움으로 칠하면 맞바꾼 뒤 그 자리에 진
+  값이 앉아 읽기가 뒤집힌다.
+
+- **나무 조각은 "가지" 가 은신처다.** `sift-up` 은 삽입 가지를 상수로 박아 두고 걸음
+  함수 안에서 그렸다 — 되감으면 바탕 그리기가 원래 가지만 다시 그려 **그 가지가 조용히
+  사라졌다.** 실제 결함이었고 눈으로만 잡히는 종류다. 가지를 칸의 빈 자리 여부에서
+  파생시키면 그 상태 자체가 없어진다.
+
+- **`init()` 이 사라지면 캔버스 세로도 장면이 정한다.** mount 때 한 번 재던 `viewBox`·
+  기준선을 정적 그리기가 매번 다시 정하게 옮기지 않으면 첫 그림이 기본 높이로 눌린다
+  (`parent-two-children`).
+
+- **바탕 타입을 좁히려면 호출부를 객체 리터럴로 넘긴다.** `Pick<Scene, 'base'>` 로
+  좁혀 놓고 `atStart(scene)` 처럼 **변수**를 넘기면 TypeScript 의 초과 속성 검사가 돌지
+  않아 장면 전체가 그대로 통과한다. 좁힌 타입이 아무것도 막지 못하는데 주석은 "타입으로
+  막아 두면 실수로도 못 넘긴다" 고 단언하게 된다 — 한 배치에서 셋이 그랬다.
+
+  ```ts
+  return atStart(scene);                    // 나쁨 — 초과 속성 검사가 돌지 않는다
+  return atStart({ base: scene.base });     // 좋음 — 여기서 걸린다
+  ```
+
 - **`rewind` 갈래가 걸음이 고치는 바탕을 그대로 넘기지 않는다.** `through-middle-node`
   는 걸음이 고치는 거리표(`roads`)를 `nodes`·`edges` 와 같은 급의 바탕으로 묶어
   되감기에 넘겼다. 되감은 화면이 줄은 이미 굵고 배지는 최종 거리를 단 채로 서고, 그
@@ -477,7 +512,7 @@ grep -l "projector: 'module:" facets/*/*/src/facet.ts | wc -l
 grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 ```
 
-2026-09-16 기준 **24 / 181**.
+2026-09-16 기준 **29 / 181**.
 
 옮긴 배치는 셋이다. 셋 다 **흔들림 0 · 왕복어긋남 0** 으로 닫았다.
 
@@ -488,6 +523,7 @@ grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 | 자료 구조 · 배열 다섯 | 2026-09-16 | `index-address-calc` · `shift-on-insert` · `shift-on-remove` · `out-of-bounds` · `grow-and-copy` |
 | 자료 구조 · 연결 리스트 다섯 | 2026-09-16 | `node-points-next` · `traverse-from-head` · `relink-insert` · `lost-link` · `through-middle-node` |
 | 자료 구조 · 스택과 큐 다섯 | 2026-09-16 | `push-pop-top` · `enqueue-dequeue-ends` · `queue-vs-stack-order` · `circular-buffer-wrap` · `deque-both-ends` |
+| 자료 구조 · 힙 다섯 | 2026-09-16 | `heap-property` · `array-as-tree` · `parent-two-children` · `sift-up` · `sift-down` |
 
 ### 배치를 돌리는 법
 
@@ -568,9 +604,14 @@ split-and-number   945 → 1101  +156  +17%
 배열 다섯          5123 → 6435   +1312  +26%
 연결 리스트 다섯    6241 → 7890   +1649  +26%
 스택과 큐 다섯     5231 → 6411   +1180  +23%
+힙 다섯            4343 → 5901   +1558  +36%
                                  ─────
-                   열다섯 조각 평균 +276 줄 (+25%)
+                    스무 조각 평균 +305 줄 (+27%)
 ```
+
+힙 다섯이 가장 많이 늘었다 (+36%). 값이 실제로 자리를 옮기는 묶음이라, 어느 칸에 어느
+값이 앉았나를 장면이 말하게 되면서 "자리 ↔ 값" 을 잇는 층이 새로 생긴다. 대신 그 층이
+서자 `moveNode` · `drawInitial` · 가지 상수 같은 것들이 통째로 없어졌다.
 
 가장 적게 는 것은 `queue-vs-stack-order` 였다 (+12%). 걸음 함수를 덧대는 대신 옮길
 것을 `Move` 목록 하나로 합쳐 `settleMoves` · `showRing` · `clearRings` · `markVisited`
