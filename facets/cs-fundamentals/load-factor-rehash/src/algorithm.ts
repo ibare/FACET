@@ -19,7 +19,7 @@
  *   rehash  { key: string; masked: number; buckets: number; from: number; to: number }
  *           target `index:<to>`. 한 키를 새 버킷 수로 다시 나눠 자리를 정한다.
  *           from === to 면 우연히 그대로 남은 것이다.
- *   done    payload 없음. 재계산이 끝났다.
+ *   done    payload 없음. 재계산이 끝났다. 바뀐 수·그대로인 수는 장면이 칩에서 센다.
  *   rewind  payload 없음. 처음 상태로 되감는다 (advance 로 다시 짚어 볼 때).
  *
  * ── 메트릭 ──────────────────────────────────────────────────────────────
@@ -116,12 +116,9 @@ async function play(ctx: ReactiveContext<LoadFactorRehashData>, gate: Gate): Pro
     if (!(await gate())) return false;
   }
 
-  // 바뀐 수와 그대로인 수는 셈해서 싣는다 — 문안에 굳히면 선언을 고칠 때 거짓이 된다.
-  const moved = data.keys.filter((k) => k.slotSmall !== k.slotLarge).length;
-  await ctx.emit({
-    type: 'done',
-    payload: { moved, stayed: data.keys.length - moved },
-  });
+  // 바뀐 수와 그대로인 수는 싣지 않는다. 장면이 칩의 형편에서 직접 세므로 (scene.ts)
+  // 여기서도 세면 셈이 둘이 되고, 둘이 갈리는 날 화면 안에서 두 수가 다툰다.
+  await ctx.emit({ type: 'done' });
   return !ctx.cancelled;
 }
 

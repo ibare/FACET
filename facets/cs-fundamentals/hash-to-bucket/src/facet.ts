@@ -38,7 +38,7 @@ export const hashToBucketFacet: FacetJson = {
     pt: 'Uma função hash dobra qualquer chave num inteiro, e o resto dobra esse inteiro numa de um número fixo de casas.',
   },
   algorithm: 'module:hashToBucket',
-  projector: 'module:hashToBucketProjector',
+  scene: 'module:hashToBucketScene',
   initialData: {
     type: 'hash-to-bucket',
     // 길이 4 · 3 · 5 · 6. "banana" 는 hashCode 가 음수라 부호 비트를 떨어뜨리는
@@ -49,7 +49,7 @@ export const hashToBucketFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'hash-to-bucket-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.key': {

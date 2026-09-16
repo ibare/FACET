@@ -9,7 +9,7 @@
  * (h & 0x7FFFFFFF) % size 로 직접 구하므로 선언에 적힌 수는 hash 뿐이다.
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const openAddressingProbeFacet: FacetJson = {
   id: 'facet:openAddressingProbe',
@@ -38,7 +38,7 @@ export const openAddressingProbeFacet: FacetJson = {
     pt: 'Se o balde está ocupado, a chave desliza de lado para o seguinte até achar um assento vazio.',
   },
   algorithm: 'module:openAddressingProbe',
-  projector: 'module:openAddressingProbeProjector',
+  scene: 'module:openAddressingProbeScene',
   initialData: {
     type: 'open-addressing-probe',
     size: 8,
@@ -54,7 +54,8 @@ export const openAddressingProbeFacet: FacetJson = {
     stage: { type: 'open-addressing-probe-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      // 스크럽 띠. 장면 방식이라 어느 걸음이든 셈으로 얻으므로 끌어 볼 수 있다.
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {
