@@ -798,16 +798,22 @@ split-and-number   945 → 1101  +156  +17%
 BST 와 순회 다섯    4265 → 5965   +1700  +40%
 균형 트리 다섯      4945 → 6684   +1739  +35%
 마지막 아홉        8694 → 12331  +3637  +42%
-확률적 여덟        8773 → 12375  +3602  +41%
+확률적 여덟        8773 → 12449  +3676  +41%
                                  ─────
-                  쉰하나 조각 평균 +353 줄 (+35%)
+                  쉰하나 조각 평균 +354 줄 (+35%)
 
-늘어나는 것은 `scene.ts` 와 stage 이고 **`algorithm.ts` 는 줄어든다.** 확률적 여덟에서
-1269 → 1147 (−122) 이었고, 여덟 중 다섯이 줄었다. payload 를 걷어내면 그것을 만들던
-셈이 연쇄로 죽기 때문이다 — 가장 많이 준 `crowd-the-tails` 는 발신 넷의 payload 가
-전부 비면서 `quantileAt` · `evenBounds` · `bucketOf` · `countsIn` · `centroidsIn`
-다섯 함수가 통째로 죽었다. 줄이 오히려 는 셋은 주석이 늘어난 몫이고 payload 는
-비었다 — **보고를 믿지 말고 `git diff -- .../algorithm.ts` 를 본다.**
+늘어나는 것은 `scene.ts` 와 stage 이고 **`algorithm.ts` 는 대개 줄어든다.** 확률적
+여덟에서 1269 → 1201 (−68) 이었고 다섯이 줄었다. payload 를 걷어내면 그것을 만들던
+셈이 연쇄로 죽기 때문이다 — 가장 많이 준 `crowd-the-tails`(−37) 는 발신 넷의 payload
+가 전부 비면서 `quantileAt` · `evenBounds` · `bucketOf` · `countsIn` · `centroidsIn`
+다섯 함수가 통째로 죽었다.
+
+**늘어나는 경우가 둘 있다.** 주석이 두꺼워진 몫(+2 ~ +11)이 하나고, 나머지 하나는
+위의 B 갈래를 고를 때다 — `space-error-tradeoff` 는 `widthsOf` · `slotsFor` ·
+`countsFor` 를 내주어 오히려 +23 이 되었고 그 대신 `pass()` 가 `gate` 와 `emit` 만
+남은 **박자 함수**가 됐다. 줄이 아니라 **무엇이 남았는가**로 읽어야 한다.
+
+어느 쪽이든 **보고를 믿지 말고 `git diff -- .../algorithm.ts` 를 본다.**
 
 가장 적게 는 것은 `rotate-to-balance` 였다 (+17%). projector 가 238 줄로 그 배치에서 가장
 무거웠는데도 그렇다 — 회전 걸음이 장면을 통째로 갈아 `layout(base) → layout(next)`
