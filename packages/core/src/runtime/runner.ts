@@ -320,10 +320,18 @@ export function runFacet(
     onCursor(step) {
       if (controlBar) callMethod(controlBar, 'setTimelineCursor', step);
     },
-    async renderStep(step, from, animate) {
-      if (!sceneTrack || !sceneView) return;
-      await sceneView.render(sceneTrack.at(step), sceneTrack.at(from), { animate });
-    },
+    // **장면 조각에만 넘긴다.** Timeline 은 이 훅이 있는 것만으로 "장면을 쥐고 있다" 고
+    // 보아 되감고 다시 먹이는 길을 건너뛴다. projector 조각에 넘기면 `sceneTrack` 이
+    // 없어 곧바로 돌아오므로 **화면은 그대로인 채 띠만 움직인다.** 두 방식이 공존하는
+    // 동안 projector 조각에 띠를 달면 조용히 그렇게 된다.
+    ...(scenePlan
+      ? {
+          async renderStep(step: number, from: number, animate: boolean): Promise<void> {
+            if (!sceneTrack || !sceneView) return;
+            await sceneView.render(sceneTrack.at(step), sceneTrack.at(from), { animate });
+          },
+        }
+      : {}),
     onInstant(on) {
       instantMode = on;
       // 켜질 때 걸어 둔 것을 거둔다. 두면 되짚기가 끝난 뒤 깨어나 옛 목표를 그린다.

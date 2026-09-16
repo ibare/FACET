@@ -111,9 +111,25 @@ export class SceneTrack<S = unknown> {
     return this.scenes[i];
   }
 
-  /** 걸음 하나를 얹고 그 장면을 돌려준다. */
+  /**
+   * 걸음 하나를 얹고 그 장면을 돌려준다.
+   *
+   * **`silent` 발신은 걸음을 늘리지 않고 지금 걸음의 장면을 갈아 끼운다.** 걸음의
+   * 경계를 가르는 잣대가 `silent` 가 아닌 발신이기 때문이다 (`timeline.ts` 의 `ends`,
+   * S-runtime 의 silent 규약). 여기서 함께 늘리면 **걸음 번호와 장면 번호가 한 칸씩
+   * 어긋나** 띠가 옆 걸음의 장면을 세운다.
+   *
+   * 조용한 발신도 화면 상태는 바꾸므로 장면에는 반영한다 — 늘리지 않을 뿐이다.
+   *
+   * 눈으로는 거의 안 보이는 어긋남이다. 조용한 발신 자체는 대개 화면을 바꾸지 않아
+   * 그 걸음은 멀쩡해 보이고, 어긋나는 것은 **그 뒤의 모든 걸음**이다.
+   */
   push(event: FacetRuntimeEvent): S {
     const next = this.plan.reduce(this.scenes[this.scenes.length - 1], event);
+    if (event.silent === true) {
+      this.scenes[this.scenes.length - 1] = next;
+      return next;
+    }
     this.scenes.push(next);
     return next;
   }

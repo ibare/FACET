@@ -138,22 +138,32 @@ grep -nE "getAttribute|getBBox|getBoundingClientRect|Number\(" $d/src/*-stage.ts
   도 아니라 ①~③ 의 grep 에 걸리지 않는다. 되감아 세운 직후에는 그 값이 아직 옛
   화면의 것이라 셈이 틀어진다.
 
-- **⑤ 구조체 필드에 얹힌 상태** — `type Piece = { g: SVGGElement; body: SVGRectElement;
-  station: number }` 처럼 **DOM 손잡이와 수치를 한 객체에 묶어** 둔 자리. `let` 도
-  `Set.has` 도 DOM 되읽기도 아니라 ①~④ 어디에도 안 걸린다. `enqueue-dequeue-ends` 의
-  `pieces[i].station` (각 값이 선 정거장) 과 `deque-both-ends` 의 `Chip.used` (문이
-  쓰인 적 있나) 가 그것이고, 뒤엣것은 **그 조각의 결론 자체**였다 — 되짚어 살아나지
-  않으면 "문 넷이 다 켜진다" 는 주장이 화면에서 사라진다.
+- **⑤ 구조체와 타입 선언에 얹힌 상태 — grep 으로 쫓지 말고 `stage` 의 타입 선언을
+  처음부터 끝까지 읽는다.**
+
+  이 자리를 grep 패턴으로 잡으려 세 배치를 시도했고 **세 번 다 빗나갔다.** 나온 것들은
+  이렇게 생겼다.
+
+  | 모양 | 무엇이었나 | 왜 grep 이 놓치나 |
+  | --- | --- | --- |
+  | `Piece = { g, body, station }` | 각 값이 선 정거장 | 이름을 패턴에 적어 두어야 잡힌다 |
+  | `Chip.used` | 문이 쓰인 적 있나 (**그 조각의 결론**) | 위와 같다 |
+  | `Branch = { parent, side, line, badge }` | 어느 쪽이 빈 자리인가 | 생성 때 한 번 묶고 **읽기만** 해 대입이 없다 |
+  | `Chip.tile: SVGGElement \| null` | 부호 비트를 아직 안 떨궜나 | **부품 이름**이라 어떤 낱말 목록에도 안 든다 |
+  | `Map<string, { path, head }>` | 어디까지 밀려났나 | `new Map<…>` 한 줄이라 `type` 선언조차 없다 |
+  | `const tags: Tag[]` | **어느 키가 어느 칸에 앉았나** | `const` 라 `let` grep 을 통과한다 |
+  | `type NodeState = 'default' \| 'comparing' \| …` | 마디의 형편 | **선언만 있고 값이 어디에도 저장되지 않는다.** 칠에만 쓰인다 |
+
+  마지막 둘이 요점이다. 찾는 것은 특정 낱말이 아니라 **"이 조각이 화면에 대해 아는
+  것을 어디에 적어 두었나"** 이고, 그 자리가 `let` 이 아닐 때가 많다. 아래 한 줄로
+  타입 선언과 모듈 스코프 선언을 전부 뽑아 **눈으로 읽는 것**이 유일하게 통한 방법이다.
 
   ```sh
-  grep -nE "\.(used|active|done|seen|visited|station|slot|at) *=" $d/src/*-stage.ts   # ⑤ (대입만 잡는다)
+  grep -nE "^(type|interface)|^  (const|let) |new (Map|Set)<" $d/src/*-stage.ts
   ```
 
-  **이 grep 으로는 절반만 잡힌다.** 생성 시점에 한 번 묶고 읽기만 하는 필드는 대입이
-  없어 걸리지 않는다 — `parent-two-children` 의 `Branch = { parent, side, line, badge }`
-  가 그랬다. `side` 는 뜻이고 `line`·`badge` 는 DOM 손잡이인데 한 타입에 묶여 있어,
-  칠을 되돌릴 때 `branch.side` 로 도로 꺼내 썼다. **stage 의 타입 선언을 직접 읽어
-  DOM 손잡이와 수치·뜻이 한 객체에 묶인 자리를 찾는다.**
+  그중 **DOM 손잡이와 뜻·수치가 한 객체에 묶인 것**, 그리고 **선언되었는데 저장되는
+  곳이 없는 타입**을 의심한다.
 
 **변수가 하나도 없는 조각이 가장 위험하다.** `traverse-from-head` 는 `let` 이 전부 DOM
 핸들이었고 지나온 자취는 `rect` 의 `stroke` 칠에, 옮김 횟수는 `textContent` 에,
@@ -394,15 +404,22 @@ const t = params.t ?? makeTranslator(params.locale);
   `e === 1` 에서 `-0` 이 되고, `RETIRED_OPACITY` 를 보간했다 되돌리면 `'0.55'` 가
   `'0.5500000000000001'` 이 된다. 끝에서는 보간값 대신 목표값·상수를 그대로 쓴다.
 
+- **되돌림이 있으면 정보가 지워지고, 없으면 정보가 쌓인다 — 둘 다 판단할 자리다.**
+  명령형 stage 에서 **물들였다 되돌리는 쌍**(`paintCellFilled(blocked)` · `clearActive()`)
+  이 보이면, 되돌리는 쪽이 지우는 것이 **정보였는지** 먼저 묻는다.
+  `open-addressing-probe` 는 짚어 본 칸을 잠깐 물들였다 되돌려, 되짚으면 "몇 칸을
+  짚어 보았나" 라는 주장이 사라졌다. 반대 짝이 아래 항목이다.
+
 - **명령형 코드가 남긴 "누적" 이 사실은 정보였을 수 있다.** 되돌리는 명령이 없어
   칠이 쌓이던 자리를 버그로 읽고 장면에서 깔끔히 지우면 **화면이 말하던 것이 줄어든다.**
   `sift-down` 의 `swap` 은 두 마디만 기본색으로 되돌려 진 자식이 계속 물들어 있었는데,
   그것이 "이 둘을 견주어 이쪽으로 내려갔다" 를 남기고 있었다. 장면으로 옮기면 그 누적이
   저절로 사라지므로, **정말 남아야 할 것은 일부러 장면에 올려야 한다.**
 
-  갈라 두면 부딪히지 않는다 — 채움은 *값의 형편*(내려가는 중 / 멈춤), 테두리는 *견줌의
-  표식*. 값이 자리를 옮기는 조각에서 고른 쪽을 채움으로 칠하면 맞바꾼 뒤 그 자리에 진
-  값이 앉아 읽기가 뒤집힌다.
+  갈라 두면 부딪히지 않는다 — 채움은 *값의 형편*(내려가는 중 / 멈춤 / 차 있다),
+  테두리는 *견줌의 표식*(견주었다 / 짚어 보았다). 값이 자리를 옮기는 조각에서 고른
+  쪽을 채움으로 칠하면 맞바꾼 뒤 그 자리에 진 값이 앉아 읽기가 뒤집힌다. 서로 모르는
+  두 조각(`sift-down` · `open-addressing-probe`)이 각자 이 갈래에 이르렀다.
 
 - **나무 조각은 "가지" 가 은신처다.** `sift-up` 은 삽입 가지를 상수로 박아 두고 걸음
   함수 안에서 그렸다 — 되감으면 바탕 그리기가 원래 가지만 다시 그려 **그 가지가 조용히
@@ -412,6 +429,28 @@ const t = params.t ?? makeTranslator(params.locale);
 - **`init()` 이 사라지면 캔버스 세로도 장면이 정한다.** mount 때 한 번 재던 `viewBox`·
   기준선을 정적 그리기가 매번 다시 정하게 옮기지 않으면 첫 그림이 기본 높이로 눌린다
   (`parent-two-children`).
+
+- **조용한 발신(`silent: true`)이 걸음 셈을 어긋내던 것을 러너에서 고쳤다.**
+  `SceneTrack` 은 발신마다 장면을 쌓는데 `Timeline` 의 걸음 경계는 `silent` 가 아닌
+  발신만 센다. 그래서 조용한 발신이 하나 끼면 **그 뒤 모든 걸음에서 띠가 옆 걸음의
+  장면을 세웠다.** 조용한 발신 자체는 대개 화면을 안 바꾸므로 그 걸음은 멀쩡해 보이고,
+  되짚기 감사도 화면만 보므로 통과시킨다 — **눈으로도 감사로도 안 잡히는 어긋남**이다.
+
+  이제 `SceneTrack.push` 가 조용한 발신에 대해 걸음을 늘리지 않고 그 걸음의 장면을
+  갈아 끼운다 (`packages/core/test/scene-silent-step.test.ts` 가 지킨다). 조각 87 개가
+  `silent` 를 쓰므로 그 전에 옮겼다면 전부 어긋났을 자리다.
+
+  **고친 덕에 `silent` 가 쓸 수 있는 도구가 됐다.** 한 걸음으로 묶여야 할 발신이
+  셋으로 갈려 띠에 0ms 짜리 눈금이 서는 조각이 있으면 (`bst-inorder-sorted` 는 값 하나가
+  흘러나오는 데 발신 셋을 썼다) 뒤의 둘을 `silent` 로 돌린다 — 장면에는 반영되고
+  눈금은 하나로 접힌다.
+
+- **걸음 벽시계가 정직해지면서 재생이 길어지는 조각이 있다.** projector 의 `onEvent` 는
+  `void` 를 돌려주어 애니메이션을 띄워 보내기만 할 수 있었지만, `render` 의 Promise 는
+  그 장면이 다 선 뒤에 풀려야 한다 (S-scene). 그래서 `stepMs` 위에 애니메이션이 더해진다
+  (`traversal-order` 는 15 초에서 24 초가 됐다). **이행이 만든 결함이 아니라 원래 화면이
+  못 지키던 수가 드러난 것이다.** S-piece 의 처방대로 `stepMs` 를 낮추는 것이 아니라
+  걸음 수나 사양을 다시 본다.
 
 - **바탕 타입을 좁히려면 호출부를 객체 리터럴로 넘긴다.** `Pick<Scene, 'base'>` 로
   좁혀 놓고 `atStart(scene)` 처럼 **변수**를 넘기면 TypeScript 의 초과 속성 검사가 돌지
@@ -512,7 +551,7 @@ grep -l "projector: 'module:" facets/*/*/src/facet.ts | wc -l
 grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 ```
 
-2026-09-16 기준 **29 / 181**.
+2026-09-16 기준 **43 / 181**.
 
 옮긴 배치는 셋이다. 셋 다 **흔들림 0 · 왕복어긋남 0** 으로 닫았다.
 
@@ -524,6 +563,8 @@ grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 | 자료 구조 · 연결 리스트 다섯 | 2026-09-16 | `node-points-next` · `traverse-from-head` · `relink-insert` · `lost-link` · `through-middle-node` |
 | 자료 구조 · 스택과 큐 다섯 | 2026-09-16 | `push-pop-top` · `enqueue-dequeue-ends` · `queue-vs-stack-order` · `circular-buffer-wrap` · `deque-both-ends` |
 | 자료 구조 · 힙 다섯 | 2026-09-16 | `heap-property` · `array-as-tree` · `parent-two-children` · `sift-up` · `sift-down` |
+| 자료 구조 · 해시 넷 | 2026-09-16 | `hash-to-bucket` · `chaining-bucket` · `open-addressing-probe` · `load-factor-rehash` |
+| 자료 구조 · BST 와 순회 다섯 | 2026-09-16 | `bst-compare-and-go` · `bst-inorder-sorted` · `traversal-order` · `height-stays-low` · `depth-doubles-count` |
 
 ### 배치를 돌리는 법
 
@@ -605,8 +646,10 @@ split-and-number   945 → 1101  +156  +17%
 연결 리스트 다섯    6241 → 7890   +1649  +26%
 스택과 큐 다섯     5231 → 6411   +1180  +23%
 힙 다섯            4343 → 5901   +1558  +36%
+해시 넷            4035 → 5403   +1368  +34%
+BST 와 순회 다섯    4265 → 5965   +1700  +40%
                                  ─────
-                    스무 조각 평균 +305 줄 (+27%)
+                  스물아홉 조각 평균 +343 줄 (+31%)
 ```
 
 힙 다섯이 가장 많이 늘었다 (+36%). 값이 실제로 자리를 옮기는 묶음이라, 어느 칸에 어느
