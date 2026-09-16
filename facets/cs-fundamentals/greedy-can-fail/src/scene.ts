@@ -260,18 +260,20 @@ export const greedyCanFailScene: ScenePlan<GreedyCanFailScene> = {
       case 'fork-picked':
       case 'round-picked': {
         const p = event.payload as { greedyValue?: unknown; fewestValue?: unknown } | undefined;
-        const taken: Partial<Record<GreedyLane, number>> = {};
         const greedy = num(p?.greedyValue);
         const fewest = num(p?.fewestValue);
-        if (greedy !== null) taken.greedy = greedy;
-        if (fewest !== null) taken.fewest = fewest;
-        const moved = GREEDY_LANES.filter((lane) => taken[lane] !== undefined);
+        // 걸러 낸 값을 짝으로 들고 다닌다 — 묶음에 넣었다 도로 꺼내면 타입이 풀려
+        // 단언으로 되돌려야 한다. 쌓는 차례가 곧 화면의 위아래다.
+        const taken: Array<readonly [GreedyLane, number]> = [];
+        if (greedy !== null) taken.push(['greedy', greedy]);
+        if (fewest !== null) taken.push(['fewest', fewest]);
         // 아무 줄도 움직이지 않는 집음은 화면에 할 말이 없다. 조용히 흘린다 (C2).
-        if (moved.length === 0) return scene;
+        if (taken.length === 0) return scene;
 
         // 앞 장면을 제자리에서 고치지 않는다. 목록도 묶음도 새로 만든다 (S-scene).
         const picks: Record<GreedyLane, readonly number[]> = { ...scene.picks };
-        for (const lane of moved) picks[lane] = [...scene.picks[lane], taken[lane] as number];
+        for (const [lane, value] of taken) picks[lane] = [...scene.picks[lane], value];
+        const moved = taken.map(([lane]) => lane);
 
         const both = moved.length === GREEDY_LANES.length;
         return {

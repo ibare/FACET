@@ -30,8 +30,8 @@
  * - **`links: Map<string, SVGLineElement>`** — 어느 가지가 그려졌나. `let` 도
  *   `Set.has` 도 아닌 조회 명부였다. 이제 `parentId` 에서 파생된다.
  * - **`rootId`** — 뿌리가 누구인가. stage 가 `makeNode('r', …)` 로 id 를 **손수
- *   박아** 두고 `seed` payload 의 `nodeId` 를 버렸다. 이름을 정하는 자리가 둘이었다.
- *   이제 `rootId` 하나이고 algorithm 이 정한 이름을 그대로 쓴다.
+ *   박아** 두었다. 이름을 정하는 자리가 둘이었다. 이제 `rootId` 하나이고 그 이름은
+ *   발신의 `target` 에서만 온다.
  * - **`emphasized`** — 다 끝났나. 논증 단계를 stage 가 혼자 쥔 `let` 이었다. 이제
  *   `concluded` 다.
  * - **테(ring) 요소** — `finish()` 가 `frameLayer` 에 직접 붙이던 `rect`. "끝났다"
@@ -45,8 +45,15 @@
  * 자리는 부모-자식 잇기가 정하는 깊이·차례에서 그리는 쪽이 캔버스에 역산한다
  * (S-piece). 캡션은 무엇을 말할지만 담고 문자는 그리는 쪽이 `params.t` 로 만든다
  * (C10) — 쪼갬/합침 횟수도 싣지 않는다. 배지의 수와 두 출처가 되기 때문이다.
+ *
+ * ── 어느 자리의 일인지는 `target` 만 말한다
+ *
+ * 걸음이 가리키는 자리의 이름을 payload 에서 또 받지 않는다. 수가 아니라 이름일
+ * 뿐 "두 자리에서 세기" 와 같은 병이고, 한쪽만 고치면 조용히 갈린다. 식별자 파싱은
+ * `parseTarget` 을 경유한다 (원칙 4).
  */
 
+import { parseTarget } from '@ffacet/core/runtime';
 import type { ScenePlan, FacetRuntimeEvent } from '@ffacet/core/runtime';
 import type { DcSide } from './algorithm.js';
 
@@ -202,14 +209,33 @@ function readNumbers(raw: unknown): number[] {
   return raw.filter((v): v is number => typeof v === 'number');
 }
 
-function readIds(raw: unknown): string[] {
-  if (!Array.isArray(raw)) return [];
-  return raw.filter((v): v is string => typeof v === 'string');
-}
-
 function readSides(raw: unknown): DcSide[] {
   if (!Array.isArray(raw)) return [];
   return raw.filter((v): v is DcSide => v === 'L' || v === 'R');
+}
+
+/** `node:<이름>` 하나에서 자리 이름을 꺼낸다. 식별자 파싱은 `parseTarget` 경유 (원칙 4). */
+function nodeId(target: FacetRuntimeEvent['target']): string | null {
+  if (typeof target !== 'string') return null;
+  const parsed = parseTarget(target);
+  if (!parsed || parsed.prefix !== 'node' || parsed.id === '') return null;
+  return parsed.id;
+}
+
+/**
+ * `node:<이름>` 여럿에서 자리 이름들을 꺼낸다.
+ *
+ * 한 층이 **한꺼번에** 답이 되는 걸음이라 목록이 곧 그 걸음의 대상이다 — 같은
+ * 목록을 payload 에 또 담지 않는다.
+ */
+function nodeIds(target: FacetRuntimeEvent['target']): string[] {
+  if (!Array.isArray(target)) return [];
+  const out: string[] = [];
+  for (const raw of target) {
+    const id = nodeId(raw);
+    if (id !== null) out.push(id);
+  }
+  return out;
 }
 
 export const divideConquerCombineScene: ScenePlan<DivideConquerCombineScene> = {
@@ -233,8 +259,8 @@ export const divideConquerCombineScene: ScenePlan<DivideConquerCombineScene> = {
     switch (event.type) {
       // 문제 하나가 뿌리에 놓인다. 뿌리의 이름도 여기서 온다.
       case 'seed': {
-        const id = p.nodeId;
-        if (typeof id !== 'string') return scene;
+        const id = nodeId(event.target);
+        if (id === null) return scene;
         return {
           ...EMPTY,
           rootId: id,
@@ -252,12 +278,12 @@ export const divideConquerCombineScene: ScenePlan<DivideConquerCombineScene> = {
       // 그래야 "부모 칸 수 = 자식 칸 수의 합" 이 구조적으로 어긋날 수 없다. 자를
       // 자리만이 걸음이 내리는 판정이라 그것만 싣는다.
       case 'split': {
-        const id = p.nodeId;
+        const id = nodeId(event.target);
         const leftId = p.leftId;
         const rightId = p.rightId;
         const mid = p.mid;
         if (
-          typeof id !== 'string' ||
+          id === null ||
           typeof leftId !== 'string' ||
           typeof rightId !== 'string' ||
           typeof mid !== 'number'
@@ -293,7 +319,7 @@ export const divideConquerCombineScene: ScenePlan<DivideConquerCombineScene> = {
 
       // 바닥. 낱개는 이미 답이라 그 층이 한꺼번에 답이 되고 방향이 바뀐다.
       case 'layer-settled': {
-        const ids = readIds(p.nodes);
+        const ids = nodeIds(event.target);
         if (ids.length === 0) return scene;
         return {
           ...scene,
@@ -307,10 +333,11 @@ export const divideConquerCombineScene: ScenePlan<DivideConquerCombineScene> = {
       //
       // 부모의 값은 payload 로 받지 않는다. `from` 이 말하는 차례대로 자식의 칸을
       // 꺼내면 나오고, 그래야 부모 칸의 글자와 올라오는 복제본의 글자가 한 출처다.
+      // 합쳐질 두 자식의 이름도 받지 않는다 — 이미 갈라져 나무에 있다.
       case 'merge': {
-        const id = p.nodeId;
+        const id = nodeId(event.target);
         const from = readSides(p.from);
-        if (typeof id !== 'string' || from.length === 0) return scene;
+        if (id === null || from.length === 0) return scene;
         const { left, right } = childrenOf(scene, id);
         if (!left || !right) return scene;
         const values: number[] = [];

@@ -143,6 +143,15 @@ type Drawn = {
   windowRect: SVGRectElement | null;
   /** 창이 멎는 자리. 운동은 여기로 온다. */
   windowX: number;
+  /**
+   * 창의 폭. **화면에서 되읽지 않으려고 여기 싣는다.**
+   *
+   * 운동의 출발점이 `-windowW - 20` 이라 폭이 필요한데, `rect` 의 `width` 속성을
+   * 도로 꺼내면 화면을 되읽어 출발값을 셈하는 꼴이 된다 (S-scene — `prev` 도 화면도
+   * 출발값의 출처가 아니다). `windowX` 는 이미 여기 싣고 있었으니 폭만 되읽는 것은
+   * 비대칭이기도 했다.
+   */
+  windowW: number;
 };
 
 function el<K extends keyof SVGElementTagNameMap>(
@@ -546,18 +555,19 @@ export const bottomUpTableStageView: CanvasView = {
       // ── 창. 들고 있어야 할 칸만 감싼다.
       let windowRect: SVGRectElement | null = null;
       let windowX = 0;
+      let windowW = 0;
       if (scene.finished && keep.size > 0) {
         const marks = [...keep].sort((a, b) => a - b);
         const k0 = marks[0];
         const k1 = marks[marks.length - 1];
         windowX = geom.cellLeft(k0) - 6;
-        const width = geom.cellLeft(k1) + (geom.cellW - CELL_GAP) - geom.cellLeft(k0) + 12;
+        windowW = geom.cellLeft(k1) + (geom.cellW - CELL_GAP) - geom.cellLeft(k0) + 12;
         // 칸만이 아니라 `T[i]` 표식까지 품는다 — 창 선이 글자를 가로지르지 않게.
         const top = CELL_TOP - 8;
         windowRect = el('rect', {
           x: windowX,
           y: top,
-          width,
+          width: windowW,
           height: INDEX_BASELINE + 8 - top,
           rx: 10,
           fill: c.accent,
@@ -590,7 +600,7 @@ export const bottomUpTableStageView: CanvasView = {
       note.textContent = words.note;
       gText.append(caption, note);
 
-      return { geom, valueTexts, freshArcs, windowRect, windowX };
+      return { geom, valueTexts, freshArcs, windowRect, windowX, windowW };
     }
 
     // ── 운동. 정적 그리기가 끝 자리를 세웠으므로 아직 못 온 만큼을 뒤로 물린다 ──
@@ -676,7 +686,8 @@ export const bottomUpTableStageView: CanvasView = {
     function flowKeep(drawn: Drawn, mine: number): Promise<void> {
       const rect = drawn.windowRect;
       if (rect === null) return Promise.resolve();
-      const startX = -Number(rect.getAttribute('width') ?? 0) - 20;
+      // 폭은 `drawStatic` 이 셈해 실어 준 것을 쓴다. 화면에서 되읽지 않는다 (S-scene).
+      const startX = -drawn.windowW - 20;
       const endX = drawn.windowX;
       rect.setAttribute('x', startX.toFixed(2));
       return tween(WINDOW_MS, mine, (p) => {

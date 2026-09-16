@@ -62,7 +62,7 @@ export const pivotChoiceMattersFacet: FacetJson = {
   messages: {
     'caption.pickMiddle': {
       en: 'Take the middle value {pivot} as the pivot.',
-      ko: '가운데 값 {pivot} 을 기준으로 삼는다.',
+      ko: '기준은 가운데 값 {pivot}.',
       ja: '真ん中の値 {pivot} をピボットにする。',
       zh: '取中间的值 {pivot} 作为基准。',
       ar: 'اتخذ القيمة الوسطى {pivot} محورًا.',
@@ -74,7 +74,7 @@ export const pivotChoiceMattersFacet: FacetJson = {
     },
     'caption.pickFirst': {
       en: 'Now take the first value {pivot} as the pivot — the input is already sorted.',
-      ko: '이번엔 맨 앞 값 {pivot} 을 기준으로 삼는다. 입력은 이미 줄이 서 있다.',
+      ko: '이번 기준은 맨 앞 값 {pivot}. 입력은 이미 줄이 서 있다.',
       ja: '今度は先頭の値 {pivot} をピボットにする — 入力はすでに並んでいる。',
       zh: '这次取第一个值 {pivot} 作为基准 — 输入本来就已排好序。',
       ar: 'والآن اتخذ القيمة الأولى {pivot} محورًا — المدخلات مرتَّبة أصلًا.',

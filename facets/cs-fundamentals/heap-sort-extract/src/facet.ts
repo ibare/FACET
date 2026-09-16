@@ -82,7 +82,7 @@ export const heapSortExtractFacet: FacetJson = {
     },
     'caption.place': {
       en: 'The heap hands back its last slot, and that is exactly where {value} sits down.',
-      ko: '힙이 마지막 칸을 내놓고, 꺼낸 {value} 가 바로 그 칸에 앉는다.',
+      ko: '힙이 마지막 칸을 내놓는다. 꺼낸 값은 {value}, 앉을 자리는 바로 그 칸.',
       ja: 'ヒープが最後のマスを手放し、取り出した {value} がちょうどそこに座る。',
       zh: '堆交还最后一格，取出的 {value} 正好坐在那里。',
       ar: 'تتخلّى الكومة عن آخر خانة، وفيها بالضبط يجلس {value}.',

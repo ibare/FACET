@@ -80,7 +80,7 @@ export const memoWriteOnceFacet: FacetJson = {
     },
     'caption.read': {
       en: 'f({n}) is already written — read {value}, branch no further.',
-      ko: 'f({n}) 은 이미 적혀 있다 — {value} 를 읽고 더 뻗지 않는다.',
+      ko: '이미 적혀 있다 — f({n}) 의 값은 {value}. 읽고 더 뻗지 않는다.',
       ja: 'f({n}) はすでに書いてある — {value} を読んで、これ以上は伸ばさない。',
       zh: 'f({n}) 已经写过了 — 读出 {value}，不再往下分叉。',
       ar: 'f({n}) مكتوبة سلفًا — اقرأ {value} ولا تتفرّع أكثر.',

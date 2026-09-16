@@ -53,7 +53,7 @@ export const halveTheRangeFacet: FacetJson = {
   messages: {
     'caption.start': {
       en: 'A sorted range of {n}. Looking for {target}.',
-      ko: '줄이 선 {n}개. {target} 을 찾는다.',
+      ko: '줄이 선 {n}개. 찾는 값은 {target}.',
       ja: '並んだ {n} 個。{target} を探す。',
       zh: '已排好的 {n} 个。要找 {target}。',
       ar: 'مجال مرتّب من {n}. نبحث عن {target}.',
@@ -101,7 +101,7 @@ export const halveTheRangeFacet: FacetJson = {
     },
     'caption.done': {
       en: '{comparisons} comparisons cut {n} candidates down to {left}.',
-      ko: '견줌 {comparisons}번이 후보를 {n}에서 {left}로 줄였다.',
+      ko: '견줌 {comparisons}번으로 후보가 {n}에서 {left}까지 줄었다.',
       ja: '{comparisons} 回の比較で候補が {n} から {left} に減った。',
       zh: '{comparisons} 次比较把候选从 {n} 减到 {left}。',
       ar: '{comparisons} مقارنات قلّصت المرشّحين من {n} إلى {left}.',

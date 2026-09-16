@@ -633,8 +633,15 @@ export const pruneBranchStageView: CanvasView = {
     // ── 흐르게 하기. 요소는 이미 끝 자리에 서 있으므로 **아직 못 온 만큼을 뒤로
     //    물려** 두고 앞으로 흐른다. 물림은 첫 프레임 전에 곧바로 박는다.
 
-    /** 문제가 선다 — 목표 딱지가 두드려지고 고를 수들이 홈통에 내려앉는다. */
-    function flowTask(d: Drawn): Promise<void> {
+    /**
+     * 문제가 선다 — 목표 딱지가 두드려지고 고를 수들이 홈통에 내려앉는다.
+     *
+     * `targetText` 는 **재건 밖 요소**다. 정적 경로가 `transform` 을 거두어도 앞
+     * 세대의 프레임이 살아 있는 화면에 그것을 도로 쓸 수 있으므로, 프레임마다
+     * 자기 세대를 확인한다 — 되짚기는 `gen` 만 올릴 뿐 이미 걸린 프레임을
+     * 거두지 않는다 (S-scene 세대 빗장).
+     */
+    function flowTask(d: Drawn, my: number): Promise<void> {
       const labels = d.rowLabels;
       const lag = 0.35;
       const span = 1 / (1 + lag * Math.max(0, labels.length - 1));
@@ -643,6 +650,7 @@ export const pruneBranchStageView: CanvasView = {
         label.setAttribute('transform', `translate(0 ${-ROW_DROP})`);
       }
       return tween(TASK_MS, (t) => {
+        if (!alive(my)) return;
         labels.forEach((label, k) => {
           const e = easeOut(clamp01((t - k * lag * span) / span));
           label.setAttribute('opacity', String(ROW_DIM * e));
@@ -659,7 +667,7 @@ export const pruneBranchStageView: CanvasView = {
      * 짚을 자리를 걸음에서 받지 않고 **장면에서 찾는다** — `prunedIds` 는 셈판의
      * 수를 내는 것과 같은 함수다.
      */
-    function flowFinish(scene: PruneBranchScene, d: Drawn): Promise<void> {
+    function flowFinish(scene: PruneBranchScene, d: Drawn, my: number): Promise<void> {
       const { nodeR } = d.layout;
       const left: SVGCircleElement[] = [];
       for (const id of prunedIds(scene)) {
@@ -668,6 +676,10 @@ export const pruneBranchStageView: CanvasView = {
       }
       for (const ghost of left) ghost.setAttribute('opacity', String(GHOST_DIM));
       return tween(FINISH_MS, (t) => {
+        // 유령은 재건 대상이라 옛 손잡이는 이미 떨어져 나간 노드다. 그래도 빗장을
+        // 나란히 둔다 — 어느 걸음 함수가 살아 있는 화면에 쓰는지를 갈래마다 다시
+        // 따지게 하면 언젠가 하나를 놓친다.
+        if (!alive(my)) return;
         const pulse = Math.sin(Math.PI * t);
         for (const ghost of left) {
           ghost.setAttribute('r', String(nodeR * (1 + 0.24 * pulse)));
@@ -721,6 +733,7 @@ export const pruneBranchStageView: CanvasView = {
         const x2 = g.x;
         const y2 = g.y - L.nodeR;
         await tween(EDGE_MS, (t) => {
+          if (!alive(my)) return;
           const e = easeOut(t);
           edge.setAttribute('x2', String(x1 + (x2 - x1) * e));
           edge.setAttribute('y2', String(y1 + (y2 - y1) * e));
@@ -729,6 +742,7 @@ export const pruneBranchStageView: CanvasView = {
       }
 
       await tween(POP_MS, (t) => {
+        if (!alive(my)) return;
         const e = easeOut(t);
         node.circle.setAttribute('r', String(L.nodeR * e));
         node.label.setAttribute('opacity', String(e));
@@ -742,6 +756,7 @@ export const pruneBranchStageView: CanvasView = {
         const disc = el('circle', { cx: g.x, cy: g.y, r: 0, fill: resting.fill });
         liveNodeLayer.insertBefore(disc, node.label);
         await tween(VERDICT_MS, (t) => {
+          if (!alive(my)) return;
           disc.setAttribute('r', String(L.nodeR * easeOut(t)));
         });
         disc.remove();
@@ -757,6 +772,9 @@ export const pruneBranchStageView: CanvasView = {
         const shadeH = L.treeBottom - shadeTop;
         const jumped = belowCount(scene, step.id) > 0;
         await tween(CLOSE_MS, (t) => {
+          // `skippedText` 는 재건 밖 요소다. 빗장이 없으면 앞 세대의 남은 프레임이
+          // 새로 선 화면의 셈판 글자를 계속 밀고 키운다.
+          if (!alive(my)) return;
           const capE = easeOut(clamp01(t / CAP_PART));
           if (cap !== undefined) {
             cap.setAttribute('width', String(capW * capE));
@@ -774,6 +792,7 @@ export const pruneBranchStageView: CanvasView = {
       if (trace !== null) {
         const total = trace.length;
         await tween(TRACE_MS, (t) => {
+          if (!alive(my)) return;
           trace.line.setAttribute('stroke-dashoffset', String(total * (1 - easeOut(t))));
         });
       }
@@ -782,8 +801,8 @@ export const pruneBranchStageView: CanvasView = {
     function flow(scene: PruneBranchScene, d: Drawn, my: number): Promise<void> {
       const step = scene.step;
       if (step === null) return Promise.resolve();
-      if (step.kind === 'task') return flowTask(d);
-      if (step.kind === 'finish') return flowFinish(scene, d);
+      if (step.kind === 'task') return flowTask(d, my);
+      if (step.kind === 'finish') return flowFinish(scene, d, my);
       return flowSpot(scene, step, d, my);
     }
 

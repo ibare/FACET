@@ -508,6 +508,106 @@ export const greedyCanFailStageView: CanvasView = {
     // ── 정적 그리기 ──────────────────────────────────────────────────────
 
     /**
+     * 줄 하나를 세우고 운동이 만질 손잡이를 돌려준다.
+     *
+     * 빈 객체를 만들어 두고 루프가 채우는 꼴로 두지 않는다 — 다 차기 전에 읽으면
+     * 타입이 거짓말을 한다. 줄이 둘로 고정이라 부르는 쪽이 리터럴로 묶는다 (C9).
+     */
+    function drawLane(scene: GreedyCanFailScene, at: Layout, lane: GreedyLane): LaneNodes {
+      const excess = excessOf(scene);
+      const railY = RAIL_Y[lane];
+      const count = countOf(scene, lane);
+      const settled = scene.settled[lane];
+
+      root.appendChild(rule(TRACK_X, railY, TRACK_RIGHT, railY, pal.border, 1.5));
+      root.appendChild(text(SIDE, railY - 6, laneLabel(lane), { weight: 600 }));
+
+      // 개수는 견주는 걸음에서만 뜬다. 그때까지는 줄의 길이가 그것을 말한다.
+      if (scene.judged) {
+        root.appendChild(
+          text(SIDE, railY + 18, tr('label.count', '{n} coins', { n: count }), {
+            size: fontSizes.sm,
+            fill: pal.textMuted,
+          }),
+        );
+      }
+
+      // 남은 몫 눈금. 끝난 줄인가를 칠로 **매번 명시로** 쓴다.
+      root.appendChild(
+        svgEl('rect', {
+          x: RIGHT_X,
+          y: railY - PILL_H / 2,
+          width: PILL_W,
+          height: PILL_H,
+          rx: px(radii.md),
+          fill: settled ? pal.itemSorted : pal.bg,
+          stroke: settled ? pal.itemSorted : pal.border,
+          'stroke-width': 1,
+        }),
+      );
+      const pillNum = text(
+        RIGHT_X + PILL_W / 2,
+        railY + PILL_NUM_DY,
+        scene.started ? String(remainingOf(scene, lane)) : '',
+        {
+          size: fontSizes.lg,
+          weight: 700,
+          anchor: 'middle',
+          fill: settled ? pal.textInverse : pal.text,
+        },
+      );
+      root.appendChild(pillNum);
+
+      // 집은 동전. 어느 칸에 앉는지는 차례가 정하고 자리는 여기서 역산한다.
+      const coins: SVGGElement[] = [];
+      scene.picks[lane].forEach((value, slot) => {
+        const r = at.coinR(value);
+        const spot = at.shelf.get(value);
+        const node = coinNode(value, r, spot?.fill === undefined || spot.fill === '' ? pal.itemDefault : spot.fill);
+        setPos(node, at.coinX(slot), railY - r);
+        root.appendChild(node);
+        coins.push(node);
+      });
+
+      // 먼저 끝난 자리의 눈금. **남는 강조**라 정적 그리기가 세운다 (S-scene).
+      let tick: SVGLineElement | null = null;
+      if (settled) {
+        const x = TRACK_X + at.cell * count;
+        tick = rule(x, railY - TICK_UP, x, railY + BAR_DY + TICK_DOWN, pal.text, 2);
+        root.appendChild(tick);
+      }
+
+      // 잣대와 넘어간 만큼. 견주기 전에는 아예 짓지 않는다 — 길이 0 짜리 선을
+      // 미리 두면 둥근 끝이 점으로 찍혀 잴 자리를 광고한다 (프로토콜 4 절).
+      let bar: SVGLineElement | null = null;
+      let excessBar: SVGLineElement | null = null;
+      if (scene.judged) {
+        bar = rule(
+          TRACK_X,
+          railY + BAR_DY,
+          TRACK_X + at.cell * count,
+          railY + BAR_DY,
+          pal.text,
+          BAR_WIDTH,
+        );
+        root.appendChild(bar);
+        if (lane === 'greedy' && excess > 0) {
+          excessBar = rule(
+            TRACK_X + at.cell * countOf(scene, 'fewest'),
+            railY + BAR_DY,
+            TRACK_X + at.cell * count,
+            railY + BAR_DY,
+            pal.danger,
+            BAR_WIDTH,
+          );
+          root.appendChild(excessBar);
+        }
+      }
+
+      return { railY, pillNum, coins, tick, bar, excess: excessBar };
+    }
+
+    /**
      * 장면이 말하는 것을 전부 세운다.
      *
      * 걸음마다 통째로 다시 짓는다. 되돌릴 명령이 필요 없고, 흐르던 운동이 남긴 속성도
@@ -554,101 +654,11 @@ export const greedyCanFailStageView: CanvasView = {
         }),
       );
 
-      const excess = excessOf(scene);
-      const drawn = {} as Record<GreedyLane, LaneNodes>;
-
-      for (const lane of GREEDY_LANES) {
-        const railY = RAIL_Y[lane];
-        const count = countOf(scene, lane);
-        const settled = scene.settled[lane];
-
-        root.appendChild(rule(TRACK_X, railY, TRACK_RIGHT, railY, pal.border, 1.5));
-        root.appendChild(text(SIDE, railY - 6, laneLabel(lane), { weight: 600 }));
-
-        // 개수는 견주는 걸음에서만 뜬다. 그때까지는 줄의 길이가 그것을 말한다.
-        if (scene.judged) {
-          root.appendChild(
-            text(SIDE, railY + 18, tr('label.count', '{n} coins', { n: count }), {
-              size: fontSizes.sm,
-              fill: pal.textMuted,
-            }),
-          );
-        }
-
-        // 남은 몫 눈금. 끝난 줄인가를 칠로 **매번 명시로** 쓴다.
-        root.appendChild(
-          svgEl('rect', {
-            x: RIGHT_X,
-            y: railY - PILL_H / 2,
-            width: PILL_W,
-            height: PILL_H,
-            rx: px(radii.md),
-            fill: settled ? pal.itemSorted : pal.bg,
-            stroke: settled ? pal.itemSorted : pal.border,
-            'stroke-width': 1,
-          }),
-        );
-        const pillNum = text(
-          RIGHT_X + PILL_W / 2,
-          railY + PILL_NUM_DY,
-          scene.started ? String(remainingOf(scene, lane)) : '',
-          {
-            size: fontSizes.lg,
-            weight: 700,
-            anchor: 'middle',
-            fill: settled ? pal.textInverse : pal.text,
-          },
-        );
-        root.appendChild(pillNum);
-
-        // 집은 동전. 어느 칸에 앉는지는 차례가 정하고 자리는 여기서 역산한다.
-        const coins: SVGGElement[] = [];
-        scene.picks[lane].forEach((value, slot) => {
-          const r = at.coinR(value);
-          const spot = at.shelf.get(value);
-          const node = coinNode(value, r, spot?.fill === undefined || spot.fill === '' ? pal.itemDefault : spot.fill);
-          setPos(node, at.coinX(slot), railY - r);
-          root.appendChild(node);
-          coins.push(node);
-        });
-
-        // 먼저 끝난 자리의 눈금. **남는 강조**라 정적 그리기가 세운다 (S-scene).
-        let tick: SVGLineElement | null = null;
-        if (settled) {
-          const x = TRACK_X + at.cell * count;
-          tick = rule(x, railY - TICK_UP, x, railY + BAR_DY + TICK_DOWN, pal.text, 2);
-          root.appendChild(tick);
-        }
-
-        // 잣대와 넘어간 만큼. 견주기 전에는 아예 짓지 않는다 — 길이 0 짜리 선을
-        // 미리 두면 둥근 끝이 점으로 찍혀 잴 자리를 광고한다 (프로토콜 4 절).
-        let bar: SVGLineElement | null = null;
-        let excessBar: SVGLineElement | null = null;
-        if (scene.judged) {
-          bar = rule(
-            TRACK_X,
-            railY + BAR_DY,
-            TRACK_X + at.cell * count,
-            railY + BAR_DY,
-            pal.text,
-            BAR_WIDTH,
-          );
-          root.appendChild(bar);
-          if (lane === 'greedy' && excess > 0) {
-            excessBar = rule(
-              TRACK_X + at.cell * countOf(scene, 'fewest'),
-              railY + BAR_DY,
-              TRACK_X + at.cell * count,
-              railY + BAR_DY,
-              pal.danger,
-              BAR_WIDTH,
-            );
-            root.appendChild(excessBar);
-          }
-        }
-
-        drawn[lane] = { railY, pillNum, coins, tick, bar, excess: excessBar };
-      }
+      // 두 줄. **객체 리터럴의 평가 차례가 곧 짓는 차례**라 위(greedy)가 먼저 붙는다.
+      const drawn: Record<GreedyLane, LaneNodes> = {
+        greedy: drawLane(scene, at, 'greedy'),
+        fewest: drawLane(scene, at, 'fewest'),
+      };
 
       // 캡션 두 줄.
       const maxUnits = Math.floor((W - SIDE * 2) / (px(fontSizes.md) * 0.52));

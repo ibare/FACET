@@ -69,7 +69,7 @@ export const selectMinEachPassFacet: FacetJson = {
     },
     'caption.compare': {
       en: 'Is {value} smaller than {best}?',
-      ko: '{value} 가 {best} 보다 작은가?',
+      ko: '{value} 대 {best} — 더 작은가?',
       ja: '{value} は {best} より小さいか。',
       zh: '{value} 比 {best} 小吗？',
       ar: 'هل {value} أصغر من {best}؟',

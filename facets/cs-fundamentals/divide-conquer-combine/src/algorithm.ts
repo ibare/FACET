@@ -22,23 +22,29 @@
  * 않는다 — 차례는 발신이 오는 순서가 이미 말하고, 깊이는 부모-자식 잇기가 말하고,
  * 값은 이어 붙인 구조에서 나온다. 실으면 같은 물음에 두 답이 생겨 언젠가 갈린다.
  *
- *   seed           target `node:<id>`   payload { nodeId: string; values: number[] }
- *                  뿌리에 문제 하나가 놓인다. 뿌리의 이름도 여기서 정한다.
- *   split          target `node:<id>`   payload { nodeId: string; leftId: string;
- *                                                 rightId: string; mid: number }
+ * **어느 자리의 일인지는 `target` 만 말한다.** 같은 이름을 payload 에 또 담지
+ * 않는다 — 수가 아니라 이름일 뿐 "두 자리에서 세기" 와 같은 병이고, 받는 쪽은
+ * `parseTarget` 을 지나 읽는다 (원칙 4).
+ *
+ *   seed           target `node:<id>`   payload { values: number[] }
+ *                  뿌리에 문제 하나가 놓인다. 뿌리의 이름은 `target` 이 정한다.
+ *   split          target `node:<id>`   payload { leftId: string; rightId: string;
+ *                                                 mid: number }
  *                  한 자리가 두 자리로 갈라져 내려간다. **자를 자리(`mid`)만이
- *                  판정이고** 자식의 값은 부모의 값을 거기서 자르면 나온다.
- *   layer-settled  target `node:<id>[]` payload { nodes: string[] }
+ *                  판정이고** 자식의 값은 부모의 값을 거기서 자르면 나온다. 두
+ *                  자식의 이름은 이 걸음이 새로 짓는 것이라 `target` 이 못 말한다.
+ *   layer-settled  target `node:<id>[]` payload 없음.
  *                  그 층의 잎이 한꺼번에 답이 된다 (낱개는 이미 정렬된 것이므로).
  *                  C2 의 집합 이벤트 계열(`layer-*`)에 얹은 이름 — 한 층이 동시에
- *                  전이하는 장면을 낱개 emit 으로 풀면 동시성이 훼손된다.
- *   merge          target `node:<id>`   payload { nodeId: string; leftId: string;
- *                                                 rightId: string; from: DcSide[] }
+ *                  전이하는 장면을 낱개 emit 으로 풀면 동시성이 훼손된다. 어느
+ *                  자리들인지는 `target` 목록이 그대로 말한다.
+ *   merge          target `node:<id>`   payload { from: DcSide[] }
  *                  두 답이 부모 자리로 되짚어 올라 하나가 된다. **`from` 만이
  *                  판정이다** — 값이 어느 쪽에서 차례로 올라왔는가. 부모의 값도,
- *                  각 값이 온 칸 번호도 거기서 풀린다.
+ *                  각 값이 온 칸 번호도 거기서 풀린다. 합쳐질 두 자식은 이미
+ *                  갈라져 있으므로 이름을 싣지 않는다 — 나무에서 찾으면 된다.
  *   rewind         payload 없음. 자동 재생이 끝난 뒤 advance 로 처음부터 되짚을 때.
- *   done           payload 없음. 쪼갬/합침 횟수는 발신을 센 쪽이 안다.
+ *   done           target `node:<id>`   payload 없음. 쪼갬/합침 횟수는 센 쪽이 안다.
  *
  * 메트릭은 없다 — 조각은 셀 것이 없다 (S-piece).
  */
@@ -214,7 +220,7 @@ function buildSteps(ctx: FacetContext<DivideConquerCombineData>, root: DcNode): 
     await ctx.emit({
       type: 'seed',
       target: `node:${root.id}`,
-      payload: { nodeId: root.id, values: root.problem.slice() },
+      payload: { values: root.problem.slice() },
     });
   });
 
@@ -229,7 +235,7 @@ function buildSteps(ctx: FacetContext<DivideConquerCombineData>, root: DcNode): 
         type: 'split',
         target: `node:${node.id}`,
         payload: {
-          nodeId: node.id,
+          // 이 걸음이 새로 짓는 이름이라 `target` 이 말하지 못한다.
           leftId: left.id,
           rightId: right.id,
           // 자를 자리만이 판정이다. 자식의 값은 부모의 값을 여기서 자르면 나온다.
@@ -247,7 +253,6 @@ function buildSteps(ctx: FacetContext<DivideConquerCombineData>, root: DcNode): 
       await ctx.emit({
         type: 'layer-settled',
         target: ids.map((id) => `node:${id}`),
-        payload: { nodes: ids },
       });
     });
   }
@@ -266,11 +271,8 @@ function buildSteps(ctx: FacetContext<DivideConquerCombineData>, root: DcNode): 
           type: 'merge',
           target: `node:${node.id}`,
           payload: {
-            nodeId: node.id,
-            leftId: left.id,
-            rightId: right.id,
             // 어느 쪽에서 차례로 꺼냈는가. 부모의 값도 각 값이 온 칸 번호도
-            // 이것 하나에서 풀린다.
+            // 이것 하나에서 풀린다. 합쳐질 두 자식은 나무에 이미 있다.
             from: combined.from,
           },
         });

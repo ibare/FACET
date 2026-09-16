@@ -81,7 +81,7 @@ export const takeBestNowFacet: FacetJson = {
     },
     'caption.goal': {
       en: 'Make {target} out of these.',
-      ko: '이것들로 {target}을 만든다.',
+      ko: '목표는 {target}. 이것들로 만든다.',
       ja: 'これらで {target} をつくる。',
       zh: '用这些凑出 {target}。',
       ar: 'كوّن {target} من هذه.',
