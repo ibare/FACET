@@ -920,7 +920,7 @@ grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 나온다. 실제로 두 번 걸렸고 한 번은 커밋을 amend 로 고쳤다 — 배치를 닫는 시점에는
 형제 배치가 이미 `facet.ts` 를 고쳐 놓았기 때문이다.
 
-2026-09-16 기준 **124 / 181**.
+2026-09-16 기준 **125 / 181**.
 
 옮긴 배치는 셋이다. 셋 다 **흔들림 0 · 왕복어긋남 0** 으로 닫았다.
 
@@ -956,12 +956,16 @@ grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 리스트 둘(`skip-a-layer` · `coin-flip-height`)은 자료 구조 배치에 섞여 이미 옮겨져
 있었다. 배치마다 병렬 에이전트 셋~아홉.
 
-**`cs-fundamentals` 가 닫혔다 — 조각 117 개 전부 Scene 이다.** 서브도메인 일곱이
-모두 끝났다: 자료구조 40 · 확률적 자료구조 10 · 알고리즘 27 · 그래프 21 · 문자열 11 ·
-수치 3 · 복잡도 5.
+**`cs-fundamentals` 가 닫혔다 — 조각 117 개 전부 Scene 이고 projector 는 0 건이다.**
+서브도메인 일곱이 모두 끝났다: 자료구조 40 · 확률적 자료구조 10 · 알고리즘 27 ·
+그래프 21 · 문자열 11 · 수치 3 · 복잡도 5.
 
-남은 57 은 다른 도메인이다 — `ml-basics` 23 · `computer-architecture` 19 ·
-`security` 8 · `ai-engineering` 6 · `databases` 1.
+마지막 하나(`adjacency-list-vs-matrix`)는 카탈로그상 `data-structures` 인데
+`origin: graph` 라 양쪽 배치에서 빠져 있었다 — **대상을 서브도메인으로만 세면
+놓친다.**
+
+남은 56 은 다른 도메인이다 — `ml-basics` 23 · `computer-architecture` 19 ·
+`security` 8 · `ai-engineering` 6.
 
 ### 배치를 돌리는 법
 
