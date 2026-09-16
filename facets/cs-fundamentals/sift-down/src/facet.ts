@@ -34,7 +34,7 @@ export const siftDownFacet: FacetJson = {
     pt: 'O último valor preenche o topo vazio e desce um passo de cada vez até se encaixar.',
   },
   algorithm: 'module:siftDown',
-  projector: 'module:siftDownProjector',
+  scene: 'module:siftDownScene',
   initialData: {
     type: 'sift-down',
     values: [3, 5, 8, 9, 6, 12, 10],
@@ -42,7 +42,7 @@ export const siftDownFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'sift-down-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.extract': {

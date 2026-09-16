@@ -13,7 +13,8 @@
  *   target: `index:${toIndex}`
  *   payload: {
  *     toIndex: number;
- *     textKey: string;                          // 캡션 키. projector 가 해석.
+ *     textKey: string;                          // 캡션 키. scene 이 갈래로 옮기고
+ *                                               // stage 가 문장을 만든다.
  *     vars: Record<string, string | number>;     // 캡션 플레이스홀더 값.
  *     rewind?: boolean;                          // true 면 화면을 비운 뒤 보인다.
  *   }

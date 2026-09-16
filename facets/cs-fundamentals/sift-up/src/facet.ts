@@ -42,7 +42,7 @@ export const siftUpFacet: FacetJson = {
     pt: 'Insere-se na última posição e sobe até encontrar o seu lugar.',
   },
   algorithm: 'module:siftUp',
-  projector: 'module:siftUpProjector',
+  scene: 'module:siftUpScene',
   initialData: {
     type: 'sift-up',
     values: [3, 5, 8, 9, 6, 12, 10],
@@ -104,7 +104,7 @@ export const siftUpFacet: FacetJson = {
     stage: { type: 'sift-up-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

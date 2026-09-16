@@ -6,10 +6,11 @@
  * `2i+1` · `2i+2` · `⌊(i−1)/2⌋` 셈만으로 부모와 자식 사이를 오간다.
  *
  * 조각이므로 header 도 metrics 도 두지 않는다 (S-piece). 제목은 글의 문단이
- * 주고, 셀 것은 없다.
+ * 주고, 셀 것은 없다. 컨트롤은 다시 보기와 스크럽 띠 둘뿐이며, 걸음을 되짚어도
+ * 화면이 온전한 것은 이 조각이 장면(Scene) 방식이기 때문이다 (S-scene).
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const arrayAsTreeFacet: FacetJson = {
   id: 'facet:arrayAsTree',
@@ -38,7 +39,7 @@ export const arrayAsTreeFacet: FacetJson = {
     pt: 'Como um único vetor faz as vezes de árvore — sem links guardados, só aritmética de índices.',
   },
   algorithm: 'module:arrayAsTree',
-  projector: 'module:arrayAsTreeProjector',
+  scene: 'module:arrayAsTreeScene',
 
   initialData: {
     type: 'array-as-tree',
@@ -48,7 +49,7 @@ export const arrayAsTreeFacet: FacetJson = {
 
   blocks: {
     stage: { type: 'array-as-tree-stage' },
-    controls: { type: 'control-bar', controls: [CONTROL.replay, CONTROL.advance] },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
 
   messages: {
