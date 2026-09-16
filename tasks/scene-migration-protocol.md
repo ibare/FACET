@@ -786,6 +786,14 @@ const t = params.t ?? makeTranslator(params.locale);
   함께 고쳐야 한다 (`t(key, '<en 원본>', args)`). `rolling-hash` 가 열 로캘을 다 고치고
   호출부를 빠뜨려 `en-original-matches-declaration` 이 잡았다. 선언이 정본이다.
 
+- **`t()` 를 지나지 않는 화면 글자는 어떤 검사도 못 잡는다.**
+  `en-original-matches-declaration` 도 `facet-i18n` 도 **`t()` 호출만 훑기 때문에**
+  `label.textContent = 'pattern'` 같은 자리는 통과한다. `rolling-hash` 는 거기에
+  "도식 라벨 한 단어라 표식이다 — 키를 만들지 않는다 (C10)" 는 **C10 에 없는 예외**를
+  주석으로 적어 두기까지 했다. 옮길 때 stage 의 `textContent = '<라틴 두 자 이상>'` 을
+  직접 훑어라 — 저장소 전반에 같은 종류가 열 곳 남짓 더 있다 (`head` · `tail` ·
+  `capacity` 등). 검사를 하나 붙이면 다시 안 들어온다.
+
 - **`origin` 이 서브도메인을 가로지른다.** `adjacency-list-vs-matrix` 는 카탈로그상
   `data-structures` 인데 `origin: graph` 라 자료구조 배치에서도 그래프 배치에서도
   빠졌다. **대상을 셀 때 서브도메인만 보면 놓친다** — `kind: 'piece'` 를 전부 세고
