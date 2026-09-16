@@ -138,6 +138,17 @@ grep -nE "getAttribute|getBBox|getBoundingClientRect|Number\(" $d/src/*-stage.ts
   도 아니라 ①~③ 의 grep 에 걸리지 않는다. 되감아 세운 직후에는 그 값이 아직 옛
   화면의 것이라 셈이 틀어진다.
 
+- **⑤ 구조체 필드에 얹힌 상태** — `type Piece = { g: SVGGElement; body: SVGRectElement;
+  station: number }` 처럼 **DOM 손잡이와 수치를 한 객체에 묶어** 둔 자리. `let` 도
+  `Set.has` 도 DOM 되읽기도 아니라 ①~④ 어디에도 안 걸린다. `enqueue-dequeue-ends` 의
+  `pieces[i].station` (각 값이 선 정거장) 과 `deque-both-ends` 의 `Chip.used` (문이
+  쓰인 적 있나) 가 그것이고, 뒤엣것은 **그 조각의 결론 자체**였다 — 되짚어 살아나지
+  않으면 "문 넷이 다 켜진다" 는 주장이 화면에서 사라진다.
+
+  ```sh
+  grep -nE "\.(used|active|done|seen|visited|station|slot|at) *=" $d/src/*-stage.ts   # ⑤
+  ```
+
 **변수가 하나도 없는 조각이 가장 위험하다.** `traverse-from-head` 는 `let` 이 전부 DOM
 핸들이었고 지나온 자취는 `rect` 의 `stroke` 칠에, 옮김 횟수는 `textContent` 에,
 커서 자리는 `transform` 에 있었다. `node-points-next` 도 "지금까지 무엇이 그려졌나" 를
@@ -211,9 +222,28 @@ const grewOne = opts.animate && prev !== null && next.nodes.length === prev.node
 const justAssigned = opts.animate && prev?.active?.assigned == null;
 ```
 
-**한 걸음에 흐르게 할 것은 하나라고 전제한다.** 러너가 이벤트를 하나씩 주므로 아홉
-조각 모두 그러했다. 한 걸음에 두 곳이 동시에 달라지는 조각이 나오면 이 관용구가
-깨지니, 그때는 그 사실을 여기 적는다.
+**한 걸음에 흐르게 할 것이 여럿일 수 있다.** 러너가 이벤트를 하나씩 주므로 처음 아홉
+조각은 모두 하나였고, 그래서 이 문서는 한동안 그것을 전제로 적혀 있었다.
+`queue-vs-stack-order` 에서 깨졌다 — 걸음 하나에 두 그릇이 함께 움직이고 통에 남은
+것들이 따라 미끄러진다. 그것이 우연이 아니라 **그 조각의 주장 자체**다. 두 그릇을
+나란히(lockstep) 돌려야 갈리는 순간이 한 화면에서 보인다.
+
+그럴 때 **시계를 둘로 나누지 않는다.**
+
+```ts
+// 나쁨 — 시계가 둘이라 lockstep 이 우연히 맞는 꼴이 되고, 하나를 void 로 흘릴 여지가 생긴다
+await Promise.all([slideQueue(next, my), slideStack(next, my)]);
+
+// 좋음 — 옮길 것을 한 목록에 모아 한 시계로 흘린다
+const { moves, duration } = movesFor(next, step);
+await animate(duration, my, (t) => {
+  for (const m of moves) place(m.chip, pointAt(m, t));
+});
+```
+
+`Promise.all` 은 **서로 다른 뜻의 운동**을 나란히 돌릴 때 쓴다. 두 운동이 한 뜻으로
+묶여 있으면 한 시계가 옳고, 그러면 `render` 의 Promise 가 둘 다 선 뒤에 구조적으로
+풀린다 — `void` 로 던질 Promise 자체가 생기지 않는다.
 
 **운동의 방향이 뒤집힌다.** 정적 그리기가 정본이 되므로 요소는 이미 끝 자리에 서 있고,
 애니메이션은 **아직 못 온 만큼을 뒤로 물리는** 꼴이 된다 — `translate(dx*e)` 가 아니라
@@ -258,6 +288,12 @@ const justAssigned = opts.animate && prev?.active?.assigned == null;
 매번 새로 만드는 요소라면 살아남은 옛 운동이 쥔 것은 이미 떨어져 나간 노드라 무해하다.
 반대로 배치 밑감처럼 계속 쓰는 요소를 프레임마다 고치는 걸음은 stale 프레임이 **살아
 있는 화면**에 쓴다. 고정 자리에 둔 캡션·집계처럼 재건 밖에 있는 요소도 마찬가지다.
+
+**다만 "매번 새로 만든다" 를 너무 믿지 않는다.** 새로 지어지는 것은 **노드**이지 그
+노드를 가리키는 **클로저 변수**가 아니다. `cells` · `markers` 처럼 정적 그리기가
+재할당하는 손잡이를 걸음 함수가 `await` 뒤에 읽으면, 옛 세대의 이음매가 새 손잡이를
+타고 살아 있는 화면에 쓴다 (`circular-buffer-wrap`). 걸음 함수가 `await` 를 하나라도
+지나면 빗장을 두는 편이 안전하다.
 
 운동이 `wait` 나 rAF 로 여러 마디를 이어 달리는 조각은 대개 필요하다 — 되짚기가 가운데
 끼어들면 남은 마디들이 깨어나 이미 새로 선 화면을 덮는다. 걷어내는 뒷마디가 특히
@@ -326,6 +362,12 @@ const t = params.t ?? makeTranslator(params.locale);
 
   `probeLayer` 처럼 **자식을 비워도 자신의 `opacity` 는 남는** 레이어를 조심한다.
   레이어를 비우는 것과 레이어를 되돌리는 것은 다른 일이다.
+
+  **재건 밖 요소에는 이 관용구가 자동으로 적용되지 않는다.** 정적 그리기가 매번 다시
+  짓지 않고 계속 쓰는 요소 — 고정 자리의 캡션·집계, `display:none` 으로 숨기기만 하는
+  띠 — 는 정적 경로가 그 속성을 **매번 명시로 쓰는지** 직접 확인해야 한다.
+  `push-pop-top` 의 막음 띠는 숨겨도 `y1` 이 앞 걸음 값으로 남아 되짚기 판정에서
+  어긋났다. 눈에는 안 보이는 차이다.
 
 - **애니메이션의 출발값을 `prev` 에서 꺼내면 위반이다.** S-scene 은 `prev` 를 "무엇을
   흐르게 할지 **고르는 데만**" 쓰라고 못박는다. `settleBracket(prev.usedLength, …)` 이
@@ -435,7 +477,7 @@ grep -l "projector: 'module:" facets/*/*/src/facet.ts | wc -l
 grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 ```
 
-2026-09-16 기준 **19 / 181**.
+2026-09-16 기준 **24 / 181**.
 
 옮긴 배치는 셋이다. 셋 다 **흔들림 0 · 왕복어긋남 0** 으로 닫았다.
 
@@ -445,6 +487,7 @@ grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 | 토큰화 여섯 | 2026-09-13 | `ai-engineering` 의 여섯. 옮기기 전 여섯 다 되짚기가 흔들렸다 |
 | 자료 구조 · 배열 다섯 | 2026-09-16 | `index-address-calc` · `shift-on-insert` · `shift-on-remove` · `out-of-bounds` · `grow-and-copy` |
 | 자료 구조 · 연결 리스트 다섯 | 2026-09-16 | `node-points-next` · `traverse-from-head` · `relink-insert` · `lost-link` · `through-middle-node` |
+| 자료 구조 · 스택과 큐 다섯 | 2026-09-16 | `push-pop-top` · `enqueue-dequeue-ends` · `queue-vs-stack-order` · `circular-buffer-wrap` · `deque-both-ends` |
 
 ### 배치를 돌리는 법
 
@@ -524,9 +567,15 @@ split-and-number   945 → 1101  +156  +17%
 ```
 배열 다섯          5123 → 6435   +1312  +26%
 연결 리스트 다섯    6241 → 7890   +1649  +26%
+스택과 큐 다섯     5231 → 6411   +1180  +23%
                                  ─────
-                    열 조각 평균 +296 줄 (+26%)
+                   열다섯 조각 평균 +276 줄 (+25%)
 ```
+
+가장 적게 는 것은 `queue-vs-stack-order` 였다 (+12%). 걸음 함수를 덧대는 대신 옮길
+것을 `Move` 목록 하나로 합쳐 `settleMoves` · `showRing` · `clearRings` · `markVisited`
+· `createChip` 분기가 통째로 없어졌다. **걸음 함수를 그대로 두고 정적 경로를 덧대면
++26%, 장면에서 바로 그리도록 합치면 그보다 적다** 는 것이 열다섯의 결론이다.
 
 늘어난 몫의 정체는 배치마다 같았다 — 걸음 함수를 버리지 않고 **정적으로 그리는 길을
 덧댄** 것, 그리고 캡션 문안 만들기가 projector 에서 stage 로 넘어온 것이다. 줄이려면
