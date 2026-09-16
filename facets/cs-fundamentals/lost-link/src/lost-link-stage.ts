@@ -9,17 +9,30 @@
  * 줄에서 떨어져 아래로 기울며 내려앉을 뿐이다.
  *
  * 세 가지가 실제로 **움직인다**. 색 전환이 아니다.
- *   - 새 노드가 위에서 내려와 줄 위에 뜬다 (staged)
- *   - 화살표 끝이 원래 겨누던 노드에서 다른 노드로 **건너간다** (moveLink)
- *   - 붙들어 주는 화살표를 잃은 무리가 왼쪽을 축으로 기울며 떨어진다 (detach)
+ *   - 새 노드가 위에서 내려와 줄 위에 뜬다
+ *   - 화살표 끝이 원래 겨누던 노드에서 다른 노드로 **건너간다**
+ *   - 붙들어 주는 화살표를 잃은 무리가 왼쪽을 축으로 기울며 떨어진다
  *
- * ── 닿을 수 없음은 그리는 것이 아니라 계산한다
+ * ── 장면을 받아 그린다
  *
- * 어떤 노드가 위태로운지 이 view 는 통보받지 않는다. 매 프레임 head 에서
- * 화살표를 따라가 닿는 집합을 구하고, 거기 들지 못한 노드에 위험 색을 준다.
- * 그래서 "화살표를 옮기는 순간 뒤가 끊긴다" 가 주장이 아니라 화면의 결과가 된다.
+ * 걸음마다 부르는 메서드(`stageNode()` · `moveLink()` · `detach()` …) 를 두지
+ * 않는다. 그 메서드들은 되돌릴 수 없는 명령이라, 임의의 걸음으로 가려면 처음부터
+ * 다시 밟는 수밖에 없었다. 대신 `render(next, prev, { animate })` 하나가 **그
+ * 장면의 화면 전체**를 세운다 — 어느 걸음에서 어느 걸음으로 가든 같은 길이다
+ * (S-scene).
  *
- * 화면 문자는 하나도 이 파일에 없다. 캡션·라벨·각주는 projector 가 넣어 준다 (C10).
+ * 부드러움은 `opts.animate` 가 정한다. 참이면 장면이 실어 보낸 `mark` 하나만
+ * 프레임으로 흐르게 하고, 거짓이면 곧바로 끝 자리에 세운다 — 되짚기와 첫 그림이
+ * 그 길이다. `prev` 는 들추지 않는다. 출발 배치는 `mark.was` 가 싣고 있다.
+ *
+ * ── 닿을 수 없음은 장면이 말한다
+ *
+ * 옛 화면은 매 프레임 head 에서 화살표를 따라가 닿는 집합을 스스로 구했고, 그
+ * 셈이 화살표의 **애니메이션 진행도**를 탔다. 이제 닿음은 `scene.reachable` 이
+ * 말하고 정적으로 그릴 때도 그것으로 칠한다. 건너는 **중간**에만 그리는 쪽이
+ * "아직 옛 목표를 겨눈다" 를 얹어 다시 셈한다.
+ *
+ * 화면 문자는 캡션과 띠 라벨 둘뿐이고 전부 `params.t` 로 만든다 (C10).
  */
 
 import {
@@ -27,11 +40,20 @@ import {
   fonts,
   fontSizes,
   getColors,
+  makeTranslator,
   type Palette,
   type CanvasView,
+  type Translate,
   type ViewInstance,
   type ViewMountParams,
 } from '@ffacet/core/runtime';
+import {
+  linkTargets,
+  reachableFrom,
+  type LostLinkCaption,
+  type LostLinkPlacement,
+  type LostLinkScene,
+} from './scene.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -61,7 +83,6 @@ const HEAD_LABEL_X = 20;
 const HEAD_ARROW_X = 58;
 const CAPTION_Y = 286;
 const CAPTION_LINE_H = 18;
-const NOTE_Y = 324;
 
 const ARROW_HEAD = 7;
 const ARROW_GAP = 5;
@@ -75,32 +96,25 @@ const DUR_REWIND = 560;
 /** 한 줄에 담을 글자 폭 예산. 한글은 두 칸, 라틴은 한 칸으로 센다. */
 const CAPTION_BUDGET = 72;
 
-type NodeBox = {
-  id: string;
-  value: number;
-  x: number;
-  y: number;
-  /** 줄에서 떨어져 나갔는가. */
-  fallen: boolean;
-  /** 이 판에서 새로 들어온 노드인가 — 아직 아무도 안 가리켜도 위험이 아니다. */
-  fresh: boolean;
-};
-
-type Link = {
-  from: string;
-  to: string;
-  /** 화살표가 건너오기 전에 겨누던 노드. 건너는 동안만 값이 있다. */
-  prevTo: string | null;
-  /** 건너기 진행도 0→1. 1 이면 to 를 온전히 겨눈 상태. */
-  prog: number;
-  /** 이번 걸음에 손댄 화살표인가. */
-  active: boolean;
-};
-
 type Point = { x: number; y: number };
 
-type InitSpec = {
-  nodes: { id: string; value: number }[];
+/**
+ * 한 번 그릴 때의 화면 상태.
+ *
+ * 장면은 차례만 말하므로 자리는 여기서 셈해 담는다. 운동 중에는 프레임마다 새로
+ * 만들어지고, 멎어 있을 때는 `restBoard` 가 장면에서 곧바로 만든다.
+ */
+type Board = {
+  /** 노드의 왼쪽 위 모서리. 여기 없는 노드는 화면에 서지 않는다. */
+  pos: Map<string, Point>;
+  /** 줄에서 떨어져 나간 노드들. 기울고 흐려진다. */
+  fallen: Set<string>;
+  /** 떨어진 무리가 기운 각도. */
+  tilt: number;
+  /** 줄 위에 떠 있는 노드. 아무도 가리키지 않으면 점선으로 선다. */
+  staged: string | null;
+  /** 건너는 중인 화살표. 멎어 있으면 `null`. */
+  crossing: { from: string; was: string | null; prog: number } | null;
 };
 
 function slotX(index: number): number {
@@ -158,70 +172,152 @@ function wrapCaption(text: string): string[] {
   return lines.slice(0, 2);
 }
 
+/**
+ * 배치를 자리로 옮긴다. 장면은 차례만 말하고 자리는 여기서 캔버스로 역산한다.
+ *
+ * 줄 안의 노드는 제 차례의 칸에, 떨어진 노드는 **떨어질 때 있던 칸** 아래로,
+ * 줄 위에 뜬 노드는 자기가 들어갈 자리 위에 선다.
+ */
+function layout(place: LostLinkPlacement): Map<string, Point> {
+  const pos = new Map<string, Point>();
+  place.lane.forEach((id, i) => pos.set(id, { x: slotX(i), y: LANE_Y }));
+  for (const f of place.fallen) pos.set(f.id, { x: slotX(f.laneIndex) + FALL_DRIFT_X, y: FALLEN_Y });
+  if (place.staged) {
+    const anchor = place.lane.indexOf(place.staged.afterId);
+    pos.set(place.staged.id, { x: slotX(anchor + 1), y: STAGE_Y });
+  }
+  return pos;
+}
+
+function tiltOf(place: LostLinkPlacement): number {
+  return place.fallen.length > 0 ? FALL_TILT_DEG : 0;
+}
+
+/** 멎어 있을 때의 화면 상태. 장면 하나로 곧바로 만들어진다. */
+function restBoard(scene: LostLinkScene): Board {
+  return {
+    pos: layout(scene.place),
+    fallen: new Set(scene.place.fallen.map((f) => f.id)),
+    tilt: tiltOf(scene.place),
+    staged: scene.place.staged?.id ?? null,
+    crossing: null,
+  };
+}
+
+/** 배치가 달라지는 걸음마다의 시간과 결. */
+const PLACE_FLOW: Record<
+  'staged' | 'detached' | 'settled' | 'rewound',
+  { ms: number; ease: (p: number) => number }
+> = {
+  staged: { ms: DUR_STAGE, ease: easeOutCubic },
+  detached: { ms: DUR_FALL, ease: easeInQuad },
+  settled: { ms: DUR_SETTLE, ease: easeOutCubic },
+  rewound: { ms: DUR_REWIND, ease: easeOutCubic },
+};
+
 export const lostLinkStageView: CanvasView = {
   canvas: { height: H },
   mount(
     _container: HTMLElement,
     params: ViewMountParams & { canvas: SVGSVGElement },
   ): ViewInstance {
-    const colors: Palette = getColors(params.theme);
+    const tr: Translate = params.t ?? makeTranslator(params.locale);
+    const colors: Palette = getColors(params.theme ?? 'light');
 
     const svg = params.canvas;
     svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
     svg.setAttribute('role', 'img');
     svg.style.fontFamily = fonts.body;
 
-    let nodes: NodeBox[] = [];
-    let links: Link[] = [];
-    let laneOrder: string[] = [];
-    /** 처음 사슬의 노드 차례. 되돌리기는 언제나 여기로 돌아간다. */
-    let baseline: string[] = [];
-    let headTo = '';
-    let tilt = 0;
-    let caption = '';
-    let note = '';
-    let bandAbove = '';
-    let bandBelow = '';
-
-    let rafId = 0;
-    let generation = 0;
+    // ── 걸어 둔 것과 기다리는 것. destroy 가 일괄로 거둔다 (S-piece).
+    const frames = new Set<number>();
+    const waiters = new Set<() => void>();
     let destroyed = false;
 
-    // ── 모델 조회 ───────────────────────────────────────────────────────
-    const nodeById = (id: string): NodeBox | undefined => nodes.find((n) => n.id === id);
+    /**
+     * 세대 빗장. `render` 가 불릴 때마다 오르고, 깨어난 걸음 함수는 자기 세대를
+     * 확인한 뒤에만 그린다.
+     *
+     * 되짚기는 `opts.animate` 가 거짓으로 오므로 프레임을 아예 걸지 않는 것이
+     * 첫 번째 빗장이고, 이것이 두 번째다 — 앞 걸음의 운동이 아직 살아 있는 채로
+     * 다음 `render` 가 오면 그 운동은 다음 프레임에서 스스로 물러난다. 물러나지
+     * 않으면 이미 새로 세운 화면 위에 옛 자리를 덮어쓴다.
+     */
+    let gen = 0;
 
-    /** head 에서 화살표를 따라 실제로 닿는 노드 집합. 건너는 중인 화살표는 아직 옛 목표를 가리킨다. */
-    function reachableSet(): Set<string> {
-      const next = new Map<string, string>();
-      for (const l of links) next.set(l.from, l.prog >= 1 ? l.to : (l.prevTo ?? l.to));
-      const seen = new Set<string>();
-      let cur: string | undefined = headTo;
-      while (cur && !seen.has(cur)) {
-        seen.add(cur);
-        cur = next.get(cur);
+    /** 되짚기 직전에 걸어 둔 것을 거둔다 (러너가 맡기면). */
+    params.onScrubStart?.(() => {
+      gen += 1;
+      for (const id of frames) cancelAnimationFrame(id);
+      frames.clear();
+      for (const wake of [...waiters]) wake();
+      waiters.clear();
+    });
+
+    // ── 문안. 장면은 무엇을 말할지만 말하고 문자는 여기서 만든다 (C10).
+    function captionText(c: LostLinkCaption): string {
+      switch (c.kind) {
+        case 'staged':
+          return tr('caption.staged', 'New node {node}({value}) is ready. Nothing points to it yet.', {
+            node: c.node,
+            value: c.value,
+          });
+        case 'stagedAgain':
+          return tr('caption.stagedAgain', '{node}({value}) is ready again.', {
+            node: c.node,
+            value: c.value,
+          });
+        case 'wrongMove':
+          return tr('caption.wrongMove', 'Wrong order — move {from}.next to {to} first.', {
+            from: c.from,
+            to: c.to,
+          });
+        case 'detached':
+          return tr(
+            'caption.detached',
+            'Nothing points to {first} any more, so {count} nodes drop out of reach.',
+            { first: c.first, count: c.count },
+          );
+        case 'rewind':
+          return tr('caption.rewind', 'Undo. Same insertion, other order.');
+        case 'rightAdd':
+          return tr(
+            'caption.rightAdd',
+            'Right order — attach {from}.next to {to} first. Now two arrows reach {to}.',
+            { from: c.from, to: c.to },
+          );
+        case 'rightMove':
+          return tr(
+            'caption.rightMove',
+            'Now move {from}.next to {to}. The tail is still held from the other side.',
+            { from: c.from, to: c.to },
+          );
+        case 'settled':
+          return tr('caption.settled', '{node} takes its place in the chain.', { node: c.node });
+        case 'done':
+          return tr('caption.done', 'No arrow into the tail was ever cut. Nothing fell off.');
       }
-      return seen;
     }
 
-    function hasReferrer(id: string): boolean {
-      return links.some((l) => (l.prog >= 1 ? l.to : (l.prevTo ?? l.to)) === id);
-    }
-
+    // ── 기하 ───────────────────────────────────────────────────────────
     /** 떨어져 나간 무리가 기우는 축 — 무리의 맨 왼쪽. 왼쪽에 걸린 채 뒤가 처지는 모양. */
-    function fallPivot(): Point {
-      const fallen = nodes.filter((n) => n.fallen);
-      if (fallen.length === 0) return { x: 0, y: 0 };
-      let min = fallen[0];
-      for (const n of fallen) if (n.x < min.x) min = n;
-      return { x: min.x, y: min.y + NODE_H / 2 };
+    function fallPivot(board: Board): Point {
+      let best: Point | null = null;
+      for (const id of board.fallen) {
+        const p = board.pos.get(id);
+        if (!p) continue;
+        if (best === null || p.x < best.x) best = { x: p.x, y: p.y + NODE_H / 2 };
+      }
+      return best ?? { x: 0, y: 0 };
     }
 
     /** 기울기까지 반영한 실제 중심. 화살표도 노드도 이 좌표만 본다. */
-    function centerOf(n: NodeBox, pivot: Point): Point {
-      const cx = n.x + NODE_W / 2;
-      const cy = n.y + NODE_H / 2;
-      if (!n.fallen || tilt === 0) return { x: cx, y: cy };
-      const rad = (tilt * Math.PI) / 180;
+    function centerOf(id: string, board: Board, pivot: Point): Point {
+      const p = board.pos.get(id) ?? { x: 0, y: 0 };
+      const cx = p.x + NODE_W / 2;
+      const cy = p.y + NODE_H / 2;
+      if (!board.fallen.has(id) || board.tilt === 0) return { x: cx, y: cy };
+      const rad = (board.tilt * Math.PI) / 180;
       const dx = cx - pivot.x;
       const dy = cy - pivot.y;
       return {
@@ -242,7 +338,7 @@ export const lostLinkStageView: CanvasView = {
     }
 
     // ── 그리기 ─────────────────────────────────────────────────────────
-    function drawArrow(from: Point, to: Point, stroke: string, width: number, dashed: boolean): SVGGElement {
+    function drawArrow(from: Point, to: Point, stroke: string, width: number): SVGGElement {
       const g = svgEl('g', {});
       const dx = to.x - from.x;
       const dy = to.y - from.y;
@@ -253,17 +349,17 @@ export const lostLinkStageView: CanvasView = {
       const tipY = to.y - uy * ARROW_GAP;
       const baseX = tipX - ux * ARROW_HEAD;
       const baseY = tipY - uy * ARROW_HEAD;
-      const line = svgEl('line', {
-        x1: from.x,
-        y1: from.y,
-        x2: baseX,
-        y2: baseY,
-        stroke,
-        'stroke-width': width,
-        'stroke-linecap': 'round',
-      });
-      if (dashed) line.setAttribute('stroke-dasharray', '4 4');
-      g.appendChild(line);
+      g.appendChild(
+        svgEl('line', {
+          x1: from.x,
+          y1: from.y,
+          x2: baseX,
+          y2: baseY,
+          stroke,
+          'stroke-width': width,
+          'stroke-linecap': 'round',
+        }),
+      );
       g.appendChild(
         svgEl('polygon', {
           points: [
@@ -277,18 +373,24 @@ export const lostLinkStageView: CanvasView = {
       return g;
     }
 
-    function drawNode(n: NodeBox, pivot: Point, reach: Set<string>): SVGGElement {
-      const c = centerOf(n, pivot);
-      const pending = n.fresh && !hasReferrer(n.id);
-      const lost = !reach.has(n.id) && !pending;
+    function drawNode(
+      id: string,
+      value: number,
+      board: Board,
+      pivot: Point,
+      lost: boolean,
+      pending: boolean,
+    ): SVGGElement {
+      const c = centerOf(id, board, pivot);
+      const fallen = board.fallen.has(id);
 
       const stroke = lost ? colors.danger : pending ? colors.itemActive : colors.border;
       const fill = lost ? colors.bgSubtle : colors.itemDefault;
-      const valueFill = n.fallen ? colors.textMuted : colors.text;
+      const valueFill = fallen ? colors.textMuted : colors.text;
 
       const g = svgEl('g', {});
-      if (n.fallen && tilt !== 0) g.setAttribute('transform', `rotate(${tilt} ${c.x} ${c.y})`);
-      if (n.fallen) g.setAttribute('opacity', '0.82');
+      if (fallen && board.tilt !== 0) g.setAttribute('transform', `rotate(${board.tilt} ${c.x} ${c.y})`);
+      if (fallen) g.setAttribute('opacity', '0.82');
 
       const rect = svgEl('rect', {
         x: c.x - NODE_W / 2,
@@ -303,7 +405,7 @@ export const lostLinkStageView: CanvasView = {
       if (pending) rect.setAttribute('stroke-dasharray', '5 3');
       g.appendChild(rect);
 
-      const value = svgEl('text', {
+      const text = svgEl('text', {
         x: c.x,
         y: c.y + 5,
         'text-anchor': 'middle',
@@ -311,8 +413,8 @@ export const lostLinkStageView: CanvasView = {
         'font-size': fontSizes.lg,
         fill: valueFill,
       });
-      value.textContent = String(n.value);
-      g.appendChild(value);
+      text.textContent = String(value);
+      g.appendChild(text);
 
       const name = svgEl('text', {
         x: c.x,
@@ -322,15 +424,31 @@ export const lostLinkStageView: CanvasView = {
         'font-size': fontSizes.xs,
         fill: lost ? colors.danger : colors.textMuted,
       });
-      name.textContent = n.id;
+      name.textContent = id;
       g.appendChild(name);
       return g;
     }
 
-    function render(): void {
+    /**
+     * 그 장면의 화면 **전체**를 세운다. 앞 화면과 견주어 고치지 않으므로 되돌릴
+     * 명령이 필요 없다 (S-scene).
+     */
+    function paint(scene: LostLinkScene, board: Board): void {
       while (svg.firstChild) svg.removeChild(svg.firstChild);
-      const pivot = fallPivot();
-      const reach = reachableSet();
+
+      const cross = board.crossing;
+      // 건너는 중인 화살표는 다 건너가기 전까지 아직 옛 목표를 겨눈다. 없던
+      // 화살표가 자라 나오는 중이면 자라는 첫 순간부터 새 목표를 겨눈 것으로 센다.
+      const override =
+        cross !== null && cross.prog < 1 && cross.was !== null
+          ? { from: cross.from, to: cross.was }
+          : undefined;
+      const targets = linkTargets(scene.arrows, override);
+      // 멎어 있으면 장면이 쥔 값을 그대로 쓴다 — 닿음은 장면이 말한다.
+      const reach =
+        cross === null ? new Set(scene.reachable) : new Set(reachableFrom(scene.head, targets));
+      const referrers = new Set(targets.values());
+      const pivot = fallPivot(board);
 
       // 경계 — 여기 위는 닿는 곳, 아래는 남아 있으나 들어갈 길이 없는 곳.
       svg.appendChild(
@@ -351,10 +469,10 @@ export const lostLinkStageView: CanvasView = {
         'font-size': fontSizes.xs,
         fill: colors.textMuted,
       });
-      above.textContent = bandAbove;
+      above.textContent = tr('label.reachable', 'reachable from head');
       svg.appendChild(above);
 
-      if (nodes.some((n) => n.fallen)) {
+      if (board.fallen.size > 0) {
         const below = svgEl('text', {
           x: W - 18,
           y: BOUNDARY_Y + 18,
@@ -362,12 +480,11 @@ export const lostLinkStageView: CanvasView = {
           'font-size': fontSizes.xs,
           fill: colors.danger,
         });
-        below.textContent = bandBelow;
+        below.textContent = tr('label.unreachable', 'still in memory, no way in');
         svg.appendChild(below);
       }
 
       // head — 사슬로 들어가는 유일한 입구.
-      const first = nodeById(headTo);
       const headLabel = svgEl('text', {
         x: HEAD_LABEL_X,
         y: LANE_Y + NODE_H / 2 + 4,
@@ -379,291 +496,202 @@ export const lostLinkStageView: CanvasView = {
       // 키를 만들지 않는다 (C10 의 표식 판정 2번).
       headLabel.textContent = 'head';
       svg.appendChild(headLabel);
-      if (first && !first.fallen) {
-        const target = centerOf(first, pivot);
+      if (board.pos.has(scene.head) && !board.fallen.has(scene.head)) {
+        const target = centerOf(scene.head, board, pivot);
         const start = { x: HEAD_ARROW_X, y: LANE_Y + NODE_H / 2 };
-        svg.appendChild(drawArrow(start, edgePoint(target, start), colors.text, 1.6, false));
+        svg.appendChild(drawArrow(start, edgePoint(target, start), colors.text, 1.6));
       }
 
       // 화살표. 건너는 중이면 끝점이 옛 목표에서 새 목표로 이동한다.
-      for (const l of links) {
-        const from = nodeById(l.from);
-        const to = nodeById(l.to);
-        if (!from || !to) continue;
-        const fromC = centerOf(from, pivot);
-        const toC = centerOf(to, pivot);
+      for (const a of scene.arrows) {
+        if (!board.pos.has(a.from) || !board.pos.has(a.to)) continue;
+        const fromC = centerOf(a.from, board, pivot);
+        const toC = centerOf(a.to, board, pivot);
         let end = edgePoint(toC, fromC);
-        if (l.prog < 1) {
+        if (cross !== null && cross.from === a.from && cross.prog < 1) {
           // 건너는 중이면 옛 목표에서, 새로 나는 중이면 제 몸에서 끝점이 출발한다.
-          const prev = l.prevTo ? nodeById(l.prevTo) : undefined;
-          const origin = prev
-            ? edgePoint(centerOf(prev, pivot), fromC)
-            : edgePoint(fromC, end);
-          end = { x: lerp(origin.x, end.x, l.prog), y: lerp(origin.y, end.y, l.prog) };
+          const origin =
+            cross.was !== null && board.pos.has(cross.was)
+              ? edgePoint(centerOf(cross.was, board, pivot), fromC)
+              : edgePoint(fromC, end);
+          end = { x: lerp(origin.x, end.x, cross.prog), y: lerp(origin.y, end.y, cross.prog) };
         }
         const start = edgePoint(fromC, end);
         if (Math.hypot(end.x - start.x, end.y - start.y) < ARROW_GAP + ARROW_HEAD) continue;
-        const dead = !reach.has(l.from);
-        const stroke = l.active ? colors.itemActive : dead ? colors.textMuted : colors.text;
-        svg.appendChild(drawArrow(start, end, stroke, l.active ? 2.4 : 1.6, false));
+        // 이번 걸음에 손댄 화살표는 다음 걸음까지 강조로 **남는다**. 머무는 강조라
+        // 정적으로 그릴 때도 들어간다 (S-scene).
+        const active = scene.mark?.kind === 'linked' && scene.mark.from === a.from;
+        const dead = !reach.has(a.from);
+        const stroke = active ? colors.itemActive : dead ? colors.textMuted : colors.text;
+        svg.appendChild(drawArrow(start, end, stroke, active ? 2.4 : 1.6));
       }
 
-      for (const n of nodes) svg.appendChild(drawNode(n, pivot, reach));
+      for (const n of scene.nodes) {
+        if (!board.pos.has(n.id)) continue;
+        const pending = board.staged === n.id && !referrers.has(n.id);
+        const lost = !reach.has(n.id) && !pending;
+        svg.appendChild(drawNode(n.id, n.value, board, pivot, lost, pending));
+      }
 
-      // 캡션과 각주.
-      const lines = wrapCaption(caption);
-      lines.forEach((line, i) => {
-        const text = svgEl('text', {
-          x: W / 2,
-          y: CAPTION_Y + i * CAPTION_LINE_H,
-          'text-anchor': 'middle',
-          'font-size': fontSizes.md,
-          fill: colors.text,
+      // 캡션.
+      if (scene.caption !== null) {
+        wrapCaption(captionText(scene.caption)).forEach((line, i) => {
+          const text = svgEl('text', {
+            x: W / 2,
+            y: CAPTION_Y + i * CAPTION_LINE_H,
+            'text-anchor': 'middle',
+            'font-size': fontSizes.md,
+            fill: colors.text,
+          });
+          text.textContent = line;
+          svg.appendChild(text);
         });
-        text.textContent = line;
-        svg.appendChild(text);
-      });
-
-      const noteText = svgEl('text', {
-        x: W / 2,
-        y: NOTE_Y,
-        'text-anchor': 'middle',
-        'font-size': fontSizes.xs,
-        fill: colors.textMuted,
-      });
-      noteText.textContent = note;
-      svg.appendChild(noteText);
+      }
     }
 
     // ── 시간 ───────────────────────────────────────────────────────────
-    function cancelFrame(): void {
-      if (rafId !== 0 && typeof cancelAnimationFrame === 'function') cancelAnimationFrame(rafId);
-      rafId = 0;
+    function now(): number {
+      return typeof performance !== 'undefined' ? performance.now() : Date.now();
     }
 
     /**
-     * 한 동작을 시간에 펼친다. init 이 새 판을 열면 세대가 올라가 진행 중이던
-     * 동작은 스스로 물러난다 (다시 보기를 누른 순간 옛 동작이 화면을 덮지 않도록).
+     * 걸음 하나를 프레임으로 흐르게 한다.
+     *
+     * 첫 프레임을 **동기로** 그린다. 정적 그리기가 이미 끝 자리에 세워 두었으므로,
+     * 출발 자리로 물리는 것을 다음 프레임에 미루면 끝 자리가 한 번 번쩍인다.
      */
-    function tween(duration: number, ease: (p: number) => number, apply: (p: number) => void): Promise<void> {
-      const mine = generation;
-      const finish = (): void => {
-        apply(1);
-        render();
-      };
+    function animate(ms: number, draw: (p: number) => void): Promise<void> {
+      const mine = gen;
       if (destroyed || typeof requestAnimationFrame !== 'function') {
-        finish();
+        draw(1);
         return Promise.resolve();
       }
-      const now = (): number => (typeof performance !== 'undefined' ? performance.now() : Date.now());
       const t0 = now();
       return new Promise<void>((resolve) => {
-        const frame = (): void => {
-          if (destroyed || mine !== generation) {
-            resolve();
+        const finish = (): void => {
+          waiters.delete(finish);
+          resolve();
+        };
+        waiters.add(finish);
+        let id = 0;
+        const step = (): void => {
+          frames.delete(id);
+          if (destroyed || mine !== gen) {
+            finish();
             return;
           }
-          const p = Math.min(1, (now() - t0) / duration);
-          apply(ease(p));
-          render();
-          if (p < 1) {
-            rafId = requestAnimationFrame(frame);
-          } else {
-            rafId = 0;
-            resolve();
+          const raw = Math.min(1, (now() - t0) / ms);
+          draw(raw);
+          if (raw >= 1) {
+            finish();
+            return;
           }
+          id = requestAnimationFrame(step);
+          frames.add(id);
         };
-        rafId = requestAnimationFrame(frame);
+        draw(0);
+        id = requestAnimationFrame(step);
+        frames.add(id);
       });
     }
 
-    /** 여러 노드를 각자의 목적지로 동시에 옮긴다. */
+    /**
+     * 배치가 달라진 걸음. 출발 배치에서 도착 배치로 다 함께 미끄러진다.
+     *
+     * 출발 배치에만 있는 노드는 화면 밖으로 물러나고, 도착 배치에만 있는 노드는
+     * 화면 밖에서 내려온다. 그래서 새 노드가 드는 걸음과 되감는 걸음이 같은 길로
+     * 그려진다.
+     */
     function glide(
-      targets: Map<string, Point>,
-      duration: number,
+      scene: LostLinkScene,
+      was: LostLinkPlacement,
+      stagedId: string | null,
+      ms: number,
       ease: (p: number) => number,
-      tiltTo = tilt,
     ): Promise<void> {
-      const starts = new Map<string, Point>();
-      for (const [id] of targets) {
-        const n = nodeById(id);
-        if (n) starts.set(id, { x: n.x, y: n.y });
+      const fromPos = layout(was);
+      const toPos = layout(scene.place);
+      const fallen = new Set(scene.place.fallen.map((f) => f.id));
+      const tiltFrom = tiltOf(was);
+      const tiltTo = tiltOf(scene.place);
+
+      const moves: { id: string; a: Point; b: Point }[] = [];
+      for (const n of scene.nodes) {
+        const a = fromPos.get(n.id);
+        const b = toPos.get(n.id);
+        if (!a && !b) continue;
+        moves.push({
+          id: n.id,
+          a: a ?? { x: (b as Point).x, y: OFFSCREEN_Y },
+          b: b ?? { x: (a as Point).x, y: OFFSCREEN_Y },
+        });
       }
-      const tiltFrom = tilt;
-      return tween(duration, ease, (p) => {
-        for (const [id, to] of targets) {
-          const n = nodeById(id);
-          const from = starts.get(id);
-          if (!n || !from) continue;
-          n.x = lerp(from.x, to.x, p);
-          n.y = lerp(from.y, to.y, p);
+
+      return animate(ms, (raw) => {
+        const e = ease(raw);
+        const pos = new Map<string, Point>();
+        for (const m of moves) {
+          pos.set(m.id, { x: lerp(m.a.x, m.b.x, e), y: lerp(m.a.y, m.b.y, e) });
         }
-        tilt = lerp(tiltFrom, tiltTo, p);
+        paint(scene, { pos, fallen, tilt: lerp(tiltFrom, tiltTo, e), staged: stagedId, crossing: null });
       });
     }
 
-    function laneTargets(order: string[]): Map<string, Point> {
-      const map = new Map<string, Point>();
-      order.forEach((id, i) => map.set(id, { x: slotX(i), y: LANE_Y }));
-      return map;
-    }
+    /** 장면이 실어 보낸 `mark` 하나만 흐르게 한다. */
+    function flow(scene: LostLinkScene): Promise<void> {
+      const mark = scene.mark;
+      if (mark === null) return Promise.resolve();
 
-    function clearActive(): void {
-      for (const l of links) l.active = false;
-    }
-
-    // ── projector 가 부르는 표면 ────────────────────────────────────────
-    function init(spec: InitSpec): void {
-      generation += 1;
-      cancelFrame();
-      nodes = spec.nodes.map((n, i) => ({
-        id: n.id,
-        value: n.value,
-        x: slotX(i),
-        y: LANE_Y,
-        fallen: false,
-        fresh: false,
-      }));
-      links = [];
-      for (let i = 0; i + 1 < spec.nodes.length; i += 1) {
-        links.push({ from: spec.nodes[i].id, to: spec.nodes[i + 1].id, prevTo: null, prog: 1, active: false });
+      if (mark.kind === 'linked') {
+        const rest = restBoard(scene);
+        const ease = mark.how === 'moved' ? easeInOutCubic : easeOutCubic;
+        return animate(DUR_LINK, (raw) => {
+          paint(scene, {
+            ...rest,
+            crossing: { from: mark.from, was: mark.was, prog: ease(raw) },
+          });
+        });
       }
-      laneOrder = spec.nodes.map((n) => n.id);
-      baseline = [...laneOrder];
-      headTo = spec.nodes[0]?.id ?? '';
-      tilt = 0;
-      render();
+
+      // 되감는 동안 물러나는 노드는 **물러나기 전의** 모습으로 남아야 한다.
+      // 그래서 줄 위에 떠 있던 노드가 누구였는지는 출발 배치에서 본다.
+      const stagedId =
+        mark.how === 'rewound'
+          ? (mark.was.staged?.id ?? null)
+          : (scene.place.staged?.id ?? null);
+      const { ms, ease } = PLACE_FLOW[mark.how];
+      return glide(scene, mark.was, stagedId, ms, ease);
     }
 
-    function setCaption(text: string): void {
-      caption = text;
-      render();
+    async function render(
+      next: LostLinkScene,
+      /** 이 조각은 출발 배치를 `mark` 에서 셈하므로 앞 장면을 들추지 않는다. */
+      _prev: LostLinkScene | null,
+      opts: { animate: boolean },
+    ): Promise<void> {
+      gen += 1;
+      const mine = gen;
+
+      paint(next, restBoard(next));
+      if (!opts.animate || destroyed) return;
+
+      await flow(next);
+      // 운동이 끝나면 그 장면을 통째로 다시 세운다. 보간의 끝자리가 목표값과
+      // 문자열로 어긋나는 일을 없애 준다 (`-0` 과 부동소수 끝자리).
+      if (!destroyed && mine === gen) paint(next, restBoard(next));
     }
-
-    function setNote(text: string): void {
-      note = text;
-      render();
-    }
-
-    function setBandLabels(aboveText: string, belowText: string): void {
-      bandAbove = aboveText;
-      bandBelow = belowText;
-      render();
-    }
-
-    /** 새 노드가 위에서 내려와 줄 바로 위에 뜬다. 아직 아무도 가리키지 않는다. */
-    async function stageNode(id: string, value: number, after: string): Promise<void> {
-      clearActive();
-      const slot = laneOrder.indexOf(after) + 1;
-      const x = slotX(slot);
-      if (!nodeById(id)) {
-        nodes.push({ id, value, x, y: OFFSCREEN_Y, fallen: false, fresh: true });
-      }
-      await glide(new Map([[id, { x, y: STAGE_Y }]]), DUR_STAGE, easeOutCubic);
-    }
-
-    /** 없던 화살표가 제 몸에서 자라 나와 목표에 닿는다. 아무에게서도 빼앗지 않는다. */
-    async function addLink(from: string, to: string): Promise<void> {
-      clearActive();
-      const existing = links.find((l) => l.from === from);
-      const link: Link = existing ?? { from, to, prevTo: null, prog: 0, active: false };
-      link.to = to;
-      link.prevTo = null;
-      link.prog = 0;
-      link.active = true;
-      if (!existing) links.push(link);
-      await tween(DUR_LINK, easeOutCubic, (p) => {
-        link.prog = p;
-      });
-      link.prog = 1;
-    }
-
-    /** 있던 화살표의 끝이 다른 노드로 건너간다. 원래 겨누던 쪽은 겨눔을 잃는다. */
-    async function moveLink(from: string, to: string): Promise<void> {
-      clearActive();
-      const link = links.find((l) => l.from === from);
-      if (!link) {
-        await addLink(from, to);
-        return;
-      }
-      link.prevTo = link.to;
-      link.to = to;
-      link.prog = 0;
-      link.active = true;
-      await tween(DUR_LINK, easeInOutCubic, (p) => {
-        link.prog = p;
-      });
-      link.prevTo = null;
-      link.prog = 1;
-    }
-
-    /** 붙들어 주는 화살표를 잃은 무리가 왼쪽에 걸린 채 기울며 줄에서 떨어진다. */
-    async function detach(ids: string[]): Promise<void> {
-      clearActive();
-      const targets = new Map<string, Point>();
-      for (const id of ids) {
-        const n = nodeById(id);
-        if (!n) continue;
-        n.fallen = true;
-        targets.set(id, { x: n.x + FALL_DRIFT_X, y: FALLEN_Y });
-      }
-      laneOrder = laneOrder.filter((id) => !ids.includes(id));
-      if (targets.size === 0) return;
-      await glide(targets, DUR_FALL, easeInQuad, FALL_TILT_DEG);
-    }
-
-    /** 새 노드가 줄 안으로 내려앉고, 뒤쪽이 자리를 내어 준다. */
-    async function settle(id: string, after: string): Promise<void> {
-      clearActive();
-      if (!laneOrder.includes(id)) {
-        const at = laneOrder.indexOf(after) + 1;
-        laneOrder.splice(at, 0, id);
-      }
-      const n = nodeById(id);
-      if (n) n.fresh = false;
-      await glide(laneTargets(laneOrder), DUR_SETTLE, easeOutCubic);
-    }
-
-    /** 처음 자리로. 떨어진 무리는 줄로 올라오고 끼워 넣던 노드는 화면 밖으로 물러난다. */
-    async function rewind(): Promise<void> {
-      clearActive();
-      links = [];
-      for (let i = 0; i + 1 < baseline.length; i += 1) {
-        links.push({ from: baseline[i], to: baseline[i + 1], prevTo: null, prog: 1, active: false });
-      }
-      laneOrder = [...baseline];
-      headTo = baseline[0] ?? headTo;
-      for (const n of nodes) n.fallen = false;
-
-      const targets = laneTargets(laneOrder);
-      for (const n of nodes) {
-        if (!baseline.includes(n.id)) targets.set(n.id, { x: n.x, y: OFFSCREEN_Y });
-      }
-      await glide(targets, DUR_REWIND, easeOutCubic, 0);
-      nodes = nodes.filter((n) => baseline.includes(n.id));
-      render();
-    }
-
-    function destroy(): void {
-      destroyed = true;
-      cancelFrame();
-      if (svg.parentNode) svg.parentNode.removeChild(svg);
-    }
-
-    render();
 
     return {
-      init,
-      setCaption,
-      setNote,
-      setBandLabels,
-      stageNode,
-      addLink,
-      moveLink,
-      detach,
-      settle,
-      rewind,
-      destroy,
+      render,
+
+      destroy(): void {
+        destroyed = true;
+        for (const id of frames) cancelAnimationFrame(id);
+        frames.clear();
+        for (const wake of [...waiters]) wake();
+        waiters.clear();
+        if (svg.parentNode) svg.parentNode.removeChild(svg);
+      },
     };
   },
 };

@@ -4,9 +4,15 @@
  * @piece 연결 유실 — 한 주장만 말한다: 화살표를 잘못된 차례로 옮기면 뒤쪽이
  * 통째로 떨어져 나간다. 제목은 글의 문단이 주므로 title-block 을 두지 않고,
  * 셀 것이 없으므로 metrics 도 두지 않는다 (S-piece).
+ *
+ * 화면은 장면(Scene) 방식이다 — projector 대신 `scene` 을 선언한다. 둘 다 두거나
+ * 둘 다 빠뜨리면 러너가 세우지 않는다 (S-scene).
+ *
+ * 컨트롤은 `CONTROL_SET.pieceScrub` — 다시 보기와 스크럽 띠다. 띠가 한 걸음 단추를
+ * 대신한다. 단추는 앞으로만 갈 수 있어 곱씹으려면 한 바퀴를 다 돌아야 했다.
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const lostLinkFacet: FacetJson = {
   id: 'facet:lostLink',
@@ -35,7 +41,7 @@ export const lostLinkFacet: FacetJson = {
     pt: 'Mova a seta na ordem errada e tudo o que vem atrás fica fora de alcance.',
   },
   algorithm: 'module:lostLink',
-  projector: 'module:lostLinkProjector',
+  scene: 'module:lostLinkScene',
   initialData: {
     type: 'lost-link',
     nodes: [
@@ -50,10 +56,7 @@ export const lostLinkFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'lost-link-stage' },
-    controls: {
-      type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
-    },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.staged': {

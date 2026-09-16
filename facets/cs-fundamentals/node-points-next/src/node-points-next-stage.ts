@@ -23,12 +23,35 @@
  *   레인의 왼쪽부터 12 · 5 · 8 이 되는데, 메모리에 놓인 차례는 12 · 8 · 5 다.
  *   내려가는 경로가 서로 엇갈리는 것이 그 어긋남이다.
  *
+ * ── 장면 하나로 화면을 세운다
+ *
+ * 걸음마다 부르는 메서드(`placeNodes()` · `attachHead()` · `followPointer()` …) 를
+ * 두지 않는다. 그 메서드들은 되돌릴 수 없는 명령이라 임의의 걸음으로 가려면
+ * 처음부터 다시 밟는 수밖에 없었다. 대신 `render(next, prev, { animate })` 하나가
+ * **그 장면의 화면 전체**를 세운다 — 어느 걸음에서 어느 걸음으로 가든 같은
+ * 길이다 (S-scene). 장면의 모양은 `scene.ts`.
+ *
+ * 흐르게 하는 것은 그 위에 덧댄다. 정적 그리기가 정본이므로 운동은 **끝 자리에
+ * 서 있는 것을 출발 자리로 물렸다가 되돌리는** 꼴이 되고, 운동이 끝나면 그 장면을
+ * 다시 한 번 통째로 세운다 — 흐르며 선 화면과 곧바로 세운 화면이 속성 하나라도
+ * 다르면 되짚기 판정이 어긋나기 때문이다.
+ *
  * 색은 design-tokens 만 쓴다 (S-view). 주소 계열은 accent, 값과 구조는
- * structural, 끝(null) 은 textMuted.
+ * structural, 끝(null) 은 textMuted. 문안은 `params.t` 로만 짓는다 (C10) — 이
+ * 파일의 en 원본은 조회가 빗나갔을 때의 되받이이고, 칸 안의 숫자와 주소 표기는
+ * 데이터 그대로다.
  */
 
-import { PIECE_CANVAS_W, fonts, fontSizes, getColors } from '@ffacet/core/runtime';
-import type { Palette, CanvasView, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import { PIECE_CANVAS_W, fonts, fontSizes, getColors, makeTranslator } from '@ffacet/core/runtime';
+import type {
+  Palette,
+  CanvasView,
+  Translate,
+  ViewInstance,
+  ViewMountParams,
+} from '@ffacet/core/runtime';
+
+import type { NodePointsNextCaption, NodePointsNextScene } from './scene.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 
@@ -52,6 +75,11 @@ const CAPTION_Y = 282;
 const ARROW_TIP_Y = NODE_Y - 2;
 const ARROW_BASE_Y = NODE_Y - 12;
 const CELL_MID_Y = NODE_Y + 26;
+
+/** 상자가 내려앉기 전 떠 있는 높이. 정적으로는 이 몫이 0 이다. */
+const DROP_DY = 46;
+/** head 칩이 미끄러져 들어오기 전 서 있는 자리 — 화면 왼쪽 밖. */
+const HEAD_FROM_X = -70;
 
 // 호의 마루 높이. 앞으로 가는 호는 높이, 되돌아가는 호는 낮게 건다 — 둘이
 // 같은 높이로 걸리면 겹쳐서 어느 쪽이 어디로 가는지 읽히지 않는다.
@@ -79,34 +107,13 @@ const MARK_NULL = 'null';
 const MARK_BYTE = 'B';
 const MARK_FLOW = '→';
 
-export type NodePointsNextStageNode = {
-  addr: string;
-  value: number;
-  next: string | null;
-};
-
-export type NodePointsNextStageInit = {
-  /** 논리 순서 (head 부터) 로 적힌 노드들. 화면 배치는 주소 순으로 다시 세운다. */
-  nodes: NodePointsNextStageNode[];
-  head: string;
-  nodeBytes: number;
-  valueBytes: number;
-  addressBytes: number;
-  /**
-   * 화면에 쓸 문안. 키 조회는 projector 가 `runtime.t` 로 끝내고 (C10) 이
-   * stage 는 해석된 문자열만 받는다.
-   *
-   * View 가 `params.t` 로 직접 조회하지 않는 이유는 하나다 — 러너는 조회기를
-   * 넘기지만 `layout-builder.ts::mountBlocks` 가 mountParams 를 다시 조립하며
-   * `t` 를 떨어뜨린다. 그래서 view 안에서는 `makeTranslator(locale)` 로 떨어져
-   * `FacetJson.messages` 의 저작자 문안을 보지 못한다. 캡션과 각주가 서로 다른
-   * 경로로 들어오면 한 화면에 두 언어가 섞이므로, 문안 출처를 projector 하나로
-   * 모았다. 러너 쪽이 고쳐지면 이 필드들은 지워도 된다.
-   */
-  orderLabel: string;
-};
-
-type Placed = NodePointsNextStageNode & { x: number; group: SVGGElement };
+/**
+ * 배치가 정해진 노드 하나. 자리는 장면이 아니라 여기서 셈한 것이다.
+ *
+ * 값과 next 는 상자 안에 이미 그려져 있으므로 들고 있지 않는다 — 걸음이 필요로
+ * 하는 것은 주소로 찾는 길과 그 자리뿐이다.
+ */
+type Placed = { addr: string; x: number; group: SVGGElement };
 
 /** '0x0100' 을 수로. 16진 접두가 없어도 16진으로 읽는다. */
 function addrNum(addr: string): number {
@@ -143,7 +150,12 @@ function arcOf(p0: Pt, p1: Pt, apexY: number): Arc {
   return { p0, c1: { x: p0.x, y: apexY }, c2: { x: p1.x, y: apexY }, p1 };
 }
 
-/** de Casteljau — 0..t 구간만 잘라낸 부분 곡선의 제어점들. */
+/**
+ * de Casteljau — 0..t 구간만 잘라낸 부분 곡선의 제어점들.
+ *
+ * `t === 1` 이면 원래 곡선 그대로가 나오므로 정적 그리기도 이 함수를 쓴다. 그래야
+ * 흐르며 선 선과 곧바로 세운 선의 `d` 문자열이 한 글자도 갈리지 않는다.
+ */
 function arcSplit(a: Arc, t: number): { d: string; end: Pt } {
   const l1 = lerp(a.p0, a.c1, t);
   const l2 = lerp(a.c1, a.c2, t);
@@ -158,18 +170,61 @@ function arcSplit(a: Arc, t: number): { d: string; end: Pt } {
   };
 }
 
+/** 바탕이 달라졌나 — 달라졌을 때만 배치를 다시 짓는다. */
+function baseKey(s: NodePointsNextScene): string {
+  return JSON.stringify([s.nodes, s.head, s.nodeBytes, s.valueBytes, s.addressBytes]);
+}
+
+function linkKey(from: string, to: string): string {
+  return `${from}>${to}`;
+}
+
 export const nodePointsNextStageView: CanvasView = {
   canvas: { height: H },
   mount(
     _container: HTMLElement,
     params: ViewMountParams & { canvas: SVGSVGElement },
   ): ViewInstance {
+    const tr: Translate = params.t ?? makeTranslator(params.locale);
     const c: Palette = getColors(params.theme);
 
+    const svg = params.canvas;
+
+    // ── 걸어 둔 것과 기다리는 것. destroy 가 일괄로 거둔다 (S-piece).
     let destroyed = false;
     const frames = new Set<number>();
+    const waiters = new Set<() => void>();
 
-    const svg = params.canvas;
+    /**
+     * 세대 빗장. `render` 가 부를 때마다 하나 올린다.
+     *
+     * 이 조각의 운동은 rAF 로 프레임마다 좌표를 제자리에서 고쳐 쓰는 짜임이라,
+     * 되짚기가 화면을 새로 세운 뒤에도 앞 걸음의 프레임이 살아 있으면 새 자리에
+     * 옛 좌표를 덮어쓴다 — 되짚은 직후가 아니라 반 초쯤 뒤에 무너지므로 눈으로도
+     * 늦게야 잡힌다. 걸음 함수는 깨어날 때마다 자기 세대가 아직 유효한지 보고,
+     * 아니면 **화면에 손대지 않고** 물러난다.
+     */
+    let gen = 0;
+
+    /** 내 세대가 아직 유효한가. */
+    function alive(myGen: number): boolean {
+      return !destroyed && myGen === gen;
+    }
+
+    /**
+     * 되짚는 중인가. 러너가 `params` 로 흘린다 (`ViewMountParams.isInstant`).
+     *
+     * scene 경로에서는 러너가 이것을 부르지 않을 수도 있으므로 지연 발화를 막는
+     * 빗장으로 믿지 않는다 — 실효 있는 것은 `opts.animate` 검사와 위의 세대
+     * 빗장이다. 여기 두는 것은 무해하고 한 겹 더 거를 뿐이다.
+     */
+    const isInstant = params.isInstant ?? ((): boolean => false);
+    params.onScrubStart?.(() => {
+      for (const id of frames) cancelAnimationFrame(id);
+      frames.clear();
+      for (const wake of [...waiters]) wake();
+      waiters.clear();
+    });
 
     function el<K extends keyof SVGElementTagNameMap>(
       parent: Element,
@@ -189,7 +244,13 @@ export const nodePointsNextStageView: CanvasView = {
       mono?: boolean;
     };
 
-    function put(parent: Element, content: string, x: number, y: number, ink: Ink = {}): SVGTextElement {
+    function put(
+      parent: Element,
+      content: string,
+      x: number,
+      y: number,
+      ink: Ink = {},
+    ): SVGTextElement {
       const node = el(parent, 'text', {
         x,
         y,
@@ -206,37 +267,52 @@ export const nodePointsNextStageView: CanvasView = {
       while (g.firstChild) g.removeChild(g.firstChild);
     }
 
-    function animate(duration: number, tick: (p: number) => void): Promise<void> {
+    /**
+     * 걸음 하나를 프레임으로 흐르게 한다.
+     *
+     * 첫 프레임을 **동기로** 그린다. 정적 그리기가 이미 끝 자리에 세워 두었으므로,
+     * 출발 자리로 물리는 것을 다음 프레임에 미루면 끝 자리가 한 번 번쩍인다.
+     * 세대가 지났거나 되짚는 중이면 아무것도 그리지 않고 물러난다 — 끝 자리는
+     * 정적 그리기가 이미 세웠거나 새 세대가 곧 세운다.
+     */
+    function animate(myGen: number, ms: number, draw: (e: number) => void): Promise<void> {
       return new Promise<void>((resolve) => {
-        if (destroyed || typeof requestAnimationFrame !== 'function') {
-          if (!destroyed) tick(1);
+        if (!alive(myGen) || isInstant() || typeof requestAnimationFrame !== 'function') {
           resolve();
           return;
         }
-        let start = -1;
-        const frame = (now: number): void => {
-          if (destroyed) {
-            resolve();
+        const start = Date.now();
+        const finish = (): void => {
+          waiters.delete(finish);
+          resolve();
+        };
+        waiters.add(finish);
+        let id = 0;
+        const step = (): void => {
+          frames.delete(id);
+          if (!alive(myGen)) {
+            finish();
             return;
           }
-          if (start < 0) start = now;
-          const p = clamp01((now - start) / duration);
-          tick(p);
-          if (p < 1) {
-            const id = requestAnimationFrame(frame);
-            frames.add(id);
-          } else {
-            resolve();
+          const raw = Math.min(1, (Date.now() - start) / ms);
+          draw(raw);
+          if (raw >= 1) {
+            finish();
+            return;
           }
+          id = requestAnimationFrame(step);
+          frames.add(id);
         };
-        const id = requestAnimationFrame(frame);
+        draw(0);
+        id = requestAnimationFrame(step);
         frames.add(id);
       });
     }
 
     // ── 레이어. 뒤에 붙는 것이 위에 그려진다. ──────────────────────────
     const gAxis = el(svg, 'g', {});
-    const gOrder = el(svg, 'g', {});
+    const gLane = el(svg, 'g', {});
+    const gMarks = el(svg, 'g', {});
     const gNodes = el(svg, 'g', {});
     const gArcs = el(svg, 'g', {});
     const gFly = el(svg, 'g', {});
@@ -244,13 +320,22 @@ export const nodePointsNextStageView: CanvasView = {
 
     const captionText = put(gWords, '', W / 2, CAPTION_Y, { size: fontSizes.md });
 
-    let spec: NodePointsNextStageInit | null = null;
-    let placed: Placed[] = [];
+    // ── 배치 밑감. 바탕이 바뀔 때만 다시 짓는다. ───────────────────────
+    let builtKey: string | null = null;
+    let boxes: Placed[] = [];
     let slots: SVGRectElement[] = [];
     let slotCount = 0;
+    let valueW = NODE_W / 2;
 
-    function nodeAt(addr: string): Placed | undefined {
-      return placed.find((n) => n.addr === addr);
+    // ── 지금 세워 둔 지나가지 않는 표식들. 걸음 함수가 물렸다 되돌린다. ──
+    let headParts: { chip: Chip; stem: SVGLineElement; arrow: SVGPathElement } | null = null;
+    const linkParts = new Map<string, { path: SVGPathElement; arrow: SVGPathElement; arc: Arc }>();
+    let nullParts: { chip: Chip; wall: SVGLineElement; fromX: number; restX: number } | null = null;
+    const slotMarks = new Map<number, SVGTextElement>();
+    let sealLine: SVGLineElement | null = null;
+
+    function boxAt(addr: string): Placed | undefined {
+      return boxes.find((n) => n.addr === addr);
     }
 
     function slotCenterX(index: number): number {
@@ -258,14 +343,9 @@ export const nodePointsNextStageView: CanvasView = {
       return W / 2 - total / 2 + index * (SLOT_W + SLOT_GAP) + SLOT_W / 2;
     }
 
-    /** 값 칸의 폭. 바이트 수 비율 그대로 나눈다. */
-    function valueWidth(): number {
-      return spec && spec.nodeBytes > 0 ? (NODE_W * spec.valueBytes) / spec.nodeBytes : NODE_W / 2;
-    }
-
     /** 주소가 가리키는 곳 — 노드의 첫 바이트, 곧 값 칸의 머리다. */
     function landingX(node: Placed): number {
-      return node.x + valueWidth() / 2;
+      return node.x + valueW / 2;
     }
 
     /**
@@ -273,26 +353,27 @@ export const nodePointsNextStageView: CanvasView = {
      * 관통하므로 칸 안에서 오른쪽으로 치우쳐 세운다.
      */
     function liftX(node: Placed): number {
-      const valueW = valueWidth();
       return node.x + valueW + (NODE_W - valueW) * 0.78;
     }
 
     /** 화살촉 하나 — 아래를 향해 상자 머리에 꽂힌다. */
-    function arrowHead(parent: Element, x: number, fill: string): void {
-      el(parent, 'path', {
+    function arrowHead(parent: Element, x: number, fill: string): SVGPathElement {
+      return el(parent, 'path', {
         d: `M ${x - 6} ${ARROW_BASE_Y} L ${x + 6} ${ARROW_BASE_Y} L ${x} ${ARROW_TIP_Y} Z`,
         fill,
       });
     }
 
     /** 떠다니는 주소·값 칩. 중심 좌표로 옮긴다. */
+    type Chip = { g: SVGGElement; moveTo: (p: Pt) => void };
+
     function chip(
       parent: Element,
       label: string,
       width: number,
       stroke: string,
       fill: string,
-    ): { g: SVGGElement; moveTo: (p: Pt) => void } {
+    ): Chip {
       const g = el(parent, 'g', {});
       el(g, 'rect', {
         x: -width / 2,
@@ -311,26 +392,51 @@ export const nodePointsNextStageView: CanvasView = {
       };
     }
 
-    // ── 무대 세우기 ────────────────────────────────────────────────────
-    function build(init: NodePointsNextStageInit): void {
-      spec = init;
+    // ── 문안 ──────────────────────────────────────────────────────────
+    //
+    // en 원본은 호출부 리터럴로 남아야 추출기가 본다 (C10). 그래서 키를 그대로
+    // 넘기지 않고 갈래마다 한 줄씩 편다.
+    function captionOf(caption: NodePointsNextCaption | null): string {
+      if (!caption) return '';
+      switch (caption.kind) {
+        case 'scattered':
+          return tr(
+            'caption.scattered',
+            'Three nodes lie apart in memory. Their places say nothing about which comes first.',
+          );
+        case 'holdsAddress':
+          return tr(
+            'caption.holdsAddress',
+            'Beside its value every node holds one more thing — the address of the next node.',
+          );
+        case 'orderExists':
+          return tr(
+            'caption.orderExists',
+            'Follow the held addresses and an order appears: 12, 5, 8 — not the order they lie in.',
+          );
+      }
+    }
+
+    // ── 배치 세우기. 바탕만으로 정해지는 것들. ─────────────────────────
+    function build(s: NodePointsNextScene): void {
       clear(gAxis);
-      clear(gOrder);
+      clear(gLane);
+      clear(gMarks);
       clear(gNodes);
       clear(gArcs);
       clear(gFly);
-      captionText.textContent = '';
-      placed = [];
+      boxes = [];
       slots = [];
-      slotCount = init.nodes.length;
+      slotCount = s.nodes.length;
+      valueW = s.nodeBytes > 0 ? (NODE_W * s.valueBytes) / s.nodeBytes : NODE_W / 2;
 
-      const order = [...init.nodes].sort((a, b) => addrNum(a.addr) - addrNum(b.addr));
+      const order = [...s.nodes].sort((a, b) => addrNum(a.addr) - addrNum(b.addr));
       const gaps: number[] = [];
       for (let i = 0; i < order.length - 1; i += 1) {
         const here = order[i];
         const there = order[i + 1];
         if (!here || !there) continue;
-        gaps.push(Math.max(0, addrNum(there.addr) - (addrNum(here.addr) + init.nodeBytes)));
+        gaps.push(Math.max(0, addrNum(there.addr) - (addrNum(here.addr) + s.nodeBytes)));
       }
       const gapSum = gaps.reduce((a, b) => a + b, 0);
       const freeW = Math.max(0, LANE_X1 - LANE_X0 - order.length * NODE_W);
@@ -354,7 +460,9 @@ export const nodePointsNextStageView: CanvasView = {
       order.forEach((n, i) => {
         const x = cursor;
         const gapBytes = gaps[i] ?? 0;
-        cursor += NODE_W + (gapSum > 0 ? (freeW * gapBytes) / gapSum : freeW / Math.max(1, order.length - 1));
+        cursor +=
+          NODE_W +
+          (gapSum > 0 ? (freeW * gapBytes) / gapSum : freeW / Math.max(1, order.length - 1));
 
         // 축 위의 자리 표시.
         el(gAxis, 'line', {
@@ -392,15 +500,7 @@ export const nodePointsNextStageView: CanvasView = {
 
         // 노드 상자 — 8바이트를 값 칸과 주소 칸으로 나눈 것.
         const g = el(gNodes, 'g', { transform: `translate(${x} ${NODE_Y})`, opacity: 0 });
-        const valueW = init.nodeBytes > 0 ? (NODE_W * init.valueBytes) / init.nodeBytes : NODE_W / 2;
-        el(g, 'rect', {
-          x: 0,
-          y: 0,
-          width: valueW,
-          height: NODE_H,
-          rx: 6,
-          fill: c.bgSubtle,
-        });
+        el(g, 'rect', { x: 0, y: 0, width: valueW, height: NODE_H, rx: 6, fill: c.bgSubtle });
         el(g, 'rect', {
           x: valueW,
           y: 0,
@@ -447,215 +547,387 @@ export const nodePointsNextStageView: CanvasView = {
           });
         }
 
-        placed.push({ ...n, x, group: g });
+        boxes.push({ addr: n.addr, x, group: g });
       });
 
       // 순서 레인 — 가리킨 차례대로 값이 내려앉는 자리.
-      put(gOrder, init.orderLabel, slotCenterX(0) - SLOT_W / 2 - 14, SLOT_Y + 21, {
+      put(gLane, tr('label.order', 'order'), slotCenterX(0) - SLOT_W / 2 - 14, SLOT_Y + 21, {
         anchor: 'end',
         size: fontSizes.sm,
         fill: c.textMuted,
       });
       for (let i = 0; i < order.length; i += 1) {
         const cx = slotCenterX(i);
-        const rect = el(gOrder, 'rect', {
-          x: cx - SLOT_W / 2,
-          y: SLOT_Y,
-          width: SLOT_W,
-          height: SLOT_H,
-          rx: 6,
-          fill: 'none',
-          stroke: c.border,
-          'stroke-width': 1.5,
-          'stroke-dasharray': '4 4',
-        });
-        slots.push(rect);
+        slots.push(
+          el(gLane, 'rect', {
+            x: cx - SLOT_W / 2,
+            y: SLOT_Y,
+            width: SLOT_W,
+            height: SLOT_H,
+            rx: 6,
+            fill: 'none',
+            stroke: c.border,
+            'stroke-width': 1.5,
+            'stroke-dasharray': '4 4',
+          }),
+        );
         if (i < order.length - 1) {
-          put(gOrder, MARK_FLOW, cx + SLOT_W / 2 + SLOT_GAP / 2, SLOT_Y + 21, {
+          put(gLane, MARK_FLOW, cx + SLOT_W / 2 + SLOT_GAP / 2, SLOT_Y + 21, {
             size: fontSizes.sm,
             fill: c.textMuted,
           });
         }
       }
 
+      builtKey = baseKey(s);
     }
 
-    // ── 걸음 ──────────────────────────────────────────────────────────
-    async function placeNodes(): Promise<void> {
-      const n = placed.length;
+    /** 빈 칸의 모습. 채워진 칸과 속성을 하나씩 짝지어 되돌린다. */
+    function emptySlot(rect: SVGRectElement): void {
+      rect.setAttribute('fill', 'none');
+      rect.setAttribute('stroke', c.border);
+      rect.setAttribute('stroke-dasharray', '4 4');
+    }
+
+    /** 값이 앉은 칸의 모습. */
+    function filledSlot(rect: SVGRectElement): void {
+      rect.setAttribute('fill', c.bgSubtle);
+      rect.setAttribute('stroke', c.accent);
+      rect.setAttribute('stroke-dasharray', '');
+    }
+
+    /**
+     * 장면 하나를 통째로 세운다 — 상자도 화살표도 칩도 캡션도.
+     *
+     * 지나가지 않는 표식들은 매번 지우고 새로 만든다. 그래야 흐르며 남은 속성
+     * 하나가 곧바로 세운 화면과의 차이가 되는 일이 없다 (프로토콜 4절).
+     */
+    function settle(s: NodePointsNextScene): void {
+      if (builtKey !== baseKey(s)) build(s);
+
+      clear(gArcs);
+      clear(gFly);
+      clear(gMarks);
+      headParts = null;
+      linkParts.clear();
+      nullParts = null;
+      slotMarks.clear();
+      sealLine = null;
+
+      // 상자 — 내려앉았으면 제자리에, 아니면 떠 있는 채 보이지 않는다.
+      for (const box of boxes) {
+        box.group.setAttribute('opacity', s.placed ? '1' : '0');
+        box.group.setAttribute(
+          'transform',
+          `translate(${box.x} ${s.placed ? NODE_Y : NODE_Y - DROP_DY})`,
+        );
+      }
+
+      // head 가 쥔 주소와 그것이 꽂힌 화살.
+      if (s.headAt !== null) {
+        const target = boxAt(s.headAt);
+        if (target) {
+          const cx = landingX(target);
+          const g = el(gArcs, 'g', {});
+          el(g, 'rect', {
+            x: -44,
+            y: -18,
+            width: 88,
+            height: 36,
+            rx: 8,
+            fill: c.bg,
+            stroke: c.text,
+            'stroke-width': 1.5,
+          });
+          put(g, MARK_HEAD, 0, -3, { size: fontSizes.xs, fill: c.textMuted });
+          put(g, s.headAt, 0, 12, { mono: true, size: fontSizes.sm });
+          const headChip: Chip = {
+            g,
+            moveTo: (p) =>
+              g.setAttribute('transform', `translate(${p.x.toFixed(2)} ${p.y.toFixed(2)})`),
+          };
+          headChip.moveTo({ x: cx, y: HEAD_Y });
+          const stem = el(gArcs, 'line', {
+            x1: cx,
+            y1: HEAD_Y + 18,
+            x2: cx,
+            y2: ARROW_BASE_Y,
+            stroke: c.accent,
+            'stroke-width': 2.5,
+          });
+          headParts = { chip: headChip, stem, arrow: arrowHead(gArcs, cx, c.accent) };
+        }
+      }
+
+      // 그어진 호들. 남는 강조라 정적으로도 그린다.
+      for (const link of s.links) {
+        const src = boxAt(link.from);
+        const dst = boxAt(link.to);
+        if (!src || !dst) continue;
+        const p0 = { x: liftX(src), y: CELL_MID_Y };
+        const p1 = { x: landingX(dst), y: ARROW_BASE_Y };
+        const arc = arcOf(p0, p1, p1.x > p0.x ? ARC_APEX_FORWARD : ARC_APEX_BACKWARD);
+        const path = el(gArcs, 'path', {
+          d: arcSplit(arc, 1).d,
+          fill: 'none',
+          stroke: c.accent,
+          'stroke-width': 2.5,
+          'stroke-linecap': 'round',
+        });
+        linkParts.set(linkKey(link.from, link.to), {
+          path,
+          arrow: arrowHead(gArcs, p1.x, c.accent),
+          arc,
+        });
+      }
+
+      // 갈 곳이 없다는 것 — 벽 앞에 멎은 null 칩. 이것도 남는다.
+      if (s.nullAt !== null) {
+        const src = boxAt(s.nullAt);
+        if (src) {
+          const fromX = liftX(src);
+          // 위로 띄우면 다른 호와 겹친다. 옆 빈 자리로 나가려다 벽에 막히는 쪽이
+          // 뜻도 맞다 — 갈 곳이 없다.
+          const neighbour = boxes.find((n) => n.x > src.x);
+          const limit = (neighbour ? neighbour.x : W) - 44;
+          const restX = Math.min(src.x + NODE_W + 28, limit);
+          const wall = el(gArcs, 'line', {
+            x1: restX + 28,
+            y1: CELL_MID_Y - 16,
+            x2: restX + 28,
+            y2: CELL_MID_Y + 16,
+            stroke: c.textMuted,
+            'stroke-width': 3,
+            'stroke-linecap': 'round',
+            opacity: 1,
+          });
+          const leaving = chip(gArcs, MARK_NULL, 44, c.textMuted, c.bg);
+          leaving.moveTo({ x: restX, y: CELL_MID_Y });
+          nullParts = { chip: leaving, wall, fromX, restX };
+        }
+      }
+
+      // 순서 레인 — 앉은 값과 빈 칸.
+      const filled = new Map(s.collected.map((c2) => [c2.slot, c2] as const));
+      slots.forEach((rect, i) => {
+        const hit = filled.get(i);
+        if (!hit) {
+          emptySlot(rect);
+          return;
+        }
+        filledSlot(rect);
+        slotMarks.set(
+          i,
+          put(gMarks, String(hit.value), slotCenterX(i), SLOT_Y + SLOT_H / 2 + 6, {
+            mono: true,
+            size: fontSizes.md,
+          }),
+        );
+      });
+
+      // 순서가 다 드러났다는 밑줄.
+      if (s.sealed && slots.length > 0) {
+        const x1 = slotCenterX(slotCount - 1) + SLOT_W / 2;
+        sealLine = el(gMarks, 'line', {
+          x1: slotCenterX(0) - SLOT_W / 2,
+          y1: SEAL_Y,
+          x2: x1,
+          y2: SEAL_Y,
+          stroke: c.accent,
+          'stroke-width': 2.5,
+          'stroke-linecap': 'round',
+        });
+      }
+
+      captionText.textContent = captionOf(s.caption);
+    }
+
+    // ── 운동 ──────────────────────────────────────────────────────────
+    //
+    // 정적 그리기가 정본이라 요소는 이미 끝 자리에 서 있다. 그러니 운동은 출발
+    // 자리로 **물렸다가** 되돌아오는 꼴이 된다. 물리는 일은 `settle` 직후 아직
+    // 어떤 기다림도 지나지 않은 동안 하므로 첫 프레임에 끝 자리가 번쩍이지 않는다.
+
+    /** 상자들이 차례로 떠서 내려앉는다. */
+    async function runPlace(myGen: number): Promise<void> {
+      const n = boxes.length;
+      if (n === 0) return;
       const span = 1 - 0.16 * Math.max(0, n - 1);
-      await animate(PLACE_MS, (p) => {
-        placed.forEach((node, i) => {
+      await animate(myGen, PLACE_MS, (p) => {
+        boxes.forEach((box, i) => {
           const local = easeOut(clamp01((p - 0.16 * i) / span));
-          node.group.setAttribute('opacity', String(local));
-          node.group.setAttribute(
+          box.group.setAttribute('opacity', String(local));
+          box.group.setAttribute(
             'transform',
-            `translate(${node.x} ${(NODE_Y - 46 * (1 - local)).toFixed(2)})`,
+            `translate(${box.x} ${(NODE_Y - DROP_DY * (1 - local)).toFixed(2)})`,
           );
         });
       });
     }
 
-    async function attachHead(addr: string): Promise<void> {
-      const target = nodeAt(addr);
-      if (!target) return;
+    /** head 가 쥔 주소가 미끄러져 와 상자 머리에 화살을 내린다. */
+    async function runHead(myGen: number, addr: string): Promise<void> {
+      const parts = headParts;
+      const target = boxAt(addr);
+      if (!parts || !target) return;
       const cx = landingX(target);
 
-      const g = el(gArcs, 'g', {});
-      el(g, 'rect', {
-        x: -44,
-        y: -18,
-        width: 88,
-        height: 36,
-        rx: 8,
-        fill: c.bg,
-        stroke: c.text,
-        'stroke-width': 1.5,
-      });
-      put(g, MARK_HEAD, 0, -3, { size: fontSizes.xs, fill: c.textMuted });
-      put(g, addr, 0, 12, { mono: true, size: fontSizes.sm });
+      // 화살은 줄기가 다 내려온 뒤에 꽂힌다. 끝에서 `settle` 이 다시 세운다.
+      parts.arrow.remove();
+      parts.stem.setAttribute('y2', String(HEAD_Y + 18));
+      parts.chip.moveTo({ x: HEAD_FROM_X, y: HEAD_Y });
 
-      const from = -70;
-      await animate(HEAD_SLIDE_MS, (p) => {
-        const x = from + (cx - from) * easeOut(p);
-        g.setAttribute('transform', `translate(${x.toFixed(2)} ${HEAD_Y})`);
+      await animate(myGen, HEAD_SLIDE_MS, (p) => {
+        parts.chip.moveTo({ x: HEAD_FROM_X + (cx - HEAD_FROM_X) * easeOut(p), y: HEAD_Y });
       });
-
-      const stem = el(gArcs, 'line', {
-        x1: cx,
-        y1: HEAD_Y + 18,
-        x2: cx,
-        y2: HEAD_Y + 18,
-        stroke: c.accent,
-        'stroke-width': 2.5,
+      if (!alive(myGen)) return;
+      await animate(myGen, HEAD_DROP_MS, (p) => {
+        parts.stem.setAttribute(
+          'y2',
+          (HEAD_Y + 18 + (ARROW_BASE_Y - HEAD_Y - 18) * easeOut(p)).toFixed(2),
+        );
       });
-      await animate(HEAD_DROP_MS, (p) => {
-        const y = HEAD_Y + 18 + (ARROW_BASE_Y - HEAD_Y - 18) * easeOut(p);
-        stem.setAttribute('y2', y.toFixed(2));
-      });
-      arrowHead(gArcs, cx, c.accent);
     }
 
-    async function followPointer(from: string, to: string): Promise<void> {
-      const src = nodeAt(from);
-      const dst = nodeAt(to);
-      if (!src || !dst) return;
+    /** next 칸의 주소가 복제되어 날아가 다음 상자를 가리킨다. */
+    async function runLink(myGen: number, from: string, to: string): Promise<void> {
+      const parts = linkParts.get(linkKey(from, to));
+      if (!parts) return;
 
-      const p0 = { x: liftX(src), y: CELL_MID_Y };
-      const p1 = { x: landingX(dst), y: ARROW_BASE_Y };
-      const arc = arcOf(p0, p1, p1.x > p0.x ? ARC_APEX_FORWARD : ARC_APEX_BACKWARD);
+      parts.arrow.remove();
+      parts.path.setAttribute('d', '');
+      const flying = chip(gFly, to, 68, c.accent, c.bg);
+      flying.moveTo(parts.arc.p0);
 
-      const path = el(gArcs, 'path', {
-        d: '',
-        fill: 'none',
-        stroke: c.accent,
-        'stroke-width': 2.5,
-        'stroke-linecap': 'round',
-      });
-      const flying = chip(gFly, dst.addr, 68, c.accent, c.bg);
-      flying.moveTo(p0);
-
-      await animate(FLY_MS, (p) => {
-        const cut = arcSplit(arc, easeOut(p));
-        path.setAttribute('d', cut.d);
+      await animate(myGen, FLY_MS, (p) => {
+        const cut = arcSplit(parts.arc, easeOut(p));
+        parts.path.setAttribute('d', cut.d);
         flying.moveTo(cut.end);
       });
-      gFly.removeChild(flying.g);
-      arrowHead(gArcs, p1.x, c.accent);
+      flying.g.remove();
     }
 
-    async function endWithNull(addr: string): Promise<void> {
-      const src = nodeAt(addr);
-      if (!src) return;
-      const startX = liftX(src);
-      // 위로 띄우면 다른 호와 겹친다. 옆 빈 자리로 나가려다 벽에 막히는 쪽이
-      // 뜻도 맞다 — 갈 곳이 없다.
-      const neighbour = placed.find((n) => n.x > src.x);
-      const limit = (neighbour ? neighbour.x : W) - 44;
-      const restX = Math.min(src.x + NODE_W + 28, limit);
-      const wallX = restX + 28;
+    /** null 칩이 옆으로 나가려다 벽에 막힌다. */
+    async function runNull(myGen: number): Promise<void> {
+      const parts = nullParts;
+      if (!parts) return;
+      const { fromX, restX } = parts;
 
-      const wall = el(gArcs, 'line', {
-        x1: wallX,
-        y1: CELL_MID_Y - 16,
-        x2: wallX,
-        y2: CELL_MID_Y + 16,
-        stroke: c.textMuted,
-        'stroke-width': 3,
-        'stroke-linecap': 'round',
-        opacity: 0,
-      });
-      const leaving = chip(gFly, MARK_NULL, 44, c.textMuted, c.bg);
-      leaving.moveTo({ x: startX, y: CELL_MID_Y });
+      parts.wall.setAttribute('opacity', '0');
+      parts.chip.moveTo({ x: fromX, y: CELL_MID_Y });
 
-      await animate(NULL_SLIDE_MS, (p) => {
+      await animate(myGen, NULL_SLIDE_MS, (p) => {
         const t = easeOut(p);
-        leaving.moveTo({ x: startX + (restX - startX) * t, y: CELL_MID_Y });
-        wall.setAttribute('opacity', String(clamp01((t - 0.45) / 0.55)));
+        parts.chip.moveTo({ x: fromX + (restX - fromX) * t, y: CELL_MID_Y });
+        parts.wall.setAttribute('opacity', String(clamp01((t - 0.45) / 0.55)));
       });
     }
 
-    async function collectValue(addr: string, slot: number, value: number): Promise<void> {
-      const src = nodeAt(addr);
-      const target = slots[slot];
-      if (!src || !target) return;
-      const p0 = { x: src.x + valueWidth() / 2, y: CELL_MID_Y };
+    /** 값이 상자에서 순서 레인의 제 칸으로 내려간다. */
+    async function runCollect(
+      myGen: number,
+      addr: string,
+      slot: number,
+      value: number,
+    ): Promise<void> {
+      const src = boxAt(addr);
+      const rect = slots[slot];
+      if (!src || !rect) return;
+
+      // 앉은 값을 잠시 거둔다 — 칩이 날아와 앉는 것이 이번 걸음이기 때문이다.
+      slotMarks.get(slot)?.remove();
+      emptySlot(rect);
+
+      const p0 = { x: src.x + valueW / 2, y: CELL_MID_Y };
       const p1 = { x: slotCenterX(slot), y: SLOT_Y + SLOT_H / 2 };
       const cp = { x: (p0.x + p1.x) / 2, y: (p0.y + p1.y) / 2 + 26 };
 
       const moving = chip(gFly, String(value), SLOT_W, c.accent, c.bg);
       moving.moveTo(p0);
-      await animate(COLLECT_MS, (p) => {
+      await animate(myGen, COLLECT_MS, (p) => {
         moving.moveTo(quadAt(p0, cp, p1, easeOut(p)));
       });
-      gFly.removeChild(moving.g);
-
-      target.setAttribute('stroke', c.accent);
-      target.setAttribute('stroke-dasharray', '');
-      target.setAttribute('fill', c.bgSubtle);
-      put(gOrder, String(value), p1.x, p1.y + 6, { mono: true, size: fontSizes.md });
+      moving.g.remove();
     }
 
-    async function seal(): Promise<void> {
-      if (slots.length === 0) return;
+    /** 순서 레인 밑에 밑줄이 그어진다. */
+    async function runSeal(myGen: number): Promise<void> {
+      const line = sealLine;
+      if (!line || slots.length === 0) return;
       const x0 = slotCenterX(0) - SLOT_W / 2;
       const x1 = slotCenterX(slotCount - 1) + SLOT_W / 2;
-      const line = el(gOrder, 'line', {
-        x1: x0,
-        y1: SEAL_Y,
-        x2: x0,
-        y2: SEAL_Y,
-        stroke: c.accent,
-        'stroke-width': 2.5,
-        'stroke-linecap': 'round',
-      });
-      await animate(SEAL_MS, (p) => {
+
+      line.setAttribute('x2', x0.toFixed(2));
+      await animate(myGen, SEAL_MS, (p) => {
         line.setAttribute('x2', (x0 + (x1 - x0) * easeOut(p)).toFixed(2));
       });
     }
 
+    /** 방금 밟은 걸음 하나만 흐르게 한다. */
+    async function flow(s: NodePointsNextScene, myGen: number): Promise<void> {
+      const step = s.step;
+      if (!step) return;
+      switch (step.kind) {
+        case 'place':
+          await runPlace(myGen);
+          return;
+        case 'head':
+          await runHead(myGen, step.addr);
+          return;
+        case 'link':
+          await runLink(myGen, step.from, step.to);
+          return;
+        case 'null':
+          await runNull(myGen);
+          return;
+        case 'collect':
+          await runCollect(myGen, step.addr, step.slot, step.value);
+          return;
+        case 'seal':
+          await runSeal(myGen);
+          return;
+      }
+    }
+
+    /**
+     * 장면 하나를 그린다.
+     *
+     * 정적으로 세우는 것이 먼저다. 흐르게 하는 것은 그 위에 덧대고, 되짚기
+     * (`animate` 가 거짓) 는 덧대지 않는다 — 지나온 걸음을 되밟을 까닭이 없고,
+     * 되밟으면 그 운동이 되짚기보다 오래 남아 화면이 흔들린다.
+     *
+     * 운동이 끝나면 그 장면을 **다시 한 번 통째로** 세운다. 흐르며 남은 좌표
+     * 문자열 하나(`116.00` 과 `116`)가 곧바로 세운 화면과의 차이가 되어 되짚기
+     * 판정을 어긋나게 하기 때문이다. 사이에 타이머도 프레임도 없어 같은 그림이
+     * 다시 그려질 뿐이다.
+     *
+     * 돌려주는 Promise 는 장면이 다 선 뒤에 풀린다 — 이것이 바깥이 걸음의 끝을
+     * 아는 유일한 통로다 (S-scene).
+     */
+    async function render(
+      next: NodePointsNextScene,
+      /** 이 조각은 출발 그림을 장면과 배치에서 셈하므로 앞 장면을 들추지 않는다. */
+      _prev: NodePointsNextScene | null,
+      opts: { animate: boolean },
+    ): Promise<void> {
+      const myGen = (gen += 1);
+      settle(next);
+      if (!opts.animate || destroyed) return;
+      await flow(next, myGen);
+      if (alive(myGen)) settle(next);
+    }
+
     return {
-      init(data: NodePointsNextStageInit): void {
-        build(data);
-      },
-      rewind(): void {
-        if (spec) build(spec);
-      },
-      setCaption(textContent: string): void {
-        captionText.textContent = textContent;
-      },
-      placeNodes,
-      attachHead,
-      followPointer,
-      endWithNull,
-      collectValue,
-      seal,
+      render,
+
       destroy(): void {
         destroyed = true;
         if (typeof cancelAnimationFrame === 'function') {
           for (const id of frames) cancelAnimationFrame(id);
         }
         frames.clear();
+        for (const wake of [...waiters]) wake();
+        waiters.clear();
         if (svg.parentNode) svg.parentNode.removeChild(svg);
       },
     };

@@ -29,6 +29,20 @@
  * `onReset` → `onInit` → 로그. Timeline 이 그 차례로 되짚고, S-runtime 이 reset
  * 순서로 못박은 것도 그것이다. 한때 `onReset` 만 부르고 쟀는데 그 한 줄로 72 종 중
  * 아홉이 갈렸다 — 하네스가 실제 구현과 다른 것을 재고 있었다.
+ *
+ * ## 장면(scene) 조각은 여기서 재지 않는다
+ *
+ * 위의 전제 — "되감고 로그를 다시 먹이면 그 걸음의 화면이 되살아난다" — 가 장면
+ * 방식에는 해당하지 않는다. 장면을 쥐고 있으므로 `rewindTo` 가 로그를 다시 먹이지
+ * 않고 그 걸음의 장면을 꺼내 곧바로 그린다 (`runtime/timeline.ts`). 그래서
+ * `collect()` 가 `projector` 를 선언한 조각만 고른다.
+ *
+ * 장면 조각의 되짚기는 `scripts/scene-audit.mjs` 가 실제 Chrome 으로 잰다 — 흔들림
+ * (되짚은 뒤 화면이 저 혼자 바뀌는가) 과 왕복어긋남 둘 다, happy-dom 이 레이아웃도
+ * 페인트도 셈하지 않아 여기서는 잴 수 없는 것들이다.
+ *
+ * 그러니 `SCRUB_ONLY` 에 장면 조각의 id 를 주면 고를 것이 없어 실패한다. 그것이
+ * 계측의 빈틈이 아니라 잣대가 갈린 자리다.
  */
 // @vitest-environment happy-dom
 import { describe, expect, it } from 'vitest';

@@ -36,7 +36,7 @@ export const throughMiddleNodeFacet: FacetJson = {
     pt: 'A única pergunta que uma tabela de caminhos mínimos repete par após par.',
   },
   algorithm: 'module:throughMiddleNode',
-  projector: 'module:throughMiddleNodeProjector',
+  scene: 'module:throughMiddleNodeScene',
   initialData: {
     type: 'through-middle-node',
     nodes: ['A', 'B', 'C', 'D'],
@@ -52,7 +52,7 @@ export const throughMiddleNodeFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'through-middle-node-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.roads': {

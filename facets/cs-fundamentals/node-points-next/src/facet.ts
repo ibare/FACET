@@ -5,12 +5,12 @@
  * 답:   노드가 값 옆에 다음 노드의 주소를 함께 쥐고 있고, 그 주소가 가리킨다.
  *
  * 제목 블록도 메트릭도 두지 않는다 — 제목은 글의 문단이 주고, 조각은 셀 것이
- * 없다. 컨트롤은 다시 보기와 한 걸음 둘뿐이며 둘 다 눌러야 완성되는 조작이
+ * 없다. 컨트롤은 다시 보기와 스크럽 띠 둘뿐이며 둘 다 눌러야 완성되는 조작이
  * 아니다. 알고리즘은 reactive 로 등록되어 mount 시 스스로 재생한다
  * (index.ts 의 registerAlgorithm 옵션).
  */
 
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 import type { FacetJson } from '@ffacet/core/runtime';
 
 export const nodePointsNextFacet: FacetJson = {
@@ -40,7 +40,7 @@ export const nodePointsNextFacet: FacetJson = {
     pt: 'Os nós estão espalhados na memória e ainda assim têm uma ordem — o endereço que cada nó guarda ao lado do seu valor.',
   },
   algorithm: 'module:nodePointsNext',
-  projector: 'module:nodePointsNextProjector',
+  scene: 'module:nodePointsNextScene',
   initialData: {
     type: 'node-points-next',
     /** 걸음 간격. 한 걸음마다 읽을 시간을 준다. */
@@ -59,7 +59,11 @@ export const nodePointsNextFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'node-points-next-stage' },
-    controls: { type: 'control-bar', controls: [CONTROL.replay, CONTROL.advance] },
+    controls: {
+      type: 'control-bar',
+      // 스크럽 띠. 장면 방식이라 어느 걸음이든 셈으로 얻으므로 끌어 볼 수 있다.
+      controls: CONTROL_SET.pieceScrub,
+    },
   },
   messages: {
     'caption.scattered': {
