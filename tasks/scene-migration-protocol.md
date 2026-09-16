@@ -551,7 +551,7 @@ grep -l "projector: 'module:" facets/*/*/src/facet.ts | wc -l
 grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 ```
 
-2026-09-16 기준 **43 / 181**.
+2026-09-16 기준 **38 / 181**.
 
 옮긴 배치는 셋이다. 셋 다 **흔들림 0 · 왕복어긋남 0** 으로 닫았다.
 
