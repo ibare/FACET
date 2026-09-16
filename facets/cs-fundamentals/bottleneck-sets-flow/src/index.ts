@@ -9,13 +9,13 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { bottleneckSetsFlowAlgorithm } from './algorithm.js';
 import type { BottleneckSetsFlowData, FlowPipe } from './algorithm.js';
-import { bottleneckSetsFlowProjector } from './projector.js';
+import { bottleneckSetsFlowScene } from './scene.js';
 import { bottleneckSetsFlowIRs } from './irs.js';
 import { bottleneckSetsFlowStageView } from './bottleneck-sets-flow-stage.js';
 import { bottleneckSetsFlowFacet } from './facet.js';
@@ -25,7 +25,7 @@ export function registerBottleneckSetsFlow(): void {
   registerAlgorithm<BottleneckSetsFlowData>('bottleneckSetsFlow', bottleneckSetsFlowAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('bottleneckSetsFlowProjector', bottleneckSetsFlowProjector);
+  registerScenePlan('bottleneckSetsFlowScene', bottleneckSetsFlowScene);
   for (const ir of bottleneckSetsFlowIRs) registerIR(ir.id, ir);
   registerView('bottleneck-sets-flow-stage', bottleneckSetsFlowStageView);
   registerFacets([bottleneckSetsFlowFacet]);
@@ -34,10 +34,11 @@ export function registerBottleneckSetsFlow(): void {
 
 export {
   bottleneckSetsFlowAlgorithm,
-  bottleneckSetsFlowProjector,
+  bottleneckSetsFlowScene,
   bottleneckSetsFlowIRs,
   bottleneckSetsFlowStageView,
   bottleneckSetsFlowFacet,
   bottleneckSetsFlowDescription,
 };
 export type { BottleneckSetsFlowData, FlowPipe };
+export type { BottleneckSetsFlowScene } from './scene.js';

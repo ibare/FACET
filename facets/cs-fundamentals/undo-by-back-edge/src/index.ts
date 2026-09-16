@@ -9,12 +9,12 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { undoByBackEdgeAlgorithm, type UndoByBackEdgeData } from './algorithm.js';
-import { undoByBackEdgeProjector } from './projector.js';
+import { undoByBackEdgeScene } from './scene.js';
 import { undoByBackEdgeIRs } from './irs.js';
 import { undoByBackEdgeStageView } from './undo-by-back-edge-stage.js';
 import { undoByBackEdgeFacet } from './facet.js';
@@ -24,7 +24,7 @@ export function registerUndoByBackEdge(): void {
   registerAlgorithm<UndoByBackEdgeData>('undoByBackEdge', undoByBackEdgeAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('undoByBackEdgeProjector', undoByBackEdgeProjector);
+  registerScenePlan('undoByBackEdgeScene', undoByBackEdgeScene);
   for (const ir of undoByBackEdgeIRs) registerIR(ir.id, ir);
   registerView('undo-by-back-edge-stage', undoByBackEdgeStageView);
   registerFacets([undoByBackEdgeFacet]);
@@ -33,7 +33,7 @@ export function registerUndoByBackEdge(): void {
 
 export { undoByBackEdgeAlgorithm } from './algorithm.js';
 export type { UndoByBackEdgeData, UndoByBackEdgeEdge } from './algorithm.js';
-export { undoByBackEdgeProjector } from './projector.js';
+export { undoByBackEdgeScene, type UndoByBackEdgeScene } from './scene.js';
 export { undoByBackEdgeIRs } from './irs.js';
 export { undoByBackEdgeStageView } from './undo-by-back-edge-stage.js';
 export { undoByBackEdgeFacet } from './facet.js';

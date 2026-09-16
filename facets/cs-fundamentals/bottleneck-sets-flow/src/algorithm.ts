@@ -13,26 +13,27 @@
  *   rewind             {}                                               silent: false
  *     되감았다. 한 걸음씩 다시 볼 때 맨 앞에 한 번.
  *
- *   path-found         { nodes: string[]; edges: string[] }             silent: false
- *     여유가 남은 길을 찾았다. nodes 는 S..T 순서, edges 는 그 사이 관들.
+ *   path-found         { edges: string[] }                              silent: false
+ *     여유가 남은 길을 찾았다. edges 는 들어오는 곳에서 나가는 곳 순서의 관들.
+ *     지나는 정점 차례는 그 관들에서 펴지므로 싣지 않는다.
  *     target: 그 관들의 `edge:` 식별자 배열.
  *
- *   narrowest-marked   { edges: string[]; rooms: number[];              silent: false
- *                        narrowest: string[]; amount: number }
- *     길 위 관마다 남은 여유(rooms, edges 와 같은 순서)를 재고, 그중 최소인 관을
- *     narrowest 로 짚는다. amount 가 이번에 흘릴 양이다. 여유가 같은 관이 여럿이면
- *     narrowest 도 여럿이다. target: narrowest 의 `edge:` 식별자 배열.
+ *   narrowest-marked   { narrowest: string[] }                          silent: false
+ *     그 길에서 남은 여유가 가장 적은 관을 짚는다. 여유가 같은 관이 여럿이면
+ *     narrowest 도 여럿이다. **흘릴 양은 싣지 않는다** — 그 관의 여유를 읽으면
+ *     나오고, 여유는 용량에서 흘린 양을 빼 구조에서 세진다.
+ *     target: narrowest 의 `edge:` 식별자 배열.
  *
- *   flow-pushed        { edges: string[]; flows: number[];              silent: false
- *                        amount: number; total: number; full: string[] }
- *     amount 만큼 흘렸다. flows 는 edges 와 같은 순서의 갱신된 유량, full 은 이번에
- *     꽉 찬 관, total 은 지금까지 도착한 총량. target: edges 의 `edge:` 식별자 배열.
+ *   flow-pushed        {}                                               silent: false
+ *     짚어 둔 만큼 흘렸다. 갱신된 유량도 꽉 찬 관도 도착 총량도 싣지 않는다 —
+ *     길과 흘릴 양에서 전부 파생된다. target: 그 길의 `edge:` 식별자 배열.
  *
- *   no-more-room       { edges: string[] }                              silent: false
- *     들어오는 곳에서 나가는 관이 모두 꽉 차 더 갈 길이 없다. edges 는 그 관들.
+ *   no-more-room       {}                                               silent: false
+ *     들어오는 곳에서 나가는 관이 모두 꽉 차 더 갈 길이 없다. 그 관들은 선언에서
+ *     골라지므로 싣지 않는다. target: 그 관들의 `edge:` 식별자 배열.
  *
- *   done               { total: number }                                silent: false
- *     끝. total 은 흘려보낸 총량.
+ *   done               {}                                               silent: false
+ *     끝. 흘려보낸 총량은 지나온 걸음의 합이라 싣지 않는다.
  *
  * ── 메커니즘
  * reactive. mount 하면 스스로 자동 재생하고, 끝난 뒤에는 `advance` 입력마다 한
@@ -67,13 +68,13 @@ export type BottleneckSetsFlowData = {
 
 const FALLBACK_STEP_MS = 900;
 
-type Route = { nodes: string[]; edges: string[] };
-
 /**
  * 여유가 남은 관만 밟아 들어오는 곳에서 나가는 곳까지 가는 길을 찾는다.
  * 너비 우선이라 관을 적게 지나는 길이 먼저 나온다. 없으면 null.
+ *
+ * 돌려주는 것은 관의 차례뿐이다 — 지나는 정점은 그 관들에서 펴진다.
  */
-function findRoute(data: BottleneckSetsFlowData, flow: Map<string, number>): Route | null {
+function findRoute(data: BottleneckSetsFlowData, flow: Map<string, number>): string[] | null {
   const from = new Map<string, { node: string; edge: string }>();
   const seen = new Set<string>([data.source]);
   const queue: string[] = [data.source];
@@ -92,17 +93,15 @@ function findRoute(data: BottleneckSetsFlowData, flow: Map<string, number>): Rou
         continue;
       }
       // 나가는 곳에 닿았다 — 거슬러 올라가 길을 편다.
-      const nodes: string[] = [data.sink];
       const edges: string[] = [];
       let cursor = data.sink;
       let step = from.get(cursor);
       while (step !== undefined) {
-        nodes.unshift(step.node);
         edges.unshift(step.edge);
         cursor = step.node;
         step = from.get(cursor);
       }
-      return { nodes, edges };
+      return edges;
     }
   }
   return null;
@@ -145,42 +144,30 @@ async function playThrough(ctx: ReactiveContext<BottleneckSetsFlowData>, manual:
   if (manual) await ctx.emit({ type: 'rewind' });
 
   const flow = new Map<string, number>();
-  let total = 0;
 
   for (;;) {
     const route = findRoute(data, flow);
     if (route === null) break;
-    const marks = route.edges.map((id) => `edge:${id}`);
+    const marks = route.map((id) => `edge:${id}`);
 
     if (!(await gate())) return;
-    await ctx.emit({
-      type: 'path-found',
-      target: marks,
-      payload: { nodes: route.nodes, edges: route.edges },
-    });
+    await ctx.emit({ type: 'path-found', target: marks, payload: { edges: route } });
 
-    const rooms = route.edges.map((id) => (capacityOf.get(id) ?? 0) - (flow.get(id) ?? 0));
+    const rooms = route.map((id) => (capacityOf.get(id) ?? 0) - (flow.get(id) ?? 0));
     const amount = Math.min(...rooms);
-    const narrowest = route.edges.filter((_, i) => rooms[i] === amount);
+    const narrowest = route.filter((_, i) => rooms[i] === amount);
 
     if (!(await gate())) return;
     await ctx.emit({
       type: 'narrowest-marked',
       target: narrowest.map((id) => `edge:${id}`),
-      payload: { edges: route.edges, rooms, narrowest, amount },
+      payload: { narrowest },
     });
 
-    const flows = route.edges.map((id) => (flow.get(id) ?? 0) + amount);
-    route.edges.forEach((id, i) => flow.set(id, flows[i]));
-    total += amount;
-    const full = route.edges.filter((id, i) => flows[i] >= (capacityOf.get(id) ?? 0));
+    for (const id of route) flow.set(id, (flow.get(id) ?? 0) + amount);
 
     if (!(await gate())) return;
-    await ctx.emit({
-      type: 'flow-pushed',
-      target: marks,
-      payload: { edges: route.edges, flows, amount, total, full },
-    });
+    await ctx.emit({ type: 'flow-pushed', target: marks, payload: {} });
   }
 
   const blocked = data.edges.filter((pipe) => pipe.from === data.source).map((pipe) => pipe.id);
@@ -189,11 +176,11 @@ async function playThrough(ctx: ReactiveContext<BottleneckSetsFlowData>, manual:
   await ctx.emit({
     type: 'no-more-room',
     target: blocked.map((id) => `edge:${id}`),
-    payload: { edges: blocked },
+    payload: {},
   });
 
   if (!(await gate())) return;
-  await ctx.emit({ type: 'done', payload: { total } });
+  await ctx.emit({ type: 'done', payload: {} });
 }
 
 export const bottleneckSetsFlowAlgorithm = async (

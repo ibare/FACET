@@ -7,7 +7,7 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
@@ -16,7 +16,7 @@ import { mutuallyReachableDescription } from './description.js';
 import { mutuallyReachableFacet } from './facet.js';
 import { mutuallyReachableIRs } from './irs.js';
 import { mutuallyReachableStageView } from './mutually-reachable-stage.js';
-import { mutuallyReachableProjector } from './projector.js';
+import { mutuallyReachableScene } from './scene.js';
 
 export { mutuallyReachableAlgorithm } from './algorithm.js';
 export type { MutuallyReachableData, MutuallyReachableEdge } from './algorithm.js';
@@ -24,14 +24,14 @@ export { mutuallyReachableDescription } from './description.js';
 export { mutuallyReachableFacet } from './facet.js';
 export { mutuallyReachableIRs } from './irs.js';
 export { mutuallyReachableStageView } from './mutually-reachable-stage.js';
-export type { MutuallyReachableStageInstance, StageEdge } from './mutually-reachable-stage.js';
-export { mutuallyReachableProjector } from './projector.js';
+export type { StageEdge } from './mutually-reachable-stage.js';
+export { mutuallyReachableScene, type MutuallyReachableScene } from './scene.js';
 
 export function registerMutuallyReachable(): void {
   registerAlgorithm('mutuallyReachable', mutuallyReachableAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('mutuallyReachableProjector', mutuallyReachableProjector);
+  registerScenePlan('mutuallyReachableScene', mutuallyReachableScene);
   for (const ir of mutuallyReachableIRs) registerIR(ir.id, ir);
   registerView('mutually-reachable-stage', mutuallyReachableStageView);
   registerFacets([mutuallyReachableFacet]);

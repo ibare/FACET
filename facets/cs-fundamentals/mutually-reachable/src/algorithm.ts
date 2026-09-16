@@ -34,24 +34,37 @@
  *
  *   probe-begin    { u: string; v: string }
  *                  두 정점을 짚는다. 아직 아무것도 묻지 않았다.
- *   reach-found    { from: string; to: string; path: string[] }
- *                  from 에서 to 로 가는 길을 찾았다. path 는 정점 열(from 포함).
- *   reach-blocked  { from: string; to: string; region: string[] }
- *                  from 에서 to 로 갈 길이 없다. region 은 from 이 닿을 수 있는
- *                  곳 전부(from 포함) — 여기서 바깥으로 나가는 길이 없다.
- *   pair-verdict   { u: string; v: string; mutual: boolean }
+ *   reach-found    { path: string[] }
+ *                  길을 찾았다. path 는 정점 열이고 **맨 앞이 출발점**이다.
+ *   reach-blocked  { region: string[] }
+ *                  갈 길이 없다. region 은 출발점이 닿을 수 있는 곳 전부이고
+ *                  **맨 앞이 출발점**이다 — 여기서 바깥으로 나가는 길이 없다.
+ *   pair-verdict   { mutual: boolean }
  *                  두 방향을 다 물어 본 뒤의 판정.
- *   group-settled  { group: number; members: string[] }
+ *   group-settled  { members: string[] }
  *                  대표 u 의 무리가 확정됐다.
- *   split          { groups: string[][]; bridges: { from: string; to: string }[];
- *                    oneWayCount: number }
- *                  무리끼리 갈린다. bridges 는 서로 다른 무리를 잇는 간선,
- *                  oneWayCount 는 그중 되돌아오는 짝이 없는 것의 수.
+ *   split          (payload 없음)
+ *                  무리끼리 갈린다.
  *   rewind         (payload 없음)
  *                  자동 재생이 끝난 뒤 `advance` 로 처음으로 되감는다.
- *   done           { groupCount: number }
+ *   done           (payload 없음, silent)
  *
- * silent 인 이벤트는 없다 — 전부 화면이 바뀌는 걸음이다.
+ * ── payload 에 무엇을 싣고 무엇을 싣지 않나
+ *
+ * 화면이 구조에서 셀 수 있는 것은 싣지 않는다. 실려 있으면 다음 사람이 집어 쓰고,
+ * 그 순간 같은 수를 두 자리에서 세게 되어 언젠가 갈린다.
+ *
+ *   무리 번호        장면이 쌓인 무리 수로 센다
+ *   짝의 두 이름     `probe-begin` 이 이미 말했다
+ *   답사의 출발·도착 `path`/`region` 의 맨 앞과 짚은 짝이 말한다
+ *   무리 목록·다리   장면의 무리와 바탕의 간선에서 파생된다
+ *
+ * 남긴 것은 셋이다 — 짚을 짝, 답사의 결과(길이냐 덩이냐), 그리고 걸음이 내리는
+ * 판정(`mutual` · `members`). 앞의 둘은 이 조각의 알고리즘 그 자체라 내주면
+ * 장면이 도달 가능성을 되풀이하는 꼴이 되고 발신이 장식이 된다.
+ *
+ * `done` 만 silent 다 — 화면을 새로 말하는 것이 아니라 앞 걸음(갈라섬)의 화면을
+ * 마저 고치기 때문이다. 나머지는 전부 제 몫의 걸음이다.
  *
  * ── 메트릭
  *
@@ -188,7 +201,7 @@ async function play(ctx: ReactiveContext<MutuallyReachableData>, gate: Gate): Pr
         await ctx.emit({
           type: 'reach-blocked',
           target: `node:${v}`,
-          payload: { from: u, to: v, region },
+          payload: { region },
         });
         if (!(await gate(GATE_WALK))) return;
         for (const w of nodes) {
@@ -198,7 +211,7 @@ async function play(ctx: ReactiveContext<MutuallyReachableData>, gate: Gate): Pr
         await ctx.emit({
           type: 'reach-found',
           target: `node:${v}`,
-          payload: { from: u, to: v, path: forward },
+          payload: { path: forward },
         });
         if (!(await gate(GATE_WALK))) return;
 
@@ -209,7 +222,7 @@ async function play(ctx: ReactiveContext<MutuallyReachableData>, gate: Gate): Pr
           await ctx.emit({
             type: 'reach-blocked',
             target: `node:${u}`,
-            payload: { from: v, to: u, region },
+            payload: { region },
           });
           if (!(await gate(GATE_WALK))) return;
           for (const w of region) ruledOut.add(w);
@@ -217,7 +230,7 @@ async function play(ctx: ReactiveContext<MutuallyReachableData>, gate: Gate): Pr
           await ctx.emit({
             type: 'reach-found',
             target: `node:${u}`,
-            payload: { from: v, to: u, path: backward },
+            payload: { path: backward },
           });
           if (!(await gate(GATE_WALK))) return;
           mutual = true;
@@ -227,7 +240,7 @@ async function play(ctx: ReactiveContext<MutuallyReachableData>, gate: Gate): Pr
       await ctx.emit({
         type: 'pair-verdict',
         target: [`node:${u}`, `node:${v}`],
-        payload: { u, v, mutual },
+        payload: { mutual },
       });
       if (!(await gate(GATE_VERDICT))) return;
 
@@ -240,27 +253,16 @@ async function play(ctx: ReactiveContext<MutuallyReachableData>, gate: Gate): Pr
     await ctx.emit({
       type: 'group-settled',
       target: members.map((m) => `node:${m}`),
-      payload: { group, members: [...members] },
+      payload: { members: [...members] },
     });
     if (!(await gate(GATE_SETTLE))) return;
   }
 
-  const bridges = edges.filter((e) => groupOf.get(e.from) !== groupOf.get(e.to));
-  const oneWayCount = bridges.filter(
-    (e) => !bridges.some((o) => o.from === e.to && o.to === e.from),
-  ).length;
-
-  await ctx.emit({
-    type: 'split',
-    payload: {
-      groups: groups.map((m) => [...m]),
-      bridges: bridges.map((e) => ({ from: e.from, to: e.to })),
-      oneWayCount,
-    },
-  });
+  await ctx.emit({ type: 'split' });
   if (!(await gate(GATE_SPLIT))) return;
 
-  await ctx.emit({ type: 'done', payload: { groupCount: groups.length } });
+  // 앞 걸음의 화면을 마저 고칠 뿐이라 걸음을 하나 더 세우지 않는다.
+  await ctx.emit({ type: 'done', silent: true });
 }
 
 export const mutuallyReachableAlgorithm = async (

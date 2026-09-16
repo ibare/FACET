@@ -3,11 +3,14 @@
  *
  * ── 무엇이 어디에 있는가
  *
- *   위 (0..64)     왕복 검사기. 칸 둘이 두 방향을 하나씩 맡는다. 둘 다 통하면
+ *   위 (14..63)    왕복 검사기. 칸 둘이 두 방향을 하나씩 맡는다. 둘 다 통하면
  *                  칸 아래로 띠가 자라 둘을 묶고, 한쪽이 막히면 칸 사이가
  *                  금이 가며 서로 밀려난다.
- *   가운데 (68..250) 그래프. 처음에는 다섯이 한 줄로 늘어서 무리가 보이지 않는다.
- *   아래 (254..296) 캡션. 문안은 projector 가 준다 (C10).
+ *   그 아래 (68..90) **짚어 본 짝의 기록.** 물어 본 짝마다 알약 하나가 앉고
+ *                  끝까지 남는다. 두 방향의 답이 그대로 적혀 있어, 다 끝난
+ *                  화면에서 "왜 저기서 갈렸나" 를 읽을 수 있다.
+ *   가운데 (93..282) 그래프. 처음에는 다섯이 한 줄로 늘어서 무리가 보이지 않는다.
+ *   아래 (294..340) 캡션. 문안은 `params.t` 로 만든다 (C10).
  *
  * ── 두 답사는 서로 다른 일로 보인다
  *
@@ -16,14 +19,39 @@
  *   갈 길이 없을 때  토큰이 없다. 닿을 수 있는 곳으로 얼룩이 **번지고**, 다 번진
  *                   뒤 그 둘레에 점선 벽이 닫힌다. 바깥은 흐려진다.
  *
+ * ── 채움과 테두리를 갈라 둔다
+ *
+ *   채움  값의 형편 — 아직 아무 무리도 아니다 / 지금 지나가는 길 위다 / 얼룩이
+ *         들어 바깥으로 못 나간다 / 무리가 확정됐다.
+ *   테두리 짚음의 표식 — 지금 짚은 두 끝에 링이 돌고, 막힌 덩이 둘레에 점선 벽이
+ *         닫힌다. 짚어 본 짝의 기록도 테두리로 갈린다 (실선 = 오간다, 점선 = 막혔다).
+ *
+ * 둘이 한 칸에서 부딪히지 않으므로, 무리가 확정된 뒤 답사의 자취를 걷어도 판정은
+ * 기록에 그대로 남는다.
+ *
  * ── 갈린다
  *
  * 마지막에 정점들이 실제로 자리를 옮긴다. 오갈 수 있는 것끼리 한 덩이로 모이고
  * 덩이끼리는 캔버스 양 끝으로 밀려나, 둘을 잇던 간선 하나만 빈 사이를 건넌다.
  * 그 간선의 화살촉은 한쪽뿐이다.
  *
+ * ── 장면을 받아 그린다
+ *
+ * 걸음마다 부르는 메서드(`askPair()` · `showReached()` · `settleGroup()`) 를 두지
+ * 않는다. 그 메서드들은 되돌릴 수 없는 명령이라, 임의의 걸음으로 가려면 처음부터
+ * 다시 밟는 수밖에 없었다. 대신 `render(next, prev, { animate })` 하나가 **그
+ * 장면의 화면 전체**를 세운다 (S-scene).
+ *
+ * `prev` 는 들추지 않는다. 이 조각의 운동은 전부 그 장면 자체가 말하는 자리에서
+ * 출발한다 — 짚은 두 끝, 길, 번질 덩이, 처음 늘어선 줄.
+ *
  * 세로는 마운트한 뒤 바뀌지 않는다 (S-view). 정점 수가 달라져도 배치를 캔버스에서
- * 역산할 뿐 viewBox 를 다시 재지 않는다.
+ * 역산할 뿐 캔버스를 다시 재지 않는다.
+ *
+ * ── 뒷일
+ *
+ * 걸어 둔 프레임과 기다리는 약속은 집합에 담아 `destroy` 가 일괄로 거둔다.
+ * 취소된 프레임은 콜백이 아예 안 불리므로 기다리던 약속을 따로 깨워야 한다 (S-piece).
  */
 
 import {
@@ -32,11 +60,27 @@ import {
   fonts,
   fontSizes,
   getColors,
+  makeTranslator,
   shiftLightness,
+  type CanvasView,
+  type SceneRenderer,
+  type Translate,
+  type ViewInstance,
+  type ViewMountParams,
 } from '@ffacet/core/runtime';
-import type { CanvasView, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import {
+  bridgesOf,
+  groupIndexOf,
+  oneWayCountOf,
+  type MutuallyReachableCaption,
+  type MutuallyReachableScene,
+  type PairMark,
+  type ReachGraph,
+  type SceneEdge,
+  type Trial,
+} from './scene.js';
 
-export type StageEdge = { from: string; to: string };
+export type StageEdge = SceneEdge;
 
 type Pt = { x: number; y: number };
 
@@ -46,7 +90,7 @@ type Curve = { s: Pt; c: Pt; e: Pt };
 const NS = 'http://www.w3.org/2000/svg';
 
 const W = PIECE_CANVAS_W;
-const H = 296;
+const H = 340;
 
 /** 정점 반지름. 라벨 한 글자가 편히 앉는 크기. */
 const R = 22;
@@ -58,10 +102,10 @@ const HULL_PAD = 12;
 const WALL_PAD = 17;
 
 /** 늘어선 줄의 아래칸 / 윗칸 세로. 지그재그로 두어야 간선이 겹치지 않는다. */
-const CHAIN_LOW_Y = 196;
-const CHAIN_HIGH_Y = 120;
+const CHAIN_LOW_Y = 208;
+const CHAIN_HIGH_Y = 132;
 /** 갈린 뒤 무리 중심의 세로. */
-const SPLIT_CY = 170;
+const SPLIT_CY = 190;
 
 /** 간선의 휨. 오가는 짝(두 방향)이 같은 자리에 겹치지 않게 하는 것이 첫 몫이다. */
 const BOW = 22;
@@ -74,11 +118,20 @@ const CHIP_H = 38;
 const TIE_Y = CHIP_Y + CHIP_H + 6;
 const TIE_H = 5;
 
-const CAPTION_Y1 = 268;
-const CAPTION_Y2 = 286;
+/** 짚어 본 짝의 기록이 앉는 줄. */
+const LEDGER_Y = 68;
+const LEDGER_H = 22;
+const LEDGER_GAP = 10;
+/** 알약의 좌우 여백과 글자 한 칸의 너비. 알약 폭을 글자 수에서 역산한다. */
+const LEDGER_PAD = 11;
+const LEDGER_CH = 7.2;
+
+const CAPTION_Y1 = 306;
+const CAPTION_Y2 = 324;
 /** 캡션 한 줄에 담기는 폭 — 한글 한 자를 2, 그 밖을 1로 센 값. */
 const CAPTION_BUDGET = 72;
 
+const ASK_MS = 260;
 const HOP_MS = 200;
 const ARRIVE_MS = 170;
 const FLOOD_MS = 240;
@@ -93,6 +146,9 @@ const FLOW_MS = 640;
  * 0번(hue 50)이 주황이라 답사에 쓰는 accent 노랑과 붙어 보이고, 이 화면에서는
  * "지금 지나가는 중" 과 "이미 확정된 무리" 가 서로 다른 말이어야 한다.
  * 그래서 청록(hue 170)과 보라(hue 290)부터 쓴다.
+ *
+ * 시드는 **상수**다. "지금까지 드러난 무리 수" 로 정하면 무리가 하나 더 드러날
+ * 때마다 hue 간격이 통째로 갈려 **이미 칠한 무리의 색이 바뀐다.**
  */
 const GROUP_SEED = 6;
 const GROUP_HUE_ORDER = [2, 4, 0, 3, 5, 1];
@@ -116,6 +172,10 @@ function withAlpha(hex: string, alpha: number): string {
 
 function easeInOut(t: number): number {
   return t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
+}
+
+function easeOut(t: number): number {
+  return 1 - (1 - t) * (1 - t) * (1 - t);
 }
 
 function towards(from: Pt, to: Pt, dist: number): Pt {
@@ -241,7 +301,7 @@ function boxOf(points: Pt[], pad: number): { x: number; y: number; w: number; h:
 /** 한글은 두 칸, 그 밖은 한 칸으로 센다. 줄바꿈 자리를 고르는 데만 쓴다. */
 function textUnits(s: string): number {
   let n = 0;
-  for (const ch of s) n += /[\u1100-\u11FF\u3131-\u318E\uAC00-\uD7A3]/.test(ch) ? 2 : 1;
+  for (const ch of s) n += /[ᄀ-ᇿㄱ-ㆎ가-힣]/.test(ch) ? 2 : 1;
   return n;
 }
 
@@ -258,20 +318,127 @@ function wrapTwoLines(text: string, budget: number): [string, string] {
   return [head, tail];
 }
 
+/** 검사기 한 칸의 형편. 장면의 `Trial` 에서 파생된다 — 어디에도 저장하지 않는다. */
 type ChipState = 'idle' | 'asking' | 'found' | 'blocked';
 
-/** projector 가 부르는 계약. 문안은 전부 밖에서 온다. */
-export type MutuallyReachableStageInstance = ViewInstance & {
-  setGraph(nodes: string[], edges: StageEdge[]): void;
-  setCaption(text: string): void;
-  askPair(u: string, v: string): void;
-  showReached(from: string, to: string, path: string[]): Promise<void>;
-  showBlocked(from: string, to: string, region: string[]): Promise<void>;
-  resolvePair(mutual: boolean): Promise<void>;
-  settleGroup(group: number, members: string[]): Promise<void>;
-  splitApart(groups: string[][], bridges: StageEdge[]): Promise<void>;
-  finish(): void;
-  resetAll(): void;
+/** 간선의 이름. 방향이 있으므로 두 방향이 서로 다른 이름을 갖는다. */
+function keyOf(e: SceneEdge): string {
+  return `${e.from}>${e.to}`;
+}
+
+/**
+ * 장면이 말하는 구조에서 역산한 자리와 파생. 그리기 전에 한 번에 셈한다 —
+ * 그리면서 재면 순회 순서가 곧 숨은 상태가 된다.
+ */
+type Geo = {
+  chain: Map<string, Pt>;
+  cluster: Map<string, Pt>;
+  groupAt: Map<string, number>;
+  bridges: Set<string>;
+};
+
+function geometryOf(scene: MutuallyReachableScene): Geo {
+  const chain = chainLayout(scene.graph.nodes);
+  const cluster = scene.groups.length > 0 ? splitLayout(scene.groups) : new Map<string, Pt>();
+  return {
+    chain,
+    cluster,
+    groupAt: groupIndexOf(scene.groups),
+    bridges: new Set(bridgesOf(scene.graph, scene.groups).map(keyOf)),
+  };
+}
+
+/** 지금 프레임의 자리. 갈라서는 동안에는 두 배치 사이를 흐른다. */
+function placeOf(scene: MutuallyReachableScene, geo: Geo, posT: number): Map<string, Pt> {
+  if (!scene.split) return geo.chain;
+  const out = new Map<string, Pt>();
+  for (const id of scene.graph.nodes) {
+    const a = geo.chain.get(id);
+    const b = geo.cluster.get(id) ?? a;
+    if (!a || !b) continue;
+    out.set(id, { x: a.x + (b.x - a.x) * posT, y: a.y + (b.y - a.y) * posT });
+  }
+  return out;
+}
+
+/** 지금 검사기에 걸린 두 갈래. 자취를 걷은 뒤에도 검사기에는 남는다. */
+function trialOf(scene: MutuallyReachableScene, lane: 0 | 1): Trial | null {
+  const probe = scene.probe;
+  if (probe === null) return null;
+  return lane === 0 ? probe.forward : probe.backward;
+}
+
+/** 그래프에 아직 보이는 답사. 무리가 확정되면 걷힌다. */
+function liveTrials(scene: MutuallyReachableScene): Trial[] {
+  const probe = scene.probe;
+  if (probe === null || !probe.trail) return [];
+  const out: Trial[] = [];
+  if (probe.forward !== null) out.push(probe.forward);
+  if (probe.backward !== null) out.push(probe.backward);
+  return out;
+}
+
+/** 켜진 간선 — 길이 있다고 답한 답사가 지나온 도막들. */
+function litKeysOf(scene: MutuallyReachableScene): Set<string> {
+  const out = new Set<string>();
+  for (const trial of liveTrials(scene)) {
+    if (trial.kind !== 'found') continue;
+    for (let i = 0; i + 1 < trial.path.length; i += 1) {
+      out.add(`${trial.path[i]}>${trial.path[i + 1]}`);
+    }
+  }
+  return out;
+}
+
+/** 길 위에 선 정점들. */
+function pathNodesOf(scene: MutuallyReachableScene): Set<string> {
+  const out = new Set<string>();
+  for (const trial of liveTrials(scene)) {
+    if (trial.kind !== 'found') continue;
+    for (const id of trial.path) out.add(id);
+  }
+  return out;
+}
+
+/** 막힌 답사가 그려 보인 덩이. 한 짝에 많아야 하나다. */
+function blockedRegionOf(scene: MutuallyReachableScene): string[] | null {
+  for (const trial of liveTrials(scene)) {
+    if (trial.kind === 'blocked') return trial.region;
+  }
+  return null;
+}
+
+/**
+ * 한 번 그릴 때의 화면 형편. 장면이 말하지 않는 **지나가는 것**만 담는다.
+ *
+ * 멎어 있을 때는 `restBoard` 가 장면에서 곧바로 만들고, 운동 중에는 프레임마다
+ * 새로 만들어진다. 어느 쪽이든 그리는 길은 `paint` 하나다.
+ */
+type Board = {
+  /** 갈라선 자리로 흘러간 정도. */
+  posT: number;
+  /** 짚는 링이 닫힌 정도. 0 이면 아직 바깥에 크게 벌어져 있다. */
+  askT: number;
+  /** 간선이 그어진 정도. 목록에 없으면 다 그어져 있다. */
+  draw: Map<string, number>;
+  /** 지금 얼룩이 든 정점. */
+  stained: Set<string>;
+  /** 얼룩 바깥을 흐리는가. 벽이 닫히는 순간부터다. */
+  dim: boolean;
+  /** 벽이 닫힌 정도. 0 이면 아직 짓지 않는다. */
+  wallT: number;
+  token: Pt | null;
+  arrive: { at: Pt; t: number } | null;
+  tieT: number;
+  crackT: number;
+  /** 검사기 두 칸이 당겨지거나 밀린 정도(px). */
+  chipShift: number;
+  /** 다리 위 점선이 흐른 정도. 0 미만이면 흐르지 않는다. */
+  flowT: number;
+  /** 맨 나중 무리 둘레가 떠오른 정도. */
+  hullGrow: number;
+  /** 맨 나중 짚음 기록이 앉은 정도. */
+  markGrow: number;
 };
 
 export const mutuallyReachableStageView: CanvasView = {
@@ -280,238 +447,254 @@ export const mutuallyReachableStageView: CanvasView = {
   mount(
     _container: HTMLElement,
     params: ViewMountParams & { canvas: SVGSVGElement },
-  ): MutuallyReachableStageInstance {
+  ): ViewInstance & SceneRenderer<MutuallyReachableScene> {
     const svg = params.canvas;
+    // 캔버스 **안쪽**만 비운다. 컨테이너를 비우면 캔버스가 통째로 떨어져 나간다 (S-view).
+    svg.textContent = '';
+
+    const tr: Translate = params.t ?? makeTranslator(params.locale);
     const c = getColors(params.theme);
     const seed = categorical(GROUP_SEED, 'vivid');
     const groupColor = (gi: number): string =>
       seed[GROUP_HUE_ORDER[gi % GROUP_HUE_ORDER.length] as number] as string;
 
-    // ── 레이어. 순서가 곧 겹침 순서다.
+    // ── 레이어. 순서가 곧 겹침 순서다. 레이어 자신에는 속성을 걸지 않는다 —
+    //    걸면 자식을 비워도 그 속성이 남아 되짚기 판정에서 어긋난다.
     const layerHull = el('g', {});
     const layerWall = el('g', {});
     const layerEdge = el('g', {});
     const layerNode = el('g', {});
     const layerToken = el('g', {});
     const layerStrip = el('g', {});
+    const layerLedger = el('g', {});
     const layerCaption = el('g', {});
-    for (const l of [layerHull, layerWall, layerEdge, layerNode, layerToken, layerStrip, layerCaption]) {
-      svg.appendChild(l);
-    }
+    const layers = [
+      layerHull,
+      layerWall,
+      layerEdge,
+      layerNode,
+      layerToken,
+      layerStrip,
+      layerLedger,
+      layerCaption,
+    ];
+    for (const l of layers) svg.appendChild(l);
 
-    // ── 상태
-    let nodes: string[] = [];
-    let edges: StageEdge[] = [];
-    let pos = new Map<string, Pt>();
-
-    const groupOfNode = new Map<string, number>();
-    let settled: string[][] = [];
-    let bridgeKeys = new Set<string>();
-
-    let endpoints: [string, string] | null = null;
-    const litEdges = new Set<string>();
-    const drawT = new Map<string, number>();
-    const onPath = new Set<string>();
-    const flooded = new Set<string>();
-    let outsideDim = false;
-    let wallBox: { x: number; y: number; w: number; h: number } | null = null;
-    let wallT = 0;
-    let token: Pt | null = null;
-    let arriveAt: { at: Pt; t: number } | null = null;
-    let flowT = -1;
-
-    const chipState: ChipState[] = ['idle', 'idle'];
-    const chipNote: string[] = ['', ''];
-    const chipRoute: string[] = ['', ''];
-    let chipShift = 0;
-    let tieT = 0;
-    let crackT = 0;
-    let stripDim = false;
-    let caption = '';
-
-    // ── 상시 요소
-    const chipRect: SVGRectElement[] = [];
-    const chipNoteText: SVGTextElement[] = [];
-    const chipRouteText: SVGTextElement[] = [];
-    for (let i = 0; i < 2; i += 1) {
-      const rect = el('rect', { x: 0, y: CHIP_Y, width: CHIP_W, height: CHIP_H, rx: 11 });
-      const note = el('text', {
-        y: CHIP_Y + 24,
-        'font-family': fonts.mono,
-        'font-size': fontSizes.sm,
-        'text-anchor': 'start',
-      });
-      const route = el('text', {
-        y: CHIP_Y + 24,
-        'font-family': fonts.mono,
-        'font-size': fontSizes.sm,
-        'text-anchor': 'end',
-      });
-      layerStrip.append(rect, note, route);
-      chipRect.push(rect);
-      chipNoteText.push(note);
-      chipRouteText.push(route);
-    }
-    const tieBar = el('rect', { y: TIE_Y, height: TIE_H, rx: TIE_H / 2, opacity: 0 });
-    const crack = el('path', { fill: 'none', 'stroke-width': 2.6, opacity: 0 });
-    layerStrip.append(tieBar, crack);
-
-    const wallRect = el('rect', {
-      fill: 'none',
-      'stroke-width': 2,
-      'stroke-dasharray': '7 6',
-      rx: 22,
-      opacity: 0,
-    });
-    layerWall.appendChild(wallRect);
-
-    const tokenRing = el('circle', { r: R + 4, fill: 'none', 'stroke-width': 3, opacity: 0 });
-    const tokenDot = el('circle', { r: 9, 'stroke-width': 1.2, opacity: 0 });
-    layerToken.append(tokenRing, tokenDot);
-
-    const captionLine1 = el('text', {
-      x: W / 2,
-      y: CAPTION_Y1,
-      'font-family': fonts.body,
-      'font-size': fontSizes.md,
-      'text-anchor': 'middle',
-      fill: c.text,
-    });
-    const captionLine2 = el('text', {
-      x: W / 2,
-      y: CAPTION_Y2,
-      'font-family': fonts.body,
-      'font-size': fontSizes.md,
-      'text-anchor': 'middle',
-      fill: c.text,
-    });
-    layerCaption.append(captionLine1, captionLine2);
-
-    const hullRects = new Map<number, SVGRectElement>();
-    const nodeCircle = new Map<string, SVGCircleElement>();
-    const nodeRing = new Map<string, SVGCircleElement>();
-    const nodeLabel = new Map<string, SVGTextElement>();
-    const edgePath = new Map<string, SVGPathElement>();
-    const edgeHead = new Map<string, SVGPathElement>();
-
-    // ── 애니메이션. destroy 하면 예약된 프레임을 전부 거둔다.
-    let destroyed = false;
-    const timers = new Set<ReturnType<typeof setTimeout>>();
+    // ── 걸어 둔 것과 기다리는 것. destroy 가 일괄로 거둔다 (S-piece).
     const frames = new Set<number>();
+    const timers = new Set<ReturnType<typeof setTimeout>>();
+    const waiters = new Set<() => void>();
+    let destroyed = false;
 
     /**
-     * 기다리다 만 것들을 깨우는 자리.
+     * 세대 빗장. `render` 가 불릴 때마다 오르고, 깨어난 걸음 함수는 자기 세대를
+     * 확인한 뒤에만 그린다.
      *
-     * 프레임·타이머를 거두는 것만으로는 모자란다 — 취소된 tick 은 아예 불리지
-     * 않으므로 `destroyed` 를 보고 resolve 하는 길도 지나가지 않는다. 그러면
-     * `await ctx.emit` 이 영영 돌아오지 않아, unmount 된 뒤에도 알고리즘과
-     * projector 와 SVG 트리가 통째로 붙들린다 (S-view).
+     * 되짚기는 `opts.animate` 가 거짓으로 오므로 프레임을 아예 안 거는 것이 첫
+     * 빗장이고, 이것이 두 번째다. 걸음 함수가 `await` 를 지나므로 그 사이에 새
+     * `render` 가 오면 살아남은 프레임이 이미 새로 선 화면을 덮는다.
      */
-    const waiters = new Set<() => void>();
+    let gen = 0;
 
-    function later(fn: () => void): void {
-      if (typeof requestAnimationFrame === 'function') {
-        const id = requestAnimationFrame(() => {
-          frames.delete(id);
-          fn();
+    // ── 문안. 장면은 무엇을 말할지만 말하고 문자는 여기서 만든다 (C10).
+    //    수는 전부 그 장면의 구조에서 셈한다 — 장면이 실어 온 수를 쓰지 않는다.
+    function captionText(cap: MutuallyReachableCaption, scene: MutuallyReachableScene): string {
+      const probe = scene.probe;
+      switch (cap.kind) {
+        case 'intro':
+          return tr('caption.intro', 'Pick two vertices and ask: can each one reach the other?');
+        case 'ask':
+          if (probe === null) return '';
+          return tr('caption.ask', 'Take {u} and {v}.', { u: probe.u, v: probe.v });
+        case 'reached': {
+          const trial = trialOf(scene, cap.lane);
+          if (probe === null || trial === null || trial.kind !== 'found') return '';
+          return tr('caption.reached', '{from} to {to}: there is a way, and this is it.', {
+            from: trial.path[0] ?? '',
+            to: trial.path[trial.path.length - 1] ?? '',
+          });
+        }
+        case 'blocked': {
+          const trial = trialOf(scene, cap.lane);
+          if (probe === null || trial === null || trial.kind !== 'blocked') return '';
+          const from = trial.region[0] ?? '';
+          return tr(
+            'caption.blocked',
+            'No way from {from} to {to}. From {from} you only ever reach {region}.',
+            {
+              from,
+              to: from === probe.u ? probe.v : probe.u,
+              region: trial.region.join(', '),
+            },
+          );
+        }
+        case 'verdict': {
+          if (probe === null || probe.verdict === null) return '';
+          return probe.verdict
+            ? tr('caption.mutual', 'Both ways work, so {u} and {v} belong together.', {
+                u: probe.u,
+                v: probe.v,
+              })
+            : tr('caption.oneWay', 'Only one way, so {u} and {v} are not one group.', {
+                u: probe.u,
+                v: probe.v,
+              });
+        }
+        case 'settled': {
+          const members = scene.groups[scene.groups.length - 1];
+          if (members === undefined) return '';
+          return tr('caption.settled', '{members} form one group of {count}.', {
+            members: members.join(', '),
+            count: members.length,
+          });
+        }
+        case 'split': {
+          // 세 수가 전부 같은 자료에서 나온다 — 무리와 바탕의 간선.
+          const bridges = bridgesOf(scene.graph, scene.groups);
+          return tr(
+            'caption.split',
+            '{groupCount} groups. Links between them: {bridgeCount}, one way only: {oneWayCount}. Cross and there is no way back.',
+            {
+              groupCount: scene.groups.length,
+              bridgeCount: bridges.length,
+              oneWayCount: oneWayCountOf(bridges),
+            },
+          );
+        }
+      }
+    }
+
+    // ── 검사기와 기록의 표기. 문안이 아니라 기호라 여기서 만든다.
+
+    function chipStateOf(scene: MutuallyReachableScene, lane: 0 | 1): ChipState {
+      const probe = scene.probe;
+      if (probe === null) return 'idle';
+      const trial = lane === 0 ? probe.forward : probe.backward;
+      if (trial !== null) return trial.kind;
+      // 0 번 칸은 짚는 순간 이미 묻고 있고, 1 번 칸은 앞 답이 나온 뒤에 묻는다.
+      return lane === 0 || probe.forward !== null ? 'asking' : 'idle';
+    }
+
+    function chipRouteOf(scene: MutuallyReachableScene, lane: 0 | 1): string {
+      const trial = trialOf(scene, lane);
+      if (trial === null) return '';
+      return trial.kind === 'found'
+        ? trial.path.join(' → ')
+        : `${trial.region.join(' · ')} ⊣`;
+    }
+
+    /**
+     * 짚어 본 짝 하나의 표기. 물어 본 방향마다 화살 하나이고, 막힌 방향은 화살 대신
+     * 멈춤 표(`⊣`)가 선다 — 갈린 까닭이 그 한 글자에 있다.
+     */
+    function markText(m: PairMark): string {
+      const f = m.forward === null ? '' : `${m.u}${m.forward === 'found' ? '→' : '⊣'}${m.v}`;
+      const b = m.backward === null ? '' : `${m.v}${m.backward === 'found' ? '→' : '⊣'}${m.u}`;
+      if (f === '') return b;
+      return b === '' ? f : `${f} · ${b}`;
+    }
+
+    /** 알약의 폭. 정수로 맞춰 자리 셈이 부동소수 끝자리를 끌고 다니지 않게 한다. */
+    function markWidth(m: PairMark): number {
+      return Math.round(LEDGER_PAD * 2 + [...markText(m)].length * LEDGER_CH);
+    }
+
+    // ── 그리기 -------------------------------------------------------------
+
+    function restBoard(scene: MutuallyReachableScene): Board {
+      const region = blockedRegionOf(scene);
+      const verdict = scene.probe?.verdict ?? null;
+      return {
+        posT: 1,
+        askT: 1,
+        draw: new Map(),
+        stained: new Set(region ?? []),
+        dim: region !== null,
+        wallT: region === null ? 0 : 1,
+        token: null,
+        arrive: null,
+        tieT: verdict === true ? 1 : 0,
+        crackT: verdict === false ? 1 : 0,
+        chipShift: verdict === null ? 0 : verdict ? -4 : 6,
+        flowT: -1,
+        hullGrow: 1,
+        markGrow: 1,
+      };
+    }
+
+    /**
+     * 그 장면의 화면을 통째로 세운다. 되돌릴 명령이 없으므로 늘 비우고 시작한다.
+     *
+     * 아직 없는 것은 숨기지 않고 **짓지 않는다** — 투명도 0 으로 숨기면 좌표가 앞
+     * 걸음 값으로 남아 되짚기 판정에서 어긋난다.
+     */
+    function paint(scene: MutuallyReachableScene, geo: Geo, board: Board): void {
+      for (const l of layers) l.textContent = '';
+
+      const pos = placeOf(scene, geo, board.posT);
+      const lit = litKeysOf(scene);
+      const onPath = pathNodesOf(scene);
+      const probe = scene.probe;
+
+      // ── 무리 둘레. 확정된 무리마다 하나이고 맨 나중 것만 떠오르는 중일 수 있다.
+      scene.groups.forEach((members, gi) => {
+        const points = members.map((m) => pos.get(m)).filter((p): p is Pt => p !== undefined);
+        if (points.length === 0) return;
+        const box = boxOf(points, HULL_PAD);
+        const grow = gi === scene.groups.length - 1 ? board.hullGrow : 1;
+        const rect = el('rect', {
+          x: box.x,
+          y: box.y,
+          width: box.w,
+          height: box.h,
+          rx: 24,
+          'stroke-width': 2,
+          'stroke-dasharray': '2 5',
+          fill: withAlpha(groupColor(gi), 0.13),
+          stroke: withAlpha(groupColor(gi), 0.55),
         });
-        frames.add(id);
-        return;
-      }
-      const id = setTimeout(() => {
-        timers.delete(id);
-        fn();
-      }, 16);
-      timers.add(id);
-    }
-
-    function animate(ms: number, onFrame: (t: number) => void): Promise<void> {
-      return new Promise<void>((resolve) => {
-        if (destroyed) {
-          resolve();
-          return;
-        }
-        const finish = (): void => {
-          waiters.delete(finish);
-          resolve();
-        };
-        waiters.add(finish);
-        const started = Date.now();
-        const tick = (): void => {
-          if (destroyed) {
-            finish();
-            return;
-          }
-          const raw = ms <= 0 ? 1 : Math.min(1, (Date.now() - started) / ms);
-          onFrame(raw);
-          render();
-          if (raw >= 1) {
-            finish();
-            return;
-          }
-          later(tick);
-        };
-        later(tick);
+        if (grow < 1) rect.setAttribute('opacity', String(grow));
+        layerHull.appendChild(rect);
       });
-    }
 
-    const key = (e: StageEdge): string => `${e.from}>${e.to}`;
-
-    function hasEdge(from: string, to: string): boolean {
-      return edges.some((e) => e.from === from && e.to === to);
-    }
-
-    // ── 그리기
-    function render(): void {
-      // 무리 둘레
-      for (const [gi, rect] of hullRects) {
-        const members = settled[gi];
-        if (!members || members.length === 0) {
-          rect.setAttribute('opacity', '0');
-          continue;
+      // ── 벽. 막힌 덩이를 두르고 닫힌다.
+      if (board.wallT > 0) {
+        const region = blockedRegionOf(scene) ?? [];
+        const points = region.map((id) => pos.get(id)).filter((p): p is Pt => p !== undefined);
+        if (points.length > 0) {
+          const box = boxOf(points, WALL_PAD);
+          const grow = 1 - board.wallT;
+          layerWall.appendChild(
+            el('rect', {
+              x: box.x + box.w * 0.06 * grow,
+              y: box.y + box.h * 0.06 * grow,
+              width: box.w * (1 - 0.12 * grow),
+              height: box.h * (1 - 0.12 * grow),
+              rx: 22,
+              fill: 'none',
+              'stroke-width': 2,
+              'stroke-dasharray': '7 6',
+              stroke: c.danger,
+              opacity: board.wallT,
+            }),
+          );
         }
-        const box = boxOf(
-          members.map((m) => pos.get(m) ?? { x: W / 2, y: SPLIT_CY }),
-          HULL_PAD,
-        );
-        rect.setAttribute('x', String(box.x));
-        rect.setAttribute('y', String(box.y));
-        rect.setAttribute('width', String(box.w));
-        rect.setAttribute('height', String(box.h));
       }
 
-      // 벽
-      if (wallBox && wallT > 0) {
-        const grow = 1 - wallT;
-        wallRect.setAttribute('x', String(wallBox.x + wallBox.w * 0.06 * grow));
-        wallRect.setAttribute('y', String(wallBox.y + wallBox.h * 0.06 * grow));
-        wallRect.setAttribute('width', String(wallBox.w * (1 - 0.12 * grow)));
-        wallRect.setAttribute('height', String(wallBox.h * (1 - 0.12 * grow)));
-        wallRect.setAttribute('stroke', c.danger);
-        wallRect.setAttribute('opacity', String(wallT));
-      } else {
-        wallRect.setAttribute('opacity', '0');
-      }
-
-      // 간선
-      for (const e of edges) {
-        const k = key(e);
-        const path = edgePath.get(k);
-        const head = edgeHead.get(k);
-        if (!path || !head) continue;
+      // ── 간선
+      for (const e of scene.graph.edges) {
+        const k = keyOf(e);
         const p1 = pos.get(e.from);
         const p2 = pos.get(e.to);
         if (!p1 || !p2) continue;
         const g = curveOf(p1, p2);
-        path.setAttribute('d', curvePath(g));
-        head.setAttribute('d', arrowPath(g, p2));
 
-        const lit = litEdges.has(k);
-        const flood = flooded.has(e.from) && flooded.has(e.to);
-        const bridge = bridgeKeys.has(k);
+        const isLit = lit.has(k);
+        const flood = board.stained.has(e.from) && board.stained.has(e.to);
+        const bridge = scene.split && geo.bridges.has(k);
         let stroke = c.textMuted;
         let width = 1.6;
-        if (lit) {
+        if (isLit) {
           stroke = c.accent;
           width = 3.4;
         } else if (flood) {
@@ -521,47 +704,46 @@ export const mutuallyReachableStageView: CanvasView = {
           stroke = c.text;
           width = 2.8;
         }
-        path.setAttribute('stroke', stroke);
-        path.setAttribute('stroke-width', String(width));
-        head.setAttribute('fill', stroke);
 
-        const t = drawT.get(k) ?? 1;
+        const t = board.draw.get(k) ?? 1;
         const len = curveLength(g);
-        path.setAttribute('stroke-dasharray', bridge && flowT >= 0 ? '10 8' : `${len.toFixed(1)} ${len.toFixed(1)}`);
-        path.setAttribute(
-          'stroke-dashoffset',
-          bridge && flowT >= 0 ? String(-flowT * 36) : String((len * (1 - t)).toFixed(1)),
-        );
-
+        const flowing = bridge && board.flowT >= 0;
         // 지나온 길은 흐리지 않는다 — "갈 수는 있었다" 와 "돌아올 수 없다" 가 한 화면에
         // 함께 남아야 반쪽만 되는 사이가 무슨 뜻인지 보인다.
-        const outside = outsideDim && !lit && !flood;
-        const alpha = outside ? 0.22 : 1;
-        path.setAttribute('opacity', String(alpha));
-        head.setAttribute('opacity', String(t > 0.92 ? alpha : 0));
+        const alpha = board.dim && !isLit && !flood ? 0.22 : 1;
+
+        layerEdge.appendChild(
+          el('path', {
+            d: curvePath(g),
+            fill: 'none',
+            'stroke-linecap': 'round',
+            stroke,
+            'stroke-width': width,
+            'stroke-dasharray': flowing ? '10 8' : `${len.toFixed(1)} ${len.toFixed(1)}`,
+            'stroke-dashoffset': flowing ? -board.flowT * 36 : (len * (1 - t)).toFixed(1),
+            opacity: alpha,
+          }),
+        );
+        layerEdge.appendChild(
+          el('path', {
+            d: arrowPath(g, p2),
+            stroke: 'none',
+            fill: stroke,
+            opacity: t > 0.92 ? alpha : 0,
+          }),
+        );
       }
 
-      // 정점
-      for (const id of nodes) {
-        const circle = nodeCircle.get(id);
-        const ring = nodeRing.get(id);
-        const label = nodeLabel.get(id);
+      // ── 정점
+      for (const id of scene.graph.nodes) {
         const p = pos.get(id);
-        if (!circle || !ring || !label || !p) continue;
-
-        circle.setAttribute('cx', String(p.x));
-        circle.setAttribute('cy', String(p.y));
-        ring.setAttribute('cx', String(p.x));
-        ring.setAttribute('cy', String(p.y));
-        label.setAttribute('x', String(p.x));
-        label.setAttribute('y', String(p.y + 6));
-
-        const gi = groupOfNode.get(id);
+        if (!p) continue;
+        const gi = geo.groupAt.get(id);
         let fill = c.itemDefault;
         let stroke = c.textMuted;
         let strokeWidth = 2;
         let ink = c.text;
-        if (flooded.has(id)) {
+        if (board.stained.has(id)) {
           fill = withAlpha(c.danger, 0.16);
           stroke = c.danger;
           strokeWidth = 2.4;
@@ -575,53 +757,84 @@ export const mutuallyReachableStageView: CanvasView = {
           stroke = c.accent;
           strokeWidth = 2.6;
         }
-        circle.setAttribute('fill', fill);
-        circle.setAttribute('stroke', stroke);
-        circle.setAttribute('stroke-width', String(strokeWidth));
-        label.setAttribute('fill', ink);
+        const alpha = board.dim && !board.stained.has(id) && !onPath.has(id) ? 0.24 : 1;
 
-        const isEnd = endpoints !== null && (endpoints[0] === id || endpoints[1] === id);
-        ring.setAttribute('stroke', c.accent);
-        ring.setAttribute('opacity', isEnd ? '0.85' : '0');
+        layerNode.appendChild(
+          el('circle', {
+            cx: p.x,
+            cy: p.y,
+            r: R,
+            fill,
+            stroke,
+            'stroke-width': strokeWidth,
+            opacity: alpha,
+          }),
+        );
 
-        const dim = outsideDim && !flooded.has(id) && !onPath.has(id);
-        const alpha = dim ? 0.24 : 1;
-        circle.setAttribute('opacity', String(alpha));
-        label.setAttribute('opacity', String(alpha));
+        // 짚은 두 끝의 링. 짚는 걸음에서 바깥에서 오므라들어 닫힌다.
+        if (probe !== null && probe.trail && (probe.u === id || probe.v === id)) {
+          layerNode.appendChild(
+            el('circle', {
+              cx: p.x,
+              cy: p.y,
+              r: R + 6 + (1 - board.askT) * 14,
+              fill: 'none',
+              'stroke-width': 2.4,
+              stroke: c.accent,
+              opacity: 0.85 * board.askT,
+            }),
+          );
+        }
+
+        const label = el('text', {
+          x: p.x,
+          y: p.y + 6,
+          'font-family': fonts.body,
+          'font-size': fontSizes.lg,
+          'font-weight': 600,
+          'text-anchor': 'middle',
+          fill: ink,
+          opacity: alpha,
+        });
+        label.textContent = id;
+        layerNode.appendChild(label);
       }
 
-      // 토큰
-      if (token) {
-        tokenDot.setAttribute('cx', String(token.x));
-        tokenDot.setAttribute('cy', String(token.y));
-        tokenDot.setAttribute('fill', c.accent);
-        tokenDot.setAttribute('stroke', c.stateInk);
-        tokenDot.setAttribute('opacity', '1');
-      } else {
-        tokenDot.setAttribute('opacity', '0');
+      // ── 토큰. 길을 타고 움직이는 동안에만 있다.
+      if (board.token !== null) {
+        layerToken.appendChild(
+          el('circle', {
+            cx: board.token.x,
+            cy: board.token.y,
+            r: 9,
+            'stroke-width': 1.2,
+            fill: c.accent,
+            stroke: c.stateInk,
+          }),
+        );
       }
-      if (arriveAt) {
-        tokenRing.setAttribute('cx', String(arriveAt.at.x));
-        tokenRing.setAttribute('cy', String(arriveAt.at.y));
-        tokenRing.setAttribute('r', String(R + 4 + arriveAt.t * 12));
-        tokenRing.setAttribute('stroke', c.accent);
-        tokenRing.setAttribute('opacity', String(1 - arriveAt.t));
-      } else {
-        tokenRing.setAttribute('opacity', '0');
+      if (board.arrive !== null) {
+        layerToken.appendChild(
+          el('circle', {
+            cx: board.arrive.at.x,
+            cy: board.arrive.at.y,
+            r: R + 4 + board.arrive.t * 12,
+            fill: 'none',
+            'stroke-width': 3,
+            stroke: c.accent,
+            opacity: 1 - board.arrive.t,
+          }),
+        );
       }
 
-      // 왕복 검사기
+      // ── 왕복 검사기. 흐리는 것은 레이어가 아니라 이 안의 무리에 건다.
+      const strip = el('g', scene.finished ? { opacity: 0.55 } : {});
+      layerStrip.appendChild(strip);
       for (let i = 0; i < 2; i += 1) {
+        const lane = i as 0 | 1;
         const baseX = STRIP_X + i * (CHIP_W + CHIP_GAP);
-        const shift = i === 0 ? -chipShift : chipShift;
-        const rect = chipRect[i] as SVGRectElement;
-        const note = chipNoteText[i] as SVGTextElement;
-        const route = chipRouteText[i] as SVGTextElement;
-        rect.setAttribute('x', String(baseX + shift));
-        note.setAttribute('x', String(baseX + shift + 16));
-        route.setAttribute('x', String(baseX + shift + CHIP_W - 16));
-
-        const state = chipState[i] as ChipState;
+        const x = baseX + (i === 0 ? -board.chipShift : board.chipShift);
+        const state = chipStateOf(scene, lane);
         let fill = c.bgSubtle;
         let stroke = c.border;
         let width = 1.4;
@@ -641,321 +854,381 @@ export const mutuallyReachableStageView: CanvasView = {
           width = 2;
           ink = c.danger;
         }
-        rect.setAttribute('fill', fill);
-        rect.setAttribute('stroke', stroke);
-        rect.setAttribute('stroke-width', String(width));
-        note.setAttribute('fill', ink);
-        route.setAttribute('fill', ink);
-        note.textContent = chipNote[i] ?? '';
-        route.textContent = chipRoute[i] ?? '';
-      }
-      layerStrip.setAttribute('opacity', stripDim ? '0.55' : '1');
-
-      const tieFull = CHIP_W * 2 + CHIP_GAP;
-      tieBar.setAttribute('x', String(STRIP_X + (tieFull * (1 - tieT)) / 2));
-      tieBar.setAttribute('width', String(tieFull * tieT));
-      tieBar.setAttribute('fill', c.accent);
-      tieBar.setAttribute('opacity', String(tieT > 0 ? 1 : 0));
-
-      const cx = STRIP_X + CHIP_W + CHIP_GAP / 2;
-      const top = CHIP_Y - 6;
-      const bottom = CHIP_Y + CHIP_H + 12;
-      const steps = 5;
-      let d = `M ${cx} ${top}`;
-      for (let i = 1; i <= steps; i += 1) {
-        const y = top + ((bottom - top) * i) / steps;
-        d += ` L ${cx + (i % 2 === 0 ? 5 : -5)} ${y}`;
-      }
-      crack.setAttribute('d', d);
-      crack.setAttribute('stroke', c.danger);
-      crack.setAttribute('opacity', String(crackT));
-
-      // 캡션
-      const [line1, line2] = wrapTwoLines(caption, CAPTION_BUDGET);
-      captionLine1.textContent = line1;
-      captionLine2.textContent = line2;
-      captionLine1.setAttribute('fill', c.text);
-      captionLine2.setAttribute('fill', c.text);
-    }
-
-    function clearProbeMarks(): void {
-      litEdges.clear();
-      drawT.clear();
-      onPath.clear();
-      flooded.clear();
-      outsideDim = false;
-      wallBox = null;
-      wallT = 0;
-      token = null;
-      arriveAt = null;
-    }
-
-    function buildGraph(nextNodes: string[], nextEdges: StageEdge[]): void {
-      layerHull.textContent = '';
-      layerEdge.textContent = '';
-      layerNode.textContent = '';
-      hullRects.clear();
-      nodeCircle.clear();
-      nodeRing.clear();
-      nodeLabel.clear();
-      edgePath.clear();
-      edgeHead.clear();
-
-      nodes = [...nextNodes];
-      edges = nextEdges.map((e) => ({ from: e.from, to: e.to }));
-      pos = chainLayout(nodes);
-
-      groupOfNode.clear();
-      settled = [];
-      bridgeKeys = new Set();
-      endpoints = null;
-      clearProbeMarks();
-      flowT = -1;
-      chipState[0] = 'idle';
-      chipState[1] = 'idle';
-      chipNote[0] = '';
-      chipNote[1] = '';
-      chipRoute[0] = '';
-      chipRoute[1] = '';
-      chipShift = 0;
-      tieT = 0;
-      crackT = 0;
-      stripDim = false;
-
-      for (const e of edges) {
-        const path = el('path', { fill: 'none', 'stroke-linecap': 'round' });
-        const head = el('path', { stroke: 'none' });
-        layerEdge.append(path, head);
-        edgePath.set(key(e), path);
-        edgeHead.set(key(e), head);
-      }
-      for (const id of nodes) {
-        const circle = el('circle', { r: R });
-        const ring = el('circle', { r: R + 6, fill: 'none', 'stroke-width': 2.4, opacity: 0 });
-        const label = el('text', {
-          'font-family': fonts.body,
-          'font-size': fontSizes.lg,
-          'font-weight': 600,
-          'text-anchor': 'middle',
+        strip.appendChild(
+          el('rect', {
+            x,
+            y: CHIP_Y,
+            width: CHIP_W,
+            height: CHIP_H,
+            rx: 11,
+            fill,
+            stroke,
+            'stroke-width': width,
+          }),
+        );
+        const note = el('text', {
+          x: x + 16,
+          y: CHIP_Y + 24,
+          'font-family': fonts.mono,
+          'font-size': fontSizes.sm,
+          'text-anchor': 'start',
+          fill: ink,
         });
-        label.textContent = id;
-        layerNode.append(circle, ring, label);
-        nodeCircle.set(id, circle);
-        nodeRing.set(id, ring);
-        nodeLabel.set(id, label);
+        note.textContent = probe === null ? '' : lane === 0 ? `${probe.u} → ${probe.v}` : `${probe.v} → ${probe.u}`;
+        strip.appendChild(note);
+        const route = el('text', {
+          x: x + CHIP_W - 16,
+          y: CHIP_Y + 24,
+          'font-family': fonts.mono,
+          'font-size': fontSizes.sm,
+          'text-anchor': 'end',
+          fill: ink,
+        });
+        route.textContent = chipRouteOf(scene, lane);
+        strip.appendChild(route);
       }
-      render();
+
+      // 둘 다 통하면 아래로 띠가 자라 둘을 묶는다.
+      if (board.tieT > 0) {
+        const full = CHIP_W * 2 + CHIP_GAP;
+        strip.appendChild(
+          el('rect', {
+            x: STRIP_X + (full * (1 - board.tieT)) / 2,
+            y: TIE_Y,
+            width: full * board.tieT,
+            height: TIE_H,
+            rx: TIE_H / 2,
+            fill: c.accent,
+          }),
+        );
+      }
+      // 한쪽이 막히면 칸 사이에 금이 간다.
+      if (board.crackT > 0) {
+        const cx = STRIP_X + CHIP_W + CHIP_GAP / 2;
+        const top = CHIP_Y - 6;
+        const bottom = CHIP_Y + CHIP_H + 12;
+        const steps = 5;
+        let d = `M ${cx} ${top}`;
+        for (let i = 1; i <= steps; i += 1) {
+          const y = top + ((bottom - top) * i) / steps;
+          d += ` L ${cx + (i % 2 === 0 ? 5 : -5)} ${y}`;
+        }
+        strip.appendChild(
+          el('path', {
+            d,
+            fill: 'none',
+            'stroke-width': 2.6,
+            stroke: c.danger,
+            opacity: board.crackT,
+          }),
+        );
+      }
+
+      // ── 짚어 본 짝의 기록. 여기가 조각의 결론이 남는 자리다.
+      let cursor = STRIP_X;
+      scene.marks.forEach((m, i) => {
+        const w = markWidth(m);
+        const grow = i === scene.marks.length - 1 ? board.markGrow : 1;
+        const pill = el('g', {});
+        if (grow < 1) {
+          pill.setAttribute('transform', `translate(0 ${(-(1 - grow) * 7).toFixed(2)})`);
+          pill.setAttribute('opacity', String(grow));
+        }
+        const rect = el('rect', {
+          x: cursor,
+          y: LEDGER_Y,
+          width: w,
+          height: LEDGER_H,
+          rx: LEDGER_H / 2,
+          'stroke-width': 1.6,
+          fill: m.mutual ? withAlpha(c.accent, 0.18) : withAlpha(c.danger, 0.12),
+          stroke: m.mutual ? c.accent : c.danger,
+        });
+        // 테두리가 판정을 말한다 — 실선은 오간다, 점선은 한쪽에서 막혔다.
+        if (!m.mutual) rect.setAttribute('stroke-dasharray', '4 3');
+        pill.appendChild(rect);
+        const text = el('text', {
+          x: cursor + w / 2,
+          y: LEDGER_Y + 15,
+          'font-family': fonts.mono,
+          'font-size': fontSizes.sm,
+          'text-anchor': 'middle',
+          fill: m.mutual ? c.text : c.danger,
+        });
+        text.textContent = markText(m);
+        pill.appendChild(text);
+        layerLedger.appendChild(pill);
+        cursor += w + LEDGER_GAP;
+      });
+
+      // ── 캡션
+      const [line1, line2] = wrapTwoLines(
+        scene.caption === null ? '' : captionText(scene.caption, scene),
+        CAPTION_BUDGET,
+      );
+      for (const [text, y] of [
+        [line1, CAPTION_Y1],
+        [line2, CAPTION_Y2],
+      ] as [string, number][]) {
+        if (text === '') continue;
+        const node = el('text', {
+          x: W / 2,
+          y,
+          'font-family': fonts.body,
+          'font-size': fontSizes.md,
+          'text-anchor': 'middle',
+          fill: c.text,
+        });
+        node.textContent = text;
+        layerCaption.appendChild(node);
+      }
     }
 
-    const instance: MutuallyReachableStageInstance = {
-      setGraph(nextNodes, nextEdges) {
-        buildGraph(nextNodes, nextEdges);
-      },
+    // ── 시간 ---------------------------------------------------------------
 
-      setCaption(text) {
-        caption = text;
-        render();
-      },
+    function now(): number {
+      return typeof performance !== 'undefined' ? performance.now() : Date.now();
+    }
 
-      askPair(u, v) {
-        clearProbeMarks();
-        endpoints = [u, v];
-        chipState[0] = 'asking';
-        chipState[1] = 'idle';
-        chipNote[0] = `${u} → ${v}`;
-        chipNote[1] = `${v} → ${u}`;
-        chipRoute[0] = '';
-        chipRoute[1] = '';
-        chipShift = 0;
-        tieT = 0;
-        crackT = 0;
-        render();
-      },
+    function later(fn: () => void): void {
+      if (typeof requestAnimationFrame === 'function') {
+        const id = requestAnimationFrame(() => {
+          frames.delete(id);
+          fn();
+        });
+        frames.add(id);
+        return;
+      }
+      const id = setTimeout(() => {
+        timers.delete(id);
+        fn();
+      }, 16);
+      timers.add(id);
+    }
 
-      async showReached(from, to, path) {
-        const lane = endpoints !== null && endpoints[0] === from ? 0 : 1;
-        const other = 1 - lane;
-        chipState[lane] = 'found';
-        if (chipState[other] === 'idle') chipState[other] = 'asking';
-        chipRoute[lane] = path.join(' → ');
-        for (const id of path) onPath.add(id);
+    /**
+     * 걸음 하나를 프레임으로 흐르게 한다.
+     *
+     * 약속을 깨우는 `finish` 를 `waiters` 에 담아 둔다. 프레임을 취소하면 콜백이
+     * 아예 안 불리므로, `destroy` 가 그 자리에서 직접 깨우지 않으면 약속이 영영
+     * 안 풀린다 (S-piece).
+     */
+    function animate(ms: number, mine: number, draw: (t: number) => void): Promise<void> {
+      if (destroyed || mine !== gen || ms <= 0) {
+        if (!destroyed && mine === gen) draw(1);
+        return Promise.resolve();
+      }
+      const t0 = now();
+      return new Promise<void>((resolve) => {
+        const finish = (): void => {
+          waiters.delete(finish);
+          resolve();
+        };
+        waiters.add(finish);
+        const tick = (): void => {
+          if (destroyed || mine !== gen) {
+            finish();
+            return;
+          }
+          const t = Math.min(1, (now() - t0) / ms);
+          draw(t);
+          if (t >= 1) {
+            finish();
+            return;
+          }
+          later(tick);
+        };
+        draw(0);
+        later(tick);
+      });
+    }
 
-        for (let i = 0; i + 1 < path.length; i += 1) {
-          const k = `${path[i]}>${path[i + 1]}`;
-          litEdges.add(k);
-          drawT.set(k, 0);
+    function hasEdge(graph: ReachGraph, from: string, to: string): boolean {
+      return graph.edges.some((e) => e.from === from && e.to === to);
+    }
+
+    /**
+     * 얼룩이 번지는 차례. 덩이는 발견 순서로 오므로, 각 정점은 앞선 것 중 자기에게
+     * 간선을 대는 첫 정점에서 번져 온다.
+     */
+    function spreadsOf(graph: ReachGraph, region: string[]): { key: string | null; node: string }[] {
+      const out: { key: string | null; node: string }[] = [];
+      for (let i = 1; i < region.length; i += 1) {
+        const node = region[i] as string;
+        const parent = region.slice(0, i).find((prev) => hasEdge(graph, prev, node));
+        out.push({ key: parent === undefined ? null : `${parent}>${node}`, node });
+      }
+      return out;
+    }
+
+    /** 이번 걸음에 달라진 것만 흐르게 한다. */
+    async function flow(scene: MutuallyReachableScene, geo: Geo, mine: number): Promise<void> {
+      const step = scene.step;
+      if (step === null) return;
+      const rest = restBoard(scene);
+
+      // 두 정점을 짚는다 — 링이 바깥에서 오므라들어 닫힌다.
+      if (step.kind === 'ask') {
+        await animate(ASK_MS, mine, (t) => {
+          paint(scene, geo, { ...rest, askT: easeOut(t) });
+        });
+        return;
+      }
+
+      // 길이 있다 — 토큰이 도막을 차례로 타고 가 도착점에서 파문 하나를 남긴다.
+      // 한 뜻으로 묶인 운동이라 시계를 나누지 않고 한 `animate` 로 흘린다.
+      if (step.kind === 'walk') {
+        const trial = trialOf(scene, step.lane);
+        if (trial === null || trial.kind !== 'found') return;
+        const path = trial.path;
+        const hops = path.length - 1;
+        if (hops <= 0) return;
+        const pos = placeOf(scene, geo, 1);
+        const legs: { key: string; curve: Curve }[] = [];
+        for (let i = 0; i < hops; i += 1) {
           const p1 = pos.get(path[i] as string);
           const p2 = pos.get(path[i + 1] as string);
-          if (!p1 || !p2) continue;
-          const g = curveOf(p1, p2);
-          await animate(HOP_MS, (t) => {
-            drawT.set(k, t);
-            token = curveAt(g, t);
-          });
-          drawT.set(k, 1);
+          if (!p1 || !p2) return;
+          legs.push({ key: `${path[i]}>${path[i + 1]}`, curve: curveOf(p1, p2) });
         }
-        const end = pos.get(to);
-        if (end) {
-          token = end;
-          await animate(ARRIVE_MS, (t) => {
-            arriveAt = { at: end, t: easeInOut(t) };
-          });
-        }
-        arriveAt = null;
-        token = null;
-        render();
-      },
+        const end = pos.get(path[hops] as string) ?? null;
+        const walkMs = hops * HOP_MS;
+        const total = walkMs + ARRIVE_MS;
 
-      async showBlocked(from, _to, region) {
-        const lane = endpoints !== null && endpoints[0] === from ? 0 : 1;
-        const other = 1 - lane;
-        chipState[lane] = 'blocked';
-        if (chipState[other] === 'idle') chipState[other] = 'asking';
-        chipRoute[lane] = `${region.join(' · ')} ⊣`;
-
-        flooded.add(from);
-        render();
-        for (let i = 1; i < region.length; i += 1) {
-          const next = region[i] as string;
-          const parent = region.slice(0, i).find((prev) => hasEdge(prev, next));
-          if (parent !== undefined) {
-            const k = `${parent}>${next}`;
-            drawT.set(k, 0);
-            await animate(FLOOD_MS, (t) => {
-              drawT.set(k, t);
-              if (t > 0.55) flooded.add(next);
+        await animate(total, mine, (t) => {
+          const ms = t * total;
+          const draw = new Map<string, number>();
+          if (ms < walkMs) {
+            const i = Math.min(hops - 1, Math.floor(ms / HOP_MS));
+            const local = (ms - i * HOP_MS) / HOP_MS;
+            for (let j = 0; j < i; j += 1) draw.set((legs[j] as { key: string }).key, 1);
+            draw.set((legs[i] as { key: string }).key, local);
+            paint(scene, geo, {
+              ...rest,
+              draw,
+              token: curveAt((legs[i] as { curve: Curve }).curve, local),
             });
-            drawT.set(k, 1);
+            return;
           }
-          flooded.add(next);
-        }
-        wallBox = boxOf(
-          region.map((id) => pos.get(id) ?? { x: W / 2, y: SPLIT_CY }),
-          WALL_PAD,
-        );
-        outsideDim = true;
-        await animate(WALL_MS, (t) => {
-          wallT = easeInOut(t);
-        });
-        wallT = 1;
-        render();
-      },
-
-      async resolvePair(mutual) {
-        if (mutual) {
-          await animate(VERDICT_MS, (t) => {
-            const e = easeInOut(t);
-            tieT = e;
-            chipShift = -4 * e;
+          const local = Math.min(1, (ms - walkMs) / ARRIVE_MS);
+          paint(scene, geo, {
+            ...rest,
+            token: end,
+            arrive: end === null ? null : { at: end, t: easeInOut(local) },
           });
-          tieT = 1;
-          chipShift = -4;
-        } else {
-          await animate(VERDICT_MS, (t) => {
-            const e = easeInOut(t);
-            crackT = e;
-            chipShift = 6 * e;
-          });
-          crackT = 1;
-          chipShift = 6;
-        }
-      },
-
-      async settleGroup(group, members) {
-        settled[group] = [...members];
-        for (const m of members) groupOfNode.set(m, group);
-        clearProbeMarks();
-        endpoints = null;
-
-        let rect = hullRects.get(group);
-        if (!rect) {
-          rect = el('rect', { rx: 24, 'stroke-width': 2, 'stroke-dasharray': '2 5' });
-          layerHull.appendChild(rect);
-          hullRects.set(group, rect);
-        }
-        rect.setAttribute('fill', withAlpha(groupColor(group), 0.13));
-        rect.setAttribute('stroke', withAlpha(groupColor(group), 0.55));
-
-        const hull = rect;
-        await animate(SETTLE_MS, (t) => {
-          hull.setAttribute('opacity', String(easeInOut(t)));
         });
-        hull.setAttribute('opacity', '1');
-      },
+        return;
+      }
 
-      async splitApart(groups, bridges) {
-        settled = groups.map((g) => [...g]);
-        groups.forEach((members, gi) => {
-          for (const m of members) groupOfNode.set(m, gi);
+      // 길이 없다 — 얼룩이 닿는 곳으로 번지고, 다 번진 뒤 그 둘레에 벽이 닫힌다.
+      if (step.kind === 'flood') {
+        const trial = trialOf(scene, step.lane);
+        if (trial === null || trial.kind !== 'blocked') return;
+        const region = trial.region;
+        const spreads = spreadsOf(scene.graph, region);
+        const floodMs = spreads.length * FLOOD_MS;
+        const total = floodMs + WALL_MS;
+
+        await animate(total, mine, (t) => {
+          const ms = t * total;
+          const stained = new Set<string>([region[0] as string]);
+          const draw = new Map<string, number>();
+          if (ms < floodMs) {
+            const i = Math.min(spreads.length - 1, Math.floor(ms / FLOOD_MS));
+            const local = (ms - i * FLOOD_MS) / FLOOD_MS;
+            for (let j = 0; j < i; j += 1) {
+              const s = spreads[j] as { key: string | null; node: string };
+              stained.add(s.node);
+              if (s.key !== null) draw.set(s.key, 1);
+            }
+            const cur = spreads[i] as { key: string | null; node: string };
+            if (cur.key !== null) draw.set(cur.key, local);
+            // 얼룩은 도막의 중간을 지나야 건너간다.
+            if (local > 0.55) stained.add(cur.node);
+            paint(scene, geo, { ...rest, draw, stained, dim: false, wallT: 0 });
+            return;
+          }
+          for (const s of spreads) stained.add(s.node);
+          const local = Math.min(1, (ms - floodMs) / WALL_MS);
+          paint(scene, geo, { ...rest, stained, wallT: easeInOut(local) });
         });
-        bridgeKeys = new Set(bridges.map((e) => key(e)));
-        clearProbeMarks();
-        endpoints = null;
+        return;
+      }
 
-        const from = new Map(pos);
-        const to = splitLayout(groups);
-        await animate(SPLIT_MS, (t) => {
+      // 판정 — 띠가 자라 둘을 묶거나 금이 가며 서로 밀린다. 기록도 같은 시계에 앉는다.
+      if (step.kind === 'verdict') {
+        const mutual = scene.probe?.verdict === true;
+        await animate(VERDICT_MS, mine, (t) => {
           const e = easeInOut(t);
-          for (const id of nodes) {
-            const a = from.get(id);
-            const b = to.get(id);
-            if (!a || !b) continue;
-            pos.set(id, { x: a.x + (b.x - a.x) * e, y: a.y + (b.y - a.y) * e });
-          }
+          paint(scene, geo, {
+            ...rest,
+            tieT: mutual ? e : 0,
+            crackT: mutual ? 0 : e,
+            chipShift: mutual ? -4 * e : 6 * e,
+            markGrow: e,
+          });
         });
-        pos = new Map(to);
+        return;
+      }
 
-        // 남은 한 줄기가 어느 쪽으로 흐르는지 점선으로 한 번 흘려보낸다.
-        await animate(FLOW_MS, (t) => {
-          flowT = t;
+      // 무리가 확정된다 — 둘레가 떠오른다.
+      if (step.kind === 'settle') {
+        await animate(SETTLE_MS, mine, (t) => {
+          paint(scene, geo, { ...rest, hullGrow: easeInOut(t) });
         });
-        flowT = -1;
-        render();
-      },
+        return;
+      }
 
-      finish() {
-        stripDim = true;
-        render();
-      },
+      // 갈라선다 — 자리를 옮기고, 남은 한 줄기가 어느 쪽으로 흐르는지 점선이 말한다.
+      const total = SPLIT_MS + FLOW_MS;
+      await animate(total, mine, (t) => {
+        const ms = t * total;
+        if (ms < SPLIT_MS) {
+          paint(scene, geo, { ...rest, posT: easeInOut(ms / SPLIT_MS) });
+          return;
+        }
+        paint(scene, geo, { ...rest, flowT: Math.min(1, (ms - SPLIT_MS) / FLOW_MS) });
+      });
+    }
 
-      resetAll() {
-        buildGraph(nodes, edges);
-        caption = '';
-        render();
-      },
+    async function render(
+      next: MutuallyReachableScene,
+      /** 이 조각은 출발 자리를 장면에서 셈하므로 앞 장면을 들추지 않는다. */
+      _prev: MutuallyReachableScene | null,
+      opts: { animate: boolean },
+    ): Promise<void> {
+      const mine = (gen += 1);
+      const geo = geometryOf(next);
+      paint(next, geo, restBoard(next));
 
-      destroy() {
+      // 되짚기는 여기서 끝난다. 타이머도 프레임도 걸지 않는다 (S-scene).
+      if (!opts.animate || destroyed) return;
+
+      await flow(next, geo, mine);
+      if (mine !== gen || destroyed) return;
+
+      // 운동이 끝나면 장면을 통째로 다시 세운다. 보간의 끝자리가 목표값과 문자열로
+      // 어긋나는 일이 없어진다. 그 사이에 타이머도 프레임도 없어 깜빡이지 않는다.
+      paint(next, geo, restBoard(next));
+    }
+
+    return {
+      render,
+
+      destroy(): void {
         destroyed = true;
+        gen += 1;
         if (typeof cancelAnimationFrame === 'function') {
           for (const id of frames) cancelAnimationFrame(id);
         }
         frames.clear();
         for (const id of timers) clearTimeout(id);
         timers.clear();
+        // 취소된 프레임은 콜백이 안 불린다 — 기다리던 약속을 여기서 직접 깨운다.
         for (const wake of [...waiters]) wake();
         waiters.clear();
         svg.textContent = '';
       },
     };
-
-    // 마운트 직후에 이미 그림이 서 있게 한다. projector 의 onInit 이 곰 뒤따라 같은 것을
-    // 다시 주지만, 러너 밖에서 mount 하는 경우에도 빈 캔버스가 남지 않아야 한다.
-    const initial: Record<string, unknown> = params.initialData ?? {};
-    const rawNodes: unknown = initial.nodes;
-    const rawEdges: unknown = initial.edges;
-    const initialNodes = Array.isArray(rawNodes)
-      ? rawNodes.filter((n): n is string => typeof n === 'string')
-      : [];
-    const initialEdges = Array.isArray(rawEdges)
-      ? rawEdges.flatMap((e): StageEdge[] => {
-          const row = e as { from?: unknown; to?: unknown } | null;
-          return row !== null && typeof row.from === 'string' && typeof row.to === 'string'
-            ? [{ from: row.from, to: row.to }]
-            : [];
-        })
-      : [];
-    buildGraph(initialNodes, initialEdges);
-
-    return instance;
   },
 };
