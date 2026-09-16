@@ -38,7 +38,7 @@ export const rowTimesColumnFacet: FacetJson = {
     pt: 'De onde vem uma célula do produto: uma linha de A e uma coluna de B se engrenam num único lugar.',
   },
   algorithm: 'module:rowTimesColumn',
-  projector: 'module:rowTimesColumnProjector',
+  scene: 'module:rowTimesColumnScene',
   initialData: {
     type: 'row-times-column',
     a: [
@@ -55,7 +55,7 @@ export const rowTimesColumnFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'row-times-column-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.pairMeet': {

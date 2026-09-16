@@ -8,6 +8,10 @@ import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
  * 마지막 칸 하나가 두 낱말 전체의 답이 된다.
  *
  * 되짚어 어느 손질을 골랐는지 찾는 일은 이 조각이 말하지 않는다.
+ *
+ * 화면은 장면(Scene) 방식이라 `projector` 대신 `scene` 을 선언한다. 어느 걸음의
+ * 화면이든 셈으로 얻으므로 컨트롤은 `CONTROL_SET.pieceScrub` — 한 걸음씩 미는
+ * 단추 대신 끌어 볼 수 있는 띠다 (S-piece 의 화면 방식 표).
  */
 export const editTableFillFacet: FacetJson = {
   id: 'facet:editTableFill',
@@ -36,7 +40,7 @@ export const editTableFillFacet: FacetJson = {
     pt: 'Cada célula guarda a distância de edição de dois prefixos e é construída a partir de três vizinhas já preenchidas.',
   },
   algorithm: 'module:editTableFill',
-  projector: 'module:editTableFillProjector',
+  scene: 'module:editTableFillScene',
   initialData: {
     type: 'edit-table-fill',
     source: 'kitten',
@@ -45,7 +49,7 @@ export const editTableFillFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'edit-table-fill-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.corner': {

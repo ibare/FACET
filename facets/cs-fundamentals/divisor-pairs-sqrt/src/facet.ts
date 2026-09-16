@@ -40,7 +40,7 @@ export const divisorPairsSqrtFacet: FacetJson = {
     pt: 'Os divisores vêm em pares, e o menor de cada par nunca ultrapassa a raiz quadrada.',
   },
   algorithm: 'module:divisorPairsSqrt',
-  projector: 'module:divisorPairsSqrtProjector',
+  scene: 'module:divisorPairsSqrtScene',
   initialData: {
     type: 'divisor-pairs-sqrt',
     /** 1차 데이터는 이 수 하나다. 약수도 짝도 √n 도 알고리즘이 셈한다. */
@@ -49,7 +49,7 @@ export const divisorPairsSqrtFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'divisor-pairs-sqrt-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.probe': {

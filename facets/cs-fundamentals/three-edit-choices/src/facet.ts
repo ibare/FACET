@@ -3,6 +3,9 @@
  *
  * @piece 편집거리 표의 칸 하나가 어떻게 정해지는가에만 답한다. 표를 채우는 것은
  * 이 조각의 일이 아니다.
+ *
+ * 화면은 장면(Scene) 방식이라 `projector` 대신 `scene` 을 선언한다. 어느 걸음의
+ * 화면이든 셈으로 얻으므로 띠로 아무 자리에나 갈 수 있다 (S-scene · S-piece).
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -34,7 +37,7 @@ export const threeEditChoicesFacet: FacetJson = {
     pt: 'Uma célula da tabela de distância de edição fica com a mais barata de três propostas: apagar de cima, inserir da esquerda, substituir ou manter da diagonal.',
   },
   algorithm: 'module:threeEditChoices',
-  projector: 'module:threeEditChoicesProjector',
+  scene: 'module:threeEditChoicesScene',
   initialData: {
     type: 'three-edit-choices',
     source: 'kitten',
@@ -48,7 +51,7 @@ export const threeEditChoicesFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'three-edit-choices-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.open': {

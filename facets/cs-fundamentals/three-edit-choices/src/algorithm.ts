@@ -11,20 +11,23 @@
  *
  * ── 이벤트 (전부 facet 고유. silent 는 없다 — 모두 걸음의 경계다)
  *
- *   cell-open  { i, j, rowChar, colChar, same, up, left, diag, levels }
- *              칸 하나를 연다. up/left/diag 는 이웃 셋의 값, rowChar/colChar 는
- *              여기서 만나는 두 글자, same 은 그 둘이 같은가, levels 는 비용
- *              사다리의 눈금 수.
- *   offers     { del, ins, sub, subCost }
- *              세 이웃이 제 비용을 더해 내놓은 값. subCost 는 대각선이 더한 값
- *              (두 글자가 같으면 0, 다르면 1).
- *   weigh      { best, winners }
- *              가장 싼 값과 그 값을 낸 갈래. winners ⊂ ['delete','insert','diag'] 이며
- *              둘 이상이면 비긴 칸이다.
- *   settle     { i, j, value }
- *              이긴 값이 칸에 앉는다.
+ *   cell-open  { up, left, diag, levels }
+ *              칸 하나를 연다. up/left/diag 는 이웃 셋의 값이고 levels 는 비용
+ *              사다리의 눈금 수다.
+ *   offers     { del, ins, sub }
+ *              세 이웃이 제 비용을 더해 내놓은 값.
+ *   weigh      payload 없다. 셋을 견준다.
+ *   settle     payload 없다. 이긴 값이 칸에 앉는다.
  *   done       payload 없다. 방문할 칸이 다 끝났다.
  *   rewind     payload 없다. 처음으로 되감는다 (손걸음 회차의 시작).
+ *
+ * ── 싣지 않는 것
+ *
+ * 어느 칸인가(`i`·`j`)는 `visits` 에 적힌 차례가 말하고, 거기서 만나는 두 글자와
+ * 그 둘이 같은가는 `source`/`target` 에서 나온다. 대각선이 더한 값은 `sub - diag`
+ * 이고, 가장 싼 값과 그것을 낸 갈래는 셋의 최솟값이다 — 전부 장면이 센다
+ * (`scene.ts`). 이웃 셋과 후보 셋만 싣는 까닭은 그것을 내주면 장면이 편집거리 표를
+ * 통째로 채우게 되기 때문이다. 이 조각이 하지 않겠다고 말한 일이다.
  *
  * ── 메트릭
  *
@@ -54,7 +57,7 @@ export type ThreeEditChoicesData = {
   stepMs: number;
 };
 
-/** 한 칸에서 세 갈래가 내놓는 것. */
+/** 한 칸에서 이웃 셋이 내는 값과 셋이 내놓는 후보. */
 type Choices = {
   up: number;
   left: number;
@@ -62,8 +65,6 @@ type Choices = {
   del: number;
   ins: number;
   sub: number;
-  subCost: number;
-  same: boolean;
 };
 
 /**
@@ -99,20 +100,11 @@ function choicesAt(
   i: number,
   j: number,
 ): Choices {
-  const same = source[i - 1] === target[j - 1];
-  const subCost = same ? 0 : 1;
+  const subCost = source[i - 1] === target[j - 1] ? 0 : 1;
   const up = table[i - 1][j];
   const left = table[i][j - 1];
   const diag = table[i - 1][j - 1];
-  return { up, left, diag, del: up + 1, ins: left + 1, sub: diag + subCost, subCost, same };
-}
-
-function winnersOf(c: Choices, best: number): string[] {
-  const out: string[] = [];
-  if (c.del === best) out.push('delete');
-  if (c.ins === best) out.push('insert');
-  if (c.sub === best) out.push('diag');
-  return out;
+  return { up, left, diag, del: up + 1, ins: left + 1, sub: diag + subCost };
 }
 
 export async function threeEditChoicesAlgorithm(
@@ -174,38 +166,21 @@ export async function threeEditChoicesAlgorithm(
 
     for (const { i, j } of visits) {
       const c = choicesAt(table, source, target, i, j);
-      const best = Math.min(c.del, c.ins, c.sub);
 
       if (!(await step())) return false;
       await ctx.emit({
         type: 'cell-open',
-        payload: {
-          i,
-          j,
-          rowChar: source[i - 1],
-          colChar: target[j - 1],
-          same: c.same,
-          up: c.up,
-          left: c.left,
-          diag: c.diag,
-          levels,
-        },
+        payload: { up: c.up, left: c.left, diag: c.diag, levels },
       });
 
       if (!(await step())) return false;
-      await ctx.emit({
-        type: 'offers',
-        payload: { del: c.del, ins: c.ins, sub: c.sub, subCost: c.subCost },
-      });
+      await ctx.emit({ type: 'offers', payload: { del: c.del, ins: c.ins, sub: c.sub } });
 
       if (!(await step())) return false;
-      await ctx.emit({
-        type: 'weigh',
-        payload: { best, winners: winnersOf(c, best) },
-      });
+      await ctx.emit({ type: 'weigh' });
 
       if (!(await step())) return false;
-      await ctx.emit({ type: 'settle', payload: { i, j, value: best } });
+      await ctx.emit({ type: 'settle' });
     }
 
     if (!(await step())) return false;
