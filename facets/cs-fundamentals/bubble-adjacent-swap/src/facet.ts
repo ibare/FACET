@@ -40,7 +40,7 @@ export const bubbleAdjacentSwapFacet: FacetJson = {
     pt: 'Uma única varredura da esquerda para a direita comparando vizinhos leva o maior do momento uma casa por vez até ele parar na ponta direita.',
   },
   algorithm: 'module:bubbleAdjacentSwap',
-  projector: 'module:bubbleAdjacentSwapProjector',
+  scene: 'module:bubbleAdjacentSwapScene',
   initialData: {
     type: 'bubble-adjacent-swap',
     // 한 값이 옆칸 맞바꿈을 **연달아** 하며 끝까지 가는 장면이 이 조각의 논증이다.
@@ -52,7 +52,7 @@ export const bubbleAdjacentSwapFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'bubble-adjacent-swap-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.compare': {

@@ -38,7 +38,7 @@ export const insertIntoSortedPartFacet: FacetJson = {
     pt: 'Um valor novo é tirado da fila, os valores se afastam a partir do fim e ele se acomoda na lacuna.',
   },
   algorithm: 'module:insertIntoSortedPart',
-  projector: 'module:insertIntoSortedPartProjector',
+  scene: 'module:insertIntoSortedPartScene',
   initialData: {
     type: 'insert-into-sorted-part',
     sorted: [2, 5, 8],
@@ -51,7 +51,7 @@ export const insertIntoSortedPartFacet: FacetJson = {
     stage: { type: 'insert-into-sorted-part-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {

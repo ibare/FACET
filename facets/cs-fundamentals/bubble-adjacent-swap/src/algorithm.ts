@@ -12,20 +12,23 @@
  *
  * ── 이벤트 (facet 고유. 표준 어휘로는 "선두가 한 칸 나아간다" 를 말할 수 없다)
  *
- * | type            | target                        | payload                                              | silent |
- * |-----------------|-------------------------------|------------------------------------------------------|--------|
- * | `compare-begin` | `['index:l', 'index:r']`      | `{ left, right, leftValue, rightValue }`             | 아니다 |
- * | `swap-adjacent` | `['index:l', 'index:r']`      | `{ left, right, movedValue, stayedValue }`           | 아니다 |
- * | `keep-adjacent` | `['index:l', 'index:r']`      | `{ left, right, leftValue, rightValue }`             | 아니다 |
- * | `pass-settled`  | `index:<last>`                | `{ settledIndex, settledValue, comparisons }`        | 아니다 |
- * | `rewind`        | 없음                          | `{ values: number[] }`                               | 아니다 |
+ * | type            | target                   | payload | silent |
+ * |-----------------|--------------------------|---------|--------|
+ * | `compare-begin` | `['index:l', 'index:r']` | 없다    | 아니다 |
+ * | `swap-adjacent` | `['index:l', 'index:r']` | 없다    | 아니다 |
+ * | `keep-adjacent` | `['index:l', 'index:r']` | 없다    | 아니다 |
+ * | `pass-settled`  | `index:<last>`           | 없다    | 아니다 |
+ * | `rewind`        | 없음                     | 없다    | 아니다 |
  *
  *   compare-begin  나란한 두 칸을 견주기 시작. 아직 아무것도 옮기지 않았다.
  *   swap-adjacent  왼쪽이 더 컸다. 그 값이 이웃을 넘어 한 칸 오른쪽으로 간다.
- *                  `movedValue` 가 오른쪽으로 간 값, `stayedValue` 가 왼쪽으로 온 값.
  *   keep-adjacent  오른쪽이 이미 컸다. 아무것도 옮기지 않고 선두만 오른쪽으로 넘어간다.
  *   pass-settled   한 번의 훑음이 끝났다. 오른쪽 끝 한 자리가 확정된다.
  *   rewind         `advance` 로 처음부터 다시 짚어 보려고 배치를 되돌린다.
+ *
+ *   **payload 를 싣지 않는다.** 견주는 두 칸은 이미 `target` 의 `index:<n>` 이
+ *   말하고, 그 칸에 앉은 값과 견준 횟수는 장면이 자기 구조에서 센다. 같은 수를
+ *   두 자리에 적어 두면 언젠가 갈린다 — 걸음이 실어 오는 친절이 곧 그 문이다.
  *
  * ── 메트릭
  *   없다. 조각이므로 `ctx.metric` 을 부르지 않는다 (S-piece).
@@ -72,8 +75,6 @@ async function sweepOnce(
     return gate();
   };
 
-  let comparisons = 0;
-
   for (let i = 0; i + 1 < values.length; i++) {
     if (!(await step())) return false;
     const leftValue = values[i];
@@ -81,9 +82,7 @@ async function sweepOnce(
     await ctx.emit({
       type: 'compare-begin',
       target: [`index:${i}`, `index:${i + 1}`],
-      payload: { left: i, right: i + 1, leftValue, rightValue },
     });
-    comparisons += 1;
 
     if (!(await step())) return false;
     if (leftValue > rightValue) {
@@ -92,24 +91,17 @@ async function sweepOnce(
       await ctx.emit({
         type: 'swap-adjacent',
         target: [`index:${i}`, `index:${i + 1}`],
-        payload: { left: i, right: i + 1, movedValue: leftValue, stayedValue: rightValue },
       });
     } else {
       await ctx.emit({
         type: 'keep-adjacent',
         target: [`index:${i}`, `index:${i + 1}`],
-        payload: { left: i, right: i + 1, leftValue, rightValue },
       });
     }
   }
 
   if (!(await step())) return false;
-  const last = values.length - 1;
-  await ctx.emit({
-    type: 'pass-settled',
-    target: `index:${last}`,
-    payload: { settledIndex: last, settledValue: values[last], comparisons },
-  });
+  await ctx.emit({ type: 'pass-settled', target: `index:${values.length - 1}` });
   return true;
 }
 
@@ -145,7 +137,8 @@ export const bubbleAdjacentSwap = async (
     const input = await rx.waitForInput();
     if (input.type !== 'advance') continue;
     rx.data.values.splice(0, rx.data.values.length, ...initialValues);
-    await rx.emit({ type: 'rewind', payload: { values: [...initialValues] } });
+    // 되돌릴 배치는 장면이 첫 장면으로 쥐고 있다 — 여기서 또 실어 보내지 않는다.
+    await rx.emit({ type: 'rewind' });
     if (!(await sweepOnce(rx, advanceGate))) return;
   }
 };

@@ -8,7 +8,7 @@
  * 이동 횟수와 처음부터 옆칸만 견준 쪽의 이동 횟수를 나란히 들고 있는다.
  */
 
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 import type { FacetJson } from '@ffacet/core/runtime';
 
 export const gapShrinkFacet: FacetJson = {
@@ -38,7 +38,7 @@ export const gapShrinkFacet: FacetJson = {
     pt: 'Limpar primeiro a desordem distante deixa menos trabalho para a passagem final entre vizinhos.',
   },
   algorithm: 'module:gapShrink',
-  projector: 'module:gapShrinkProjector',
+  scene: 'module:gapShrinkScene',
   initialData: {
     type: 'gap-shrink',
     values: [8, 1, 7, 2, 6, 3],
@@ -48,7 +48,7 @@ export const gapShrinkFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'gap-shrink-stage' },
-    controls: { type: 'control-bar', controls: [CONTROL.replay, CONTROL.advance] },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.roundFar': {
