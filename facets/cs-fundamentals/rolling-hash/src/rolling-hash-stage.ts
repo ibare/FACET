@@ -699,7 +699,7 @@ export const rollingHashStageView: CanvasView = {
         case 'done':
           return t(
             'caption.done',
-            '{windows} windows, {rolls} rolls — each roll touched {touches} letters.',
+            '{windows} windows, {rolls} rolls — letters touched per roll: {touches}.',
             { windows: cap.windows, rolls: cap.rolls, touches: cap.touches },
           );
       }
