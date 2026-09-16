@@ -156,6 +156,12 @@ grep -nE "getAttribute|getBBox|getBoundingClientRect|Number\(" $d/src/*-stage.ts
   | `const cellOn = [...scene.bits]` | 지금 비트열 | **`const` 인데 `cellOn[s] = 0` 으로 제자리에서 고쳐진다.** 묶음이 상수일 뿐 알맹이는 변수다 |
   | `Cell = { g, fills, value, x, owners: number[] }` | **누가 이 칸을 켰나** (그 조각의 결론) | DOM 손잡이와 결론이 한 객체. `const cells: Cell[]` 이라 grep 을 통과한다 |
   | `tok.g` 의 `transform` | 그 칸이 셋 중 **어디에 서 있나** | 좌표가 아니라 *어느 단계에 있나* 를 화면이 혼자 안다 |
+  | `badgeDisc` 의 `stroke-width` 1.5/3 | "견주는 중" **과** "확정" 두 뜻 | **한 속성에 두 말이 실려** 어느 쪽도 복원되지 않는다 |
+  | 칸의 **부모**가 `lane.g` 냐 `lane.beam` 이냐 | 줄에 있나 저울대에 실렸나 | 좌표도 속성도 아니라 **부모 참조**가 단계를 말한다 |
+  | `ledgerLayer.childNodes.length` | 몇 라운드를 마쳤나 | **`<g>` 자식 수**가 진행을 쥔다 |
+  | stage 의 `headLeft`/`headRight` | 두 줄의 커서 — **algorithm 의 `i`/`j` 와 두 벌** | 사본을 애니메이션 도중에 올려 복원할 길이 없다 |
+  | `ghost.getAttribute('opacity') !== '0'` | **끝내 안 연 자리가 어디인가**(그 조각의 결론) | 화면을 도로 읽어 **결론을 셈한다** |
+  | `const lanes: Lane[]` 한 줄 | 실린 칸 · 각 · 수 · 자식 유무 · opacity · 부모 — **일곱** | 이름이 부품이라 어떤 낱말 목록에도 안 든다 |
 
   `const tags` 아래 넷이 요점이다. 찾는 것은 특정 낱말이 아니라 **"이 조각이 화면에
   대해 아는 것을 어디에 적어 두었나"** 이고, 그 자리가 `let` 이 아닐 때가 많다.
@@ -522,6 +528,21 @@ const t = params.t ?? makeTranslator(params.locale);
   | 바탕 + 순수 함수로 나오는 것 | **함수를 내주고 장면이 부른다** | 해시 자리 · 척도 경계 · 좁히개 |
   | 걸음이 내리는 판정 | **싣는다** | 어느 칸이 부딪혔다고 볼 것인가 · 어느 값을 지울 것인가 |
 
+  **가운데 줄에는 경계가 있다 — 내주려는 함수가 조각의 알고리즘 그 자체면 멈춘다.**
+  내주면 장면이 알고리즘을 되풀이하는 꼴이 되고 발신이 장식이 된다. 알고리즘 계열에서
+  서로 모르는 셋이 각자 같은 자리에서 멈췄다.
+
+  | 조각 | 내주려던 것 | 판단 |
+  | --- | --- | --- |
+  | `in-place-vs-extra` | `planRounds` 전체 | 알고리즘 자체 → 판정 둘만 싣는다 |
+  | `bottom-up-table` | `from`/`value` | **피보나치 점화식 자체** → 싣는다 |
+  | `greedy-can-fail` | `planGreedy` + `planFewest` | 알고리즘 자체 → `capacity` 를 싣는다 |
+
+  반대로 같은 조각들이 **자르는 잣대 · 펼침 · 술어**는 내주었다 —
+  `bottomUpTableCellCount`(폭 좁히기) · `expandFibCalls`(나무 펼치기) ·
+  `reachableIndices`(닿음의 술어) · `midOf`(가운데 고르기) · `slotsFor`(해시 자리).
+  잣대는 이렇게 읽는다: **그 함수만 떼어 내도 조각이 말하려는 바가 남아 있으면 내준다.**
+
 - **길이 0 짜리 선이 둥근 끝을 만나면 점이 된다.** `average-the-buckets` 는 가운데 벽을
   `y1 = y2` 로 미리 지어 두고 나중에 `y2` 만 늘렸는데, `stroke-linecap: 'round'` ·
   `stroke-width: 2` 라 **아직 나누지 않은 화면에 2px 점 셋이 찍혀 있었다.** 나눌 자리를
@@ -557,6 +578,26 @@ const t = params.t ?? makeTranslator(params.locale);
   셋으로 갈려 띠에 0ms 짜리 눈금이 서는 조각이 있으면 (`bst-inorder-sorted` 는 값 하나가
   흘러나오는 데 발신 셋을 썼다) 뒤의 둘을 `silent` 로 돌린다 — 장면에는 반영되고
   눈금은 하나로 접힌다.
+
+  **다만 `silent` 는 앞 걸음의 장면을 갈아 끼운다 — 방향이 있다.** 접으려는 발신이
+  **다음** 국면을 예고하는 것이면 한 걸음 일찍 말하게 되므로 접으면 안 된다.
+  `count-then-place` 의 `caption-changed` 넷이 그 자리였다: 접으면 마지막 세기 걸음이
+  "눈금 더미가 굳는다" 를 말하고, 마지막 타일이 날아가는 중에 "정렬이 끝났다" 가 뜬다.
+  거기서는 **발신을 통째로 걷어내고 장면이 스스로 정하게** 했다 (걸음 20 → 16). 같은
+  배치의 `heap-sort-extract` 는 `rewind`/`heap-shown` 이 앞 걸음을 갈아 끼우는 것이
+  맞아 `silent` 로 접었다. **같은 증상에 두 처방이 갈린다.**
+
+  | 접으려는 발신이 | 처방 |
+  | --- | --- |
+  | 방금 지나간 걸음의 화면을 마저 고친다 | `silent: true` |
+  | 다음에 올 국면을 예고한다 | 발신을 없애고 장면이 파생시킨다 |
+
+- **문 없이 나가는 발신은 벽시계가 0 이다.** `silent` 가 아니어도 `gate()` 를 안 지나면
+  걸음 눈금이 0ms 로 선다. `take-best-now` 의 `reach-updated` 다섯이 그랬고
+  (`gate` 가 루프 첫머리에 한 번뿐이었다), `guess-by-value` 의 `discard-half` 는
+  360ms 였다. **앞 걸음과 한 뜻이면 `silent` 로 접고, 제 몫의 주장이면 문을 하나 넣는다.**
+  `select-min-each-pass` 의 `mark-hop` 은 문을 넣어 300ms → 1050ms 가 됐다 — 발신 수는
+  그대로라 띠 눈금이 변하지 않는다.
 
 - **흐를 것이 없는 걸음은 벽시계가 `stepMs` 그대로다.** 짚기만 하는 걸음, 답에 이름만
   붙이는 걸음은 운동이 없어 S-piece 의 얇은 걸음 잣대(800ms) 아래로 떨어진다. 띠를
@@ -619,6 +660,60 @@ const t = params.t ?? makeTranslator(params.locale);
   조각이 있다 (`tokens-per-language` · `unknown-becomes-known`). 배치 밑감이면
   `Layout`, 문장 읽기면 `readSentences` 처럼 갈라 준다.
 
+- **CSS `transition` 을 쓰지 않는다 (MUST NOT).** 되짚기는 `animate:false` 로 오는데
+  transition 은 그 뒤에도 화면을 **저 혼자 흘러가게** 한다 — 흔들림의 직접 원인이다.
+  알고리즘 계열에서 셋이 걸렸고 (`scan-until-found` · `greedy-can-fail` ·
+  `try-and-undo` 는 일곱 곳), 전부 rAF 보간으로 옮겼다. 곁들여 `void nextFrame().then(…)`
+  처럼 **나중에 transition 을 도로 켜는 지연 발화**도 같은 자리다.
+
+- **`destroy()` 가 기다리던 Promise 를 반드시 푼다 (S-piece MUST).** `tween`/`animate` 의
+  `resolve` 가 `tick`/`setTimeout` 콜백 **안에만** 있으면, `destroy` 가 rAF·타이머를
+  취소할 때 그 콜백이 **아예 안 불려** 약속이 영영 안 풀린다. `await ctx.emit` 이
+  안 돌아와 unmount 뒤에도 algorithm 과 SVG 가 붙들린다.
+
+  **이 이행에서 열 조각이 글자 그대로 같은 구멍을 갖고 있었다.** 조각마다 고칠 일이
+  아니라 관용구를 외워 두는 자리다 — `waiters: Set<() => void>` 에 `finish` 를 담고,
+  `destroy` 가 `destroyed = true` → `gen += 1` → 프레임·타이머 일괄 취소 →
+  **`for (const wake of [...waiters]) wake()`** 순으로 돈다. 전부가 걸린 것은 아니다
+  (`take-best-now` 는 원본이 이미 옳았다).
+
+  **더 나쁜 쪽도 있다.** `overlapping-subproblems` 는 `animate()` 가 `void` 를 돌려주고
+  projector 의 `onEvent` 도 `void` 라 **풀 Promise 자체가 없었다.** `destroy-releases-waiters`
+  전수 검사를 매달림 0 으로 통과하는데, **기다리는 것이 없어서** 통과하는 종류다. 검사가
+  두 상태를 못 가른다.
+
+- **자기 글자를 도로 읽어 덧붙이지 않는다.** `guess-by-value` 의 `aimLand` 가
+  `formula.textContent = formula.textContent + ' = ' + index` 였다. 같은 걸음을 두 번
+  그리면 `= 8 = 8` 이 된다. 명령형 stage 에서는 각 걸음이 한 번만 지나가 드러나지
+  않지만 장면은 같은 걸음을 몇 번이든 다시 그린다 — **되짚기가 없으면 영영 안 보이는
+  결함**이다.
+
+- **걸음 계약이 거짓일 수 있다.** `scan-until-found` 는 `SETTLE_MS = 140` 으로 걸음이
+  520ms 짜리 운동을 띄워 보내고 140ms 만에 "끝났다" 고 답했다. projector 의 `onEvent` 가
+  `void` 를 돌려주니 가능했던 일이고, `render` 의 Promise 는 장면이 다 선 뒤에 풀려야
+  하므로 구조적으로 못 하게 된다.
+
+- **조각의 결론이 상수로 박혀 있을 수 있다.** `bottom-up-table` 의 옛 발신은 `calls: 0`
+  을 **리터럴로** 실었다 — "위에서 내려가며 부르는 일이 한 번도 없다" 가 그 조각의
+  결론인데 화면의 자취와 아무 관계가 없었다. `keep: [n-1, n]` 도 같다. 지금은
+  `callsOf` 가 자취를 밟으며 세고 `keepOf` 가 **화살이 실제로 뻗은 거리**를 잰다.
+  **조각의 결론이 그림과 같은 자료를 쓰게 하는 것이 이행의 알맹이다.**
+
+- **아예 없던 상태도 있다.** `take-best-now` 는 "지금까지 얼마를 만들었나" 가 **코드에도
+  화면에도** 없었다 — 계량기가 남은 몫만 보였다. 숨은 상태를 찾는 일과 별개로,
+  **조각이 말하려는 것 중 화면이 아직 말하지 않는 것**을 따로 묻는다.
+
+- **자취를 남기되 어휘를 가른다.** `try-and-undo` 의 헛걸음을 살아 있는 자국과 같은
+  점선 원으로 그리면 "자국이 안 지워졌다" 로 읽히는데, 그것은 그 조각이 말하려는 것의
+  **정반대**다(`description` 이 "그 아래 행의 자국도 지워져야 한다" 고 못박는다).
+  모서리의 작은 점으로 갈랐다. **남길 것과 남기면 안 되는 것이 한 화면에 같이 있는
+  조각에서는 어휘를 먼저 가른다.**
+
+- **사양 문제와 이행 문제를 가른다.** `prune-branch` 의 뻗는 걸음이 462ms 로 800ms
+  아래인데 **이행 전에도 같은 값**이었고 projector 도 그 운동을 `await` 하고 있었다.
+  고치려면 걸음 열일곱의 박자를 다시 잡아야 한다 — 이행이 건드릴 자리가 아니다.
+  얇은 걸음을 만났을 때 **이행이 드러낸 것인지 원래 사양이 그런 것인지** 먼저 본다.
+
 - **전수 검사가 새 구조를 모른다.** `piece-first-advance` 는 projector 만 감싸 발신을
   세던 탓에 scene 조각을 "발신 없음" 으로 잘못 잡았다. 이미 고쳤지만, 다른 검사에서
   비슷한 것이 나올 수 있다.
@@ -634,6 +729,22 @@ d=facets/<domain>/<name>
 npx tsc --noEmit -p $d/tsconfig.json
 npx tsc --noEmit -p packages/core/tsconfig.json
 ```
+
+**그리고 자체 검증 세 항목을 돌린다.** 알고리즘 계열에서 담당들이 만들어 낸 것으로,
+**dev 서버로만 알 수 있던 두 축을 조각 안에서 미리 잰다.** happy-dom 위에 임시 검사
+파일을 두고(확인 뒤 지운다) 실제 `algorithm` 의 발신을 `reduce` 에 먹여 장면을 쌓은 뒤:
+
+1. **걸음마다** ⑴ `animate:true` 로 흘려 세운 `innerHTML` 과 ⑵ `animate:false` 로 곧바로
+   세운 `innerHTML` 이 **글자 하나 다르지 않은가.** — 운동이 남긴 속성·보간 끝자리를
+   전부 잡는다.
+2. **걸음을 뛰어다닌 뒤** 각 화면이 곧바로 세운 것과 같고, **끝으로 돌아온 화면이 처음
+   완주 화면과 같은가.** 이웃 걸음(1→3→0→4→2)만이 아니라 **큰 널뛰기**(19→7→0→12→3→19)
+   까지 잰다 — 되짚기가 가장 깨지기 쉬운 것은 멀리 뛸 때다.
+3. **재생 도중 `destroy`** 하면 `render` 의 Promise 가 즉시 풀리는가. 끊기 **전에는**
+   안 풀려 있는 것도 함께 확인해야 검사가 헛돌지 않는다.
+
+이것을 붙인 뒤로 배치 감사에서 어긋남이 한 건도 안 나왔다. 앞서는 배치가 다 끝난 뒤에야
+알던 것이다.
 
 ### 되짚기가 서는가 (핵심 판정)
 
@@ -692,7 +803,7 @@ grep -l "projector: 'module:" facets/*/*/src/facet.ts | wc -l
 grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 ```
 
-2026-09-16 기준 **60 / 181**.
+2026-09-16 기준 **87 / 181**.
 
 옮긴 배치는 셋이다. 셋 다 **흔들림 0 · 왕복어긋남 0** 으로 닫았다.
 
@@ -709,10 +820,19 @@ grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 | 자료 구조 · 균형 트리 다섯 | 2026-09-16 | `height-balance-check` · `rotate-to-balance` · `black-height-equal` · `recolor-then-rotate` · `coin-flip-height` |
 | 자료 구조 · B트리 · 트라이 · 스킵 · 유니온 파인드 아홉 | 2026-09-16 | `node-holds-many` · `split-when-full` · `share-prefix-path` · `walk-per-character` · `skip-a-layer` · `find-root` · `union-by-rank` · `path-compression` · `separate-components` |
 | 확률적 자료구조 여덟 | 2026-09-16 | `several-hashes-one-value` · `wrong-in-one-direction` · `cannot-unset` · `trust-the-smallest` · `space-error-tradeoff` · `leading-zeros-tell` · `average-the-buckets` · `crowd-the-tails` |
+| 알고리즘 · 정렬의 기본 동작 다섯 | 2026-09-16 | `compare-and-swap` · `bubble-adjacent-swap` · `select-min-each-pass` · `insert-into-sorted-part` · `gap-shrink` |
+| 알고리즘 · 나누고 합치기 다섯 | 2026-09-16 | `split-until-one` · `merge-two-sorted` · `divide-conquer-combine` · `partition-around-pivot` · `pivot-choice-matters` |
+| 알고리즘 · 정렬의 성질과 비교 없는 정렬 다섯 | 2026-09-16 | `sort-stability` · `in-place-vs-extra` · `count-then-place` · `digit-by-digit` · `heap-sort-extract` |
+| 알고리즘 · 탐색 넷 | 2026-09-16 | `scan-until-found` · `requires-sorted` · `halve-the-range` · `guess-by-value` |
+| 알고리즘 · 동적 계획법과 그리디 다섯 | 2026-09-16 | `overlapping-subproblems` · `memo-write-once` · `bottom-up-table` · `greedy-can-fail` · `take-best-now` |
+| 알고리즘 · 백트래킹 셋 | 2026-09-16 | `try-and-undo` · `prune-branch` · `bound-and-cut` |
 
-**자료 구조 계열 42 개가 아홉 배치로 닫혔고, 확률적 자료구조 열도 닫혔다** — 그중
-스킵 리스트 둘(`skip-a-layer` · `coin-flip-height`)은 자료 구조 배치에 섞여 이미
-옮겨져 있었다. 배치마다 병렬 에이전트 넷~아홉.
+**자료 구조 42 · 확률적 자료구조 10 · 알고리즘 27 이 닫혔다.** 확률적 열 중 스킵
+리스트 둘(`skip-a-layer` · `coin-flip-height`)은 자료 구조 배치에 섞여 이미 옮겨져
+있었다. 배치마다 병렬 에이전트 셋~아홉.
+
+`cs-fundamentals` 의 서브도메인 일곱 중 **셋이 닫혔다** — 자료구조 · 확률적 자료구조 ·
+알고리즘. 남은 넷은 그래프 알고리즘 · 문자열 알고리즘 · 수치 알고리즘 · 계산 복잡도다.
 
 ### 배치를 돌리는 법
 
@@ -799,11 +919,12 @@ BST 와 순회 다섯    4265 → 5965   +1700  +40%
 균형 트리 다섯      4945 → 6684   +1739  +35%
 마지막 아홉        8694 → 12331  +3637  +42%
 확률적 여덟        8773 → 12449  +3676  +41%
+알고리즘 스물일곱  29578 → 40117 +10539  +35%
                                  ─────
-                  쉰하나 조각 평균 +354 줄 (+35%)
+                  일흔여덟 조각 평균 +348 줄 (+35%)
 
 늘어나는 것은 `scene.ts` 와 stage 이고 **`algorithm.ts` 는 대개 줄어든다.** 확률적
-여덟에서 1269 → 1201 (−68) 이었고 다섯이 줄었다. payload 를 걷어내면 그것을 만들던
+여덟에서 1269 → 1201 (−68), 알고리즘 스물일곱에서 **5108 → 4795 (−313)** 이었다. payload 를 걷어내면 그것을 만들던
 셈이 연쇄로 죽기 때문이다 — 가장 많이 준 `crowd-the-tails`(−37) 는 발신 넷의 payload
 가 전부 비면서 `quantileAt` · `evenBounds` · `bucketOf` · `countsIn` · `centroidsIn`
 다섯 함수가 통째로 죽었다.
