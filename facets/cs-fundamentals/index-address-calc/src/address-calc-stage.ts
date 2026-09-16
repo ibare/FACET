@@ -10,15 +10,21 @@
  * 지나지 않는 궤적 자체가 "훑지 않는다" 는 말이다 — 그래서 이 조각의 운동은
  * opacity 가 아니라 위치다.
  *
+ * 걸음마다 부르는 메서드는 두지 않는다. `render` 하나가 장면을 받아 화면 **전체**를
+ * 세우고, 방금 달라진 한 자리만 흐르게 한다 (S-scene). 정적 그리기가 정본이라
+ * 운동의 방향이 뒤집힌다 — 요소는 이미 끝 자리에 서 있고, 흐르게 할 때만 출발
+ * 그림으로 되돌려 놓고 시작한다.
+ *
  * 화면에 새겨진 글자 (`i` · `i × 4` · `addr(i)` · `0x100C`) 는 수식·기호 표기라
- * 표식으로 두고 (C10 판정 1·3), 문장이 되는 캡션과 각주는 projector 가 번역해
- * 넘긴다.
+ * 표식으로 두고 (C10 판정 1·3), 문장이 되는 캡션은 장면이 말하려는 것과 인자만
+ * 받아 여기서 `params.t` 로 만든다.
  */
 
 import {
   getColors,
   fonts,
   fontSizes,
+  makeTranslator,
   PIECE_CANVAS_W,
   type Palette,
   type CanvasView,
@@ -26,7 +32,12 @@ import {
   type ViewMountParams,
 } from '@ffacet/core/runtime';
 
-type CellSpec = { index: number; addr: number; value: number };
+import type {
+  AddressCaption,
+  AddressCell,
+  IndexAddressCalcScene,
+  RailChip,
+} from './scene.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -60,10 +71,18 @@ const END_X = 552;
 const CHIP_W = 66;
 const CHIP_H = 34;
 
+/** 칩이 레일에 오를 때 왼쪽에서 밀려 들어오는 거리. */
+const ENTER_DX = 44;
+/** 칸이 내려앉는 높이. */
+const LAY_DROP = 14;
+/** 칸이 하나씩 늦게 내려앉는 몫. */
+const LAY_STAGGER = 0.12;
+/** 궤적의 길이를 재는 표본 수. */
+const ARC_SAMPLES = 24;
+
 const LEAP_CTRL_Y = 138;
 
 const CAPTION_Y = 288;
-const NOTE_Y = 308;
 
 // ── 시간. 걸음 사이의 읽을 시간은 algorithm 이 정하고 (initialData.stepMs),
 //    한 걸음 안의 운동 길이는 그림의 사정이므로 여기 둔다.
@@ -124,6 +143,9 @@ export const addressCalcStageView: CanvasView = {
     params: ViewMountParams & { canvas: SVGSVGElement },
   ): ViewInstance {
     const colors: Palette = getColors(params.theme);
+    // 문안은 그리는 쪽이 만든다. 장면은 무엇을 말할지만 담는다 — 저작자
+    // 오버라이드가 얹힌 `params.t` 로만 조회한다 (C10).
+    const t = params.t ?? makeTranslator(params.locale);
 
     const svg = params.canvas;
 
@@ -159,71 +181,144 @@ export const addressCalcStageView: CanvasView = {
     gChip.appendChild(chipText);
 
     const caption = label(W / 2, CAPTION_Y, '', fontSizes.md, colors.text, fonts.body);
-    const note = label(W / 2, NOTE_Y, '', fontSizes.xs, colors.textMuted, fonts.body);
     svg.appendChild(caption);
-    svg.appendChild(note);
 
-    // ── 데이터가 정하는 것들. showMemory 가 채운다.
+    // ── 장면이 정하는 것들. 매 render 마다 새로 세운다.
     let centers: number[] = [];
     let boxes: SVGRectElement[] = [];
     let valueTexts: SVGTextElement[] = [];
     let addrTexts: SVGTextElement[] = [];
     let indexTexts: SVGTextElement[] = [];
+    let risers: SVGGElement[] = [];
     let scaleGate: SVGRectElement | null = null;
     let addGate: SVGRectElement | null = null;
-    let activeCell = -1;
 
-    // ── 취소 가능한 시간 진행. destroy 시 남은 운동을 전부 끝으로 밀어 정리한다.
-    const pending = new Set<{ cancel(): void }>();
+    // ── 걸어 둔 것과 기다리는 것. destroy 가 일괄로 거둔다 (S-piece).
+    const waiters = new Set<() => void>();
+    const frames = new Set<number>();
+    let destroyed = false;
 
-    function animate(ms: number, apply: (p: number) => void): Promise<void> {
-      apply(0);
-      if (typeof requestAnimationFrame !== 'function') {
+    /**
+     * 되짚는 중인가. 러너가 `params` 로 흘린다 (`ViewMountParams.isInstant`).
+     *
+     * 이 조각의 운동은 rAF 로 칩의 좌표를 프레임마다 고쳐 쓴다. 되짚기가 화면을
+     * 새로 세운 뒤에도 앞 걸음의 운동이 살아 있으면 새 칩에 옛 좌표를 덮어쓴다 —
+     * 되짚은 직후가 아니라 반 초쯤 뒤에 무너지므로 눈으로도 늦게야 잡힌다.
+     */
+    const isInstant = params.isInstant ?? ((): boolean => false);
+    // 되짚기 직전에 걸어 둔 것을 거둔다 (destroy 와 같은 모양).
+    params.onScrubStart?.(() => {
+      for (const id of frames) cancelAnimationFrame(id);
+      frames.clear();
+      for (const wake of [...waiters]) wake();
+      waiters.clear();
+    });
+
+    /**
+     * 지금 화면을 세운 `render` 의 번호.
+     *
+     * 이 조각의 운동은 관문 넷을 차례로 지나는 **사슬**이라 (미끄러짐 → 관문 → 다시
+     * 미끄러짐) 중간에 되짚기가 끼어들면 남은 고리들이 즉시 모드로 곧장 끝값을 써
+     * 버린다. 그 끝값은 이미 새로 선 화면을 덮는다. 고리마다 자기 번호가 아직
+     * 유효한지 보고 멈춘다.
+     */
+    let epoch = 0;
+
+    /**
+     * 취소 가능한 시간 진행.
+     *
+     * 깨워서 끝낼 때는 아무것도 그리지 않는다 — 끝값을 쓰면 그것이 곧 덮어쓰기다.
+     */
+    function animate(ms: number, apply: (p: number) => void, live: () => boolean): Promise<void> {
+      if (!live()) return Promise.resolve();
+      if (destroyed || isInstant() || typeof requestAnimationFrame !== 'function') {
         apply(1);
         return Promise.resolve();
       }
+      apply(0);
       return new Promise<void>((resolve) => {
-        let frame = 0;
         let origin = -1;
         let settled = false;
+        let id = 0;
         const finish = (): void => {
           if (settled) return;
           settled = true;
-          pending.delete(handle);
-          apply(1);
+          waiters.delete(finish);
           resolve();
         };
-        const handle = {
-          cancel: (): void => {
-            if (frame) cancelAnimationFrame(frame);
-            finish();
-          },
-        };
+        waiters.add(finish);
         const tick = (now: number): void => {
+          frames.delete(id);
           if (settled) return;
+          if (destroyed || !live()) {
+            finish();
+            return;
+          }
           if (origin < 0) origin = now;
           const p = ms <= 0 ? 1 : Math.min(1, (now - origin) / ms);
           apply(p);
-          if (p < 1) frame = requestAnimationFrame(tick);
-          else finish();
+          if (p >= 1) {
+            finish();
+            return;
+          }
+          id = requestAnimationFrame(tick);
+          frames.add(id);
         };
-        pending.add(handle);
-        frame = requestAnimationFrame(tick);
+        id = requestAnimationFrame(tick);
+        frames.add(id);
       });
     }
 
-    const hold = (ms: number): Promise<void> => animate(ms, () => undefined);
+    const hold = (ms: number, live: () => boolean): Promise<void> =>
+      animate(ms, () => undefined, live);
+
+    // ── 칩 ────────────────────────────────────────────────────────────────
 
     function placeChip(x: number, y: number): void {
       gChip.setAttribute('transform', `translate(${x}, ${y})`);
     }
 
-    function glide(fromX: number, toX: number, ms: number): Promise<void> {
-      return animate(ms, (p) => {
-        const e = easeInOut(p);
-        placeChip(fromX + (toX - fromX) * e, RAIL_Y);
-      });
+    /** 보이는 칩에는 opacity 속성이 아예 없다 — 값으로 되돌리지 않고 거둔다. */
+    function showChip(): void {
+      gChip.removeAttribute('opacity');
     }
+
+    function hideChip(): void {
+      gChip.setAttribute('opacity', '0');
+    }
+
+    function chipLabel(chip: RailChip): string {
+      switch (chip.stage) {
+        case 'index':
+          return String(chip.index);
+        case 'offset':
+          return String(chip.offset);
+        case 'address':
+          return hex(chip.addr);
+      }
+    }
+
+    /** 관문의 차례가 곧 레일 위의 자리. 좌표는 장면이 아니라 여기가 안다. */
+    function chipX(chip: RailChip): number {
+      switch (chip.stage) {
+        case 'index':
+          return START_X;
+        case 'offset':
+          return MID_X;
+        case 'address':
+          return END_X;
+      }
+    }
+
+    function glide(fromX: number, toX: number, live: () => boolean): Promise<void> {
+      return animate(
+        GLIDE_MS,
+        (p) => placeChip(fromX + (toX - fromX) * easeInOut(p), RAIL_Y),
+        live,
+      );
+    }
+
+    // ── 칸과 궤적 ──────────────────────────────────────────────────────────
 
     function paintCell(i: number, active: boolean): void {
       const box = boxes[i];
@@ -238,11 +333,42 @@ export const addressCalcStageView: CanvasView = {
       idx.setAttribute('fill', active ? colors.text : colors.textMuted);
     }
 
-    function clearActive(): void {
-      if (activeCell >= 0) paintCell(activeCell, false);
-      activeCell = -1;
+    function arcPath(cx: number): string {
+      const ctrlX = (END_X + cx) / 2;
+      return `M ${END_X} ${RAIL_Y} Q ${ctrlX} ${LEAP_CTRL_Y} ${cx} ${CELL_CY}`;
+    }
+
+    /** 곡선의 길이를 표본으로 잰다 — dash 로 그려 나가려면 총 길이가 있어야 한다. */
+    function arcLength(cx: number): number {
+      const ctrlX = (END_X + cx) / 2;
+      let length = 0;
+      let px = END_X;
+      let py = RAIL_Y;
+      for (let s = 1; s <= ARC_SAMPLES; s += 1) {
+        const p = s / ARC_SAMPLES;
+        const qx = quad(p, END_X, ctrlX, cx);
+        const qy = quad(p, RAIL_Y, LEAP_CTRL_Y, CELL_CY);
+        length += Math.hypot(qx - px, qy - py);
+        px = qx;
+        py = qy;
+      }
+      return length;
+    }
+
+    function showTrail(cx: number): void {
+      trail.setAttribute('d', arcPath(cx));
+      trail.setAttribute('opacity', '1');
+      trail.setAttribute('stroke-dasharray', '5 5');
+      // 지운다 — '0' 으로 되돌리지 않는다. 곧바로 세운 화면에는 이 속성이 아예
+      // 없어, 남겨 두면 같은 걸음인데 화면이 갈린다 (S-scene).
+      trail.removeAttribute('stroke-dashoffset');
+    }
+
+    function hideTrail(): void {
       trail.setAttribute('opacity', '0');
       trail.setAttribute('d', '');
+      trail.setAttribute('stroke-dasharray', '5 5');
+      trail.removeAttribute('stroke-dashoffset');
     }
 
     function markGate(gate: SVGRectElement | null, on: boolean): void {
@@ -251,7 +377,13 @@ export const addressCalcStageView: CanvasView = {
       gate.setAttribute('stroke-width', on ? '2.5' : '1.5');
     }
 
-    function showMemory(cells: CellSpec[], base: number, unit: number): Promise<void> {
+    // ── 정적 그리기 ────────────────────────────────────────────────────────
+    //
+    // 늘 비우고 그 장면이 말하는 것을 전부 다시 세운다. 되돌릴 명령을 따로 둘
+    // 필요가 없고, 어느 걸음에서 어느 걸음으로 가든 같은 길이다.
+
+    /** 늘 비우고 시작한다 (S-scene). */
+    function rewind(): void {
       while (gCells.firstChild) gCells.removeChild(gCells.firstChild);
       while (gRail.firstChild) gRail.removeChild(gRail.firstChild);
       centers = [];
@@ -259,22 +391,28 @@ export const addressCalcStageView: CanvasView = {
       valueTexts = [];
       addrTexts = [];
       indexTexts = [];
-      activeCell = -1;
-      trail.setAttribute('opacity', '0');
-      gChip.setAttribute('opacity', '0');
+      risers = [];
+      scaleGate = null;
+      addGate = null;
+      hideTrail();
+      chipText.textContent = '';
+      hideChip();
       placeChip(START_X, RAIL_Y);
+      caption.textContent = '';
+    }
 
+    /** 칸을 늘어놓는다. 폭은 캔버스에서 역산하고 좌표는 번호가 정한다 (S-piece). */
+    function drawCells(cells: AddressCell[]): void {
       const n = cells.length;
-      if (n === 0) return Promise.resolve();
+      if (n === 0) return;
       const cellW = (W - SIDE * 2 - CELL_GAP * (n - 1)) / n;
-      const risers: SVGGElement[] = [];
 
       cells.forEach((cell, i) => {
         const x = SIDE + i * (cellW + CELL_GAP);
         const cx = x + cellW / 2;
         centers.push(cx);
 
-        const riser = el('g', { opacity: 0 });
+        const riser = el('g', {});
         const box = el('rect', {
           x,
           y: CELL_Y,
@@ -300,8 +438,10 @@ export const addressCalcStageView: CanvasView = {
         addrTexts.push(addr);
         indexTexts.push(idx);
       });
+    }
 
-      // 레일 — 번호가 지나가는 길. 관문 라벨은 데이터에서 나온다.
+    /** 레일 — 번호가 지나가는 길. 관문 라벨은 장면의 base · unit 에서 나온다. */
+    function drawRail(base: number, unit: number): void {
       gRail.appendChild(
         el('line', {
           x1: SIDE + 8,
@@ -355,107 +495,240 @@ export const addressCalcStageView: CanvasView = {
           fonts.mono,
         ),
       );
-
-      // 칸이 왼쪽부터 차례로 자리에 내려앉는다.
-      const stagger = 0.12;
-      const span = 1 + (n - 1) * stagger;
-      return animate(LAY_MS, (p) => {
-        risers.forEach((riser, i) => {
-          const local = Math.min(1, Math.max(0, p * span - i * stagger));
-          riser.setAttribute('opacity', String(local));
-          riser.setAttribute('transform', `translate(0, ${(1 - easeInOut(local)) * 14})`);
-        });
-      });
     }
 
-    async function askIndex(index: number): Promise<void> {
-      clearActive();
-      chipText.textContent = String(index);
-      await animate(ENTER_MS, (p) => {
-        const e = easeInOut(p);
-        gChip.setAttribute('opacity', String(e));
-        placeChip(START_X - 44 + 44 * e, RAIL_Y);
-      });
+    function drawChip(chip: RailChip | null): void {
+      if (chip === null) return;
+      chipText.textContent = chipLabel(chip);
+      showChip();
+      placeChip(chipX(chip), RAIL_Y);
     }
 
-    async function scaleToOffset(offset: number): Promise<void> {
-      await glide(START_X, SCALE_GATE_CX, GLIDE_MS);
-      markGate(scaleGate, true);
-      chipText.textContent = String(offset);
-      await hold(GATE_HOLD_MS);
-      markGate(scaleGate, false);
-      await glide(SCALE_GATE_CX, MID_X, GLIDE_MS);
-    }
-
-    async function addBase(addr: number): Promise<void> {
-      await glide(MID_X, ADD_GATE_CX, GLIDE_MS);
-      markGate(addGate, true);
-      chipText.textContent = hex(addr);
-      await hold(GATE_HOLD_MS);
-      markGate(addGate, false);
-      await glide(ADD_GATE_CX, END_X, GLIDE_MS);
-    }
-
-    async function landOn(index: number): Promise<void> {
-      const cx = centers[index];
-      if (cx === undefined) return;
-      const ctrlX = (END_X + cx) / 2;
-      trail.setAttribute('d', `M ${END_X} ${RAIL_Y} Q ${ctrlX} ${LEAP_CTRL_Y} ${cx} ${CELL_CY}`);
-      trail.setAttribute('opacity', '1');
-
-      // 길이를 표본으로 재서 dash 로 그려 나간다 — 궤적이 칩과 같이 자란다.
-      let length = 0;
-      let px = END_X;
-      let py = RAIL_Y;
-      for (let s = 1; s <= 24; s++) {
-        const t = s / 24;
-        const qx = quad(t, END_X, ctrlX, cx);
-        const qy = quad(t, RAIL_Y, LEAP_CTRL_Y, CELL_CY);
-        length += Math.hypot(qx - px, qy - py);
-        px = qx;
-        py = qy;
+    /** 캡션은 장면이 무엇을 말할지만 담는다. 문자는 여기서 만든다 (C10). */
+    function drawCaption(cap: AddressCaption | null): void {
+      if (cap === null) {
+        caption.textContent = '';
+        return;
       }
-      trail.setAttribute('stroke-dasharray', `${length}`);
+      switch (cap.kind) {
+        case 'memory':
+          caption.textContent = t(
+            'caption.memory',
+            'The array sits in memory: {unit} bytes per slot from {base}.',
+            { unit: cap.unit, base: hex(cap.base) },
+          );
+          return;
+        case 'ask':
+          caption.textContent = t('caption.ask', 'Where is arr[{index}]?', { index: cap.index });
+          return;
+        case 'scale':
+          caption.textContent = t(
+            'caption.scale',
+            'Index times element size: {index} × {unit} = {offset}.',
+            { index: cap.index, unit: cap.unit, offset: cap.offset },
+          );
+          return;
+        case 'add':
+          caption.textContent = t('caption.add', 'Add the base address: {base} + {offset} = {addr}.', {
+            base: hex(cap.base),
+            offset: cap.offset,
+            addr: hex(cap.addr),
+          });
+          return;
+        case 'reach':
+          caption.textContent = t(
+            'caption.reach',
+            'One multiply, one add: {addr} holds arr[{index}] = {value}.',
+            { addr: hex(cap.addr), index: cap.index, value: cap.value },
+          );
+          return;
+        case 'done':
+          caption.textContent = t(
+            'caption.done',
+            'Any index, the same one calculation. Nothing in between is read.',
+          );
+          return;
+      }
+    }
 
-      await animate(LEAP_MS, (p) => {
-        const e = easeInOut(p);
-        placeChip(quad(e, END_X, ctrlX, cx), quad(e, RAIL_Y, LEAP_CTRL_Y, CELL_CY));
-        trail.setAttribute('stroke-dashoffset', String(length * (1 - e)));
-      });
-      trail.setAttribute('stroke-dasharray', '5 5');
-      trail.setAttribute('stroke-dashoffset', '0');
+    // ── 걸음 함수 ──────────────────────────────────────────────────────────
+    //
+    // 버리지 않고 `live` 를 받게 고쳐 두 쓰임을 겸한다. 정적 그리기가 이미 끝
+    // 자리에 세워 두었으므로, 여기서는 출발 그림으로 되돌려 놓고 시작한다.
 
-      activeCell = index;
-      paintCell(index, true);
-      await animate(FADE_MS, (p) => gChip.setAttribute('opacity', String(1 - p)));
+    /** 칸이 왼쪽부터 차례로 자리에 내려앉는다. */
+    async function layCells(live: () => boolean): Promise<void> {
+      const n = risers.length;
+      if (n === 0) return;
+      const span = 1 + (n - 1) * LAY_STAGGER;
+      const shown = risers.slice();
+      await animate(
+        LAY_MS,
+        (p) => {
+          shown.forEach((riser, i) => {
+            const local = Math.min(1, Math.max(0, p * span - i * LAY_STAGGER));
+            riser.setAttribute('opacity', String(local));
+            riser.setAttribute('transform', `translate(0, ${(1 - easeInOut(local)) * LAY_DROP})`);
+          });
+        },
+        live,
+      );
+      if (!live()) return;
+      // 값으로 되돌리지 않고 거둔다 — 곧바로 세운 칸에는 이 속성들이 아예 없다.
+      for (const riser of shown) {
+        riser.removeAttribute('opacity');
+        riser.removeAttribute('transform');
+      }
+    }
+
+    /** 번호가 레일 왼쪽 끝으로 밀려 들어온다. */
+    async function enterChip(live: () => boolean): Promise<void> {
+      await animate(
+        ENTER_MS,
+        (p) => {
+          const e = easeInOut(p);
+          gChip.setAttribute('opacity', String(e));
+          placeChip(START_X - ENTER_DX + ENTER_DX * e, RAIL_Y);
+        },
+        live,
+      );
+      if (!live()) return;
+      showChip();
       placeChip(START_X, RAIL_Y);
     }
 
-    function rewind(): void {
-      clearActive();
-      chipText.textContent = '';
-      gChip.setAttribute('opacity', '0');
+    /** 번호가 곱셈 관문을 지나 오프셋이 된다. */
+    async function scaleChip(
+      chip: Extract<RailChip, { stage: 'offset' }>,
+      live: () => boolean,
+    ): Promise<void> {
+      chipText.textContent = String(chip.index);
       placeChip(START_X, RAIL_Y);
+      await glide(START_X, SCALE_GATE_CX, live);
+      if (!live()) return;
+      markGate(scaleGate, true);
+      chipText.textContent = String(chip.offset);
+      await hold(GATE_HOLD_MS, live);
+      if (!live()) return;
       markGate(scaleGate, false);
+      await glide(SCALE_GATE_CX, MID_X, live);
+    }
+
+    /** 오프셋이 덧셈 관문을 지나 주소가 된다. */
+    async function addBase(
+      chip: Extract<RailChip, { stage: 'address' }>,
+      live: () => boolean,
+    ): Promise<void> {
+      chipText.textContent = String(chip.offset);
+      placeChip(MID_X, RAIL_Y);
+      await glide(MID_X, ADD_GATE_CX, live);
+      if (!live()) return;
+      markGate(addGate, true);
+      chipText.textContent = hex(chip.addr);
+      await hold(GATE_HOLD_MS, live);
+      if (!live()) return;
       markGate(addGate, false);
+      await glide(ADD_GATE_CX, END_X, live);
+    }
+
+    /** 주소가 레일을 떠나 제 칸으로 곧장 날아간다. 사이의 칸은 지나지 않는다. */
+    async function landOn(landed: AddressCell, live: () => boolean): Promise<void> {
+      const cx = centers[landed.index];
+      if (cx === undefined) return;
+
+      // 출발 그림 — 칩은 아직 레일 끝에 서 있고 칸은 물들지 않았다.
+      paintCell(landed.index, false);
+      chipText.textContent = hex(landed.addr);
+      showChip();
+      placeChip(END_X, RAIL_Y);
+
+      const ctrlX = (END_X + cx) / 2;
+      const length = arcLength(cx);
+      trail.setAttribute('d', arcPath(cx));
+      trail.setAttribute('opacity', '1');
+      // 궤적이 칩과 같이 자라도록 dash 하나로 덮었다가 걷어 낸다.
+      trail.setAttribute('stroke-dasharray', String(length));
+
+      await animate(
+        LEAP_MS,
+        (p) => {
+          const e = easeInOut(p);
+          placeChip(quad(e, END_X, ctrlX, cx), quad(e, RAIL_Y, LEAP_CTRL_Y, CELL_CY));
+          trail.setAttribute('stroke-dashoffset', String(length * (1 - e)));
+        },
+        live,
+      );
+      if (!live()) return;
+
+      showTrail(cx);
+      paintCell(landed.index, true);
+
+      await animate(FADE_MS, (p) => gChip.setAttribute('opacity', String(1 - p)), live);
+      if (!live()) return;
+      hideChip();
+      placeChip(START_X, RAIL_Y);
+    }
+
+    // ── 장면 그리기 ────────────────────────────────────────────────────────
+
+    async function render(
+      next: IndexAddressCalcScene,
+      prev: IndexAddressCalcScene | null,
+      opts: { animate: boolean },
+    ): Promise<void> {
+      const mine = (epoch += 1);
+      const live = (): boolean => epoch === mine;
+
+      rewind();
+      if (next.cells.length > 0) {
+        drawCells(next.cells);
+        drawRail(next.base, next.unit);
+      }
+      if (next.landed) {
+        const cx = centers[next.landed.index];
+        if (cx !== undefined) {
+          showTrail(cx);
+          paintCell(next.landed.index, true);
+        }
+      }
+      drawChip(next.chip);
+      drawCaption(next.caption);
+
+      if (!opts.animate) return;
+
+      // 방금 밟은 걸음 하나만 흐르게 한다. 걸음을 건너뛰어 왔으면 `step` 이
+      // 이어지지 않으므로 그 경우도 여기서 걸러진다.
+      const step = next.step;
+      if (step === null || step === prev?.step) return;
+
+      switch (step) {
+        case 'laid':
+          await layCells(live);
+          return;
+        case 'ask':
+          if (next.chip) await enterChip(live);
+          return;
+        case 'scale':
+          if (next.chip?.stage === 'offset') await scaleChip(next.chip, live);
+          return;
+        case 'add':
+          if (next.chip?.stage === 'address') await addBase(next.chip, live);
+          return;
+        case 'land':
+          if (next.landed) await landOn(next.landed, live);
+          return;
+      }
     }
 
     return {
-      showMemory,
-      askIndex,
-      scaleToOffset,
-      addBase,
-      landOn,
-      rewind,
-      setCaption(text: string) {
-        caption.textContent = text;
-      },
-      setNote(text: string) {
-        note.textContent = text;
-      },
-      destroy() {
-        for (const handle of [...pending]) handle.cancel();
-        pending.clear();
+      render,
+
+      destroy(): void {
+        destroyed = true;
+        for (const id of frames) cancelAnimationFrame(id);
+        frames.clear();
+        for (const wake of [...waiters]) wake();
+        waiters.clear();
         svg.replaceChildren();
       },
     };

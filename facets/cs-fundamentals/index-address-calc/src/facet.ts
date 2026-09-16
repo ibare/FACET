@@ -9,7 +9,7 @@
  * metrics 도 없다 (S-piece).
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const indexAddressCalcFacet: FacetJson = {
   id: 'facet:indexAddressCalc',
@@ -38,10 +38,10 @@ export const indexAddressCalcFacet: FacetJson = {
     pt: 'Uma multiplicação e uma soma transformam um índice em endereço.',
   },
   algorithm: 'module:indexAddressCalc',
-  projector: 'module:indexAddressCalcProjector',
+  scene: 'module:indexAddressCalcScene',
   initialData: {
     type: 'index-address-calc',
-    /** 0x1000 — 배열이 할당된 자리. 재지 않고 선언한 값이며 각주가 그렇게 밝힌다. */
+    /** 0x1000 — 배열이 할당된 자리. 재지 않고 선언한 값이며 글이 그렇게 밝힌다. */
     base: 4096,
     /** int32 이므로 4바이트. 크기는 자료형이 정한다. */
     unit: 4,
@@ -54,7 +54,7 @@ export const indexAddressCalcFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'address-calc-stage' },
-    controls: { type: 'control-bar', controls: [CONTROL.replay, CONTROL.advance] },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.memory': {
