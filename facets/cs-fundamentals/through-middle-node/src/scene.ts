@@ -374,7 +374,9 @@ export const throughMiddleNodeScene: ScenePlan<ThroughMiddleNodeScene> = {
         };
 
       case 'rewind':
-        return atStart(scene);
+        // 변수가 아니라 객체 리터럴로 넘긴다 — 변수를 넘기면 초과 속성 검사가 돌지
+        // 않아 `roads` 를 넣지 않으려고 좁혀 둔 타입이 아무것도 막지 못한다.
+        return atStart({ nodes: scene.nodes, edges: scene.edges });
 
       default:
         // 이 facet 이 내보내는 이벤트는 위가 전부다. 그 밖의 것은 조용히 버린다 (C2).
