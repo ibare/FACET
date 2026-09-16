@@ -373,7 +373,6 @@ export const rollingHashStageView: CanvasView = {
           'stroke-width': 1,
         }),
       );
-      // `hash` 는 도식 라벨 한 단어라 표식이다 — 키를 만들지 않는다 (C10).
       const label = el('text', {
         x: L.originX,
         y: WHEEL_Y + 4,
@@ -381,7 +380,7 @@ export const rollingHashStageView: CanvasView = {
         'font-size': fontSizes.xs,
         fill: palette.textMuted,
       });
-      label.textContent = 'hash';
+      label.textContent = t('label.hash', 'hash');
       root.appendChild(label);
     }
 
@@ -414,7 +413,7 @@ export const rollingHashStageView: CanvasView = {
         'font-size': fontSizes.xs,
         fill: palette.textMuted,
       });
-      label.textContent = 'pattern';
+      label.textContent = t('label.pattern', 'pattern');
       root.appendChild(label);
 
       L.patternLetters.forEach((ch, i) => {

@@ -14,7 +14,7 @@
  *                짝의 수 = (n-1)(n-2). 화면의 물음 장부가 이 크기로 짜인다.
  *                silent 아님.
  *
- *   middle-set   { middle: string; order: number; total: number }
+ *   middle-set   { middle: string; order: number }
  *                가운데에 세울 정점이 바뀐다. silent 아님.
  *
  *   ask          { from: string; to: string; middle: string;
@@ -157,7 +157,7 @@ export const throughMiddleNodeAlgorithm = async (
 
       await ctx.emit({
         type: 'middle-set',
-        payload: { middle, order: middleIndex, total: data.nodes.length },
+        payload: { middle, order: middleIndex },
       });
       if (!(await hold(holdBeat))) return;
 
