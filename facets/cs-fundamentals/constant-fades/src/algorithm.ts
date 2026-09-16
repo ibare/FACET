@@ -14,15 +14,20 @@
  * 발신 이벤트 (facet 고유 확장 — C2):
  *   axis            { ticks: number[] }
  *                     n 의 눈금 자리. 오름차순이며 첫 값이 1, 끝 값이 축의 끝이다.
- *   probe           { n, coefficient, linear, quad, lead, ratio }
- *                     한 자리에서 두 값을 짚는다. lead 는 'linear' | 'quad' | 'tie',
- *                     ratio 는 큰 쪽을 작은 쪽으로 나눈 값 (tie 면 1).
- *   boundary        { coefficient, meeting, value }
- *                     경계 기둥을 세운다. value 는 그 자리에서 두 식이 함께 갖는 값.
- *   boundary-move   { coefficient, meeting, value, previous }
- *                     상수를 바꿔 기둥을 옮긴다. previous 는 직전 기둥이 서 있던 n.
- *   spacing         { factor, marks: { coefficient, meeting }[] }
- *                     기둥 셋 사이의 간격을 잰다. marks 는 n 오름차순.
+ *                     **척도를 정하는 유일한 자리다** — 장면이 이것을 받아 굳히고,
+ *                     눈금을 그리는 쪽도 자리를 셈하는 쪽도 같은 자를 쓴다.
+ *   probe           { n, coefficient }
+ *                     그 상수로 그 자리를 짚어 본다. 두 값도, 어느 쪽이 앞서는지도,
+ *                     몇 배인지도 싣지 않는다 — 자리와 상수가 정하는 값이라 장면이
+ *                     `linearValueAt` · `quadValueAt` 으로 셈한다.
+ *   boundary        { coefficient, meeting }
+ *                     경계 기둥을 세운다. 그 자리의 값은 장면이 셈한다.
+ *   boundary-move   { coefficient, meeting }
+ *                     상수를 바꿔 기둥을 옮긴다. 직전 기둥이 어디에 서 있었는지는
+ *                     세운 기둥의 자취가 안다.
+ *   spacing         (payload 없음)
+ *                     기둥 셋 사이의 간격을 잰다. 어느 기둥들인지도 몇 배씩
+ *                     벌어졌는지도 자취에서 나온다.
  *   constant-erased (payload 없음)
  *                     상수를 지운다. 셋이 한 말이 된다.
  *   rewind          (payload 없음)
@@ -48,21 +53,33 @@ export type ConstantFadesData = {
   stepMs: number;
 };
 
-/** 어느 쪽이 큰가. 'tie' 는 두 값이 정확히 같은 자리다. */
-type Lead = 'linear' | 'quad' | 'tie';
-
 /**
  * 걸음과 걸음 사이의 문. 자동 재생은 `ctx.sleep`, 한 걸음씩 짚을 때는 `advance`.
  * false 를 돌려주면 취소된 것이다.
  */
 type Gate = () => Promise<boolean>;
 
+/**
+ * 상수가 붙은 쪽의 값.
+ *
+ * 내주는 까닭은 화면에 이 수가 칩으로도 캡션으로도 뜨기 때문이다. 걸음이 실어
+ * 보내면 같은 물음에 답이 둘이 되고 언젠가 갈린다 — 장면이 이 함수를 부른다.
+ */
+export function linearValueAt(coefficient: number, n: number, degree: number): number {
+  return coefficient * n ** degree;
+}
+
+/** 상수가 없는 쪽의 값. 위와 같은 까닭으로 내준다. */
+export function quadValueAt(n: number, degree: number): number {
+  return n ** degree;
+}
+
 function linearAt(d: ConstantFadesData, coefficient: number, n: number): number {
-  return coefficient * n ** d.linearDegree;
+  return linearValueAt(coefficient, n, d.linearDegree);
 }
 
 function quadAt(d: ConstantFadesData, n: number): number {
-  return n ** d.quadraticDegree;
+  return quadValueAt(n, d.quadraticDegree);
 }
 
 /**
@@ -88,18 +105,18 @@ function ticksUpTo(d: ConstantFadesData, farthest: number): number[] {
   return out;
 }
 
-/** 한 자리를 짚어 두 값을 함께 낸다. */
+/**
+ * 한 자리를 짚는다.
+ *
+ * 두 값을 여기서 재어 싣지 않는다. 자리와 상수만 말하면 장면이 같은 함수로 값을
+ * 내고, 어느 쪽이 앞서는지와 몇 배인지는 그 두 값에서 곧바로 나온다.
+ */
 async function probeAt(
   ctx: ReactiveContext<ConstantFadesData>,
-  d: ConstantFadesData,
   coefficient: number,
   n: number,
 ): Promise<void> {
-  const linear = linearAt(d, coefficient, n);
-  const quad = quadAt(d, n);
-  const lead: Lead = linear === quad ? 'tie' : linear > quad ? 'linear' : 'quad';
-  const ratio = lead === 'tie' ? 1 : Math.max(linear, quad) / Math.min(linear, quad);
-  await ctx.emit({ type: 'probe', payload: { n, coefficient, linear, quad, lead, ratio } });
+  await ctx.emit({ type: 'probe', payload: { n, coefficient } });
 }
 
 /**
@@ -129,54 +146,33 @@ async function sequence(
   if (!(await gate())) return false;
 
   // 짚어 볼 자리는 만나는 자리가 정한다 — 그 한 눈금 앞, 만나는 자리, 한 눈금 뒤.
-  await probeAt(ctx, d, base, Math.round(meetBase / d.factor));
+  await probeAt(ctx, base, Math.round(meetBase / d.factor));
   if (!(await gate())) return false;
 
-  await probeAt(ctx, d, base, meetBase);
+  await probeAt(ctx, base, meetBase);
   if (!(await gate())) return false;
 
-  await probeAt(ctx, d, base, Math.round(meetBase * d.factor));
+  await probeAt(ctx, base, Math.round(meetBase * d.factor));
+  if (!(await gate())) return false;
+
+  await ctx.emit({ type: 'boundary', payload: { coefficient: base, meeting: meetBase } });
   if (!(await gate())) return false;
 
   await ctx.emit({
-    type: 'boundary',
-    payload: { coefficient: base, meeting: meetBase, value: linearAt(d, base, meetBase) },
+    type: 'boundary-move',
+    payload: { coefficient: smaller, meeting: meetSmall },
   });
   if (!(await gate())) return false;
 
   await ctx.emit({
     type: 'boundary-move',
-    payload: {
-      coefficient: smaller,
-      meeting: meetSmall,
-      value: linearAt(d, smaller, meetSmall),
-      previous: meetBase,
-    },
+    payload: { coefficient: larger, meeting: meetLarge },
   });
   if (!(await gate())) return false;
 
-  await ctx.emit({
-    type: 'boundary-move',
-    payload: {
-      coefficient: larger,
-      meeting: meetLarge,
-      value: linearAt(d, larger, meetLarge),
-      previous: meetSmall,
-    },
-  });
-  if (!(await gate())) return false;
-
-  await ctx.emit({
-    type: 'spacing',
-    payload: {
-      factor: d.factor,
-      marks: [
-        { coefficient: smaller, meeting: meetSmall },
-        { coefficient: base, meeting: meetBase },
-        { coefficient: larger, meeting: meetLarge },
-      ],
-    },
-  });
+  // 기둥 셋이 이미 서 있으므로 잴 것을 다시 적어 보내지 않는다. 몇 배씩 벌어졌는지가
+  // 이 조각의 결론인데, 그것을 상수로 실어 보내면 결론이 그림과 다른 자료를 쓴다.
+  await ctx.emit({ type: 'spacing' });
   if (!(await gate())) return false;
 
   await ctx.emit({ type: 'constant-erased' });

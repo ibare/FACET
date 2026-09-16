@@ -36,7 +36,7 @@ export const verifyVsFindFacet: FacetJson = {
     pt: 'Encontrar um subconjunto cuja soma atinge o alvo exige olhar todos os candidatos; conferir um candidato que lhe entregam basta um olhar.',
   },
   algorithm: 'module:verifyVsFind',
-  projector: 'module:verifyVsFindProjector',
+  scene: 'module:verifyVsFindScene',
   initialData: {
     type: 'verify-vs-find',
     values: [3, 7, 12, 19, 24, 31],
@@ -45,7 +45,7 @@ export const verifyVsFindFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'verify-vs-find-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'label.target': {

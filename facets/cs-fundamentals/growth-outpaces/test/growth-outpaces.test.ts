@@ -8,7 +8,15 @@
 
 import { describe, expect, it } from 'vitest';
 import type { FacetContext, FacetRuntimeEvent } from '@ffacet/core/runtime';
-import { computeRung, growthOutpaces, type GrowthOutpacesData } from '../src/algorithm.js';
+import { computeRung, growthOutpaces, ladderOf, type GrowthOutpacesData } from '../src/algorithm.js';
+import {
+  captionFor,
+  currentRung,
+  growthOutpacesScene,
+  pctOf,
+  topShareOf,
+  type GrowthOutpacesScene,
+} from '../src/scene.js';
 import { growthOutpacesFacet } from '../src/facet.js';
 
 /** 저장소가 번역 번들을 갖춘 열 언어. `messages/*.json` 과 같다. */
@@ -30,10 +38,23 @@ const TABLE = [
 
 const data = growthOutpacesFacet.initialData as unknown as GrowthOutpacesData;
 
-/** projector 가 캡션과 막대에 같은 수를 쓰도록 쓰는 그 셈. */
-const pctOf = (share: number): string => (share * 100).toFixed(1);
-
 type Ctx = FacetContext<GrowthOutpacesData>;
+
+/**
+ * 발신을 장면에 이어 붙인다. 러너가 하는 일과 같다 (`SceneTrack`).
+ *
+ * 화면에 뜨는 수는 이제 payload 가 아니라 **이 장면**에서 나오므로, 대조는 걸음이
+ * 실어 오는 것이 아니라 장면이 내놓는 것을 두고 한다.
+ */
+function track(events: FacetRuntimeEvent[]): GrowthOutpacesScene[] {
+  let scene = growthOutpacesScene.initial(data);
+  const scenes = [scene];
+  for (const event of events) {
+    scene = growthOutpacesScene.reduce(scene, event);
+    scenes.push(scene);
+  }
+  return scenes;
+}
 
 /**
  * 알고리즘을 굴려 발신을 모은다. `advance` 를 몇 번 줄지 정하고, 다 쓰면 취소로
@@ -71,10 +92,6 @@ async function run(advances: number): Promise<FacetRuntimeEvent[]> {
   };
   await growthOutpaces(ctx as unknown as Ctx);
   return events;
-}
-
-function payloadOf(event: FacetRuntimeEvent): Record<string, number> {
-  return event.payload as Record<string, number>;
 }
 
 describe('growth-outpaces 의 선언', () => {
@@ -173,40 +190,33 @@ describe('알고리즘이 내는 걸음', () => {
     ]);
   });
 
-  it('걸음이 실어 보내는 수가 그 자리에서 다시 셈한 것과 같다', async () => {
+  it('걸음을 이어 붙인 장면의 수가 그 자리에서 다시 셈한 것과 같다', async () => {
+    // 옛 검사는 payload 의 수를 재었다. 지금은 걸음이 아무것도 싣지 않고 장면이
+    // `computeRung` 을 부르므로, 같은 뜻을 **화면이 실제로 읽는 자리**에서 잰다.
     const events = await run(0);
-    const rungs = events.filter((e) => e.type !== 'settle');
-    expect(rungs.length).toBe(TABLE.length);
-    rungs.forEach((event, i) => {
-      const want = TABLE[i]!;
-      const p = payloadOf(event);
-      expect({
-        n: p.n,
-        quad: p.quad,
-        lin: p.lin,
-        cons: p.cons,
-        sum: p.sum,
-        pct: pctOf(p.share!),
-        topIndex: p.topIndex,
-      }).toEqual({
-        n: want.n,
-        quad: want.quad,
-        lin: want.lin,
-        cons: want.cons,
-        sum: want.sum,
-        pct: want.pct,
-        topIndex: want.topIndex,
-      });
+    const scenes = track(events);
+    // 첫 장면(걸음 0)은 빈 막대다. 사다리를 오른 걸음만 본다.
+    const climbed = scenes.slice(1, 1 + TABLE.length);
+    expect(climbed.length).toBe(TABLE.length);
+    const got = climbed.map((scene) => {
+      const r = currentRung(scene)!;
+      return {
+        n: r.n,
+        quad: r.quad,
+        lin: r.lin,
+        cons: r.cons,
+        sum: r.sum,
+        pct: pctOf(r.share),
+        topIndex: r.topIndex,
+        tie: r.tie,
+      };
     });
+    expect(got).toEqual(TABLE);
   });
 
-  it('화면 문안을 payload 로 보내지 않는다 (C10)', async () => {
-    const events = await run(0);
-    for (const event of events) {
-      for (const v of Object.values(payloadOf(event))) {
-        expect(typeof v).toBe('number');
-      }
-    }
+  it('payload 를 아예 싣지 않는다 — 다음 사람이 집어 쓸 문을 닫는다', async () => {
+    const events = await run(1);
+    for (const event of events) expect(event.payload).toBeUndefined();
   });
 
   it('선언한 캡션 넷이 고정 데이터에서 모두 한 번은 뜬다', async () => {
@@ -226,5 +236,45 @@ describe('알고리즘이 내는 걸음', () => {
     const withPress = await run(1);
     // 되감기 하나로 끝나면 눌러도 반응이 없는 것으로 읽힌다 (S-piece).
     expect(withPress.slice(auto.length).map((e) => e.type)).toEqual(['rewind', 'begin']);
+  });
+});
+
+describe('장면이 세우는 화면', () => {
+  it('첫 단의 캡션은 가장 큰 항의 몫을 말한다 — n² 의 몫이 아니다', async () => {
+    const [firstClimb] = track(await run(0)).slice(1);
+    const caption = captionFor(firstClimb!);
+    expect(caption?.kind).toBe('begin');
+    const r = currentRung(firstClimb!)!;
+    // n = 1 에서 가장 큰 항은 상수 100 이고 막대의 90.1% 를 쥐고 있다. 옛 projector 는
+    // 같은 자리에 n² 의 몫(0.9%)을 넣어 "가장 큰 항" 이라는 문안과 어긋났다.
+    expect(pctOf(topShareOf(r))).toBe('90.1');
+    expect(pctOf(r.share)).toBe('0.9');
+    expect(caption).toEqual({ kind: 'begin', n: 1, pct: topShareOf(r) });
+  });
+
+  it('다 끝난 화면에 갈림목과 뒤집힘이 남는다 — *결국*이 보이는 자리', async () => {
+    const scenes = track(await run(0));
+    const last = scenes[scenes.length - 1]!;
+    expect(last.settled).toBe(true);
+    // 눈금 여섯이 그대로 남고, 가운데 하나가 갈림목의 표식을 단다.
+    expect(last.rungs).toEqual(['begin', 'rung', 'tie', 'rung', 'rung', 'rung']);
+    // 눈금의 채움색을 정하는 것은 그 단에서 가장 컸던 항이다 — 둘은 상수, 넷은 n².
+    const tops = last.ladder.map((n) => computeRung(data, n).topIndex);
+    expect(tops).toEqual([2, 2, 0, 0, 0, 0]);
+  });
+
+  it('되감기가 자취만 턴다 — 되감은 첫 화면이 처음 화면과 같다', async () => {
+    const events = await run(1);
+    const scenes = track(events);
+    const rewound = scenes[events.indexOf(events.find((e) => e.type === 'rewind')!) + 1]!;
+    expect(rewound).toEqual(growthOutpacesScene.initial(data));
+  });
+
+  it('장면과 algorithm 이 같은 사다리를 걷는다 — 자르는 잣대가 하나다', () => {
+    const scene = growthOutpacesScene.initial(data);
+    expect(scene.ladder).toEqual(ladderOf(data.ladder));
+    expect(scene.ladder).toEqual(data.ladder);
+    // 참조를 쥐면 되짚을 때 이미 굴러간 자료로 바탕을 그린다 (S-scene).
+    expect(scene.ladder).not.toBe(data.ladder);
   });
 });

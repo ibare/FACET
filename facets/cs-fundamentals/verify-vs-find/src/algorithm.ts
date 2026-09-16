@@ -24,15 +24,24 @@
  * 합이 아니므로, 이 데이터(여섯 → 64)에서는 벽에 닿지 않는다.
  *
  * ── 이벤트 (전부 facet 고유. silent 는 없다 — 모두 화면이 바뀌는 걸음이다)
- *   setup            { values: number[]; target: number; candidates: number; answers: number }
- *   verify-candidate { mask: number; picked: number[]; partials: number[];
- *                      sum: number; target: number; ok: boolean }
- *   sweep-block      { from: number; to: number; seen: number; total: number;
- *                      hits: { mask: number; picked: number[]; sum: number }[] }
- *   done             { verifySeen: number; findSeen: number }
+ *   setup            {}
+ *   verify-candidate { mask: number }
+ *   sweep-block      { to: number; found: number[] }
+ *   done             {}
  *   rewind           {}
  *
  * 식별자(target)는 쓰지 않는다. 후보 번호의 정본은 payload 다.
+ *
+ * ── 왜 이렇게 얇은가
+ * 장면이 셀 수 있는 것은 싣지 않는다. 후보의 수(`2^n`)·목표·수 목록은 선언에서
+ * 나오고, "지금까지 몇을 보았나" 는 장면이 자취에서 센다 — 그 수가 화면의 자취와
+ * 다른 출처가 되면 언젠가 갈린다. 마스크를 고른 수·중간 합·합으로 펼치는 일은
+ * 순수 함수 `expandCandidate` 로 내주어 장면이 부른다.
+ *
+ * **싣는 것은 걸음이 내리는 판정뿐이다** — 건네받은 후보가 어느 것인가(`mask`),
+ * 이번 묶음이 어디까지인가(`to`), 그 안에서 답으로 드러난 것이 무엇인가(`found`).
+ * 전수 탐색 자체(`computeVerifyVsFindResult`)는 이 조각의 알고리즘 그 자체라
+ * 장면에 내주지 않는다 — 내주면 장면이 알고리즘을 되풀이하고 발신이 장식이 된다.
  */
 
 import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
@@ -68,7 +77,14 @@ export type VerifyVsFindResult = {
 /** 걸음 수의 상한. 묶음 크기는 이것에서 나온다. */
 const SWEEP_STEPS_MAX = 8;
 
-function candidateAt(values: number[], mask: number): VerifyVsFindCandidate {
+/**
+ * 후보 번호를 고른 수 · 더해 온 자취 · 합으로 펼친다.
+ *
+ * 바탕(수 목록)과 번호만 있으면 나오는 순수 함수라 발신에 실어 보내지 않고
+ * 밖으로 낸다 — 장면이 이것을 부른다. 이 함수만 떼어 내도 이 조각이 말하려는
+ * 바(찾기와 확인의 값 차이)는 남으므로 내주는 쪽이 옳다.
+ */
+export function expandCandidate(values: number[], mask: number): VerifyVsFindCandidate {
   const picked: number[] = [];
   const partials: number[] = [];
   let sum = 0;
@@ -94,12 +110,12 @@ export function computeVerifyVsFindResult(data: VerifyVsFindData): VerifyVsFindR
   const candidates = 2 ** values.length;
   const answers: VerifyVsFindCandidate[] = [];
   for (let mask = 0; mask < candidates; mask += 1) {
-    const c = candidateAt(values, mask);
+    const c = expandCandidate(values, mask);
     if (c.sum === data.target) answers.push(c);
   }
   // 건넬 것이 없으면 수를 전부 고른 후보를 건넨다. 그것도 후보 하나이고,
   // 확인이 하는 일(한 번 더해 본다)은 답이든 아니든 같다.
-  const given = answers[0] ?? candidateAt(values, Math.max(0, candidates - 1));
+  const given = answers[0] ?? expandCandidate(values, Math.max(0, candidates - 1));
   return { candidates, answers, given };
 }
 
@@ -132,49 +148,27 @@ async function runOnce(ctx: ReactiveContext<VerifyVsFindData>, gate: Gate): Prom
   if (values.length === 0) return true;
   const result = computeVerifyVsFindResult(ctx.data);
 
-  await ctx.emit({
-    type: 'setup',
-    payload: {
-      values: [...values],
-      target: ctx.data.target,
-      candidates: result.candidates,
-      answers: result.answers.length,
-    },
-  });
+  // 수 목록도 목표도 싣지 않는다 — 선언에 있는 것이라 장면이 그대로 읽는다.
+  await ctx.emit({ type: 'setup' });
   if (!(await gate())) return false;
 
-  const given = result.given;
-  await ctx.emit({
-    type: 'verify-candidate',
-    payload: {
-      mask: given.mask,
-      picked: [...given.picked],
-      partials: [...given.partials],
-      sum: given.sum,
-      target: ctx.data.target,
-      ok: given.sum === ctx.data.target,
-    },
-  });
+  // 건네받는 후보가 어느 것인가는 걸음의 판정이다. 고른 수·중간 합·합은
+  // `expandCandidate` 가 번호에서 펼치므로 싣지 않는다.
+  await ctx.emit({ type: 'verify-candidate', payload: { mask: result.given.mask } });
   if (!(await gate())) return false;
 
   // 묶음 크기는 걸음 수 상한에서 나온다. 후보가 적으면 한 묶음으로 끝난다.
   const block = Math.max(1, Math.ceil(result.candidates / SWEEP_STEPS_MAX));
   for (let from = 0; from < result.candidates; from += block) {
     const to = Math.min(result.candidates, from + block);
-    const hits = result.answers
-      .filter((a) => a.mask >= from && a.mask < to)
-      .map((a) => ({ mask: a.mask, picked: [...a.picked], sum: a.sum }));
-    await ctx.emit({
-      type: 'sweep-block',
-      payload: { from, to, seen: to, total: result.candidates, hits },
-    });
+    const found = result.answers.filter((a) => a.mask >= from && a.mask < to).map((a) => a.mask);
+    // `from` 은 싣지 않는다 — 묶음은 차례로 오므로 앞 걸음의 `to` 가 곧 이번 `from` 이다.
+    await ctx.emit({ type: 'sweep-block', payload: { to, found } });
     if (!(await gate())) return false;
   }
 
-  await ctx.emit({
-    type: 'done',
-    payload: { verifySeen: 1, findSeen: result.candidates },
-  });
+  // 두 쪽이 몇을 보았는지는 화면의 자취가 센다. 여기서 세어 실으면 출처가 둘이 된다.
+  await ctx.emit({ type: 'done' });
   return true;
 }
 
