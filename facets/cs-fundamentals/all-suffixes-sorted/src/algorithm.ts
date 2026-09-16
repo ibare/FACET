@@ -12,14 +12,14 @@
  *   align-left  꼬리들의 왼쪽 끝을 맞춘다 — 서로 견줄 수 있는 꼴로.
  *               payload 없음.
  *   take-place  사전 순으로 다음 차례인 꼬리가 줄의 제 자리로 건너간다.
- *               payload { from: number; rank: number; tail: string }
+ *               payload { from: number }
  *                 from  원래 자리 (꼬리가 시작하는 칸)
- *                 rank  줄에서 선 자리
- *                 tail  그 꼬리의 글자들
+ *               줄에서 선 자리도 꼬리의 글자들도 싣지 않는다 — 앞의 것은 지금까지
+ *               앉은 수이고 뒤의 것은 바탕 글을 `from` 에서 자른 것이라 장면이
+ *               셈한다. 걸음이 말하는 것은 다음 차례가 어느 꼬리인가 하나다.
  *   cluster     앞머리가 같은 꼬리들이 이룬 구간을 짚는다.
- *               payload { ranks: number[]; prefix: string }
- *                 ranks  그 구간에 속한 줄 자리들
- *                 prefix 그들이 함께 가진 앞머리
+ *               payload 없음 — 구간은 줄에서 나온다. 장면이 `largestSharedHeadRun`
+ *               을 제 줄에 대고 셈하므로, 그림과 결론이 같은 자료를 쓴다.
  *   rewind      줄 세우기 전으로 되감는다. 한 걸음씩 다시 볼 때만 발신한다.
  *               payload 없음.
  *
@@ -68,8 +68,12 @@ export function computeAllSuffixesSortedResult(data: AllSuffixesSortedData): num
 /**
  * 줄 세우고 나면 앞머리가 같은 꼬리는 반드시 이웃한다. 그렇게 생긴 덩어리 중
  * 가장 큰 것을 고른다 — 줄 세우기의 값어치를 가장 잘 보이는 구간이다.
+ *
+ * 줄 세우기 자체가 아니라 **줄 세운 결과를 읽는 규칙**이라 내준다. 이 함수를 떼어
+ * 내도 꼬리들이 줄 서는 것은 그대로 남는다. 장면이 제 줄에 대고 이것을 부르므로
+ * 화면과 결론이 같은 자료를 쓴다 (프로토콜 2-4 절).
  */
-function largestFirstLetterRun(sorted: readonly Tail[]): { ranks: number[]; prefix: string } {
+export function largestSharedHeadRun(sorted: readonly Tail[]): { ranks: number[]; prefix: string } {
   let best: number[] = [];
   let bestHead = '';
   let run: number[] = [];
@@ -101,7 +105,6 @@ export const allSuffixesSortedAlgorithm = async (
   const stepMs = typeof ctx.data.stepMs === 'number' ? ctx.data.stepMs : DEFAULT_STEP_MS;
 
   const sorted = sortTails(buildTails(text));
-  const cluster = largestFirstLetterRun(sorted);
 
   /** 한 번의 완주. auto 면 스스로 나아가고, 아니면 한 걸음씩 기다린다. */
   const walk = async (auto: boolean): Promise<boolean> => {
@@ -125,19 +128,13 @@ export const allSuffixesSortedAlgorithm = async (
     if (!(await gate())) return false;
     await ctx.emit({ type: 'align-left' });
 
-    for (const [rank, tail] of sorted.entries()) {
+    for (const tail of sorted) {
       if (!(await gate())) return false;
-      await ctx.emit({
-        type: 'take-place',
-        payload: { from: tail.from, rank, tail: tail.text },
-      });
+      await ctx.emit({ type: 'take-place', payload: { from: tail.from } });
     }
 
     if (!(await gate())) return false;
-    await ctx.emit({
-      type: 'cluster',
-      payload: { ranks: cluster.ranks, prefix: cluster.prefix },
-    });
+    await ctx.emit({ type: 'cluster' });
     return true;
   };
 

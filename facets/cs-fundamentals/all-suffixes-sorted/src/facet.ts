@@ -34,7 +34,7 @@ export const allSuffixesSortedFacet: FacetJson = {
     pt: 'Ordene todos os sufixos de um texto e os que começam igual ficam lado a lado.',
   },
   algorithm: 'module:allSuffixesSorted',
-  projector: 'module:allSuffixesSortedProjector',
+  scene: 'module:allSuffixesSortedScene',
   initialData: {
     type: 'all-suffixes-sorted',
     text: 'banana',
@@ -42,7 +42,7 @@ export const allSuffixesSortedFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'all-suffixes-sorted-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'label.byPosition': {

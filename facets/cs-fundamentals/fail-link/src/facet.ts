@@ -6,6 +6,9 @@
  *
  * 선언에 있는 것은 패턴 목록과 텍스트와 걸음 간격뿐이다. 나무 모양·실패 링크·
  * 자취는 algorithm 이 셈하고, 좌표는 stage 가 캔버스에서 역산한다.
+ *
+ * 화면은 걸음마다의 장면에서 만들어진다 (`scene.ts`) — 어느 걸음으로 끌어도 같은
+ * 그림이 서므로 띠(`pieceScrub`)를 단다 (S-scene · S-piece).
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -37,7 +40,7 @@ export const failLinkFacet: FacetJson = {
     pt: 'Ao falhar, desliza para a sobreposição, não para o início.',
   },
   algorithm: 'module:failLink',
-  projector: 'module:failLinkProjector',
+  scene: 'module:failLinkScene',
   initialData: {
     type: 'fail-link',
     patterns: ['he', 'she', 'his', 'hers'],
@@ -46,7 +49,7 @@ export const failLinkFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'fail-link-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.insert': {

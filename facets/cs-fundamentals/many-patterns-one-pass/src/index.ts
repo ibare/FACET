@@ -7,12 +7,12 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { manyPatternsOnePassAlgorithm, type ManyPatternsOnePassData } from './algorithm.js';
-import { manyPatternsOnePassProjector } from './projector.js';
+import { manyPatternsOnePassScene } from './scene.js';
 import { manyPatternsOnePassIRs } from './irs.js';
 import { manyPatternsOnePassStageView } from './many-patterns-one-pass-stage.js';
 import { manyPatternsOnePassFacet } from './facet.js';
@@ -20,7 +20,7 @@ import { manyPatternsOnePassDescription } from './description.js';
 
 export {
   manyPatternsOnePassAlgorithm,
-  manyPatternsOnePassProjector,
+  manyPatternsOnePassScene,
   manyPatternsOnePassIRs,
   manyPatternsOnePassStageView,
   manyPatternsOnePassFacet,
@@ -34,7 +34,7 @@ export function registerManyPatternsOnePass(): void {
     manyPatternsOnePassAlgorithm,
     { mechanismKind: 'reactive' },
   );
-  registerProjector('manyPatternsOnePassProjector', manyPatternsOnePassProjector);
+  registerScenePlan('manyPatternsOnePassScene', manyPatternsOnePassScene);
   for (const ir of manyPatternsOnePassIRs) registerIR(ir.id, ir);
   registerView('many-patterns-one-pass-stage', manyPatternsOnePassStageView);
   registerFacets([manyPatternsOnePassFacet]);
