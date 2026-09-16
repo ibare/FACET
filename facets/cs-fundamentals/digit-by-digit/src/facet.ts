@@ -36,7 +36,7 @@ export const digitByDigitFacet: FacetJson = {
     pt: 'Um dígito de cada vez, a começar pelas unidades — e toda a fila acaba ordenada.',
   },
   algorithm: 'module:digitByDigit',
-  projector: 'module:digitByDigitProjector',
+  scene: 'module:digitByDigitScene',
   initialData: {
     type: 'digit-by-digit',
     values: [170, 45, 75, 90],
@@ -45,7 +45,7 @@ export const digitByDigitFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'digit-by-digit-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.start': {

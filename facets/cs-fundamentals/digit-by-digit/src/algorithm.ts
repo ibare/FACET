@@ -6,23 +6,23 @@
  * 마지막 자리를 마쳤을 때 줄이 다 서 있다.
  *
  * ── 식별자
- * payload 의 `ids` 는 **초기 배열에서의 자리**(0..n-1)다. 라운드가 바뀌어 줄
+ * 수 하나는 **초기 배열에서의 자리**(0..n-1)로 가리킨다. 라운드가 바뀌어 줄
  * 순서가 흩어져도 같은 수는 같은 id 를 지킨다. `target` 은 쓰지 않는다 — 이
  * 조각의 걸음은 줄 하나를 통째로 옮기는 일이라 낱개로 가리킬 대상이 없다.
  *
  * ── 이벤트 (전부 이 facet 고유 확장, silent 아님)
- * `focus-place`  { round, total, place, column }
- *     보는 자리가 옮겨 간다. place 는 자리값(1 · 10 · 100), column 은 왼쪽부터
- *     센 글자 칸 번호. 라운드마다 오른쪽에서 왼쪽으로 한 칸 옮겨 간다.
- * `scatter`      { round, place, ids, bins, slots }
- *     줄 전체가 통으로 내려간다. ids[k] 가 bins[k] 번 통의 slots[k] 번째 칸에
- *     놓인다. ids 는 **내려가기 직전 줄 순서**라 같은 통에 들어가는 차례가
- *     곧 안정성이다.
- * `gather`       { round, place, column, ids, digits }
- *     통을 0 부터 9 까지 읽어 다시 줄로 올린다. ids 는 새 줄 순서, digits[k] 는
- *     그 수의 이번 라운드 자릿수 (오름차순임을 화면이 보인다).
- * `done`         { rounds }
- * `rewind`       {}  — advance 로 처음부터 되짚을 때 화면을 초기 상태로 되돌린다.
+ * `focus-place`  {}  보는 자리가 오른쪽에서 왼쪽으로 한 칸 옮겨 간다.
+ * `scatter`      {}  줄 전체가 통으로 내려간다.
+ * `gather`       {}  통을 0 부터 9 까지 읽어 다시 줄로 올린다.
+ * `done`         {}  마지막 자리까지 마쳤다.
+ * `rewind`       {}  advance 로 처음부터 되짚을 때 화면을 초기 상태로 되돌린다.
+ *
+ * ── 걸음은 아무것도 싣지 않는다
+ * 몇째 라운드인지는 **발신이 오는 순서가 이미 말한다.** 어느 통으로 가는지도,
+ * 통을 이어 붙인 다음 줄도, 자리값과 글자 칸도 전부 바탕 자료에 순수 함수를
+ * 먹이면 나오는 것이다 — 그래서 그 함수(`computeDigitByDigitRounds`)를 내주고
+ * 장면이 그것을 부른다. payload 로 실으면 같은 수를 장면과 여기 두 자리에서
+ * 세게 되어 언젠가 갈린다.
  *
  * ── 메트릭
  * 없다. 조각은 셀 것이 없다 (S-piece).
@@ -51,8 +51,6 @@ export type DigitRound = {
   scatter: DigitPlacement[];
   /** 라운드 뒤의 줄 순서 (id). */
   order: number[];
-  /** order 와 짝 — 그 수의 이번 라운드 자릿수. */
-  digits: number[];
 };
 
 /** 가장 긴 수의 자릿수. 라운드 수이기도 하다. */
@@ -98,13 +96,7 @@ export function computeDigitByDigitRounds(values: number[]): DigitRound[] {
     const next: number[] = [];
     for (const bucket of buckets) for (const id of bucket) next.push(id);
 
-    rounds.push({
-      place,
-      column: width - 1 - r,
-      scatter,
-      order: next,
-      digits: next.map((id) => digitAt(values[id] ?? 0, place)),
-    });
+    rounds.push({ place, column: width - 1 - r, scatter, order: next });
     order = next;
   }
   return rounds;
@@ -127,47 +119,18 @@ export async function digitByDigit(ctx: FacetContext<DigitByDigitData>): Promise
 
   const steps: Array<() => Promise<void>> = [];
   for (let r = 0; r < rounds.length; r += 1) {
-    const round = rounds[r];
-    if (!round) continue;
-    const roundNo = r + 1;
     steps.push(async () => {
-      await rctx.emit({
-        type: 'focus-place',
-        payload: {
-          round: roundNo,
-          total: rounds.length,
-          place: round.place,
-          column: round.column,
-        },
-      });
+      await rctx.emit({ type: 'focus-place', payload: {} });
     });
     steps.push(async () => {
-      await rctx.emit({
-        type: 'scatter',
-        payload: {
-          round: roundNo,
-          place: round.place,
-          ids: round.scatter.map((p) => p.id),
-          bins: round.scatter.map((p) => p.bin),
-          slots: round.scatter.map((p) => p.slot),
-        },
-      });
+      await rctx.emit({ type: 'scatter', payload: {} });
     });
     steps.push(async () => {
-      await rctx.emit({
-        type: 'gather',
-        payload: {
-          round: roundNo,
-          place: round.place,
-          column: round.column,
-          ids: round.order,
-          digits: round.digits,
-        },
-      });
+      await rctx.emit({ type: 'gather', payload: {} });
     });
   }
   steps.push(async () => {
-    await rctx.emit({ type: 'done', payload: { rounds: rounds.length } });
+    await rctx.emit({ type: 'done', payload: {} });
   });
 
   // 자동 재생 — 누르지 않아도 화면이 할 말을 마친다.

@@ -6,18 +6,23 @@
  * 이 조각은 정렬 과정을 보이지 않는다. 보이는 것은 **같은 입력에서 갈라져 나온
  * 두 결과**이고, 그 둘이 값으로는 구별되지 않으며 오직 "어디서 왔는가" 로만
  * 어긋난다는 사실이다. 그래서 algorithm 은 견줌·맞바꿈을 걸음마다 발신하지 않고,
- * 두 정렬의 **결과 순서**를 각각 셈해 한 걸음씩 내놓는다.
+ * 논증의 마디만 한 걸음씩 내놓는다.
  *
  * ── 이벤트 목록 (전부 facet 고유 확장, 전부 step boundary — silent 없음)
  *
- * | type            | payload                                | 뜻 |
- * |-----------------|----------------------------------------|----|
- * | `sort-stable`   | `{ order: string[] }`                  | 안정 정렬 결과의 이름표 차례. 항목이 입력 줄에서 위 결과 줄로 옮겨 앉는다 |
- * | `sort-selection`| `{ order: string[] }`                  | 선택 정렬 결과의 이름표 차례. 아래 결과 줄로 옮겨 앉는다 |
- * | `tags-hidden`   | 없음                                    | 두 결과 줄의 이름표를 접는다. 값만 남으면 두 줄이 똑같이 읽힌다 |
- * | `link-origin`   | 없음                                    | 이름표를 도로 펴고 같은 항목끼리 실을 잇는다 |
- * | `mark-mismatch` | `{ labels: string[]; value: number }`  | 두 결과에서 자리가 어긋난 항목들과 그들의 공통 값 |
- * | `rewind`        | 없음                                    | 처음 상태로 되감는다 (advance 로 되짚어 볼 때) |
+ * **여섯 다 payload 가 없다.** 두 정렬의 결과 차례는 바탕 자료에 순수 함수를 먹이면
+ * 나오는 값이라 아래 `stableResultOrder` · `selectionResultOrder` 를 **내주고 장면이
+ * 부른다**. 어긋난 짝과 그 값은 두 차례를 견주면 나오므로 **장면이 센다**. 실어
+ * 보내면 화면의 구조와 다른 출처가 되어 언젠가 갈린다 (프로토콜 4절).
+ *
+ * | type            | payload | 뜻 |
+ * |-----------------|---------|----|
+ * | `sort-stable`   | 없음    | 안정 정렬 결과가 갈라져 나온다. 항목이 입력 줄에서 위 결과 줄로 옮겨 앉는다 |
+ * | `sort-selection`| 없음    | 선택 정렬 결과가 갈라져 나온다. 아래 결과 줄로 옮겨 앉는다 |
+ * | `tags-hidden`   | 없음    | 두 결과 줄의 이름표를 접는다. 값만 남으면 두 줄이 똑같이 읽힌다 |
+ * | `link-origin`   | 없음    | 이름표를 도로 펴고 같은 항목끼리 실을 잇는다 |
+ * | `mark-mismatch` | 없음    | 두 결과에서 자리가 어긋난 짝을 짚는다 |
+ * | `rewind`        | 없음    | 처음 상태로 되감는다 (advance 로 되짚어 볼 때) |
  *
  * ── 진행
  *
@@ -46,10 +51,6 @@ export type SortStabilityData = {
 const FALLBACK_STEP_MS = 900;
 
 /**
- * 안정된 결과. 값이 같으면 입력에서의 자리를 그대로 tiebreak 로 쓴다 —
- * 이것이 "안정" 의 정의 자체다.
- */
-/**
  * `advance` 가 올 때까지 기다린다. 다른 입력은 흘려보낸다 — 컨트롤이 replay 와
  * advance 뿐이라 지금은 무해하지만, 걸음을 옮기는 것은 advance 하나여야 한다.
  * 취소되면 waitForInput 이 reject 한다.
@@ -62,6 +63,12 @@ async function waitForAdvance(rc: ReactiveContext<SortStabilityData>): Promise<v
   }
 }
 
+/**
+ * 안정된 결과. 값이 같으면 입력에서의 자리를 그대로 tiebreak 로 쓴다 —
+ * 이것이 "안정" 의 정의 자체다.
+ *
+ * 장면이 부른다. 걸음에 실어 보내지 않고 함수를 내주는 쪽이다 (프로토콜 4절 B 갈래).
+ */
 export function stableResultOrder(items: readonly SortStabilityItem[]): string[] {
   return items
     .map((item, index) => ({ item, index }))
@@ -72,6 +79,8 @@ export function stableResultOrder(items: readonly SortStabilityItem[]): string[]
 /**
  * 선택 정렬의 결과. 남은 구간의 최솟값을 찾아 맨 앞과 맞바꾼다.
  * 맞바꿈이 멀리 있는 항목을 끌어오므로 값이 같은 둘의 앞뒤가 뒤집힐 수 있다.
+ *
+ * 위와 같이 장면이 부른다.
  */
 export function selectionResultOrder(items: readonly SortStabilityItem[]): string[] {
   const work = items.slice();
@@ -89,29 +98,9 @@ export function selectionResultOrder(items: readonly SortStabilityItem[]): strin
   return work.map((item) => item.label);
 }
 
-/** 두 결과에서 자리가 어긋난 항목의 이름표. 안정된 쪽의 차례로 모은다. */
-function mismatchedLabels(stable: readonly string[], other: readonly string[]): string[] {
-  const out: string[] = [];
-  for (let i = 0; i < stable.length; i += 1) {
-    if (stable[i] !== other[i]) out.push(stable[i]);
-  }
-  return out;
-}
-
-function valueOf(items: readonly SortStabilityItem[], label: string): number {
-  const found = items.find((item) => item.label === label);
-  return found ? found.value : 0;
-}
-
 export const sortStability = async (ctx: FacetContext<SortStabilityData>): Promise<void> => {
   const rc = ctx as ReactiveContext<SortStabilityData>;
-  const items = ctx.data.items;
   const stepMs = typeof ctx.data.stepMs === 'number' ? ctx.data.stepMs : FALLBACK_STEP_MS;
-
-  const stable = stableResultOrder(items);
-  const selection = selectionResultOrder(items);
-  const mismatch = mismatchedLabels(stable, selection);
-  const mismatchValue = mismatch.length > 0 ? valueOf(items, mismatch[0]) : 0;
 
   /**
    * 걸음 사이의 문. 자동 재생이면 stepMs 만큼 쉬고, 되짚어 보는 중이면
@@ -132,10 +121,10 @@ export const sortStability = async (ctx: FacetContext<SortStabilityData>): Promi
 
   const playOnce = async (): Promise<boolean> => {
     if (!(await gate())) return false;
-    await ctx.emit({ type: 'sort-stable', payload: { order: stable } });
+    await ctx.emit({ type: 'sort-stable' });
 
     if (!(await gate())) return false;
-    await ctx.emit({ type: 'sort-selection', payload: { order: selection } });
+    await ctx.emit({ type: 'sort-selection' });
 
     if (!(await gate())) return false;
     await ctx.emit({ type: 'tags-hidden' });
@@ -144,7 +133,7 @@ export const sortStability = async (ctx: FacetContext<SortStabilityData>): Promi
     await ctx.emit({ type: 'link-origin' });
 
     if (!(await gate())) return false;
-    await ctx.emit({ type: 'mark-mismatch', payload: { labels: mismatch, value: mismatchValue } });
+    await ctx.emit({ type: 'mark-mismatch' });
 
     return !rc.cancelled;
   };
