@@ -44,7 +44,7 @@ facet id  facet:<camelCase>
 ## MUST NOT
 
 - **다른 조각의 구현 파일을 열지 않는다.** `facets/**/*-stage.ts`,
-  `facets/**/projector.ts`, `facets/**/algorithm.ts` 를 읽지 않는다. 계약은 규칙
+  `facets/**/scene.ts`, `facets/**/algorithm.ts` 를 읽지 않는다. 계약은 규칙
   문서에 있고, 형태는 사양의 동사에서 나온다. 여는 순간 이 에이전트의 존재 이유가
   사라진다.
   - 예외: 타입 정의(`packages/core/**`)와 공개 API 는 읽어도 된다.
@@ -56,13 +56,15 @@ facet id  facet:<camelCase>
 
 ## 산출
 
-`facets/<domain>/<name>/src/` 아래 다섯 파일과, 데모 사이트 설명 글 하나.
+`facets/<domain>/<name>/src/` 아래 다섯 파일 + stage view 하나, 그리고 데모 사이트
+설명 글 하나.
 
 ```
 algorithm.ts     걸음마다 리터럴 emit (C2). reactive + ctx.sleep(stepMs)
-projector.ts     payload 를 좁혀 stage 로 (C9)
-<name>-stage.ts  그림. PIECE_CANVAS_W, 세로는 내용이 정한다
-facet.ts         @piece 표식, mechanismKind: 'reactive', controls: [CONTROL.replay, CONTROL.advance]
+scene.ts         이벤트를 장면 상태로 잇는 ScenePlan (S-scene). projector.ts 는 두지 않는다
+<name>-stage.ts  그림. PIECE_CANVAS_W, 세로는 내용이 정한다. render 가 전량 세운다
+irs.ts           빈 배열. 조각은 코드 패널을 두지 않지만 파일 구성은 지킨다 (S-facet)
+facet.ts         @piece 표식, mechanismKind: 'reactive', controls: CONTROL_SET.pieceScrub
 index.ts         등록 진입점 (호스트가 나중에 부른다)
 ```
 

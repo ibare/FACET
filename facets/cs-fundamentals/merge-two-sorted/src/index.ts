@@ -2,7 +2,7 @@
  * @ffacet/algorithm-merge-two-sorted — 병합 조각 번들.
  *
  * 정렬된 두 줄의 맨 앞만 견주고 이긴 쪽이 아래 결과줄로 내려간다. algorithm /
- * 장면 설계 / IR(빈 배열) / facet JSON / stage view 을 함께 묶고
+ * 장면 설계 / IR(빈 배열) / facet JSON / stage view 를 함께 묶고
  * 등록 헬퍼를 제공한다.
  *
  * 화면은 장면(Scene) 방식이다 — projector 대신 `scene.ts` 의 `ScenePlan` 을 등록하고,

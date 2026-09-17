@@ -48,15 +48,16 @@
 facet id  facet:merkleTree
 view id   merkle-tree-stage
 걸음 간격  stepMs 700
-산출      package.json · tsconfig.json · src/{algorithm,projector,<view id>,
-          facet,description,irs,index}.ts  (일곱 파일)
+산출      package.json · tsconfig.json · src/{algorithm,scene,<view id>,
+          facet,irs,index}.ts  (여섯 파일) +
+          apps/playground/src/descriptions/<facet id 에서 facet: 을 뗀 것>.md
 ```
 
 ### 첫 배치에서 사양이 모자랐던 것
 
 열 중 열이 같은 자리를 지적했거나 스스로 메웠다. 다음 배치부터는 사양에 넣는다.
 
-- **`irs.ts` 를 산출 목록에서 빠뜨렸다.** S-facet MUST 의 6파일 구성에 들어 있어
+- **`irs.ts` 를 산출 목록에서 빠뜨렸다.** S-facet MUST 의 파일 구성에 들어 있어
   열 전부가 스스로 넣었다. 조각은 코드 패널이 없으니 빈 배열이다.
 - **`stepMs` 를 주지 않았다.** 열이 460~1200 사이에서 제각각 정했다. 걸음 간격은
   읽을 시간을 주는 저작 결정이라 호스트가 확정해야 한다.

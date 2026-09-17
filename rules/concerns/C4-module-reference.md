@@ -13,7 +13,7 @@ last_verified: 2026-09-05
 - `FacetJson.algorithm: 'module:<name>'` / `projector: 'module:<name>'` 작성
 - `FacetJson.blocks.<ref>.type === 'code-view'` 의 `ir: 'ir:<id>'` / `transpiler: 'transpiler:<id>'` 작성
 - `FacetJson.id: 'facet:<name>'` 작성
-- 데모 설명 글(`apps/playground/src/descriptions/<facet id>.md`) 본문에 `{facet:<id>}` DSL 토큰 삽입
+- 데모 설명 글(`apps/playground/src/descriptions/<이름>.md`, `<이름>` 은 facet id 에서 `facet:` 을 뗀 것) 본문에 `{facet:<id>}` DSL 토큰 삽입
 - `registerAlgorithm/Projector/IR/Transpiler/Facet` 호출
 
 ## MUST

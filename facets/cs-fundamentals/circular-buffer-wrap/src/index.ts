@@ -1,7 +1,7 @@
 /**
  * @ffacet/algorithm-circular-buffer-wrap — 조각(piece) facet 번들.
  *
- * 끝에 닿으면 앞으로 돌아온다. algorithm / 장면 설계 / stage view / IR / facet JSON /
+ * 끝에 닿으면 앞으로 돌아온다. algorithm / 장면 설계 / stage view / IR / facet JSON 을
  * 함께 묶고 등록 헬퍼를 제공한다. 등록 호출은 호스트 앱의 책임이다.
  */
 
