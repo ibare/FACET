@@ -843,6 +843,68 @@ const t = params.t ?? makeTranslator(params.locale);
   세던 탓에 scene 조각을 "발신 없음" 으로 잘못 잡았다. 이미 고쳤지만, 다른 검사에서
   비슷한 것이 나올 수 있다.
 
+### 보안 여덟과 벡터 검색 여섯이 새로 물어 온 것
+
+- **★ 그림이 주장을 그리지 않고 *되풀이*하고 있는가.** 이 열넷에서 넷 나왔고,
+  앞 도메인에서도 둘 나왔다. **조각이 말하려는 성질을 상수가 대신 만들어 주면,
+  자료를 바꿔도 그림이 같은 말을 해서 주장이 거짓이 되어도 모른다.**
+
+  | 조각 | 상수 | 무엇을 동어반복했나 |
+  | --- | --- | --- |
+  | `hash-fixed-length` | `BOX_W = 200` | "출력은 늘 같은 길이" |
+  | `merkle-tree` | `LEAF_CX = [90,230,390,530]` | "부모가 아이들 위에 선다" |
+  | `hash-chain` | `total = 4 * BLOCK_W + …` | 칸의 개수 |
+  | `signature-on-hash` | `scale = BAR_MAX_W / documentBytes` | "문서가 훨씬 크다" |
+  | `probe-a-few-cells` | `Y_SPAN = 14` · `DATA_CX = 6` | 점이 놓인 범위 |
+  | `compare-with-all` | (아래) | "감당 못 한다" |
+
+  마지막 것이 가장 나쁘다 — 척도가 **문서 막대에서** 나와 문서는 자료가 무엇이든
+  언제나 430px 였고 해시·서명은 최소 폭으로 깎여 셋 다 사실상 상수였다.
+  **실제 비율 1 : 115,625 를 그림은 1 : 72 로 말하고 있었다.**
+  **잣대: 그 상수를 지우고 자료에서 셈하게 했을 때 그림이 달라지는가.**
+  안 달라지면 자료가 그래서였고, 달라지면 코드가 그렇게 그려서였다.
+- **주석이 화면을 거짓으로 서술할 수 있다.** 둘 나왔다 — `signature-on-hash` 의
+  stage 주석은 "문서 막대가 화면 폭을 넘어간다, 잘림이 곧 얼마든지 커진다는
+  표시" 라 적었는데 `150 + 430 = 580` 이라 **넘어가지 않았고**, `compare-with-all`
+  은 "화면을 벗어나는 마지막 줄만 `danger`" 라 적었는데 `column` 을 만들 때
+  `itemComparing` 으로 칠하고 **끝내 바꾸지 않았다.** **머리 주석이 말하는 것을
+  화면에서 실제로 세어 보라.**
+- **`description.ts` 가 표를 따로 적고 있으면 화면이 그 말을 못 한다는 증거다.**
+  `recall-speed-tradeoff` 는 산 값과 얻은 값의 짝이 화면에 함께 서지 않아
+  설명글이 그 표를 대신 적고 있었다. `coarse-then-fine`·`neighbors-linked-ahead`
+  도 description 이 적어 둔 수("열한 점을 보게 된다")가 **이행 뒤에야 화면에서
+  세어졌다.** 글이 대신 말하는 것이 있으면 그 자리를 의심하라.
+- **`captionBase` · `note` 죽은 요소** — security **여덟 모두**에서 나왔다.
+  `setBaseCaption`/`setNote` 를 projector 가 한 번도 안 불러 영영 빈 글자였다.
+  S-piece 가 상시 캡션과 화면 각주를 **둘 다 MUST NOT** 으로 막으므로 되살리지
+  말고 걷어내고, 전제는 `description.ts` 로 옮긴다. `signature-on-hash` 의
+  `note` 는 하필 "최소 폭 눈속임" 을 밝힌다던 각주였다.
+- **되짚으면 주장이 통째로 뒤집히는 조각이 있다.** `probe-a-few-cells` 는 견준
+  점이 오직 `fill` 누적에만 있어 **맺음 걸음으로 곧바로 뛰면 스물넷이 전부
+  "손대지 않은 점"** 으로 섰다 — 캡션은 "견준 점: 12" 라는데 그림은 0 을 말했다.
+  **부재로만 존재하는 형편**(아무도 안 칠한 것 = 손 안 댄 것)을 찾아라.
+- **자기 글자를 도로 읽어 이어 붙이는 자리가 또 나왔다** (함정 9). 둘이다 —
+  `occupant.textContent = \`${occupant.textContent} ${input}\`` 는 같은 걸음을
+  두 번 그리면 `aa ag ag` 가 되고, `trailD` 는 SVG 경로 문자열이 자취 그 자체라
+  `const base = trailD === '' ? … : trailD` 로 도막을 두 벌 쌓았다.
+  **되짚기가 없으면 영영 안 보이는 결함이다.**
+- **"옳은 걱정, 틀린 해법" 을 알아보라.** `coarse-then-fine` 의 옛 코드는 마지막
+  걸음에서 판을 통째로 비웠는데, 까닭은 *"화면이 스물둘인데 캡션은 열다섯이라
+  말한다"* 였다 — **걱정은 옳았으나 해법이 지우기여서 결론(여덟 대 열다섯)을
+  잃었다.** 답은 **어휘를 가르는 것**이다(채움 여덟 ↔ 고리 열다섯).
+- **견줄 것을 지우면서 견줌의 결론을 말하지 마라.** `angle-not-length` 는 이긴
+  하나만 남기고 나머지 부채꼴·현을 지웠는데, 조각의 주장이 "두 줄이 어긋난다"
+  라 **두 자가 나란히 읽혀야 성립한다.**
+- **전수 검사의 문턱이 `stepMs` 가 큰 조각을 잘못 잴 수 있다.** `scrub-replay` 는
+  발신이 1100ms 멎으면 완주로 보는데 `hash-integrity-check` 의 `stepMs` 가
+  1500 이라 **둘만 받고 끝났다고 판정**하고는 되짚는 동안 algorithm 이 나머지를
+  쏘아 화면을 오염시켰다. 전수 검사가 한 조각만 집어 낼 때 **그 조각의 사정이
+  계측기의 가정을 깨는지** 먼저 보라.
+- **④ 의 grep 에 `dataset.*` 을 반드시 넣어라.** 호스트가 `angle-not-length` 의
+  ④ 를 0 건으로 넘겼는데 실제로는 **8 건**이었다 — `ext.dataset.fx` 에 끝점을
+  적어 두고 꺼내 썼다. 이 문서 자체가 그 함정을 적어 두고도 실측 grep 이 그
+  패턴을 안 보고 있었다.
+
 ### 머신러닝 기초 스물셋이 새로 물어 온 것
 
 - **④ 의 grep 은 `node.x` 꼴을 못 잡는다.** 보간 루프가 **프레임마다 제자리에서
@@ -1031,7 +1093,7 @@ grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 나온다. 실제로 두 번 걸렸고 한 번은 커밋을 amend 로 고쳤다 — 배치를 닫는 시점에는
 형제 배치가 이미 `facet.ts` 를 고쳐 놓았기 때문이다.
 
-2026-09-17 기준 **167 / 181**.
+2026-09-17 기준 **181 / 181 — 이행이 끝났다.**
 
 옮긴 배치는 셋이다. 셋 다 **흔들림 0 · 왕복어긋남 0** 으로 닫았다.
 
@@ -1071,6 +1133,9 @@ grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 | 머신러닝 · 숲과 마진 다섯 | 2026-09-17 | `many-trees-vote` · `bagging-sample` · `widest-margin` · `support-vectors-only` · `kernel-lifts` |
 | 머신러닝 · 군집과 밀도 여섯 | 2026-09-17 | `assign-then-move` · `k-must-be-given` · `merge-nearest-pair` · `dendrogram-cut` · `dense-neighborhood` · `noise-left-out` |
 | 머신러닝 · 차원 축소 넷 | 2026-09-17 | `direction-of-most-spread` · `project-and-lose` · `keep-neighbors-close` · `global-and-local` |
+| 보안 · 해시의 성질 넷 | 2026-09-17 | `hash-fixed-length` · `hash-salt` · `pigeonhole-collision` · `hash-integrity-check` |
+| 보안 · 해시 구조와 서명 넷 | 2026-09-17 | `hash-chain` · `merkle-tree` · `signature-on-hash` · `signature-key-direction` |
+| 벡터 검색 여섯 | 2026-09-17 | `compare-with-all` · `angle-not-length` · `recall-speed-tradeoff` · `coarse-then-fine` · `probe-a-few-cells` · `neighbors-linked-ahead` |
 
 **자료 구조 42 · 확률적 자료구조 10 · 알고리즘 27 이 닫혔다.** 확률적 열 중 스킵
 리스트 둘(`skip-a-layer` · `coin-flip-height`)은 자료 구조 배치에 섞여 이미 옮겨져
@@ -1095,7 +1160,16 @@ grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 **카탈로그 48 vs 구현 23** 으로 갈렸다 — 신경망 기초 6 · 학습 기전 8 · 규제 5 ·
 평가 6 은 항목만 있고 facet 이 없다. 그 스물다섯도 새로 만들 일이다.
 
-남은 14 는 `security` 와 `ai-engineering` 이다.
+**`security` 와 `ai-engineering` 도 닫혔다 — 조각 181 이 전부 Scene 이고
+`projector:` 를 선언한 조각은 0 건이다.** 완제품 96 종은 여전히 projector 이고
+그것이 정상이다.
+
+**이 열넷의 성격** — `security` 여덟은 **전부 CSS `transition` 을 쓰고 있었다**
+(조각마다 3~7 곳, 합쳐 서른일곱). `style.transition` 을 걸고 다음 틱에 값을
+바꾸는 짜임이라 stage 의 운동 전부가 그 한 함수를 지났다. 그래서 이 배치의
+알맹이는 숨은 상태 찾기가 아니라 **보간을 다시 짜는 일**이었다.
+
+그리고 **그림이 주장을 그리지 않고 되풀이하는 자리**가 넷 나왔다 (아래 4 절).
 
 **이 도메인의 성격** — 그래프 조각은 노드가 격자에 박히지만 ml 조각은 **점의 값에서
 화면 자리를 셈한다.** 그래서 척도(`kx` · `domX0` · `xUnit` · `domainSpan` · `unitLo`)
@@ -1271,6 +1345,9 @@ SCC·최대유량 셋     4484 → 5580   +1096  +24%
 
 ## 7. 이행이 끝난 뒤
 
+**2026-09-17 로 조각 181 이 전부 Scene 이 되었다. 이 절이 이제 열렸다.**
+아래는 그날 기준으로 다시 잰 현황이다.
+
 - `ProjectorFactory` 와 그 배선을 러너에서 걷어낸다. **`ViewMountParams.isInstant` 와
   `onScrubStart` 는 걷어내지 않는다** — projector 조각이 남아 있는 동안 쓴다. 다만
   **장면 조각에서는 러너가 그 둘을 부르지 않는다** (3-4 절). 그 사실을 모른 채 걷어낼
@@ -1281,7 +1358,31 @@ SCC·최대유량 셋     4484 → 5580   +1096  +24%
   끝난 뒤 한 번에 한다.
 - `rules/principles.md` 의 "Projector 단일 번역기" 를 장면 방식으로 다시 쓴다.
 - `S-facet` 의 6 파일 구성에서 `projector.ts` 를 `scene.ts` 로 바꾼다.
-- 스크럽 띠를 전 조각에 단다 (`CONTROL_SET.piece` → `pieceScrub`). 그때 조각
-  algorithm 의 손짚기 루프(`waitForInput` → `rewind`)가 죽은 코드가 되므로 함께
-  걷어낸다 — 179 곳이고, 자취를 닫는 신호가 `enterAwaiting` 에서 `runAlgorithm` 끝으로
-  옮겨 가므로 조각 하나로 먼저 확인한다.
+- 스크럽 띠는 **이미 전 조각에 달렸다** (`CONTROL_SET.pieceScrub` 181/181). 남은 것은
+  조각 algorithm 의 **손짚기 루프**(`waitForInput` → `rewind`)다 — `pieceScrub` 에
+  `advance` 가 없어 **도달 불능인 죽은 코드**인데 181 곳에 그대로 있다. 자취를 닫는
+  신호가 `enterAwaiting` 에서 `runAlgorithm` 끝으로 옮겨 가므로 조각 하나로 먼저
+  확인한다. 그 루프 안의 C8 `cancelled` 검사 누락도 같은 처분 대상이다.
+
+### 이행이 남긴 뒷정리 (2026-09-17 실측)
+
+- **CSS `transition` 이 조각 일곱에 32 곳 남아 있다** — `traverse-from-head` 12 ·
+  `depth-doubles-count` 6 · `enqueue-dequeue-ends` 5 · `grow-and-copy` 3 ·
+  `hash-avalanche` 3 · `push-pop-top` 2 · `shift-on-insert` 1. 전부 **이행 첫
+  배치들**(2026-09-13 ~ 09-16)의 것이고, 그 무렵에는 `tween`·`gen`·`alive` 관용구가
+  아직 확립되지 않았다. S-scene MUST NOT 이므로 걷어내야 한다.
+  다만 `depth-doubles-count` 는 되짚기에서 `style.transition = 'none'` 으로 꺼 두는
+  식이라 **조건부로 쓰고 있을 수 있다** — Chrome 감사를 통과한 까닭이 그것일 수 있으니
+  걷어내기 전에 실제로 흔들리는지 재라.
+- **이행 첫 배치의 여덟 조각은 관용구가 낡았다.** `hash-avalanche` 와 `ai-engineering`
+  의 일곱(`split-and-number`·`tokens-per-language` 등)은 `waiters` 는 있으나
+  **`gen` 세대 빗장도 `alive()` 도 `drawStatic` 두 번 부르기도 0 건**이다.
+  **본보기로 쓰면 낡은 방식을 물려주므로 지시문에서 제외하라.**
+- **projector 전용 계측 하네스 둘을 걷어냈다** (`5e5f072`). `scrub-replay.test.ts` 와
+  `step-contract.test.ts` 는 `isPiece(facet) && facet.projector` 를 요구해 표본이
+  0 이 되었다. 둘 다 통과 바가 아니라 계측이었고(`timeline.ts` 주석이 명시한다),
+  회귀 방어는 `timeline-scrub.test.ts` 가, 장면의 되짚기는 `scene-audit.mjs` 가 한다.
+  **`step-contract` 의 취지는 Scene 으로 다시 짤 수 있다** — `render` 가 돌려주는
+  Promise 가 풀린 **직후**의 그림과 잠시 뒤의 그림을 견주면 지연 발화가 잡힌다.
+- `register-names.test.ts` 는 **scene 도 같은 규약으로 세게 고쳤다** — 레지스트리가
+  셋을 별도 Map 으로 들고 있어 `module:` 참조가 이름으로만 갈리기 때문이다.
