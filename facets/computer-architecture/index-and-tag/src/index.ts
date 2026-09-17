@@ -10,7 +10,7 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
@@ -19,20 +19,30 @@ import { indexAndTagDescription } from './description.js';
 import { indexAndTagFacet } from './facet.js';
 import { indexAndTagStageView } from './index-and-tag-stage.js';
 import { indexAndTagIRs } from './irs.js';
-import { indexAndTagProjector } from './projector.js';
+import { indexAndTagScene } from './scene.js';
 
-export { indexAndTagAlgorithm, type IndexAndTagData } from './algorithm.js';
+export {
+  indexAndTagAlgorithm,
+  indexAndTagFields,
+  type IndexAndTagData,
+  type IndexAndTagFields,
+} from './algorithm.js';
 export { indexAndTagDescription } from './description.js';
 export { indexAndTagFacet } from './facet.js';
 export { indexAndTagStageView } from './index-and-tag-stage.js';
 export { indexAndTagIRs } from './irs.js';
-export { indexAndTagProjector } from './projector.js';
+export {
+  indexAndTagScene,
+  type AddressSplit,
+  type IndexAndTagPhase,
+  type IndexAndTagScene,
+} from './scene.js';
 
 export function registerIndexAndTag(): void {
   registerAlgorithm<IndexAndTagData>('indexAndTag', indexAndTagAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('indexAndTagProjector', indexAndTagProjector);
+  registerScenePlan('indexAndTagScene', indexAndTagScene);
   for (const ir of indexAndTagIRs) registerIR(ir.id, ir);
   registerView('index-and-tag-stage', indexAndTagStageView);
   registerFacets([indexAndTagFacet]);

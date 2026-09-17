@@ -10,7 +10,7 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
@@ -19,26 +19,36 @@ import { latencyLadderDescription } from './description.js';
 import { latencyLadderFacet } from './facet.js';
 import { latencyLadderIRs } from './irs.js';
 import { latencyLadderStageView } from './latency-ladder-stage.js';
-import { latencyLadderProjector } from './projector.js';
+import { latencyLadderScene } from './scene.js';
 
 export {
   latencyLadderAlgorithm,
+  latencyLevelsOf,
+  latencyRungs,
+  latencySpanFactor,
   type LatencyLadderData,
   type LatencyLevel,
+  type LatencyRung,
 } from './algorithm.js';
 export { latencyLadderDescription } from './description.js';
 export { latencyLadderFacet } from './facet.js';
 export { latencyLadderIRs } from './irs.js';
 export { latencyLadderStageView } from './latency-ladder-stage.js';
-export { latencyLadderProjector } from './projector.js';
+export {
+  latencyLadderScene,
+  type LatencyCaption,
+  type LatencyLadderScene,
+  type LatencyRungState,
+  type LatencyStep,
+} from './scene.js';
 
 export function registerLatencyLadder(): void {
   registerAlgorithm<LatencyLadderData>('latencyLadder', latencyLadderAlgorithm, {
     mechanismKind: 'reactive',
   });
-  // projector 이름은 algorithm 과 겹치지 않는다 — `module:` 참조가 어느 쪽인지
+  // 장면 이름은 algorithm 과 겹치지 않는다 — `module:` 참조가 어느 쪽인지
   // 말하지 못하게 된다 (C4, packages/core/test/register-names.test.ts).
-  registerProjector('latencyLadderProjector', latencyLadderProjector);
+  registerScenePlan('latencyLadderScene', latencyLadderScene);
   for (const ir of latencyLadderIRs) registerIR(ir.id, ir);
   registerView('latency-ladder-stage', latencyLadderStageView);
   registerFacets([latencyLadderFacet]);

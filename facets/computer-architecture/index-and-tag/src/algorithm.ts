@@ -7,21 +7,30 @@
  *
  * ── 이벤트 (전부 facet 고유 확장, C2)
  *
- *   address-arrives    { addr: number; tagBits: string; indexBits: string; offsetBits: string }
- *                      주소 하나가 통째로 떠오른다. **어디서 끊을지는 이 층이 정한다** —
- *                      세 토막의 비트열을 함께 보내므로 stage 는 비트를 자르지 않는다.
+ *   address-arrives    { addr: number; tag: number; line: number; offset: number }
+ *                      주소 하나가 떠오르고, **어디서 끊을지는 이 층이 정한다** —
+ *                      가르는 셈이 곧 이 조각의 주장이라 판정으로 싣는다.
  *   address-splits     {}
  *                      끊긴 자리가 벌어진다. 값은 앞 걸음에서 이미 갔고, 이 걸음이
  *                      보이는 것은 갈라짐 그 자체다.
- *   pieces-dispatched  { line: number; tag: number; offset: number; evicted: number | null }
- *                      셋이 제 자리로 간다. evicted 는 그 줄이 들고 있던 앞 태그이며,
- *                      비어 있었거나 같은 태그면 null 이다.
+ *   pieces-dispatched  {}
+ *                      셋이 제 자리로 간다. **쫓겨나는 앞 태그는 싣지 않는다** —
+ *                      어느 줄이 무엇을 들고 있었나는 장면이 쌓아 온 것이라
+ *                      장면이 센다 (프로토콜 4 절).
  *   rewind             {}
  *                      한 걸음씩 다시 짚으려고 처음으로 되감는다.
  *   done               {}
  *                      표준 어휘. 마지막 캡션.
  *
  * silent 이벤트는 없다. 조각이므로 `ctx.metric` 도 부르지 않는다 (S-piece).
+ *
+ * ── 토막의 폭은 여기서 한 번만 셈한다
+ *
+ * 몇 비트가 오프셋이고 몇 비트가 인덱스인지는 **바탕(라인 크기 · 줄 수 · 주소
+ * 비트 수)에 순수 함수를 먹이면 나오는 값**이다. 화면도 같은 수를 써야 하므로
+ * `indexAndTagFields` 하나를 내주고 `scene.ts` 가 그것을 부른다 (프로토콜 4 절의
+ * B 갈래). 한때 이 폭을 stage 가 제 나름으로 다시 셈했고, `addrBits` 를 보정하는
+ * 방식이 두 곳에서 달랐다.
  */
 
 import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
@@ -43,26 +52,55 @@ export type IndexAndTagData = {
   stepMs: number;
 };
 
-/** 값을 width 자리 이진수 문자열로. 앞을 0 으로 채운다. */
-function toBits(value: number, width: number): string {
-  let out = '';
-  for (let i = width - 1; i >= 0; i -= 1) out += (value >> i) & 1;
-  return out;
-}
+/** 바탕이 정하는 것 — 줄의 수와 세 토막의 폭. 걸음이 고치지 않는다. */
+export type IndexAndTagFields = {
+  /** 라인 하나의 크기 (바이트). 오프셋이 셀 수 있는 칸 수이기도 하다. */
+  lineSize: number;
+  /** 줄 수. 인덱스가 고를 수 있는 자리의 수다. */
+  lineCount: number;
+  offsetWidth: number;
+  indexWidth: number;
+  tagWidth: number;
+};
 
 /** 2 의 거듭제곱 n 이 몇 비트를 먹는가. */
 function widthOf(n: number): number {
   return Math.max(1, Math.round(Math.log2(Math.max(1, n))));
 }
 
-export async function indexAndTagAlgorithm(ctx: FacetContext<IndexAndTagData>): Promise<void> {
-  const rx = ctx as ReactiveContext<IndexAndTagData>;
-  const { cacheSize, lineSize, addrBits, addresses, stepMs } = ctx.data;
+function posInt(v: unknown, fallback: number): number {
+  return typeof v === 'number' && Number.isFinite(v) && v > 0 ? Math.floor(v) : fallback;
+}
 
+/**
+ * 바탕에서 줄 수와 세 토막의 폭을 낸다 — **algorithm 과 화면이 같이 부르는 하나**.
+ *
+ * 좁히개도 여기 하나뿐이다. 받는 자리가 둘(`ctx.data` 와 `initialData`)이라도
+ * 좁히는 규칙이 두 벌이 되면 폭이 갈린다 (C9).
+ */
+export function indexAndTagFields(raw: unknown): IndexAndTagFields {
+  const d = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
+  const cacheSize = posInt(d.cacheSize, 64);
+  const lineSize = posInt(d.lineSize, 16);
   const lineCount = Math.max(1, Math.floor(cacheSize / lineSize));
   const offsetWidth = widthOf(lineSize);
   const indexWidth = widthOf(lineCount);
-  const tagWidth = Math.max(1, addrBits - offsetWidth - indexWidth);
+  // 태그가 한 자리도 없으면 "누구의 것인가" 를 말할 수 없다 — 주소 폭을 늘려 준다.
+  const addrBits = Math.max(offsetWidth + indexWidth + 1, posInt(d.addrBits, 10));
+  return {
+    lineSize,
+    lineCount,
+    offsetWidth,
+    indexWidth,
+    tagWidth: addrBits - offsetWidth - indexWidth,
+  };
+}
+
+export async function indexAndTagAlgorithm(ctx: FacetContext<IndexAndTagData>): Promise<void> {
+  const rx = ctx as ReactiveContext<IndexAndTagData>;
+  const { addresses, stepMs } = ctx.data;
+  // 폭과 줄 수는 화면과 한 함수를 지난다 (프로토콜 4 절 B 갈래).
+  const { lineSize, lineCount } = indexAndTagFields(ctx.data);
 
   /** advance 로 한 걸음씩 짚는 중인가. 자동 재생을 마친 뒤부터 참이 된다. */
   let manual = false;
@@ -85,8 +123,6 @@ export async function indexAndTagAlgorithm(ctx: FacetContext<IndexAndTagData>): 
 
   async function play(): Promise<void> {
     firstGate = true;
-    /** 줄 → 그 줄이 지금 들고 있는 태그. 회차마다 새로 시작한다. */
-    const held = new Map<number, number>();
 
     for (let i = 0; i < addresses.length; i += 1) {
       const addr = addresses[i] ?? 0;
@@ -95,15 +131,7 @@ export async function indexAndTagAlgorithm(ctx: FacetContext<IndexAndTagData>): 
       const tag = Math.floor(addr / (lineSize * lineCount));
 
       if (!(await gate())) return;
-      await ctx.emit({
-        type: 'address-arrives',
-        payload: {
-          addr,
-          tagBits: toBits(tag, tagWidth),
-          indexBits: toBits(line, indexWidth),
-          offsetBits: toBits(offset, offsetWidth),
-        },
-      });
+      await ctx.emit({ type: 'address-arrives', payload: { addr, tag, line, offset } });
 
       // 끊기는 순간에 걸음 하나를 따로 주는 것은 첫 주소에서만이다. 두 번째부터는
       // 독자가 이미 본 장면이라 도착과 끊김을 한 걸음에 잇는다 — 같은 장면을
@@ -111,12 +139,8 @@ export async function indexAndTagAlgorithm(ctx: FacetContext<IndexAndTagData>): 
       if (i === 0 && !(await gate())) return;
       await ctx.emit({ type: 'address-splits', payload: {} });
 
-      const before = held.get(line);
-      const evicted = before !== undefined && before !== tag ? before : null;
-      held.set(line, tag);
-
       if (!(await gate())) return;
-      await ctx.emit({ type: 'pieces-dispatched', payload: { line, tag, offset, evicted } });
+      await ctx.emit({ type: 'pieces-dispatched', payload: {} });
     }
 
     if (!(await gate())) return;

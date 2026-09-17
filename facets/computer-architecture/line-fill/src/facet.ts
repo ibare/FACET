@@ -41,7 +41,7 @@ export const lineFillFacet: FacetJson = {
   },
 
   algorithm: 'module:lineFill',
-  projector: 'module:lineFillProjector',
+  scene: 'module:lineFillScene',
 
   initialData: {
     type: 'line-fill',
@@ -56,7 +56,7 @@ export const lineFillFacet: FacetJson = {
 
   blocks: {
     stage: { type: 'line-fill-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
 
   messages: {
