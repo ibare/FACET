@@ -14,15 +14,18 @@
  *
  * 이벤트 (전부 facet 고유 확장. silent 인 것은 없다).
  *   — 여기 실리는 `cell` 과 `order` 는 **배열 색인이라 0 부터** 센다. 화면과 글은
- *     1 부터 세므로 projector 와 stage 가 읽는 자리에서 하나를 더한다. 같은 네
- *     칸을 다루는 완제품(`invertedFileIndex`)이 그 규약을 쓰고, 두 화면이 한 글에
- *     나란히 놓일 때 "칸 2" 가 서로 다른 칸을 가리키지 않게 하려는 것이다.
- *   query-placed      { total: number }
+ *     1 부터 세므로 장면을 그리는 자리에서 하나를 더한다. 같은 네 칸을 다루는
+ *     완제품(`invertedFileIndex`)이 그 규약을 쓰고, 두 화면이 한 글에 나란히 놓일 때
+ *     "칸 2" 가 서로 다른 칸을 가리키지 않게 하려는 것이다.
+ *   — **싣는 것은 걸음이 내리는 판정뿐이다.** 세면 나오는 수(점의 총수 · 칸의 수 ·
+ *     지금까지 견준 점 · 손대지 않은 점)와 두 점을 알면 재지는 값(질의에서 대표까지의
+ *     거리 · 띠의 안팎 반지름)은 장면이 셈한다 (`scene.ts`).
+ *   query-placed      {}
  *   cells-split       { counts: number[] }
- *   centroid-measured { cell: number; dist: number }
- *   order-ranked      { order: number[]; near: number; far: number }
- *   cell-opened       { cell: number; members: number[]; seen: number }
- *   probe-stopped     { opened: number; cells: number; seen: number; untouched: number }
+ *   centroid-measured { cell: number }
+ *   order-ranked      { order: number[] }
+ *   cell-opened       { cell: number; members: number[] }
+ *   probe-stopped     {}
  *   rewind            {}
  */
 
@@ -110,11 +113,8 @@ export async function probeAFewCellsAlgorithm(
   for (;;) {
     first = true;
 
-    // 질의가 평면에 내려앉는다.
-    if (!(await step(() => ctx.emit({
-      type: 'query-placed',
-      payload: { total: points.length },
-    })))) return;
+    // 질의가 평면에 내려앉는다. 점이 몇인지는 바탕을 세면 나온다.
+    if (!(await step(() => ctx.emit({ type: 'query-placed' })))) return;
 
     // 평면은 이미 갈라져 있다 — 칸마다 대표가 하나씩.
     if (!(await step(() => ctx.emit({
@@ -122,47 +122,35 @@ export async function probeAFewCellsAlgorithm(
       payload: { counts },
     })))) return;
 
-    // 대표까지 잰다. 칸을 도는 것이지 걸음을 적어 둔 것이 아니다.
+    // 대표까지 잰다. 칸을 도는 것이지 걸음을 적어 둔 것이 아니다. 잰 값은 싣지
+    // 않는다 — 질의와 대표를 이미 알고 있으므로 자로 재는 일은 장면의 몫이다.
     for (let c = 0; c < centroids.length; c += 1) {
       const cell = c;
       if (!(await step(() => ctx.emit({
         type: 'centroid-measured',
-        payload: { cell, dist: dists[cell] },
+        payload: { cell },
       })))) return;
     }
 
-    // 잰 값이 엇비슷하다는 것 자체가 이 조각의 장치다.
+    // 잰 값이 엇비슷하다는 것 자체가 이 조각의 장치다. 띠의 안팎은 이 차례의 양
+    // 끝을 재면 나오므로, 여기서 싣는 것은 **고른 차례**뿐이다.
     if (!(await step(() => ctx.emit({
       type: 'order-ranked',
-      payload: {
-        order,
-        near: dists[order[0]],
-        far: dists[order[order.length - 1]],
-      },
+      payload: { order },
     })))) return;
 
     // 가까운 칸부터 연다. 연 칸의 점만 실제로 견준다.
-    let seen = 0;
     for (let r = 0; r < nprobe; r += 1) {
       const cell = order[r];
-      seen += members[cell].length;
-      const soFar = seen;
       if (!(await step(() => ctx.emit({
         type: 'cell-opened',
-        payload: { cell, members: members[cell], seen: soFar },
+        payload: { cell, members: members[cell] },
       })))) return;
     }
 
-    // 멈춘다. 남은 칸은 닫힌 채이고 그 안의 점은 손도 대지 않았다.
-    if (!(await step(() => ctx.emit({
-      type: 'probe-stopped',
-      payload: {
-        opened: nprobe,
-        cells: centroids.length,
-        seen,
-        untouched: points.length - seen,
-      },
-    })))) return;
+    // 멈춘다. 남은 칸은 닫힌 채이고 그 안의 점은 손도 대지 않았다. 연 칸 수도
+    // 견준 점 수도 손대지 않은 점 수도 전부 자취를 세면 나온다.
+    if (!(await step(() => ctx.emit({ type: 'probe-stopped' })))) return;
 
     // 한 바퀴가 끝났다. 다음 단추를 받으면 되감고 첫 걸음까지 간다 (S-piece).
     manual = true;

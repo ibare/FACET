@@ -28,22 +28,23 @@
  *
  * ── 이벤트 (전부 이 facet 고유 확장. 표준 어휘를 재해석하지 않는다)
  *
- *   enter      { layer: string; node: string; seen: number }
- *              가장 성긴 층의 진입점에 선다. seen 은 그때까지 거리를 잰 점의 수.
- *   hop        { layer: string; from: string; to: string;
- *                cands: string[]; fresh: string[]; seen: number }
- *              이웃(cands)을 보고 더 가까운 쪽으로 옮긴다. fresh 는 이번에
- *              처음 거리를 잰 점들.
- *   hand-down  { from: string; to: string; node: string;
- *                cands: string[]; fresh: string[]; seen: number }
+ * **걸음이 내리는 판정만 싣는다.** 어느 층에 서 있는지 · 어디서 떠나는지 · 몇을
+ * 재었는지 · 점이 모두 몇인지는 장면이 자취에서 센다 (`scene.ts`). 층은 `hand-down`
+ * 이 올 때마다 한 칸씩 내려가고, 지금 자리는 마지막 `hop` 의 `to` 이며, 본 점은
+ * 지금까지 실린 `cands` 를 모으면 나온다.
+ *
+ *   enter      { node: string }
+ *              가장 성긴 층의 진입점에 선다.
+ *   hop        { to: string; cands: string[] }
+ *              이웃(cands)의 거리를 재고 더 가까운 to 로 옮긴다.
+ *   hand-down  { cands: string[] }
  *              이 층에는 더 가까운 이웃이 없다. 자리를 아래층에 물려준다.
- *   stop       { layer: string; node: string;
- *                cands: string[]; fresh: string[]; seen: number }
+ *   stop       { cands: string[] }
  *              맨 아래층에서도 더 나은 이웃이 없다 — 멈추는 조건.
- *   found      { node: string; seen: number; total: number }
- *              결과와 본 점 수.
- *   flat       { layer: string; path: string[]; seen: string[]; total: number }
- *              같은 진입점에서 맨 아래층 한 층만 쓰면 어디를 거쳐 몇을 보는가.
+ *   found      (payload 없음)
+ *              답이 났다. 어느 점인지도 몇을 쟀는지도 자취에 이미 있다.
+ *   flat       { path: string[]; seen: string[] }
+ *              같은 진입점에서 맨 아래층 한 층만 쓰면 어디를 거쳐 무엇을 재는가.
  *   rewind     {}
  *              자동 재생이 끝난 뒤 한 걸음씩 다시 볼 때 화면을 처음으로 되돌린다.
  *
@@ -199,7 +200,6 @@ export async function coarseThenFine(ctx: FacetContext<CoarseThenFineData>): Pro
 
   /** 걸음 전부. 끝까지 갔으면 true, 도중에 접혔으면 false. */
   const play = async (): Promise<boolean> => {
-    const seen = new Set<string>([entry]);
     let cur = entry;
 
     for (let li = 0; li < layers.length; li += 1) {
@@ -211,14 +211,13 @@ export async function coarseThenFine(ctx: FacetContext<CoarseThenFineData>): Pro
         if (!(await beat({
           type: 'enter',
           target: `node:${cur}`,
-          payload: { layer: layer.id, node: cur, seen: seen.size },
+          payload: { node: cur },
         }))) return false;
       }
 
       for (;;) {
+        // 이 층에서 이 자리의 이웃이 누구인가 — 거리를 재는 셈이라 여기가 그 자리다.
         const cands = neighborsOf(points, layer, cur);
-        const fresh = cands.filter((id) => !seen.has(id));
-        for (const id of cands) seen.add(id);
 
         let best = cur;
         let bestReach = toQuery(cur);
@@ -231,48 +230,39 @@ export async function coarseThenFine(ctx: FacetContext<CoarseThenFineData>): Pro
         }
 
         if (best !== cur) {
-          const from = cur;
           cur = best;
           if (!(await beat({
             type: 'hop',
             target: `node:${cur}`,
-            payload: { layer: layer.id, from, to: cur, cands, fresh, seen: seen.size },
+            payload: { to: cur, cands },
           }))) return false;
           continue;
         }
 
+        // 두 발신의 payload 가 같아졌다고 삼항으로 합치지 않는다 — `type` 은 언제나
+        // 리터럴이어야 어휘를 grep 으로 찾을 수 있다 (C2).
         if (below) {
           if (!(await beat({
             type: 'hand-down',
             target: `node:${cur}`,
-            payload: { from: layer.id, to: below.id, node: cur, cands, fresh, seen: seen.size },
+            payload: { cands },
           }))) return false;
         } else if (!(await beat({
           type: 'stop',
           target: `node:${cur}`,
-          payload: { layer: layer.id, node: cur, cands, fresh, seen: seen.size },
+          payload: { cands },
         }))) return false;
         break;
       }
     }
 
-    if (!(await beat({
-      type: 'found',
-      target: `node:${cur}`,
-      payload: { node: cur, seen: seen.size, total: data.points.length },
-    }))) return false;
+    if (!(await beat({ type: 'found', target: `node:${cur}` }))) return false;
 
     const flat = flatSearch(data, entry);
-    const bottom = layers[layers.length - 1];
     return beat({
       type: 'flat',
       target: `node:${flat.result}`,
-      payload: {
-        layer: bottom ? bottom.id : '',
-        path: flat.path,
-        seen: flat.seen,
-        total: data.points.length,
-      },
+      payload: { path: flat.path, seen: flat.seen },
     });
   };
 

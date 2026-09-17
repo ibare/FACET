@@ -39,7 +39,9 @@ export const angleNotLengthFacet: FacetJson = {
     pt: 'A similaridade do cosseno compara direções: o ângulo define a classificação e o comprimento fica de fora, podendo contradizer a distância euclidiana.',
   },
   algorithm: 'module:angleNotLength',
-  projector: 'module:angleNotLengthProjector',
+  // 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든
+  // 셈으로 얻으므로 띠로 임의의 자리에 갈 수 있다 (S-scene).
+  scene: 'module:angleNotLengthScene',
   initialData: {
     type: 'angle-not-length',
     stepMs: 850,
@@ -52,7 +54,7 @@ export const angleNotLengthFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'angle-not-length-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.place': {

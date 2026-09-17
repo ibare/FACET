@@ -9,13 +9,13 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { compareWithAllAlgorithm } from './algorithm.js';
 import type { CompareWithAllData } from './algorithm.js';
-import { compareWithAllProjector } from './projector.js';
+import { compareWithAllScene } from './scene.js';
 import { compareWithAllStageView } from './compare-with-all-stage.js';
 import { compareWithAllFacet } from './facet.js';
 import { compareWithAllDescription } from './description.js';
@@ -23,8 +23,14 @@ import { compareWithAllIRs } from './irs.js';
 
 export { compareWithAllAlgorithm } from './algorithm.js';
 export type { CompareWithAllData, CompareWithAllPair } from './algorithm.js';
-export { compareWithAllProjector } from './projector.js';
-export { compareWithAllStageView, formatCount, readBoard } from './compare-with-all-stage.js';
+export { compareWithAllScene } from './scene.js';
+export type {
+  CompareWithAllCaption,
+  CompareWithAllScene,
+  CompareWithAllStep,
+  SceneRow,
+} from './scene.js';
+export { compareWithAllStageView, formatCount } from './compare-with-all-stage.js';
 export { compareWithAllFacet } from './facet.js';
 export { compareWithAllDescription } from './description.js';
 export { compareWithAllIRs } from './irs.js';
@@ -35,7 +41,7 @@ export function registerCompareWithAll(): void {
   registerAlgorithm<CompareWithAllData>('compareWithAll', compareWithAllAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('compareWithAllProjector', compareWithAllProjector);
+  registerScenePlan('compareWithAllScene', compareWithAllScene);
   for (const ir of compareWithAllIRs) registerIR(ir.id, ir);
   registerView('compare-with-all-stage', compareWithAllStageView);
   registerFacets([compareWithAllFacet]);

@@ -6,7 +6,11 @@
  * 답에 닿는 데 본 점이 절반이다 (8 대 15).
  *
  * 1차 데이터는 점 열여섯의 정수 좌표 · 질의 좌표 · 층별 구성원 · 층별 이웃
- * 수뿐이다. 거리도 이웃 목록도 본 점 수도 algorithm 이 셈한다.
+ * 수뿐이다. 거리도 이웃 목록도 algorithm 이 셈하고, 본 점 수는 그 판정을 모아
+ * 장면이 센다 — 화면에 켜진 점을 세면 캡션의 수가 나온다 (`scene.ts`).
+ *
+ * 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든 셈으로
+ * 얻으므로 띠로 임의의 자리에 갈 수 있다 (S-scene).
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -38,7 +42,7 @@ export const coarseThenFineFacet: FacetJson = {
     pt: 'Uma camada superior esparsa fixa a posição com saltos longos; cada camada abaixo herda essa posição e a refina.',
   },
   algorithm: 'module:coarseThenFine',
-  projector: 'module:coarseThenFineProjector',
+  scene: 'module:coarseThenFineScene',
   initialData: {
     type: 'coarse-then-fine',
     points: [
@@ -76,7 +80,14 @@ export const coarseThenFineFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'coarse-then-fine-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: {
+      type: 'control-bar',
+      // 장면 방식이라 띠(timeline)를 단다 — 어느 걸음의 화면이든 계산으로 얻으므로
+      // 임의의 자리로 끌 수 있다 (S-piece 의 조작 표). 다시 보기의 action 은
+      // reset 인데, ReactiveMechanism 의 reset() 이 끝에 ensureStarted() 를 부르므로
+      // reset 이 곧 다시 재생이다.
+      controls: CONTROL_SET.pieceScrub,
+    },
   },
   messages: {
     'caption.enter': {

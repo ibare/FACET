@@ -7,19 +7,33 @@
  *
  * ── 이벤트 목록 + payload 스키마 (C2)
  *
- *   graph-ready  { links: [number, number][]; start: number; k: number }
- *                미리 이어 둔 길을 놓고 첫 발을 올린다. links 는 무향 한 벌이라
- *                같은 변이 두 번 오지 않는다. silent 아님.
- *   probe        { from: number; candidates: number[]; best: number | null }
+ *   graph-ready  {}
+ *                미리 이어 둔 길을 놓고 첫 발을 올린다. 길도 출발점도 바탕에서
+ *                나오므로 싣지 않는다 — 장면이 `nearestNeighbors` 를 불러 셈한다.
+ *                silent 아님.
+ *   probe        { best: number | null }
  *                선 자리의 이웃을 본다. best 는 질의에 더 가까운 이웃 중 가장
- *                가까운 것이고, 나아질 데가 없으면 null. silent 아님.
- *   step-to      { from: number; to: number }
- *                발을 옮긴다. silent 아님.
- *   settle       { at: number }
- *                더 가까운 이웃이 없어 걸음이 멎었다. silent 아님.
+ *                가까운 것이고, 나아질 데가 없으면 null. **이 조각의 판정이라
+ *                유일하게 싣는 것이다.** 선 자리도 이웃 목록도 자취와 바탕에서
+ *                나온다. silent 아님.
+ *   step-to      {}
+ *                발을 옮긴다. 어디로 가는지는 바로 앞 probe 가 이미 말했다.
+ *                silent 아님.
+ *   settle       {}
+ *                더 가까운 이웃이 없어 걸음이 멎었다. 선 자리는 자취의 끝이다.
+ *                silent 아님.
  *   rewind       {}
  *                자동 재생이 끝난 뒤 한 걸음씩 다시 볼 때 처음으로 되감는다.
  *                silent 아님 — 화면이 실제로 처음 모습으로 돌아간다.
+ *
+ * ── 무엇을 싣고 무엇을 세는가
+ *
+ * **이웃 중에서 질의에 더 가까운 것을 고르는 셈이 이 조각의 알고리즘 그 자체**라
+ * 그 판정(`probe.best`)만 싣는다. 반대로 **미리 이어 둔 길**은 이 조각이 말하는 바가
+ * 아니라 그 앞의 전제다 — description 이 "이웃을 어떻게 골라 그래프를 짓는가" 를
+ * 말하지 않는다고 못박고 있다. 그래서 `nearestNeighbors` 와 `undirectedLinks` 를
+ * 내주어 장면이 바탕에서 곧바로 셈한다. 몇 번째 걸음인가도, 선 자리도, 이웃
+ * 목록도 자취에서 나온다.
  *
  * 메트릭은 없다. 조각은 셀 것이 없으므로 ctx.metric 을 부르지 않는다 (S-piece).
  */
@@ -66,8 +80,13 @@ export function nearestNeighbors(points: NeighborsPoint[], k: number): number[][
   );
 }
 
-/** 무향 링크 한 벌. 낮은 번호를 앞에 두어 같은 변을 두 번 그리지 않는다. */
-function undirectedLinks(adjacency: number[][]): [number, number][] {
+/**
+ * 무향 링크 한 벌. 낮은 번호를 앞에 두어 같은 변을 두 번 그리지 않는다.
+ *
+ * 내주는 까닭은 화면이 길을 그려야 하기 때문이다. 길을 발신에 실으면 같은 규칙이
+ * 두 벌이 되고, 좌표를 고쳤을 때 한쪽만 따라온다.
+ */
+export function undirectedLinks(adjacency: number[][]): [number, number][] {
   const seen = new Set<string>();
   const out: [number, number][] = [];
   for (let i = 0; i < adjacency.length; i += 1) {
@@ -89,8 +108,8 @@ export async function neighborsLinkedAheadAlgorithm(
   const ctx = base as ReactiveContext<NeighborsLinkedAheadData>;
   const { points, query, neighborCount, start, stepMs } = ctx.data;
 
+  // 길 자체는 발신에 싣지 않는다 — 장면이 같은 함수를 불러 바탕에서 셈한다.
   const adjacency = nearestNeighbors(points, neighborCount);
-  const links = undirectedLinks(adjacency);
 
   /**
    * 한 바퀴 걷는다. manual 이면 걸음 사이마다 `advance` 를 기다린다.
@@ -129,7 +148,7 @@ export async function neighborsLinkedAheadAlgorithm(
     }
 
     if (!(await gate())) return false;
-    await ctx.emit({ type: 'graph-ready', payload: { links, start, k: neighborCount } });
+    await ctx.emit({ type: 'graph-ready' });
     if (ctx.cancelled) return false;
 
     let at = start;
@@ -152,19 +171,19 @@ export async function neighborsLinkedAheadAlgorithm(
       }
 
       if (!(await gate())) return false;
-      await ctx.emit({ type: 'probe', payload: { from: at, candidates, best } });
+      await ctx.emit({ type: 'probe', payload: { best } });
       if (ctx.cancelled) return false;
 
       if (best === null) break;
 
       if (!(await gate())) return false;
-      await ctx.emit({ type: 'step-to', payload: { from: at, to: best } });
+      await ctx.emit({ type: 'step-to' });
       if (ctx.cancelled) return false;
       at = best;
     }
 
     if (!(await gate())) return false;
-    await ctx.emit({ type: 'settle', payload: { at } });
+    await ctx.emit({ type: 'settle' });
     return !ctx.cancelled;
   }
 
