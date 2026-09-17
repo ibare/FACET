@@ -14,12 +14,16 @@
  * 식별자 (C1): 칸을 가리키는 곳이 payload 뿐이라 target 을 쓰지 않는다.
  *
  * 이벤트 (C2) — 전부 facet 로컬 (StandardEventType 미포함):
- *   - init          payload: { algorithmLabel, blocks, tamper }
+ *   - init          payload: { algorithmLabel, blocks, tamperedBlocks }  바탕을 값으로 넘긴다
  *   - rewind payload: {}   손으로 짚기 시작할 때 화면을 되감는다
  *   - reveal-chain  payload: {}   칸들이 앞 칸의 해시를 품은 채 이어진다
  *   - tamper        payload: {}   가운데 한 칸의 내용이 바뀐다
  *   - break-link    payload: {}   그 칸의 해시가 바뀌어 다음 칸과 어긋난다
  *   - cascade       payload: {}   어긋남이 끝까지 번진다
+ *
+ * 손댄 칸의 자리도 바뀐 내용도 싣지 않는다. 둘 다 성한 사슬과 다시 셈한 사슬을
+ * 견주면 곧바로 나오는 것이라, 실어 두면 같은 물음에 답이 둘이 되어 자료가 바뀔 때
+ * 화면이 조용히 거짓이 된다. 장면이 센다 (`scene.ts` 의 `editedAt`).
  *
  * 메트릭 (C5): 없다.
  */
@@ -36,16 +40,6 @@ export type ChainBlock = {
   hash: string;
 };
 
-/** 손댄 뒤의 사슬. 고친 자리부터 끝까지 값이 갈린다. */
-export type ChainTamper = {
-  /** 손댄 칸의 위치 (0-based). */
-  index: number;
-  /** 바뀐 내용. */
-  data: string;
-  /** 손댄 뒤 다시 계산한 칸들. blocks 와 길이가 같다. */
-  blocks: ChainBlock[];
-};
-
 /** 손으로 짚어 보는 입력. control-bar 의 advance 버튼이 보낸다. */
 export type ChainInput = { type: 'advance' } | { type: string };
 
@@ -56,10 +50,14 @@ export type HashChainFacetData = {
   type: 'hash-chain';
   /** 화면에 인쇄할 해시 함수 이름. */
   algorithmLabel: string;
-  /** 손대기 전의 사슬. */
+  /** 손대기 전의 성한 사슬. */
   blocks: ChainBlock[];
-  /** 손댄 뒤의 사슬. */
-  tamper: ChainTamper;
+  /**
+   * 한 칸을 고치고 그 뒤를 전부 다시 계산한 사슬. `blocks` 와 길이가 같다.
+   *
+   * 어느 칸을 고쳤는지는 둘을 견주면 나오므로 따로 적지 않는다.
+   */
+  tamperedBlocks: ChainBlock[];
   /**
    * 한 걸음 사이 머무는 간격 ms.
    *
@@ -72,7 +70,7 @@ export async function hashChain(
   ctxBase: FacetContext<HashChainFacetData>,
 ): Promise<void> {
   const ctx = ctxBase as ReactiveContext<HashChainFacetData>;
-  const { algorithmLabel, blocks, tamper, stepMs } = ctx.data;
+  const { algorithmLabel, blocks, tamperedBlocks, stepMs } = ctx.data;
 
   /**
    * 한 걸음을 실제로 발신한다. 자동 재생과 손으로 짚기가 같은 경로를 쓴다.
@@ -110,7 +108,7 @@ export async function hashChain(
 
   await ctx.emit({
     type: 'init',
-    payload: { algorithmLabel, blocks, tamper },
+    payload: { algorithmLabel, blocks, tamperedBlocks },
   });
 
   // 네 걸음. 성한 사슬을 먼저 보여야 어긋남이 어긋남으로 보인다.

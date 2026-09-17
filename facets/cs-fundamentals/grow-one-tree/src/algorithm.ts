@@ -11,24 +11,24 @@
  *   edge:<id>     간선. id 는 데이터에 적힌 그대로다 (`A-B`).
  *
  * ── 이벤트 (`done` 만 표준 어휘, 나머지 넷은 이 facet 고유)
- *   tree-seeded     { node: string }
- *       시작 정점 하나가 나무가 된다.
- *   frontier-shown  { candidates: string[] }
- *       지금 나무 밖으로 나가는 간선 id 들. 여기 없는 간선은 고를 수 없다 —
- *       양쪽 다 나무 안이거나(더 이을 것이 없다), 양쪽 다 나무 밖이거나(아직
- *       닿지 않았다).
- *   edge-chosen     { edgeId: string; from: string; to: string; weight: number;
- *                     blockedEdge?: string; blockedWeight?: number }
- *       후보 중 가장 가벼운 것을 골라 나무가 한 자리 자란다. `from` 은 나무 쪽 끝,
- *       `to` 는 새로 붙는 정점이다. `blocked*` 는 "더 가벼운데 아직 나무에 닿지
- *       않아 고를 수 없는" 간선이 있을 때만 실린다 — 이 조각의 요점이 되는 걸음.
+ *   tree-seeded     (payload 없음)
+ *       시작 정점 하나가 나무가 된다. **어느 정점인지는 싣지 않는다** —
+ *       `initialData.start` 에 적혀 있고 장면이 그것을 읽는다.
+ *   frontier-shown  (payload 없음)
+ *       지금 나무 밖으로 나가는 간선들을 드러낸다. **어느 것들인지는 싣지 않는다** —
+ *       나무에 든 정점과 간선 목록만 있으면 구조에서 그대로 세어진다. 장면이
+ *       아래 `frontierOf` 를 불러 같은 답을 얻는다 (한 자리에서만 센다).
+ *   edge-chosen     { edgeId: string }
+ *       후보 중 가장 가벼운 것을 골라 나무가 한 자리 자란다. **어느 것을 고르는가는
+ *       걸음의 판정**이라 싣는다. 나무 쪽 끝·새로 붙는 정점·무게·"더 가벼운데 아직
+ *       닿지 않은 간선" 은 전부 그 판정과 구조에서 파생되므로 싣지 않는다.
  *   rewind          (payload 없음)
  *       자동 재생을 다 본 뒤 advance 를 눌러 처음으로 돌아간다.
- *   done            { edgeCount: number; total: number }
- *       나무가 다 자랐다. 두 값 모두 이 실행에서 센 것이다.
+ *   done            (payload 없음)
+ *       나무가 다 자랐다. 간선 수와 무게 합은 **골라 온 간선 목록에서** 나온다.
  *
  * silent 이벤트는 없다 — 다섯 모두 화면이 바뀌는 걸음이다.
- * 화면 문안은 싣지 않는다 (C10). 캡션은 projector 가 이벤트 종류로 고른다.
+ * 화면 문안은 싣지 않는다 (C10). 캡션은 장면이 걸음의 종류로 고른다.
  */
 
 import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
@@ -54,23 +54,36 @@ export type GrowOneTreeData = {
 
 const DEFAULT_STEP_MS = 850;
 
-/** 한쪽 끝만 나무 안 — 나무 밖으로 나가는 간선. 고를 수 있는 것은 이것뿐이다. */
-function leavesTree(tree: ReadonlySet<string>, e: GrowOneTreeEdge): boolean {
+/**
+ * 한쪽 끝만 나무 안 — 나무 밖으로 나가는 간선. 고를 수 있는 것은 이것뿐이다.
+ *
+ * 닿음의 술어라 장면도 그대로 쓴다 (`scene.ts` 가 import 한다). 고르는 일 자체는
+ * 여기 남는다 — 그것이 이 조각의 알고리즘이고, 장면은 고른 결과만 받는다.
+ */
+export function leavesTree(tree: ReadonlySet<string>, e: GrowOneTreeEdge): boolean {
   return tree.has(e.u) !== tree.has(e.v);
 }
 
 /** 양쪽 끝 모두 나무 밖 — 그 자리에 있지만 아직 나무에 발이 닿지 않았다. */
-function outsideTree(tree: ReadonlySet<string>, e: GrowOneTreeEdge): boolean {
+export function outsideTree(tree: ReadonlySet<string>, e: GrowOneTreeEdge): boolean {
   return !tree.has(e.u) && !tree.has(e.v);
 }
 
 /** 무게가 가장 작은 간선. 같으면 먼저 적힌 것. */
-function lightest(edges: GrowOneTreeEdge[]): GrowOneTreeEdge | undefined {
+export function lightest(edges: readonly GrowOneTreeEdge[]): GrowOneTreeEdge | undefined {
   let best: GrowOneTreeEdge | undefined;
   for (const e of edges) {
     if (best === undefined || e.w < best.w) best = e;
   }
   return best;
+}
+
+/** 지금 나무 밖으로 나가는 간선 전부. 선언에 적힌 차례를 지킨다. */
+export function frontierOf(
+  tree: ReadonlySet<string>,
+  edges: readonly GrowOneTreeEdge[],
+): GrowOneTreeEdge[] {
+  return edges.filter((e) => leavesTree(tree, e));
 }
 
 export const growOneTreeAlgorithm = async (
@@ -117,18 +130,11 @@ export const growOneTreeAlgorithm = async (
     const tree = new Set<string>([start]);
 
     if (!(await gate())) return false;
-    await ctx.emit({
-      type: 'tree-seeded',
-      target: `node:${start}`,
-      payload: { node: start },
-    });
-
-    let total = 0;
-    let edgeCount = 0;
+    await ctx.emit({ type: 'tree-seeded', target: `node:${start}` });
 
     while (tree.size < nodes.length) {
       if (ctx.cancelled) return false;
-      const candidates = edges.filter((e) => leavesTree(tree, e));
+      const candidates = frontierOf(tree, edges);
       const pick = lightest(candidates);
       // 후보가 없으면 나무는 더 자랄 수 없다 (끊긴 그림).
       if (pick === undefined) break;
@@ -137,33 +143,19 @@ export const growOneTreeAlgorithm = async (
       await ctx.emit({
         type: 'frontier-shown',
         target: candidates.map((e) => `edge:${e.id}`),
-        payload: { candidates: candidates.map((e) => e.id) },
       });
 
-      const from = tree.has(pick.u) ? pick.u : pick.v;
-      const to = from === pick.u ? pick.v : pick.u;
-      // 고른 것보다 가벼운데 아직 나무에 닿지 않은 간선. 있으면 그 걸음이 요점이다.
-      const blocked = lightest(edges.filter((e) => outsideTree(tree, e) && e.w < pick.w));
-
       if (!(await gate())) return false;
-      tree.add(to);
-      total += pick.w;
-      edgeCount += 1;
+      tree.add(tree.has(pick.u) ? pick.v : pick.u);
       await ctx.emit({
         type: 'edge-chosen',
         target: `edge:${pick.id}`,
-        payload: {
-          edgeId: pick.id,
-          from,
-          to,
-          weight: pick.w,
-          ...(blocked === undefined ? {} : { blockedEdge: blocked.id, blockedWeight: blocked.w }),
-        },
+        payload: { edgeId: pick.id },
       });
     }
 
     if (!(await gate())) return false;
-    await ctx.emit({ type: 'done', payload: { edgeCount, total } });
+    await ctx.emit({ type: 'done' });
     return true;
   };
 

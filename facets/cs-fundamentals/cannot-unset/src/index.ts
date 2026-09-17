@@ -9,12 +9,12 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { cannotUnsetAlgorithm, type CannotUnsetData } from './algorithm.js';
-import { cannotUnsetProjector } from './projector.js';
+import { cannotUnsetScene } from './scene.js';
 import { cannotUnsetIRs } from './irs.js';
 import { cannotUnsetStageView } from './cannot-unset-stage.js';
 import { cannotUnsetFacet } from './facet.js';
@@ -22,7 +22,12 @@ import { cannotUnsetDescription } from './description.js';
 
 export { cannotUnsetAlgorithm } from './algorithm.js';
 export type { CannotUnsetData, CannotUnsetWord } from './algorithm.js';
-export { cannotUnsetProjector } from './projector.js';
+export {
+  cannotUnsetScene,
+  type CannotUnsetPhase,
+  type CannotUnsetScene,
+  type WordStand,
+} from './scene.js';
 export { cannotUnsetIRs } from './irs.js';
 export { cannotUnsetStageView } from './cannot-unset-stage.js';
 export { cannotUnsetFacet } from './facet.js';
@@ -32,7 +37,7 @@ export function registerCannotUnset(): void {
   registerAlgorithm<CannotUnsetData>('cannotUnset', cannotUnsetAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('cannotUnsetProjector', cannotUnsetProjector);
+  registerScenePlan('cannotUnsetScene', cannotUnsetScene);
   for (const ir of cannotUnsetIRs) registerIR(ir.id, ir);
   registerView('cannot-unset-stage', cannotUnsetStageView);
   registerFacets([cannotUnsetFacet]);

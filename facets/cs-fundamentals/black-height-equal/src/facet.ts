@@ -10,6 +10,9 @@
  * 메트릭 없음 / 캔버스 폭은 러너가 정함(PIECE_CANVAS_W) / 전제를 각주로
  * 밝히지 않음.
  *
+ * 화면은 걸음마다의 장면에서 만들어진다 (`scene.ts`). 어느 걸음의 화면이든 셈으로
+ * 얻으므로 재생 자리를 끄는 띠를 단다 (S-scene · S-piece 의 컨트롤 표).
+ *
  * 데이터는 호스트가 준 실측 트리 그대로다 — 성한 레드-블랙 트리이며,
  * 20(검) 아래 10(검)·40(빨), 10 아래 5(빨), 40 아래 30(검)·50(검). 뿌리
  * 20 자신은 세지 않고 그 아래 네 길(20→10→5→nil, 20→10→nil, 20→40→30→nil,
@@ -47,7 +50,7 @@ export const blackHeightEqualFacet: FacetJson = {
     pt: 'Percorre da raiz ao nil por quatro rotas — a contagem de pretos cai sempre no mesmo número',
   },
   algorithm: 'module:blackHeightEqual',
-  projector: 'module:blackHeightEqualProjector',
+  scene: 'module:blackHeightEqualScene',
   initialData: {
     type: 'black-height-equal',
     root: {
@@ -122,7 +125,7 @@ export const blackHeightEqualFacet: FacetJson = {
     },
     'caption.settled': {
       en: 'This path settles at {n} black.',
-      ko: '이 길은 검은 수 {n}로 끝난다.',
+      ko: '이 길이 끝난 검은 수 — {n}.',
       ja: 'この道は黒 {n} で終わる。',
       zh: '这条路停在黑 {n}。',
       ar: 'ينتهي هذا المسار عند {n} أسود.',
@@ -161,7 +164,7 @@ export const blackHeightEqualFacet: FacetJson = {
     stage: { type: 'black-height-equal-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

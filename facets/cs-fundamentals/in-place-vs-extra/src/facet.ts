@@ -39,7 +39,7 @@ export const inPlaceVsExtraFacet: FacetJson = {
     pt: 'Duas ordenações chegam à mesma ordem; só uma pede mais espaço.',
   },
   algorithm: 'module:inPlaceVsExtra',
-  projector: 'module:inPlaceVsExtraProjector',
+  scene: 'module:inPlaceVsExtraScene',
 
   initialData: {
     type: 'in-place-vs-extra',
@@ -51,7 +51,7 @@ export const inPlaceVsExtraFacet: FacetJson = {
 
   blocks: {
     stage: { type: 'in-place-vs-extra-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
 
   messages: {

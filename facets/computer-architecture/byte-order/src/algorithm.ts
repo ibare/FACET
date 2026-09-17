@@ -2,20 +2,25 @@
  * byteOrder — 같은 값을 반대 차례로 늘어놓는다 (조각).
  *
  * 1차 데이터는 **값 하나와 바이트 수 하나**뿐이다. 바이트 쪼개기 · 두 배치 ·
- * 두 읽기 결과는 전부 여기서 셈한다. 화면에 뜨는 수는 지어낸 것이 하나도 없고
- * 이 파일의 셈에서만 나온다 (S-piece 의 실측 조항).
+ * 세 읽기 결과는 전부 그 둘에서 나온다. 화면에 뜨는 수는 지어낸 것이 하나도 없다
+ * (S-piece 의 실측 조항).
+ *
+ * **셈은 여기 있지 않고 장면에 있다.** 이 파일이 내주는 `splitBytes` 하나를
+ * `scene.ts` 가 부르고, 두 배치와 세 읽기는 장면이 **그려진 줄에서** 낸다. 걸음이
+ * 수를 실어 오면 그림과 다른 출처가 되어 언젠가 갈린다 — 옛 발신은 `big` ·
+ * `little` · `value` 셋을 실었고 그림은 그림대로 바이트를 늘어놓고 있었다.
+ *
+ * 그래서 여기 남은 것은 **논증의 차례**다. 무엇을 언제 말할지가 저작 결정이고,
+ * 발신은 그것만 말한다.
  *
  * ── 이벤트 (전부 facet 고유 확장. silent 인 것은 없다 — 걸음마다 화면이 바뀐다)
  *
- *   value-shown  { bytes: number[] }                 값이 바이트로 갈려 한 줄로 선다
- *   laid-big     { slots: number[] }                 큰 자리가 낮은 주소로 내려앉는다
- *   laid-little  { slots: number[] }                 같은 바이트가 서로 건너가 반대 차례로 앉는다
- *   read-both    { big: number; little: number }     두 배치를 제 규칙으로 읽는다 — 같은 수
- *   misread      { value: number }                   리틀엔디언 바이트열을 빅엔디언으로 읽는다
- *   rewind       (payload 없음)                      처음 상태로 되돌린다
- *
- * `bytes` 와 `slots` 는 0..255 의 바이트 값이고, `slots` 의 첨자가 곧 주소다.
- * `bytes` 만 큰 자리가 앞이라는 사람의 표기 차례이고, 나머지는 주소 차례다.
+ *   value-shown  (payload 없음)   값이 바이트로 갈려 한 줄로 선다
+ *   laid-big     (payload 없음)   큰 자리가 낮은 주소로 내려앉는다
+ *   laid-little  (payload 없음)   같은 바이트가 서로 건너가 반대 차례로 앉는다
+ *   read-both    (payload 없음)   두 배치를 제 규칙으로 읽는다 — 같은 수
+ *   misread      (payload 없음)   리틀엔디언 바이트열을 빅엔디언으로 읽는다
+ *   rewind       (payload 없음)   처음 상태로 되돌린다
  */
 
 import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
@@ -30,7 +35,17 @@ export type ByteOrderData = {
   stepMs: number;
 };
 
-/** 값을 바이트로 가른다. 앞이 큰 자리 — 사람이 수를 적는 차례다. */
+/**
+ * 값을 바이트로 가른다. 앞이 큰 자리 — 사람이 수를 적는 차례다.
+ *
+ * 이 파일은 이것을 부르지 않는다. `scene.ts` 가 부른다 — 바탕에 순수 함수를
+ * 먹이면 나오는 값은 싣지 않고 **함수를 내준다**. 그 규칙이 두 벌이 되지 않게
+ * 한 자리에만 둔다.
+ *
+ * 내주어도 조각이 말하려는 바는 그대로다. 이 조각의 주장은 *갈린 바이트를 어느
+ * 차례로 늘어놓고 어느 끝에서 읽느냐*이지 *수가 어떻게 바이트로 갈리느냐*가
+ * 아니다 — 바이트 배열을 통째로 건네받아도 조각은 같은 말을 한다.
+ */
 export function splitBytes(value: number, byteCount: number): number[] {
   const out: number[] = [];
   for (let i = byteCount - 1; i >= 0; i -= 1) {
@@ -40,29 +55,10 @@ export function splitBytes(value: number, byteCount: number): number[] {
   return out;
 }
 
-/** 바이트열을 "앞이 큰 자리" 로 이어 붙여 수 하나로 읽는다. */
-function readBigFirst(slots: number[]): number {
-  let acc = 0;
-  for (const b of slots) acc = acc * 256 + b;
-  return acc;
-}
-
 export async function byteOrderAlgorithm(ctxRaw: FacetContext<ByteOrderData>): Promise<void> {
   const ctx = ctxRaw as ReactiveContext<ByteOrderData>;
-  const { value, byteCount, stepMs } = ctx.data;
-
-  const bytes = splitBytes(value, byteCount);
-  /** 빅엔디언 — 주소 0 에 큰 자리. 사람이 적는 차례 그대로다. */
-  const big = bytes;
-  /** 리틀엔디언 — 주소 0 에 작은 자리. 같은 바이트가 정반대 차례로 앉는다. */
-  const little = [...bytes].reverse();
-
-  const bigRead = readBigFirst(big);
-  // 리틀엔디언은 높은 주소가 큰 자리이므로, 제 규칙으로 읽으면 주소를 거꾸로 훑는다.
-  // 그래서 두 수는 같다 — 달라지는 것은 늘어놓는 차례뿐이다.
-  const littleRead = readBigFirst([...little].reverse());
-  // 차례를 모르는 채 주소 순서대로 이어 붙이면 이 수가 된다. 전혀 다른 수다.
-  const misreadValue = readBigFirst(little);
+  // 걸음 사이의 정지 시간만 쓴다. 값과 바이트 수는 장면이 선언에서 곧바로 읽는다.
+  const { stepMs } = ctx.data;
 
   /**
    * 걸음 사이의 문. 자동 재생일 땐 시간이 열고, 손으로 짚을 땐 `advance` 가 연다.
@@ -81,19 +77,19 @@ export async function byteOrderAlgorithm(ctxRaw: FacetContext<ByteOrderData>): P
   const run = async (): Promise<void> => {
     // 첫 걸음 앞에는 문이 없다. 문은 걸음 *사이*의 것이라 기다릴 앞걸음이 없고,
     // 문을 먼저 두면 마운트 직후 빈 화면이 stepMs 만큼 서 있게 된다 (S-piece).
-    await ctx.emit({ type: 'value-shown', payload: { bytes } });
+    await ctx.emit({ type: 'value-shown' });
     if (!(await gate())) return;
 
-    await ctx.emit({ type: 'laid-big', payload: { slots: big } });
+    await ctx.emit({ type: 'laid-big' });
     if (!(await gate())) return;
 
-    await ctx.emit({ type: 'laid-little', payload: { slots: little } });
+    await ctx.emit({ type: 'laid-little' });
     if (!(await gate())) return;
 
-    await ctx.emit({ type: 'read-both', payload: { big: bigRead, little: littleRead } });
+    await ctx.emit({ type: 'read-both' });
     if (!(await gate())) return;
 
-    await ctx.emit({ type: 'misread', payload: { value: misreadValue } });
+    await ctx.emit({ type: 'misread' });
   };
 
   await run();

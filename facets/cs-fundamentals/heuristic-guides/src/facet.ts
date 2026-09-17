@@ -36,7 +36,7 @@ export const heuristicGuidesFacet: FacetJson = {
     pt: 'Somar um palpite da distância restante inclina a busca para o objetivo. A rota é a mesma; o número de células abertas, não.',
   },
   algorithm: 'module:heuristicGuides',
-  projector: 'module:heuristicGuidesProjector',
+  scene: 'module:heuristicGuidesScene',
   initialData: {
     type: 'heuristic-guides',
     cols: 7,
@@ -47,7 +47,7 @@ export const heuristicGuidesFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'heuristic-guides-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.begin': {

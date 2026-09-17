@@ -17,17 +17,23 @@
  * `index:<칸 번호>` — 줄의 칸. 0 부터 시작하며 마지막 칸이 새 값의 출발 자리다.
  *
  * ── 이벤트 (전부 facet 고유 확장, silent 없음)
- * | type         | payload                                          | 뜻 |
- * |--------------|--------------------------------------------------|----|
- * | `lift`       | `{ index: number; value: number }`               | 새 값이 칸에서 뽑혀 위로 들린다. 그 칸은 빈자리가 된다 |
- * | `compare`    | `{ hole, probe, key, other: number; yields: boolean }` | 들린 값과 빈자리 왼쪽 칸을 견준다. `yields` 면 비켜서야 한다 |
- * | `step-aside` | `{ from: number; to: number; value: number }`     | 견준 값이 오른쪽 빈자리로 비켜선다. 빈자리는 `from` 으로 옮겨 온다 |
- * | `stop`       | `{ hole, probe, key, other: number }`             | 견준 값이 크지 않다. 더 왼쪽으로 가지 않고 경계를 세운다 |
- * | `settle`     | `{ index: number; value: number }`                | 들려 있던 값이 빈자리로 내려앉는다 |
- * | `done`       | `{ compares, shifts: number; values: number[] }`  | 끝. 견줌·비켜섬 횟수는 이 실행에서 센 값이다 |
- * | `rewind`     | 없음                                              | 처음 상태로 되감는다 (`advance` 로 되짚어 볼 때) |
+ * | type         | payload | 뜻 |
+ * |--------------|---------|----|
+ * | `lift`       | 없음    | 새 값이 마지막 칸에서 뽑혀 위로 들린다. 그 칸은 빈자리가 된다 |
+ * | `compare`    | 없음    | 들린 값과 빈자리 왼쪽 칸을 견준다 |
+ * | `step-aside` | 없음    | 견준 값이 오른쪽 빈자리로 비켜선다. 빈자리가 한 칸 왼쪽으로 옮겨 온다 |
+ * | `stop`       | 없음    | 견준 값이 크지 않다. 더 왼쪽으로 가지 않고 경계를 세운다 |
+ * | `settle`     | 없음    | 들려 있던 값이 빈자리로 내려앉는다 |
+ * | `done`       | 없음    | 끝 |
+ * | `rewind`     | 없음    | 처음 상태로 되감는다 (`advance` 로 되짚어 볼 때) |
  *
- * payload 가 정규 경로이고 `target` 은 어휘 정합을 위한 보조다 (C2).
+ * **어느 발신도 payload 를 싣지 않는다.** 걸음이 실을 만한 수 — 들리는 칸, 빈자리,
+ * 견주는 칸, 견준 값, 비켜섬·견줌 횟수, 끝난 배열 — 이 전부 장면의 구조에서 셈되기
+ * 때문이다. 빈자리는 칸 목록에서 비어 있는 칸이고, 견줄 자리는 그 왼쪽이며, 비켜선
+ * 값들은 빈자리 오른쪽에 모여 있다. 실어 보내면 같은 물음에 답이 둘이 되어 언젠가
+ * 갈린다 (`scene.ts` 의 `holeOf` · `hasShifted` · `tallyOf`).
+ *
+ * `target` 은 어휘 정합을 위해 남긴다 (C2, 원칙 4).
  *
  * 메트릭은 두지 않는다 — 조각은 셀 것이 없다 (S-piece).
  */
@@ -68,15 +74,8 @@ async function playOnce(
   const key = ctx.data.incoming;
   const keyIndex = sorted.length;
 
-  let compares = 0;
-  let shifts = 0;
-
   if (!(await gate())) return false;
-  await ctx.emit({
-    type: 'lift',
-    target: `index:${keyIndex}`,
-    payload: { index: keyIndex, value: key },
-  });
+  await ctx.emit({ type: 'lift', target: `index:${keyIndex}` });
 
   // 빈자리. 들린 값이 내려앉을 후보이며 비켜섬마다 왼쪽으로 옮겨 온다.
   let hole = keyIndex;
@@ -84,49 +83,29 @@ async function playOnce(
   // 뒤에서부터 앞으로. 아직 비키지 않은 값을 덮지 않으려면 이 방향이어야 한다.
   for (let probe = keyIndex - 1; probe >= 0; probe -= 1) {
     // 칸 probe 는 아직 손대지 않았으므로 원래 값이 그대로 있다.
-    const other = sorted[probe];
-    const yields = other > key;
-    compares += 1;
+    // 견줌의 결과는 어디까지 갈지를 정할 뿐 실어 보내지 않는다 — 두 값이 모두
+    // 화면에 있으므로 장면이 같은 견줌을 스스로 한다.
+    const yields = sorted[probe] > key;
 
     if (!(await gate())) return false;
-    await ctx.emit({
-      type: 'compare',
-      target: `index:${probe}`,
-      payload: { hole, probe, key, other, yields },
-    });
+    await ctx.emit({ type: 'compare', target: `index:${probe}` });
 
     if (!yields) {
       if (!(await gate())) return false;
-      await ctx.emit({
-        type: 'stop',
-        target: `index:${probe}`,
-        payload: { hole, probe, key, other },
-      });
+      await ctx.emit({ type: 'stop', target: `index:${probe}` });
       break;
     }
 
     if (!(await gate())) return false;
-    await ctx.emit({
-      type: 'step-aside',
-      target: `index:${probe}`,
-      payload: { from: probe, to: hole, value: other },
-    });
-    shifts += 1;
+    await ctx.emit({ type: 'step-aside', target: `index:${probe}` });
     hole = probe;
   }
 
   if (!(await gate())) return false;
-  await ctx.emit({
-    type: 'settle',
-    target: `index:${hole}`,
-    payload: { index: hole, value: key },
-  });
-
-  // 빈자리 왼쪽은 손대지 않았고 오른쪽은 통째로 한 칸씩 비켰다.
-  const values = [...sorted.slice(0, hole), key, ...sorted.slice(hole)];
+  await ctx.emit({ type: 'settle', target: `index:${hole}` });
 
   if (!(await gate())) return false;
-  await ctx.emit({ type: 'done', payload: { compares, shifts, values } });
+  await ctx.emit({ type: 'done' });
   return true;
 }
 

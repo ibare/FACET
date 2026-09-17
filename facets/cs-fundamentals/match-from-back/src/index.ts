@@ -9,19 +9,19 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { matchFromBackAlgorithm, type MatchFromBackData } from './algorithm.js';
-import { matchFromBackProjector } from './projector.js';
+import { matchFromBackScene } from './scene.js';
 import { matchFromBackIRs } from './irs.js';
 import { matchFromBackStageView } from './match-from-back-stage.js';
 import { matchFromBackFacet } from './facet.js';
 import { matchFromBackDescription } from './description.js';
 
 export { matchFromBackAlgorithm, type MatchFromBackData };
-export { matchFromBackProjector };
+export { matchFromBackScene, type MatchFromBackScene } from './scene.js';
 export { matchFromBackIRs };
 export { matchFromBackStageView };
 export { matchFromBackFacet };
@@ -29,7 +29,7 @@ export { matchFromBackDescription };
 
 export function registerMatchFromBack(): void {
   registerAlgorithm('matchFromBack', matchFromBackAlgorithm, { mechanismKind: 'reactive' });
-  registerProjector('matchFromBackProjector', matchFromBackProjector);
+  registerScenePlan('matchFromBackScene', matchFromBackScene);
   for (const ir of matchFromBackIRs) registerIR(ir.id, ir);
   registerView('match-from-back-stage', matchFromBackStageView);
   registerFacets([matchFromBackFacet]);

@@ -6,8 +6,11 @@
  *
  * @piece — 이 표식이 S-piece 의 적용 범위를 정한다.
  *
- * 조각의 규범: 필수 조작 없음(다시 보기 하나 + 되짚기 하나) / 제목 없음 /
- * 메트릭 없음 / 캔버스 폭 620.
+ * 조각의 규범: 필수 조작 없음(다시 보기 하나 + 재생 자리를 끄는 띠 하나) /
+ * 제목 없음 / 메트릭 없음 / 캔버스 폭 620.
+ *
+ * 화면은 걸음마다의 장면에서 만들어진다 (`scene.ts`). 그래서 어느 걸음으로 끌어도
+ * 같은 그림이 서고, 띠가 설 수 있다 (S-scene).
  *
  * 데이터: 자식 하나가 이미 셋(용량)을 채운 상태에서 25 를 넣는다. 넘친 자리의
  * 가운데(넷 중 둘째, 20)가 부모로 올라가 부모 키가 1→2 로, 자식이 2→3 으로
@@ -45,7 +48,7 @@ export const splitWhenFullFacet: FacetJson = {
     pt: 'Um nó cheio transborda, sua chave do meio sobe ao pai, e o resto se parte em dois',
   },
   algorithm: 'module:splitWhenFull',
-  projector: 'module:splitWhenFullProjector',
+  scene: 'module:splitWhenFullScene',
   initialData: {
     type: 'split-when-full',
     capacity: 3,
@@ -58,7 +61,7 @@ export const splitWhenFullFacet: FacetJson = {
   messages: {
     'caption.descend': {
       en: '{key} is less than {compared}, so it heads into this child.',
-      ko: '{key} 는 {compared} 보다 작아 이 자식으로 내려간다.',
+      ko: '넣을 키 {key}, 부모 키 {compared} 보다 작다 — 이 자식으로 내려간다.',
       ja: '{key} は {compared} より小さいので、この子へ下りる。',
       zh: '{key} 小于 {compared}，于是往这个子节点走。',
       ar: '{key} أصغر من {compared}، فينزل إلى هذا الابن.',
@@ -82,7 +85,7 @@ export const splitWhenFullFacet: FacetJson = {
     },
     'caption.promote': {
       en: 'The middle key {key} rises into the parent.',
-      ko: '가운데 키 {key} 가 부모로 올라간다.',
+      ko: '가운데 키 {key} — 부모로 올라간다.',
       ja: '真ん中のキー {key} が親へ上がる。',
       zh: '中间的键 {key} 升到父节点。',
       ar: 'يصعد المفتاح الأوسط {key} إلى الأب.',
@@ -94,7 +97,7 @@ export const splitWhenFullFacet: FacetJson = {
     },
     'caption.divide': {
       en: 'What remains splits in two — {left} and {right}.',
-      ko: '남은 것이 둘로 갈라진다 — {left} 와 {right}.',
+      ko: '남은 것이 둘로 갈라진다 — {left}, {right}.',
       ja: '残ったものが二つに分かれる — {left} と {right}。',
       zh: '剩下的一分为二 — {left} 和 {right}。',
       ar: 'ينقسم ما تبقّى إلى اثنين — {left} و{right}.',
@@ -109,7 +112,7 @@ export const splitWhenFullFacet: FacetJson = {
     stage: { type: 'split-when-full-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

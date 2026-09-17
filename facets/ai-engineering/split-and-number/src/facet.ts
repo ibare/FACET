@@ -38,7 +38,7 @@ export const splitAndNumberFacet: FacetJson = {
     pt: 'Um vetor é cortado em duas metades, e cada metade é substituída pelo número do seu centroide mais próximo.',
   },
   algorithm: 'module:splitAndNumber',
-  projector: 'module:splitAndNumberProjector',
+  scene: 'module:splitAndNumberScene',
   initialData: {
     type: 'split-and-number',
     subDim: 2,
@@ -67,7 +67,7 @@ export const splitAndNumberFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'split-and-number-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'label.frontHalf': {

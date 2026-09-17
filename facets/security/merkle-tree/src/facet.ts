@@ -7,11 +7,19 @@
  * @piece — 이 표식이 S-piece 의 적용 범위를 정한다.
  *
  * 조각의 규범: 필수 조작 없음(다시 보기 하나) / 제목 없음 / 한 주장 /
- * 메트릭 없음 / 캔버스 폭 620 / 전제를 각주로 밝힘.
+ * 메트릭 없음 / 캔버스 폭 620. 전제는 화면의 각주가 아니라 `description` 이
+ * 밝힌다 (S-piece).
  *
  * 데이터는 실측 SHA-256 이다. 잎은 sha256(label), 중간은 sha256(왼쪽 + 오른쪽),
  * 꼭대기도 같은 방식이다. fileB 를 고치면 leafB · 왼쪽 중간 · 꼭대기 셋만
  * 갈리고 leafA · leafC · leafD · 오른쪽 중간은 그대로다.
+ *
+ * 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든 셈으로
+ * 얻으므로 띠로 임의의 자리에 갈 수 있다 (S-scene).
+ *
+ * **어느 잎이 바뀌었는지를 선언에 두지 않는다.** 그것이 곧 이 조각의 결론이라
+ * 받아 적어 두면 화면이 그림과 다른 출처에서 답을 얻는다. 위 두 벌을 견주면
+ * 나오는 수이고, 장면이 그렇게 센다 (`scene.ts`).
  *
  * 해시 사슬 조각과 짝을 이룬다. 사슬은 한 칸을 고치면 뒤가 전부 무너지고,
  * 트리는 한 줄만 갈린다 — 그 대비가 두 조각을 가른다.
@@ -49,10 +57,9 @@ export const merkleTreeFacet: FacetJson = {
     pt: 'Dobre os hashes aos pares e, se uma folha muda, só o caminho dela até o topo se move',
   },
   algorithm: 'module:merkleTree',
-  projector: 'module:merkleTreeProjector',
+  scene: 'module:merkleTreeScene',
   initialData: {
     type: 'merkle-tree',
-    algorithmLabel: 'SHA-256',
     // 전부 실측 SHA-256. leaf = sha256(label), 위 노드 = sha256(왼쪽 + 오른쪽).
     before: {
       leaves: [
@@ -76,7 +83,6 @@ export const merkleTreeFacet: FacetJson = {
       right: '838bb53eb94b7b0bb5390c727a9881738081e6a73f762b8bf4783b8550efa68e',
       root: '9e95ed8cc53f94ab94ddc0b61572409dd4ab95416e66a9129e4397dac7dd92dd',
     },
-    changedLeaf: 1,
     // 두 층이 이어 오르는 combine-up 이 가장 긴 걸음이라 그것에 맞춘다.
     stepMs: 1300,
   },
@@ -135,7 +141,11 @@ export const merkleTreeFacet: FacetJson = {
     stage: { type: 'merkle-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      // 장면 방식이라 띠(timeline)를 단다 — 어느 걸음의 화면이든 계산으로 얻으므로
+      // 임의의 자리로 끌 수 있다 (S-piece 의 조작 표). 다시 보기의 action 은
+      // reset 인데, ReactiveMechanism 의 reset() 이 끝에 ensureStarted() 를 부르므로
+      // reset 이 곧 다시 재생이다.
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

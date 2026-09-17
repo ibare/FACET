@@ -7,6 +7,9 @@
  * 1차 데이터는 밑과 지수 둘뿐이다. 화면에 뜨는 9 · 81 · 6561 · 243 · 1594323 은
  * 알고리즘이 그 자리에서 셈한 것이고, 그 셈이 참값과 같은지는
  * `test/square-and-halve.test.ts` 가 이 선언을 읽어 다시 잰다 (S-piece).
+ *
+ * 화면은 명령이 아니라 **장면**으로 만들어진다 (`scene.ts`). 어느 걸음의 화면이든
+ * 셈으로 얻으므로 띠를 끌어 임의의 자리로 갈 수 있다 (S-scene).
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -38,7 +41,7 @@ export const squareAndHalveFacet: FacetJson = {
     pt: 'Multiplicar 3 treze vezes custa doze multiplicações. Em vez disso, dobre ao meio a fileira de treze casas: cada par se junta e vira um quadrado, e a casa ímpar que sobra na dobra é paga à resposta. Seis multiplicações chegam ao mesmo número, e as casas pagas são exatamente os dígitos 1 de 13 em binário, 1101.',
   },
   algorithm: 'module:squareAndHalve',
-  projector: 'module:squareAndHalveProjector',
+  scene: 'module:squareAndHalveScene',
   initialData: {
     type: 'square-and-halve',
     base: 3,
@@ -49,7 +52,7 @@ export const squareAndHalveFacet: FacetJson = {
     stage: { type: 'square-and-halve-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {

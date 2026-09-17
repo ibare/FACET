@@ -7,7 +7,7 @@
  * 조각이므로 header · metrics · layout · code-view 를 두지 않는다 (S-piece).
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const diveThenBacktrackFacet: FacetJson = {
   id: 'facet:diveThenBacktrack',
@@ -36,7 +36,7 @@ export const diveThenBacktrackFacet: FacetJson = {
     pt: 'Um percurso em profundidade gasta tantos passos a voltar quanto a entrar.',
   },
   algorithm: 'module:diveThenBacktrack',
-  projector: 'module:diveThenBacktrackProjector',
+  scene: 'module:diveThenBacktrackScene',
   initialData: {
     type: 'dive-then-backtrack',
     vertices: ['A', 'B', 'C', 'D', 'E', 'F'],
@@ -52,10 +52,7 @@ export const diveThenBacktrackFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'dive-then-backtrack-stage' },
-    controls: {
-      type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
-    },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.start': {

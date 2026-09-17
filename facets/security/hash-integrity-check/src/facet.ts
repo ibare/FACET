@@ -6,8 +6,9 @@
  *
  * @piece — 이 표식이 S-piece 의 적용 범위를 정한다.
  *
- * 조각의 규범: 필수 조작 없음(다시 보기 하나) / 제목 없음 / 한 주장 /
- * 메트릭 없음 / 캔버스 폭 620 / 전제를 각주로 밝힘.
+ * 조각의 규범: 필수 조작 없음(다시 보기와 띠) / 제목 없음 / 한 주장 /
+ * 메트릭 없음 / 캔버스 폭 620. 전제는 화면의 각주가 아니라 `description` 이
+ * 밝힌다 (S-piece).
  *
  * 화면의 골격은 대조표가 아니라 갈라진 두 경로다. 이 조각이 답하는 것은 대조를
  * 어떻게 하느냐가 아니라 **무엇에 기대어 그 대조를 믿느냐** 이고, 그 답이
@@ -53,7 +54,9 @@ export const hashIntegrityCheckFacet: FacetJson = {
     pt: 'Um hash publicado diz se a cópia que recebeste foi mexida',
   },
   algorithm: 'module:hashIntegrityCheck',
-  projector: 'module:hashIntegrityCheckProjector',
+  // 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든 셈으로
+  // 얻으므로 띠를 끌어 아무 자리로나 갈 수 있다 (S-scene).
+  scene: 'module:hashIntegrityCheckScene',
   initialData: {
     type: 'hash-integrity',
     algorithmLabel: 'SHA-256',
@@ -66,8 +69,11 @@ export const hashIntegrityCheckFacet: FacetJson = {
       content: 'Pay 900 to Alice',
       hash: '988bcb940b89811fb258dcc53b6ea8d8f848baa8c29049ed73975e0e57d1c99c',
     },
-    // 토큰이 경로를 건너는 travel 이 한 걸음 안에서 끝나야 한다.
-    stepMs: 1500,
+    // 운동이 끝난 뒤의 쉼이다. 명령 방식일 때는 건너는 운동을 아무도 기다리지
+    // 않아 그 620ms 를 여기에 얹어 두어야 했는데, 장면 방식은 `render` 의 Promise
+    // 가 다 선 뒤에 풀리므로 쉼만 남기면 된다 (S-piece 의 걸음 벽시계).
+    // 가장 얇은 걸음이 1140ms 라 읽을 틈은 넉넉하다.
+    stepMs: 900,
   },
   shuffleOnReset: false,
   messages: {
@@ -232,7 +238,7 @@ export const hashIntegrityCheckFacet: FacetJson = {
     stage: { type: 'integrity-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

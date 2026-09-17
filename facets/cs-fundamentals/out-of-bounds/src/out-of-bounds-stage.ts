@@ -11,6 +11,21 @@
  * 빌트인 view 어휘 (bars / array-cells / linked-list …) 로는 "주소가 연속이라
  * 배열 밖으로 한 칸 더 갈 수 있다" 를 말할 수 없어 stage 를 둔다 — 빌트인
  * 배열 view 는 인덱스를 그리지 주소를 그리지 않고, 배열 밖 자리를 갖지 않는다.
+ *
+ * ## 장면을 받아 그린다
+ *
+ * 걸음마다 부르는 메서드(`moveProbe()` · `readSlot()` · `dropGuard()` …) 를 두지
+ * 않는다. 그 메서드들은 되돌릴 수 없는 명령이라, 임의의 걸음으로 가려면 처음부터
+ * 다시 밟는 수밖에 없었다. 대신 `render(next, prev, { animate })` 하나가 **그
+ * 장면의 화면 전체**를 세운다 — 어느 걸음에서 어느 걸음으로 가든 같은 길이다
+ * (S-scene).
+ *
+ * **비우고 시작하는 자리를 따로 두지 않는다.** 이 화면에서 걸음마다 달라지는 것은
+ * 수식 줄 · 칸의 칠 · 경계 검사 · 커서 · 캡션 · 완료 표식 여섯뿐이고, `drawStatic`
+ * 이 그 여섯을 **하나도 빠뜨리지 않고 늘 통째로** 세운다. 그래서 지울 것이 없다.
+ *
+ * 부드러움은 `opts.animate` 가 정한다. 참이면 방금 밟은 걸음 하나만 프레임으로
+ * 흐르게 하고, 거짓이면 곧바로 끝 자리에 세운다 — 되짚기와 첫 그림이 그 길이다.
  */
 
 import {
@@ -21,9 +36,11 @@ import {
   makeTranslator,
   type Palette,
   type CanvasView,
+  type Translate,
   type ViewInstance,
   type ViewMountParams,
 } from '@ffacet/core/runtime';
+import type { OutOfBoundsCaption, OutOfBoundsScene, ProbeAt } from './scene.js';
 
 // ── 기하. 세로는 내용이 정하고, 가로는 PIECE_CANVAS_W 를 따른다 (S-piece).
 const W = PIECE_CANVAS_W;
@@ -62,6 +79,9 @@ const GUARD_MS = 420;
 const BUMP_MS = 340;
 const RECOIL_MS = 150;
 
+/** 벽에 부딪힌 커서가 뒤로 물러앉는 거리. 정적으로도 이 자리에 선다. */
+const RECOIL_DX = 12;
+
 const MONO_CHAR_W = 7.2;
 const BODY_CHAR_W = 7.1;
 const CAPTION_MAX_W = 540;
@@ -69,16 +89,14 @@ const PILL_MIN_W = 56;
 
 const NS = 'http://www.w3.org/2000/svg';
 
+/**
+ * 칸의 칠. 장면이 말하는 것을 그대로 옮긴 것이라 stage 가 따로 쥐지 않는다.
+ *
+ * `scarred` 가 **남는 강조**다 — 경계 밖으로 한 번 읽힌 칸은 걸음이 지나가도
+ * 흉터를 남긴다. 옮기기 전에는 이것이 stage 의 `cellStates` 안에만 있어서,
+ * 되짚으면 지나온 걸음을 다 밟기 전에는 복원되지 않았다.
+ */
 type CellState = 'rest' | 'active' | 'breached' | 'scarred';
-
-export type OutOfBoundsStageInit = {
-  arrayName: string;
-  values: number[];
-  baseAddress: number;
-  stride: number;
-  neighborName: string;
-  neighborValue: number;
-};
 
 function el<K extends keyof SVGElementTagNameMap>(
   tag: K,
@@ -93,8 +111,20 @@ function toHex(address: number): string {
   return `0x${address.toString(16).toUpperCase()}`;
 }
 
+/** 끝으로 갈수록 느려지는 미끄러짐. CSS 의 cubic-bezier(0.32, 0.72, 0.24, 1) 자리. */
+function easeOut(t: number): number {
+  return 1 - Math.pow(1 - t, 3);
+}
+
+/** 살짝 넘어갔다 앉는 내려섬. CSS 의 cubic-bezier(0.22, 1.1, 0.36, 1) 자리. */
+function easeBack(t: number): number {
+  const c = 1.1;
+  const u = t - 1;
+  return 1 + (c + 1) * u * u * u + c * u * u;
+}
+
 /**
- * 글자 폭 근사. SVG 는 줄바꿈이 없어 직접 재야 하는데, 한글·한자 계열은 라틴
+ * 글자 폭 근사. SVG 는 줄바꿈이 없어 직접 재야 하는데, 한글 계열은 라틴
  * 글자보다 두 배 가까이 넓으므로 코드 포인트 범위로 갈라 센다.
  */
 function measure(text: string, charWidth: number): number {
@@ -124,36 +154,111 @@ function wrapTwoLines(text: string, maxWidth: number, charWidth: number): string
   return [head, words.slice(cut).join(' ')];
 }
 
+/** 커서 라벨. 문자는 그리는 쪽이 만든다 — 장면은 번호와 읽은 값만 준다. */
+function probeLabelOf(scene: OutOfBoundsScene): string {
+  const { arrayName, probe } = scene;
+  if (probe.index === null) return `${arrayName}[i]`;
+  if (probe.read === null) return `${arrayName}[${probe.index}]`;
+  return `${arrayName}[${probe.index}] → ${probe.read}`;
+}
+
+function pillWidth(label: string): number {
+  return Math.max(PILL_MIN_W, Math.round(label.length * MONO_CHAR_W + 18));
+}
+
+/** 바탕이 같은 장면인가 — 같으면 띠를 다시 짓지 않는다. */
+function baseKey(scene: OutOfBoundsScene): string {
+  return [
+    scene.arrayName,
+    scene.values.join(','),
+    scene.baseAddress,
+    scene.stride,
+    scene.neighborName,
+    scene.neighborValue,
+  ].join('|');
+}
+
 export const outOfBoundsStageView: CanvasView = {
   canvas: { height: H },
   mount(
     _container: HTMLElement,
     params: ViewMountParams & { canvas: SVGSVGElement },
   ): ViewInstance {
-    const tr = params.t ?? makeTranslator(params.locale);
+    const tr: Translate = params.t ?? makeTranslator(params.locale);
     const colors: Palette = getColors(params.theme ?? 'light');
     const svg = params.canvas;
     svg.setAttribute('role', 'img');
     svg.style.overflow = 'visible';
 
-    const timers = new Set<ReturnType<typeof setTimeout>>();
-    const wait = (ms: number): Promise<void> =>
-      new Promise((resolve) => {
-        const id = setTimeout(() => {
-          timers.delete(id);
-          resolve();
-        }, ms);
-        timers.add(id);
-      });
+    // ── 걸어 둔 것과 기다리는 것. destroy 가 일괄로 거둔다 (S-piece).
+    const waiters = new Set<() => void>();
+    const frames = new Set<number>();
+    let destroyed = false;
 
-    // ── 가변 상태.
-    let init: OutOfBoundsStageInit | null = null;
+    /**
+     * 되짚는 중인가. 러너가 `params` 로 흘린다 (`ViewMountParams.isInstant`).
+     *
+     * 커서의 운동이 프레임마다 `transform` 을 제자리에서 고쳐 쓰는 짜임이라,
+     * 되짚기가 화면을 새로 세운 뒤에도 앞 걸음의 운동이 살아 있으면 새 자리에
+     * 옛 좌표를 덮어쓴다 — 되짚은 직후가 아니라 반 초쯤 뒤에 무너지므로 눈으로도
+     * 늦게야 잡힌다.
+     */
+    const isInstant = params.isInstant ?? ((): boolean => false);
+    // 되짚기 직전에 걸어 둔 것을 거둔다 (destroy 와 같은 모양).
+    params.onScrubStart?.(() => {
+      for (const id of frames) cancelAnimationFrame(id);
+      frames.clear();
+      for (const wake of [...waiters]) wake();
+      waiters.clear();
+    });
+
+    /**
+     * 걸음 하나를 프레임으로 흐르게 한다.
+     *
+     * 첫 프레임을 **동기로** 그린다. 정적 그리기가 이미 끝 자리에 세워 두었으므로,
+     * 출발 자리로 물리는 것을 다음 프레임에 미루면 끝 자리가 한 번 번쩍인다.
+     */
+    function animate(ms: number, draw: (e: number) => void): Promise<void> {
+      return new Promise<void>((resolve) => {
+        if (destroyed || isInstant()) {
+          draw(1);
+          return resolve();
+        }
+        const start = Date.now();
+        const finish = (): void => {
+          waiters.delete(finish);
+          resolve();
+        };
+        waiters.add(finish);
+        let id = 0;
+        const step = (): void => {
+          frames.delete(id);
+          if (destroyed) {
+            finish();
+            return;
+          }
+          const raw = Math.min(1, (Date.now() - start) / ms);
+          draw(raw);
+          if (raw >= 1) {
+            finish();
+            return;
+          }
+          id = requestAnimationFrame(step);
+          frames.add(id);
+        };
+        draw(0);
+        id = requestAnimationFrame(step);
+        frames.add(id);
+      });
+    }
+
+    // ── 지금 세워 둔 띠. 바탕이 바뀔 때만 다시 짓는다.
+    let builtKey: string | null = null;
     let originX = 0;
     let cellW = CELL_MAX_W;
     let edgeX = 0;
     let cellCount = 0;
     let arrayLen = 0;
-    let cellStates: CellState[] = [];
 
     let cellRects: SVGRectElement[] = [];
     let cellValues: SVGTextElement[] = [];
@@ -166,99 +271,25 @@ export const outOfBoundsStageView: CanvasView = {
     let probeTip: SVGPolygonElement | null = null;
 
     let guardGroup: SVGGElement | null = null;
+    let guardLabel: SVGTextElement | null = null;
     let exprHead: SVGTSpanElement | null = null;
     let exprTail: SVGTSpanElement | null = null;
     let captionText: SVGTextElement | null = null;
 
     const cellCenter = (index: number): number => originX + index * cellW + cellW / 2;
 
-    const pillWidth = (label: string): number =>
-      Math.max(PILL_MIN_W, Math.round(label.length * MONO_CHAR_W + 18));
+    /** 벽 앞에서 멎는 자리. 라벨 폭을 장면에서 셈하므로 DOM 을 되읽지 않는다. */
+    const bumpX = (label: string): number =>
+      edgeX - GUARD_W / 2 - pillWidth(label) / 2 - 4;
 
-    function paintCell(index: number): void {
-      const rect = cellRects[index];
-      const value = cellValues[index];
-      const label = cellLabels[index];
-      if (!rect || !value || !label) return;
-      const state = cellStates[index] ?? 'rest';
-      const insideArray = index < arrayLen;
-
-      if (state === 'active') {
-        rect.setAttribute('fill', colors.itemActive);
-        rect.setAttribute('stroke', colors.itemActive);
-        rect.setAttribute('stroke-width', '2');
-        value.setAttribute('fill', colors.textInverse);
-        label.setAttribute('fill', colors.text);
-        return;
-      }
-      if (state === 'breached') {
-        rect.setAttribute('fill', colors.danger);
-        rect.setAttribute('stroke', colors.danger);
-        rect.setAttribute('stroke-width', '2');
-        value.setAttribute('fill', colors.textInverse);
-        label.setAttribute('fill', colors.danger);
-        return;
-      }
-      if (state === 'scarred') {
-        rect.setAttribute('fill', colors.bg);
-        rect.setAttribute('stroke', colors.danger);
-        rect.setAttribute('stroke-width', '2');
-        value.setAttribute('fill', colors.danger);
-        label.setAttribute('fill', colors.danger);
-        return;
-      }
-      rect.setAttribute('fill', insideArray ? colors.bgSubtle : colors.bg);
-      rect.setAttribute('stroke', colors.border);
-      rect.setAttribute('stroke-width', '1');
-      value.setAttribute('fill', colors.text);
-      label.setAttribute('fill', colors.textMuted);
-    }
-
-    function setCellState(index: number, state: CellState): void {
-      if (index < 0 || index >= cellCount) return;
-      cellStates[index] = state;
-      paintCell(index);
-    }
-
-    /** 읽고 있던 칸을 놓아 준다. 경계를 넘어 읽힌 칸은 흉터를 남긴다. */
-    function releaseCells(): void {
-      for (let i = 0; i < cellCount; i += 1) {
-        const state = cellStates[i] ?? 'rest';
-        if (state === 'active') setCellState(i, 'rest');
-        else if (state === 'breached') setCellState(i, 'scarred');
-      }
-    }
-
-    function setProbeLabel(label: string, danger: boolean): void {
-      if (!probePill || !probeText || !probeStem || !probeTip) return;
-      const w = pillWidth(label);
-      probePill.setAttribute('x', String(-w / 2));
-      probePill.setAttribute('width', String(w));
-      probePill.setAttribute('fill', danger ? colors.danger : colors.accent);
-      probeText.textContent = label;
-      probeText.setAttribute('fill', danger ? colors.textInverse : colors.text);
-      probeStem.setAttribute('stroke', danger ? colors.danger : colors.accent);
-      probeTip.setAttribute('fill', danger ? colors.danger : colors.accent);
-    }
-
-    function probeLabelWidth(): number {
-      const raw = probePill?.getAttribute('width');
-      const parsed = raw === null || raw === undefined ? NaN : Number(raw);
-      return Number.isNaN(parsed) ? PILL_MIN_W : parsed;
-    }
-
-    function placeProbe(x: number, ms: number): void {
-      if (!probeGroup) return;
-      probeGroup.style.transition = ms <= 0 ? 'none' : `transform ${ms}ms cubic-bezier(0.32, 0.72, 0.24, 1)`;
-      probeGroup.style.transform = `translate(${x}px, 0px)`;
-    }
-
-    function setExpr(indexLabel: string, addressHex: string | null, outside: boolean): void {
-      if (!exprHead || !exprTail || !init) return;
-      exprHead.textContent = `${toHex(init.baseAddress)} + ${indexLabel} × ${init.stride}`;
-      exprTail.textContent = addressHex === null ? '' : ` = ${addressHex}`;
-      exprTail.setAttribute('fill', outside ? colors.danger : colors.text);
-    }
+    /**
+     * 커서가 그 자리에 섰을 때의 가로 위치. 장면의 구조를 좌표로 옮기는 자리다.
+     *
+     * `edge` 는 벽에 부딪혀 물러앉은 끝 자리를 뜻한다 — 이 조각에서 `edge` 는
+     * 마지막 걸음의 도착지라 출발 자리로는 오지 않는다.
+     */
+    const probeX = (at: ProbeAt, label: string): number =>
+      at.kind === 'cell' ? cellCenter(at.index) : bumpX(label) - RECOIL_DX;
 
     function clear(): void {
       while (svg.firstChild) svg.removeChild(svg.firstChild);
@@ -271,17 +302,18 @@ export const outOfBoundsStageView: CanvasView = {
       probeStem = null;
       probeTip = null;
       guardGroup = null;
+      guardLabel = null;
       exprHead = null;
       exprTail = null;
       captionText = null;
+      builtKey = null;
     }
 
-    function build(d: OutOfBoundsStageInit): void {
+    /** 바탕을 세운다. 걸음이 바꾸지 않는 것만 여기서 그린다. */
+    function build(scene: OutOfBoundsScene): void {
       clear();
-      init = d;
-      arrayLen = d.values.length;
+      arrayLen = scene.values.length;
       cellCount = arrayLen + 1;
-      cellStates = new Array<CellState>(cellCount).fill('rest');
       cellW = Math.min(CELL_MAX_W, Math.floor((W - SIDE_MIN * 2) / cellCount));
       originX = Math.round((W - cellCount * cellW) / 2);
       edgeX = originX + arrayLen * cellW;
@@ -300,7 +332,6 @@ export const outOfBoundsStageView: CanvasView = {
       expr.appendChild(exprHead);
       expr.appendChild(exprTail);
       svg.appendChild(expr);
-      setExpr('i', null, false);
 
       // 메모리 띠. 칸 사이에 틈이 없다 — 배열의 끝과 이웃은 맞붙어 있다.
       for (let i = 0; i < cellCount; i += 1) {
@@ -315,7 +346,7 @@ export const outOfBoundsStageView: CanvasView = {
           'font-size': fontSizes.xs,
           fill: colors.textMuted,
         });
-        addr.textContent = toHex(d.baseAddress + i * d.stride);
+        addr.textContent = toHex(scene.baseAddress + i * scene.stride);
         svg.appendChild(addr);
 
         const rect = el('rect', {
@@ -338,7 +369,7 @@ export const outOfBoundsStageView: CanvasView = {
           'font-size': fontSizes.lg,
           fill: colors.text,
         });
-        value.textContent = String(inside ? (d.values[i] ?? 0) : d.neighborValue);
+        value.textContent = String(inside ? (scene.values[i] ?? 0) : scene.neighborValue);
         svg.appendChild(value);
         cellValues.push(value);
 
@@ -350,7 +381,7 @@ export const outOfBoundsStageView: CanvasView = {
           'font-size': fontSizes.xs,
           fill: colors.textMuted,
         });
-        label.textContent = inside ? `${d.arrayName}[${i}]` : d.neighborName;
+        label.textContent = inside ? `${scene.arrayName}[${i}]` : scene.neighborName;
         svg.appendChild(label);
         cellLabels.push(label);
       }
@@ -373,9 +404,9 @@ export const outOfBoundsStageView: CanvasView = {
         fill: colors.textMuted,
       });
       range.textContent = tr('label.arrayRange', '{from} – {to} · {bytes} bytes', {
-        from: toHex(d.baseAddress),
-        to: toHex(d.baseAddress + arrayLen * d.stride - 1),
-        bytes: arrayLen * d.stride,
+        from: toHex(scene.baseAddress),
+        to: toHex(scene.baseAddress + arrayLen * scene.stride - 1),
+        bytes: arrayLen * scene.stride,
       });
       svg.appendChild(range);
 
@@ -390,9 +421,8 @@ export const outOfBoundsStageView: CanvasView = {
       });
       svg.appendChild(edge);
 
-      // 경계 검사 — 처음에는 없다. 넘어간 뒤에 내려선다.
+      // 경계 검사 — 보일지 말지는 장면이 정한다.
       guardGroup = el('g');
-      guardGroup.style.display = 'none';
       const guardBar = el('rect', {
         x: edgeX - GUARD_W / 2,
         y: GUARD_TOP,
@@ -402,7 +432,7 @@ export const outOfBoundsStageView: CanvasView = {
         fill: colors.success,
       });
       guardGroup.appendChild(guardBar);
-      const guardLabel = el('text', {
+      guardLabel = el('text', {
         x: edgeX,
         y: GUARD_LABEL_Y,
         'text-anchor': 'middle',
@@ -410,7 +440,6 @@ export const outOfBoundsStageView: CanvasView = {
         'font-size': fontSizes.xs,
         fill: colors.success,
       });
-      guardLabel.textContent = `0 ≤ i < ${arrayLen}`;
       guardGroup.appendChild(guardLabel);
       svg.appendChild(guardGroup);
 
@@ -450,9 +479,6 @@ export const outOfBoundsStageView: CanvasView = {
       probeGroup.appendChild(probeText);
       svg.appendChild(probeGroup);
 
-      setProbeLabel(`${d.arrayName}[i]`, false);
-      placeProbe(cellCenter(0), 0);
-
       captionText = el('text', {
         x: W / 2,
         y: CAPTION_Y,
@@ -462,103 +488,278 @@ export const outOfBoundsStageView: CanvasView = {
         fill: colors.text,
       });
       svg.appendChild(captionText);
+
+      builtKey = baseKey(scene);
     }
 
-    if (params.initialData) {
-      const d = params.initialData as unknown as Partial<OutOfBoundsStageInit>;
-      if (Array.isArray(d.values) && typeof d.baseAddress === 'number' && typeof d.stride === 'number') {
-        build({
-          arrayName: typeof d.arrayName === 'string' ? d.arrayName : 'arr',
-          values: d.values,
-          baseAddress: d.baseAddress,
-          stride: d.stride,
-          neighborName: typeof d.neighborName === 'string' ? d.neighborName : 'next',
-          neighborValue: typeof d.neighborValue === 'number' ? d.neighborValue : 0,
-        });
+    // ── 걸음마다 달라지는 여섯. 늘 통째로 세운다.
+
+    function drawExpr(scene: OutOfBoundsScene): void {
+      if (!exprHead || !exprTail) return;
+      const indexLabel = scene.expr === null ? 'i' : String(scene.expr.index);
+      exprHead.textContent = `${toHex(scene.baseAddress)} + ${indexLabel} × ${scene.stride}`;
+      exprTail.textContent = scene.expr === null ? '' : ` = ${scene.expr.addressHex}`;
+      const outside = scene.expr !== null && scene.expr.index >= arrayLen;
+      exprTail.setAttribute('fill', outside ? colors.danger : colors.text);
+    }
+
+    /** 장면이 말하는 칸의 칠. 흉터는 남는 강조라 정적으로도 들어간다. */
+    function stateOf(scene: OutOfBoundsScene, index: number): CellState {
+      if (scene.active && scene.active.index === index) {
+        return scene.active.outOfBounds ? 'breached' : 'active';
+      }
+      return scene.scarred.includes(index) ? 'scarred' : 'rest';
+    }
+
+    function drawCells(scene: OutOfBoundsScene): void {
+      for (let i = 0; i < cellCount; i += 1) {
+        const rect = cellRects[i];
+        const value = cellValues[i];
+        const label = cellLabels[i];
+        if (!rect || !value || !label) continue;
+        const state = stateOf(scene, i);
+        const insideArray = i < arrayLen;
+
+        if (state === 'active') {
+          rect.setAttribute('fill', colors.itemActive);
+          rect.setAttribute('stroke', colors.itemActive);
+          rect.setAttribute('stroke-width', '2');
+          value.setAttribute('fill', colors.textInverse);
+          label.setAttribute('fill', colors.text);
+        } else if (state === 'breached') {
+          rect.setAttribute('fill', colors.danger);
+          rect.setAttribute('stroke', colors.danger);
+          rect.setAttribute('stroke-width', '2');
+          value.setAttribute('fill', colors.textInverse);
+          label.setAttribute('fill', colors.danger);
+        } else if (state === 'scarred') {
+          rect.setAttribute('fill', colors.bg);
+          rect.setAttribute('stroke', colors.danger);
+          rect.setAttribute('stroke-width', '2');
+          value.setAttribute('fill', colors.danger);
+          label.setAttribute('fill', colors.danger);
+        } else {
+          rect.setAttribute('fill', insideArray ? colors.bgSubtle : colors.bg);
+          rect.setAttribute('stroke', colors.border);
+          rect.setAttribute('stroke-width', '1');
+          value.setAttribute('fill', colors.text);
+          label.setAttribute('fill', colors.textMuted);
+        }
+      }
+    }
+
+    /** 경계 검사가 보이는지와 그 물음. 자리는 걸음 함수 `dropGuard` 가 정한다. */
+    function drawGuardLook(scene: OutOfBoundsScene): void {
+      if (!guardGroup || !guardLabel) return;
+      if (scene.guard === null) {
+        guardGroup.style.display = 'none';
+        guardLabel.textContent = '';
+        return;
+      }
+      guardGroup.style.display = '';
+      guardLabel.textContent = `${scene.guard.lo} ≤ i < ${scene.guard.hi}`;
+    }
+
+    /** 커서의 라벨과 색. 자리는 걸음 함수 `slideProbe` 가 정한다. */
+    function drawProbeLook(scene: OutOfBoundsScene, label: string): void {
+      if (!probeGroup || !probePill || !probeText || !probeStem || !probeTip) return;
+      const danger = scene.probe.danger;
+      const w = pillWidth(label);
+      probePill.setAttribute('x', String(-w / 2));
+      probePill.setAttribute('width', String(w));
+      probePill.setAttribute('fill', danger ? colors.danger : colors.accent);
+      probeText.textContent = label;
+      probeText.setAttribute('fill', danger ? colors.textInverse : colors.text);
+      probeStem.setAttribute('stroke', danger ? colors.danger : colors.accent);
+      probeTip.setAttribute('fill', danger ? colors.danger : colors.accent);
+    }
+
+    function placeProbe(x: number): void {
+      if (!probeGroup) return;
+      probeGroup.style.transform = `translate(${x || 0}px, 0px)`;
+    }
+
+    /** 한 걸음의 말. 장면은 무엇을 말할지만 주고 문자는 여기서 만든다 (C10). */
+    function captionTextOf(scene: OutOfBoundsScene, c: OutOfBoundsCaption): string {
+      const name = scene.arrayName;
+      switch (c.kind) {
+        case 'compute':
+          return tr(
+            'caption.compute',
+            'The index becomes an address: {base} + {i} × {stride} = {addr}.',
+            { base: c.baseHex, i: c.index, stride: c.stride, addr: c.addressHex },
+          );
+        case 'keepsCounting':
+          return tr(
+            'caption.keepsCounting',
+            'Now {i}. The arithmetic checks nothing — it just keeps counting: {addr}.',
+            { i: c.index, addr: c.addressHex },
+          );
+        case 'inside':
+          return tr('caption.inside', '{name}[{i}] lands on the last cell the array owns.', {
+            name,
+            i: c.index,
+          });
+        case 'crossed':
+          return tr(
+            'caption.crossed',
+            '{addr} lies past the end of the array, on the next variable.',
+            { addr: c.addressHex },
+          );
+        case 'readInside':
+          return tr('caption.readInside', 'It reads {value}, the value the array keeps there.', {
+            value: c.value,
+          });
+        case 'readsNeighbor':
+          return tr(
+            'caption.readsNeighbor',
+            '{name}[{i}] reads {value} all the same. That value belongs to someone else.',
+            { name, i: c.index, value: c.value },
+          );
+        case 'guard':
+          return tr(
+            'caption.guard',
+            'A bounds check stands at the end and asks {lo} ≤ i < {hi} before any access.',
+            { lo: c.lo, hi: c.hi },
+          );
+        case 'blocked':
+          return tr(
+            'caption.blocked',
+            '{name}[{i}] never reaches the address. It stops at the edge instead.',
+            { name, i: c.index },
+          );
+      }
+    }
+
+    function drawCaption(scene: OutOfBoundsScene): void {
+      if (!captionText) return;
+      const node = captionText;
+      while (node.firstChild) node.removeChild(node.firstChild);
+      if (scene.caption === null) return;
+      const lines = wrapTwoLines(captionTextOf(scene, scene.caption), CAPTION_MAX_W, BODY_CHAR_W);
+      lines.forEach((line, i) => {
+        const span = el('tspan', { x: W / 2, dy: i === 0 ? 0 : CAPTION_LINE_H });
+        span.textContent = line;
+        node.appendChild(span);
+      });
+    }
+
+    /**
+     * 장면 하나를 통째로 세운다.
+     *
+     * 완료 표식은 **거둘 때 `removeAttribute`** 로 거둔다. `data-done="false"` 로
+     * 덮으면 흐르며 선 화면과 곧바로 세운 화면이 속성의 유무만큼 달라, 눈에는
+     * 안 보여도 DOM 을 견주는 감사가 어긋남으로 잡는다.
+     */
+    function drawStatic(scene: OutOfBoundsScene, label: string): void {
+      drawExpr(scene);
+      drawCells(scene);
+      drawGuardLook(scene);
+      drawProbeLook(scene, label);
+      // 자리는 걸음 함수가 정한다 — 정적 쓰임이라 프레임을 걸지 않고 끝 자리에 선다.
+      const at = probeX(scene.probe.at, label);
+      void slideProbe(at, at, MOVE_MS, false);
+      void dropGuard(false);
+      drawCaption(scene);
+      if (scene.done) svg.setAttribute('data-done', 'true');
+      else svg.removeAttribute('data-done');
+    }
+
+    // ── 걸음 함수. `withAnim` 이 거짓이면 타이머도 프레임도 걸지 않고 끝 자리에 선다.
+
+    /** 커서가 출발 자리에서 지금 자리로 미끄러진다. */
+    function slideProbe(fromX: number, toX: number, ms: number, withAnim: boolean): Promise<void> {
+      if (!withAnim || fromX === toX) {
+        placeProbe(toX);
+        return Promise.resolve();
+      }
+      return animate(ms, (raw) => {
+        const e = easeOut(raw);
+        placeProbe(raw >= 1 ? toX : fromX + (toX - fromX) * e);
+      });
+    }
+
+    /** 경계 검사를 아직 오지 않은 자리로 물린다. 내려서는 운동의 출발점이다. */
+    function parkGuard(): void {
+      if (guardGroup) guardGroup.style.transform = `translate(0px, ${-GUARD_RISE}px)`;
+    }
+
+    /** 경계 검사가 위에서 내려선다. 정적 그리기는 이미 내려앉은 자리에 세워 두었다. */
+    function dropGuard(withAnim: boolean): Promise<void> {
+      const group = guardGroup;
+      if (!group) return Promise.resolve();
+      if (!withAnim) {
+        group.style.transform = 'translate(0px, 0px)';
+        return Promise.resolve();
+      }
+      return animate(GUARD_MS, (raw) => {
+        const e = easeBack(raw);
+        const dy = raw >= 1 ? 0 : -GUARD_RISE * (1 - e);
+        group.style.transform = `translate(0px, ${dy || 0}px)`;
+      });
+    }
+
+    /**
+     * 커서가 나아가다 벽에 부딪혀 멎고, 조금 물러앉는다.
+     *
+     * 정적 쓰임이 없는 유일한 걸음 함수다 — 물러앉은 끝 자리는 `probe.at` 이
+     * `edge` 라는 것으로 이미 정해져 `slideProbe` 가 세운다. 여기 남는 것은
+     * 부딪히고 튀는 **사이**뿐이다.
+     */
+    async function bumpProbe(fromX: number, stopX: number, restX: number): Promise<void> {
+      await slideProbe(fromX, stopX, BUMP_MS, true);
+      await slideProbe(stopX, restX, RECOIL_MS, true);
+    }
+
+    async function render(
+      next: OutOfBoundsScene,
+      /** 이 조각은 출발 그림을 장면에서 셈하므로 앞 장면을 들추지 않는다. */
+      _prev: OutOfBoundsScene | null,
+      opts: { animate: boolean },
+    ): Promise<void> {
+      if (builtKey !== baseKey(next)) build(next);
+
+      const label = probeLabelOf(next);
+      drawStatic(next, label);
+
+      if (!opts.animate) return;
+
+      // 방금 밟은 걸음 하나만 흐르게 한다. 걸음을 건너뛰어 온 길은 `animate` 가
+      // 거짓이라 위에서 이미 돌아갔고, 출발 자리는 `step.from` 이 싣고 있으므로
+      // `prev` 를 들출 까닭이 없다.
+      const step = next.step;
+      if (!step) return;
+
+      const fromX = probeX(step.from, label);
+      switch (step.kind) {
+        case 'move':
+          await slideProbe(fromX, probeX(next.probe.at, label), MOVE_MS, true);
+          return;
+        case 'guard':
+          // 커서가 물러나는 동안 경계 검사는 아직 위에 있어야 한다. 정적 그리기가
+          // 이미 내려앉은 자리에 세워 두었으므로 기다리기 전에 **동기로** 물린다 —
+          // 그 사이에는 프레임도 타이머도 없어 페인트가 끼지 않는다.
+          parkGuard();
+          await slideProbe(fromX, probeX(next.probe.at, label), HOME_MS, true);
+          await dropGuard(true);
+          return;
+        case 'bump': {
+          const stopX = bumpX(label);
+          await bumpProbe(fromX, stopX, stopX - RECOIL_DX);
+          return;
+        }
       }
     }
 
     return {
-      init(d: OutOfBoundsStageInit): void {
-        build(d);
-      },
-
-      /** 주소 셈이 결과를 냈다. 수식 줄이 채워진다. */
-      showAddress(p: { index: number; addressHex: string }): void {
-        if (!init) return;
-        setExpr(String(p.index), p.addressHex, p.index >= arrayLen);
-      },
-
-      /** 커서가 그 주소의 칸으로 미끄러진다. 배열의 끝을 넘으면 색이 갈린다. */
-      async moveProbe(p: { index: number; crossed: boolean }): Promise<void> {
-        if (!init) return;
-        releaseCells();
-        setProbeLabel(`${init.arrayName}[${p.index}]`, p.crossed);
-        placeProbe(cellCenter(p.index), MOVE_MS);
-        await wait(MOVE_MS);
-      },
-
-      /** 커서가 선 자리의 값을 읽는다. */
-      readSlot(p: { index: number; value: number; outOfBounds: boolean }): void {
-        if (!init) return;
-        setProbeLabel(`${init.arrayName}[${p.index}] → ${p.value}`, p.outOfBounds);
-        setCellState(p.index, p.outOfBounds ? 'breached' : 'active');
-      },
-
-      /** 커서를 기준 주소로 물린 뒤, 경계 검사가 배열의 끝에 내려선다. */
-      async dropGuard(p: { homeIndex: number }): Promise<void> {
-        if (!init || !guardGroup) return;
-        releaseCells();
-        setProbeLabel(`${init.arrayName}[i]`, false);
-        placeProbe(cellCenter(p.homeIndex), HOME_MS);
-        await wait(HOME_MS);
-
-        guardGroup.style.display = '';
-        guardGroup.style.transition = 'none';
-        guardGroup.style.transform = `translate(0px, ${-GUARD_RISE}px)`;
-        await wait(20);
-        guardGroup.style.transition = `transform ${GUARD_MS}ms cubic-bezier(0.22, 1.1, 0.36, 1)`;
-        guardGroup.style.transform = 'translate(0px, 0px)';
-        await wait(GUARD_MS);
-      },
-
-      /** 커서가 다시 나아가지만 경계 검사에 부딪혀 그 앞에서 멎는다. */
-      async blockProbe(p: { index: number }): Promise<void> {
-        if (!init) return;
-        setProbeLabel(`${init.arrayName}[${p.index}]`, false);
-        const stopX = edgeX - GUARD_W / 2 - probeLabelWidth() / 2 - 4;
-        placeProbe(stopX, BUMP_MS);
-        await wait(BUMP_MS);
-        placeProbe(stopX - 12, RECOIL_MS);
-        await wait(RECOIL_MS);
-      },
-
-      /** 한 걸음의 말. 문안은 projector 가 messages 에서 가져와 넘긴다. */
-      setCaption(text: string): void {
-        if (!captionText) return;
-        while (captionText.firstChild) captionText.removeChild(captionText.firstChild);
-        const lines = wrapTwoLines(text, CAPTION_MAX_W, BODY_CHAR_W);
-        lines.forEach((line, i) => {
-          const span = el('tspan', { x: W / 2, dy: i === 0 ? 0 : CAPTION_LINE_H });
-          span.textContent = line;
-          captionText?.appendChild(span);
-        });
-      },
-
-      /** 할 말을 마쳤다. 완료 상태 자체가 정보이므로 화면은 그대로 둔다. */
-      markDone(): void {
-        svg.setAttribute('data-done', 'true');
-      },
-
-      /** 처음 상태로. 커서는 기준 주소에, 경계 검사는 다시 없는 것으로. */
-      resetStage(): void {
-        if (init) build(init);
-        svg.removeAttribute('data-done');
-      },
+      render,
 
       destroy(): void {
-        for (const id of timers) clearTimeout(id);
-        timers.clear();
+        destroyed = true;
+        for (const id of frames) cancelAnimationFrame(id);
+        frames.clear();
+        for (const wake of [...waiters]) wake();
+        waiters.clear();
         clear();
         if (svg.parentNode) svg.parentNode.removeChild(svg);
       },

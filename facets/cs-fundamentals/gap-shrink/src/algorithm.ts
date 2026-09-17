@@ -9,18 +9,28 @@
  * 한 라운드는 간격 gap 의 삽입 정렬이며, 여기서는 "짝을 견주고 어긋나면 바꾼다"
  * 는 맞바꿈(swap) 형태로 편다. 견줌은 `values[j-gap]` 와 `values[j]` 를 견줄
  * 때마다 1회(맞바꿈으로 이어지지 않은 마지막 견줌도 포함), 이동은 맞바꿈 1회당
- * 1회로 센다. 대조군(간격 1 만으로 끝까지)은 같은 함수 `countGapRun` 이 같은
- * 규칙으로 센다 — 화면의 두 수가 같은 자로 잰 것이어야 견줄 수 있다.
+ * 1회다. 재생 루프는 그 하나하나를 발신하므로 **발신을 세면 곧 그 수**이고,
+ * 화면은 그렇게 센다. 대조군(간격 1 만으로 끝까지)은 같은 규칙을 그대로 편
+ * `countGapRun` 이 센다 — 화면의 두 수가 같은 자로 잰 것이어야 견줄 수 있다.
  *
  * ── 이벤트 (전부 이 facet 고유 확장)
- * | type            | target                       | payload                                                        | silent |
- * |-----------------|------------------------------|----------------------------------------------------------------|--------|
- * | round-begin     | —                            | { round: number; gap: number }                                  | no     |
- * | stride-compare  | ['index:left','index:right'] | { left; right; gap; round; willSwap: boolean; comparisons }     | no     |
- * | stride-swap     | ['index:left','index:right'] | { left; right; round; moves: number }                           | no     |
- * | baseline-reveal | —                            | { comparisons: number; moves: number }                          | no     |
- * | done            | —                            | { comparisons; moves; baseComparisons; baseMoves }              | no     |
- * | rewind          | —                            | 없음                                                             | no     |
+ * | type            | target                       | payload | silent |
+ * |-----------------|------------------------------|---------|--------|
+ * | round-begin     | —                            | 없음     | no     |
+ * | stride-compare  | ['index:left','index:right'] | 없음     | no     |
+ * | stride-swap     | ['index:left','index:right'] | 없음     | no     |
+ * | baseline-reveal | —                            | 없음     | no     |
+ * | done            | —                            | 없음     | no     |
+ * | rewind          | —                            | 없음     | no     |
+ *
+ * **payload 가 하나도 없다.** 화면에 나란히 뜨는 수는 장면이 스스로 센다 — 견줌
+ * 횟수는 `stride-compare` 발신 수, 이동 횟수는 `stride-swap` 발신 수, 라운드 차례는
+ * `round-begin` 이 오는 순서다. 걸음이 그 수를 실어 오면 화면의 구조와 다른 출처가
+ * 되어 언젠가 갈린다.
+ *
+ * 대조군만은 일어나지 않은 주행이라 구조에서 셀 수 없다. 그것은 바탕 자료에 순수
+ * 함수를 먹이면 나오는 값이라, 싣는 대신 **`countGapRun` 을 내주어 장면이 부르게**
+ * 한다 (`scene.ts`).
  *
  * `rewind` 는 자동 재생을 마친 뒤 advance 를 눌렀을 때 처음으로 되돌리는 신호다
  * (S-piece). 화면을 초기 상태로 되돌리므로 silent 가 아니다.
@@ -52,6 +62,11 @@ export type GapRunTally = {
  *
  * 재생 루프와 같은 규칙으로 세므로, 대조군(간격 1 만) 수치를 손으로 적지 않고
  * 구조에서 얻는다.
+ *
+ * **재생 루프는 이것을 부르지 않는다.** 대조군은 일어나지 않은 주행이라 발신으로
+ * 셀 수 없어 장면이 이 함수를 부른다 (`scene.ts`). 걸음에 실어 보내는 대신 함수를
+ * 내주는 쪽을 골랐다 — payload 를 무겁게 두면 다음 사람이 집어 쓸 문이 열린 채로
+ * 남고, 그 문이 곧 "두 자리에서 세기" 가 들어오는 길이다.
  */
 export function countGapRun(input: readonly number[], gaps: readonly number[]): GapRunTally {
   const values = [...input];
@@ -79,7 +94,6 @@ export const gapShrinkAlgorithm = async (ctx: FacetContext<GapShrinkData>): Prom
   const initial = [...ctx.data.values];
   const gaps = [...ctx.data.gaps];
   const stepMs = ctx.data.stepMs;
-  const baseline = countGapRun(initial, [1]);
 
   /** 자동 재생을 마친 뒤에는 걸음마다 advance 입력을 기다린다. */
   let stepwise = false;
@@ -102,15 +116,14 @@ export const gapShrinkAlgorithm = async (ctx: FacetContext<GapShrinkData>): Prom
 
   const play = async (): Promise<void> => {
     const values = [...initial];
-    let comparisons = 0;
-    let moves = 0;
 
-    for (let round = 0; round < gaps.length; round++) {
+    // 라운드 차례를 세는 변수를 두지 않는다 — `round-begin` 이 오는 순서가 그것을
+    // 이미 말하고, 화면은 그 순서로 센다.
+    for (const gap of gaps) {
       if (ctx.cancelled) return;
-      const gap = gaps[round];
       await gate();
       if (ctx.cancelled) return;
-      await ctx.emit({ type: 'round-begin', payload: { round, gap } });
+      await ctx.emit({ type: 'round-begin' });
       await pause(stepMs);
 
       for (let i = gap; i < values.length; i++) {
@@ -119,14 +132,14 @@ export const gapShrinkAlgorithm = async (ctx: FacetContext<GapShrinkData>): Prom
         while (j >= gap) {
           if (ctx.cancelled) return;
           const left = j - gap;
+          // 바꿀지 말지는 이 루프의 갈림이지 화면에 보낼 것이 아니다. 견줌 뒤에
+          // 맞바꿈이 오는지 아닌지가 그 판정을 이미 말한다.
           const willSwap = values[left] > values[j];
           await gate();
           if (ctx.cancelled) return;
-          comparisons += 1;
           await ctx.emit({
             type: 'stride-compare',
             target: [`index:${left}`, `index:${j}`],
-            payload: { left, right: j, gap, round, willSwap, comparisons },
           });
           if (!willSwap) {
             await pause(Math.round(stepMs * 0.4));
@@ -136,11 +149,9 @@ export const gapShrinkAlgorithm = async (ctx: FacetContext<GapShrinkData>): Prom
           const carried = values[left];
           values[left] = values[j];
           values[j] = carried;
-          moves += 1;
           await ctx.emit({
             type: 'stride-swap',
             target: [`index:${left}`, `index:${j}`],
-            payload: { left, right: j, round, moves },
           });
           await pause(Math.round(stepMs * 0.45));
           j = left;
@@ -150,21 +161,10 @@ export const gapShrinkAlgorithm = async (ctx: FacetContext<GapShrinkData>): Prom
 
     await gate();
     if (ctx.cancelled) return;
-    await ctx.emit({
-      type: 'baseline-reveal',
-      payload: { comparisons: baseline.comparisons, moves: baseline.moves },
-    });
+    await ctx.emit({ type: 'baseline-reveal' });
     await pause(stepMs);
     if (ctx.cancelled) return;
-    await ctx.emit({
-      type: 'done',
-      payload: {
-        comparisons,
-        moves,
-        baseComparisons: baseline.comparisons,
-        baseMoves: baseline.moves,
-      },
-    });
+    await ctx.emit({ type: 'done' });
   };
 
   await play();

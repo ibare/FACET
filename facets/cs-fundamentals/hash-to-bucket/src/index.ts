@@ -10,12 +10,12 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { hashToBucketAlgorithm, type HashToBucketData } from './algorithm.js';
-import { hashToBucketProjector } from './projector.js';
+import { hashToBucketScene } from './scene.js';
 import { hashToBucketIRs } from './irs.js';
 import { hashToBucketStageView } from './hash-to-bucket-stage.js';
 import { hashToBucketFacet } from './facet.js';
@@ -23,20 +23,21 @@ import { hashToBucketDescription } from './description.js';
 
 export {
   hashToBucketAlgorithm,
-  hashToBucketProjector,
+  hashToBucketScene,
   hashToBucketIRs,
   hashToBucketStageView,
   hashToBucketFacet,
   hashToBucketDescription,
 };
 export type { HashToBucketData };
+export type { HashToBucketScene } from './scene.js';
 
 export function registerHashToBucket(): void {
   registerAlgorithm<HashToBucketData>('hashToBucket', hashToBucketAlgorithm, {
     // 조각은 mount 되면 스스로 시작하고 걸음 간격을 스스로 정한다 (S-piece).
     mechanismKind: 'reactive',
   });
-  registerProjector('hashToBucketProjector', hashToBucketProjector);
+  registerScenePlan('hashToBucketScene', hashToBucketScene);
   for (const ir of hashToBucketIRs) registerIR(ir.id, ir);
   registerView('hash-to-bucket-stage', hashToBucketStageView);
   registerFacets([hashToBucketFacet]);

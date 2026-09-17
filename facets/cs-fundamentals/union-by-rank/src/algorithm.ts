@@ -6,16 +6,23 @@
  * 수밖에 없을 때만 키가 하나 는다 — 그 판정 결과(표)를 미리 적어 두지 않고
  * `find` + 랭크 비교로 매 걸음 실제로 계산한다.
  *
+ * 랭크 수를 싣지 않는다. 경로 압축이 없으므로 뿌리의 랭크는 곧 그 밑에 달린
+ * 서브트리의 깊이이고, 화면은 그 깊이를 이미 그리고 있다. 수를 함께 실어 보내면
+ * 한 화면에 나란히 뜨는 두 항(배지의 수 · 눈에 보이는 세로 폭)이 다른 출처에서
+ * 오게 된다 — 갈리는 날 그림이 스스로 거짓이 된다. 그래서 자리 번호만 싣고 수는
+ * 장면이 숲에서 센다 (`scene.ts` 의 `rankAt`).
+ *
  * 이벤트 어휘 (C2 확장 문서):
- *   'rank-compare' { rootA: number; rootB: number; rankA: number; rankB: number }
+ *   'rank-compare' { rootA: number; rootB: number }
  *     target: ['node:<rootA>', 'node:<rootB>']  silent: false
- *     합칠 두 뿌리와 각각의 랭크를 나란히 보인다 — 어느 쪽이 낮은지 견주는 순간.
- *   'attach' { loser: number; winner: number; loserRank: number; winnerRank: number; tie: boolean }
+ *     합칠 두 뿌리를 나란히 보인다 — 어느 쪽이 낮은지 견주는 순간.
+ *   'attach' { loser: number; winner: number }
  *     target: ['node:<loser>', 'node:<winner>']  silent: false
  *     진 쪽 뿌리(와 그 서브트리 전체)가 이긴 쪽 뿌리 밑으로 실제로 옮겨 붙는다.
- *   'rank-grow' { root: number; rank: number }
+ *     랭크가 같았는지 달랐는지는 붙기 전 숲에서 판정된다.
+ *   'rank-grow' { root: number }
  *     target: 'node:<root>'  silent: false
- *     랭크가 같아 어쩔 수 없이 키가 하나 늘 때만 발신한다. 새 랭크 값을 싣는다.
+ *     랭크가 같아 어쩔 수 없이 키가 하나 늘 때만 발신한다.
  *   'rewind' (payload 없음)  silent: false
  *     자동 재생을 마친 뒤 첫 advance 입력에서 처음 상태로 되돌아간다는 신호.
  *     화면을 통째로 되돌리는, 눈에 보이는 변화라 silent 로 두지 않는다.
@@ -91,7 +98,7 @@ export async function unionByRankAlgorithm(ctx: FacetContext<UnionByRankData>): 
       await ctx.emit({
         type: 'rank-compare',
         target: [`node:${rootA}`, `node:${rootB}`],
-        payload: { rootA, rootB, rankA, rankB },
+        payload: { rootA, rootB },
       });
       if (!(await gate(mode))) return false;
 
@@ -99,14 +106,13 @@ export async function unionByRankAlgorithm(ctx: FacetContext<UnionByRankData>): 
       const tie = rankA === rankB;
       const winner = rankB > rankA ? rootB : rootA;
       const loser = winner === rootA ? rootB : rootA;
-      const loserRank = rank[loser]!;
       const winnerRank = rank[winner]!;
       parent[loser] = winner;
 
       await ctx.emit({
         type: 'attach',
         target: [`node:${loser}`, `node:${winner}`],
-        payload: { loser, winner, loserRank, winnerRank, tie },
+        payload: { loser, winner },
       });
       if (!(await gate(mode))) return false;
 
@@ -115,7 +121,7 @@ export async function unionByRankAlgorithm(ctx: FacetContext<UnionByRankData>): 
         await ctx.emit({
           type: 'rank-grow',
           target: `node:${winner}`,
-          payload: { root: winner, rank: rank[winner] },
+          payload: { root: winner },
         });
         if (!(await gate(mode))) return false;
       }

@@ -37,7 +37,7 @@ export const spatialLocalityFacet: FacetJson = {
     pt: 'Uma linha sobe e os três seguintes saem de graça.',
   },
   algorithm: 'module:spatialLocality',
-  projector: 'module:spatialLocalityProjector',
+  scene: 'module:spatialLocalityScene',
   initialData: {
     type: 'spatialLocality',
     /** 캐시 라인 한 줄이 담는 바이트 수. */
@@ -51,7 +51,7 @@ export const spatialLocalityFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'spatial-locality-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.probe': {

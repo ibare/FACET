@@ -5,26 +5,26 @@
  * 아니라 **곱셈**에 있다 — 벡터 하나를 견주려면 차원마다 곱셈이 한 번씩 든다.
  * 그래서 이 조각이 세는 것은 `후보 수 n × 차원 d` 다.
  *
- * ── 식별자
- *   index:<i>    훑는 차례의 후보
- *
  * ── 이벤트 (전부 이 facet 고유 확장, silent 없음 — 모두 걸음 경계다)
- *   sweep        { index: number; n: number; dims: number; total: number }
- *                후보 하나를 견준다. total 은 여기까지 쌓인 곱셈 횟수.
- *   fuse         { n: number; dims: number; total: number }
- *                작은 판 하나를 다 훑었다. 낱낱의 곱셈이 한 더미로 굳는다.
- *   grow         { n: number; dims: number; total: number }
- *                후보 수와 차원을 키운다.
- *   real-scale   { n: number; dims: number; total: number }
- *                실제 크기에 가까운 줄. 더미가 화면 밖으로 자란다.
- *   rewind       payload 없음. 한 걸음씩 짚어 보려고 처음으로 되감는다.
+ *
+ * **payload 가 하나도 없다.** 이 조각에는 걸음이 내리는 판정이 없기 때문이다 —
+ * 무엇을 몇 번째로 훑을지는 후보 수가 정하고, 키운 줄은 선언의 `scales` 에 차례로
+ * 적혀 있으며, 곱셈 수는 `n × dims` 라 바탕에서 곧바로 나온다. 장면이 그것을 전부
+ * 셈하므로 (`scene.ts`) 걸음은 어휘만 나른다. `target` 도 싣지 않는다 — 몇 번째
+ * 후보인가는 훑음이 하나씩 쌓이는 것으로 장면이 센다.
+ *
+ *   sweep        후보 하나를 견준다.
+ *   fuse         작은 판 하나를 다 훑었다. 낱낱의 곱셈이 한 더미로 굳는다.
+ *   grow         후보 수와 차원을 한 줄 키운다.
+ *   real-scale   실제 크기에 가까운 줄. 더미가 화면 밖으로 자란다.
+ *   rewind       한 걸음씩 짚어 보려고 처음으로 되감는다.
  *
  * ── 메트릭
  *   없다. 조각은 셀 것이 없다 (S-piece).
  *
  * ── 선언에 없는 것
  *   곱셈 횟수는 선언에 박지 않는다. 1차 데이터는 후보 수와 차원의 짝이고,
- *   `n * dims` 는 여기서 셈한다.
+ *   `n * dims` 는 장면이 셈한다.
  */
 
 import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
@@ -56,40 +56,28 @@ type Gate = () => Promise<boolean>;
  * @returns 끝까지 갔으면 true, 중간에 취소됐으면 false.
  */
 async function runPass(ctx: ReactiveContext<CompareWithAllData>, gate: Gate): Promise<boolean> {
-  const { board, scales, real } = ctx.data;
+  const { board, scales } = ctx.data;
 
   // 걸음 수는 사람이 적은 것이 아니라 후보 수가 정한다 — 전수 탐색이란 그것이다.
-  let total = 0;
+  // 몇 번째 후보인지는 싣지 않는다 — 훑음이 하나씩 쌓이므로 장면이 센다.
   for (let i = 0; i < board.n; i += 1) {
     // 첫 걸음 앞에는 기다릴 앞걸음이 없다. 문을 먼저 두면 빈 화면부터 보인다 (S-piece).
     if (i > 0 && !(await gate())) return false;
-    total += board.dims;
-    await ctx.emit({
-      type: 'sweep',
-      target: `index:${i}`,
-      payload: { index: i, n: board.n, dims: board.dims, total },
-    });
+    await ctx.emit({ type: 'sweep' });
   }
 
   if (!(await gate())) return false;
-  await ctx.emit({
-    type: 'fuse',
-    payload: { n: board.n, dims: board.dims, total },
-  });
+  await ctx.emit({ type: 'fuse' });
 
-  for (const scale of scales) {
+  // 어느 줄로 키우는지는 선언의 `scales` 가 차례로 말한다. 걸음은 한 칸 나아갔다는
+  // 것만 옮기므로 무엇을 꺼내 쓸 것이 없어 셈 루프로 돈다.
+  for (let i = 0; i < scales.length; i += 1) {
     if (!(await gate())) return false;
-    await ctx.emit({
-      type: 'grow',
-      payload: { n: scale.n, dims: scale.dims, total: scale.n * scale.dims },
-    });
+    await ctx.emit({ type: 'grow' });
   }
 
   if (!(await gate())) return false;
-  await ctx.emit({
-    type: 'real-scale',
-    payload: { n: real.n, dims: real.dims, total: real.n * real.dims },
-  });
+  await ctx.emit({ type: 'real-scale' });
   return true;
 }
 

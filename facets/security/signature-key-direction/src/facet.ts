@@ -6,8 +6,9 @@
  *
  * @piece — 이 표식이 S-piece 의 적용 범위를 정한다.
  *
- * 조각의 규범: 필수 조작 없음(다시 보기 하나) / 제목 없음 / 한 주장 /
- * 메트릭 없음 / 캔버스 폭 620 / 전제를 각주로 밝힘.
+ * 조각의 규범: 필수 조작 없음(다시 보기와 띠) / 제목 없음 / 한 주장 /
+ * 메트릭 없음 / 캔버스 폭 620. 전제는 화면의 각주가 아니라 `description` 이
+ * 밝힌다 (S-piece).
  *
  * 자물쇠·열쇠 어휘는 RSA facet 과 맞춘다 — 공개키는 자물쇠, 개인키는 열쇠.
  * 코드를 공유하지는 않지만 (facet 패키지끼리 import 금지) 어휘가 어긋나면 두
@@ -49,7 +50,9 @@ export const signatureKeyDirectionFacet: FacetJson = {
     pt: 'Cifrar e assinar usam o mesmo par de chaves em sentidos opostos',
   },
   algorithm: 'module:signatureKeyDirection',
-  projector: 'module:signatureKeyDirectionProjector',
+  // 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든 셈으로
+  // 얻으므로 띠를 끌어 아무 자리로나 갈 수 있다 (S-scene).
+  scene: 'module:signatureKeyDirectionScene',
   initialData: {
     type: 'signature-key-direction',
     stepMs: 1000,
@@ -229,7 +232,7 @@ export const signatureKeyDirectionFacet: FacetJson = {
     stage: { type: 'key-direction-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

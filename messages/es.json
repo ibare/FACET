@@ -18,6 +18,7 @@
   "view.controlBar.search": "Buscar",
   "view.controlBar.speed": "Velocidad",
   "view.controlBar.step": "⏭ Paso",
+  "view.controlBar.timeline": "Posición de reproducción",
   "view.conveyorQueue.empty": "(vacío)",
   "view.conveyorQueue.size": "Tamaño: {n}",
   "view.conveyorQueue.sizeBounded": "Tamaño: {n} / {cap}",

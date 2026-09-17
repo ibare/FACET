@@ -8,6 +8,9 @@
  * 선언이 담는 것은 구조뿐이다 — 한 줄 위의 자리 일곱과 그 이름표, 그리고 올리는
  * 법(제곱). 자름 자리도 · 오르는 높이도 · 가르는 높이 2.5 도 여기 없다. 전부
  * 파생값이라 algorithm 이 셈하고, 좌표는 stage 가 캔버스에서 역산한다.
+ *
+ * 화면을 명령이 아니라 **장면**으로 만들므로 (`scene:`) 어느 걸음의 화면이든
+ * 셈으로 얻는다 — 그래서 재생 위치를 끌어 보는 띠를 단다 (S-scene).
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
@@ -54,7 +57,7 @@ export const kernelLiftsFacet: FacetJson = {
     pt: 'O que não se pode separar passa a separar-se com uma dimensão a mais',
   },
   algorithm: 'module:kernelLifts',
-  projector: 'module:kernelLiftsProjector',
+  scene: 'module:kernelLiftsScene',
   initialData: {
     type: 'kernel-lifts',
     points: POINTS.map((p) => ({ ...p })),
@@ -63,7 +66,7 @@ export const kernelLiftsFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'kernel-lifts-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.line': {

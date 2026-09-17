@@ -38,7 +38,7 @@ export const mantissaAndExponentFacet: FacetJson = {
     pt: 'Trinta e dois bits se dividem em três partes, e as três montam um único número.',
   },
   algorithm: 'module:mantissaAndExponent',
-  projector: 'module:mantissaAndExponentProjector',
+  scene: 'module:mantissaAndExponentScene',
   initialData: {
     type: 'mantissaAndExponent',
     /** 쪼개 볼 값. 이것 하나와 아래 배분에서 나머지가 전부 나온다. */
@@ -51,7 +51,7 @@ export const mantissaAndExponentFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'mantissa-and-exponent-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.layBits': {
@@ -198,17 +198,21 @@ export const mantissaAndExponentFacet: FacetJson = {
       id: 'mantissa',
       pt: 'mantissa',
     },
+    /**
+     * 토막 밑에 남는 자취. 빼기 전의 수와 치우침이 **함께** 서야 "치우침을
+     * 뺐다" 가 보인다 — 큰 글씨는 이미 뺀 뒤의 수로 갈아 끼워지기 때문이다.
+     */
     'label.bias': {
-      en: 'bias {b}',
-      ko: '치우침 {b}',
-      ja: '偏り {b}',
-      zh: '偏移 {b}',
-      ar: 'الانحياز {b}',
-      es: 'sesgo {b}',
-      fr: 'décalage {b}',
-      hi: 'बायस {b}',
-      id: 'bias {b}',
-      pt: 'viés {b}',
+      en: '{raw} − bias {b}',
+      ko: '{raw} − 치우침 {b}',
+      ja: '{raw} − 偏り {b}',
+      zh: '{raw} − 偏移 {b}',
+      ar: '{raw} − الانحياز {b}',
+      es: '{raw} − sesgo {b}',
+      fr: '{raw} − décalage {b}',
+      hi: '{raw} − बायस {b}',
+      id: '{raw} − bias {b}',
+      pt: '{raw} − viés {b}',
     },
     'label.hiddenOne': {
       en: 'hidden 1',

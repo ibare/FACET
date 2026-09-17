@@ -10,7 +10,7 @@
  * 그대로 화면에 뜬다.
  *
  * `stepMs` 는 실측으로 정했다. 가장 얇은 걸음이 카드 비행 540ms + 700 = 1.24초로,
- * 바닥선 800ms 위에 있다 (S-piece 걸음 벽시계).
+ * 바닥선 800ms 위에 있다 (S-piece 걸음 벽시계). 장면으로 옮긴 뒤에도 같은 값이다.
  *
  * 그림의 좌표는 stage 가 캔버스에서 역산한다 — 여기 넣지 않는다 (S-piece).
  */
@@ -47,7 +47,9 @@ export const reduceToKnownFacet: FacetJson = {
   },
 
   algorithm: 'module:reduceToKnown',
-  projector: 'module:reduceToKnownProjector',
+  // 명령이 아니라 상태로 화면을 만든다 — 그래야 띠가 임의의 걸음으로 갈 수 있다
+  // (S-scene). projector 와 둘 다 선언하면 러너가 세우지 않는다.
+  scene: 'module:reduceToKnownScene',
 
   initialData: {
     type: 'reduce-to-known',
@@ -65,7 +67,11 @@ export const reduceToKnownFacet: FacetJson = {
 
   blocks: {
     stage: { type: 'reduce-to-known-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: {
+      type: 'control-bar',
+      // 장면 방식의 조각은 띠를 단다. 띠와 advance 를 함께 두지 않는다 (S-piece).
+      controls: CONTROL_SET.pieceScrub,
+    },
   },
 
   messages: {
@@ -92,6 +98,18 @@ export const reduceToKnownFacet: FacetJson = {
       hi: 'ग्राफ़ रंगना',
       id: 'Pewarnaan graf',
       pt: 'Coloração de grafos',
+    },
+    'label.moved': {
+      en: 'Subjects moved to nodes: {nodes}. Overlaps turned into edges: {edges}.',
+      ko: '마디가 된 과목 {nodes} · 선이 된 겹침 {edges}',
+      ja: '頂点になった科目 {nodes} · 辺になった重なり {edges}',
+      zh: '成为顶点的科目 {nodes} · 成为边的冲突 {edges}',
+      ar: 'مواد صارت عقدًا: {nodes}. تعارضات صارت أضلاعًا: {edges}.',
+      es: 'Asignaturas convertidas en nodos: {nodes}. Solapes convertidos en aristas: {edges}.',
+      fr: 'Matières devenues sommets : {nodes}. Chevauchements devenus arêtes : {edges}.',
+      hi: 'शीर्ष बने विषय: {nodes}. किनारे बने टकराव: {edges}.',
+      id: 'Mata pelajaran jadi simpul: {nodes}. Bentrok jadi sisi: {edges}.',
+      pt: 'Disciplinas que viraram nós: {nodes}. Conflitos que viraram arestas: {edges}.',
     },
     'label.period': {
       en: 'Slot {n}',

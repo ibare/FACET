@@ -5,7 +5,8 @@
  *
  * 조각이므로 header 도 metrics 도 layout 도 두지 않는다. 러너가 `column · gap 8 ·
  * blocks 키 순서` 로 배치하고, 가로는 `PIECE_CANVAS_W` 로 정한다 (S-piece).
- * 컨트롤 둘은 눌러야 완성되는 조작이 아니다 — 자동 재생만 보고 지나가도 화면은 할 말을 마친다.
+ * 컨트롤은 눌러야 완성되는 조작이 아니다 — 자동 재생만 보고 지나가도 화면은 할 말을 마친다.
+ * 화면은 장면(Scene) 방식이라 어느 걸음이든 셈으로 얻으므로 스크럽 띠를 단다 (S-scene).
  */
 
 import { CONTROL_SET } from '@ffacet/core/runtime';
@@ -38,7 +39,7 @@ export const enqueueDequeueEndsFacet: FacetJson = {
     pt: 'As duas portas ficam em pontas opostas, por isso o primeiro a entrar é o primeiro a sair.',
   },
   algorithm: 'module:enqueueDequeueEnds',
-  projector: 'module:enqueueDequeueEndsProjector',
+  scene: 'module:enqueueDequeueEndsScene',
   initialData: {
     type: 'enqueue-dequeue-ends',
     values: [3, 7, 1],
@@ -46,7 +47,7 @@ export const enqueueDequeueEndsFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'enqueue-dequeue-ends-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.doors': {

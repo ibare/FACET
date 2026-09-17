@@ -9,13 +9,13 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { gapShrinkAlgorithm, countGapRun } from './algorithm.js';
 import type { GapRunTally, GapShrinkData } from './algorithm.js';
-import { gapShrinkProjector } from './projector.js';
+import { gapShrinkScene } from './scene.js';
 import { gapShrinkIRs } from './irs.js';
 import { gapShrinkStageView } from './gap-shrink-stage.js';
 import { gapShrinkFacet } from './facet.js';
@@ -24,7 +24,7 @@ import { gapShrinkDescription } from './description.js';
 export {
   gapShrinkAlgorithm,
   countGapRun,
-  gapShrinkProjector,
+  gapShrinkScene,
   gapShrinkIRs,
   gapShrinkStageView,
   gapShrinkFacet,
@@ -36,7 +36,7 @@ export function registerGapShrink(): void {
   registerAlgorithm<GapShrinkData>('gapShrink', gapShrinkAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('gapShrinkProjector', gapShrinkProjector);
+  registerScenePlan('gapShrinkScene', gapShrinkScene);
   for (const ir of gapShrinkIRs) registerIR(ir.id, ir);
   registerView('gap-shrink-stage', gapShrinkStageView);
   registerFacets([gapShrinkFacet]);

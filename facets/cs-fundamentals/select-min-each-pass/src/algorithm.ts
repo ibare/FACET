@@ -8,21 +8,26 @@
  * 식별자
  *   index:<i>   값이 든 칸의 자리 번호
  *
- * 이벤트 (전부 이 facet 고유 확장 — C2)
- *   mark-init   { index: number; value: number }
+ * 이벤트 (전부 이 facet 고유 확장 — C2). **payload 는 하나도 없다.**
+ * 걸음이 가리키는 자리는 `target` 이 말하고, 값·견줌 판정·셈은 전부 장면이
+ * 구조에서 센다 (`scene.ts`). 수를 실어 보내면 화면에 뜨는 수와 화면의 구조가
+ * 다른 출처가 되어 언젠가 갈린다.
+ *
+ *   mark-init   target `index:0`
  *               후보 표식을 첫 자리에 놓는다. 아직 아무것도 견주지 않았다.
- *   scan-step   { index: number; value: number; bestIndex: number;
- *                 bestValue: number; smaller: boolean; compares: number }
- *               눈길이 한 칸 옮겨 가 표식이 쥔 값과 견준다. 값은 건드리지 않는다.
- *   mark-hop    { from: number; to: number; value: number; hops: number }
- *               더 작았으므로 표식만 새 자리로 건너간다.
- *   scan-end    { compares: number; hops: number }
+ *   scan-step   target `index:<j>`
+ *               눈길이 그 칸으로 옮겨 가 표식이 쥔 값과 견준다. 값은 건드리지
+ *               않는다. "더 작았나" 는 장면이 두 값을 견주어 안다.
+ *   mark-hop    target `index:<j>`
+ *               더 작았으므로 표식만 그 자리로 건너간다. 떠나온 자리는 장면이
+ *               쥐고 있던 직전 표식 자리다.
+ *   scan-end    target 없음
  *               훑기가 끝났다. 여기까지 옮겨진 값은 하나도 없다.
- *   value-move  { from: number; to: number; values: number[] }
+ *   value-move  target `['index:0', 'index:<best>']`
  *               비로소 한 번. 표식이 가리킨 값과 맨 앞 값이 자리를 맞바꾼다.
- *   done        { compares: number; moves: number }   (표준 어휘)
- *               한 바퀴의 셈 — 견줌 몇 번, 이동 몇 번.
- *   rewind      payload 없음
+ *   done        target 없음   (표준 어휘)
+ *               한 바퀴가 끝났다. 견줌 수와 이동 수는 장면이 자국에서 센다.
+ *   rewind      target 없음
  *               처음 상태로 되감는다 (advance 로 다시 짚어 볼 때).
  *
  * silent 이벤트는 없다. 일곱 가지 모두 화면이 바뀌는 걸음이다.
@@ -43,7 +48,7 @@ const FALLBACK_STEP_MS = 750;
 
 /**
  * `advance` 가 올 때까지 기다린다. 다른 입력은 흘려보낸다 — 컨트롤이 replay 와
- * advance 뿐이라 지금은 무해하지만, 걸음을 옮기는 것은 advance 하나여야 한다.
+ * 띠뿐이라 지금은 무해하지만, 걸음을 옮기는 것은 advance 하나여야 한다.
  * 취소되면 waitForInput 이 reject 한다.
  */
 async function waitForAdvance(ctx: ReactiveContext<SelectMinEachPassData>): Promise<void> {
@@ -58,6 +63,9 @@ export async function selectMinEachPass(
   base: FacetContext<SelectMinEachPassData>,
 ): Promise<void> {
   const ctx = base as ReactiveContext<SelectMinEachPassData>;
+  // 사본을 읽기만 한다. 맞바꾼 결과는 두 자리를 바꾼 것일 뿐이라 장면이 셈한다 —
+  // 여기서 제자리 정렬까지 하면 같은 규칙이 두 곳에 적히고, 되짚을 때 바탕이
+  // 이미 굴러간 채로 선다 (S-scene).
   const source = Array.isArray(ctx.data.values) ? [...ctx.data.values] : [];
   const stepMs = typeof ctx.data.stepMs === 'number' ? ctx.data.stepMs : FALLBACK_STEP_MS;
   if (source.length === 0) return;
@@ -80,64 +88,33 @@ export async function selectMinEachPass(
   };
 
   const playPass = async (): Promise<void> => {
-    const values = [...source];
     let best = 0;
-    let compares = 0;
-    let hops = 0;
 
     if (!(await gate())) return;
-    await ctx.emit({
-      type: 'mark-init',
-      target: 'index:0',
-      payload: { index: 0, value: values[0] },
-    });
+    await ctx.emit({ type: 'mark-init', target: 'index:0' });
 
-    for (let j = 1; j < values.length; j += 1) {
+    for (let j = 1; j < source.length; j += 1) {
       if (!(await gate())) return;
-      compares += 1;
-      const smaller = values[j] < values[best];
-      await ctx.emit({
-        type: 'scan-step',
-        target: `index:${j}`,
-        payload: {
-          index: j,
-          value: values[j],
-          bestIndex: best,
-          bestValue: values[best],
-          smaller,
-          compares,
-        },
-      });
+      const smaller = source[j] < source[best];
+      await ctx.emit({ type: 'scan-step', target: `index:${j}` });
       if (!smaller) continue;
-      hops += 1;
-      const from = best;
       best = j;
-      await ctx.emit({
-        type: 'mark-hop',
-        target: `index:${j}`,
-        payload: { from, to: j, value: values[j], hops },
-      });
+      // 표식이 건너가는 것이 이 조각의 주장이다. 견줌과 같은 걸음에 묶으면
+      // 물음을 읽을 틈 없이 답이 지나간다 — 문을 하나 둔다.
+      if (!(await gate())) return;
+      await ctx.emit({ type: 'mark-hop', target: `index:${j}` });
     }
 
     if (!(await gate())) return;
-    await ctx.emit({ type: 'scan-end', payload: { compares, hops } });
+    await ctx.emit({ type: 'scan-end' });
 
-    let moves = 0;
     if (best !== 0) {
       if (!(await gate())) return;
-      const held = values[0];
-      values[0] = values[best];
-      values[best] = held;
-      moves = 1;
-      await ctx.emit({
-        type: 'value-move',
-        target: ['index:0', `index:${best}`],
-        payload: { from: best, to: 0, values: [...values] },
-      });
+      await ctx.emit({ type: 'value-move', target: ['index:0', `index:${best}`] });
     }
 
     if (!(await gate())) return;
-    await ctx.emit({ type: 'done', payload: { compares, moves } });
+    await ctx.emit({ type: 'done' });
   };
 
   await playPass();

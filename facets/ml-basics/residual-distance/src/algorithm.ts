@@ -12,17 +12,20 @@
  *
  * ── 이벤트 (전부 step boundary. silent 는 없다)
  *
- * | type                | target      | payload                                    |
- * | ------------------- | ----------- | ------------------------------------------ |
- * | highlight           | `index:<i>` | 없음                                        |
- * | probe-perpendicular | `index:<i>` | 없음                                        |
- * | probe-turn          | `index:<i>` | `{ predicted: number; residual: number }`   |
- * | residual-drop       | `index:<i>` | `{ predicted: number; residual: number }`   |
- * | rewind              | 없음         | 없음                                        |
- * | done                | 없음         | 없음                                        |
+ * | type                | target      | payload |
+ * | ------------------- | ----------- | ------- |
+ * | highlight           | `index:<i>` | 없음     |
+ * | probe-perpendicular | `index:<i>` | 없음     |
+ * | probe-turn          | `index:<i>` | 없음     |
+ * | residual-drop       | `index:<i>` | 없음     |
+ * | rewind              | 없음         | 없음     |
+ * | done                | 없음         | 없음     |
  *
- * `predicted` 는 직선이 그 x 에서 내놓는 값, `residual` 은 `y - predicted` 다.
- * 화면에 뜨는 수는 전부 여기서 셈해 실어 보낸다 — view 가 다시 셈하지 않는다.
+ * **수를 싣지 않는다.** 예측값도 잔차도 고정된 직선과 점에서 곧바로 나오는 값이고,
+ * 화면은 그 직선을 그리느라 이미 같은 셈을 한다. 실어 보내면 같은 물음에 답이
+ * 둘이 되므로 `lineValueAt` · `residualAt` 을 내주고 장면이 부른다.
+ *
+ * 걸음이 싣는 것은 판정 하나다 — **어느 점을 지금 다루는가** (`target`).
  *
  * 메트릭은 없다 (조각은 셀 것이 없다 — S-piece).
  */
@@ -42,18 +45,31 @@ export type ResidualDistanceData = {
   stepMs: number;
 };
 
+/**
+ * 고정된 직선이 그 x 에서 내놓는 값.
+ *
+ * 화면의 직선도 잔차 막대의 발끝도 이 함수 하나를 지난다. 걸음이 실어 보내면
+ * 그리는 쪽의 셈과 두 출처가 되어 언젠가 갈린다.
+ */
+export function lineValueAt(slope: number, intercept: number, x: number): number {
+  return slope * x + intercept;
+}
+
+/** 잔차 — 실제 y 에서 예측 y 를 뺀 것. 부호가 함께 남는다. */
+export function residualAt(slope: number, intercept: number, p: ResidualPoint): number {
+  return p.y - lineValueAt(slope, intercept, p.x);
+}
+
 export const residualDistanceAlgorithm = async (
   base: FacetContext<ResidualDistanceData>,
 ): Promise<void> => {
   const ctx = base as ReactiveContext<ResidualDistanceData>;
-  const { slope, intercept, points, stepMs } = ctx.data;
+  const { points, stepMs } = ctx.data;
 
   /** 손으로 짚는 구간인가. 자동 재생이 끝나고 advance 를 처음 받으면 켜진다. */
   let manual = false;
   /** 되감기 직후의 첫 문만 그냥 통과시킨다 — 첫 advance 는 첫 걸음까지 간다 (S-piece). */
   let freeGate = false;
-
-  const predict = (x: number): number => slope * x + intercept;
 
   /** 걸음 사이의 문. 자동이면 쉬고, 손으로 짚는 구간이면 advance 를 기다린다. */
   async function gate(): Promise<boolean> {
@@ -74,7 +90,6 @@ export const residualDistanceAlgorithm = async (
   /** 한 회차. 끝까지 갔으면 true, 도중에 취소됐으면 false. */
   async function play(): Promise<boolean> {
     if (points.length === 0) return false;
-    const first = points[0];
 
     // 1. 한 점을 짚는다. 이 점에서 직선은 얼마나 틀렸는가.
     if (!(await gate())) return false;
@@ -86,24 +101,13 @@ export const residualDistanceAlgorithm = async (
 
     // 3. 그것을 세로로 돌려세운다. 여기서부터 재는 것이 잔차다.
     if (!(await gate())) return false;
-    const firstPredicted = predict(first.x);
-    await ctx.emit({
-      type: 'probe-turn',
-      target: 'index:0',
-      payload: { predicted: firstPredicted, residual: first.y - firstPredicted },
-    });
+    await ctx.emit({ type: 'probe-turn', target: 'index:0' });
 
     // 4. 나머지 점도 같은 방식으로 내려꽂는다. 걸음 수는 점 목록이 정한다.
     for (let i = 1; i < points.length; i += 1) {
       if (ctx.cancelled) return false;
-      const p = points[i];
       if (!(await gate())) return false;
-      const predicted = predict(p.x);
-      await ctx.emit({
-        type: 'residual-drop',
-        target: `index:${i}`,
-        payload: { predicted, residual: p.y - predicted },
-      });
+      await ctx.emit({ type: 'residual-drop', target: `index:${i}` });
     }
 
     if (!(await gate())) return false;

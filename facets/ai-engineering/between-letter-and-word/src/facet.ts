@@ -39,7 +39,7 @@ export const betweenLetterAndWordFacet: FacetJson = {
     pt: 'Uma frase cortada de três formas — os pedaços ficam entre letras e palavras.',
   },
   algorithm: 'module:betweenLetterAndWord',
-  projector: 'module:betweenLetterAndWordProjector',
+  scene: 'module:betweenLetterAndWordScene',
   initialData: {
     type: 'between-letter-and-word',
     sentence: 'the worker is walking and talking',
@@ -73,7 +73,7 @@ export const betweenLetterAndWordFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'between-letter-and-word-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.word': {

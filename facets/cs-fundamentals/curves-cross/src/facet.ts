@@ -42,7 +42,11 @@ export const curvesCrossFacet: FacetJson = {
     pt: 'Enquanto a entrada é pequena, o algoritmo mais lento é de fato o mais rápido — até que um tamanho exato inverte a vantagem.',
   },
   algorithm: 'module:curvesCross',
-  projector: 'module:curvesCrossProjector',
+  /*
+   * 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`). 어느 걸음의 화면이든
+   * 계산으로 얻으므로 컨트롤에 스크럽 띠가 선다 (S-scene · S-piece).
+   */
+  scene: 'module:curvesCrossScene',
 
   /**
    * 1차 데이터는 **모양**뿐이다.
@@ -60,7 +64,7 @@ export const curvesCrossFacet: FacetJson = {
 
   blocks: {
     stage: { type: 'curves-cross-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
 
   messages: {

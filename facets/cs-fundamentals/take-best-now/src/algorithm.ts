@@ -9,19 +9,22 @@
  * ── 식별자 문법 (facet 고유 prefix)
  *   coin:<i>   진열대 i 번째 자리. i 는 `data.coins` 의 인덱스이며 화면 배치와 같다.
  *
- * ── 이벤트 (전부 이 facet 고유. silent 인 것은 없다 — 모두 화면이 바뀐다)
- *   goal-set       payload { target: number }
- *                  만들 금액을 세운다.
- *   reach-updated  payload { remaining: number; reachable: number[] }
- *                  남은 몫이 갱신되고, 그 몫에 들어가는 자리만 남는다.
- *                  reachable 은 coins 의 인덱스 배열.
- *   coin-taken     target `coin:<i>`
- *                  payload { index: number; value: number; before: number;
- *                            after: number; slot: number }
- *                  진열대 index 자리의 동전이 아래 slot 번째 자리로 내려온다.
- *                  slot 은 0 부터 늘기만 하며 비는 일이 없다 (무르지 않으므로).
- *   done           payload { count: number; target: number }
- *                  남은 몫이 0. count 는 집은 횟수.
+ * ── 이벤트 (전부 이 facet 고유)
+ *   goal-set       payload 없음
+ *                  만들 금액을 세운다. 금액은 `initialData.target` 에 이미 있으므로
+ *                  싣지 않는다 — 이 걸음이 말하는 것은 "이제 여기를 겨눈다" 뿐이다.
+ *   reach-updated  payload 없음 · silent
+ *                  남은 몫이 갱신되는 걸음. 집으면 닿는 거리가 따라 자라므로
+ *                  `coin-taken` 과 한 걸음이고, 그래서 조용히 보낸다 — 걸음을 늘리면
+ *                  띠에 0ms 짜리 눈금이 선다. 남은 몫도 손이 닿는 자리도 장면이
+ *                  집은 것들에서 셈하므로 수를 실을 것이 없다.
+ *   coin-taken     target `coin:<i>`, payload 없음
+ *                  진열대 i 자리의 동전이 쟁반으로 내려온다. 액면도, 몇 번째로
+ *                  내려앉는지도, 그래서 몫이 얼마가 되는지도 전부 자리 번호와
+ *                  지금까지 집은 것들에서 나온다.
+ *   done           payload 없음
+ *                  남은 몫이 0 이거나 더 집을 것이 없다. 몇 닢이었나는 쌓인 것을
+ *                  세면 나온다.
  *   rewind         payload 없음
  *                  손으로 짚기 위해 처음으로 되감는다 (S-piece 의 advance 규약).
  *
@@ -50,8 +53,16 @@ export type TakeBestNowData = {
  */
 type Gate = () => Promise<boolean>;
 
-/** 남은 몫에 들어가는 자리들. */
-function reachableIndices(coins: number[], remaining: number): number[] {
+/**
+ * 남은 몫에 들어가는 자리들.
+ *
+ * **내주는 까닭** — 화면도 같은 것을 알아야 한다 (손이 닿는 자리만 또렷하게
+ * 남는 것이 이 조각의 그림이다). 걸음에 실어 보내면 "들어간다" 의 잣대가 장면과
+ * 여기 두 군데에 적히므로, 싣는 대신 함수를 내주어 장면이 부르게 한다.
+ * 내주는 것이 그리디의 기준 자체는 아니다 — 고르는 일은 `bestIndex` 가 하고
+ * 그것은 내주지 않는다.
+ */
+export function reachableIndices(coins: readonly number[], remaining: number): number[] {
   const out: number[] = [];
   for (let i = 0; i < coins.length; i += 1) {
     const c = coins[i];
@@ -66,12 +77,10 @@ function reachableIndices(coins: number[], remaining: number): number[] {
  * 배열이 내림차순이라는 것을 전제하지 않는다. 인덱스가 화면 자리와 1:1 이라
  * 정렬해 버리면 자리가 어긋난다.
  */
-function bestIndex(coins: number[], remaining: number): number {
+function bestIndex(coins: readonly number[], remaining: number): number {
   let best = -1;
-  for (let i = 0; i < coins.length; i += 1) {
-    const c = coins[i];
-    if (c <= 0 || c > remaining) continue;
-    if (best < 0 || c > coins[best]) best = i;
+  for (const i of reachableIndices(coins, remaining)) {
+    if (best < 0 || coins[i] > coins[best]) best = i;
   }
   return best;
 }
@@ -84,39 +93,25 @@ function bestIndex(coins: number[], remaining: number): number {
 async function runOnce(ctx: ReactiveContext<TakeBestNowData>, gate: Gate): Promise<void> {
   const { coins, target } = ctx.data;
 
-  await ctx.emit({ type: 'goal-set', payload: { target } });
-  await ctx.emit({
-    type: 'reach-updated',
-    payload: { remaining: target, reachable: reachableIndices(coins, target) },
-  });
+  await ctx.emit({ type: 'goal-set' });
+  await ctx.emit({ type: 'reach-updated', silent: true });
 
   let remaining = target;
-  let count = 0;
 
   for (;;) {
     const index = bestIndex(coins, remaining);
     if (index < 0) break;
     if (!(await gate())) return;
 
-    const value = coins[index];
-    const before = remaining;
-    remaining -= value;
-    count += 1;
+    remaining -= coins[index];
 
-    await ctx.emit({
-      type: 'coin-taken',
-      target: `coin:${index}`,
-      payload: { index, value, before, after: remaining, slot: count - 1 },
-    });
-    await ctx.emit({
-      type: 'reach-updated',
-      payload: { remaining, reachable: reachableIndices(coins, remaining) },
-    });
+    await ctx.emit({ type: 'coin-taken', target: `coin:${index}` });
+    await ctx.emit({ type: 'reach-updated', silent: true });
     if (ctx.cancelled) return;
   }
 
   if (!(await gate())) return;
-  await ctx.emit({ type: 'done', payload: { count, target } });
+  await ctx.emit({ type: 'done' });
 }
 
 /**

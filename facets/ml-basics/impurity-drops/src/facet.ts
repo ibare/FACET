@@ -8,6 +8,9 @@
  * 선언에 두는 것은 구조뿐이다 — 점과 이름표, 그리고 가름선의 기준값. 자리와
  * 축척은 stage 가 셈한다 (S-piece).
  *
+ * 화면은 장면(Scene)으로 만든다. 어느 걸음의 화면이든 셈으로 얻으므로 띠를
+ * 끌어 임의의 자리로 갈 수 있다 (`CONTROL_SET.pieceScrub`).
+ *
  * @piece
  */
 
@@ -40,7 +43,9 @@ export const impurityDropsFacet: FacetJson = {
     pt: 'A mistura vira um único número, e cada corte o faz cair. O número lê proporções, não contagens.',
   },
   algorithm: 'module:impurityDrops',
-  projector: 'module:impurityDropsProjector',
+  // 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든
+  // 셈으로 얻으므로 임의의 자리로 갈 수 있다 (S-scene).
+  scene: 'module:impurityDropsScene',
   initialData: {
     type: 'impurity-drops',
     points: [
@@ -68,7 +73,7 @@ export const impurityDropsFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'impurity-drops-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'label.impurity': {

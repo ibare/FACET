@@ -17,26 +17,28 @@
  *
  *   path-found
  *     target  ['node:S','node:A',…]  길을 이루는 정점 차례
- *     payload { reverse: boolean[]    걸음마다 역방향 화살을 탔는지 (길이 = 정점수-1)
- *               amount: number        이 길로 보낼 수 있는 양 (가장 좁은 목)
- *               round: number         몇 번째 길인지 (1부터)
- *               usesReverse: boolean } 되돌릴 폭을 탔는지
+ *     payload { reverse: boolean[] }  걸음마다 역방향 화살을 탔는지 (길이 = 정점수-1)
+ *
+ *     이 발신만이 길을 싣는다. **어느 길을 찾았나는 이 조각의 알고리즘이 내리는
+ *     판정**이라 장면이 되풀이할 수 없다. 그 밖의 것 — 가장 좁은 목이 얼마인지,
+ *     몇 번째 길인지, 되돌릴 폭을 탔는지 — 은 길과 흐름표에서 전부 나오므로
+ *     싣지 않는다 (`scene.ts` 의 `bottleneck` · `usesReverse`).
  *
  *   flow-pushed
- *     target  path-found 와 같은 정점 차례
- *     payload { reverse: boolean[]; amount: number; round: number; usesReverse: boolean;
- *               total: number         T 에 닿은 누적량
- *               edges: string[]       모든 간선의 target 문자열
- *               flows: number[] }     edges 와 같은 차례의 흐른 양 (갱신 후)
+ *     target  없음. payload 없음. 방금 찾은 길로 흘린다는 것이 전부다.
+ *
+ *     흐름표도 누적량도 싣지 않는다. 장면이 제 흐름표에 그 길과 그 폭을 더하면
+ *     같은 값이 나오고, 두 자리에서 세지 않으므로 갈릴 자리가 없다.
  *
  *   search-blocked
- *     target  앞으로 난 화살만으로 닿는 정점들 ['node:S','node:B']
- *     payload { blocked: string[]     그 경계에서 꽉 찬 간선의 target 문자열
- *               total: number }       그때까지 T 에 닿은 양
+ *     target  없음. payload 없음.
+ *
+ *     앞으로 난 화살로는 더 갈 데가 없다는 **판정**만 보낸다. 어디까지 닿았고
+ *     무엇이 막고 있는지는 장면이 제 흐름표에서 셈한다 (`forwardReachable` ·
+ *     `saturatedFrontier`) — 멈춤의 근거가 화면의 자취와 같은 자료여야 한다.
  *
  *   done
- *     target  마지막으로 닿는 정점들
- *     payload { blocked: string[]; total: number }  (search-blocked 와 같은 모양)
+ *     target  없음. payload 없음. 되돌릴 폭으로도 남은 길이 없다.
  *
  *   rewind
  *     target  없음. payload 없음. 자동 재생을 마친 뒤 advance 로 되감을 때.
@@ -74,7 +76,6 @@ type Augmenting = {
   steps: { edge: number; reverse: boolean }[];
 };
 
-const edgeTarget = (e: UndoByBackEdgeEdge): string => `edge:${e.from}-${e.to}`;
 const nodeTargets = (ids: string[]): string[] => ids.map((id) => `node:${id}`);
 
 /**
@@ -135,42 +136,6 @@ function findAugmentingPath(
   };
 }
 
-/** 앞으로 난 화살만 타고 들어오는 곳에서 닿을 수 있는 정점들 (닿은 차례대로). */
-function forwardReachable(data: UndoByBackEdgeData, flow: number[]): string[] {
-  const seen = new Set<string>([data.source]);
-  const reached = [data.source];
-  const stack = [data.source];
-  while (stack.length > 0) {
-    const u = stack.shift() as string;
-    for (let i = 0; i < data.edges.length; i += 1) {
-      const e = data.edges[i];
-      if (e.from !== u || seen.has(e.to)) continue;
-      if (e.capacity - flow[i] <= 0) continue;
-      seen.add(e.to);
-      reached.push(e.to);
-      stack.push(e.to);
-    }
-  }
-  return reached;
-}
-
-/** 닿은 곳에서 못 닿은 곳으로 나가는데 꽉 차 버린 관들 — 앞을 막고 있는 것. */
-function saturatedFrontier(
-  data: UndoByBackEdgeData,
-  flow: number[],
-  reachable: string[],
-): string[] {
-  const inside = new Set(reachable);
-  const blocked: string[] = [];
-  for (let i = 0; i < data.edges.length; i += 1) {
-    const e = data.edges[i];
-    if (!inside.has(e.from) || inside.has(e.to)) continue;
-    if (e.capacity - flow[i] > 0) continue;
-    blocked.push(edgeTarget(e));
-  }
-  return blocked;
-}
-
 /**
  * 한 판을 처음부터 끝까지 발신한다. 자동 재생과 한 걸음씩 보기가 같은 함수를
  * 쓰고, 다른 것은 걸음 사이의 문(gate) 뿐이다.
@@ -183,41 +148,22 @@ async function playTrace(
 ): Promise<void> {
   const data = ctx.data;
   const flow = data.edges.map(() => 0);
-  const allEdges = data.edges.map(edgeTarget);
-  let total = 0;
-  let round = 0;
 
+  /** 길 하나를 보이고 그 길로 흘린다. 두 걸음이다 — 찾는 것과 흘리는 것. */
   const sendAlong = async (path: Augmenting): Promise<boolean> => {
-    round += 1;
-    const usesReverse = path.reverse.includes(true);
-    const targets = nodeTargets(path.nodes);
-
     if (!(await gate())) return false;
     await ctx.emit({
       type: 'path-found',
-      target: targets,
-      payload: { reverse: path.reverse, amount: path.amount, round, usesReverse },
+      target: nodeTargets(path.nodes),
+      payload: { reverse: path.reverse },
     });
 
     for (const s of path.steps) {
       flow[s.edge] += s.reverse ? -path.amount : path.amount;
     }
-    total += path.amount;
 
     if (!(await gate())) return false;
-    await ctx.emit({
-      type: 'flow-pushed',
-      target: targets,
-      payload: {
-        reverse: path.reverse,
-        amount: path.amount,
-        round,
-        usesReverse,
-        total,
-        edges: allEdges,
-        flows: [...flow],
-      },
-    });
+    await ctx.emit({ type: 'flow-pushed' });
     return true;
   };
 
@@ -230,27 +176,18 @@ async function playTrace(
       continue;
     }
 
-    // 앞으로 난 화살로는 더 갈 데가 없다. 어디까지 닿았고 무엇이 막고 있는지 보인다.
-    const reachable = forwardReachable(data, flow);
-    const blocked = saturatedFrontier(data, flow, reachable);
+    // 앞으로 난 화살로는 더 갈 데가 없다. 어디까지 닿았고 무엇이 막고 있는지는
+    // 장면이 제 흐름표에서 셈하므로 여기서는 판정만 보낸다.
     const withReverse = findAugmentingPath(data, flow, true);
 
     if (!withReverse) {
       if (!(await gate())) return;
-      await ctx.emit({
-        type: 'done',
-        target: nodeTargets(reachable),
-        payload: { blocked, total },
-      });
+      await ctx.emit({ type: 'done' });
       return;
     }
 
     if (!(await gate())) return;
-    await ctx.emit({
-      type: 'search-blocked',
-      target: nodeTargets(reachable),
-      payload: { blocked, total },
-    });
+    await ctx.emit({ type: 'search-blocked' });
     if (!(await sendAlong(withReverse))) return;
   }
 }

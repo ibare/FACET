@@ -35,7 +35,9 @@ export const baggingSampleFacet: FacetJson = {
     pt: 'Sorteie com reposição e cada saco aprende com algo diferente.',
   },
   algorithm: 'module:baggingSample',
-  projector: 'module:baggingSampleProjector',
+  // 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든 셈으로
+  // 얻으므로 되짚기가 앞으로 가기와 같은 연산이 된다 (S-scene).
+  scene: 'module:baggingSampleScene',
   initialData: {
     type: 'bagging-sample',
     pool: [1, 2, 3, 4, 5, 6, 7, 8],
@@ -48,7 +50,7 @@ export const baggingSampleFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'bagging-sample-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'label.pool': {

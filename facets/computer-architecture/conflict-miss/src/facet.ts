@@ -6,9 +6,10 @@
  *
  * @piece — 이 표식이 S-piece 의 적용 범위를 정한다.
  *
- * 선언이 주는 것은 **구조**뿐이다 — 줄 수 · 라인 크기 · 찾는 주소. 인덱스 ·
- * 태그 · 히트/미스 · 밀려난 태그 · 빈 줄의 수는 algorithm 이 그 자리에서 셈하고,
- * 어디에 무엇을 놓을지는 stage 가 캔버스에서 역산한다 (S-piece).
+ * 선언이 주는 것은 **구조**뿐이다 — 줄 수 · 라인 크기 · 찾는 주소. 주소를 푼
+ * 결과(줄 번호 · 인덱스 · 태그)는 algorithm 이 그 자리에서 셈하고, 히트/미스 ·
+ * 밀려난 것 · 빈 줄의 수는 장면이 접근 목록을 훑어 낸다 (`scene.ts` 의
+ * `replayOf`). 어디에 무엇을 놓을지는 stage 가 캔버스에서 역산한다 (S-piece).
  *
  * 네 줄짜리 직접 사상 캐시에서 주소 0 과 64 는 둘 다 인덱스가 0 이다
  * (0÷16=0, 0 mod 4=0 / 64÷16=4, 4 mod 4=0). 번갈아 여섯 번 찾으면 여섯 번 다
@@ -54,7 +55,7 @@ export const conflictMissFacet: FacetJson = {
     pt: 'Há linhas livres e mesmo assim cada bloco é expulso',
   },
   algorithm: 'module:conflictMiss',
-  projector: 'module:conflictMissProjector',
+  scene: 'module:conflictMissScene',
   initialData: {
     type: 'conflict-miss',
     lineCount: 4,
@@ -129,9 +130,10 @@ export const conflictMissFacet: FacetJson = {
     stage: { type: 'conflict-miss-stage' },
     controls: {
       type: 'control-bar',
-      // 다시 보기는 놓친 사람을 위한 것이고, 한 걸음은 곱씹으며 읽고 싶은
-      // 사람을 위한 것이다. 둘 다 눌러야 완성되는 조작이 아니다 (S-piece).
-      controls: CONTROL_SET.piece,
+      // 다시 보기는 놓친 사람을 위한 것이고, 띠는 곱씹으며 읽고 싶은 사람을
+      // 위한 것이다. 둘 다 눌러야 완성되는 조작이 아니다 (S-piece).
+      // 장면 방식이라 어느 걸음이든 셈으로 얻으므로 끌어 볼 수 있다.
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

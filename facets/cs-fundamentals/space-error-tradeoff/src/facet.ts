@@ -6,8 +6,11 @@
  * 없으므로 metrics 도 두지 않는다 (S-piece).
  *
  * `initialData` 에는 **구조**만 둔다 — 키 · 반복 수 · 줄 수 · 견줘 볼 폭.
- * 해시도 자리도 표의 값도 알고리즘이 직접 셈하고, 좌표는 stage 가 캔버스에서
- * 역산한다.
+ * 해시도 자리도 표의 값도 알고리즘이 직접 셈하고, 읽힌 값과 부푼 양은 장면이
+ * 그 표에서 셈하며 (`scene.ts`), 좌표는 stage 가 캔버스에서 역산한다.
+ *
+ * 화면을 명령이 아니라 **장면**으로 만들므로 (`scene:`) 어느 걸음의 화면이든
+ * 계산으로 얻는다. 그래서 컨트롤에 스크럽 띠가 선다 (S-scene · S-piece).
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -39,7 +42,7 @@ export const spaceErrorTradeoffFacet: FacetJson = {
     pt: 'O espaço poupado paga-se em erro: quanto mais estreita a tabela, mais incham os valores lidos.',
   },
   algorithm: 'module:spaceErrorTradeoff',
-  projector: 'module:spaceErrorTradeoffProjector',
+  scene: 'module:spaceErrorTradeoffScene',
   initialData: {
     type: 'space-error-tradeoff',
     keys: ['kiwi', 'mango', 'elder', 'cherry', 'banana', 'date'],
@@ -50,7 +53,7 @@ export const spaceErrorTradeoffFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'space-error-tradeoff-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.stage': {

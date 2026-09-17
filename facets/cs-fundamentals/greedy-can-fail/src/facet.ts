@@ -11,9 +11,13 @@
  *
  * 화면에 뜨는 수는 하나도 여기 적혀 있지 않다 — 넷도 둘도 algorithm 이 셈한다.
  * 이 선언이 정하는 것은 동전 묶음과 목표, 그리고 읽을 시간(stepMs)뿐이다.
+ *
+ * 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`). 어느 걸음의 화면이든 셈으로
+ * 얻으므로 스크럽 띠로 아무 자리나 끌어 볼 수 있다 (S-scene). 그래서 컨트롤은
+ * `CONTROL_SET.pieceScrub` 이다 — 띠와 `advance` 를 함께 두지 않는다 (S-piece).
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const greedyCanFailFacet: FacetJson = {
   id: 'facet:greedyCanFail',
@@ -43,7 +47,7 @@ export const greedyCanFailFacet: FacetJson = {
     pt: 'Duas fileiras formam o mesmo valor com as mesmas moedas. Pegar a maior primeiro acaba usando mais.',
   },
   algorithm: 'module:greedyCanFail',
-  projector: 'module:greedyCanFailProjector',
+  scene: 'module:greedyCanFailScene',
   initialData: {
     type: 'greedyCanFail',
     /** 액면. 9 를 집으면 6 둘로 가는 길이 닫히도록 고른 묶음이다. */
@@ -55,7 +59,7 @@ export const greedyCanFailFacet: FacetJson = {
     stage: { type: 'greedy-can-fail-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {

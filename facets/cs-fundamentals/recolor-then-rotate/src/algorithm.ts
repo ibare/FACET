@@ -17,8 +17,8 @@
  *
  *   recolor  { changes: Array<{ id, color }>, reason }
  *     색만 바꿔 위반을 푼다(또는 뿌리 불변식을 되돌린다). `reason` 별로
- *     `changes` 의 순서가 고정된다 — projector 가 캡션에 쓸 역할을 이 순서로
- *     읽는다.
+ *     `changes` 의 순서가 고정된다 — 장면이 캡션에 쓸 역할을 이 순서로
+ *     읽는다 (`scene.ts`).
  *       'siblingRecolor' → changes = [parent, uncle, grandparent] (위반의 부모/삼촌을
  *                           검정으로, 조부모를 빨강으로 — 사례 1)
  *       'rootFix'        → changes = [root] 단일 원소 (뿌리는 항상 검정이라는
@@ -312,12 +312,16 @@ export async function recolorThenRotate(ctx: FacetContext<RecolorThenRotateData>
   // 대화형 재현 — 처음 누르는 advance 가 되감고 첫 걸음까지 보인다. 그 뒤로는
   // 누를 때마다 한 이벤트씩 나아가고, 마지막 이벤트 다음 누름은 새로 되감는다.
   while (!rctx.cancelled) {
-    await rctx.waitForInput();
+    // 받은 것의 종류를 본다 (S-piece). 지금은 ReactiveMechanism 이 reset/speed 를 스스로
+    // 삼켜 안 걸러도 돌아가지만, 위젯 입력이 하나라도 붙으면 그것까지 걸음으로 센다.
+    if ((await rctx.waitForInput()).type !== 'advance') continue;
     await rctx.emit({ type: 'rewind' });
     const tree = new RBTree();
     const gate = makeGate(rctx, async () => {
-      await rctx.waitForInput();
-      return !rctx.cancelled;
+      while (!rctx.cancelled) {
+        if ((await rctx.waitForInput()).type === 'advance') return true;
+      }
+      return false;
     });
     for (const v of values) {
       if (rctx.cancelled) return;

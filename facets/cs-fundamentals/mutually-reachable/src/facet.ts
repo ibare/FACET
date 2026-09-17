@@ -40,7 +40,9 @@ export const mutuallyReachableFacet: FacetJson = {
     pt: 'Só de ida não basta. Só há grupo quando dá para ir e voltar.',
   },
   algorithm: 'module:mutuallyReachable',
-  projector: 'module:mutuallyReachableProjector',
+  // 명령이 아니라 상태로 화면을 만든다 — 그래야 띠가 임의의 걸음으로 갈 수 있다
+  // (S-scene). projector 와 둘 다 선언하면 러너가 세우지 않는다.
+  scene: 'module:mutuallyReachableScene',
 
   initialData: {
     type: 'mutually-reachable',
@@ -58,7 +60,11 @@ export const mutuallyReachableFacet: FacetJson = {
 
   blocks: {
     stage: { type: 'mutually-reachable-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: {
+      type: 'control-bar',
+      // 장면 방식의 조각은 띠를 단다. 띠와 advance 를 함께 두지 않는다 (S-piece).
+      controls: CONTROL_SET.pieceScrub,
+    },
   },
 
   messages: {

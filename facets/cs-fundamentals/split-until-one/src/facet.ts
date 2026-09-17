@@ -40,7 +40,7 @@ export const splitUntilOneFacet: FacetJson = {
     pt: 'Partir um intervalo ao meio vezes sem conta só muda as fronteiras dos grupos.',
   },
   algorithm: 'module:splitUntilOne',
-  projector: 'module:splitUntilOneProjector',
+  scene: 'module:splitUntilOneScene',
   initialData: {
     type: 'split-until-one',
     values: [6, 2, 8, 4],
@@ -51,7 +51,7 @@ export const splitUntilOneFacet: FacetJson = {
     stage: { type: 'split-until-one-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {

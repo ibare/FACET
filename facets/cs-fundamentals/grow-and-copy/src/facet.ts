@@ -9,9 +9,15 @@
  *
  * 조각이므로 title-block 도 metrics 도 두지 않는다. 제목은 글의 문단이 주고,
  * 셀 것은 없다 (S-piece).
+ *
+ * 화면은 장면(Scene) 방식이다 — projector 대신 `scene` 을 선언한다. 둘 다 두거나
+ * 둘 다 빠뜨리면 러너가 세우지 않는다 (S-scene).
+ *
+ * 컨트롤은 `CONTROL_SET.pieceScrub` — 다시 보기와 스크럽 띠다. 띠가 한 걸음 단추를
+ * 대신한다. 단추는 앞으로만 갈 수 있어 곱씹으려면 한 바퀴를 다 돌아야 했다.
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const growAndCopyFacet: FacetJson = {
   id: 'facet:growAndCopy',
@@ -40,7 +46,7 @@ export const growAndCopyFacet: FacetJson = {
     pt: 'Quando um bloco enche, toma-se outro maior em outro lugar, copia-se cada valor e libera-se o antigo. O endereço muda.',
   },
   algorithm: 'module:growAndCopy',
-  projector: 'module:growAndCopyProjector',
+  scene: 'module:growAndCopyScene',
   initialData: {
     type: 'grow-and-copy',
     stepMs: 780,
@@ -54,7 +60,7 @@ export const growAndCopyFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'grow-and-copy-stage' },
-    controls: { type: 'control-bar', controls: [CONTROL.replay, CONTROL.advance] },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.blocked': {

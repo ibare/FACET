@@ -10,7 +10,7 @@
  * 여기에는 재료(동전과 금액)만 있고 답은 없다.
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const takeBestNowFacet: FacetJson = {
   id: 'facet:takeBestNow',
@@ -40,7 +40,7 @@ export const takeBestNowFacet: FacetJson = {
     pt: 'Uma regra, uma escolha, sem olhar para trás — desce a maior moeda que ainda cabe e o que resta encolhe',
   },
   algorithm: 'module:takeBestNow',
-  projector: 'module:takeBestNowProjector',
+  scene: 'module:takeBestNowScene',
   initialData: {
     type: 'take-best-now',
     coins: [25, 10, 5, 1],
@@ -51,7 +51,7 @@ export const takeBestNowFacet: FacetJson = {
     stage: { type: 'take-best-now-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {
@@ -81,7 +81,7 @@ export const takeBestNowFacet: FacetJson = {
     },
     'caption.goal': {
       en: 'Make {target} out of these.',
-      ko: '이것들로 {target}을 만든다.',
+      ko: '목표는 {target}. 이것들로 만든다.',
       ja: 'これらで {target} をつくる。',
       zh: '用这些凑出 {target}。',
       ar: 'كوّن {target} من هذه.',

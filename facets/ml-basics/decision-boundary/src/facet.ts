@@ -11,6 +11,9 @@
  *
  * 무게 (1, 1) 과 치우침 −5.5 는 학습의 결과가 아니라 주어진 것이다. 이 조각은
  * 학습을 보이지 않는다 — 이미 정해진 모델이 평면을 어떻게 가르는지만 보인다.
+ *
+ * 화면을 명령이 아니라 **장면**으로 만들므로 (`scene:`) 어느 걸음의 화면이든
+ * 셈으로 얻는다 — 그래서 재생 위치를 끌어 보는 띠를 단다 (S-scene).
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
@@ -55,7 +58,9 @@ export const decisionBoundaryFacet: FacetJson = {
     pt: 'Cada ponto recebe primeiro uma probabilidade; a fronteira é onde ela cruza a metade',
   },
   algorithm: 'module:decisionBoundary',
-  projector: 'module:decisionBoundaryProjector',
+  // 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든
+  // 셈으로 얻는다. 그래서 재생 위치를 끌어 보는 띠를 단다 (S-scene).
+  scene: 'module:decisionBoundaryScene',
   initialData: {
     type: 'decision-boundary',
     weights: { x: 1, y: 1 },
@@ -67,7 +72,7 @@ export const decisionBoundaryFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'decision-boundary-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.probe': {

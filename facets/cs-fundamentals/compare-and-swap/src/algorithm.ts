@@ -8,19 +8,25 @@
  * ── 식별자 문법
  *   index:<i>   i 번째 짝. 짝 안의 두 자리는 stage 가 안다.
  *
- * ── 이벤트 어휘 (C2). 확장 이벤트 넷 + 표준 done.
- *   compare  target index:<i>  payload { left: number; right: number; order: PairOrder }
+ * ── 이벤트 어휘 (C2). 확장 이벤트 넷 + 표준 done. **payload 는 하나도 없다.**
+ *   compare  target index:<i>  payload 없음
  *            두 값을 견준다. 자리에서 들어올리기만 하고 아무것도 옮기지 않는다.
  *   swap     target index:<i>  payload 없음
  *            판정이 참이라 두 값이 동시에 엇갈려 서로의 자리로 건너간다.
- *   hold     target index:<i>  payload { reason: 'ordered' | 'equal' }
+ *   hold     target index:<i>  payload 없음
  *            판정이 거짓이라 두 값이 제 자리로 도로 내려앉는다.
  *   rewind   target/payload 없음
  *            advance 를 받아 처음으로 되감는다. 되감기 직후 첫 걸음까지 보인다.
- *   done     payload { compares: number; swaps: number }
- *            두 수는 손으로 적은 것이 아니라 순회에서 셈한 값이다.
+ *   done     payload 없음
+ *            다 끝났다.
  *
  *   silent 이벤트 없음 — 다섯 다 화면이 바뀐다.
+ *
+ *   **수를 싣지 않는다.** 견준 두 값도, 판정도, 견줌·옮김의 횟수도 전부 선언의
+ *   `pairs` 에서 나온다. 걸음이 그것을 실어 나르면 화면과 다른 출처가 하나 더
+ *   생겨 언젠가 갈린다. 판정은 `orderOf` 를 내주어 장면이 같은 함수를 부르게 하고,
+ *   횟수는 장면이 센다. 걸음이 말하는 것은 **어느 짝을 지금 다루는가**(target)와
+ *   **옮겼는가 멈췄는가**(event type) 뿐이다.
  *
  * ── 메커니즘
  *   reactive. mount 시 스스로 시작하고(ReactiveMechanism.init 의 ensureStarted),
@@ -59,7 +65,12 @@ function readPairs(raw: unknown): [number, number][] {
   return out;
 }
 
-function orderOf(left: number, right: number): PairOrder {
+/**
+ * 견줌의 답. 바탕 자료만 있으면 나오는 순수 함수라 걸음이 답을 실어 나르지 않고
+ * 이 함수를 내준다 — 장면이 같은 함수를 부른다 (scene.ts). 그래야 판정이 두 곳에
+ * 적히지 않는다.
+ */
+export function orderOf(left: number, right: number): PairOrder {
   if (left > right) return 'greater';
   if (left < right) return 'less';
   return 'equal';
@@ -96,44 +107,31 @@ export const compareAndSwap = async (base: FacetContext<CompareAndSwapData>): Pr
    * 짝을 차례로 다룬다.
    *
    * ctx.data 는 건드리지 않는다 — 다시 보기와 한 걸음이 언제나 같은 자리에서
-   * 출발해야 하므로 자리 상태는 이 실행의 지역 사본에만 둔다.
+   * 출발해야 한다. `readPairs` 가 짝마다 새 배열을 만드는 것으로 족하고, 자리를
+   * 실제로 맞바꿔 둘 까닭은 없다. 각 짝을 한 번씩만 지나므로 바꿔 둔 값을 도로
+   * 읽는 곳이 없고, 어느 칸에 어느 값이 앉았는지는 장면이 말한다.
    */
   const run = async (): Promise<void> => {
     const seats = readPairs(ctx.data.pairs);
-    let compares = 0;
-    let swaps = 0;
 
     for (let i = 0; i < seats.length; i++) {
-      const pair = seats[i];
-      const left = pair[0];
-      const right = pair[1];
-      const order = orderOf(left, right);
+      const order = orderOf(seats[i][0], seats[i][1]);
 
       if (!(await gate())) return;
-      compares++;
-      await ctx.emit({
-        type: 'compare',
-        target: `index:${i}`,
-        payload: { left, right, order },
-      });
+      await ctx.emit({ type: 'compare', target: `index:${i}` });
 
       if (!(await gate())) return;
+      // 판정 그 자체는 어느 이벤트를 내느냐로 말한다. payload 로 되풀이하지 않는다.
+      // type 은 리터럴로 쓴다 — 삼항으로 접으면 어휘가 코드에서 사라진다 (C2).
       if (order === 'greater') {
-        pair[0] = right;
-        pair[1] = left;
-        swaps++;
         await ctx.emit({ type: 'swap', target: `index:${i}` });
       } else {
-        await ctx.emit({
-          type: 'hold',
-          target: `index:${i}`,
-          payload: { reason: order === 'equal' ? 'equal' : 'ordered' },
-        });
+        await ctx.emit({ type: 'hold', target: `index:${i}` });
       }
     }
 
     if (!(await gate())) return;
-    await ctx.emit({ type: 'done', payload: { compares, swaps } });
+    await ctx.emit({ type: 'done' });
   };
 
   try {

@@ -9,12 +9,12 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { positionalValueAlgorithm } from './algorithm.js';
-import { positionalValueProjector } from './projector.js';
+import { positionalValueScene } from './scene.js';
 import { positionalValueIRs } from './irs.js';
 import { positionalValueFacet } from './facet.js';
 import { positionalValueDescription } from './description.js';
@@ -26,7 +26,15 @@ export type {
   PositionalValueFacts,
   PositionalGrouping,
 } from './algorithm.js';
-export { positionalValueProjector } from './projector.js';
+export {
+  positionalValueScene,
+  factsOf,
+  droppedOf,
+  phaseRank,
+  POSITIONAL_VALUE_PHASES,
+  type PositionalValueScene,
+  type PositionalValuePhase,
+} from './scene.js';
 export { positionalValueIRs } from './irs.js';
 export { positionalValueFacet } from './facet.js';
 export { positionalValueDescription } from './description.js';
@@ -34,7 +42,7 @@ export { positionalValueStageView } from './positional-value-stage.js';
 
 export function registerPositionalValue(): void {
   registerAlgorithm('positionalValue', positionalValueAlgorithm, { mechanismKind: 'reactive' });
-  registerProjector('positionalValueProjector', positionalValueProjector);
+  registerScenePlan('positionalValueScene', positionalValueScene);
   for (const ir of positionalValueIRs) registerIR(ir.id, ir);
   registerView('positional-value-stage', positionalValueStageView);
   registerFacets([positionalValueFacet]);

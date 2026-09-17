@@ -14,19 +14,22 @@
  *
  * ── 이벤트 (전부 facet 고유 확장. `done` 만 표준 어휘)
  *
- * | type          | target      | payload                                                  | silent |
- * |---------------|-------------|----------------------------------------------------------|--------|
- * | `pivot-set`   | —           | `{ pivot: number; count: number }`                         | no     |
- * | `compare`     | `index:<i>` | `{ index: number; value: number; pivot: number }`           | no     |
- * | `cross`       | `index:<i>` | `{ index: number; value: number; pivot: number; side: Side; slot: number }` | no |
- * | `pivot-final` | —           | `{ pivot: number }`                                        | no     |
- * | `done`        | —           | `{ pivot: number; lessCount: number; greaterCount: number }`| no     |
- * | `rewind`      | —           | —                                                          | no     |
+ * | type          | target      | payload | silent |
+ * |---------------|-------------|---------|--------|
+ * | `pivot-set`   | —           | 없음    | no     |
+ * | `compare`     | `index:<i>` | 없음    | no     |
+ * | `cross`       | `index:<i>` | 없음    | no     |
+ * | `pivot-final` | —           | 없음    | no     |
+ * | `done`        | —           | 없음    | no     |
+ * | `rewind`      | —           | 없음    | no     |
  *
- *   `Side` = `'less' | 'greater'`.
- *   `slot` 은 그 쪽 안에서 몇 번째로 도착했는지 (0-based). 자리는 도착 순서가
- *   정할 뿐 값의 대소가 정하지 않는다 — 각 쪽 안이 정렬되지 않는다는 것이
- *   이 조각의 매듭이다.
+ * ── 왜 payload 가 비어 있나
+ *
+ * 걸음이 실을 것이 하나도 없다. 값과 기준은 선언(`initialData`)에 있고, 어느
+ * 자리인가는 `target` 이 말하며, **어느 쪽으로 갔는가**는 바탕에 잣대를 먹이면
+ * 나오고 (`partitionSideOf`), **그 쪽 몇 번째인가**는 앞서 그리로 간 수를 세면
+ * 나온다. 세는 것도 가르는 것도 두 자리에 적히면 언젠가 갈리므로, 셈은 장면이
+ * 하고 잣대는 여기서 한 번만 내준다 (`tasks/scene-migration-protocol.md` 4절).
  *
  * ── 메트릭
  *   없다. 조각은 셀 것이 없다 (S-piece).
@@ -41,6 +44,20 @@ import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
 
 export type PartitionSide = 'less' | 'greater';
 
+/**
+ * 가르는 잣대. **이 한 줄이 이 조각의 전부**이고, 그래서 여기 한 번만 적는다.
+ *
+ * 걸음이 판정을 실어 나르는 대신 함수를 내주고 장면이 그것을 부른다. 실어
+ * 나르면 payload 가 무거워져 *다음 사람이 집어 쓸 문*이 열린 채로 남고, 그 문이
+ * 곧 "같은 규칙이 두 곳에 적히는" 길이다 (프로토콜 4절의 B 갈래).
+ *
+ * 기준과 같은 값은 큰 쪽으로 보낸다 — 어느 쪽이든 되지만 한쪽으로 정해 두어야
+ * 화면과 설명이 갈리지 않는다.
+ */
+export function partitionSideOf(value: number, pivot: number): PartitionSide {
+  return value < pivot ? 'less' : 'greater';
+}
+
 export type PartitionAroundPivotData = {
   type: 'partition-around-pivot';
   /** 기준과 견줄 값들. 이 순서대로 하나씩 건넌다. */
@@ -51,8 +68,13 @@ export type PartitionAroundPivotData = {
   stepMs: number;
 };
 
-/** 견줌을 보게 하는 짧은 뜸 — 값이 기준선에 닿고 넘어가기 전까지. */
-const HOLD_MS = 200;
+/**
+ * 견줌을 보게 하는 뜸 — 값이 기준선에 닿고 넘어가기 전까지.
+ *
+ * 견줌 걸음은 운동이 짧아(내려앉기 + 맞대기) 이 뜸까지 더해야 걸음 벽시계가
+ * 읽을 틈(S-piece 의 800ms)을 넘는다. 띠를 끌 때 앞뒤와 구별되는 자리가 된다.
+ */
+const HOLD_MS = 260;
 
 /** 한 걸음의 문. `false` 면 취소된 것이므로 즉시 멈춘다. */
 type Gate = () => Promise<boolean>;
@@ -101,44 +123,26 @@ async function playThrough(
   data: PartitionAroundPivotData,
   gate: Gate,
 ): Promise<void> {
-  const { values, pivot } = data;
+  const { values } = data;
 
   if (!(await gate())) return;
-  await ctx.emit({ type: 'pivot-set', payload: { pivot, count: values.length } });
+  await ctx.emit({ type: 'pivot-set' });
 
   // 걸음표를 손으로 적지 않는다 — 순회 대상이 곧 데이터다 (S-piece).
-  // 각 쪽의 자리는 도착 순서가 정하므로 여기서 세어 넘긴다.
-  let lessCount = 0;
-  let greaterCount = 0;
-
   for (let index = 0; index < values.length; index += 1) {
-    const value = values[index]!;
     if (!(await gate())) return;
-    await ctx.emit({
-      type: 'compare',
-      target: `index:${index}`,
-      payload: { index, value, pivot },
-    });
+    await ctx.emit({ type: 'compare', target: `index:${index}` });
 
     if (!(await pause(ctx, HOLD_MS))) return;
 
-    const side: PartitionSide = value < pivot ? 'less' : 'greater';
-    const slot = side === 'less' ? lessCount : greaterCount;
-    if (side === 'less') lessCount += 1;
-    else greaterCount += 1;
-
-    await ctx.emit({
-      type: 'cross',
-      target: `index:${index}`,
-      payload: { index, value, pivot, side, slot },
-    });
+    await ctx.emit({ type: 'cross', target: `index:${index}` });
   }
 
   if (!(await gate())) return;
-  await ctx.emit({ type: 'pivot-final', payload: { pivot } });
+  await ctx.emit({ type: 'pivot-final' });
 
   if (!(await gate())) return;
-  await ctx.emit({ type: 'done', payload: { pivot, lessCount, greaterCount } });
+  await ctx.emit({ type: 'done' });
 }
 
 export const partitionAroundPivotAlgorithm = async (

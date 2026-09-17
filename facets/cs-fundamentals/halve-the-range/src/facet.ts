@@ -3,11 +3,14 @@
  *
  * @piece 한 번의 견줌으로 후보에서 정확히 몇이 빠지는가 — 조각(piece) facet.
  *
- * 자동으로 재생되고 멈춘다. 다시 보기와 한 걸음 외에 조작은 받지 않으며,
+ * 자동으로 재생되고 멈춘다. 다시 보기와 자취 띠 외에 조작은 받지 않으며,
  * 아무것도 누르지 않아도 화면은 할 말을 마친다 (S-piece).
+ *
+ * 화면은 명령이 아니라 **장면**으로 만들어진다 (`scene.ts`). 어느 걸음의 화면이든
+ * 셈으로 얻으므로 띠를 끌어 임의의 자리로 갈 수 있다 (S-scene).
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const halveTheRangeFacet: FacetJson = {
   id: 'facet:halveTheRange',
@@ -36,7 +39,7 @@ export const halveTheRangeFacet: FacetJson = {
     pt: 'Uma comparação e exatamente estes candidatos somem.',
   },
   algorithm: 'module:halveTheRange',
-  projector: 'module:halveTheRangeProjector',
+  scene: 'module:halveTheRangeScene',
   initialData: {
     type: 'halve-the-range',
     values: [1, 3, 5, 7, 9, 11, 13],
@@ -45,15 +48,12 @@ export const halveTheRangeFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'halve-the-range-stage' },
-    controls: {
-      type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
-    },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.start': {
       en: 'A sorted range of {n}. Looking for {target}.',
-      ko: '줄이 선 {n}개. {target} 을 찾는다.',
+      ko: '줄이 선 {n}개. 찾는 값은 {target}.',
       ja: '並んだ {n} 個。{target} を探す。',
       zh: '已排好的 {n} 个。要找 {target}。',
       ar: 'مجال مرتّب من {n}. نبحث عن {target}.',
@@ -101,7 +101,7 @@ export const halveTheRangeFacet: FacetJson = {
     },
     'caption.done': {
       en: '{comparisons} comparisons cut {n} candidates down to {left}.',
-      ko: '견줌 {comparisons}번이 후보를 {n}에서 {left}로 줄였다.',
+      ko: '견줌 {comparisons}번으로 후보가 {n}에서 {left}까지 줄었다.',
       ja: '{comparisons} 回の比較で候補が {n} から {left} に減った。',
       zh: '{comparisons} 次比较把候选从 {n} 减到 {left}。',
       ar: '{comparisons} مقارنات قلّصت المرشّحين من {n} إلى {left}.',

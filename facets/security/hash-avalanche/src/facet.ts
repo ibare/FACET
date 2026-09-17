@@ -59,7 +59,7 @@ export const hashAvalancheFacet: FacetJson = {
     pt: 'Trocar um único caractere inverte cerca de metade da saída do hash',
   },
   algorithm: 'module:hashAvalanche',
-  projector: 'module:hashAvalancheProjector',
+  scene: 'module:hashAvalancheScene',
   initialData: {
     type: 'hash-avalanche',
     algorithmLabel: 'SHA-256',
@@ -114,7 +114,7 @@ export const hashAvalancheFacet: FacetJson = {
       type: 'control-bar',
       // ReactiveMechanism 의 reset() 은 끝에 ensureStarted() 를 부른다 — 즉
       // reset 이 곧 다시 재생이다. 그래서 action 은 reset 이고 라벨만 다르다.
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

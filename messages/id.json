@@ -18,6 +18,7 @@
   "view.controlBar.search": "Cari",
   "view.controlBar.speed": "Kecepatan",
   "view.controlBar.step": "⏭ Langkah",
+  "view.controlBar.timeline": "Posisi pemutaran",
   "view.conveyorQueue.empty": "(kosong)",
   "view.conveyorQueue.size": "Ukuran: {n}",
   "view.conveyorQueue.sizeBounded": "Ukuran: {n} / {cap}",

@@ -9,7 +9,7 @@
  * 없다 (S-piece). layout 은 stage 와 controls 뿐이라 러너에 맡긴다.
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const parentTwoChildrenFacet: FacetJson = {
   id: 'facet:parentTwoChildren',
@@ -38,7 +38,7 @@ export const parentTwoChildrenFacet: FacetJson = {
     pt: 'Um nó desce para dois filhos no máximo, e esquerda e direita são lugares com nome que não se trocam.',
   },
   algorithm: 'module:parentTwoChildren',
-  projector: 'module:parentTwoChildrenProjector',
+  scene: 'module:parentTwoChildrenScene',
   initialData: {
     type: 'binary-tree',
     root: 'A',
@@ -56,10 +56,7 @@ export const parentTwoChildrenFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'parent-two-children-stage' },
-    controls: {
-      type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
-    },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.seat': {

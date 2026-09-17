@@ -5,8 +5,11 @@
  * 말도 하지 못한다 — 멀다는 이유 하나로. 답은 표를 더 많이 받은 쪽이다.
  *
  * 선언에 두는 것은 구조뿐이다 — 점의 좌표와 이름표, 부를 수 k, 걸음 간격.
- * 거리 · 순위 · 표 수 · 승자는 algorithm 이 좌표에서 셈하고, 화면의 자리는
- * stage 가 캔버스에서 역산한다 (S-piece).
+ * 거리와 줄 세우기는 algorithm 이 좌표에서 셈하고, 순위 · 표 수 · 승자는 장면이
+ * 쌓인 표에서 세며, 화면의 자리는 stage 가 캔버스에서 역산한다 (S-piece).
+ *
+ * 화면을 명령이 아니라 **장면**으로 만들므로 (`scene:`) 어느 걸음의 화면이든
+ * 셈으로 얻는다 — 그래서 재생 위치를 끌어 보는 띠를 단다 (S-scene).
  */
 
 import { CONTROL_SET } from '@ffacet/core/runtime';
@@ -39,7 +42,7 @@ export const voteByNeighborsFacet: FacetJson = {
     pt: 'Os cinco vizinhos mais próximos são chamados um a um e cada um deixa um voto.',
   },
   algorithm: 'module:voteByNeighbors',
-  projector: 'module:voteByNeighborsProjector',
+  scene: 'module:voteByNeighborsScene',
   initialData: {
     type: 'vote-by-neighbors',
     query: { x: 4, y: 4 },
@@ -59,7 +62,7 @@ export const voteByNeighborsFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'vote-by-neighbors-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'label.seats': {

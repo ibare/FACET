@@ -14,23 +14,33 @@
  *
  * 이벤트 (C2):
  *   'compare'  target: `node:<id>`
- *     payload: { nodeId: string; nodeValue: number; needle: number; result: 'lt' | 'gt' | 'eq' }
+ *     payload: { nodeId: string }
  *     silent: false — 커서가 그 노드로 옮겨가고 비교 캡션이 갱신된다.
  *   'fold'     target: `node:<rootId>`  (C2 의 BST 서브트리 폴드 어휘)
- *     payload: { rootId: string; side: 'L' | 'R'; nodes: string[]; remaining: number }
+ *     payload: { rootId: string; nodes: string[] }
  *     silent: false — 반대쪽 서브트리 전체가 후보에서 빠지며 옅어진다.
- *     `nodes` 는 실제 서브트리 순회로 얻은 id 목록이고, `remaining` 은 남은
- *     서브트리(계속 내려갈 쪽)의 실제 노드 수다.
+ *     `nodes` 는 실제 서브트리 순회로 얻은 id 목록이다.
  *   'rewind'   facet 고유 확장. target 없음, payload 없음.
  *     silent: false — 자동 재생이 끝난 뒤 처음 누르는 advance 가 화면을 처음
  *     상태로 되돌린다. 같은 advance 안에서 곧바로 첫 걸음(compare)이 이어진다
  *     (S-piece: 되감기만 하고 멈추면 반응이 없는 것으로 읽힌다).
- *   'done'     target: `node:<nodeId>`
- *     payload: { nodeId: string }
- *     silent: true — 메타 이벤트. 마지막 compare('eq') 가 이미 "찾음"을
- *     보여줬으므로 추가 시각 변화가 없다.
  *
- * projector 는 이 넷을 전부 처리한다.
+ * ── 수를 싣지 않는 까닭
+ *
+ * 견준 마디의 값·찾는 값·견줌의 결과, 그리고 남은 후보 수는 전에 payload 로
+ * 실어 보냈다. 넷 다 **장면이 스스로 셀 수 있는 수**이고, 앞의 셋은 화면에
+ * `40 < 50` 이라는 등식으로 나란히 뜬다. 여기서도 세면 셈이 둘이 되고, 둘이
+ * 갈리는 날 화면 안에서 두 수가 다툰다. 그래서 걸음은 **어느 마디인가**만
+ * 가리키고 수는 `scene.ts` 의 `compareAt` · `candidatesLeft` 가 정본이다.
+ *
+ * ── 끝맺음 이벤트를 두지 않는 까닭
+ *
+ * 전에는 `silent: true` 인 `done` 을 하나 더 보냈다. 마지막 `compare('eq')` 가
+ * 이미 "찾음" 을 말하므로 같은 것을 두 번 말하는 셈이라 뺐다.
+ *
+ * (이 조각을 옮기다 `SceneTrack` 이 조용한 발신에도 걸음을 늘려 걸음 번호와 장면
+ * 번호가 어긋나던 것을 찾아 `runtime/scene.ts` 에서 고쳤다. 그러니 `silent` 자체는
+ * 이제 장면 방식에서도 안전하다 — 기피할 까닭이 없다.)
  */
 
 import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
@@ -52,17 +62,12 @@ export type BstCompareAndGoData = {
 type CompareBeat = {
   kind: 'compare';
   nodeId: string;
-  nodeValue: number;
-  needle: number;
-  result: 'lt' | 'gt' | 'eq';
 };
 
 type FoldBeat = {
   kind: 'fold';
   rootId: string;
-  side: 'L' | 'R';
   nodes: string[];
-  remaining: number;
 };
 
 type Beat = CompareBeat | FoldBeat;
@@ -84,20 +89,14 @@ function buildBeats(data: BstCompareAndGoData): Beat[] {
     if (!node) break;
     const result: 'lt' | 'gt' | 'eq' =
       data.needle < node.value ? 'lt' : data.needle > node.value ? 'gt' : 'eq';
-    beats.push({ kind: 'compare', nodeId: currentId, nodeValue: node.value, needle: data.needle, result });
+    beats.push({ kind: 'compare', nodeId: currentId });
     if (result === 'eq') break;
     const goLeft: boolean = result === 'lt';
     const keepId: string | null = goLeft ? node.left : node.right;
     const dropId: string | null = goLeft ? node.right : node.left;
     const droppedNodes: string[] = subtreeIds(data.nodes, dropId);
     if (droppedNodes.length > 0) {
-      beats.push({
-        kind: 'fold',
-        rootId: currentId,
-        side: goLeft ? 'R' : 'L',
-        nodes: droppedNodes,
-        remaining: subtreeIds(data.nodes, keepId).length,
-      });
+      beats.push({ kind: 'fold', rootId: currentId, nodes: droppedNodes });
     }
     currentId = keepId;
   }
@@ -110,34 +109,20 @@ async function playBeat(ctx: FacetContext<BstCompareAndGoData>, beat: Beat): Pro
     await ctx.emit({
       type: 'compare',
       target: `node:${beat.nodeId}`,
-      payload: {
-        nodeId: beat.nodeId,
-        nodeValue: beat.nodeValue,
-        needle: beat.needle,
-        result: beat.result,
-      },
+      payload: { nodeId: beat.nodeId },
     });
     return;
   }
   await ctx.emit({
     type: 'fold',
     target: `node:${beat.rootId}`,
-    payload: {
-      rootId: beat.rootId,
-      side: beat.side,
-      nodes: beat.nodes,
-      remaining: beat.remaining,
-    },
+    payload: { rootId: beat.rootId, nodes: beat.nodes },
   });
 }
 
 export async function bstCompareAndGoAlgorithm(ctx: FacetContext<BstCompareAndGoData>): Promise<void> {
   const rctx = ctx as ReactiveContext<BstCompareAndGoData>;
   const beats = buildBeats(rctx.data);
-  let lastCompareId: string | null = null;
-  for (const beat of beats) {
-    if (beat.kind === 'compare') lastCompareId = beat.nodeId;
-  }
 
   // 자동 재생 — 걸음마다 읽을 시간을 준다 (initialData.stepMs, 원칙 2).
   for (const beat of beats) {
@@ -148,14 +133,6 @@ export async function bstCompareAndGoAlgorithm(ctx: FacetContext<BstCompareAndGo
     if (!ok) return;
   }
   if (rctx.cancelled) return;
-  if (lastCompareId) {
-    await rctx.emit({
-      type: 'done',
-      target: `node:${lastCompareId}`,
-      payload: { nodeId: lastCompareId },
-      silent: true,
-    });
-  }
 
   // 자동 재생이 끝난 뒤 — advance 로 한 걸음씩 다시 짚어본다 (S-piece).
   // idx 가 걸음 수 이상이면 "끝에 도달"한 상태 — 다음 advance 는 되감고 나서

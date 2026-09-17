@@ -12,28 +12,33 @@
 import { describe, expect, it } from 'vitest';
 import {
   clearRegistry,
-  getProjector,
+  getScenePlan,
+  getView,
   registerBuiltinViews,
-  registerProjector,
+  registerView,
   runFacet,
+  type CanvasView,
   type FacetContext,
   type FacetRuntimeEvent,
-  type ProjectorInstance,
-  type ProjectorRuntime,
-  type ProjectorViews,
+  type SceneRenderer,
+  type ViewInstance,
+  type ViewMountParams,
 } from '@ffacet/core/runtime';
 import { rowTimesColumnAlgorithm, type RowTimesColumnData } from '../src/algorithm.js';
 import { rowTimesColumnFacet } from '../src/facet.js';
 import { registerRowTimesColumn } from '../src/index.js';
+import type { RowTimesColumnScene } from '../src/scene.js';
 
+/**
+ * 걸음이 싣는 것은 셋뿐이다 — 어느 칸을 짓고 있나와 그 짝의 곱.
+ *
+ * 몇 번째 짝인가(`k`)와 그때까지의 합(`sum`)과 맞물린 두 수(`a`·`b`)는 장면이 세거나
+ * 바탕에서 읽는다. 여기서도 같은 길로 다시 셈해 견준다 (`src/scene.ts` 의 잣대표).
+ */
 type Payload = {
   row: number;
   col: number;
-  k: number;
-  a: number;
-  b: number;
   product: number;
-  sum: number;
 };
 
 function scene(): RowTimesColumnData {
@@ -110,34 +115,35 @@ describe('행과 열의 맞물림', () => {
     expect(events.at(-1)?.type).toBe('done');
   });
 
-  it('걸음마다 실은 곱과 누적 합이 그 자리에서 맞다', async () => {
+  it('걸음마다 실은 곱이 그 칸의 다음 항과 맞다', async () => {
     const { a, b } = scene();
     const events = await drive();
-    const running = new Map<string, number>();
+    // 몇 번째 짝인가는 그 칸에 이미 쌓인 항의 수다 — 장면이 세는 것과 같은 길이다.
+    const filled = new Map<string, number>();
 
     for (const event of events) {
       if (event.type !== 'pair-meet' && event.type !== 'cell-formed') continue;
       const p = event.payload as Payload;
-      expect(p.a).toBe(a[p.row]?.[p.k]);
-      expect(p.b).toBe(b[p.k]?.[p.col]);
-      expect(p.product).toBe(p.a * p.b);
       const key = `${p.row},${p.col}`;
-      const before = running.get(key) ?? 0;
-      expect(p.sum).toBe(before + p.product);
-      running.set(key, p.sum);
+      const k = filled.get(key) ?? 0;
+      expect(p.product).toBe((a[p.row]?.[k] ?? 0) * (b[k]?.[p.col] ?? 0));
+      // 마지막 짝에서만 칸이 굳는다고 말한다.
+      expect(event.type === 'cell-formed').toBe(k === b.length - 1);
+      filled.set(key, k + 1);
     }
   });
 
-  it('굳은 칸의 값이 다시 셈한 곱과 같다', async () => {
+  it('쌓인 항의 합이 다시 셈한 곱과 같다', async () => {
     const { a, b } = scene();
     const want = multiply(a, b);
     const events = await drive();
+    // 합은 아무도 실어 오지 않는다. 화면이 그러듯 여기서도 쌓인 항에서 센다.
     const got: number[][] = a.map(() => (b[0] ?? []).map(() => 0));
 
     for (const event of events) {
-      if (event.type !== 'cell-formed') continue;
+      if (event.type !== 'pair-meet' && event.type !== 'cell-formed') continue;
       const p = event.payload as Payload;
-      got[p.row]![p.col] = p.sum;
+      got[p.row]![p.col] += p.product;
     }
     expect(got).toEqual(want);
   });
@@ -151,7 +157,7 @@ describe('한 걸음씩 보기', () => {
     // 되감기 하나로 끝나면 눌러도 반응이 없는 것으로 읽힌다 (S-piece).
     expect(tail.map((e) => e.type)).toEqual(['rewind', 'pair-meet']);
     const first = tail[1]?.payload as Payload;
-    expect({ row: first.row, col: first.col, k: first.k }).toEqual({ row: 0, col: 0, k: 0 });
+    expect({ row: first.row, col: first.col }).toEqual({ row: 0, col: 0 });
   });
 });
 
@@ -161,24 +167,43 @@ describe('띄워 보기', () => {
     registerBuiltinViews();
     registerRowTimesColumn();
 
-    // projector 를 감싸 아직 안 끝난 onEvent 를 센다 — 매달림이 곧 그 수다.
+    // 화면은 이제 장면 설계와 그것을 그리는 stage 로 만들어진다 (S-scene).
+    const sceneName = String(rowTimesColumnFacet.scene).replace(/^module:/, '');
+    expect(getScenePlan(sceneName)).toBeDefined();
+
+    /*
+     * stage 의 `render` 를 감싸 아직 안 풀린 것을 센다 — 매달림이 곧 그 수다.
+     *
+     * projector 시절에는 `onEvent` 를 감쌌다. 장면 방식에서 바깥이 걸음의 끝을 아는
+     * 통로는 `render` 가 돌려주는 Promise 하나뿐이므로 (S-scene) 재는 자리가 거기로
+     * 옮겨 왔다. 재는 것은 같다 — `destroy` 가 기다리던 것을 푸는가 (S-piece MUST).
+     */
     const tally = { started: 0, finished: 0 };
-    const name = String(rowTimesColumnFacet.projector).replace(/^module:/, '');
-    const original = getProjector(name);
+    const stageName = String(rowTimesColumnFacet.blocks.stage?.type ?? '');
+    const original = getView(stageName) as CanvasView | undefined;
     expect(original).toBeDefined();
-    registerProjector(name, (views: ProjectorViews, runtime?: ProjectorRuntime): ProjectorInstance => {
-      const made = original!(views, runtime);
-      return {
-        ...made,
-        async onEvent(event: FacetRuntimeEvent): Promise<void> {
-          tally.started += 1;
-          try {
-            await made.onEvent(event);
-          } finally {
-            tally.finished += 1;
-          }
-        },
-      };
+    const made = original!;
+    registerView(stageName, {
+      ...made,
+      mount(container: HTMLElement, params: ViewMountParams & { canvas: SVGSVGElement }): ViewInstance {
+        const inner = made.mount(container, params) as ViewInstance &
+          SceneRenderer<RowTimesColumnScene>;
+        return {
+          ...inner,
+          async render(
+            next: RowTimesColumnScene,
+            prev: RowTimesColumnScene | null,
+            opts: { animate: boolean },
+          ): Promise<void> {
+            tally.started += 1;
+            try {
+              await inner.render(next, prev, opts);
+            } finally {
+              tally.finished += 1;
+            }
+          },
+        };
+      },
     });
 
     const errors: string[] = [];
@@ -196,17 +221,26 @@ describe('띄워 보기', () => {
     const before = canvas?.getAttribute('viewBox') ?? '';
     const drawn = canvas?.childNodes.length ?? 0;
 
-    // 재생이 한창인 때 접는다 — 애니메이션이 돌고 있어야 매달릴 자리가 열린다.
-    await delay(1_200);
+    // 운동이 도는 한복판을 기다려 잡는다. **끊기 전에 안 풀려 있는 것을 먼저 확인해야**
+    // 검사가 헛돌지 않는다 — 아무것도 안 기다리는 조각도 0 으로 통과하기 때문이다.
+    const deadline = Date.now() + 8_000;
+    while (tally.started === tally.finished && Date.now() < deadline) await delay(10);
+    const hangingBefore = tally.started - tally.finished;
     const after = container.querySelector('svg')?.getAttribute('viewBox') ?? '';
+
     handle.destroy();
-    await delay(800);
+    // 타이머나 프레임을 기다리지 않는다 — 다음 눈금이 대신 깨우면 `destroy` 가
+    // 아무것도 안 풀어도 통과한다. 마이크로태스크만 돌려 조인다.
+    for (let i = 0; i < 50; i += 1) await Promise.resolve();
+    const hangingAfter = tally.started - tally.finished;
+
     console.error = speak;
     container.remove();
 
     expect(errors).toEqual([]);
     expect(drawn).toBeGreaterThan(0);
     expect(after).toBe(before);
-    expect(tally.started - tally.finished).toBe(0);
+    expect(hangingBefore).toBeGreaterThan(0);
+    expect(hangingAfter).toBe(0);
   }, 20_000);
 });

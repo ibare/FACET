@@ -2,7 +2,7 @@
  * @piece 정렬 전제 — "줄이 서 있지 않으면 같은 절차가 있는 값을 없다고 답한다."
  *
  * 조각(piece) 이므로 S-piece 를 따른다: 제목 블록 없음 · 메트릭 없음 · layout 선언
- * 없음 · 컨트롤은 다시 보기와 한 걸음 둘뿐. 진행은 reactive 메커니즘이 맡고
+ * 없음 · 컨트롤은 다시 보기와 스크럽 띠 둘뿐. 진행은 reactive 메커니즘이 맡고
  * (`index.ts` 의 `registerAlgorithm(..., { mechanismKind: 'reactive' })`) 걸음 간격은
  * `initialData.stepMs` 로 선언한다 — 읽을 시간을 주는 것은 저작 결정이다.
  *
@@ -10,7 +10,7 @@
  * 두고 같은 절차를 걸었는데 답이 갈린다" 는 주장이 성립한다.
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const requiresSortedFacet: FacetJson = {
   id: 'facet:requiresSorted',
@@ -40,7 +40,7 @@ export const requiresSortedFacet: FacetJson = {
     pt: 'A mesma busca binária em duas linhas com os mesmos sete valores: uma ordenada, outra não. A linha desordenada responde «não está» para um valor que está bem ali.',
   },
   algorithm: 'module:requiresSorted',
-  projector: 'module:requiresSortedProjector',
+  scene: 'module:requiresSortedScene',
   initialData: {
     type: 'requires-sorted',
     target: 3,
@@ -54,7 +54,7 @@ export const requiresSortedFacet: FacetJson = {
     stage: { type: 'requires-sorted-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {

@@ -9,47 +9,46 @@
  *
  *   lineBytes 16 · elemBytes 4 · together [0, 1] · apart [0, 4] · writes 8
  *
- * 줄 번호 · 무효화 횟수 · 함께 쓰는 값의 수는 여기서 셈한다. 화면에 뜨는 수는
+ * 줄 번호 · 무효화 횟수 · 함께 쓰는 값의 수는 화면이 셈한다. 화면에 뜨는 수는
  * 전부 그 셈의 결과이지 적어 둔 값이 아니다 (S-piece).
  *
- * ── 줄 번호
+ * ── 줄 번호는 함수로 내준다
  *
  *   line(i) = floor(i * elemBytes / lineBytes)
  *
- * ── 무효화를 세는 법
+ * 발신에 실어 보내지 않고 `falseSharingLine` 을 export 해 장면이 같은 함수를
+ * 부르게 한다. 베끼는 것이 아니라 같은 함수를 지나는 것이라 둘이 갈릴 수 없다.
+ *
+ * ── 무효화를 세는 법 — 이것만 싣는다
  *
  * 쓰기는 그 줄의 배타 소유를 요구한다. **직전에 다른 코어가 그 줄을 쥐고
  * 있었으면** 그쪽 사본이 무효가 된다. 아무도 쥔 적 없는 첫 쓰기는 빼앗을 것이
  * 없으므로 세지 않는다. 그래서 한 줄을 번갈아 여덟 번 고치면 둘째부터
  * 여덟째까지 일곱 번이고, 줄이 갈리면 서로 빼앗을 일이 없어 영이다.
  *
+ * 이 잣대가 곧 조각이 말하려는 바라 장면에 내주지 않는다. 대신 쓰기마다 `stole`
+ * 이라는 **판정 한 글자**만 실어 보내고, 몇 번인지는 장면이 그 목록을 세어 안다.
+ *
  * ── 이벤트 (전부 이 facet 의 확장 어휘. silent 는 없다)
  *
- *   arrange      { mode: 'together' | 'apart'; aIndex: number; bIndex: number;
- *                  aLine: number; bLine: number; sameLine: boolean;
- *                  sharedCount: number; lineBytes: number; elemBytes: number;
- *                  bAddr: number; textKey: string }
- *       배치를 세운다. 'apart' 는 B 가 맡는 칸이 옮겨 앉는 걸음이다.
+ *   arrange      { aIndex: number; bIndex: number }
+ *       배치를 세운다. 두 번째 `arrange` 는 B 가 맡는 칸이 옮겨 앉는 걸음이다.
  *
- *   write-round  { mode: 'together' | 'apart'; round: number; cores: string[];
- *                  indices: number[]; values: number[]; aIndex: number;
- *                  bIndex: number; writes: number; invalidations: number;
- *                  textKey: string }
+ *   write-round  { writes: Array<{ core: 'A' | 'B'; stole: boolean }> }
  *       두 코어가 번갈아 고치므로 한 걸음에 한 바퀴(A 한 번, B 한 번)를 보인다.
- *       `cores` · `indices` · `values` 는 그 바퀴의 쓰기들과 자리가 맞는다.
- *       `writes` · `invalidations` 는 그 배치에서의 누적이다.
+ *       `stole` 은 그 쓰기가 상대의 사본을 무르게 했는가 라는 판정이다.
  *
- *   settle       { mode: 'together' | 'apart'; writes: number;
- *                  invalidations: number; sharedCount: number; textKey: string }
- *       한 배치의 셈을 맺는다.
+ *   settle       payload 없음
+ *       한 배치의 셈을 맺는다. 셈은 장면이 쓰기 목록에서 낸다.
  *
- *   done         { sharedCount: number; textKey: string }
+ *   done         payload 없음
  *       두 배치를 견준 결론.
  *
  *   rewind       payload 없음
  *       자동 재생이 끝난 뒤 `advance` 로 처음부터 다시 짚을 때 화면을 비운다.
  *
- * 화면 문안은 여기서 정하지 않는다 — `textKey` 만 싣고 projector 가 해석한다 (C10).
+ * 화면 문안은 여기서 정하지 않는다 — 무엇을 말할지는 두 칸이 한 줄에 앉았나가
+ * 정하고 그것은 장면이 안다 (C10).
  */
 
 import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
@@ -70,15 +69,20 @@ export type FalseSharingData = {
   stepMs: number;
 };
 
-type Mode = 'together' | 'apart';
-
 /** 걸음 사이에 서는 법. 자동 재생은 재우고, 한 걸음씩은 누름을 기다린다. */
 type Pause = () => Promise<boolean>;
 
 const CORE_A = 'A';
 const CORE_B = 'B';
 
-function lineOf(index: number, lineBytes: number, elemBytes: number): number {
+/**
+ * 그 색인이 앉는 줄의 번호.
+ *
+ * 주소를 줄 크기로 나눈 몫이다. 자르는 잣대라 장면이 같은 함수를 부르게 내준다 —
+ * 두 군데서 자르면 갈린다 (프로토콜 4 절).
+ */
+export function falseSharingLine(index: number, lineBytes: number, elemBytes: number): number {
+  if (lineBytes <= 0) return 0;
   return Math.floor((index * elemBytes) / lineBytes);
 }
 
@@ -87,95 +91,38 @@ function lineOf(index: number, lineBytes: number, elemBytes: number): number {
  */
 async function playArrangement(
   ctx: ReactiveContext<FalseSharingData>,
-  mode: Mode,
   pair: number[],
   gate: () => Promise<boolean>,
 ): Promise<boolean> {
   const { lineBytes, elemBytes, writes } = ctx.data;
   const aIndex = pair[0];
   const bIndex = pair[1];
-  const aLine = lineOf(aIndex, lineBytes, elemBytes);
-  const bLine = lineOf(bIndex, lineBytes, elemBytes);
-  const sameLine = aLine === bLine;
-  // 두 코어가 실제로 함께 쓰는 값의 수. 서로 다른 칸을 맡으면 영이다 —
-  // 이것이 "거짓" 이라는 말의 근거다.
-  const sharedCount = aIndex === bIndex ? 1 : 0;
 
   if (!(await gate())) return false;
-  await ctx.emit({
-    type: 'arrange',
-    payload: {
-      mode,
-      aIndex,
-      bIndex,
-      aLine,
-      bLine,
-      sameLine,
-      sharedCount,
-      lineBytes,
-      elemBytes,
-      bAddr: bIndex * elemBytes,
-      textKey: sameLine ? 'caption.together' : 'caption.apart',
-    },
-  });
+  await ctx.emit({ type: 'arrange', payload: { aIndex, bIndex } });
   if (ctx.cancelled) return false;
 
-  /** 줄 → 그 줄을 마지막으로 쥔 코어. */
+  /** 줄 → 그 줄을 마지막으로 쥔 코어. 판정을 내리는 데만 쓴다. */
   const holder = new Map<number, string>();
-  /** 색인 → 그 칸이 지금 담은 값. 코어마다 제 칸 하나를 올린다. */
-  const value = new Map<number, number>();
-  let done = 0;
-  let invalidations = 0;
 
   for (let w = 0; w < writes; w += 2) {
-    const cores: string[] = [];
-    const indices: number[] = [];
-    const values: number[] = [];
+    const round: Array<{ core: string; stole: boolean }> = [];
     for (let k = 0; k < 2 && w + k < writes; k += 1) {
       const core = (w + k) % 2 === 0 ? CORE_A : CORE_B;
       const index = core === CORE_A ? aIndex : bIndex;
-      const line = lineOf(index, lineBytes, elemBytes);
+      const line = falseSharingLine(index, lineBytes, elemBytes);
       const prev = holder.get(line);
-      if (prev !== undefined && prev !== core) invalidations += 1;
+      round.push({ core, stole: prev !== undefined && prev !== core });
       holder.set(line, core);
-      const next = (value.get(index) ?? 0) + 1;
-      value.set(index, next);
-      done += 1;
-      cores.push(core);
-      indices.push(index);
-      values.push(next);
     }
 
     if (!(await gate())) return false;
-    await ctx.emit({
-      type: 'write-round',
-      payload: {
-        mode,
-        round: w / 2 + 1,
-        cores,
-        indices,
-        values,
-        aIndex,
-        bIndex,
-        writes: done,
-        invalidations,
-        textKey: sameLine ? 'caption.collide' : 'caption.quiet',
-      },
-    });
+    await ctx.emit({ type: 'write-round', payload: { writes: round } });
     if (ctx.cancelled) return false;
   }
 
   if (!(await gate())) return false;
-  await ctx.emit({
-    type: 'settle',
-    payload: {
-      mode,
-      writes: done,
-      invalidations,
-      sharedCount,
-      textKey: sameLine ? 'caption.tally' : 'caption.tallyApart',
-    },
-  });
+  await ctx.emit({ type: 'settle' });
   return !ctx.cancelled;
 }
 
@@ -198,20 +145,12 @@ async function sequence(ctx: ReactiveContext<FalseSharingData>, pause: Pause): P
 
   // 차례가 곧 논증이다 — 붙여 놓아 문제를 세우고, 벌려 놓아 무엇이 원인이었는지
   // 가린다. 두 배치의 색인 쌍 자체는 선언에서 온다.
-  const arrangements: Array<{ mode: Mode; pair: number[] }> = [
-    { mode: 'together', pair: ctx.data.together },
-    { mode: 'apart', pair: ctx.data.apart },
-  ];
-  for (const arrangement of arrangements) {
-    if (!(await playArrangement(ctx, arrangement.mode, arrangement.pair, gate))) return false;
+  for (const pair of [ctx.data.together, ctx.data.apart]) {
+    if (!(await playArrangement(ctx, pair, gate))) return false;
   }
 
-  // 끝에 남아 있는 배치가 벌려 놓은 쪽이므로 그 배치의 셈으로 맺는다.
-  const last = ctx.data.apart;
-  const sharedCount = last[0] === last[1] ? 1 : 0;
-
   if (!(await gate())) return false;
-  await ctx.emit({ type: 'done', payload: { sharedCount, textKey: 'caption.done' } });
+  await ctx.emit({ type: 'done' });
   return !ctx.cancelled;
 }
 

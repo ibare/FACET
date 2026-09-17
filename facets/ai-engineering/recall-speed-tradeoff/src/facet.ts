@@ -36,7 +36,9 @@ export const recallSpeedTradeoffFacet: FacetJson = {
     pt: 'Os cinco verdadeiramente mais próximos estão fixados. Busque em menos células e alguns escapam da resposta enquanto pontos mais distantes ocupam seus assentos.',
   },
   algorithm: 'module:recallSpeedTradeoff',
-  projector: 'module:recallSpeedTradeoffProjector',
+  // 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든 셈으로
+  // 얻으므로 띠를 끌어 아무 자리로나 갈 수 있다 (S-scene).
+  scene: 'module:recallSpeedTradeoffScene',
   initialData: {
     type: 'recall-speed-tradeoff',
     points: [
@@ -77,20 +79,20 @@ export const recallSpeedTradeoffFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'recall-speed-tradeoff-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
-    'label.probe': {
-      en: 'Cells opened {opened}/{cells} · points seen {seen}/{total}',
-      ko: '연 칸 {opened}/{cells} · 본 점 {seen}/{total}',
-      ja: '開いた区画 {opened}/{cells} · 見た点 {seen}/{total}',
-      zh: '已开格子 {opened}/{cells} · 已看点 {seen}/{total}',
-      ar: 'الخلايا المفتوحة {opened}/{cells} · النقاط المفحوصة {seen}/{total}',
-      es: 'Celdas abiertas {opened}/{cells} · puntos vistos {seen}/{total}',
-      fr: 'Cellules ouvertes {opened}/{cells} · points vus {seen}/{total}',
-      hi: 'खोले गए खाने {opened}/{cells} · देखे गए बिंदु {seen}/{total}',
-      id: 'Sel dibuka {opened}/{cells} · titik dilihat {seen}/{total}',
-      pt: 'Células abertas {opened}/{cells} · pontos vistos {seen}/{total}',
+    'label.cost': {
+      en: 'cells · points',
+      ko: '연 칸 · 본 점',
+      ja: '開いた区画 · 見た点',
+      zh: '已开格子 · 已看点',
+      ar: 'خلايا · نقاط',
+      es: 'celdas · puntos',
+      fr: 'cellules · points',
+      hi: 'खाने · बिंदु',
+      id: 'sel · titik',
+      pt: 'células · pontos',
     },
     'label.recall': {
       en: 'recall',

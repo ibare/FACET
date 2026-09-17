@@ -6,12 +6,16 @@
  * 차를 자리에 적은 뒤 자기 높이를 다시 위로 올려보낸다. 재귀 자체가 이 순서를
  * 만든다 — 걸음을 배열로 손으로 적지 않는다 (S-piece).
  *
+ * **키와 차이는 싣지 않는다.** 둘 다 나무 모양에서 셀 수 있는 수이고, 화면에는
+ * 왼쪽 토큰 · 오른쪽 토큰 · `Δ` 배지로 **나란히** 뜬다. 항이 두 출처에서 오면
+ * 언젠가 갈리고, 갈리는 날 화면이 스스로 거짓이 된다. 그래서 여기서는 어느
+ * 자리의 셈이 끝났는지만 말하고, 수는 `scene.ts` 의 `childHeight` 하나가 낸다.
+ *
  * 이벤트 어휘 (표준 vocab 외 확장, C2):
  *
  *   'node-settle' — 한 노드의 계산이 끝나 화면에 적힐 때.
  *     target:  `node:<value>`
- *     payload: { value: number; leftHeight: number; rightHeight: number;
- *                height: number; balance: number; outOfRange: boolean }
+ *     payload: { value: number }
  *     silent:  아니다 — 높이 토큰이 실제로 올라와 자리에 적히는 step boundary.
  *
  *   'rewind' — 자동 재생이 끝난 뒤 처음 받는 `advance` 입력에서, 처음으로
@@ -41,36 +45,25 @@ export type HeightBalanceCheckData = {
   stepMs: number;
 };
 
-/** 한 노드가 settle 될 때 화면에 적히는 값 전체. */
-export type SettleStep = {
-  value: number;
-  leftHeight: number;
-  rightHeight: number;
-  height: number;
-  balance: number;
-  outOfRange: boolean;
-};
-
 /**
- * 후위 순회로 각 노드의 높이·균형 인수를 셈한다. 순수 함수 — 실제 재귀가
- * settle 순서를 만들어 낸다 (잎 → 뿌리).
+ * 후위 순회가 자리를 밟는 차례. 실제 재귀가 그 차례를 만들어 낸다 (잎 → 뿌리).
+ *
+ * 키는 재귀 안에서 위로 올려보내는 데만 쓰고 밖으로 내보내지 않는다 — 화면이 쓰는
+ * 수는 `scene.ts` 가 나무에서 직접 센다.
  */
-export function computeHeightBalanceCheckSteps(root: TreeNodeSpec): SettleStep[] {
-  const steps: SettleStep[] = [];
+export function computeHeightBalanceCheckOrder(root: TreeNodeSpec): number[] {
+  const order: number[] = [];
 
   function visit(node: TreeNodeSpec | undefined): number {
     if (!node) return 0;
     const leftHeight = visit(node.left);
     const rightHeight = visit(node.right);
-    const height = 1 + Math.max(leftHeight, rightHeight);
-    const balance = leftHeight - rightHeight;
-    const outOfRange = balance < -1 || balance > 1;
-    steps.push({ value: node.value, leftHeight, rightHeight, height, balance, outOfRange });
-    return height;
+    order.push(node.value);
+    return 1 + Math.max(leftHeight, rightHeight);
   }
 
   visit(root);
-  return steps;
+  return order;
 }
 
 /** 취소 검사와 ctx.sleep 을 묶는다 (S-piece). */
@@ -84,15 +77,15 @@ export async function heightBalanceCheckAlgorithm(
 ): Promise<void> {
   const reactive = ctx as ReactiveContext<HeightBalanceCheckData>;
   const { root, stepMs } = reactive.data;
-  const steps = computeHeightBalanceCheckSteps(root);
+  const order = computeHeightBalanceCheckOrder(root);
 
   // 1. 자동 재생 — 잎에서 뿌리까지 한 자리씩 셈해 올라간다.
-  for (const step of steps) {
+  for (const value of order) {
     if (reactive.cancelled) return;
     await reactive.emit({
       type: 'node-settle',
-      target: `node:${step.value}`,
-      payload: step,
+      target: `node:${value}`,
+      payload: { value },
     });
     const ok = await pause(reactive, stepMs);
     if (!ok) return;
@@ -117,12 +110,12 @@ export async function heightBalanceCheckAlgorithm(
     if (manualIndex === 0) {
       await reactive.emit({ type: 'rewind' });
     }
-    const step = steps[manualIndex];
+    const value = order[manualIndex];
     await reactive.emit({
       type: 'node-settle',
-      target: `node:${step.value}`,
-      payload: step,
+      target: `node:${value}`,
+      payload: { value },
     });
-    manualIndex = (manualIndex + 1) % steps.length;
+    manualIndex = (manualIndex + 1) % order.length;
   }
 }

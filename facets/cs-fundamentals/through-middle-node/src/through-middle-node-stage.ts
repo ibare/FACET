@@ -12,6 +12,21 @@
  * 오른쪽 장부는 물음이 몇 번이나 되풀이되는지를 남긴다. 가운데 후보 하나가
  * 한 칸(열)이고, 그 아래 칸 하나가 물음 하나다. 재생이 끝난 뒤에도 그림이
  * 스스로 "이만큼 물어 이만큼만 그렇다" 라고 말하게 하는 자리다.
+ *
+ * ## 장면을 받아 그린다
+ *
+ * 걸음마다 부르는 메서드(`openRoads()` · `setMiddle()` · `ask()` …) 를 두지
+ * 않는다. 그 메서드들은 되돌릴 수 없는 명령이라, 임의의 걸음으로 가려면 처음부터
+ * 다시 밟는 수밖에 없었다. 대신 `render(next, prev, { animate })` 하나가 **그
+ * 장면의 화면 전체**를 세운다 — 어느 걸음에서 어느 걸음으로 가든 같은 길이다
+ * (S-scene).
+ *
+ * 부드러움은 `opts.animate` 가 정한다. 참이면 방금 밟은 걸음 하나만 프레임으로
+ * 흐르게 하고, 거짓이면 곧바로 끝 자리에 세운다 — 되짚기와 첫 그림이 그 길이다.
+ *
+ * 운동이 끝나면 **그 장면을 통째로 다시 세운다**. 속성을 하나씩 거두는 것보다
+ * 안전하다 — 흐르며 선 화면과 곧바로 세운 화면이 `opacity="1"` 같은 속성의
+ * 유무만큼 달라 되짚기 판정에서 어긋나는 일이 없다.
  */
 
 import {
@@ -22,8 +37,18 @@ import {
   PIECE_CANVAS_W,
   type CanvasView,
   type Palette,
+  type Translate,
+  type ViewInstance,
   type ViewMountParams,
 } from '@ffacet/core/runtime';
+
+import type {
+  ThroughMiddleNodeAsk,
+  ThroughMiddleNodeCaption,
+  ThroughMiddleNodeLink,
+  ThroughMiddleNodeScene,
+  ThroughMiddleNodeVerdict,
+} from './scene.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -36,6 +61,11 @@ const CENTER_Y = 138;
 const RING_RX = 150;
 const RING_RY = 94;
 const NODE_R = 19;
+
+/** 가운데로 선 정점이 일어서는 몫과 그 둘레에 도는 테. */
+const MIDDLE_SCALE = 1.14;
+const MIDDLE_HALO = 7;
+const MIDDLE_HALO_ALPHA = 0.45;
 
 const LEDGER_LEFT = 408;
 const LEDGER_RIGHT = 592;
@@ -55,42 +85,35 @@ const INFINITY_MARK = '∞';
 const YES_MARK = '✓';
 const NO_MARK = '✗';
 
+// ── 걸음의 길이. 하나하나가 읽을 시간을 가르므로 이름을 달아 둔다.
+const LEDGER_MS = 260;
+const MIDDLE_MS = 220;
+const PROBE_BLOCKED_MS = 100;
+const PROBE_HALF_MS = 130;
+const PROBE_FULL_MS = 220;
+const RECOIL_MS = 70;
+const REFUSE_HOLD_MS = 70;
+const REFUSE_BACK_MS = 200;
+/** 짚던 길이 사그라드는 시간. 줄이 휘는 동안 겹쳐 돈다. */
+const PROBE_FADE_MS = 200;
+const PULSE_MS = 140;
+const OPEN_MS = 180;
+const BEND_MS = 260;
+const STRAIGHTEN_MS = 280;
+const FIX_PULSE_MS = 120;
+const FADE_MS = 90;
+const FINISH_PULSE_MS = 110;
+const FINISH_GAP_MS = 60;
+
 type Pt = { x: number; y: number };
 
-export type ThroughMiddleNodeStageEdge = { from: string; to: string; weight: number };
-
-export type ThroughMiddleNodeScene = {
-  nodes: string[];
-  edges: ThroughMiddleNodeStageEdge[];
-};
-
-export type ThroughMiddleNodeLedger = {
-  middles: string[];
-  rows: number;
-};
-
-export type ThroughMiddleNodeQuestion = {
-  from: string;
-  to: string;
-  middle: string;
-  middleIndex: number;
-  pairIndex: number;
-  legA: number | null;
-  legB: number | null;
-  sum: number | null;
-  current: number | null;
-  shorter: boolean;
-};
-
 /**
- * 장부 한 칸의 상태.
- *
- * "아니다" 를 둘로 가른다 — `no` 는 길이 끊겨 재 볼 것도 없던 자리이고,
- * `weighed` 는 길이 다 있어 재 보았는데 더 멀던 자리다. 같은 회색으로 두면
- * 장부가 그 구분을 지우고, 그러면 이 조각의 물음이 "길이 있는가" 로만 읽힌다.
+ * 장부 한 칸의 칠. `asking` 은 물음이 도는 동안만이라 장면에 없다 — 그 칸이
+ * 누구인지는 `scene.ask` 가 말한다.
  */
-type SlotState = 'idle' | 'asking' | 'no' | 'weighed' | 'yes';
+type SlotState = 'idle' | 'asking' | ThroughMiddleNodeVerdict;
 
+/** 줄 하나를 그리는 데 필요한 DOM 과 그 순간의 모습. `drawStatic` 이 세운다. */
 type Chord = {
   from: string;
   to: string;
@@ -111,6 +134,24 @@ type Chord = {
   badge: SVGGElement;
   badgeBox: SVGRectElement;
   badgeText: SVGTextElement;
+};
+
+type NodeShape = {
+  group: SVGGElement;
+  disc: SVGCircleElement;
+  /** 가운데로 선 정점에만 달리는 테. 그 밖에는 아예 만들지 않는다. */
+  halo: SVGCircleElement | null;
+  text: SVGTextElement;
+};
+
+/** 물음이 짚어 가는 점과 그 길. 걸음이 도는 동안만 산다. */
+type Probe = {
+  barrier: SVGLineElement;
+  /** 0 이면 출발, 1 이면 가운데, 2 면 도착. */
+  moveDot(u: number): void;
+  at(u: number): Pt;
+  legOut: Pt;
+  legIn: Pt;
 };
 
 type Attrs = Record<string, string | number>;
@@ -173,7 +214,7 @@ function outwardNormal(at: Pt, tangent: Pt): Pt {
  * 원둘레에 놓을 차례. 주어진 간선이 변이 되도록 이어지는 고리를 찾는다.
  * 고리가 없으면 선언 순서 그대로 놓는다 — 그림이 덜 곱더라도 틀리지는 않는다.
  */
-function ringOrder(nodes: string[], edges: ThroughMiddleNodeStageEdge[]): string[] {
+function ringOrder(nodes: string[], edges: ThroughMiddleNodeLink[]): string[] {
   if (nodes.length < 3) return [...nodes];
   const near = new Map<string, Set<string>>();
   for (const id of nodes) near.set(id, new Set<string>());
@@ -207,13 +248,18 @@ function ease(p: number): number {
   return p < 0.5 ? 2 * p * p : 1 - ((-2 * p + 2) * (-2 * p + 2)) / 2;
 }
 
+/** 바탕이 달라졌나 가리는 열쇠. 같으면 자리 셈을 다시 하지 않는다. */
+function layoutKeyOf(scene: ThroughMiddleNodeScene): string {
+  return `${scene.nodes.join(',')}|${scene.edges.map((e) => `${e.from}>${e.to}:${e.weight}`).join(',')}`;
+}
+
 export const throughMiddleNodeStageView: CanvasView = {
   canvas: { height: H },
 
-  mount(_container: HTMLElement, params: ViewMountParams & { canvas: SVGSVGElement }) {
+  mount(_container: HTMLElement, params: ViewMountParams & { canvas: SVGSVGElement }): ViewInstance {
     const svg = params.canvas;
     const colors: Palette = getColors(params.theme);
-    const tr = params.t ?? makeTranslator(params.locale);
+    const tr: Translate = params.t ?? makeTranslator(params.locale);
 
     // 러너가 붙여 준 캔버스를 떼지 않는다. 비울 것은 캔버스 안쪽뿐이다 (S-view).
     svg.textContent = '';
@@ -227,26 +273,62 @@ export const throughMiddleNodeStageView: CanvasView = {
      *
      * 프레임·타이머를 거두는 것만으로는 모자란다 — 취소된 tick 은 아예 불리지
      * 않으므로 `destroyed` 를 보고 resolve 하는 길도 지나가지 않는다. 그러면
-     * `await ctx.emit` 이 영영 돌아오지 않아, unmount 된 뒤에도 알고리즘과
-     * projector 와 SVG 트리가 통째로 붙들린다. 글 하나에 조각이 여럿 박히고
-     * 스크롤로 mount/unmount 가 되풀이되면 그것이 쌓인다 (S-view).
+     * `await ctx.emit` 이 영영 돌아오지 않아, unmount 된 뒤에도 알고리즘과 SVG
+     * 트리가 통째로 붙들린다 (S-view).
      */
     const waiters = new Set<() => void>();
 
-    const nextFrame = (cb: () => void): number =>
-      typeof requestAnimationFrame === 'function'
+    /**
+     * 그림의 세대. `render` 가 화면을 새로 세울 때마다 올린다.
+     *
+     * 이 조각의 운동은 `wait` 와 여러 `animate` 로 **이어 달린다** — 물음 하나가
+     * 짚고 · 재고 · 휘고 · 펴는 넷을 잇고, 끝에서는 고쳐진 줄을 하나씩 짚는다.
+     * 되짚기가 화면을 새로 세운 뒤에 앞 세대의 뒷마디가 깨어나면 새 줄에 옛 값을
+     * 덮어쓴다. 깨어난 운동은 자기 세대를 확인하고 아니면 화면에 손대지 않는다.
+     */
+    let gen = 0;
+    const alive = (my: number): boolean => !destroyed && my === gen;
+
+    /**
+     * 되짚는 중인가. 러너가 `params` 로 흘린다 (`ViewMountParams.isInstant`).
+     * 세대 빗장의 보조다 — 혼자서는 이어 달리는 운동을 막지 못한다.
+     */
+    const isInstant = params.isInstant ?? ((): boolean => false);
+    // 되짚기 직전에 걸어 둔 것을 거둔다 (destroy 와 같은 모양, 화면은 그대로).
+    params.onScrubStart?.(() => {
+      for (const id of frames) dropFrame(id);
+      frames.clear();
+      for (const id of timers) clearTimeout(id);
+      timers.clear();
+      for (const wake of [...waiters]) wake();
+      waiters.clear();
+    });
+
+    function nextFrame(cb: () => void): number {
+      return typeof requestAnimationFrame === 'function'
         ? requestAnimationFrame(() => cb())
         : (setTimeout(cb, 16) as unknown as number);
-    const dropFrame = (id: number): void => {
+    }
+
+    function dropFrame(id: number): void {
       if (typeof cancelAnimationFrame === 'function') cancelAnimationFrame(id);
       else clearTimeout(id as unknown as ReturnType<typeof setTimeout>);
-    };
+    }
 
-    /** 스스로 다음 회차를 예약하는 루프. destroy 가 프레임을 거두고 기다리던 것을 깨운다. */
-    function animate(durationMs: number, apply: (p: number) => void): Promise<void> {
+    /**
+     * 한 마디를 프레임으로 흐르게 한다.
+     *
+     * 첫 프레임을 **동기로** 그린다. 정적 그리기가 이미 끝 자리에 세워 두었으므로,
+     * 출발 자리로 물리는 것을 다음 프레임에 미루면 끝 자리가 한 번 번쩍인다.
+     */
+    function animate(durationMs: number, draw: (e: number) => void): Promise<void> {
+      const my = gen;
+      const paint = (e: number): void => {
+        if (alive(my)) draw(e);
+      };
       return new Promise<void>((resolve) => {
-        if (destroyed || durationMs <= 0) {
-          if (!destroyed) apply(1);
+        if (destroyed || isInstant() || durationMs <= 0) {
+          paint(1);
           resolve();
           return;
         }
@@ -259,12 +341,12 @@ export const throughMiddleNodeStageView: CanvasView = {
         let id = 0;
         const tick = (): void => {
           frames.delete(id);
-          if (destroyed) {
+          if (destroyed || my !== gen) {
             finish();
             return;
           }
           const raw = Math.min(1, (Date.now() - started) / durationMs);
-          apply(ease(raw));
+          paint(ease(raw));
           if (raw >= 1) {
             finish();
             return;
@@ -272,6 +354,7 @@ export const throughMiddleNodeStageView: CanvasView = {
           id = nextFrame(tick);
           frames.add(id);
         };
+        paint(0);
         id = nextFrame(tick);
         frames.add(id);
       });
@@ -279,7 +362,7 @@ export const throughMiddleNodeStageView: CanvasView = {
 
     function wait(ms: number): Promise<void> {
       return new Promise<void>((resolve) => {
-        if (destroyed) {
+        if (destroyed || isInstant()) {
           resolve();
           return;
         }
@@ -296,10 +379,10 @@ export const throughMiddleNodeStageView: CanvasView = {
       });
     }
 
-    // ── 뼈대 ────────────────────────────────────────────────────────────────
+    // ── 뼈대. mount 에서 한 번 세우고 안쪽만 갈아 끼운다 ────────────────────
     const root = el('g');
     const chordLayer = el('g');
-    const probeLayer = el('g', { opacity: 0 });
+    const probeLayer = el('g');
     const nodeLayer = el('g');
     const ledgerLayer = el('g');
     root.appendChild(chordLayer);
@@ -328,34 +411,22 @@ export const throughMiddleNodeStageView: CanvasView = {
     root.appendChild(captionText);
     svg.appendChild(root);
 
-    // 물음이 길을 짚어 가는 점과, 길이 끊긴 자리를 막는 빗장.
-    const probeA = el('path', { fill: 'none', 'stroke-linecap': 'round' });
-    const probeB = el('path', { fill: 'none', 'stroke-linecap': 'round' });
-    const probeDot = el('circle', { r: 5.5, fill: colors.itemComparing });
-    const barrier = el('line', {
-      stroke: colors.ghostOutline,
-      'stroke-width': 3,
-      'stroke-linecap': 'round',
-      opacity: 0,
-    });
-    probeLayer.appendChild(probeA);
-    probeLayer.appendChild(probeB);
-    probeLayer.appendChild(barrier);
-    probeLayer.appendChild(probeDot);
-
-    // ── 상태 ────────────────────────────────────────────────────────────────
-    let scene: ThroughMiddleNodeScene = { nodes: [], edges: [] };
+    // ── 지금 세워 둔 그림. 전부 `drawStatic` 이 그 장면에서 다시 만든다 ─────
+    let layoutKey: string | null = null;
     const spot = new Map<string, Pt>();
-    const nodeShapes = new Map<string, { group: SVGGElement; disc: SVGCircleElement; ring: SVGCircleElement; text: SVGTextElement }>();
-    const chords = new Map<string, Chord>();
-    const slots: SVGRectElement[][] = [];
-    const columnHeads: SVGTextElement[] = [];
-    let middleNow: string | null = null;
-    /** 마지막 물음이 짚어 간 길. 되돌아 나올 때 그대로 거꾸로 밟는다. */
-    let walkDot: ((u: number) => void) | null = null;
+    /** 선언에 적힌 길. 반대 방향 짝이 있는지 보아 줄을 비켜 앉히는 데 쓴다. */
+    let given: ThroughMiddleNodeLink[] = [];
+    const nodeOf = new Map<string, NodeShape>();
+    const chordOf = new Map<string, Chord>();
+    let slotRects: SVGRectElement[][] = [];
+    let headTexts: SVGTextElement[] = [];
 
     // ── 정점 ────────────────────────────────────────────────────────────────
-    function layoutNodes(): void {
+    function ensureLayout(scene: ThroughMiddleNodeScene): void {
+      given = scene.edges;
+      const key = layoutKeyOf(scene);
+      if (key === layoutKey) return;
+      layoutKey = key;
       spot.clear();
       const ring = ringOrder(scene.nodes, scene.edges);
       const count = Math.max(1, ring.length);
@@ -368,24 +439,43 @@ export const throughMiddleNodeStageView: CanvasView = {
       });
     }
 
-    function drawNodes(): void {
+    function placeNode(id: string, scale: number): void {
+      const shape = nodeOf.get(id);
+      const at = spot.get(id);
+      if (!shape || !at) return;
+      shape.group.setAttribute('transform', `translate(${at.x} ${at.y}) scale(${scale})`);
+    }
+
+    /**
+     * 정점을 다 세운다. 가운데로 선 하나만 일어서고 테를 두른다.
+     *
+     * 옮기기 전에는 `setMiddle` 이 "앞서 서 있던 것을 찾아 도로 앉히는" 명령을
+     * 달고 있었다. 장면이 `middle` 하나를 말하므로 그 코드가 통째로 없어졌다.
+     */
+    function drawNodes(scene: ThroughMiddleNodeScene): void {
       nodeLayer.textContent = '';
-      nodeShapes.clear();
+      nodeOf.clear();
+      const middle = scene.middle?.id ?? null;
       for (const id of scene.nodes) {
         const at = spot.get(id);
         if (!at) continue;
-        const group = el('g', { transform: `translate(${at.x} ${at.y})` });
-        const ring = el('circle', {
-          r: NODE_R,
-          fill: 'none',
-          stroke: colors.itemActive,
-          'stroke-width': 2,
-          opacity: 0,
+        const standing = id === middle;
+        const group = el('g', {
+          transform: `translate(${at.x} ${at.y}) scale(${standing ? MIDDLE_SCALE : 1})`,
         });
+        const halo = standing
+          ? el('circle', {
+              r: NODE_R + MIDDLE_HALO,
+              fill: 'none',
+              stroke: colors.itemActive,
+              'stroke-width': 2,
+              opacity: MIDDLE_HALO_ALPHA,
+            })
+          : null;
         const disc = el('circle', {
           r: NODE_R,
-          fill: colors.itemDefault,
-          stroke: colors.border,
+          fill: standing ? colors.itemActive : colors.itemDefault,
+          stroke: standing ? colors.itemActive : colors.border,
           'stroke-width': 2,
         });
         const text = el('text', {
@@ -395,22 +485,15 @@ export const throughMiddleNodeStageView: CanvasView = {
           'font-family': fonts.body,
           'font-size': fontSizes.md,
           'font-weight': 600,
-          fill: colors.text,
+          fill: standing ? colors.stateInk : colors.text,
         });
         text.textContent = id;
-        group.appendChild(ring);
+        if (halo) group.appendChild(halo);
         group.appendChild(disc);
         group.appendChild(text);
         nodeLayer.appendChild(group);
-        nodeShapes.set(id, { group, disc, ring, text });
+        nodeOf.set(id, { group, disc, halo, text });
       }
-    }
-
-    function placeNode(id: string, scale: number): void {
-      const shape = nodeShapes.get(id);
-      const at = spot.get(id);
-      if (!shape || !at) return;
-      shape.group.setAttribute('transform', `translate(${at.x} ${at.y}) scale(${scale})`);
     }
 
     // ── 길 ──────────────────────────────────────────────────────────────────
@@ -421,7 +504,7 @@ export const throughMiddleNodeStageView: CanvasView = {
       const mid = lerpPt(a, b, 0.5);
       // 반대 방향 길이 함께 있으면 둘이 겹친다. 진행 방향의 왼쪽으로 비켜
       // 앉히면 반대편 길은 저절로 반대쪽으로 간다.
-      const opposed = scene.edges.some((e) => e.from === to && e.to === from);
+      const opposed = given.some((e) => e.from === to && e.to === from);
       if (!opposed) return mid;
       const dir = unit(a, b);
       return { x: mid.x - dir.y * 11, y: mid.y + dir.x * 11 };
@@ -483,8 +566,14 @@ export const throughMiddleNodeStageView: CanvasView = {
       chord.badgeText.setAttribute('fill', filled ? colors.stateInk : ghost ? colors.textMuted : colors.text);
     }
 
-    function createChord(from: string, to: string, label: string, kind: 'road' | 'ghost'): Chord {
-      const group = el('g');
+    function createChord(
+      from: string,
+      to: string,
+      label: string,
+      kind: 'road' | 'ghost',
+      improved: boolean,
+    ): Chord {
+      const group = el('g', { opacity: 1 });
       const path = el('path', { fill: 'none', 'stroke-linecap': 'round' });
       const head = el('polygon', { points: '0,0 -9,-4.6 -9,4.6' });
       const badge = el('g');
@@ -508,7 +597,7 @@ export const throughMiddleNodeStageView: CanvasView = {
         to,
         label,
         kind,
-        improved: false,
+        improved,
         hot: false,
         bend: 0,
         rest: restCtrl(from, to),
@@ -521,7 +610,7 @@ export const throughMiddleNodeStageView: CanvasView = {
         badgeBox,
         badgeText,
       };
-      chords.set(pairKey(from, to), chord);
+      chordOf.set(pairKey(from, to), chord);
       styleChord(chord);
       renderChord(chord);
       return chord;
@@ -529,7 +618,17 @@ export const throughMiddleNodeStageView: CanvasView = {
 
     function dropChord(chord: Chord): void {
       chord.group.remove();
-      chords.delete(pairKey(chord.from, chord.to));
+      const key = pairKey(chord.from, chord.to);
+      if (chordOf.get(key) === chord) chordOf.delete(key);
+    }
+
+    /** 아는 거리를 모두 곧은 줄로 세운다. 거리표가 곧 이 그림이다. */
+    function drawChords(scene: ThroughMiddleNodeScene): void {
+      chordLayer.textContent = '';
+      chordOf.clear();
+      for (const road of scene.roads) {
+        createChord(road.from, road.to, String(road.weight), 'road', road.improved);
+      }
     }
 
     // ── 장부 ────────────────────────────────────────────────────────────────
@@ -550,10 +649,33 @@ export const throughMiddleNodeStageView: CanvasView = {
       rect.setAttribute('stroke', tone.stroke);
     }
 
-    function buildLedger(ledger: ThroughMiddleNodeLedger): void {
+    function markSlot(column: number, row: number, state: SlotState): void {
+      const rect = slotRects[column]?.[row];
+      if (rect) paintSlot(rect, state);
+    }
+
+    function paintHeads(active: number): void {
+      headTexts.forEach((head, i) => {
+        head.setAttribute('fill', i === active ? colors.text : colors.textMuted);
+        head.setAttribute('font-weight', i === active ? '700' : '400');
+      });
+    }
+
+    /**
+     * 물음 장부를 그 장면 그대로 세운다.
+     *
+     * 옮기기 전에는 칸의 칠이 rect 의 속성에만 있어 되짚으면 지워졌다. 이제
+     * `scene.marks` 가 물은 자리를 말하므로 어느 걸음에서든 같은 장부가 선다.
+     */
+    function drawLedger(scene: ThroughMiddleNodeScene): void {
       ledgerLayer.textContent = '';
-      slots.length = 0;
-      columnHeads.length = 0;
+      ledgerLayer.setAttribute('opacity', '1');
+      ledgerLayer.setAttribute('transform', 'translate(0 0)');
+      slotRects = [];
+      headTexts = [];
+      const ledger = scene.ledger;
+      if (!ledger) return;
+
       const columns = Math.max(1, ledger.middles.length);
       const rows = Math.max(1, ledger.rows);
       const colPitch = Math.min(LEDGER_COL_MAX, (LEDGER_RIGHT - LEDGER_LEFT) / columns);
@@ -583,7 +705,7 @@ export const throughMiddleNodeStageView: CanvasView = {
         });
         head.textContent = id;
         ledgerLayer.appendChild(head);
-        columnHeads.push(head);
+        headTexts.push(head);
 
         const column: SVGRectElement[] = [];
         for (let r = 0; r < rows; r += 1) {
@@ -599,20 +721,11 @@ export const throughMiddleNodeStageView: CanvasView = {
           ledgerLayer.appendChild(rect);
           column.push(rect);
         }
-        slots.push(column);
+        slotRects.push(column);
       });
-    }
 
-    function markSlot(column: number, row: number, state: SlotState): void {
-      const rect = slots[column]?.[row];
-      if (rect) paintSlot(rect, state);
-    }
-
-    function markColumn(index: number): void {
-      columnHeads.forEach((head, i) => {
-        head.setAttribute('fill', i === index ? colors.text : colors.textMuted);
-        head.setAttribute('font-weight', i === index ? '700' : '400');
-      });
+      for (const mark of scene.marks) markSlot(mark.column, mark.row, mark.verdict);
+      paintHeads(scene.middle?.index ?? -1);
     }
 
     // ── 글 ──────────────────────────────────────────────────────────────────
@@ -624,14 +737,83 @@ export const throughMiddleNodeStageView: CanvasView = {
       return value === null ? INFINITY_MARK : String(value);
     }
 
-    function formulaOf(q: ThroughMiddleNodeQuestion): string {
-      return `${show(q.legA)} + ${show(q.legB)} = ${show(q.sum)}   <   ${show(q.current)}`;
+    function formulaOf(ask: ThroughMiddleNodeAsk): string {
+      return `${show(ask.legA)} + ${show(ask.legB)} = ${show(ask.sum)}   <   ${show(ask.current)}`;
     }
 
     function setFormula(text: string, tone: 'ask' | 'yes' | 'no'): void {
       formulaText.textContent = text;
       formulaText.setAttribute('fill', tone === 'no' ? colors.textMuted : colors.text);
       formulaText.setAttribute('font-weight', tone === 'yes' ? '700' : '400');
+    }
+
+    /** 장면이 말하려는 것을 문자로 만든다. 문안은 선언에 있고 여기엔 키만 있다 (C10). */
+    function captionTextOf(caption: ThroughMiddleNodeCaption | null): string {
+      if (!caption) return '';
+      switch (caption.kind) {
+        case 'roads':
+          return tr('caption.roads', '{count} one-way roads to begin with.', {
+            count: caption.count,
+          });
+        case 'middle':
+          return tr('caption.middle', 'Now {middle} stands in the middle.', {
+            middle: caption.middle,
+          });
+        case 'opened':
+          return tr('caption.opened', 'A road appears. {from}→{to} = {sum}.', {
+            from: caption.from,
+            to: caption.to,
+            sum: caption.sum,
+          });
+        case 'shorter':
+          return tr('caption.shorter', 'Shorter. {from}→{to} drops from {current} to {sum}.', {
+            from: caption.from,
+            to: caption.to,
+            current: caption.current,
+            sum: caption.sum,
+          });
+        case 'noWayIn':
+          return tr('caption.noWayIn', 'No road from {from} to {middle}.', {
+            from: caption.from,
+            middle: caption.middle,
+          });
+        case 'noWayOut':
+          return tr('caption.noWayOut', 'No road from {middle} to {to}.', {
+            middle: caption.middle,
+            to: caption.to,
+          });
+        case 'notShorter':
+          return tr(
+            'caption.notShorter',
+            'The detour is {sum} — longer than the {current} already known. Leave it.',
+            { sum: caption.sum, current: caption.current },
+          );
+        case 'done':
+          return tr('caption.done', '{asked} questions asked. Only {improved} said yes.', {
+            asked: caption.asked,
+            improved: caption.improved,
+          });
+      }
+    }
+
+    // ── 정적 그리기. 그 장면의 화면을 빠짐없이 통째로 세운다 ────────────────
+    function drawStatic(scene: ThroughMiddleNodeScene): void {
+      ensureLayout(scene);
+      drawChords(scene);
+      drawNodes(scene);
+      drawLedger(scene);
+      // 짚어 가는 점은 걸음이 도는 동안만 산다. 정적 화면에는 남기지 않는다 —
+      // 남기면 되짚은 화면에 옛 걸음의 자취가 속성으로 묻어 있게 된다. 사그라들던
+      // 도중에 되짚으면 흐려진 opacity 가 남으므로 그것도 함께 되돌린다.
+      probeLayer.textContent = '';
+      probeLayer.setAttribute('opacity', '1');
+      const ask = scene.ask;
+      setCaption(captionTextOf(scene.caption));
+      if (!ask) {
+        setFormula('', 'ask');
+        return;
+      }
+      setFormula(`${formulaOf(ask)}   ${ask.shorter ? YES_MARK : NO_MARK}`, ask.shorter ? 'yes' : 'no');
     }
 
     // ── 물음이 길을 짚는다 ──────────────────────────────────────────────────
@@ -643,74 +825,101 @@ export const throughMiddleNodeStageView: CanvasView = {
       };
     }
 
-    function hideProbe(): void {
-      probeLayer.setAttribute('opacity', '0');
-      barrier.setAttribute('opacity', '0');
-    }
-
-    async function fadeProbe(ms: number): Promise<void> {
-      await animate(ms, (p) => probeLayer.setAttribute('opacity', String(1 - p)));
-      hideProbe();
-    }
-
-    async function runProbe(q: ThroughMiddleNodeQuestion): Promise<void> {
-      const a = spot.get(q.from);
-      const m = spot.get(q.middle);
-      const b = spot.get(q.to);
-      if (!a || !m || !b) return;
+    /** 짚어 갈 길과 점을 세운다. 정적 그리기가 비워 둔 자리에 이때 만든다. */
+    function buildProbe(ask: ThroughMiddleNodeAsk): Probe | null {
+      const a = spot.get(ask.from);
+      const m = spot.get(ask.middle);
+      const b = spot.get(ask.to);
+      if (!a || !m || !b) return null;
 
       const first = legEnds(a, m);
       const second = legEnds(m, b);
-      const hasA = q.legA !== null;
-      const hasB = q.legB !== null;
+      const hasA = ask.legA !== null;
+      const hasB = ask.legB !== null;
 
-      probeA.setAttribute('d', `M ${first.s.x} ${first.s.y} L ${first.e.x} ${first.e.y}`);
-      probeA.setAttribute('stroke', hasA ? colors.itemComparing : colors.ghostOutline);
-      probeA.setAttribute('stroke-width', hasA ? '3.2' : '2');
-      probeA.setAttribute('stroke-dasharray', hasA ? 'none' : '6 6');
-      probeA.setAttribute('opacity', '1');
-
-      probeB.setAttribute('d', `M ${second.s.x} ${second.s.y} L ${second.e.x} ${second.e.y}`);
-      probeB.setAttribute('stroke', hasB ? colors.itemComparing : colors.ghostOutline);
-      probeB.setAttribute('stroke-width', hasB ? '3.2' : '2');
-      probeB.setAttribute('stroke-dasharray', hasB ? 'none' : '6 6');
-      probeB.setAttribute('opacity', hasA ? '1' : '0');
-
-      const dotAt = (u: number): Pt =>
-        u <= 1 ? lerpPt(first.s, first.e, u) : lerpPt(second.s, second.e, u - 1);
-      const moveDot = (u: number): void => {
-        const at = dotAt(u);
-        probeDot.setAttribute('cx', String(at.x));
-        probeDot.setAttribute('cy', String(at.y));
-      };
-      const putBarrier = (at: Pt, along: Pt): void => {
-        barrier.setAttribute('x1', String(at.x - along.y * 9));
-        barrier.setAttribute('y1', String(at.y + along.x * 9));
-        barrier.setAttribute('x2', String(at.x + along.y * 9));
-        barrier.setAttribute('y2', String(at.y - along.x * 9));
-        barrier.setAttribute('opacity', '1');
-      };
-
-      walkDot = moveDot;
-      moveDot(0);
-      barrier.setAttribute('opacity', '0');
+      probeLayer.textContent = '';
       probeLayer.setAttribute('opacity', '1');
 
-      if (!hasA) {
+      const legOne = el('path', {
+        fill: 'none',
+        'stroke-linecap': 'round',
+        d: `M ${first.s.x} ${first.s.y} L ${first.e.x} ${first.e.y}`,
+        stroke: hasA ? colors.itemComparing : colors.ghostOutline,
+        'stroke-width': hasA ? 3.2 : 2,
+        'stroke-dasharray': hasA ? 'none' : '6 6',
+        opacity: 1,
+      });
+      const legTwo = el('path', {
+        fill: 'none',
+        'stroke-linecap': 'round',
+        d: `M ${second.s.x} ${second.s.y} L ${second.e.x} ${second.e.y}`,
+        stroke: hasB ? colors.itemComparing : colors.ghostOutline,
+        'stroke-width': hasB ? 3.2 : 2,
+        'stroke-dasharray': hasB ? 'none' : '6 6',
+        opacity: hasA ? 1 : 0,
+      });
+      const barrier = el('line', {
+        stroke: colors.ghostOutline,
+        'stroke-width': 3,
+        'stroke-linecap': 'round',
+        opacity: 0,
+      });
+      const dot = el('circle', { r: 5.5, fill: colors.itemComparing, cx: first.s.x, cy: first.s.y });
+
+      probeLayer.appendChild(legOne);
+      probeLayer.appendChild(legTwo);
+      probeLayer.appendChild(barrier);
+      probeLayer.appendChild(dot);
+
+      const at = (u: number): Pt =>
+        u <= 1 ? lerpPt(first.s, first.e, u) : lerpPt(second.s, second.e, u - 1);
+      const moveDot = (u: number): void => {
+        const p = at(u);
+        dot.setAttribute('cx', String(p.x));
+        dot.setAttribute('cy', String(p.y));
+      };
+
+      return { barrier, moveDot, at, legOut: unit(a, m), legIn: unit(m, b) };
+    }
+
+    function putBarrier(probe: Probe, at: Pt, along: Pt): void {
+      probe.barrier.setAttribute('x1', String(at.x - along.y * 9));
+      probe.barrier.setAttribute('y1', String(at.y + along.x * 9));
+      probe.barrier.setAttribute('x2', String(at.x + along.y * 9));
+      probe.barrier.setAttribute('y2', String(at.y - along.x * 9));
+      probe.barrier.setAttribute('opacity', '1');
+    }
+
+    async function walkProbe(ask: ThroughMiddleNodeAsk, probe: Probe): Promise<void> {
+      if (ask.legA === null) {
         // 첫 걸음부터 길이 없다. 나서자마자 막힌다.
-        await animate(100, (p) => moveDot(0.28 * p));
-        putBarrier(dotAt(0.28), unit(a, m));
-        await animate(70, (p) => moveDot(0.28 - 0.14 * p));
+        await animate(PROBE_BLOCKED_MS, (e) => probe.moveDot(0.28 * e));
+        putBarrier(probe, probe.at(0.28), probe.legOut);
+        await animate(RECOIL_MS, (e) => probe.moveDot(0.28 - 0.14 * e));
         return;
       }
-      if (!hasB) {
+      if (ask.legB === null) {
         // 가운데까지는 가지만 거기서 나가는 길이 없다.
-        await animate(130, (p) => moveDot(p));
-        putBarrier(dotAt(1), unit(m, b));
-        await animate(70, (p) => moveDot(1 - 0.12 * p));
+        await animate(PROBE_HALF_MS, (e) => probe.moveDot(e));
+        putBarrier(probe, probe.at(1), probe.legIn);
+        await animate(RECOIL_MS, (e) => probe.moveDot(1 - 0.12 * e));
         return;
       }
-      await animate(220, (p) => moveDot(2 * p));
+      await animate(PROBE_FULL_MS, (e) => probe.moveDot(2 * e));
+    }
+
+    /**
+     * 짚던 길이 사그라들고 걷힌다.
+     *
+     * 걷어내기 전에 세대를 본다 — 되짚기가 이미 새 화면을 세웠다면 그 화면이
+     * 막 세운 점을 이 뒷마디가 지워 버린다.
+     */
+    async function fadeProbe(ms: number): Promise<void> {
+      const my = gen;
+      await animate(ms, (e) => probeLayer.setAttribute('opacity', String(1 - e)));
+      if (!alive(my)) return;
+      probeLayer.textContent = '';
+      probeLayer.setAttribute('opacity', '1');
     }
 
     // ── 재 보고 물러난다 ───────────────────────────────────────────────────
@@ -721,207 +930,210 @@ export const throughMiddleNodeStageView: CanvasView = {
      * **있었고**, 가 보고 재 본 끝에 물러나는 것이다. 그래서 점이 도착점까지
      * 갔다가 가운데로 되돌아 나오고, 자리를 지킨 곧은 줄이 한 번 도드라진다.
      */
-    async function refuse(chord: Chord): Promise<void> {
-      await wait(70);
+    async function refuse(chord: Chord, probe: Probe, my: number): Promise<void> {
+      await wait(REFUSE_HOLD_MS);
+      if (!alive(my)) return;
       await Promise.all([
-        animate(200, (p) => walkDot?.(2 - p)),
-        animate(200, (p) => probeLayer.setAttribute('opacity', String(1 - p))),
+        animate(REFUSE_BACK_MS, (e) => probe.moveDot(2 - e)),
+        animate(REFUSE_BACK_MS, (e) => probeLayer.setAttribute('opacity', String(1 - e))),
       ]);
-      hideProbe();
-      await animate(140, (p) => {
-        chord.badgeScale = 1 + 0.3 * Math.sin(p * Math.PI);
+      if (!alive(my)) return;
+      probeLayer.textContent = '';
+      await animate(PULSE_MS, (e) => {
+        chord.badgeScale = 1 + 0.3 * Math.sin(e * Math.PI);
         renderChord(chord);
       });
-      chord.badgeScale = 1;
-      renderChord(chord);
     }
 
     // ── 곧은 길이 자리를 내준다 ────────────────────────────────────────────
-    async function pierce(q: ThroughMiddleNodeQuestion, chord: Chord): Promise<void> {
-      const through = spot.get(q.middle);
-      if (!through || q.sum === null) return;
+    async function pierce(ask: ThroughMiddleNodeAsk, chord: Chord, my: number): Promise<void> {
+      const through = spot.get(ask.middle);
+      if (!through || ask.sum === null) return;
       chord.pierce = pierceCtrl(chord.from, chord.to, through);
 
       if (chord.kind === 'ghost') {
         // 없던 길이다. 꺾인 채로 나타나 자리를 차지한다.
         chord.kind = 'road';
         chord.improved = true;
-        chord.label = String(q.sum);
+        chord.label = String(ask.sum);
         chord.bend = 1;
         chord.group.setAttribute('opacity', '0');
         styleChord(chord);
         renderChord(chord);
         await Promise.all([
-          animate(180, (p) => chord.group.setAttribute('opacity', String(p))),
-          fadeProbe(180),
+          animate(OPEN_MS, (e) => chord.group.setAttribute('opacity', String(e))),
+          fadeProbe(OPEN_MS),
         ]);
       } else {
         // 곧던 줄이 가운데 한 점을 향해 휜다.
         await Promise.all([
-          animate(260, (p) => {
-            chord.bend = p;
+          animate(BEND_MS, (e) => {
+            chord.bend = e;
             renderChord(chord);
           }),
-          fadeProbe(200),
+          fadeProbe(PROBE_FADE_MS),
         ]);
+        if (!alive(my)) return;
         chord.improved = true;
-        chord.label = String(q.sum);
+        chord.label = String(ask.sum);
         styleChord(chord);
         renderChord(chord);
       }
+      if (!alive(my)) return;
 
-      await animate(120, (p) => {
-        chord.badgeScale = 1 + 0.4 * Math.sin(p * Math.PI);
+      await animate(FIX_PULSE_MS, (e) => {
+        chord.badgeScale = 1 + 0.4 * Math.sin(e * Math.PI);
         renderChord(chord);
       });
+      if (!alive(my)) return;
       // 새 수를 달고 다시 곧아진다 — 이제 이 줄이 가운데를 거치는 길이다.
-      await animate(280, (p) => {
-        chord.bend = 1 - p;
+      await animate(STRAIGHTEN_MS, (e) => {
+        chord.bend = 1 - e;
         renderChord(chord);
       });
-      chord.bend = 0;
-      chord.badgeScale = 1;
-      chord.pierce = null;
-      renderChord(chord);
     }
 
-    // ── 다시 세우기 ────────────────────────────────────────────────────────
-    function rebuild(): void {
-      hideProbe();
-      chordLayer.textContent = '';
-      chords.clear();
-      ledgerLayer.textContent = '';
-      slots.length = 0;
-      columnHeads.length = 0;
-      middleNow = null;
-      setCaption('');
-      setFormula('', 'ask');
-      layoutNodes();
-      drawNodes();
-      for (const edge of scene.edges) {
-        const known = chords.get(pairKey(edge.from, edge.to));
-        if (known) {
-          if (edge.weight < Number(known.label)) {
-            known.label = String(edge.weight);
-            renderChord(known);
-          }
-          continue;
+    // ── 걸음마다의 운동 ────────────────────────────────────────────────────
+    /** 장부가 오른쪽에서 미끄러져 들어온다. */
+    function openLedger(): Promise<void> {
+      return animate(LEDGER_MS, (e) => {
+        ledgerLayer.setAttribute('opacity', String(e));
+        ledgerLayer.setAttribute('transform', `translate(${(1 - e) * 14} 0)`);
+      });
+    }
+
+    /**
+     * 가운데로 세운다 — 그 점만 한 뼘 일어서고, 앞서 서 있던 점은 도로 앉는다.
+     *
+     * 정적 그리기가 이미 끝 자리에 세워 두었으므로 여기서는 **아직 못 온 만큼을
+     * 뒤로 물린다**. 도로 앉을 점이 누구인지는 `prev` 가 아니라 걸음이 싣고 온다.
+     */
+    function raiseMiddle(scene: ThroughMiddleNodeScene, leaving: string | null): Promise<void> {
+      const entering = scene.middle;
+      const halo = entering ? (nodeOf.get(entering.id)?.halo ?? null) : null;
+      return animate(MIDDLE_MS, (e) => {
+        if (leaving !== null) placeNode(leaving, MIDDLE_SCALE - (MIDDLE_SCALE - 1) * e);
+        if (entering) placeNode(entering.id, 1 + (MIDDLE_SCALE - 1) * e);
+        if (halo) {
+          halo.setAttribute('r', String(NODE_R + MIDDLE_HALO * e));
+          halo.setAttribute('opacity', String(MIDDLE_HALO_ALPHA * e));
         }
-        createChord(edge.from, edge.to, String(edge.weight), 'road');
+      });
+    }
+
+    /**
+     * 물음 하나를 흐르게 한다.
+     *
+     * 정적 그리기는 이미 **답이 난 뒤**의 화면을 세워 두었으므로, 여기서는 먼저
+     * 그 짝을 물음 직전의 모습으로 되돌린다. 출발 그림은 `before` 가 싣고 온다 —
+     * `prev` 를 들추지 않는다 (S-scene).
+     */
+    async function runAsk(
+      scene: ThroughMiddleNodeScene,
+      ask: ThroughMiddleNodeAsk,
+      before: { weight: number; improved: boolean } | null,
+      my: number,
+    ): Promise<void> {
+      const key = pairKey(ask.from, ask.to);
+      const drawn = chordOf.get(key);
+      if (drawn) dropChord(drawn);
+      const target =
+        before === null
+          ? createChord(ask.from, ask.to, INFINITY_MARK, 'ghost', false)
+          : createChord(ask.from, ask.to, String(before.weight), 'road', before.improved);
+      target.hot = true;
+      styleChord(target);
+
+      markSlot(ask.middleIndex, ask.pairIndex, 'asking');
+      setCaption(
+        tr('caption.question', '{from}→{to}: shorter through {middle}?', {
+          from: ask.from,
+          to: ask.to,
+          middle: ask.middle,
+        }),
+      );
+      setFormula(`${formulaOf(ask)}   ?`, 'ask');
+
+      const probe = buildProbe(ask);
+      if (!probe) return;
+      await walkProbe(ask, probe);
+      if (!alive(my)) return;
+
+      // 답은 세 갈래다 — 짧아진다 · 재 보니 더 멀다 · 길이 끊겼다.
+      const weighed = ask.legA !== null && ask.legB !== null;
+      setCaption(captionTextOf(scene.caption));
+      setFormula(
+        `${formulaOf(ask)}   ${ask.shorter ? YES_MARK : NO_MARK}`,
+        ask.shorter ? 'yes' : 'no',
+      );
+      if (ask.shorter) {
+        await pierce(ask, target, my);
+      } else if (weighed) {
+        await refuse(target, probe, my);
+      } else {
+        await fadeProbe(FADE_MS);
+        if (!alive(my)) return;
+        if (target.kind === 'ghost') dropChord(target);
       }
     }
 
-    return {
-      setScene(next: ThroughMiddleNodeScene): void {
-        scene = { nodes: [...next.nodes], edges: next.edges.map((e) => ({ ...e })) };
-        rebuild();
-      },
-
-      rewind(): void {
-        rebuild();
-      },
-
-      async openRoads(ledger: ThroughMiddleNodeLedger, caption: string): Promise<void> {
-        setCaption(caption);
-        buildLedger(ledger);
-        // 장부가 오른쪽에서 미끄러져 들어온다.
-        await animate(260, (p) => {
-          ledgerLayer.setAttribute('opacity', String(p));
-          ledgerLayer.setAttribute('transform', `translate(${(1 - p) * 14} 0)`);
-        });
-        ledgerLayer.setAttribute('transform', 'translate(0 0)');
-      },
-
-      async setMiddle(middle: string, order: number, caption: string): Promise<void> {
-        setCaption(caption);
-        setFormula('', 'ask');
-        markColumn(order);
-        const leaving = middleNow;
-        middleNow = middle;
-        const entering = nodeShapes.get(middle);
-        const leavingShape = leaving === null ? undefined : nodeShapes.get(leaving);
-        if (entering) {
-          entering.disc.setAttribute('fill', colors.itemActive);
-          entering.disc.setAttribute('stroke', colors.itemActive);
-          entering.text.setAttribute('fill', colors.stateInk);
-        }
-        if (leavingShape) {
-          leavingShape.disc.setAttribute('fill', colors.itemDefault);
-          leavingShape.disc.setAttribute('stroke', colors.border);
-          leavingShape.text.setAttribute('fill', colors.text);
-          leavingShape.ring.setAttribute('opacity', '0');
-        }
-        // 가운데로 세운다 — 그 점만 한 뼘 일어선다.
-        await animate(220, (p) => {
-          if (leaving !== null) placeNode(leaving, 1.14 - 0.14 * p);
-          placeNode(middle, 1 + 0.14 * p);
-          entering?.ring.setAttribute('r', String(NODE_R + 7 * p));
-          entering?.ring.setAttribute('opacity', String(0.45 * p));
-        });
-      },
-
-      async ask(
-        q: ThroughMiddleNodeQuestion,
-        texts: { question: string; verdict: string },
-      ): Promise<void> {
-        setCaption(texts.question);
-        setFormula(`${formulaOf(q)}   ?`, 'ask');
-        markSlot(q.middleIndex, q.pairIndex, 'asking');
-
-        const key = pairKey(q.from, q.to);
-        const target = chords.get(key) ?? createChord(q.from, q.to, INFINITY_MARK, 'ghost');
-        target.hot = true;
-        styleChord(target);
-
-        await runProbe(q);
-
-        // 답은 세 갈래다 — 짧아진다 · 재 보니 더 멀다 · 길이 끊겼다.
-        const weighed = q.legA !== null && q.legB !== null;
-        setCaption(texts.verdict);
-        if (q.shorter) {
-          setFormula(`${formulaOf(q)}   ${YES_MARK}`, 'yes');
-          await pierce(q, target);
-        } else if (weighed) {
-          setFormula(`${formulaOf(q)}   ${NO_MARK}`, 'no');
-          await refuse(target);
-        } else {
-          setFormula(`${formulaOf(q)}   ${NO_MARK}`, 'no');
-          await fadeProbe(90);
-          if (target.kind === 'ghost') dropChord(target);
-        }
-        target.hot = false;
-        if (chords.has(key)) styleChord(target);
-        markSlot(q.middleIndex, q.pairIndex, q.shorter ? 'yes' : weighed ? 'weighed' : 'no');
-      },
-
-      async finish(caption: string): Promise<void> {
-        setCaption(caption);
-        setFormula('', 'ask');
-        hideProbe();
-        if (middleNow !== null) {
-          const shape = nodeShapes.get(middleNow);
-          if (shape) {
-            shape.disc.setAttribute('fill', colors.itemDefault);
-            shape.disc.setAttribute('stroke', colors.border);
-            shape.text.setAttribute('fill', colors.text);
-            shape.ring.setAttribute('opacity', '0');
-          }
-          placeNode(middleNow, 1);
-          middleNow = null;
-        }
-        markColumn(-1);
-        // 고쳐진 줄만 한 번씩 짚어 준다.
-        for (const chord of chords.values()) {
-          if (!chord.improved || destroyed) continue;
-          await animate(110, (p) => {
-            chord.badgeScale = 1 + 0.35 * Math.sin(p * Math.PI);
-            renderChord(chord);
-          });
-          chord.badgeScale = 1;
+    /** 고쳐진 줄만 한 번씩 짚어 준다. 이어 달리는 운동이라 세대를 자주 본다. */
+    async function celebrate(scene: ThroughMiddleNodeScene, my: number): Promise<void> {
+      for (const road of scene.roads) {
+        if (!road.improved) continue;
+        const chord = chordOf.get(pairKey(road.from, road.to));
+        if (!chord) continue;
+        await animate(FINISH_PULSE_MS, (e) => {
+          chord.badgeScale = 1 + 0.35 * Math.sin(e * Math.PI);
           renderChord(chord);
-          await wait(60);
-        }
-      },
+        });
+        if (!alive(my)) return;
+        chord.badgeScale = 1;
+        renderChord(chord);
+        await wait(FINISH_GAP_MS);
+        if (!alive(my)) return;
+      }
+    }
+
+    async function render(
+      next: ThroughMiddleNodeScene,
+      /** 이 조각은 출발 그림을 장면에서 셈하므로 앞 장면을 들추지 않는다. */
+      _prev: ThroughMiddleNodeScene | null,
+      opts: { animate: boolean },
+    ): Promise<void> {
+      gen += 1;
+      const my = gen;
+
+      drawStatic(next);
+      if (!opts.animate) return;
+
+      const step = next.step;
+      if (!step) return;
+
+      switch (step.kind) {
+        case 'roads':
+          await openLedger();
+          break;
+        case 'middle':
+          await raiseMiddle(next, step.leaving);
+          break;
+        case 'ask':
+          if (next.ask) await runAsk(next, next.ask, step.before, my);
+          break;
+        case 'finish':
+          await celebrate(next, my);
+          break;
+      }
+
+      if (!alive(my)) return;
+      // 운동이 남긴 자취를 거두고 그 장면을 통째로 다시 세운다. 속성을 하나씩
+      // 되돌리는 것보다 안전하고, 보간값의 끝자리가 문자열을 가르지도 않는다.
+      // 그 사이에 타이머도 프레임도 없어 페인트가 끼지 않는다.
+      drawStatic(next);
+    }
+
+    return {
+      render,
 
       destroy(): void {
         destroyed = true;

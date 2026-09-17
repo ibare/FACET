@@ -34,7 +34,7 @@ export const bitShiftFacet: FacetJson = {
     pt: 'Desloque os bits uma casa e o número dobra ou cai pela metade. O que passa da borda se perde.',
   },
   algorithm: 'module:bitShift',
-  projector: 'module:bitShiftProjector',
+  scene: 'module:bitShiftScene',
   initialData: {
     type: 'bit-shift',
     // 그릇의 크기. 넘쳐 나가는 지점을 정하는 구조값이다.
@@ -50,7 +50,7 @@ export const bitShiftFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'bit-shift-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.start': {

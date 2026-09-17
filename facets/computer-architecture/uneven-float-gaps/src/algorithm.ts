@@ -1,20 +1,26 @@
 /**
  * 고르지 않은 눈금 — float32 에서 어떤 수와 바로 다음 수 사이가 얼마나 벌어지는가.
  *
- * 선언이 주는 것은 볼 지점(1 · 2 · 16 · 1024 · 65536)과 가수 비트 수(23) 뿐이다.
- * 사이 거리는 여기서 **실제로 잰다** — 비트열을 1 올린 수에서 원래 수를 뺀다
- * (`nextFloat32`). 2 의 거듭제곱과 한 구간에 드는 값의 개수도 그 자리에서 셈한다.
- * 지어낸 수는 하나도 싣지 않는다.
+ * 선언이 주는 것은 볼 지점(1 · 2 · 16 · 1024 · 65536)뿐이다. 사이 거리는 여기서
+ * **실제로 잰다** — 비트열을 1 올린 수에서 원래 수를 뺀다 (`nextFloat32`). 배수도
+ * 한 구간에 드는 값의 개수도 그 잰 거리에서 나온다. 지어낸 수는 하나도 싣지 않는다.
+ *
+ * ── 재는 자는 내주고, 발신은 빈손으로 보낸다
+ *
+ * 화면에는 사이 거리 · 배수 · 빗살 개수 · 구간의 값 개수가 그림과 나란히 뜬다. 그
+ * 수를 걸음에 실어 보내면 그림과 수의 출처가 둘이 되어 언젠가 갈린다. 그래서 재는
+ * 함수를 `export` 하고 **장면이 같은 함수를 부른다** (프로토콜 4 절의 B 갈래).
+ * 지점 하나가 정해지면 나머지가 전부 결정되므로 발신은 *어느 지점 차례인가*만
+ * 말하면 된다 — **다섯 발신 모두 payload 가 없다.**
+ *
+ * 내주어도 조각이 피하려는 셈을 장면이 대신 하게 되지 않는다. `gapAt` 은 셈이
+ * 아니라 **자**이고, 떼어 내도 "수가 클수록 이웃이 멀다" 는 주장은 그대로 남는다.
  *
  * ── 이벤트 (전부 시각 변화가 있으므로 silent 를 붙이지 않는다)
  *
- *   anchor  { value, next, gap, gapExp }
- *           첫 지점. 이 사이 거리를 한 눈금으로 삼는다.
- *   widen   { value, next, gap, gapExp, k, cumulative }
- *           다음 지점. k 는 앞 지점의 사이 거리의 몇 배인가,
- *           cumulative 는 첫 지점의 사이 거리의 몇 배인가.
- *   count   { count, from, to }
- *           한 수에서 그 두 배까지의 구간에 드는 값의 개수. from ~ to 가 그 구간.
+ *   anchor  페이로드 없음. 첫 지점. 이 사이 거리를 한 눈금으로 삼는다.
+ *   widen   페이로드 없음. 다음 지점. 몇 번째인지는 발신이 온 차례가 말한다.
+ *   count   페이로드 없음. 마지막 지점에서 그 두 배까지의 구간을 말한다.
  *   rewind  페이로드 없음. 처음으로 되감는다.
  *   done    페이로드 없음. 닫는 말만 바뀐다.
  *
@@ -31,11 +37,19 @@ export type UnevenFloatGapsData = {
   type: string;
   /** 볼 지점. 전부 2 의 거듭제곱이다. */
   samples: number[];
-  /** float32 의 가수 비트 수. 한 구간에 드는 값의 개수가 여기서 나온다. */
-  mantissaBits: number;
   /** 걸음이 끝난 뒤의 정지 시간. 읽을 틈을 주는 저작 결정이다 (S-piece). */
   stepMs: number;
 };
+
+/**
+ * 볼 지점 목록을 좁힌다. **좁히는 규칙은 한 벌이다** — 장면도 이 함수를 지난다
+ * (S-piece). 새 배열을 내므로 선언의 배열을 참조로 쥐지 않는다 (S-scene).
+ */
+export function sampleLadder(raw: unknown): number[] {
+  return Array.isArray(raw)
+    ? raw.filter((v): v is number => typeof v === 'number' && Number.isFinite(v) && v > 0)
+    : [];
+}
 
 /**
  * 비트열을 1 올린 수 — float32 에서 바로 다음에 오는 수다.
@@ -46,59 +60,63 @@ export type UnevenFloatGapsData = {
 const probe = new Float32Array(1);
 const probeBits = new Uint32Array(probe.buffer);
 
-function nextFloat32(x: number): number {
+export function nextFloat32(x: number): number {
   probe[0] = x;
   probeBits[0] += 1;
   return probe[0];
 }
 
-function gapAt(x: number): number {
+/** 이 자리의 사이 거리. 잰 값이다. */
+export function gapAt(x: number): number {
   return nextFloat32(x) - x;
+}
+
+/** 사이 거리를 2 의 거듭제곱으로 적을 때의 지수. 표기가 이것을 쓴다. */
+export function gapExponentAt(x: number): number {
+  return Math.round(Math.log2(gapAt(x)));
+}
+
+/**
+ * `x` 에서 `2x` 까지의 구간에 드는 값의 개수.
+ *
+ * 선언의 가수 비트 수로 `2 ** 23` 을 적어 두면 그림과 다른 출처가 된다. 구간의 폭
+ * (`2x - x` 는 곧 `x`)을 **그 자리의 사이 거리**로 나눈다 — 화면의 빗살과 같은 자다.
+ */
+export function valuesPerSpan(x: number): number {
+  return x / gapAt(x);
 }
 
 export async function unevenFloatGapsAlgorithm(
   ctx: FacetContext<UnevenFloatGapsData>,
 ): Promise<void> {
   const rc = ctx as ReactiveContext<UnevenFloatGapsData>;
-  const samples = rc.data.samples;
+  const samples = sampleLadder(rc.data.samples);
   if (samples.length === 0) return;
 
   const stepMs = rc.data.stepMs;
-  const count = 2 ** rc.data.mantissaBits;
   // 지점마다 한 걸음, 개수를 말하는 걸음 하나, 닫는 걸음 하나.
   const stepCount = samples.length + 2;
 
   async function stepAt(i: number): Promise<void> {
     if (i === samples.length) {
-      const last = samples[samples.length - 1];
-      await ctx.emit({ type: 'count', payload: { count, from: last, to: last * 2 } });
+      await ctx.emit({ type: 'count' });
       return;
     }
     if (i > samples.length) {
       await ctx.emit({ type: 'done' });
       return;
     }
-
-    const value = samples[i];
-    const next = nextFloat32(value);
-    const gap = next - value;
-    const gapExp = Math.round(Math.log2(gap));
-
+    // 첫 지점은 눈금의 기준이 되고, 그 뒤는 앞 눈금과 견주어진다. 어느 지점인지는
+    // 발신이 온 차례가 말하므로 싣지 않는다 (프로토콜 4 절).
+    //
+    // payload 를 걷어내고 나면 두 갈래의 본문이 같아져 삼항으로 합치고 싶어지는데,
+    // 그러면 `type` 이 리터럴이 아니게 되어 C2 MUST NOT 을 어긴다. 어휘를 grep 으로
+    // 찾을 수 없게 되는 것이 그 규칙의 까닭이다. 두 줄로 편다.
     if (i === 0) {
-      await ctx.emit({ type: 'anchor', payload: { value, next, gap, gapExp } });
+      await ctx.emit({ type: 'anchor' });
       return;
     }
-    await ctx.emit({
-      type: 'widen',
-      payload: {
-        value,
-        next,
-        gap,
-        gapExp,
-        k: gap / gapAt(samples[i - 1]),
-        cumulative: gap / gapAt(samples[0]),
-      },
-    });
+    await ctx.emit({ type: 'widen' });
   }
 
   /**

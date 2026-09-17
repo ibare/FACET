@@ -4,8 +4,11 @@
  * 조각(piece) facet. 한 주장만 말하고 멈춘다 (S-piece).
  *   - 제목 블록 없음 — 제목은 글의 문단이 준다.
  *   - 메트릭 없음 — 셀 것이 없다.
- *   - 컨트롤은 다시 보기와 한 걸음 둘뿐이며, 둘 다 눌러야 완성되는 조작이 아니다.
+ *   - 컨트롤은 다시 보기와 스크럽 띠 둘뿐이며, 둘 다 눌러야 완성되는 조작이 아니다.
  *     아무것도 누르지 않아도 화면은 스스로 재생해 할 말을 마친다.
+ *
+ * 화면은 장면(Scene) 방식으로 만든다 — 이벤트를 상태로 옮기고 그 상태에서 그린다
+ * (`scene.ts` · S-scene). 그래서 띠를 끌어 아무 걸음으로나 갈 수 있다.
  *
  * 실측 전제 — values / removeIndex 가 화면의 모든 수의 출처다.
  *   [10, 20, 30, 40, 50] 에서 인덱스 1(값 20) 을 빼면
@@ -13,7 +16,7 @@
  *   결과는 [10, 30, 40, 50], 쓰는 칸은 4개, 4번 칸은 더 쓰이지 않는다.
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const shiftOnRemoveFacet: FacetJson = {
   id: 'facet:shiftOnRemove',
@@ -42,7 +45,7 @@ export const shiftOnRemoveFacet: FacetJson = {
     pt: 'Tire um do meio e tudo o que está atrás é puxado para a esquerda.',
   },
   algorithm: 'module:shiftOnRemove',
-  projector: 'module:shiftOnRemoveProjector',
+  scene: 'module:shiftOnRemoveScene',
   initialData: {
     type: 'shift-on-remove',
     values: [10, 20, 30, 40, 50],
@@ -53,7 +56,7 @@ export const shiftOnRemoveFacet: FacetJson = {
     stage: { type: 'shift-on-remove-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {

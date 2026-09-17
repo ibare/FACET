@@ -7,20 +7,35 @@
  *
  * ── 이벤트 (전부 이 facet 고유 확장. type 은 리터럴)
  *
- * | type      | target        | payload                                              | silent |
- * | --------- | ------------- | ---------------------------------------------------- | ------ |
- * | `branch`  | `node:<id>`   | `{ id, n, depth, parentId: string \| null, side }`    | 아니오 |
- * | `resolve` | `node:<id>`   | `{ id, n, value }`                                    | 아니오 |
- * | `read`    | `node:<id>`   | `{ id, n, value }`                                    | 아니오 |
- * | `done`    | 없음          | `{ n, value, solved, reused }`                        | 아니오 |
- * | `rewind`  | 없음          | 없음                                                  | 아니오 |
+ * | type      | target | payload     | silent |
+ * | --------- | ------ | ----------- | ------ |
+ * | `branch`  | 없음   | `{ n }`     | 아니오 |
+ * | `resolve` | 없음   | `{ value }` | 아니오 |
+ * | `read`    | 없음   | 없음        | 아니오 |
+ * | `done`    | 없음   | 없음        | 아니오 |
+ * | `rewind`  | 없음   | 없음        | 아니오 |
  *
- * - `branch`  가지가 한 칸 뻗어 새 호출 자리가 생긴다. `side` 는 `'root' | 'L' | 'R'`.
+ * - `branch`  가지가 한 칸 뻗어 새 호출 자리가 생긴다. 어느 항을 부르는지만 싣는다.
  * - `resolve` 그 항의 답이 나왔다. 값이 표의 제 칸으로 **옮겨 가 적힌다**.
  * - `read`    이미 적힌 항이다. 값이 표에서 **되돌아 나와** 그 자리를 채우고,
  *             그 아래로는 아무것도 뻗지 않는다.
- * - `done`    `solved` / `reused` 는 셈해 둔 상수가 아니라 이 실행이 센 값이다.
+ * - `done`    다 폈다.
  * - `rewind`  자동 재생이 끝난 뒤 `advance` 를 처음 눌렀을 때 화면을 비운다.
+ *
+ * ── 자리를 싣지 않는다
+ *
+ * 한때는 발신마다 `id` · `depth` · `parentId` · `side` 를 실어 보냈고, 마지막
+ * 걸음은 `solved` · `reused` 까지 세어 보냈다. 그 수들은 전부 **장면이 셀 수
+ * 있는 것**이다 — `branch` 가 호출 하나를 열고 `resolve`/`read` 가 그것을 닫으니
+ * 아직 닫히지 않은 자리들이 곧 지금의 호출 스택이고, 부모도 몇째 자식인지도
+ * 거기서 나온다. 실어 보내면 같은 것을 두 자리에서 세게 되고, 언젠가 갈린다.
+ *
+ * 남은 둘은 셀 수 없는 것이다 — 어느 항을 부르는가(`n`)와 그 항의 답(`value`).
+ * 장면이 그것을 셈하려면 `f(k)=f(k-1)+f(k-2)` 를 다시 적어야 하는데, 그것은
+ * 알고리즘 그 자체라 옮겨 놓을 자리가 아니다.
+ *
+ * `read` 가 payload 를 갖지 않는 것이 이 조각의 요점이다. 되읽는 값은 표에
+ * 이미 적혀 있고, 그것을 표에서 꺼내 쓰는 것이 바로 주장이다.
  *
  * ── 메트릭
  *
@@ -46,6 +61,16 @@ export type MemoWriteOnceData = {
 const DEFAULT_N = 5;
 const DEFAULT_STEP_MS = 650;
 
+/**
+ * 펼칠 항을 선언에서 좁힌다.
+ *
+ * 장면도 같은 함수를 부른다 — 표의 칸 수와 실제로 펴는 항이 두 벌의 규칙에서
+ * 나오면 언젠가 갈린다 (S-piece 의 좁히개 조항).
+ */
+export function readMemoTerm(raw: unknown): number {
+  return typeof raw === 'number' && raw >= 2 ? Math.floor(raw) : DEFAULT_N;
+}
+
 /** 취소 신호를 예외로 올린다. reactive 메커니즘이 이 메시지를 조용히 삼킨다. */
 function cancelled(): Error {
   return new Error('cancelled');
@@ -54,7 +79,7 @@ function cancelled(): Error {
 export async function memoWriteOnce(ctx: FacetContext<MemoWriteOnceData>): Promise<void> {
   const rc = ctx as ReactiveContext<MemoWriteOnceData>;
   const data = rc.data;
-  const n = typeof data?.n === 'number' && data.n >= 2 ? Math.floor(data.n) : DEFAULT_N;
+  const n = readMemoTerm(data?.n);
   const stepMs = typeof data?.stepMs === 'number' && data.stepMs > 0 ? data.stepMs : DEFAULT_STEP_MS;
 
   /** 'auto' 는 스스로 걸음을 떼고, 'manual' 은 advance 를 기다린다. */
@@ -79,31 +104,15 @@ export async function memoWriteOnce(ctx: FacetContext<MemoWriteOnceData>): Promi
 
   async function play(): Promise<void> {
     const memo = new Map<number, number>();
-    let seq = 0;
-    let solved = 0;
-    let reused = 0;
 
-    async function visit(
-      k: number,
-      parentId: string | null,
-      side: 'root' | 'L' | 'R',
-      depth: number,
-    ): Promise<number> {
-      const id = `c${seq}`;
-      seq += 1;
-
+    async function visit(k: number): Promise<number> {
       await gate();
-      await rc.emit({
-        type: 'branch',
-        target: `node:${id}`,
-        payload: { id, n: k, depth, parentId, side },
-      });
+      await rc.emit({ type: 'branch', payload: { n: k } });
 
       const written = memo.get(k);
       if (written !== undefined) {
-        reused += 1;
         await gate();
-        await rc.emit({ type: 'read', target: `node:${id}`, payload: { id, n: k, value: written } });
+        await rc.emit({ type: 'read' });
         return written;
       }
 
@@ -111,21 +120,20 @@ export async function memoWriteOnce(ctx: FacetContext<MemoWriteOnceData>): Promi
       if (k <= 1) {
         value = k;
       } else {
-        const left = await visit(k - 1, id, 'L', depth + 1);
-        const right = await visit(k - 2, id, 'R', depth + 1);
+        const left = await visit(k - 1);
+        const right = await visit(k - 2);
         value = left + right;
       }
 
       memo.set(k, value);
-      solved += 1;
       await gate();
-      await rc.emit({ type: 'resolve', target: `node:${id}`, payload: { id, n: k, value } });
+      await rc.emit({ type: 'resolve', payload: { value } });
       return value;
     }
 
-    const answer = await visit(n, null, 'root', 0);
+    await visit(n);
     await gate();
-    await rc.emit({ type: 'done', payload: { n, value: answer, solved, reused } });
+    await rc.emit({ type: 'done' });
   }
 
   await play();

@@ -9,12 +9,12 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { repeatRelaxAllAlgorithm, type RelaxEdge, type RepeatRelaxAllData } from './algorithm.js';
-import { repeatRelaxAllProjector } from './projector.js';
+import { repeatRelaxAllScene } from './scene.js';
 import { repeatRelaxAllIRs } from './irs.js';
 import { repeatRelaxAllFacet } from './facet.js';
 import { repeatRelaxAllDescription } from './description.js';
@@ -22,19 +22,20 @@ import { repeatRelaxAllStageView } from './repeat-relax-all-stage.js';
 
 export {
   repeatRelaxAllAlgorithm,
-  repeatRelaxAllProjector,
+  repeatRelaxAllScene,
   repeatRelaxAllIRs,
   repeatRelaxAllFacet,
   repeatRelaxAllDescription,
   repeatRelaxAllStageView,
 };
 export type { RelaxEdge, RepeatRelaxAllData };
+export type { RepeatRelaxAllScene } from './scene.js';
 
 export function registerRepeatRelaxAll(): void {
   registerAlgorithm<RepeatRelaxAllData>('repeatRelaxAll', repeatRelaxAllAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('repeatRelaxAllProjector', repeatRelaxAllProjector);
+  registerScenePlan('repeatRelaxAllScene', repeatRelaxAllScene);
   for (const ir of repeatRelaxAllIRs) registerIR(ir.id, ir);
   registerView('repeat-relax-all-stage', repeatRelaxAllStageView);
   registerFacets([repeatRelaxAllFacet]);

@@ -10,27 +10,30 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { baggingSampleAlgorithm, type BaggingSampleData } from './algorithm.js';
-import { baggingSampleProjector } from './projector.js';
 import { baggingSampleIRs } from './irs.js';
+import { baggingSampleScene } from './scene.js';
 import { baggingSampleStageView } from './bagging-sample-stage.js';
 import { baggingSampleFacet } from './facet.js';
 import { baggingSampleDescription } from './description.js';
 
-export { baggingSampleAlgorithm, type BaggingSampleData } from './algorithm.js';
-export { baggingSampleProjector } from './projector.js';
-export { baggingSampleIRs } from './irs.js';
 export {
-  baggingSampleStageView,
-  readBaggingSetup,
-  type BaggingSetup,
-  type BaggingDrawInput,
-  type BaggingLeftOutInput,
-} from './bagging-sample-stage.js';
+  baggingSampleAlgorithm,
+  neverDrawnProbability,
+  type BaggingSampleData,
+} from './algorithm.js';
+export { baggingSampleIRs } from './irs.js';
+export { baggingSampleScene } from './scene.js';
+export type {
+  BaggingCaption,
+  BaggingSampleScene,
+  BaggingStep,
+} from './scene.js';
+export { baggingSampleStageView } from './bagging-sample-stage.js';
 export { baggingSampleFacet } from './facet.js';
 export { baggingSampleDescription } from './description.js';
 
@@ -38,7 +41,7 @@ export function registerBaggingSample(): void {
   registerAlgorithm<BaggingSampleData>('baggingSample', baggingSampleAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('baggingSampleProjector', baggingSampleProjector);
+  registerScenePlan('baggingSampleScene', baggingSampleScene);
   for (const ir of baggingSampleIRs) registerIR(ir.id, ir);
   registerView('bagging-sample-stage', baggingSampleStageView);
   registerFacets([baggingSampleFacet]);

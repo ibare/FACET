@@ -11,34 +11,42 @@
  * 벗어났는지만으로 값이 정해진다. 통이 커지면 달라지는 것은 섞임이 아니라
  * **층 전체를 셈할 때의 몫**이다 — 그래서 층의 섞임은 통 크기로 가중한 평균이다.
  *
- * ── 식별자
- *   bucket:<path>   통. path 는 뿌리에서의 갈림길. 'root' · 'root/L' · 'root/L/H' …
- *                   'L' 은 기준값 미만, 'H' 는 기준값 이상.
+ * ── 여기서 세지 않는 것
  *
- * ── 이벤트 (전부 facet 고유. silent 는 하나도 없다 — 걸음마다 화면이 바뀐다)
+ * 섞임도, 층의 섞임도, 내려간 폭도 여기서 세지 않는다. 그 수들은 화면의 막대와
+ * **나란히** 뜨므로, 여기서 한 번 세고 그림이 또 한 번 세면 같은 물음에 답이 둘이
+ * 된다. 발신이 싣는 것은 **갈랐다는 판정**(어느 통을 어디서 갈랐고 그 결과 어느
+ * 이름표가 몇씩 담겼나)뿐이고, 그 판정에서 곧바로 나오는 수는 장면이 센다
+ * (`scene.ts`). 세는 자리를 하나로 묶으려 이름표 세기(`tallyOf`)만 내준다 —
+ * 프로토콜 4 절의 B 갈래다.
  *
- *   'sample-shown'   { buckets: BucketWire[] }
- *       뿌리 통 하나가 섞임 자의 꼭대기에 놓인다. buckets 는 길이 1.
+ * ── 이벤트 (전부 facet 고유)
  *
- *   'cut-drawn'      { depth: number; cuts: CutWire[] }
+ *   'sample-shown'   {}
+ *       뿌리 통 하나가 섞임 자의 꼭대기에 놓인다. 그 통은 바탕 자료 전부이므로
+ *       장면이 스스로 만든다 — 실어 보낼 것이 없다.
+ *
+ *   'cut-drawn'      { cuts: CutWire[] }
  *       그 층의 가름선을 산점도에 긋는다. 한 층에 여럿일 수 있다 (통마다 제 질문).
+ *       가름선을 가둘 칸은 싣지 않는다 — 그 통이 장면에 이미 서 있다.
  *
- *   'buckets-split'  { depth: number; buckets: BucketWire[] }
+ *   'buckets-split'  { buckets: BucketWire[] }
  *       통이 갈라져 저마다 제 섞임 높이로 내려간다. buckets 는 그 층의 잎 전부이며
  *       왼쪽→오른쪽 순서다.
  *
- *   'level-measured' { depth: number; from: number; to: number; drop: number }
- *       층 전체의 섞임(통 크기로 가중한 평균)과 내려간 폭. from 은 직전 층의 값.
+ *   'level-measured' {}
+ *       층 전체의 섞임을 잰다. 값도 내려간 폭도 장면이 제 막대에서 센다.
  *
- *   'settled'        { buckets: BucketWire[] }
- *       더 가를 것이 없다. 통마다 한 가지 이름표만 남았으면 pureClass 가 그 이름표.
+ *   'settled'        {}
+ *       더 가를 것이 없다. 통마다 한 가지 이름표만 남았는지는 장면이 셈으로 안다.
  *
  *   'rewind'         {}
  *       처음으로 되감는다. 자동 재생이 끝난 뒤 처음 누르는 `advance` 가 이것을
  *       내보내고, 곧이어 첫 걸음까지 간다 (S-piece).
  *
- *   'done'           {}
- *       표준 이벤트. 발신이 끝났다는 표시이며 화면은 바꾸지 않는다.
+ *   'done'           {} — silent
+ *       발신이 끝났다는 표시. 화면은 'settled' 에서 할 말을 마쳤으므로 문을 지나지
+ *       않고, 띠에 0ms 눈금을 세우지 않도록 앞 걸음에 접는다 (S-runtime).
  */
 
 import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
@@ -71,93 +79,54 @@ export type ImpurityBox = {
   yHi: number | null;
 };
 
+/** 뿌리 통의 칸 — 네 쪽이 다 열려 있다. 장면도 이것을 쓴다 (한 자리에서만 정한다). */
+export const IMPURITY_ROOT_BOX: ImpurityBox = { xLo: null, xHi: null, yLo: null, yHi: null };
+
 export type BucketWire = {
   id: string;
   box: ImpurityBox;
-  /** classes 순서대로의 개수. */
+  /** classes 순서대로의 개수. 개수·섞임·순수 여부가 전부 여기서 나온다. */
   counts: number[];
-  n: number;
-  gini: number;
-  /** 한 가지 이름표만 담겼으면 그 class 인덱스, 아니면 -1. */
-  pureClass: number;
 };
 
 export type CutWire = {
   bucketId: string;
   axis: 'x' | 'y';
   at: number;
-  /** 가름선을 가둘 칸 — 가르기 전 통의 칸이다. */
-  box: ImpurityBox;
 };
 
-type Leaf = { path: string; box: ImpurityBox; points: number[] };
-
-const OPEN_BOX: ImpurityBox = { xLo: null, xHi: null, yLo: null, yHi: null };
+type Leaf = { path: string; box: ImpurityBox; points: ImpurityPoint[] };
 
 function idOf(path: string): string {
   return path === '' ? 'root' : `root/${path.split('').join('/')}`;
 }
 
-function tallyOf(points: ImpurityPoint[], idx: number[], classes: string[]): number[] {
+/**
+ * 이름표별 개수. `classes` 에 없는 이름표는 세지 않는다.
+ *
+ * 장면도 이 함수를 부른다 — 뿌리 통은 바탕 자료 전부라 발신을 기다릴 것이 없고,
+ * 그렇다고 세는 규칙이 두 벌로 갈리면 안 된다 (프로토콜 4 절 B 갈래).
+ */
+export function tallyOf(points: readonly ImpurityPoint[], classes: readonly string[]): number[] {
   const counts = classes.map(() => 0);
-  for (const i of idx) {
-    const p = points[i];
-    if (p === undefined) continue;
+  for (const p of points) {
     const k = classes.indexOf(p.label);
     if (k >= 0) counts[k] = (counts[k] ?? 0) + 1;
   }
   return counts;
 }
 
-/** 지니 불순도. 1 − Σ 비율². 빈 통은 0. */
-function giniOf(counts: number[], n: number): number {
-  if (n <= 0) return 0;
-  let sum = 0;
-  for (const c of counts) sum += (c / n) * (c / n);
-  return 1 - sum;
+function wireOf(leaf: Leaf, classes: string[]): BucketWire {
+  return { id: idOf(leaf.path), box: leaf.box, counts: tallyOf(leaf.points, classes) };
 }
 
-function pureClassOf(counts: number[], n: number): number {
-  if (n <= 0) return -1;
-  let found = -1;
-  for (let k = 0; k < counts.length; k += 1) {
-    if ((counts[k] ?? 0) === 0) continue;
-    if (found >= 0) return -1;
-    found = k;
-  }
-  return found;
-}
-
-function wireOf(leaf: Leaf, points: ImpurityPoint[], classes: string[]): BucketWire {
-  const counts = tallyOf(points, leaf.points, classes);
-  const n = leaf.points.length;
-  return {
-    id: idOf(leaf.path),
-    box: leaf.box,
-    counts,
-    n,
-    gini: giniOf(counts, n),
-    pureClass: pureClassOf(counts, n),
-  };
-}
-
-/** 통 크기로 가중한 층의 섞임. 그냥 평균이 아니다. */
-function levelOf(wires: BucketWire[], total: number): number {
-  if (total <= 0) return 0;
-  let sum = 0;
-  for (const w of wires) sum += w.n * w.gini;
-  return sum / total;
-}
-
-function splitLeaf(leaf: Leaf, cut: ImpurityCut, points: ImpurityPoint[]): [Leaf, Leaf] {
-  const lo: number[] = [];
-  const hi: number[] = [];
-  for (const i of leaf.points) {
-    const p = points[i];
-    if (p === undefined) continue;
+function splitLeaf(leaf: Leaf, cut: ImpurityCut): [Leaf, Leaf] {
+  const lo: ImpurityPoint[] = [];
+  const hi: ImpurityPoint[] = [];
+  for (const p of leaf.points) {
     const v = cut.axis === 'x' ? p.x : p.y;
-    if (v < cut.at) lo.push(i);
-    else hi.push(i);
+    if (v < cut.at) lo.push(p);
+    else hi.push(p);
   }
   const boxLo: ImpurityBox = { ...leaf.box };
   const boxHi: ImpurityBox = { ...leaf.box };
@@ -207,24 +176,15 @@ export const impurityDropsAlgorithm = async (
 
   /** 한 바퀴 굴린다. 끝까지 갔으면 true, 도중에 취소됐으면 false. */
   async function run(): Promise<boolean> {
-    const total = points.length;
     let leaves: Leaf[] = [
-      { path: '', box: { ...OPEN_BOX }, points: points.map((_, i) => i) },
+      { path: '', box: { ...IMPURITY_ROOT_BOX }, points: [...points] },
     ];
-    let level = levelOf(
-      leaves.map((l) => wireOf(l, points, classes)),
-      total,
-    );
 
     if (!(await gate())) return false;
-    await rc.emit({
-      type: 'sample-shown',
-      target: leaves.map((l) => `bucket:${idOf(l.path)}`),
-      payload: { buckets: leaves.map((l) => wireOf(l, points, classes)) },
-    });
+    await rc.emit({ type: 'sample-shown' });
 
     // 층은 선언된 가름선이 마르면 끝난다 — 걸음표를 손으로 적지 않는다.
-    for (let depth = 0; ; depth += 1) {
+    for (;;) {
       const layerCuts: CutWire[] = [];
       const next: Leaf[] = [];
       for (const leaf of leaves) {
@@ -233,47 +193,29 @@ export const impurityDropsAlgorithm = async (
           next.push(leaf);
           continue;
         }
-        layerCuts.push({ bucketId: idOf(leaf.path), axis: cut.axis, at: cut.at, box: leaf.box });
-        const [lo, hi] = splitLeaf(leaf, cut, points);
+        layerCuts.push({ bucketId: idOf(leaf.path), axis: cut.axis, at: cut.at });
+        const [lo, hi] = splitLeaf(leaf, cut);
         next.push(lo, hi);
       }
       if (layerCuts.length === 0) break;
 
       if (!(await gate())) return false;
-      await rc.emit({
-        type: 'cut-drawn',
-        target: layerCuts.map((c) => `bucket:${c.bucketId}`),
-        payload: { depth, cuts: layerCuts },
-      });
+      await rc.emit({ type: 'cut-drawn', payload: { cuts: layerCuts } });
 
-      const wires = next.map((l) => wireOf(l, points, classes));
+      const wires = next.map((l) => wireOf(l, classes));
 
       if (!(await gate())) return false;
-      await rc.emit({
-        type: 'buckets-split',
-        target: wires.map((w) => `bucket:${w.id}`),
-        payload: { depth, buckets: wires },
-      });
+      await rc.emit({ type: 'buckets-split', payload: { buckets: wires } });
 
-      const to = levelOf(wires, total);
       if (!(await gate())) return false;
-      await rc.emit({
-        type: 'level-measured',
-        payload: { depth, from: level, to, drop: level - to },
-      });
+      await rc.emit({ type: 'level-measured' });
 
-      level = to;
       leaves = next;
     }
 
-    const finalWires = leaves.map((l) => wireOf(l, points, classes));
     if (!(await gate())) return false;
-    await rc.emit({
-      type: 'settled',
-      target: finalWires.map((w) => `bucket:${w.id}`),
-      payload: { buckets: finalWires },
-    });
-    await rc.emit({ type: 'done' });
+    await rc.emit({ type: 'settled' });
+    await rc.emit({ type: 'done', silent: true });
     return true;
   }
 

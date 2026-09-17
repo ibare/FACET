@@ -5,11 +5,11 @@
  * 답한다. 머리글도 메트릭도 두지 않고, 배치는 러너가 정한다 (S-piece).
  *
  * 데이터는 줄이 서 있지 않은 [5, 8, 2, 9, 4] 한 벌과 찾을 값 둘 뿐이다.
- * 화면에 뜨는 수 — 본 칸 수 4 와 5 — 는 여기 적지 않는다. 훑기가 실제로 세고
- * 그 값이 그대로 올라온다 (S-piece).
+ * 화면에 뜨는 수 — 본 칸 수 4 와 5 — 는 여기 적지 않는다. 장면이 짚은 칸을 세고
+ * 그 값이 캡션과 자 눈금 양쪽에 함께 쓰인다 (S-piece).
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const scanUntilFoundFacet: FacetJson = {
   id: 'facet:scanUntilFound',
@@ -39,7 +39,7 @@ export const scanUntilFoundFacet: FacetJson = {
     pt: 'O mesmo olhar percorre a mesma fila duas vezes — uma pára a meio, outra passa do fim.',
   },
   algorithm: 'module:scanUntilFound',
-  projector: 'module:scanUntilFoundProjector',
+  scene: 'module:scanUntilFoundScene',
   initialData: {
     type: 'scan-until-found',
     values: [5, 8, 2, 9, 4],
@@ -50,7 +50,8 @@ export const scanUntilFoundFacet: FacetJson = {
     stage: { type: 'scan-until-found-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      // 스크럽 띠. 장면 방식이라 어느 걸음이든 셈으로 얻으므로 끌어 볼 수 있다.
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {

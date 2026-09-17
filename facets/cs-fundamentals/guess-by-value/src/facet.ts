@@ -8,7 +8,7 @@
  * metrics 도 없다. 배치는 stage 와 controls 뿐이라 러너의 기본 배치를 쓴다 (S-piece).
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const guessByValueFacet: FacetJson = {
   id: 'facet:guessByValue',
@@ -38,7 +38,7 @@ export const guessByValueFacet: FacetJson = {
     pt: 'Com valores espalhados por igual, o próprio valor diz onde olhar.',
   },
   algorithm: 'module:guessByValue',
-  projector: 'module:guessByValueProjector',
+  scene: 'module:guessByValueScene',
   initialData: {
     type: 'guess-by-value',
     // 고르게 퍼진 열 개. 두 줄이 같은 배열을 훑는다.
@@ -48,10 +48,7 @@ export const guessByValueFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'guess-by-value-stage' },
-    controls: {
-      type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
-    },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'label.laneMiddle': {
@@ -81,7 +78,7 @@ export const guessByValueFacet: FacetJson = {
 
     'caption.begin': {
       en: 'Looking for {target} in an evenly spread array.',
-      ko: '고르게 퍼진 배열에서 {target} 을 찾는다.',
+      ko: '고르게 퍼진 배열. 찾는 값은 {target}.',
       ja: '均等に散らばった配列で {target} を探す。',
       zh: '在均匀分布的数组里找 {target}。',
       ar: 'نبحث عن {target} في مصفوفة موزعة بانتظام.',
@@ -105,7 +102,7 @@ export const guessByValueFacet: FacetJson = {
     },
     'caption.midDropLeft': {
       en: '{value} is below {target} — the left half is out.',
-      ko: '{value} 는 {target} 보다 작다 — 왼쪽 절반이 빠진다.',
+      ko: '{value} 대 {target} — 짚은 쪽이 작다. 왼쪽 절반이 빠진다.',
       ja: '{value} は {target} より小さい — 左半分が外れる。',
       zh: '{value} 小于 {target} — 左半边出局。',
       ar: '{value} أصغر من {target} — يسقط النصف الأيسر.',
@@ -117,7 +114,7 @@ export const guessByValueFacet: FacetJson = {
     },
     'caption.midDropRight': {
       en: '{value} is above {target} — the right half is out.',
-      ko: '{value} 는 {target} 보다 크다 — 오른쪽 절반이 빠진다.',
+      ko: '{value} 대 {target} — 짚은 쪽이 크다. 오른쪽 절반이 빠진다.',
       ja: '{value} は {target} より大きい — 右半分が外れる。',
       zh: '{value} 大于 {target} — 右半边出局。',
       ar: '{value} أكبر من {target} — يسقط النصف الأيمن.',
@@ -154,7 +151,7 @@ export const guessByValueFacet: FacetJson = {
     },
     'caption.aimMeasure': {
       en: 'Where does {target} sit on that scale?',
-      ko: '{target} 은 그 자 위 어디쯤인가.',
+      ko: '그 자 위 어디쯤인가 — {target}.',
       ja: '{target} はそのものさしのどのあたりか。',
       zh: '{target} 在这把尺上落在哪里？',
       ar: 'أين يقع {target} على تلك المسطرة؟',
@@ -178,7 +175,7 @@ export const guessByValueFacet: FacetJson = {
     },
     'caption.aimHit': {
       en: 'Slot {index} holds {target}. Straight there.',
-      ko: '자리 {index} 에 {target} 이 있다. 곧장 닿았다.',
+      ko: '자리 {index} 에서 찾았다 — {target}. 곧장 닿았다.',
       ja: '{index} 番に {target} がある。一発で届いた。',
       zh: '第 {index} 格就是 {target}。一步到位。',
       ar: 'الموضع {index} يحمل {target}. وصلنا مباشرة.',
@@ -190,7 +187,7 @@ export const guessByValueFacet: FacetJson = {
     },
     'caption.aimMiss': {
       en: 'Slot {index} holds {value}. Narrow the scale and aim again.',
-      ko: '자리 {index} 에는 {value} 가 있다. 자를 좁혀 다시 겨눈다.',
+      ko: '자리 {index} 에 있는 것은 {value}. 자를 좁혀 다시 겨눈다.',
       ja: '{index} 番には {value} がある。ものさしを狭めて狙い直す。',
       zh: '第 {index} 格是 {value}。收窄尺子，重新瞄准。',
       ar: 'الموضع {index} يحمل {value}. نضيّق المسطرة ونصوّب من جديد.',

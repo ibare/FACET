@@ -5,21 +5,26 @@
  * 어디를 찾느냐뿐이다. 가까이 머무는 열은 한 번만 아래층까지 내려가고, 멀리
  * 흩어지는 열은 여섯 번 다 내려간다.
  *
- * 히트·미스 판정과 셈은 여기서 한다 (`computeTemporalLocalityTrace`). 선언에
- * 있는 것은 구조뿐이다 — 칸 수 · 라인 크기 · 원소 크기 · 두 접근열의 색인.
+ * 히트·미스 판정과 밀어낼 칸 고르기는 여기서 한다 (`computeTemporalLocalityTrace`).
+ * 그것이 이 조각의 알고리즘 그 자체라 내주지 않고 **판정만 싣는다.** 반대로
+ * 색인이 앉는 라인은 바탕에 순수 함수를 먹이면 나오는 값이라 함수를 내주고
+ * (`temporalLocalityLineOf`) 장면이 부른다. 선언에 있는 것은 구조뿐이다 —
+ * 칸 수 · 라인 크기 · 원소 크기 · 두 접근열의 색인.
  *
  * ── 이벤트 (전부 facet 고유, C2)
  *
- *   stream-begin  { stream: number; slots: number }
- *                 접근열 하나를 깨우고 캐시를 비운다. stream 은 행 번호.
- *   access        { stream: number; step: number; index: number; line: number;
- *                   hit: boolean; slot: number; evicted: number | null }
- *                 한 번의 접근. hit 면 slot 은 맞은 칸, 아니면 올라온 칸이고
- *                 evicted 는 그 칸에서 밀려난 라인 번호 (빈 칸이었으면 null).
- *   stream-end    { stream: number; hits: number; misses: number; total: number }
- *                 접근열 하나가 끝났다.
- *   verdict       { near: number; far: number; total: number }
- *                 두 열의 미스 수를 견준다.
+ *   stream-begin  {}   접근열 하나를 깨우고 캐시를 비운다.
+ *                      몇 번째 열인지는 장면이 센다 — 깨운 열의 수가 그 번호다.
+ *   access        { hit: boolean; slot: number }
+ *                 한 번의 접근. `hit` 면 `slot` 은 맞은 칸, 아니면 라인이 올라온
+ *                 칸이다. 둘 다 이 걸음이 내리는 판정이라 싣는다.
+ *                 **몇 번째 접근인가 · 어느 색인인가 · 그 색인이 앉는 라인 ·
+ *                 밀려난 라인은 싣지 않는다** — 앞의 셋은 바탕과
+ *                 `temporalLocalityLineOf` 가 정하고, 밀려난 것은 그 칸에 무엇이
+ *                 있었나로 장면이 안다.
+ *   stream-end    {}   접근열 하나가 끝났다. 적중·실패의 수는 장면이 센다.
+ *   verdict       {}   두 열의 실패 수를 견준다. 그 수도 장면이 센다 —
+ *                      조각의 결론이 화면의 자취와 같은 자료에서 나와야 한다.
  *   rewind        {}   처음으로 되감는다 (한 걸음씩 다시 보기).
  *
  * silent 이벤트는 없다. 메트릭도 부르지 않는다 (S-piece).
@@ -47,18 +52,31 @@ export type TemporalLocalityData = {
   streams: TemporalLocalityStream[];
 };
 
+/**
+ * 한 번의 접근에서 **걸음이 내리는 판정**.
+ *
+ * 화면이 구조에서 셀 수 있는 것(몇 번째 접근인가 · 어느 색인인가 · 어느 라인인가)
+ * 은 들지 않는다. 같은 수를 두 자리에서 세면 언젠가 갈린다.
+ */
 export type TemporalLocalityAccess = {
-  stream: number;
-  step: number;
-  index: number;
-  line: number;
+  /** 이미 위층에 있었나. */
   hit: boolean;
+  /** 맞은 칸, 또는 라인이 새로 올라온 칸. */
   slot: number;
-  evicted: number | null;
 };
 
-/** 색인이 앉는 라인 번호. 원소 크기와 라인 크기가 정한다. */
-function lineOf(index: number, elemBytes: number, lineBytes: number): number {
+/**
+ * 색인이 앉는 라인 번호. 원소 크기와 라인 크기가 정한다.
+ *
+ * 바탕 자료에 순수 함수를 먹이면 나오는 값이라 발신에 실어 보내지 않고 장면이
+ * 이 함수를 부른다. 그 함수만 떼어 내도 "같은 자리를 다시 읽으면 위층에 있다"
+ * 는 주장은 남으므로 내주어도 된다.
+ */
+export function temporalLocalityLineOf(
+  index: number,
+  elemBytes: number,
+  lineBytes: number,
+): number {
   if (lineBytes <= 0) return index;
   return Math.floor((index * elemBytes) / lineBytes);
 }
@@ -76,8 +94,7 @@ export function computeTemporalLocalityTrace(
   const slotCount = Math.max(1, data.slots);
   const out: TemporalLocalityAccess[][] = [];
 
-  for (let s = 0; s < data.streams.length; s += 1) {
-    const stream = data.streams[s];
+  for (const stream of data.streams) {
     if (!stream) continue;
     const resident: Array<{ line: number; used: number } | null> = Array.from(
       { length: slotCount },
@@ -86,29 +103,27 @@ export function computeTemporalLocalityTrace(
     const steps: TemporalLocalityAccess[] = [];
     let clock = 0;
 
-    for (let i = 0; i < stream.indices.length; i += 1) {
-      const index = stream.indices[i] ?? 0;
-      const line = lineOf(index, data.elemBytes, data.lineBytes);
+    for (const raw of stream.indices) {
+      const index = raw ?? 0;
+      const line = temporalLocalityLineOf(index, data.elemBytes, data.lineBytes);
       clock += 1;
 
       const hitSlot = resident.findIndex((r) => r !== null && r.line === line);
       if (hitSlot >= 0) {
         resident[hitSlot] = { line, used: clock };
-        steps.push({ stream: s, step: i, index, line, hit: true, slot: hitSlot, evicted: null });
+        steps.push({ hit: true, slot: hitSlot });
         continue;
       }
 
       let target = resident.findIndex((r) => r === null);
-      let evicted: number | null = null;
       if (target < 0) {
         target = 0;
         for (let k = 1; k < resident.length; k += 1) {
           if ((resident[k]?.used ?? 0) < (resident[target]?.used ?? 0)) target = k;
         }
-        evicted = resident[target]?.line ?? null;
       }
       resident[target] = { line, used: clock };
-      steps.push({ stream: s, step: i, index, line, hit: false, slot: target, evicted });
+      steps.push({ hit: false, slot: target });
     }
 
     out.push(steps);
@@ -147,51 +162,21 @@ export async function temporalLocalityAlgorithm(
   };
 
   for (;;) {
-    const missesPerStream: number[] = [];
-
-    for (let s = 0; s < trace.length; s += 1) {
-      const steps = trace[s] ?? [];
-
+    for (const steps of trace) {
       if (!(await gate())) return;
-      await ctx.emit({ type: 'stream-begin', payload: { stream: s, slots: data.slots } });
+      await ctx.emit({ type: 'stream-begin', payload: {} });
 
-      let hits = 0;
-      let misses = 0;
       for (const step of steps) {
         if (!(await gate())) return;
-        if (step.hit) hits += 1;
-        else misses += 1;
-        await ctx.emit({
-          type: 'access',
-          payload: {
-            stream: step.stream,
-            step: step.step,
-            index: step.index,
-            line: step.line,
-            hit: step.hit,
-            slot: step.slot,
-            evicted: step.evicted,
-          },
-        });
+        await ctx.emit({ type: 'access', payload: { hit: step.hit, slot: step.slot } });
       }
-      missesPerStream.push(misses);
 
       if (!(await gate())) return;
-      await ctx.emit({
-        type: 'stream-end',
-        payload: { stream: s, hits, misses, total: steps.length },
-      });
+      await ctx.emit({ type: 'stream-end', payload: {} });
     }
 
     if (!(await gate())) return;
-    await ctx.emit({
-      type: 'verdict',
-      payload: {
-        near: missesPerStream[0] ?? 0,
-        far: missesPerStream[1] ?? 0,
-        total: trace[0]?.length ?? 0,
-      },
-    });
+    await ctx.emit({ type: 'verdict', payload: {} });
 
     // 자동 재생이 끝났다. 여기서부터는 누르는 사람의 걸음이다.
     for (;;) {

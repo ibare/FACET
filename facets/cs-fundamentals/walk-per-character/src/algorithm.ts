@@ -19,20 +19,20 @@
  * step-down     (silent: false)
  *   찾는 말의 글자 하나를 따라 그 가지를 타고 한 칸 내려간다.
  *   target: `node:<toId>`
- *   payload: {
- *     queryIndex: number; charIndex: number; char: string;
- *     fromId: string; toId: string;
- *   }
+ *   payload: { fromId: string; toId: string }
  *
  * search-result (silent: false)
  *   글자를 다 썼거나(글이 없어) 더 못 내려가 답이 난 자리.
  *   target: `node:<nodeId>` (답이 난 자리 — found/no-word 는 마지막으로 내려간
  *   노드, blocked 는 가지가 없던 그 부모 노드)
  *   payload: {
- *     queryIndex: number; query: string; nodeId: string; depth: number;
  *     verdict: 'found' | 'no-word' | 'blocked';
  *     blockedChar?: string;  // verdict === 'blocked' 일 때만, 없던 가지의 글자
  *   }
+ *
+ * **몇 번째 말을 몇 글자까지 걸었나를 싣지 않는다.** 그 수는 화면이 걸어온
+ * 자취에서 내고, 여기서 한 번 더 실으면 같은 수의 출처가 둘이 된다 — 언젠가
+ * 갈린다. `search-begin` 의 셋만이 찾기의 차례를 말하는 유일한 자리다.
  */
 
 import type { FacetContext } from '@ffacet/core/runtime';
@@ -76,20 +76,10 @@ function buildTrie(words: string[]): TrieNode {
 
 type Step =
   | { kind: 'search-begin'; queryIndex: number; queryTotal: number; query: string }
-  | {
-      kind: 'step-down';
-      queryIndex: number;
-      charIndex: number;
-      char: string;
-      fromId: string;
-      toId: string;
-    }
+  | { kind: 'step-down'; fromId: string; toId: string }
   | {
       kind: 'search-result';
-      queryIndex: number;
-      query: string;
       nodeId: string;
-      depth: number;
       verdict: 'found' | 'no-word' | 'blocked';
       blockedChar?: string;
     };
@@ -104,28 +94,23 @@ function computeSteps(root: TrieNode, queries: string[]): Step[] {
   queries.forEach((query, queryIndex) => {
     steps.push({ kind: 'search-begin', queryIndex, queryTotal, query });
     let node = root;
-    let depth = 0;
     let blockedChar: string | undefined;
-    for (let i = 0; i < query.length; i++) {
-      const ch = query[i];
+    // 글자를 코드 포인트로 집는다 — 트라이를 지을 때와 같은 셈이어야 한다.
+    for (const ch of query) {
       const child = node.children.get(ch);
       if (!child) {
         blockedChar = ch;
         break;
       }
-      steps.push({ kind: 'step-down', queryIndex, charIndex: i, char: ch, fromId: node.id, toId: child.id });
+      steps.push({ kind: 'step-down', fromId: node.id, toId: child.id });
       node = child;
-      depth++;
     }
     if (blockedChar !== undefined) {
-      steps.push({ kind: 'search-result', queryIndex, query, nodeId: node.id, depth, verdict: 'blocked', blockedChar });
+      steps.push({ kind: 'search-result', nodeId: node.id, verdict: 'blocked', blockedChar });
     } else {
       steps.push({
         kind: 'search-result',
-        queryIndex,
-        query,
         nodeId: node.id,
-        depth,
         verdict: node.isEnd ? 'found' : 'no-word',
       });
     }
@@ -194,27 +179,14 @@ async function runSteps(
         await ctx.emit({
           type: 'step-down',
           target: `node:${step.toId}`,
-          payload: {
-            queryIndex: step.queryIndex,
-            charIndex: step.charIndex,
-            char: step.char,
-            fromId: step.fromId,
-            toId: step.toId,
-          },
+          payload: { fromId: step.fromId, toId: step.toId },
         });
         break;
       case 'search-result':
         await ctx.emit({
           type: 'search-result',
           target: `node:${step.nodeId}`,
-          payload: {
-            queryIndex: step.queryIndex,
-            query: step.query,
-            nodeId: step.nodeId,
-            depth: step.depth,
-            verdict: step.verdict,
-            blockedChar: step.blockedChar,
-          },
+          payload: { verdict: step.verdict, blockedChar: step.blockedChar },
         });
         break;
     }

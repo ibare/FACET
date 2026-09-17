@@ -36,7 +36,7 @@ export const growOneTreeFacet: FacetJson = {
     pt: 'Prim só escolhe entre as arestas que já tocam a árvore.',
   },
   algorithm: 'module:growOneTree',
-  projector: 'module:growOneTreeProjector',
+  scene: 'module:growOneTreeScene',
   initialData: {
     type: 'grow-one-tree',
     nodes: ['A', 'B', 'C', 'D', 'E'],
@@ -53,7 +53,7 @@ export const growOneTreeFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'grow-one-tree-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'lane.tree': {

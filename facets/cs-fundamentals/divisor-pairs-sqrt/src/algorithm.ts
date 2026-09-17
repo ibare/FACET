@@ -8,17 +8,24 @@
  * **1차 데이터는 n 하나다.** 약수도 짝도 √n 도 여기서 셈한다 — 화면에 뜨는 수를
  * 손으로 옮겨 적지 않는다.
  *
- * ── 이벤트 (target 은 쓰지 않는다. 자리는 payload 의 수가 정한다)
+ * ── 이벤트 (target 도 payload 도 쓰지 않는다)
  *
- *   probe   { d: number; n: number }                   지금 짚는 수
- *   pair    { d: number; q: number; n: number; self: boolean }
- *                                                      d 가 약수다. 짝은 q = n/d.
- *                                                      self 는 d === q (√n 위의 칸)
- *   miss    { d: number; n: number }                   나누어떨어지지 않는다
- *   cover   { from: number; n: number }                from..n 을 덮는다 (√n 너머)
- *   rewind  {}                                         처음으로 되감는다
+ * 다섯 다 **빈 발신**이다. 걸음이 실을 만한 수가 하나도 없기 때문이다.
+ *
+ *   probe   {}   지금 짚는 수. 몇 번째 짚기인가가 곧 그 수다 (1 부터 하나씩).
+ *   pair    {}   방금 짚은 수가 약수다. 짝은 q = n/d 로 바탕에서 나온다.
+ *   miss    {}   방금 짚은 수로는 나누어떨어지지 않는다.
+ *   cover   {}   √n 너머를 덮는다. 덮는 자리는 `sqrtLimit(n) + 1` 이다.
+ *   rewind  {}   처음으로 되감는다.
  *
  * 다섯 다 시각 변화가 있는 걸음 경계라 `silent` 를 붙이지 않는다 (C2).
+ *
+ * ── 장면이 부르는 순수 함수 둘
+ *
+ * `readN` 과 `sqrtLimit` 은 바탕(n)에 먹이면 나오는 값이라 걸음에 싣지 않고
+ * **함수로 내준다** — 장면이 같은 함수를 지나야 화면과 셈이 한 출처다
+ * (`tasks/scene-migration-protocol.md` 4 절의 B 갈래). 잣대를 떼어 내도 "약수는
+ * 짝을 이룬다" 는 주장은 그대로 남으므로 알고리즘 자체가 아니다.
  *
  * ── 메트릭
  *
@@ -38,13 +45,34 @@ export type DivisorPairsSqrtData = {
   stepMs: number;
 };
 
+/**
+ * 그릴 수를 읽는다. 2 보다 작으면 짝을 이룰 것이 없으므로 2 로 올린다.
+ *
+ * 장면도 이 함수를 지난다. 좁히는 잣대가 두 군데면 언젠가 갈린다 — 옮기기 전
+ * 화면은 2 보다 작은 수를 0 으로 읽어 알고리즘과 다른 답을 갖고 있었다.
+ */
+export function readN(raw: unknown): number {
+  const v = typeof raw === 'number' && Number.isFinite(raw) ? Math.floor(raw) : 2;
+  return Math.max(2, v);
+}
+
+/**
+ * 어디까지 훑나 — 자르는 잣대.
+ *
+ * 화면의 접는 자리도 이 함수에서 나온다. 옮기기 전에는 접는 자리를 "자기 자신과
+ * 짝을 이룬 칸" 에서 얻어, 제곱수가 아닌 n 에서는 축이 아예 서지 않았다.
+ */
+export function sqrtLimit(n: number): number {
+  return Math.floor(Math.sqrt(n));
+}
+
 export async function divisorPairsSqrtAlgorithm(
   ctx: FacetContext<DivisorPairsSqrtData>,
 ): Promise<void> {
   const rc = ctx as ReactiveContext<DivisorPairsSqrtData>;
-  const n = Math.max(2, Math.floor(rc.data.n));
+  const n = readN(rc.data.n);
   const stepMs = Math.max(0, Math.floor(rc.data.stepMs));
-  const limit = Math.floor(Math.sqrt(n));
+  const limit = sqrtLimit(n);
 
   /**
    * 걸음 수. 1..√n 을 하나씩 짚고(probe) 그때마다 답한 뒤(pair | miss),
@@ -57,20 +85,17 @@ export async function divisorPairsSqrtAlgorithm(
   /** i 번째 걸음. 자동 재생과 한 걸음 짚기가 같은 함수를 쓴다. */
   async function runStep(i: number): Promise<void> {
     if (i >= limit * 2) {
-      await rc.emit({ type: 'cover', payload: { from: limit + 1, n } });
+      await rc.emit({ type: 'cover' });
       return;
     }
     const d = Math.floor(i / 2) + 1;
     if (i % 2 === 0) {
-      await rc.emit({ type: 'probe', payload: { d, n } });
+      await rc.emit({ type: 'probe' });
       return;
     }
-    if (n % d !== 0) {
-      await rc.emit({ type: 'miss', payload: { d, n } });
-      return;
-    }
-    const q = n / d;
-    await rc.emit({ type: 'pair', payload: { d, q, n, self: q === d } });
+    // 나누어떨어지는가 — 이것만이 걸음이 내리는 판정이고, 그마저 발신의 **종류**로
+    // 다 말해진다. 짝 q 는 n / d 라 바탕에서 나오므로 싣지 않는다.
+    await rc.emit({ type: n % d === 0 ? 'pair' : 'miss' });
   }
 
   // 자동 재생. 문(sleep)은 걸음 *사이*에 둔다 — 첫 걸음 앞에는 기다릴 앞걸음이
@@ -101,7 +126,7 @@ export async function divisorPairsSqrtAlgorithm(
     if (cursor >= total) {
       // 다 본 뒤의 첫 누름은 되감고 **첫 걸음까지** 간다. 되감기만 하면 눌러도
       // 반응이 없는 것으로 읽힌다 (S-piece).
-      await rc.emit({ type: 'rewind', payload: {} });
+      await rc.emit({ type: 'rewind' });
       cursor = 0;
     }
     await runStep(cursor);

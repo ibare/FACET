@@ -13,19 +13,26 @@
  *
  * ── 이벤트 (type 은 모두 리터럴, C2)
  *
- *   begin  { base, exponent, naive }
- *          줄을 처음 세운다. 칸 수는 exponent, 칸마다의 값은 base,
- *          하나씩 곱을 때 드는 곱셈 횟수는 naive.
- *   take   { place, count, factor, product }
- *          칸 수 count 가 홀수라 남는 한 칸을 답으로 보낸다. place 는 그 칸이
- *          덮는 지수 폭(1·2·4·8…) 이고 factor 는 칸의 값, product 는 누적 곱.
- *   skip   { place, count }
- *          칸 수 count 가 짝수라 답으로 갈 것이 없다. place 는 그 자리의 지수 폭.
- *   fold   { row, count, value }
- *          반으로 접는다. row 는 새 줄의 번호(0부터), count 는 새 칸 수,
- *          value 는 새 칸 하나의 값 — 앞 값의 제곱.
- *   done   { product, squarings, multiplies, total, naive, bits }
- *          bits 는 지수의 이진 표기를 큰 자리부터 담은 0/1 배열.
+ * 걸음이 실어 오는 것은 **접었을 때 칸의 새 값** 하나뿐이다. 나머지 — 칸 수 ·
+ * 자릿값 · 보낸 값 · 누적 곱 · 곱셈 횟수 · 이진 표기 — 는 전부 화면의 자취에서
+ * 세지므로 장면이 센다 (`scene.ts`). 화면에 나란히 뜨는 수가 발신과 자취라는 두
+ * 출처를 갖지 않게 하는 것이다 (프로토콜 4 절).
+ *
+ *   begin  {}
+ *          줄을 처음 세운다. 칸 수도 칸의 값도 선언이 이미 말한다.
+ *   take   {}
+ *          칸 수가 홀수라 남는 한 칸을 답으로 보낸다. **판정은 type 자체**이고
+ *          어느 칸을 얼마에 보냈는지는 그 줄이 화면에 서 있으므로 장면이 안다.
+ *   skip   {}
+ *          칸 수가 짝수라 답으로 갈 것이 없다. 이것도 판정은 type 자체다.
+ *   fold   { value }
+ *          반으로 접는다. value 는 새 칸 하나의 값 — 앞 값의 제곱이다.
+ *          **이 하나만 싣는다.** 제곱은 이 알고리즘 그 자체라 함수로 내주면
+ *          장면이 알고리즘을 되풀이하게 되고, 더 나쁘게는 이 조각이 *피하려는*
+ *          셈(밑을 지수만큼 곱하기)으로도 같은 수가 나와 화면이 "이렇게 안 해도
+ *          된다" 고 말하면서 그렇게 얻은 수를 띄우게 된다 (프로토콜 4 절의 경계).
+ *   done   {}
+ *          다 셌다. 곱셈 횟수도 이진 표기도 자취에서 나온다.
  *   rewind {}
  *          자동 재생을 마친 뒤 advance 를 처음 누르면 되감는다.
  *
@@ -101,74 +108,62 @@ function makeGate(
 }
 
 /**
+ * 지수를 좁힌다 — 칸 수를 정하는 **유일한 잣대**다.
+ *
+ * 장면도 처음 줄의 칸 수를 알아야 하는데, 양쪽이 각자 `Math.floor` 를 셈하면
+ * 선언에 13.5 가 오는 날 줄의 길이와 자리표의 폭이 갈린다. 그래서 여기가 내주고
+ * `scene.ts` 가 부른다 (프로토콜 4 절 B 갈래). 자르는 잣대는 이 알고리즘이 아니라
+ * 입구의 규칙이라, 떼어 내도 조각이 말하려는 바는 그대로 남는다.
+ */
+export function exponentOf(raw: unknown): number {
+  return typeof raw === 'number' && Number.isFinite(raw) ? Math.max(0, Math.floor(raw)) : 0;
+}
+
+/**
  * 한 바퀴 재생한다.
  *
  * 걸음표를 손으로 적어 두르지 않는다 — 아래 순회가 곧 그 연산이다 (C2).
+ *
+ * 세는 일이 여기서 사라졌다. 자릿값 · 누적 곱 · 제곱 횟수 · 답곱 횟수 · 이진
+ * 표기를 쥐던 지역 변수 다섯이 발신에서 빠지며 함께 죽었다 — 같은 규칙이 이
+ * 파일과 장면 두 곳에 적혀 있던 자리다 (프로토콜 4 절).
  */
 async function playOnce(
   rc: ReactiveContext<SquareAndHalveData>,
   gate: Gate,
 ): Promise<void> {
-  const base = rc.data.base;
-  const exponent = Math.max(0, Math.floor(rc.data.exponent));
-  /** 하나씩 곱을 때의 곱셈 횟수. 칸 열셋을 잇는 데 드는 곱셈은 열둘이다. */
-  const naive = Math.max(0, exponent - 1);
+  /** 남은 칸 수. 곧 남은 지수다. */
+  let count = exponentOf(rc.data.exponent);
+  /** 칸 하나의 값. 접을 때마다 제 자신을 곱한다. */
+  let cell = rc.data.base;
 
   if (!(await gate())) return;
-  await rc.emit({ type: 'begin', payload: { base, exponent, naive } });
-
-  /** 남은 칸 수. 곧 남은 지수다. */
-  let count = exponent;
-  /** 칸 하나의 값. 접을 때마다 제 자신을 곱한다. */
-  let cell = base;
-  /** 칸 하나가 덮는 지수 폭. 이진수의 자릿값이기도 하다. */
-  let place = 1;
-  let product = 1;
-  let row = 0;
-  let squarings = 0;
-  let multiplies = 0;
-  /** 지수의 이진 표기. 작은 자리부터 쌓이므로 마지막에 뒤집는다. */
-  const bits: number[] = [];
+  await rc.emit({ type: 'begin', payload: {} });
 
   while (count > 0) {
     // 문(gate)을 바디 첫 줄에 둘 수 없다 — 홀짝을 먼저 갈라야 어느 걸음인지 정해지고
     // 문이 그 갈래 안으로 들어간다. 그래서 진입 검사를 직접 둔다 (C8).
     if (rc.cancelled) return;
+    // 홀짝의 판정은 발신의 type 그 자체다. 실어 보낼 것이 따로 없다.
     if (count % 2 === 1) {
-      product *= cell;
-      multiplies += 1;
-      bits.push(1);
       if (!(await gate())) return;
-      await rc.emit({ type: 'take', payload: { place, count, factor: cell, product } });
+      await rc.emit({ type: 'take', payload: {} });
     } else {
-      bits.push(0);
       if (!(await gate())) return;
-      await rc.emit({ type: 'skip', payload: { place, count } });
+      await rc.emit({ type: 'skip', payload: {} });
     }
 
     count = Math.floor(count / 2);
     if (count === 0) break;
 
+    // 두 칸이 만나는 것이 곧 제곱이다. 이 한 줄만 화면으로 건너간다.
     cell = cell * cell;
-    place *= 2;
-    squarings += 1;
-    row += 1;
     if (!(await gate())) return;
-    await rc.emit({ type: 'fold', payload: { row, count, value: cell } });
+    await rc.emit({ type: 'fold', payload: { value: cell } });
   }
 
   if (!(await gate())) return;
-  await rc.emit({
-    type: 'done',
-    payload: {
-      product,
-      squarings,
-      multiplies,
-      total: squarings + multiplies,
-      naive,
-      bits: [...bits].reverse(),
-    },
-  });
+  await rc.emit({ type: 'done', payload: {} });
 }
 
 export async function squareAndHalve(ctx: FacetContext<SquareAndHalveData>): Promise<void> {

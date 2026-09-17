@@ -5,6 +5,10 @@
  *        거울에서 답을 빌린다는 한 주장만 말하고 멈춘다.
  *
  * 화면에 뜨는 문안은 전부 messages 에 있다 (C10). 좌표는 stage 가 셈한다.
+ *
+ * 화면은 장면(Scene) 방식이다 — 이벤트가 `MatchLengthPerSpotScene` 으로 쌓이고
+ * stage 의 `render` 하나가 그 장면을 통째로 세운다. 그래서 스크럽 띠로 아무 걸음에나
+ * 갈 수 있다 (S-scene).
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -36,7 +40,7 @@ export const matchLengthPerSpotFacet: FacetJson = {
     pt: 'Dentro de uma janela já verificada, a resposta é emprestada da posição espelho em vez de comparar de novo.',
   },
   algorithm: 'module:matchLengthPerSpot',
-  projector: 'module:matchLengthPerSpotProjector',
+  scene: 'module:matchLengthPerSpotScene',
   initialData: {
     type: 'match-length-per-spot',
     text: 'aabaabaabx',
@@ -44,7 +48,7 @@ export const matchLengthPerSpotFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'match-length-per-spot-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.whole': {
@@ -95,6 +99,18 @@ export const matchLengthPerSpotFacet: FacetJson = {
       id: 'Di dalam jendela. Pinjam jawaban dari posisi cermin di sebelah kiri.',
       pt: 'Dentro da janela. Pegue emprestada a resposta da posição espelho à esquerda.',
     },
+    'caption.capped': {
+      en: 'What was borrowed reaches the window edge. Beyond it nothing is certain yet.',
+      ko: '빌린 만큼이 구간 끝에 닿았다. 그 너머는 아직 확인된 적이 없다.',
+      ja: '借りた分が区間の端に届いた。その先はまだ確かめられていない。',
+      zh: '借来的部分触到了区间末端。再往后还没有被确认过。',
+      ar: 'بلغ ما استُعير حافة النافذة. وما بعدها لم يُتحقق منه بعد.',
+      es: 'Lo prestado llega al borde de la ventana. Más allá nada está confirmado aún.',
+      fr: "Ce qui est emprunté atteint le bord de la fenêtre. Au-delà, rien n'est encore vérifié.",
+      hi: 'उधार लिया गया हिस्सा खिड़की के किनारे तक पहुँच गया। उसके आगे अभी कुछ भी जाँचा नहीं गया।',
+      id: 'Bagian yang dipinjam mencapai tepi jendela. Di luar itu belum ada yang dipastikan.',
+      pt: 'O que foi emprestado alcança a borda da janela. Além dela nada foi confirmado ainda.',
+    },
     'caption.window': {
       en: 'The overlap reached farther right. Move the window over there.',
       ko: '겹침이 더 오른쪽에 닿았다. 구간을 그리로 옮긴다.',
@@ -108,16 +124,16 @@ export const matchLengthPerSpotFacet: FacetJson = {
       pt: 'A sobreposição alcançou mais à direita. Mova a janela para lá.',
     },
     'caption.done': {
-      en: 'Every spot has its answer. The right end of the window never stepped back.',
-      ko: '자리마다 답이 찼다. 구간의 오른쪽 끝은 한 번도 뒤로 가지 않았다.',
-      ja: 'どの位置にも答えが埋まった。区間の右端は一度も後ろへ戻らなかった。',
-      zh: '每个位置都有了答案。区间的右端一次也没有后退。',
-      ar: 'كل موضع نال جوابه. ولم يتراجع طرف النافذة الأيمن ولو مرة.',
-      es: 'Cada posición tiene su respuesta. El extremo derecho de la ventana nunca retrocedió.',
-      fr: "Chaque position a sa réponse. Le bord droit de la fenêtre n'a jamais reculé.",
-      hi: 'हर स्थान का उत्तर भर गया। खिड़की का दायाँ छोर कभी पीछे नहीं हटा।',
-      id: 'Setiap posisi sudah punya jawaban. Tepi kanan jendela tak pernah mundur.',
-      pt: 'Cada posição tem sua resposta. A ponta direita da janela nunca recuou.',
+      en: 'Of {spots} spots, {borrowed} never compared a character. Character pairs compared: {compares}.',
+      ko: '자리 {spots} 가운데 {borrowed} 곳은 글자를 한 번도 견주지 않았다. 견준 글자 쌍은 모두 {compares}.',
+      ja: '{spots} の位置のうち {borrowed} か所は一度も文字を比べていない。比べた文字の組は全部で {compares}。',
+      zh: '{spots} 个位置中有 {borrowed} 个从未比较过字符。比较过的字符对共 {compares}。',
+      ar: 'من بين {spots} موضعًا، {borrowed} لم تقارن حرفًا قط. أزواج الحروف المقارنة: {compares}.',
+      es: 'De {spots} posiciones, {borrowed} nunca compararon un carácter. Pares de caracteres comparados: {compares}.',
+      fr: 'Sur {spots} positions, {borrowed} n\'ont jamais comparé un caractère. Paires de caractères comparées : {compares}.',
+      hi: '{spots} स्थानों में से {borrowed} ने कभी कोई अक्षर नहीं मिलाया। मिलाए गए अक्षर-युग्म: {compares}.',
+      id: 'Dari {spots} posisi, {borrowed} tidak pernah membandingkan huruf. Pasangan huruf yang dibandingkan: {compares}.',
+      pt: 'De {spots} posições, {borrowed} nunca compararam um caractere. Pares de caracteres comparados: {compares}.',
     },
     'label.mirror': {
       en: 'mirror',

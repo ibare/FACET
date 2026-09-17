@@ -14,25 +14,28 @@
  *   rewind   {}
  *     화면을 처음으로 되감는다. 자동 재생이 끝난 뒤 첫 `advance` 에서만 나간다.
  *
- *   ignite   { index: number; cluster: number; neighborCount: number }
+ *   ignite   { index: number; neighborCount: number }
  *     아직 어느 무리에도 들지 않은 점에 불씨를 놓는다. `neighborCount` 는
  *     그 점의 eps 안 이웃 수이며 **자기 자신을 셈에 넣는다**.
  *
- *   spread   { cluster: number;
- *              links: { from: number; to: number; dist: number }[];
- *              rejected: number | null;
- *              total: number }
+ *   spread   { links: { from: number; to: number }[];
+ *              rejected: { from: number; to: number } | null }
  *     물결 한 겹. `links` 는 이번에 이어 붙은 모든 쌍이다 (한 점이 두 곳에서
  *     닿으면 이음이 둘 생기고 점은 한 번만 든다). `rejected` 는 이번 물결의
- *     앞자락에서 **가장 가까운데도 안 붙은** 점까지의 거리 — 없으면 null.
- *     `total` 은 이 걸음을 마친 뒤 무리에 든 점 수.
+ *     앞자락에서 **가장 가까운데도 안 붙은** 쌍 — 없으면 null.
  *
- *   blocked  { from: number; to: number; dist: number }
- *     번짐이 멎었다. 무리 안의 점과 무리 밖의 점 중 가장 가까운 한 쌍과 그
- *     거리. 무리 밖에 남은 점이 없으면 나가지 않는다.
+ *   blocked  { from: number; to: number }
+ *     번짐이 멎었다. 무리 안의 점과 무리 밖의 점 중 가장 가까운 한 쌍. 무리
+ *     밖에 남은 점이 없으면 나가지 않는다.
  *
- *   done     { sizes: number[] }
- *     무리마다의 크기. 무리 번호 순.
+ *   done     {}
+ *     불이 다 앉았다.
+ *
+ *   ── 싣지 않는 것
+ *     무리 번호 · 무리에 든 점 수 · 무리마다의 크기 · 쌍의 거리는 전부 장면이
+ *     셈한다. 불씨는 하나씩 쌓이므로 차례가 곧 번호이고, 든 점은 물결의 닿은
+ *     점을 세면 나오며, 거리는 두 점을 알면 나오는 순수 함수다. 실어 보내면
+ *     같은 것을 두 자리에서 세게 되고 언젠가 갈린다.
  *
  * ── 메트릭
  *   없다. 조각은 셀 것이 없다 (S-piece).
@@ -54,7 +57,11 @@ export type DenseNeighborhoodData = {
   stepMs: number;
 };
 
-type Link = { from: number; to: number; dist: number };
+/** 두 점을 가리키는 쌍. 발신에 나가는 것은 이 둘뿐이다 — 거리는 장면이 잰다. */
+type Pair = { from: number; to: number };
+
+/** 가장 가까운 짝을 고르는 동안에만 거리를 쥔다. 밖으로는 나가지 않는다. */
+type Reach = Pair & { dist: number };
 
 function distance(a: DenseNeighborhoodPoint, b: DenseNeighborhoodPoint): number {
   return Math.hypot(a.x - b.x, a.y - b.y);
@@ -102,8 +109,8 @@ export const denseNeighborhoodAlgorithm = async (
   function nearestOutside(
     inside: number[],
     outside: (i: number) => boolean,
-  ): Link | null {
-    let best: Link | null = null;
+  ): Reach | null {
+    let best: Reach | null = null;
     for (const a of inside) {
       const row = dist[a] ?? [];
       for (let b = 0; b < n; b += 1) {
@@ -128,7 +135,7 @@ export const denseNeighborhoodAlgorithm = async (
       if (!(await gate())) return false;
       await ctx.emit({
         type: 'ignite',
-        payload: { index: seed, cluster, neighborCount: neighbors[seed]?.length ?? 0 },
+        payload: { index: seed, neighborCount: neighbors[seed]?.length ?? 0 },
       });
 
       let frontier = [seed];
@@ -137,14 +144,14 @@ export const denseNeighborhoodAlgorithm = async (
         // 있는지 알기 때문이다. 모으는 일은 O(n²) 로 유계이고 발신 앞에 문이
         // 서므로 취소는 먹는다 (C8).
         // 한 점이 두 앞자락에서 닿으면 이음은 둘, 점은 하나.
-        const links: Link[] = [];
+        const links: Pair[] = [];
         const joined: number[] = [];
         const joining = new Set<number>();
         for (const f of frontier) {
           if (!isCore[f]) continue;
           for (const j of neighbors[f] ?? []) {
             if (label[j] !== 0) continue;
-            links.push({ from: f, to: j, dist: dist[f]?.[j] ?? 0 });
+            links.push({ from: f, to: j });
             if (!joining.has(j)) {
               joining.add(j);
               joined.push(j);
@@ -157,12 +164,14 @@ export const denseNeighborhoodAlgorithm = async (
         const missed = nearestOutside(frontier, (b) => label[b] === 0 && !joining.has(b));
 
         for (const j of joined) label[j] = cluster;
-        const total = label.filter((v) => v === cluster).length;
 
         if (!(await gate())) return false;
         await ctx.emit({
           type: 'spread',
-          payload: { cluster, links, rejected: missed === null ? null : missed.dist, total },
+          payload: {
+            links,
+            rejected: missed === null ? null : { from: missed.from, to: missed.to },
+          },
         });
         frontier = joined;
       }
@@ -172,15 +181,12 @@ export const denseNeighborhoodAlgorithm = async (
       const gap = nearestOutside(members, (b) => label[b] === 0);
       if (gap !== null) {
         if (!(await gate())) return false;
-        await ctx.emit({ type: 'blocked', payload: gap });
+        await ctx.emit({ type: 'blocked', payload: { from: gap.from, to: gap.to } });
       }
     }
 
-    const sizes: number[] = [];
-    for (let c = 1; c <= cluster; c += 1) sizes.push(label.filter((v) => v === c).length);
-
     if (!(await gate())) return false;
-    await ctx.emit({ type: 'done', payload: { sizes } });
+    await ctx.emit({ type: 'done' });
     return true;
   }
 

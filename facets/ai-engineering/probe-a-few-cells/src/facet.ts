@@ -38,7 +38,9 @@ export const probeAFewCellsFacet: FacetJson = {
     pt: 'A consulta é comparada apenas com pontos das células mais próximas; os das células não abertas nunca são tocados.',
   },
   algorithm: 'module:probeAFewCells',
-  projector: 'module:probeAFewCellsProjector',
+  // 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든 셈으로
+  // 얻으므로 띠로 임의의 자리에 갈 수 있다 (S-scene).
+  scene: 'module:probeAFewCellsScene',
   initialData: {
     type: 'probe-a-few-cells',
     points: [
@@ -59,7 +61,7 @@ export const probeAFewCellsFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'probe-a-few-cells-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.query': {

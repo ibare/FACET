@@ -8,7 +8,7 @@
  * 않는다. 아래 initialData 의 구조에서 algorithm 이 셈해 낸다.
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const twoColorConflictFacet: FacetJson = {
   id: 'facet:twoColorConflict',
@@ -37,7 +37,9 @@ export const twoColorConflictFacet: FacetJson = {
     pt: 'Alterne duas cores num anel de cinco vértices e veja a última aresta falhar.',
   },
   algorithm: 'module:twoColorConflict',
-  projector: 'module:twoColorConflictProjector',
+  // 명령이 아니라 상태로 화면을 만든다 — 그래야 띠가 임의의 걸음으로 갈 수 있다
+  // (S-scene). projector 와 둘 다 선언하면 러너가 세우지 않는다.
+  scene: 'module:twoColorConflictScene',
   initialData: {
     type: 'two-color-ring',
     nodes: ['P', 'Q', 'R', 'S', 'T'],
@@ -56,7 +58,8 @@ export const twoColorConflictFacet: FacetJson = {
     stage: { type: 'two-color-conflict-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      // 장면 방식의 조각은 띠를 단다. 띠와 advance 를 함께 두지 않는다 (S-piece).
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {

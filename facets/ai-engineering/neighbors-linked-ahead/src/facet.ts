@@ -38,7 +38,9 @@ export const neighborsLinkedAheadFacet: FacetJson = {
     pt: 'Se os caminhos já existem, dá para caminhar até a resposta em vez de medir tudo.',
   },
   algorithm: 'module:neighborsLinkedAhead',
-  projector: 'module:neighborsLinkedAheadProjector',
+  // 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든 셈으로
+  // 얻으므로 띠를 끌어 아무 자리로나 갈 수 있다 (S-scene).
+  scene: 'module:neighborsLinkedAheadScene',
   initialData: {
     type: 'neighbors-linked-ahead',
     points: [
@@ -75,7 +77,7 @@ export const neighborsLinkedAheadFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'neighbors-linked-ahead-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.begin': {
@@ -125,6 +127,18 @@ export const neighborsLinkedAheadFacet: FacetJson = {
       hi: 'कोई पड़ोसी और निकट नहीं है। चाल यहीं रुक जाती है।',
       id: 'Tidak ada tetangga yang lebih dekat. Langkah berhenti di sini.',
       pt: 'Nenhum vizinho está mais perto. A caminhada para aqui.',
+    },
+    'label.query': {
+      en: 'query',
+      ko: '질의',
+      ja: 'クエリ',
+      zh: '查询',
+      ar: 'الاستعلام',
+      es: 'consulta',
+      fr: 'requête',
+      hi: 'क्वेरी',
+      id: 'kueri',
+      pt: 'consulta',
     },
   },
 };

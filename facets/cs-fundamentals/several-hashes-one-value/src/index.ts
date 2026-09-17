@@ -8,12 +8,12 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { severalHashesOneValueAlgorithm, type SeveralHashesOneValueData } from './algorithm.js';
-import { severalHashesOneValueProjector } from './projector.js';
+import { severalHashesOneValueScene } from './scene.js';
 import { severalHashesOneValueIRs } from './irs.js';
 import { severalHashesOneValueStageView } from './several-hashes-one-value-stage.js';
 import { severalHashesOneValueFacet } from './facet.js';
@@ -21,13 +21,19 @@ import { severalHashesOneValueDescription } from './description.js';
 
 export {
   severalHashesOneValueAlgorithm,
-  severalHashesOneValueProjector,
+  severalHashesOneValueScene,
   severalHashesOneValueIRs,
   severalHashesOneValueStageView,
   severalHashesOneValueFacet,
   severalHashesOneValueDescription,
 };
 export { hashesOf, type KeyHashes } from './algorithm.js';
+export type {
+  SeveralHashesOneValueScene,
+  HashRow,
+  HashStep,
+  HashCaption,
+} from './scene.js';
 export type { SeveralHashesOneValueData };
 
 export function registerSeveralHashesOneValue(): void {
@@ -36,7 +42,7 @@ export function registerSeveralHashesOneValue(): void {
     severalHashesOneValueAlgorithm,
     { mechanismKind: 'reactive' },
   );
-  registerProjector('severalHashesOneValueProjector', severalHashesOneValueProjector);
+  registerScenePlan('severalHashesOneValueScene', severalHashesOneValueScene);
   for (const ir of severalHashesOneValueIRs) registerIR(ir.id, ir);
   registerView('several-hashes-one-value-stage', severalHashesOneValueStageView);
   registerFacets([severalHashesOneValueFacet]);

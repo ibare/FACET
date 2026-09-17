@@ -6,29 +6,40 @@
  *
  * ── 이벤트 (전부 이 facet 고유 어휘. `done` 만 표준. silent 는 없다)
  *
- *   align    { shift: number }
- *            패턴을 자리 `shift` 에 놓는다. 첫 자리가 아니면 한 칸 미끄러진다.
+ *   align    {}
+ *            패턴을 다음 자리에 놓는다. 첫 자리가 아니면 한 칸 미끄러진다.
+ *            **몇 칸 밀렸는지는 싣지 않는다** — 자리는 올 때마다 하나씩 쌓이므로
+ *            장면이 쌓아 둔 자리 목록의 길이가 곧 그 수다.
  *
- *   compare  { shift: number; offset: number; hit: boolean }
- *            패턴의 `offset` 번째 글자를 텍스트의 `shift + offset` 번째와 견줬다.
- *            `hit` 이 거짓이면 이 자리는 거기서 끝난다.
+ *   compare  { hit: boolean }
+ *            지금 자리에서 앞에서부터 다음 글자를 견줬다. `hit` 이 거짓이면 이
+ *            자리는 거기서 끝난다. **몇 번째 글자인지는 싣지 않는다** — 그 자리의
+ *            짚은 목록 길이가 곧 그 수다.
  *
- *   retreat  { shift: number; matched: number; comparisons: number }
- *            어긋나서 도로 물러난다. `matched` 는 버리게 된 글자 수 (0 일 수 있다).
+ *            `hit` 만은 싣는다. 글자 하나를 견준 결과는 걸음이 내리는 판정이고,
+ *            장면이 그것을 다시 셈하면 이 조각의 알고리즘을 통째로 되풀이하는 꼴이
+ *            되어 발신이 장식이 된다.
  *
- *   found    { shift: number; comparisons: number }
+ *   retreat  {}
+ *            어긋나서 도로 물러난다. 버리게 된 글자 수는 그 자리의 자취가 말한다.
+ *
+ *   found    {}
  *            패턴이 통째로 맞았다. 여기서 멈추지 않고 남은 자리도 마저 훑는다.
  *
  *   rewind   {}
  *            처음으로 되감는다. 자동 재생이 끝난 뒤 `advance` 를 받았을 때만 나간다.
  *
- *   done     { comparisons: number }
- *            더 밀 자리가 없다. `comparisons` 는 처음부터 여기까지 견준 횟수.
+ *   done     {}
+ *            더 밀 자리가 없다.
  *
- * ── 셈
+ * ── 셈은 여기서 하지 않는다
  *
- * 맞은 글자 수와 견준 횟수는 이 파일이 직접 센다. 선언에 적어 두고 읽어 오는
- * 것이 아니다. `ctx.metric` 은 부르지 않는다 — 조각은 계기를 두지 않는다 (S-piece).
+ * 맞은 글자 수도 견준 횟수도 이 파일이 세지 않는다. 둘 다 화면에 선 자취의
+ * **구조에서 세지는 것**이라 (`scene.ts` 의 `matchedOf` · `comparisonsOf`), 여기서
+ * 함께 세면 같은 물음에 답이 둘이 되어 언젠가 갈린다. 화면에 뜨는 수와 그림이 같은
+ * 자료를 쓰게 하는 것이 이 갈래의 요점이다.
+ *
+ * `ctx.metric` 도 부르지 않는다 — 조각은 계기를 두지 않는다 (S-piece).
  */
 
 import type { FacetContext, ReactiveContext, ReactiveInputEvent } from '@ffacet/core/runtime';
@@ -87,7 +98,6 @@ async function sweep(
   const m = pattern.length;
   if (m === 0 || text.length < m) return;
 
-  let comparisons = 0;
   let first = true;
 
   for (let shift = 0; shift + m <= text.length; shift += 1) {
@@ -95,28 +105,29 @@ async function sweep(
     first = false;
     if (ctx.cancelled) return;
 
-    await ctx.emit({ type: 'align', payload: { shift } });
+    await ctx.emit({ type: 'align' });
 
     // 앞에서부터 한 글자씩. 어긋나는 순간 멈춘다 — 뒤는 보지도 않는다.
-    let matched = 0;
+    let broke = false;
     for (let offset = 0; offset < m; offset += 1) {
       const hit = text[shift + offset] === pattern[offset];
-      comparisons += 1;
-      await ctx.emit({ type: 'compare', payload: { shift, offset, hit } });
-      if (!hit) break;
-      matched += 1;
+      await ctx.emit({ type: 'compare', payload: { hit } });
+      if (!hit) {
+        broke = true;
+        break;
+      }
     }
 
-    if (matched === m) {
-      await ctx.emit({ type: 'found', payload: { shift, comparisons } });
+    if (broke) {
+      // 여기까지 맞힌 것을 통째로 버리고 한 칸만 민다.
+      await ctx.emit({ type: 'retreat' });
     } else {
-      // 여기까지 맞힌 `matched` 글자를 통째로 버리고 한 칸만 민다.
-      await ctx.emit({ type: 'retreat', payload: { shift, matched, comparisons } });
+      await ctx.emit({ type: 'found' });
     }
     if (ctx.cancelled) return;
   }
 
-  await ctx.emit({ type: 'done', payload: { comparisons } });
+  await ctx.emit({ type: 'done' });
 }
 
 /**

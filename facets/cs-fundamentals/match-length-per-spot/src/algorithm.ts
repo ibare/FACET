@@ -10,19 +10,24 @@
  *
  * ── 이벤트 어휘 (facet 고유. 전부 걸음의 경계이므로 silent 는 하나도 없다)
  *
- *   whole-prefix  { index: number; value: number }
+ *   whole-prefix  payload 없음
  *       맨 앞 자리. 문자열 전체가 곧 맨 앞과의 겹침이라 길이를 그대로 놓는다.
+ *       그 길이는 장면이 바탕 문자열에서 잰다 — 화면의 칸 수와 한 출처가 된다.
  *
- *   mirror        { index: number; from: number; value: number }
+ *   mirror        { from: number; value: number; capped: boolean }
  *       구간 안이라 거울 자리 from 의 답을 빌려 온다. value 는 실제로 빌린 만큼 —
  *       구간 끝을 넘는 몫은 빌리지 않으므로 from 의 답보다 작을 수 있다.
+ *       capped 가 참이면 빌린 만큼이 구간 끝에 딱 닿아, 그 너머를 이어서 견줘야
+ *       한다. 이 갈래가 없으면 답이 틀리므로 걸음이 내리는 판정으로 싣는다.
  *
- *   scan          { index: number; start: number; value: number; mismatch: boolean }
- *       구간 밖을 실제로 견준다. start 부터 value-1 까지는 같았고, mismatch 가
- *       참이면 value 자리에서 어긋나 멈췄다 (거짓이면 문자열이 끝나 멈췄다).
+ *   scan          { value: number }
+ *       실제로 글자를 견줬고 value 글자가 같았다. 어디서부터 견줬는지는 장면이
+ *       바로 앞 mirror 에서 알고, 어긋나 멈췄는지는 index + value 가 문자열 끝에
+ *       닿았는지로 안다 — 둘 다 싣지 않는다.
  *
- *   window        { left: number; right: number }
- *       겹침이 여태보다 오른쪽에 닿아 구간을 그리로 옮긴다.
+ *   window        payload 없음
+ *       겹침이 여태보다 오른쪽에 닿아 구간을 그리로 옮긴다. 새 구간의 양 끝은
+ *       방금 답이 찬 자리와 그 값에서 나오므로 장면이 셈한다.
  *
  *   rewind        payload 없음
  *       자동 재생을 마친 뒤 손으로 짚어 보려고 처음으로 되감는다.
@@ -85,7 +90,7 @@ export async function matchLengthPerSpotAlgorithm(
 
     value[0] = n;
     if (!(await gate())) return false;
-    await ctx.emit({ type: 'whole-prefix', payload: { index: 0, value: n } });
+    await ctx.emit({ type: 'whole-prefix' });
     if (ctx.cancelled) return false;
 
     // 아직 겹침 구간이 없다 — right 가 left 보다 작으면 빈 구간이다.
@@ -101,8 +106,11 @@ export async function matchLengthPerSpotAlgorithm(
         const from = i - left;
         // 구간 끝을 넘는 만큼은 빌리지 않는다.
         k = Math.min(limit, value[from]);
+        // 빌린 만큼이 구간 끝에 딱 닿았나. 닿았으면 그 너머는 확인된 적이 없어
+        // 이어서 글자를 견줘야 한다 — 이 갈래가 없으면 틀린 답을 낸다.
+        const capped = k >= limit;
         if (!(await gate())) return false;
-        await ctx.emit({ type: 'mirror', payload: { index: i, from, value: k } });
+        await ctx.emit({ type: 'mirror', payload: { from, value: k, capped } });
         if (ctx.cancelled) return false;
       }
 
@@ -111,12 +119,8 @@ export async function matchLengthPerSpotAlgorithm(
       if (!inside || k >= limit) {
         let m = k;
         while (i + m < n && text[m] === text[i + m]) m += 1;
-        const mismatch = i + m < n;
         if (!(await gate())) return false;
-        await ctx.emit({
-          type: 'scan',
-          payload: { index: i, start: k, value: m, mismatch },
-        });
+        await ctx.emit({ type: 'scan', payload: { value: m } });
         if (ctx.cancelled) return false;
         k = m;
       }
@@ -127,7 +131,7 @@ export async function matchLengthPerSpotAlgorithm(
         left = i;
         right = i + k - 1;
         if (!(await gate())) return false;
-        await ctx.emit({ type: 'window', payload: { left, right } });
+        await ctx.emit({ type: 'window' });
         if (ctx.cancelled) return false;
       }
     }

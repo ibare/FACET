@@ -7,10 +7,13 @@
  *
  * 진행 모델은 reactive — mount 하면 스스로 표를 채우기 시작하고, 걸음 간격은
  * `initialData.stepMs` 가 정한다.
+ *
+ * 화면은 장면(Scene) 방식이라 `projector` 대신 `scene` 을 선언한다. 어느 걸음의
+ * 화면이든 셈으로 얻으므로 컨트롤은 `CONTROL_SET.pieceScrub` — 한 걸음씩 미는
+ * 단추 대신 끌어 볼 수 있는 띠다 (S-piece 의 화면 방식 표).
  */
 
-import type { FacetJson } from '@ffacet/core/runtime';
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const bottomUpTableFacet: FacetJson = {
   id: 'facet:bottomUpTable',
@@ -39,7 +42,7 @@ export const bottomUpTableFacet: FacetJson = {
     pt: 'Preencha a tabela pela ponta pequena e a recursão simplesmente some',
   },
   algorithm: 'module:bottomUpTable',
-  projector: 'module:bottomUpTableProjector',
+  scene: 'module:bottomUpTableScene',
   initialData: {
     type: 'bottom-up-table',
     n: 5,
@@ -97,9 +100,6 @@ export const bottomUpTableFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'bottom-up-table-stage' },
-    controls: {
-      type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
-    },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
 };

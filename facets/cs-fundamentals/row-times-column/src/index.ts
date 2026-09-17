@@ -9,12 +9,12 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { rowTimesColumnAlgorithm, type RowTimesColumnData } from './algorithm.js';
-import { rowTimesColumnProjector } from './projector.js';
+import { rowTimesColumnScene } from './scene.js';
 import { rowTimesColumnStageView } from './row-times-column-stage.js';
 import { rowTimesColumnIRs } from './irs.js';
 import { rowTimesColumnFacet } from './facet.js';
@@ -22,17 +22,18 @@ import { rowTimesColumnDescription } from './description.js';
 
 export {
   rowTimesColumnAlgorithm,
-  rowTimesColumnProjector,
+  rowTimesColumnScene,
   rowTimesColumnStageView,
   rowTimesColumnIRs,
   rowTimesColumnFacet,
   rowTimesColumnDescription,
 };
 export type { RowTimesColumnData };
+export type { RowTimesColumnScene } from './scene.js';
 
 export function registerRowTimesColumn(): void {
   registerAlgorithm('rowTimesColumn', rowTimesColumnAlgorithm, { mechanismKind: 'reactive' });
-  registerProjector('rowTimesColumnProjector', rowTimesColumnProjector);
+  registerScenePlan('rowTimesColumnScene', rowTimesColumnScene);
   for (const ir of rowTimesColumnIRs) registerIR(ir.id, ir);
   registerView('row-times-column-stage', rowTimesColumnStageView);
   registerFacets([rowTimesColumnFacet]);

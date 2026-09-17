@@ -7,10 +7,9 @@
  *
  *   'descend'
  *     한 나무가 층을 하나 내려가 그 층까지 덮은 잎 수를 발신한다.
- *     payload: { treeId: 'branchA' | 'branchB'; level: number; covered: number; arrived: boolean }
+ *     payload: { treeId: 'branchA' | 'branchB'; level: number }
  *       - level    지금 내려간 층 (뿌리 = 1층).
- *       - covered  이 층이 덮는 잎 수 = branchCount^(level-1).
- *       - arrived  이 층에서 covered 가 처음 target 이상이 됐는가 (그 나무의 마지막 층).
+ *       층이 덮는 잎 수와 마지막 층인지는 싣지 않는다 — 화면이 사다리에서 센다.
  *     target: `tree:<treeId>`. silent 아님 — 매 층이 step boundary.
  *
  *   'rewind'
@@ -19,7 +18,7 @@
  *
  *   'result'
  *     두 나무가 모두 목표에 닿은 뒤, 최종 층수를 비교해 발신한다.
- *     payload: { levelsA: number; levelsB: number }. silent 아님.
+ *     payload 없음. 두 나무의 층수는 화면이 사다리에서 센다. silent 아님.
  *
  * 표준 `done` 은 쓰지 않는다 — 이 조각의 결론은 "다 됐다" 가 아니라 "몇 층
  * 내려갔는가의 격차" 이고, 그 결론은 `result` 페이로드의 두 숫자가 이미 담고
@@ -51,6 +50,14 @@ type TreeId = 'branchA' | 'branchB';
  * children^(h-1) >= target 이 되는 첫 층 h 와 그 층이 덮는 잎 수를 찾는다.
  * 뿌리를 1층으로 센다 — 사양의 표와 동일한 규칙.
  */
+/**
+ * 몇 층까지 내려가야 목표를 덮는가.
+ *
+ * **이 셈의 몫은 "걸음을 몇 개 낼지" 하나다.** 화면이 그리는 사다리는 `scene.ts` 의
+ * `ladder` 가 따로 셈하고, 층수·층별 잎 수·결론의 두 수가 전부 거기서 나온다. 둘이
+ * 갈리면 `reduce` 의 자르기가 마지막 층을 조용히 삼키므로 (예외도 로그도 없다) 셈을
+ * 고칠 일이 생기면 **양쪽을 함께** 본다.
+ */
 function levelsToReach(children: number, target: number): { levels: number; covered: number } {
   let level = 1;
   let covered = 1;
@@ -75,24 +82,29 @@ export async function heightStaysLow(ctx: FacetContext<HeightStaysLowData>): Pro
   const b = levelsToReach(branchB, target);
   const maxLevel = Math.max(a.levels, b.levels);
 
-  /** 전체 걸음(level)에서, 아직 목표에 닿지 않은 나무마다 descend 를 하나씩 발신. */
+  /**
+   * 전체 걸음(level)에서, 아직 목표에 닿지 않은 나무마다 descend 를 하나씩 발신.
+   *
+   * 층이 덮는 잎 수도, 그 층이 마지막인지도 싣지 않는다. 화면이 그 둘을 사다리에서
+   * 다시 세므로 (`scene.ts` 의 `ladder`) 여기서도 세면 **셈이 둘이 되고, 갈리는 날
+   * 화면 안에서 두 수가 다툰다.** 걸음이 말하는 것은 "어느 나무가 몇 층까지
+   * 내려갔나" 하나다.
+   */
   async function emitLevel(level: number): Promise<void> {
     if (level <= a.levels) {
-      const covered = level === a.levels ? a.covered : Math.pow(branchA, level - 1);
       if (ctx.cancelled) return;
       await ctx.emit({
         type: 'descend',
         target: 'tree:branchA',
-        payload: { treeId: 'branchA' as TreeId, level, covered, arrived: level === a.levels },
+        payload: { treeId: 'branchA' as TreeId, level },
       });
     }
     if (level <= b.levels) {
-      const covered = level === b.levels ? b.covered : Math.pow(branchB, level - 1);
       if (ctx.cancelled) return;
       await ctx.emit({
         type: 'descend',
         target: 'tree:branchB',
-        payload: { treeId: 'branchB' as TreeId, level, covered, arrived: level === b.levels },
+        payload: { treeId: 'branchB' as TreeId, level },
       });
     }
   }
@@ -104,7 +116,7 @@ export async function heightStaysLow(ctx: FacetContext<HeightStaysLowData>): Pro
     if (!(await pause(reactive, stepMs))) return;
   }
   if (ctx.cancelled) return;
-  await ctx.emit({ type: 'result', payload: { levelsA: a.levels, levelsB: b.levels } });
+  await ctx.emit({ type: 'result' });
 
   // ── 자동 재생 종료 뒤 advance 로 한 걸음씩 다시 짚기.
   let manualLevel = 0; // 0 = 아직 되감기 전
@@ -130,7 +142,7 @@ export async function heightStaysLow(ctx: FacetContext<HeightStaysLowData>): Pro
     await emitLevel(manualLevel);
     if (manualLevel >= maxLevel) {
       if (ctx.cancelled) return;
-      await ctx.emit({ type: 'result', payload: { levelsA: a.levels, levelsB: b.levels } });
+      await ctx.emit({ type: 'result' });
     }
   }
 }

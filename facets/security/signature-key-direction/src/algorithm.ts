@@ -15,15 +15,18 @@
  * 진행 동력은 ReactiveMechanism. 컨트롤바 없이 스스로 시작하고 걸음 간격도
  * 스스로 정한다 (ctx.sleep).
  *
- * 식별자 (C1): 흐름을 가리키는 곳이 payload 뿐이라 target 을 쓰지 않는다.
+ * 식별자 (C1): 가리킬 것이 없어 target 을 쓰지 않는다. 러너도 장면도
+ * `event.target` 을 보지 않으므로 싣는 순간 죽은 값이 된다.
  *
- * 이벤트 (C2) — 전부 facet 로컬 (StandardEventType 미포함):
- *   - init             payload: {}
- *   - rewind payload: {}   손으로 짚기 시작할 때 화면을 되감는다
- *   - encryption-flow  payload: {}   누구나 잠그고 주인만 여는 흐름
- *   - signature-flow   payload: {}   주인만 만들고 누구나 확인하는 흐름
- *   - mark-keys        payload: {}   두 흐름에서 키가 교차했음을 잇는다
- *   - mark-who         payload: {}   "한 사람" 이 어느 쪽에 서 있는지
+ * 이벤트 (C2) — 전부 facet 로컬 (StandardEventType 미포함).
+ * **어느 것도 payload 를 싣지 않는다** — 이 조각은 값이 아니라 배치를 말하고,
+ * 화면이 아는 것은 "어디까지 세웠나" 뿐이라 장면이 스스로 센다 (프로토콜 4 절):
+ *   - init             판을 연다
+ *   - rewind           손으로 짚기 시작할 때 화면을 되감는다
+ *   - encryption-flow  누구나 잠그고 주인만 여는 흐름
+ *   - signature-flow   주인만 만들고 누구나 확인하는 흐름
+ *   - mark-keys        두 흐름에서 키가 교차했음을 잇는다
+ *   - mark-who         "한 사람" 이 어느 쪽에 서 있는지
  *
  * 메트릭 (C5): 없다.
  */
@@ -86,7 +89,7 @@ export async function signatureKeyDirection(
     return ok && !ctx.cancelled;
   }
 
-  await ctx.emit({ type: 'init', payload: {} });
+  await ctx.emit({ type: 'init' });
 
   // 네 걸음. 두 흐름을 각각 세운 뒤에야 교차를 말할 수 있다.
   for (let i = 0; i < STEP_COUNT; i++) {

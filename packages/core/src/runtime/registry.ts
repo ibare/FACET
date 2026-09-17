@@ -19,9 +19,11 @@ type AlgorithmEntry = {
 
 const algorithms = new Map<string, AlgorithmEntry>();
 const projectors = new Map<string, ProjectorFactory>();
+const scenePlans = new Map<string, ScenePlan>();
 const facets = new Map<string, FacetJson>();
 
 import type { IR, Transpiler } from '../types/ir.js';
+import type { ScenePlan } from './scene.js';
 
 const irs = new Map<string, IR>();
 const transpilers = new Map<string, Transpiler>();
@@ -68,6 +70,20 @@ export function registerProjector(name: string, factory: ProjectorFactory): void
 
 export function getProjector(name: string): ProjectorFactory | undefined {
   return projectors.get(name);
+}
+
+/**
+ * 장면 설계 등록 (`runtime/scene.ts`).
+ *
+ * projector 를 대신한다 — 조각이 이벤트를 화면 명령이 아니라 **장면 상태**로
+ * 옮기면, 어느 걸음의 화면이든 셈으로 얻을 수 있다.
+ */
+export function registerScenePlan<S = unknown>(name: string, plan: ScenePlan<S>): void {
+  scenePlans.set(name, plan as ScenePlan);
+}
+
+export function getScenePlan(name: string): ScenePlan | undefined {
+  return scenePlans.get(name);
 }
 
 export function registerFacets(jsons: FacetJson[]): void {
@@ -156,6 +172,7 @@ export function getDescription(id: string): string | undefined {
 }
 
 export function clearRegistry(): void {
+  scenePlans.clear();
   algorithms.clear();
   projectors.clear();
   facets.clear();

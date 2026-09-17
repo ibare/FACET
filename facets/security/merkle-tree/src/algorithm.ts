@@ -18,12 +18,17 @@
  * 식별자 (C1): 노드를 가리키는 곳이 payload 뿐이라 target 을 쓰지 않는다.
  *
  * 이벤트 (C2) — 전부 facet 로컬 (StandardEventType 미포함):
- *   - init          payload: { algorithmLabel, before, after, changedLeaf }
+ *   - init          payload: { before, after }   트리 두 벌을 값으로 넘긴다
  *   - rewind payload: {}   손으로 짚기 시작할 때 화면을 되감는다
  *   - build-leaves  payload: {}   잎마다 자기 해시가 붙는다
  *   - combine-up    payload: {}   둘씩 묶여 위로 합쳐져 꼭대기 값이 남는다
  *   - change-leaf   payload: {}   잎 하나가 바뀐다
  *   - mark-path     payload: {}   꼭대기까지 한 줄만 갈리고 나머지는 그대로다
+ *
+ * 어느 잎이 바뀌었는지는 싣지 않는다. 그것은 두 벌을 견주면 나오는 수인데, 받아
+ * 적으면 화면이 "여기가 갈렸다" 를 자료가 아니라 선언에서 얻게 되어 그림과 결론이
+ * 두 출처가 된다. 장면이 센다 (`scene.ts` 의 `leafHashOf` · `midValueOf`).
+ * 해시 함수 이름도 마찬가지로 싣지 않는다 — 화면이 읽지 않는 값이었다.
  *
  * 메트릭 (C5): 없다.
  */
@@ -57,14 +62,10 @@ const STEP_COUNT = 4;
 
 export type MerkleTreeFacetData = {
   type: 'merkle-tree';
-  /** 화면에 인쇄할 해시 함수 이름. */
-  algorithmLabel: string;
   /** 바뀌기 전의 트리. */
   before: MerkleSnapshot;
   /** 잎 하나가 바뀐 뒤의 트리. */
   after: MerkleSnapshot;
-  /** 바뀐 잎의 위치 (0-based). */
-  changedLeaf: number;
   /**
    * 한 걸음 사이 머무는 간격 ms.
    *
@@ -77,7 +78,7 @@ export async function merkleTree(
   ctxBase: FacetContext<MerkleTreeFacetData>,
 ): Promise<void> {
   const ctx = ctxBase as ReactiveContext<MerkleTreeFacetData>;
-  const { algorithmLabel, before, after, changedLeaf, stepMs } = ctx.data;
+  const { before, after, stepMs } = ctx.data;
 
   /**
    * 한 걸음을 실제로 발신한다. 자동 재생과 손으로 짚기가 같은 경로를 쓴다.
@@ -115,7 +116,7 @@ export async function merkleTree(
 
   await ctx.emit({
     type: 'init',
-    payload: { algorithmLabel, before, after, changedLeaf },
+    payload: { before, after },
   });
 
   // 네 걸음. 접히는 것을 먼저 보여야 한 줄만 갈린다는 말이 뜻을 갖는다.

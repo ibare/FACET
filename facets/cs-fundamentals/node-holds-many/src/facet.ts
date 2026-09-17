@@ -39,7 +39,7 @@ export const nodeHoldsManyFacet: FacetJson = {
     pt: 'Um único nó guarda várias chaves.',
   },
   algorithm: 'module:nodeHoldsMany',
-  projector: 'module:nodeHoldsManyProjector',
+  scene: 'module:nodeHoldsManyScene',
   initialData: {
     type: 'node-holds-many',
     stepMs: 720,
@@ -56,7 +56,7 @@ export const nodeHoldsManyFacet: FacetJson = {
     stage: { type: 'node-holds-many-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {

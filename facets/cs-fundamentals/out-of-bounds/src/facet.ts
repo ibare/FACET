@@ -10,7 +10,7 @@
  * 셀 것은 없다.
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const outOfBoundsFacet: FacetJson = {
   id: 'facet:outOfBounds',
@@ -39,7 +39,7 @@ export const outOfBoundsFacet: FacetJson = {
     pt: 'Para o que aponta realmente um índice além do fim do arranjo.',
   },
   algorithm: 'module:outOfBounds',
-  projector: 'module:outOfBoundsProjector',
+  scene: 'module:outOfBoundsScene',
 
   initialData: {
     type: 'out-of-bounds',
@@ -59,7 +59,11 @@ export const outOfBoundsFacet: FacetJson = {
 
   blocks: {
     stage: { type: 'out-of-bounds-stage' },
-    controls: { type: 'control-bar', controls: [CONTROL.replay, CONTROL.advance] },
+    controls: {
+      type: 'control-bar',
+      // 스크럽 띠. 장면 방식이라 어느 걸음이든 셈으로 얻으므로 끌어 볼 수 있다.
+      controls: CONTROL_SET.pieceScrub,
+    },
   },
 
   messages: {

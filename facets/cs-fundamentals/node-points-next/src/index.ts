@@ -9,7 +9,7 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
@@ -17,27 +17,31 @@ import { nodePointsNextAlgorithm } from './algorithm.js';
 import { nodePointsNextDescription } from './description.js';
 import { nodePointsNextFacet } from './facet.js';
 import { nodePointsNextIRs } from './irs.js';
-import { nodePointsNextProjector } from './projector.js';
+import { nodePointsNextScene } from './scene.js';
 import { nodePointsNextStageView } from './node-points-next-stage.js';
 
 export { nodePointsNextAlgorithm } from './algorithm.js';
 export type { NodePointsNextData, NodePointsNextNode } from './algorithm.js';
-export { nodePointsNextProjector } from './projector.js';
+export { nodePointsNextScene } from './scene.js';
+export type {
+  NodePointsNextScene,
+  NodePointsNextSceneNode,
+  NodePointsNextCaption,
+  NodePointsNextCollected,
+  NodePointsNextLink,
+  NodePointsNextStep,
+} from './scene.js';
 export { nodePointsNextIRs } from './irs.js';
 export { nodePointsNextFacet } from './facet.js';
 export { nodePointsNextDescription } from './description.js';
 export { nodePointsNextStageView } from './node-points-next-stage.js';
-export type {
-  NodePointsNextStageInit,
-  NodePointsNextStageNode,
-} from './node-points-next-stage.js';
 
 export function registerNodePointsNext(): void {
   registerAlgorithm('nodePointsNext', nodePointsNextAlgorithm, {
     // 조각은 mount 시 스스로 시작하고 걸음 간격을 스스로 정한다 (S-piece).
     mechanismKind: 'reactive',
   });
-  registerProjector('nodePointsNextProjector', nodePointsNextProjector);
+  registerScenePlan('nodePointsNextScene', nodePointsNextScene);
   for (const ir of nodePointsNextIRs) registerIR(ir.id, ir);
   registerView('node-points-next-stage', nodePointsNextStageView);
   registerFacets([nodePointsNextFacet]);

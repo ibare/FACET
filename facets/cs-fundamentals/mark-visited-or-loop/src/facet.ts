@@ -48,7 +48,7 @@ export const markVisitedOrLoopFacet: FacetJson = {
     pt: 'Sem marca nos lugares já vistos, o percurso gira para sempre em torno dos mesmos três',
   },
   algorithm: 'module:markVisitedOrLoop',
-  projector: 'module:markVisitedOrLoopProjector',
+  scene: 'module:markVisitedOrLoopScene',
   initialData: {
     type: 'graph-walk',
     nodes: ['A', 'B', 'C', 'D'],
@@ -70,8 +70,9 @@ export const markVisitedOrLoopFacet: FacetJson = {
     stage: { type: 'mark-visited-or-loop-stage' },
     controls: {
       type: 'control-bar',
-      // 다시 보기 · 한 걸음. 둘 다 눌러야 완성되는 조작이 아니다 (S-piece).
-      controls: CONTROL_SET.piece,
+      // 다시 보기 · 띠. 화면을 명령이 아니라 장면으로 만드는 조각이라 어느 걸음으로든
+      // 곧장 갈 수 있다 (S-piece · S-scene).
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {

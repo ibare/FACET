@@ -7,15 +7,17 @@
  *
  *   walk-start    payload: { node: number }
  *                 새 질의 시작 — 시작 자리에 마커를 놓는다.
- *   hop           payload: { from: number; to: number }
- *                 자리 from 이 가리키는 자리 to 로 마커가 오른다 (한 걸음).
- *   root-reached  payload: { start: number; node: number; groupIndex: number }
- *                 자기 자신을 가리키는 자리에 닿았다 — 뿌리. start 는 이 걸음이
- *                 출발한 자리, node 는 뿌리(=이름), groupIndex 는 뿌리가 처음
- *                 발견된 순서(0, 1, ...)로 시각적 색 배정에만 쓰인다.
- *   compare       payload: { a: number; b: number; same: boolean }
- *                 앞선 질의들의 뿌리를 첫 질의의 뿌리와 비교 — 같은 이름에
- *                 닿았으면 한 무리, 다르면 남남.
+ *   hop           payload: { from: number }
+ *                 자리 from 을 떠나 그것이 가리키는 자리로 마커가 오른다 (한 걸음).
+ *                 **닿을 곳은 싣지 않는다** — `parent[from]` 이 정본이고, 화면의
+ *                 곡선도 같은 자료에서 그려진다. 두 출처에서 오면 언젠가 갈린다.
+ *   root-reached  payload 없음.
+ *                 자기 자신을 가리키는 자리에 닿았다 — 뿌리. 출발 자리도 뿌리도
+ *                 올라온 길의 양 끝이고, 무리 번호도 이름이 드러난 차례라 장면이
+ *                 스스로 셈한다 (`scene.ts`).
+ *   compare       payload: { a: number; b: number }
+ *                 앞선 질의들의 뿌리를 첫 질의의 뿌리와 비교. 한 무리인지는 두
+ *                 자리가 닿은 이름이 같은지이므로 장면이 셈한다.
  *   rewind        payload 없음. 자동 재생이 끝난 뒤 첫 advance 입력에서, 걸음을
  *                 처음부터 다시 보여주기 전에 화면을 지운다.
  *
@@ -38,9 +40,9 @@ export type FindRootData = {
 
 type Step =
   | { kind: 'walk-start'; node: number }
-  | { kind: 'hop'; from: number; to: number }
-  | { kind: 'root-reached'; start: number; node: number; groupIndex: number }
-  | { kind: 'compare'; a: number; b: number; same: boolean };
+  | { kind: 'hop'; from: number }
+  | { kind: 'root-reached' }
+  | { kind: 'compare'; a: number; b: number };
 
 /** 가리킴을 따라가는 루프의 상한 — 데이터에 고리가 있어도 여기서 멈춘다. */
 const MAX_HOPS_GUARD = 64;
@@ -51,33 +53,27 @@ const MAX_HOPS_GUARD = 64;
  */
 function buildSteps(data: FindRootData): Step[] {
   const steps: Step[] = [];
-  const groupIndexOfRoot = new Map<number, number>();
-  const rootOfStart = new Map<number, number>();
 
   for (const start of data.queries) {
     steps.push({ kind: 'walk-start', node: start });
     let cur = start;
     let guard = 0;
     while (data.parent[cur] !== cur) {
-      const next = data.parent[cur];
-      steps.push({ kind: 'hop', from: cur, to: next });
-      cur = next;
+      steps.push({ kind: 'hop', from: cur });
+      cur = data.parent[cur];
       guard += 1;
       if (guard > MAX_HOPS_GUARD) break; // 고리 방지 — 여기까지 왔으면 데이터 이상.
     }
-    if (!groupIndexOfRoot.has(cur)) groupIndexOfRoot.set(cur, groupIndexOfRoot.size);
-    steps.push({ kind: 'root-reached', start, node: cur, groupIndex: groupIndexOfRoot.get(cur)! });
-    rootOfStart.set(start, cur);
+    steps.push({ kind: 'root-reached' });
   }
 
   // 첫 질의를 기준으로 나머지 질의들과 비교 — 사양의 "3과 6", "3과 2" 비교와 동형.
+  // 한 무리인지 아닌지는 여기서 셈하지 않는다. 두 자리가 닿은 이름은 장면이 이미
+  // 쥐고 있고, 같은 판정을 두 곳에서 하면 언젠가 갈린다.
   const anchor = data.queries[0];
-  const anchorRoot = anchor === undefined ? undefined : rootOfStart.get(anchor);
-  if (anchor !== undefined && anchorRoot !== undefined) {
+  if (anchor !== undefined) {
     for (let i = 1; i < data.queries.length; i += 1) {
-      const b = data.queries[i];
-      const bRoot = rootOfStart.get(b);
-      steps.push({ kind: 'compare', a: anchor, b, same: bRoot === anchorRoot });
+      steps.push({ kind: 'compare', a: anchor, b: data.queries[i] });
     }
   }
 
@@ -97,16 +93,13 @@ async function applyStep(ctx: ReactiveContext<FindRootData>, step: Step): Promis
       await ctx.emit({ type: 'walk-start', payload: { node: step.node } });
       break;
     case 'hop':
-      await ctx.emit({ type: 'hop', payload: { from: step.from, to: step.to } });
+      await ctx.emit({ type: 'hop', payload: { from: step.from } });
       break;
     case 'root-reached':
-      await ctx.emit({
-        type: 'root-reached',
-        payload: { start: step.start, node: step.node, groupIndex: step.groupIndex },
-      });
+      await ctx.emit({ type: 'root-reached' });
       break;
     case 'compare':
-      await ctx.emit({ type: 'compare', payload: { a: step.a, b: step.b, same: step.same } });
+      await ctx.emit({ type: 'compare', payload: { a: step.a, b: step.b } });
       break;
   }
   return !ctx.cancelled;

@@ -38,7 +38,7 @@ export const compareAndSwapFacet: FacetJson = {
     pt: 'Comparar é um juízo. Trocar só acontece quando esse juízo é verdadeiro.',
   },
   algorithm: 'module:compareAndSwap',
-  projector: 'module:compareAndSwapProjector',
+  scene: 'module:compareAndSwapScene',
   initialData: {
     type: 'compare-and-swap',
     // 첫 짝만 어긋나 있고, 둘째는 이미 순서가 맞고, 셋째는 두 값이 같다.
@@ -53,7 +53,7 @@ export const compareAndSwapFacet: FacetJson = {
     stage: { type: 'compare-and-swap-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {

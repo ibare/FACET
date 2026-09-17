@@ -54,7 +54,9 @@ export const constantFadesFacet: FacetJson = {
     pt: 'Uma constante apenas adia onde duas taxas de crescimento se encontram; nunca muda qual delas vence.',
   },
   algorithm: 'module:constantFades',
-  projector: 'module:constantFadesProjector',
+  // 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든 셈으로
+  // 얻으므로 띠를 끌어 아무 자리로나 갈 수 있다 (S-scene).
+  scene: 'module:constantFadesScene',
   initialData: {
     type: 'constant-fades',
     constant: 100,
@@ -180,7 +182,8 @@ export const constantFadesFacet: FacetJson = {
       type: 'control-bar',
       // ReactiveMechanism 의 reset() 은 끝에 ensureStarted() 를 부른다 — 되돌리는
       // 일이 곧 다시 재생하는 일이다. 그래서 action 은 reset 이고 라벨만 다르다.
-      controls: CONTROL_SET.piece,
+      // 장면 방식이라 한 걸음 단추 대신 띠를 단다 (S-piece).
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

@@ -6,9 +6,15 @@
  *
  * initialData 의 수는 전부 실측값이다. `hashCode` 는 Java `String.hashCode()`
  * 이고 `masked` 는 `hashCode & 0x7FFFFFFF`, 자리는 `masked % 버킷수` 다.
+ *
+ * 화면은 장면(Scene) 방식이다 — projector 대신 `scene` 을 선언한다. 둘 다 두거나
+ * 둘 다 빠뜨리면 러너가 세우지 않는다 (S-scene).
+ *
+ * 컨트롤은 `CONTROL_SET.pieceScrub` — 다시 보기와 스크럽 띠다. 띠가 한 걸음 단추를
+ * 대신한다. 단추는 앞으로만 갈 수 있어 곱씹으려면 한 바퀴를 다 돌아야 했다.
  */
 
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 import type { FacetJson } from '@ffacet/core/runtime';
 import type { LoadFactorRehashData } from './algorithm.js';
 
@@ -56,14 +62,11 @@ export const loadFactorRehashFacet: FacetJson = {
     pt: 'Quando a tabela fica cheia demais ela cresce, e cada chave é colocada outra vez do zero.',
   },
   algorithm: 'module:loadFactorRehash',
-  projector: 'module:loadFactorRehashProjector',
+  scene: 'module:loadFactorRehashScene',
   initialData: loadFactorRehashData,
   blocks: {
     stage: { type: 'load-factor-rehash-stage' },
-    controls: {
-      type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
-    },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'label.loadFactor': {
@@ -80,7 +83,7 @@ export const loadFactorRehashFacet: FacetJson = {
     },
     'caption.threshold': {
       en: 'One more key fills {count} of {buckets} buckets — the load factor reaches the {threshold} threshold.',
-      ko: '하나가 더 들어오자 {buckets} 칸 중 {count} 이 찼다. 적재율이 임계 {threshold} 에 닿는다.',
+      ko: '하나가 더 들어오자 {buckets} 칸 가운데 찬 것이 {count}. 적재율이 임계 {threshold} 에 닿는다.',
       ja: 'もう一つ入って {buckets} 個中 {count} が埋まった — 負荷率が閾値 {threshold} に届く。',
       zh: '再进来一个，{buckets} 个桶里占了 {count} — 装载因子触到阈值 {threshold}。',
       ar: 'مفتاح آخر يملأ {count} من {buckets} سلة — فيبلغ معامل التحميل العتبة {threshold}.',
@@ -116,7 +119,7 @@ export const loadFactorRehashFacet: FacetJson = {
     },
     'caption.result': {
       en: '{moved} keys landed somewhere else. {stayed} happened to stay.',
-      ko: '{moved} 은 자리가 바뀌었고, {stayed} 은 우연히 그대로 남았다.',
+      ko: '자리가 바뀐 것이 {moved}, 우연히 그대로 남은 것이 {stayed}.',
       ja: '{moved} は別の場所に移り、{stayed} はたまたまそのままだった。',
       zh: '{moved} 落到了别处，{stayed} 恰好留在原位。',
       ar: '{moved} حطّت في مواضع أخرى، و{stayed} بقيت مصادفةً في مكانها.',

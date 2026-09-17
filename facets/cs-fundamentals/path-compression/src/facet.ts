@@ -3,6 +3,12 @@
  *
  * 경로 압축 — 뿌리를 찾아 오른 김에, 지나온 자리 전부를 뿌리에 곧장 다시
  * 붙이면 그 길 위의 모든 자리가 함께 싸진다는 것을 보여준다.
+ *
+ * 화면은 장면(Scene) 방식이다. projector 를 두지 않고 `scene.ts` 가 이벤트를 상태로
+ * 옮기며, stage 는 `render(next, prev, { animate })` 하나로 산다 (S-scene).
+ *
+ * 컨트롤은 `CONTROL_SET.pieceScrub` — 다시 보기와 스크럽 띠다. 어느 걸음의 화면이든
+ * 셈으로 얻으므로 띠를 끌어 아무 데나 갈 수 있다.
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
@@ -35,7 +41,7 @@ export const pathCompressionFacet: FacetJson = {
     pt: 'Subir até a raiz compensa para todos os nós do caminho, não só para o que você perguntou.',
   },
   algorithm: 'module:pathCompression',
-  projector: 'module:pathCompressionProjector',
+  scene: 'module:pathCompressionScene',
   initialData: {
     type: 'path-compression',
     parent: [0, 0, 1, 2, 3],
@@ -44,12 +50,12 @@ export const pathCompressionFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'path-compression-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.queryBegin': {
       en: 'Ask where {node} leads, all the way to the root',
-      ko: '{node}가 어디로 이어지는지, 뿌리까지 묻는다',
+      ko: '{node} 에서 시작해 어디로 이어지는지 뿌리까지 묻는다',
       ja: '{node} がどこへつながるか、根まで尋ねる',
       zh: '一路问到根：{node} 通向哪里',
       ar: 'اسأل إلى أين يقود {node}، وصولًا إلى الجذر',
@@ -61,7 +67,7 @@ export const pathCompressionFacet: FacetJson = {
     },
     'caption.climb': {
       en: '{from} points up to {to}',
-      ko: '{from}은 {to}를 가리킨다',
+      ko: '{from} 의 화살표가 {to} 에 닿아 있다',
       ja: '{from} は {to} を指している',
       zh: '{from} 指向 {to}',
       ar: '{from} يشير إلى {to}',
@@ -73,7 +79,7 @@ export const pathCompressionFacet: FacetJson = {
     },
     'caption.rootFirst': {
       en: '{node} reached root {root} after {hops} hops',
-      ko: '{node}는 {hops}칸을 올라 뿌리 {root}에 닿았다',
+      ko: '{node} 에서 {hops}칸 올라 뿌리 {root} 에 닿았다',
       ja: '{node} は {hops} 回たどって根 {root} に着いた',
       zh: '{node} 跳了 {hops} 次到达根 {root}',
       ar: 'وصل {node} إلى الجذر {root} بعد {hops} قفزات',
@@ -85,7 +91,7 @@ export const pathCompressionFacet: FacetJson = {
     },
     'caption.rootAfter': {
       en: '{node} now reaches {root} in {hops} hop — it used to take {hopsBefore}',
-      ko: '{node}는 이제 {hops}칸 만에 {root}에 닿는다 — 전에는 {hopsBefore}칸이었다',
+      ko: '{node} 에서 이제 {hops}칸 만에 {root} 에 닿는다 — 전에는 {hopsBefore}칸',
       ja: '{node} は今や {hops} 回で {root} に着く — 以前は {hopsBefore} 回だった',
       zh: '{node} 现在 {hops} 跳就到 {root} — 以前要 {hopsBefore} 跳',
       ar: 'يصل {node} الآن إلى {root} في {hops} قفزة — كانت تلزمه {hopsBefore}',
@@ -97,7 +103,7 @@ export const pathCompressionFacet: FacetJson = {
     },
     'caption.compress': {
       en: 'Compressing — every node on the path now points straight to {root}',
-      ko: '접는다 — 지나온 자리 전부가 이제 {root}를 곧장 가리킨다',
+      ko: '접는다 — 지나온 자리 전부가 이제 곧장 가리키는 곳은 {root}',
       ja: '圧縮する — 経路上のすべてのノードが {root} を直接指す',
       zh: '压缩 — 路径上的每个节点现在都直接指向 {root}',
       ar: 'نضغط — كل عقدة على المسار تشير الآن مباشرة إلى {root}',

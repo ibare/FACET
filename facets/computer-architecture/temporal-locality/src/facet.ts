@@ -5,8 +5,10 @@
  * 일이 없고, 매번 다른 곳을 찾으면 올라온 것이 쓰이기도 전에 밀려난다.
  *
  * 선언에 두는 것은 구조뿐이다 — 칸 수 · 라인 크기 · 원소 크기 · 두 접근열의
- * 색인. 히트·미스 판정과 셈은 algorithm 이 하고, 좌표는 stage 가 셈한다
- * (S-piece). `stepMs` 는 읽을 시간을 정하는 저작 결정이라 예외로 여기 둔다.
+ * 색인. 히트·미스 판정은 algorithm 이 내리고, 적중·실패의 **셈은 장면이** 하며
+ * 좌표는 stage 가 셈한다 (S-piece). 화면을 명령이 아니라 장면으로 만들므로 띠를
+ * 단다 (`CONTROL_SET.pieceScrub`). `stepMs` 는 읽을 시간을 정하는 저작 결정이라
+ * 예외로 여기 둔다.
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -38,7 +40,7 @@ export const temporalLocalityFacet: FacetJson = {
     pt: 'O que você acabou de ler, logo lê de novo — por isso fica em cima.',
   },
   algorithm: 'module:temporalLocality',
-  projector: 'module:temporalLocalityProjector',
+  scene: 'module:temporalLocalityScene',
   initialData: {
     type: 'temporal-locality',
     stepMs: 700,
@@ -52,7 +54,7 @@ export const temporalLocalityFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'temporal-locality-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'label.near': {

@@ -4,11 +4,11 @@
  * @piece 한 주장만 말한다 — "처음부터 따라가야 닿는다".
  *
  * 제목 블록도 메트릭도 두지 않는다 (S-piece). 제목은 글의 문단이 주고, 조각은
- * 셀 것이 없다. 컨트롤은 다시 보기와 한 걸음 둘뿐이며 둘 다 눌러야 완성되는
+ * 셀 것이 없다. 컨트롤은 다시 보기와 스크럽 띠 둘뿐이며 둘 다 눌러야 완성되는
  * 조작이 아니다 — 자동 재생만 보고 지나가도 화면은 할 말을 마친다.
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const traverseFromHeadFacet: FacetJson = {
   id: 'facet:traverseFromHead',
@@ -37,7 +37,7 @@ export const traverseFromHeadFacet: FacetJson = {
     pt: 'Para chegar a um nó é preciso seguir os elos a partir do head, um a um.',
   },
   algorithm: 'module:traverseFromHead',
-  projector: 'module:traverseFromHeadProjector',
+  scene: 'module:traverseFromHeadScene',
   initialData: {
     type: 'traverse-from-head',
     /** 다섯 노드. 값은 화면에 그대로 쓰인다. */
@@ -51,7 +51,8 @@ export const traverseFromHeadFacet: FacetJson = {
     stage: { type: 'traverse-from-head-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      // 스크럽 띠. 장면 방식이라 어느 걸음이든 셈으로 얻으므로 끌어 볼 수 있다.
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {

@@ -79,7 +79,9 @@ export const globalAndLocalFacet: FacetJson = {
     pt: 'Distâncias entre grupos que parecem iguais podem não ser',
   },
   algorithm: 'module:globalAndLocal',
-  projector: 'module:globalAndLocalProjector',
+  // 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든
+  // 셈으로 얻으므로 띠를 끌어 아무 데나 갈 수 있다 (S-scene).
+  scene: 'module:globalAndLocalScene',
   initialData: {
     type: 'global-and-local',
     groups: GROUPS.map((g) => ({ name: g.name, points: g.points.map((p) => ({ ...p })) })),
@@ -88,7 +90,7 @@ export const globalAndLocalFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'global-and-local-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'label.global': {
@@ -175,17 +177,18 @@ export const globalAndLocalFacet: FacetJson = {
       id: 'Hubungkan benda yang sama. Kedua ujung sudah dipatok, jadi yang tersisa bagian tengah — ia bergeser {shift}.',
       pt: 'Ligue os mesmos itens. As duas pontas estão fixadas, então resta o meio — ele deslizou {shift}.',
     },
+    // 자리 수를 글자로 못박지 않는다 — 선언이 바뀌면 거짓이 되는 상수였다.
     'caption.inside': {
-      en: 'Look inside a cluster — the room one cluster gets is {g} on top and {l} below. Below, the four are readable.',
-      ko: '무리 안을 본다. 무리 하나가 차지하는 몫은 위 {g}, 아래 {l}. 아래에서는 넷이 보인다.',
-      ja: 'クラスタの中を見る。ひとつのクラスタが占める幅は上が {g}、下が {l}。下では四つが読み取れる。',
-      zh: '看看簇的内部 — 一个簇占的宽度，上尺是 {g}，下尺是 {l}。下面这四个看得清。',
-      ar: 'انظر داخل العنقود — المساحة التي ينالها عنقود واحد هي {g} في الأعلى و{l} في الأسفل. في الأسفل تُقرأ الأربع بوضوح.',
-      es: 'Mira dentro de un grupo: el espacio que ocupa es {g} arriba y {l} abajo. Abajo se distinguen los cuatro.',
-      fr: "Regarde à l'intérieur d'un groupe — la place qu'il occupe est de {g} en haut et {l} en bas. En bas, les quatre se lisent.",
-      hi: 'क्लस्टर के भीतर देखें — एक क्लस्टर को मिलती जगह ऊपर {g} और नीचे {l} है। नीचे चारों पढ़े जा सकते हैं।',
-      id: 'Lihat ke dalam satu klaster — ruang yang didapatnya {g} di atas dan {l} di bawah. Di bawah, keempatnya terbaca.',
-      pt: 'Olhe dentro de um grupo — o espaço que ele ocupa é {g} em cima e {l} embaixo. Embaixo, dá para ler os quatro.',
+      en: 'Look inside a cluster — the room one cluster gets is {g} on top and {l} below. Below, all {n} are readable.',
+      ko: '무리 안을 본다. 무리 하나가 차지하는 몫은 위 {g}, 아래 {l}. 아래에서는 {n} 개가 다 보인다.',
+      ja: 'クラスタの中を見る。ひとつのクラスタが占める幅は上が {g}、下が {l}。下では {n} 個すべてが読み取れる。',
+      zh: '看看簇的内部 — 一个簇占的宽度，上尺是 {g}，下尺是 {l}。下面 {n} 个都看得清。',
+      ar: 'انظر داخل العنقود — المساحة التي ينالها عنقود واحد هي {g} في الأعلى و{l} في الأسفل. في الأسفل تُقرأ الـ {n} كلها بوضوح.',
+      es: 'Mira dentro de un grupo: el espacio que ocupa es {g} arriba y {l} abajo. Abajo se distinguen los {n}.',
+      fr: "Regarde à l'intérieur d'un groupe — la place qu'il occupe est de {g} en haut et {l} en bas. En bas, les {n} se lisent.",
+      hi: 'क्लस्टर के भीतर देखें — एक क्लस्टर को मिलती जगह ऊपर {g} और नीचे {l} है। नीचे {n} में से सभी पढ़े जा सकते हैं।',
+      id: 'Lihat ke dalam satu klaster — ruang yang didapatnya {g} di atas dan {l} di bawah. Di bawah, semua {n} terbaca.',
+      pt: 'Olhe dentro de um grupo — o espaço que ele ocupa é {g} em cima e {l} embaixo. Embaixo, dá para ler os {n}.',
     },
     'caption.gap': {
       en: 'Now the gap between clusters — {from}–{to}. Originally {o} of the whole, top {g}, bottom {l}.',
@@ -211,17 +214,18 @@ export const globalAndLocalFacet: FacetJson = {
       id: 'Jarak kedua dibagi jarak pertama — aslinya 1 : {o}, atas 1 : {g}, bawah 1 : {l}.',
       pt: 'A segunda distância dividida pela primeira — originalmente 1 : {o}, em cima 1 : {g}, embaixo 1 : {l}.',
     },
+    // 결론을 "세 배" 로 적어 두지 않는다 — 괄호를 그리는 바로 그 수에서 셈한다.
     'caption.verdict': {
-      en: 'Three times apart became the same. Do not read cluster-to-cluster distance off the bottom ruler.',
-      ko: '세 배였던 것이 같아졌다. 아래 자에서 무리 사이 거리를 읽으면 안 된다.',
-      ja: '三倍だったものが同じになった。下の定規でクラスタ間の距離を読んではいけない。',
-      zh: '相差三倍的变成了一样。别在下尺上读簇与簇之间的距离。',
-      ar: 'ما كان أبعد بثلاثة أضعاف صار متساويًا. لا تقرأ المسافة بين العناقيد من المسطرة السفلى.',
-      es: 'Lo que estaba al triple de distancia quedó igual. No leas la distancia entre grupos en la regla de abajo.',
-      fr: 'Ce qui était trois fois plus loin est devenu identique. Ne lis pas la distance entre groupes sur la règle du bas.',
-      hi: 'जो तीन गुना दूर था वह बराबर हो गया। नीचे वाले पैमाने से क्लस्टरों की आपसी दूरी मत पढ़ें।',
-      id: 'Yang tadinya tiga kali lebih jauh jadi sama. Jangan membaca jarak antarklaster dari penggaris bawah.',
-      pt: 'O que estava três vezes mais longe ficou igual. Não leia a distância entre grupos na régua de baixo.',
+      en: 'What was {g} times apart is now {l} times. Do not read cluster-to-cluster distance off the bottom ruler.',
+      ko: '{g} 배였던 것이 {l} 배가 됐다. 아래 자에서 무리 사이 거리를 읽으면 안 된다.',
+      ja: '{g} 倍だったものが {l} 倍になった。下の定規でクラスタ間の距離を読んではいけない。',
+      zh: '原本相差 {g} 倍的，变成了 {l} 倍。别在下尺上读簇与簇之间的距离。',
+      ar: 'ما كان أبعد بـ {g} ضعفًا صار {l} ضعفًا. لا تقرأ المسافة بين العناقيد من المسطرة السفلى.',
+      es: 'Lo que estaba a {g} veces de distancia ahora está a {l}. No leas la distancia entre grupos en la regla de abajo.',
+      fr: 'Ce qui était {g} fois plus loin est maintenant à {l} fois. Ne lis pas la distance entre groupes sur la règle du bas.',
+      hi: 'जो {g} गुना दूर था वह अब {l} गुना है। नीचे वाले पैमाने से क्लस्टरों की आपसी दूरी मत पढ़ें।',
+      id: 'Yang tadinya {g} kali lebih jauh kini jadi {l} kali. Jangan membaca jarak antarklaster dari penggaris bawah.',
+      pt: 'O que estava {g} vezes mais longe agora está a {l} vezes. Não leia a distância entre grupos na régua de baixo.',
     },
     'caption.done': {
       en: 'Looking close and being close are not the same thing.',

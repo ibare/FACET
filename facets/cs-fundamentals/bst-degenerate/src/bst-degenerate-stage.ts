@@ -24,12 +24,13 @@ import {
   type Theme,
   type ViewInstance,
   type ViewMountParams,
+  makeTranslator,
 } from '@ffacet/core/runtime';
+import type { BstScene, PlantedNode } from './scene.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 type TreeId = 'a' | 'b';
-type Side = 'left' | 'right';
 
 const W = PIECE_CANVAS_W;
 const PANEL_GAP = 24;
@@ -105,6 +106,9 @@ export const bstDegenerateStageView: CanvasView = {
     params.canvas.textContent = '';
     const theme: Theme | undefined = params.theme;
     const colors = getColors(theme);
+    // 문안은 그리는 쪽이 만든다. 장면은 무엇을 말할지만 담는다 (C10 의 조회는
+    // 저작자 오버라이드가 얹힌 `params.t` 로).
+    const t = params.t ?? makeTranslator(params.locale);
 
     const initial = params.initialData as { orderA?: unknown; orderB?: unknown } | undefined;
     const orderA = readNumberArray(initial?.orderA);
@@ -171,23 +175,22 @@ export const bstDegenerateStageView: CanvasView = {
     const nodes = new Map<string, NodeEntry>();
     const edges = new Map<string, EdgeEntry>();
 
-    async function insertNode(
-      tree: TreeId,
-      id: string,
-      value: number,
-      parentId: string | null,
-      _side: Side | null,
-      depth: number,
-    ): Promise<void> {
-      const x = colX(tree, value);
-      const y = rowY(depth);
-      const parent = parentId ? nodes.get(parentId) : undefined;
+    /**
+     * 마디 하나를 심는다.
+     *
+     * `grow` 가 참이면 0 에서 부풀며 가지가 뻗는다. 거짓이면 곧바로 제 크기로 선다 —
+     * 되짚어 여러 마디를 한꺼번에 세울 때의 길이다.
+     */
+    function plant(n: PlantedNode, grow: boolean): Promise<void> {
+      const x = colX(n.tree, n.value);
+      const y = rowY(n.depth);
+      const parent = n.parentId ? nodes.get(n.parentId) : undefined;
 
       const group = svgEl('g');
       const circle = svgEl('circle', {
         cx: x,
         cy: y,
-        r: 0,
+        r: grow ? 0 : NODE_R,
         fill: colors.itemDefault,
         stroke: colors.border,
         'stroke-width': 2,
@@ -199,38 +202,41 @@ export const bstDegenerateStageView: CanvasView = {
         fill: colors.text,
         'font-family': fonts.mono,
         'font-size': fontSizes.sm,
-        opacity: 0,
+        opacity: grow ? 0 : 1,
       });
-      label.textContent = String(value);
+      label.textContent = String(n.value);
       group.append(circle, label);
-      nodesG[tree].appendChild(group);
-      nodes.set(id, { group, circle, label, x, y, parentId });
+      nodesG[n.tree].appendChild(group);
+      nodes.set(n.id, { group, circle, label, x, y, parentId: n.parentId });
 
       let line: SVGLineElement | null = null;
       if (parent) {
         line = svgEl('line', {
           x1: parent.x,
           y1: parent.y,
-          x2: parent.x,
-          y2: parent.y,
+          x2: grow ? parent.x : x,
+          y2: grow ? parent.y : y,
           stroke: colors.border,
           'stroke-width': 2,
         });
-        edgesG[tree].appendChild(line);
-        edges.set(id, { line, x1: parent.x, y1: parent.y });
+        edgesG[n.tree].appendChild(line);
+        edges.set(n.id, { line, x1: parent.x, y1: parent.y });
       }
 
+      if (!grow) return Promise.resolve();
+
       const finalLine = line;
-      await tween(GROW_MS, (t) => {
+      return tween(GROW_MS, (t) => {
         circle.setAttribute('r', String(NODE_R * t));
         label.setAttribute('opacity', String(t));
-        if (finalLine) {
-          finalLine.setAttribute('x2', String(parent!.x + (x - parent!.x) * t));
-          finalLine.setAttribute('y2', String(parent!.y + (y - parent!.y) * t));
+        if (finalLine && parent) {
+          finalLine.setAttribute('x2', String(parent.x + (x - parent.x) * t));
+          finalLine.setAttribute('y2', String(parent.y + (y - parent.y) * t));
         }
       });
     }
 
+    /** 짚은 자리를 물들인다. 머무는 강조(`persist`) 가 아니면 곧 되돌아온다. */
     async function pulse(entry: NodeEntry, fill: string, ink: string, persist: boolean): Promise<void> {
       entry.circle.setAttribute('fill', fill);
       entry.label.setAttribute('fill', ink);
@@ -238,41 +244,6 @@ export const bstDegenerateStageView: CanvasView = {
       await sleep(PULSE_MS);
       entry.circle.setAttribute('fill', colors.itemDefault);
       entry.label.setAttribute('fill', colors.text);
-    }
-
-    async function compareNode(_tree: TreeId, nodeId: string, _direction: Side): Promise<void> {
-      const entry = nodes.get(nodeId);
-      if (!entry) return;
-      await pulse(entry, colors.itemComparing, colors.stateInk, false);
-    }
-
-    async function searchCompareNode(_tree: TreeId, nodeId: string, direction: Side | 'match'): Promise<void> {
-      const entry = nodes.get(nodeId);
-      if (!entry) return;
-      if (direction === 'match') {
-        await pulse(entry, colors.itemPivot, colors.stateInk, true);
-        return;
-      }
-      await pulse(entry, colors.itemComparing, colors.stateInk, false);
-    }
-
-    async function showResult(tree: TreeId, text: string): Promise<void> {
-      const el = resultText[tree];
-      el.textContent = text;
-      await tween(220, (t) => {
-        el.setAttribute('opacity', String(t));
-      });
-    }
-
-    async function conclude(): Promise<void> {
-      for (const tree of ['a', 'b'] as const) {
-        const el = resultText[tree];
-        el.setAttribute('fill', colors.accent);
-      }
-      await sleep(PULSE_MS);
-      for (const tree of ['a', 'b'] as const) {
-        resultText[tree].setAttribute('fill', colors.textMuted);
-      }
     }
 
     function setCaption(text: string): void {
@@ -293,17 +264,102 @@ export const bstDegenerateStageView: CanvasView = {
       }
     }
 
+    /** 논증 단계가 정하는 캡션. 걸음마다가 아니라 단계가 바뀔 때만 달라진다. */
+    function captionFor(scene: BstScene): string {
+      const a = scene.results.a;
+      const b = scene.results.b;
+      switch (scene.narrative) {
+        case 'growing':
+          return t('caption.growing', 'Every insertion compares first, then goes left or right.');
+        case 'searching':
+          return t('caption.searching', 'Both trees are built. Now look for {value} in each.', {
+            value: scene.searchTarget,
+          });
+        case 'result':
+          return t(
+            'caption.result',
+            'A: height {heightA}, {comparisonsA} compares. B: height {heightB}, {comparisonsB} compares — same values, different cost.',
+            {
+              heightA: a?.height ?? 0,
+              comparisonsA: a?.comparisons ?? 0,
+              heightB: b?.height ?? 0,
+              comparisonsB: b?.comparisons ?? 0,
+            },
+          );
+        default:
+          return t('caption.problem', 'The same six values, inserted in two different orders.');
+      }
+    }
+
+    // ── 장면 그리기 ─────────────────────────────────────────────────────────
+    //
+    // 늘 비우고 그 장면이 말하는 마디를 다시 심는다. 되돌릴 명령을 따로 둘 필요가
+    // 없고, 본래 projector 가 자기 안에 쥐고 있던 논증 단계와 셈이 장면 안에 있으니
+    // 되짚어도 지난 걸음의 캡션이 남지 않는다.
+    async function render(
+      next: BstScene,
+      prev: BstScene | null,
+      opts: { animate: boolean },
+    ): Promise<void> {
+      rewind();
+
+      // 마디를 심는다. 방금 늘어난 하나만 부풀며 서고 나머지는 곧바로 선다.
+      const grewOne =
+        opts.animate && prev !== null && next.nodes.length === prev.nodes.length + 1;
+      const lastIndex = next.nodes.length - 1;
+      let growing: Promise<void> | null = null;
+      next.nodes.forEach((n, i) => {
+        const p = plant(n, grewOne && i === lastIndex);
+        if (grewOne && i === lastIndex) growing = p;
+      });
+
+      for (const tree of ['a', 'b'] as const) {
+        const r = next.results[tree];
+        if (!r) continue;
+        resultText[tree].textContent = t('label.result', 'height {height} · {comparisons} compares', {
+          height: r.height,
+          comparisons: r.comparisons,
+        });
+        resultText[tree].setAttribute('opacity', '1');
+      }
+
+      // 찾던 것을 만난 자리는 머무는 강조다 — 지나가는 반짝임과 달리 장면에 남는다.
+      if (next.pulse?.kind === 'match') {
+        const entry = nodes.get(next.pulse.nodeId);
+        if (entry) {
+          entry.circle.setAttribute('fill', colors.itemPivot);
+          entry.label.setAttribute('fill', colors.stateInk);
+        }
+      }
+
+      setCaption(captionFor(next));
+
+      if (!opts.animate) return;
+
+      if (growing) await growing;
+
+      // 걸음을 건너뛰어 온 길은 `animate` 가 거짓이라 위에서 이미 돌아갔다. `pulse` 는
+      // 걸음마다 새로 짓는 객체라 그것끼리 견주는 것으로는 아무것도 가려지지 않는다
+      // (프로토콜 4 절의 죽은 비교).
+      if (next.pulse && next.pulse.kind !== 'match') {
+        const entry = nodes.get(next.pulse.nodeId);
+        if (entry) await pulse(entry, colors.itemComparing, colors.stateInk, false);
+      }
+
+      if (next.concluded && prev?.concluded !== true) {
+        for (const tree of ['a', 'b'] as const) resultText[tree].setAttribute('fill', colors.accent);
+        await sleep(PULSE_MS);
+        for (const tree of ['a', 'b'] as const) {
+          resultText[tree].setAttribute('fill', colors.textMuted);
+        }
+      }
+    }
+
     return {
       destroy() {
         container.textContent = '';
       },
-      insertNode,
-      compareNode,
-      searchCompareNode,
-      showResult,
-      conclude,
-      setCaption,
-      rewind,
+      render,
     };
   },
 };

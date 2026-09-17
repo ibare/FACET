@@ -7,7 +7,7 @@
  * 시작 상태는 m=16 비트 배열에 fig · kiwi · mango 가 이미 들어간 것이다. h1 은
  * Java `String.hashCode` 를 `& 0x7FFFFFFF` 한 값, h2 는 FNV-1a 32bit 를
  * `& 0x7FFFFFFF` 한 뒤 홀수로 만든 값이며 둘 다 실측이다. 각 값이 밟는 자리는
- * algorithm 이 `h_i = (h1 + i·h2) mod 16` 으로 직접 셈한다.
+ * 장면이 `h_i = (h1 + i·h2) mod 16` 으로 직접 셈한다 — 걸음은 수를 싣지 않는다.
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -39,7 +39,7 @@ export const cannotUnsetFacet: FacetJson = {
     pt: 'Apagar um valor de um filtro de Bloom derruba também os que compartilham suas células.',
   },
   algorithm: 'module:cannotUnset',
-  projector: 'module:cannotUnsetProjector',
+  scene: 'module:cannotUnsetScene',
   initialData: {
     type: 'cannot-unset',
     m: 16,
@@ -55,7 +55,7 @@ export const cannotUnsetFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'cannot-unset-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.stand': {

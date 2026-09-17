@@ -9,7 +9,7 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
@@ -18,11 +18,11 @@ import { byteOrderStageView } from './byte-order-stage.js';
 import { byteOrderDescription } from './description.js';
 import { byteOrderFacet } from './facet.js';
 import { byteOrderIRs } from './irs.js';
-import { byteOrderProjector } from './projector.js';
+import { byteOrderScene } from './scene.js';
 
 export function registerByteOrder(): void {
   registerAlgorithm('byteOrder', byteOrderAlgorithm, { mechanismKind: 'reactive' });
-  registerProjector('byteOrderProjector', byteOrderProjector);
+  registerScenePlan('byteOrderScene', byteOrderScene);
   for (const ir of byteOrderIRs) registerIR(ir.id, ir);
   registerView('byte-order-stage', byteOrderStageView);
   registerFacets([byteOrderFacet]);
@@ -34,8 +34,22 @@ export {
   byteOrderDescription,
   byteOrderFacet,
   byteOrderIRs,
-  byteOrderProjector,
+  byteOrderScene,
   byteOrderStageView,
   splitBytes,
 };
 export type { ByteOrderData };
+// 장면이 내주는 셈. 화면에 뜨는 세 수와 훑는 차례가 전부 여기서 나온다.
+export {
+  bigRow,
+  littleRow,
+  msbAddrOf,
+  originAt,
+  readOrderOf,
+  rowOf,
+  valueOf,
+  type ByteOrderReading,
+  type ByteOrderScene,
+  type ByteOrderSceneCaption,
+  type ByteOrderSceneStep,
+} from './scene.js';

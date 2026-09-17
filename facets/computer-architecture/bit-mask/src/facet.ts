@@ -38,7 +38,7 @@ export const bitMaskFacet: FacetJson = {
     pt: 'Uma máscara é uma tampa furada: só passam os bits sob os furos; o resto fica coberto com 0.',
   },
   algorithm: 'module:bitMask',
-  projector: 'module:bitMaskProjector',
+  scene: 'module:bitMaskScene',
   initialData: {
     type: 'bit-mask',
     /** 10101011 — 171, 16진 AB. */
@@ -50,7 +50,7 @@ export const bitMaskFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'bit-mask-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.mask': {
@@ -100,6 +100,18 @@ export const bitMaskFacet: FacetJson = {
       hi: 'मास्क केवल वही स्थान बचाता है जिनकी ज़रूरत है।',
       id: 'Mask hanya menyisakan posisi yang kamu perlukan.',
       pt: 'Uma máscara guarda apenas as posições de que você precisa.',
+    },
+    'label.value': {
+      en: 'value {dec} (0x{hex})',
+      ko: '원래 값: {dec} (0x{hex})',
+      ja: '元の値: {dec} (0x{hex})',
+      zh: '原来的值：{dec}（0x{hex}）',
+      ar: 'القيمة الأصلية: {dec} (0x{hex})',
+      es: 'valor {dec} (0x{hex})',
+      fr: "valeur d'origine {dec} (0x{hex})",
+      hi: 'मूल मान: {dec} (0x{hex})',
+      id: 'nilai asli {dec} (0x{hex})',
+      pt: 'valor original {dec} (0x{hex})',
     },
     'label.read': {
       en: 'reads {dec} (0x{hex})',

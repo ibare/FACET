@@ -11,6 +11,7 @@ import {
   computeHeuristicGuidesResult,
   heuristicGuidesFacet,
   registerHeuristicGuides,
+  remainingGuess,
   type HeuristicGuidesData,
 } from '../src/index.js';
 import { clearRegistry, runFacet } from '@ffacet/core/runtime';
@@ -33,9 +34,26 @@ describe('heuristicGuides', () => {
     expect(plain.route.length - 1).toBe(6);
   });
 
-  it('열어 본 칸의 수는 걸음마다 하나씩 는다', () => {
-    const { plain } = computeHeuristicGuidesResult(data);
-    expect(plain.moves.map((m) => m.count)).toEqual(plain.moves.map((_, i) => i + 1));
+  it('같은 칸을 두 번 꺼내지 않는다', () => {
+    // 열어 본 칸의 수는 이제 화면이 `moves` 를 세어 말한다. 그 셈이 뜻을 가지려면
+    // 한 칸이 두 번 꺼내어지는 일이 없어야 한다 — 그렇지 않으면 막대가 격자보다
+    // 길어진다. 옮기기 전에는 걸음마다 실려 오던 누계를 대조했는데, 그 수가
+    // `i + 1` 이라 사실은 아무것도 재지 않는 단언이었다.
+    for (const trace of Object.values(computeHeuristicGuidesResult(data))) {
+      const keys = trace.moves.map((m) => `${m.cell.col},${m.cell.row}`);
+      expect(new Set(keys).size).toBe(keys.length);
+      // 후보로 올린 칸도 겹치지 않는다. 겹치면 타일이 두 벌 그려진다.
+      const opened = trace.moves.flatMap((m) => m.opened.map((at) => `${at.col},${at.row}`));
+      expect(new Set(opened).size).toBe(opened.length);
+    }
+  });
+
+  it('짐작은 목표에서 0 이고 한 칸 멀어질 때마다 하나씩 는다', () => {
+    // 화면의 숫자와 꺼내는 차례를 정하는 수가 같은 함수를 지난다. 그 함수를
+    // 내주었으므로 여기서 못 박는다.
+    expect(remainingGuess(data.goal.col, data.goal.row, data.goal)).toBe(0);
+    expect(remainingGuess(data.start.col, data.start.row, data.goal)).toBe(6);
+    expect(remainingGuess(0, 0, data.goal)).toBe(8);
   });
 
   it('마운트하면 스스로 재생하고 세로는 그대로다', async () => {

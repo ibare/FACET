@@ -9,7 +9,7 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
@@ -17,12 +17,19 @@ import { splitByQuestionAlgorithm, type SplitByQuestionData } from './algorithm.
 import { splitByQuestionDescription } from './description.js';
 import { splitByQuestionFacet } from './facet.js';
 import { splitByQuestionIRs } from './irs.js';
-import { splitByQuestionProjector } from './projector.js';
+import { splitByQuestionScene } from './scene.js';
 import { splitByQuestionStageView } from './split-by-question-stage.js';
 
-export { splitByQuestionAlgorithm } from './algorithm.js';
+export { splitByQuestionAlgorithm, oneLabelOnly, tally } from './algorithm.js';
 export type { SplitByQuestionData, SplitPoint, SideTally } from './algorithm.js';
-export { splitByQuestionProjector } from './projector.js';
+export { splitByQuestionScene } from './scene.js';
+export type {
+  SplitAxis,
+  SplitByQuestionScene,
+  SplitCaption,
+  SplitStep,
+  TriedCut,
+} from './scene.js';
 export { splitByQuestionIRs } from './irs.js';
 export { splitByQuestionFacet } from './facet.js';
 export { splitByQuestionDescription } from './description.js';
@@ -32,7 +39,7 @@ export function registerSplitByQuestion(): void {
   registerAlgorithm<SplitByQuestionData>('splitByQuestion', splitByQuestionAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('splitByQuestionProjector', splitByQuestionProjector);
+  registerScenePlan('splitByQuestionScene', splitByQuestionScene);
   for (const ir of splitByQuestionIRs) registerIR(ir.id, ir);
   registerView('split-by-question-stage', splitByQuestionStageView);
   registerFacets([splitByQuestionFacet]);

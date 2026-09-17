@@ -4,36 +4,44 @@
  * 이 조각은 "지금 몇 개째를 세고 있는가" 가 그림의 절반이라 같은 캔버스 안에
  * 그 둘이 있어야 한다 (원칙 6 의 예외 조건).
  *
- * black-height-equal-stage — 레드-블랙 트리를 그리고, 커서가 뿌리 아래
- * 한 경로를 따라 실제로 내려갔다가(walking) 다시 뿌리로 올라오는(returning)
- * 움직임을 SVG 좌표 이동으로 보여 준다.
+ * black-height-equal-stage — 레드-블랙 트리를 그리고, 커서가 뿌리 아래 한 경로를
+ * 따라 내려갔다가 다시 뿌리로 돌아오는 움직임을 SVG 좌표 이동으로 보여 준다.
  *
  * 노드 채움색은 그 자리의 값(빨강/검정)이다 — 방문 여부로 다시 칠하지 않는다.
  * "지금 어디를 보고 있는지" · "셈에 들어갔는지" 는 커서 링으로만 표현한다.
  *
- * projector 가 호출하는 메서드
- *   init(data)          트리 구조를 그린다. 커서는 뿌리 위에서 숨어 있다.
- *   visitStep(payload)  커서가 한 자리로 옮겨 간다(실제 좌표 이동).
- *   settlePath(payload) 그 경로의 검은 수를 nil 자리 곁에 남기고, 커서가
- *                        뿌리로 돌아간다(실제 좌표 이동).
- *   settleAll(payload)  남은 배지 전부가 같은 수라는 것을 강조한다.
- *   rewind(payload)      배지를 지우고 커서를 뿌리로 되돌린다.
+ * ── 장면(Scene) 방식
+ *
+ * 걸음마다 부르는 메서드를 두지 않고 `render(next, prev, { animate })` 하나가
+ * **그 장면의 화면 전체**를 세운다 (S-scene). 되돌릴 명령이 없으므로 어느 걸음으로
+ * 건너뛰어도 같은 화면이 선다 — `returnCursorToRoot` 같은 역명령이 통째로 없어졌다.
+ *
+ * 특히 이 조각은 **쌓인 배지가 곧 주장**이다. 네 길이 각각 남긴 검은 수가 화면에
+ * 함께 있어야 "길이는 달라도 셈은 같다" 가 보인다. 그래서 배지는 흐르며 생기는
+ * 것이 아니라 **정적 그리기가 매번 다시 세운다.** 흐름은 그 위에 얹힌 얇은 한
+ * 겹이다 — 아직 앉기 전으로 잠깐 되물렸다 제자리로 돌려놓는다.
+ *
+ * 화면에 뜨는 수는 전부 장면의 `trail` · `settled` 에서 나온다. 발신이 실어 온
+ * `runningCount` · `blackCount` 는 쓰지 않는다 — 캡션의 셈과 배지의 셈이 한
+ * 출처여야 화면이 스스로 참이다 (`scene.ts`).
  */
 
-import type { CanvasView, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
-import { getColors, PIECE_CANVAS_W, fonts, fontSizes } from '@ffacet/core/runtime';
+import type {
+  CanvasView,
+  SceneRenderer,
+  Theme,
+  ViewInstance,
+  ViewMountParams,
+} from '@ffacet/core/runtime';
+import { getColors, makeTranslator, PIECE_CANVAS_W, fonts, fontSizes } from '@ffacet/core/runtime';
+import { countBlack } from './scene.js';
+import type {
+  BlackHeightEqualScene,
+  BlackHeightSceneColor,
+  BlackHeightSceneNode,
+} from './scene.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
-
-type RBColor = 'red' | 'black';
-
-type RBNodeLike = {
-  id: string;
-  value: number;
-  color: RBColor;
-  left?: RBNodeLike;
-  right?: RBNodeLike;
-};
 
 type Placed = {
   id: string;
@@ -41,7 +49,7 @@ type Placed = {
   x: number;
   y: number;
   value?: number;
-  color?: RBColor;
+  color?: BlackHeightSceneColor;
 };
 
 type PlacedEdge = {
@@ -51,6 +59,8 @@ type PlacedEdge = {
   y2: number;
   kind: 'real' | 'nil';
 };
+
+type Point = { x: number; y: number };
 
 const H = 310;
 const SIDE_MIN = 30;
@@ -65,6 +75,14 @@ const BADGE_HALF_W = 14;
 const BADGE_HALF_H = 10;
 const CAPTION_Y = H - 20;
 
+/** 커서가 한 자리 내려가는 시간. */
+const WALK_MS = 260;
+/** 커서가 뿌리로 돌아오며 배지가 앉는 시간. 한 걸음이라 한 시계로 돈다. */
+const SETTLE_MS = 300;
+/** 배지 전부가 한 번 부푸는 시간. */
+const EMPHASIS_MS = 440;
+const FRAME_MS = 16;
+
 function el<K extends keyof SVGElementTagNameMap>(
   tag: K,
   attrs: Record<string, string | number> = {},
@@ -74,16 +92,21 @@ function el<K extends keyof SVGElementTagNameMap>(
   return node;
 }
 
+/** 자리 문자열은 정적 경로와 흐름의 끝이 같은 함수에서 나와야 한 글자도 안 갈린다. */
+function translate(x: number, y: number): string {
+  return `translate(${x}, ${y})`;
+}
+
 /**
  * 트리를 실제로 따라 내려가며 좌표를 매긴다. 자식이 둘 다 없는 노드는 nil
  * 자리 하나를 자기 바로 아래 가운데 둔다 — algorithm.ts 의 buildPaths 가
  * 세는 경로와 같은 자리를 가리키도록 맞춘다.
  */
-function layoutTree(root: RBNodeLike): { nodes: Placed[]; edges: PlacedEdge[] } {
+function layoutTree(root: BlackHeightSceneNode): { nodes: Placed[]; edges: PlacedEdge[] } {
   const nodes: Placed[] = [];
   const edges: PlacedEdge[] = [];
 
-  function place(node: RBNodeLike, xMin: number, xMax: number, depth: number): Placed {
+  function place(node: BlackHeightSceneNode, xMin: number, xMax: number, depth: number): Placed {
     const x = (xMin + xMax) / 2;
     const y = TOP_PAD + depth * ROW_GAP;
     const entry: Placed = { id: node.id, kind: 'node', x, y, value: node.value, color: node.color };
@@ -126,11 +149,16 @@ function layoutTree(root: RBNodeLike): { nodes: Placed[]; edges: PlacedEdge[] } 
 
 export const blackHeightEqualStageView: CanvasView = {
   canvas: { height: H },
-  mount(_container: HTMLElement, params: ViewMountParams & { canvas: SVGSVGElement }): ViewInstance {
+  mount(
+    _container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance & SceneRenderer<BlackHeightEqualScene> {
     // 컨테이너가 아니라 캔버스 안을 비운다 — 러너가 이미 컨테이너에 캔버스를
     // 붙여 놓았으므로, 컨테이너를 비우면 그 캔버스가 떨어져 나가 화면이 빈다.
     params.canvas.textContent = '';
-    const colors = getColors(params.theme);
+    const theme: Theme | undefined = params.theme;
+    const colors = getColors(theme);
+    const tr = params.t ?? makeTranslator(params.locale);
     const svg = params.canvas;
 
     const edgesG = el('g');
@@ -141,11 +169,13 @@ export const blackHeightEqualStageView: CanvasView = {
     const captionG = el('g');
     svg.append(edgesG, nilG, nodesG, cursorG, badgesG, captionG);
 
-    // 좌표(key → x/y). visitStep/settlePath 가 target 을 이 자리로 옮긴다.
-    const positions = new Map<string, { x: number; y: number }>();
-    const badgeTimers: ReturnType<typeof setTimeout>[] = [];
+    // ── 정적 그리기가 다시 채우는 손잡이들. 자리는 장면의 `root` 에서만 나온다.
+    const positions = new Map<string, Point>();
+    const badgeByNilId = new Map<string, SVGGElement>();
 
-    // 커서 — accent 링. counted 이면 실선, 건너뛴 자리(빨강)면 점선.
+    // 커서와 캡션은 **재건 밖**이다 — mount 때 한 번 짓고 정적 그리기가 속성만
+    // 덮어쓴다. 그래서 세대 빗장이 필요하다 (S-scene): 살아남은 옛 흐름이 이
+    // 둘에 쓰면 살아 있는 화면을 덮는다.
     const cursorRing = el('circle', {
       r: CURSOR_R,
       fill: 'none',
@@ -153,8 +183,6 @@ export const blackHeightEqualStageView: CanvasView = {
       'stroke-width': 3,
     });
     cursorG.appendChild(cursorRing);
-    cursorG.style.transition = 'transform 260ms ease';
-    cursorG.style.opacity = '0';
 
     const captionText = el('text', {
       x: PIECE_CANVAS_W / 2,
@@ -166,45 +194,199 @@ export const blackHeightEqualStageView: CanvasView = {
     });
     captionG.appendChild(captionText);
 
-    function setCaption(text: string): void {
-      captionText.textContent = text;
-    }
+    // ── 시간 자원. destroy 에서 모두 거둔다 (S-view).
+    const timers = new Set<ReturnType<typeof setTimeout>>();
+    /**
+     * 기다리다 만 것을 깨우는 자리. 타이머를 거두는 것만으로는 모자란다 — 취소된
+     * tick 은 아예 불리지 않아 promise 를 풀 길이 사라지고, 러너가 `render` 의
+     * Promise 를 기다리므로 걸음이 영영 돌아오지 않는다 (S-view).
+     */
+    const waiters = new Set<() => void>();
+    let disposed = false;
 
-    function nodeFill(color: RBColor): string {
+    let gen = 0;
+    const alive = (myGen: number): boolean => !disposed && myGen === gen;
+
+    /**
+     * 시간 기반 tick 애니메이션.
+     *
+     * 스스로 다음 회차를 예약하는 루프이므로 세대가 갈리거나 destroy 되면 멈춘다 —
+     * 떨어져 나간 노드를 16ms 마다 건드리면 유한하더라도 "관찰 가능한 뒷일" 이
+     * 남는다 (S-view).
+     */
+    const animate = (ms: number, onTick: (t: number) => void, myGen: number): Promise<void> =>
+      new Promise((resolve) => {
+        if (ms <= 0 || disposed) {
+          if (alive(myGen)) onTick(1);
+          resolve();
+          return;
+        }
+        const start = Date.now();
+        const finish = (): void => {
+          waiters.delete(finish);
+          resolve();
+        };
+        waiters.add(finish);
+        const tick = (): void => {
+          if (!alive(myGen)) {
+            finish();
+            return;
+          }
+          const t = Math.min(1, (Date.now() - start) / ms);
+          onTick(t);
+          if (t >= 1) {
+            finish();
+            return;
+          }
+          const id = setTimeout(() => {
+            timers.delete(id);
+            tick();
+          }, FRAME_MS);
+          timers.add(id);
+        };
+        tick();
+      });
+
+    function nodeFill(color: BlackHeightSceneColor): string {
       return color === 'red' ? colors.danger : colors.primary;
     }
-    function nodeInk(color: RBColor): string {
+    function nodeInk(color: BlackHeightSceneColor): string {
       return color === 'red' ? colors.stateInk : colors.textInverse;
     }
 
-    function moveCursorTo(x: number, y: number, counted: boolean): void {
-      cursorG.style.transform = `translate(${x}px, ${y}px)`;
-      cursorG.style.opacity = '1';
-      cursorRing.setAttribute('stroke', counted ? colors.accent : colors.textMuted);
-      cursorRing.setAttribute('stroke-dasharray', counted ? '' : '4 3');
+    /** 장면이 말할 것을 문자로 만든다. 장면은 문안도 수도 모른다 (C10). */
+    function captionFor(scene: BlackHeightEqualScene): string {
+      const c = scene.caption;
+      if (!c) return '';
+      switch (c.kind) {
+        case 'visit': {
+          // 지금까지의 셈은 길에서 센다 — 배지와 같은 출처다.
+          const last = scene.trail[scene.trail.length - 1];
+          const n = countBlack(scene.trail);
+          if (!last) return '';
+          if (last.kind === 'nil') {
+            return tr('caption.visitNil', 'Nil — always counts as black. Running total {n}.', { n });
+          }
+          return last.counted
+            ? tr('caption.visitBlack', 'Black — count it. Running total {n}.', { n })
+            : tr('caption.visitRed', 'Red — skip it. Running total stays {n}.', { n });
+        }
+        case 'settled': {
+          const just = scene.settled[scene.settled.length - 1];
+          if (!just) return '';
+          return tr('caption.settled', 'This path settles at {n} black.', { n: just.blackCount });
+        }
+        case 'allSettled': {
+          // 네 배지가 같은 수라는 것이 이 걸음의 말이다. 그 수를 따로 실어 오지
+          // 않고 배지에서 읽는다 — 하나라도 달랐다면 화면이 스스로 어긋난다.
+          const first = scene.settled[0];
+          if (!first) return '';
+          return tr('caption.allSettled', 'Every path settles at the same number — {n} black.', {
+            n: first.blackCount,
+          });
+        }
+        case 'rewind':
+          return tr(
+            'caption.rewind',
+            'Back to the root — watching it again, one step at a time.',
+            {},
+          );
+      }
     }
 
-    function drawTree(root: RBNodeLike): void {
-      edgesG.replaceChildren();
-      nilG.replaceChildren();
-      nodesG.replaceChildren();
-      badgesG.replaceChildren();
-      positions.clear();
 
-      const { nodes, edges } = layoutTree(root);
+    /** 커서를 그 자리에 세운다. 정적 경로와 흐름의 끝이 같은 문자열을 쓴다. */
+    function setCursor(at: Point, counted: boolean, hidden: boolean): void {
+      cursorG.setAttribute('transform', translate(at.x, at.y));
+      if (hidden) cursorG.setAttribute('opacity', '0');
+      else cursorG.removeAttribute('opacity');
+      cursorRing.setAttribute('stroke', counted ? colors.accent : colors.textMuted);
+      // 되돌릴 때는 값을 다시 쓰지 않고 지운다 — 속성의 유무 하나가 되짚기
+      // 판정을 가른다 (프로토콜 4 절).
+      if (counted) cursorRing.removeAttribute('stroke-dasharray');
+      else cursorRing.setAttribute('stroke-dasharray', '4 3');
+    }
+
+    /** 뿌리 자리. 커서가 숨거나 돌아오는 곳이다. */
+    function rootPoint(scene: BlackHeightEqualScene): Point | null {
+      if (!scene.root) return null;
+      return positions.get(`node:${scene.root.id}`) ?? null;
+    }
+
+    /** 길의 `i` 번째 자리. 범위 밖이면 `null`. */
+    function trailPoint(scene: BlackHeightEqualScene, i: number): Point | null {
+      const s = scene.trail[i];
+      if (!s) return null;
+      return positions.get(`${s.kind}:${s.id}`) ?? null;
+    }
+
+    /** 배지 하나. 스케일이 가운데를 물도록 자리를 transform 으로 준다. */
+    function drawBadge(at: Point, count: number, ringed: boolean): SVGGElement {
+      const chip = el('g', { transform: translate(at.x, at.y + BADGE_OFFSET_Y) });
+      const rect = el('rect', {
+        x: -BADGE_HALF_W,
+        y: -BADGE_HALF_H,
+        width: BADGE_HALF_W * 2,
+        height: BADGE_HALF_H * 2,
+        rx: 4,
+        fill: colors.accent,
+      });
+      // 매듭지어진 뒤에는 테두리가 남는다 — "넷이 같다" 는 강조가 되짚어도
+      // 살아 있어야 한다 (S-scene PREFER).
+      if (ringed) {
+        rect.setAttribute('stroke', colors.text);
+        rect.setAttribute('stroke-width', '1.5');
+      }
+      chip.appendChild(rect);
+      const label = el('text', {
+        x: 0,
+        y: 0,
+        'text-anchor': 'middle',
+        'dominant-baseline': 'central',
+        'font-family': fonts.mono,
+        'font-size': fontSizes.xs,
+        fill: colors.stateInk,
+      });
+      label.textContent = String(count);
+      chip.appendChild(label);
+      badgesG.appendChild(chip);
+      return chip;
+    }
+
+    /**
+     * 그 장면의 화면 **전체**를 세운다.
+     *
+     * 늘 비우고 다시 그린다. 되짚기가 지나온 걸음을 되밟을 필요가 없는 것이 이
+     * 함수 하나 때문이다 — 쌓인 배지도, 커서의 자리와 그 링의 결도 전부 장면이
+     * 말하는 대로 여기서 다시 선다.
+     */
+    function drawStatic(scene: BlackHeightEqualScene): void {
+      edgesG.textContent = '';
+      nilG.textContent = '';
+      nodesG.textContent = '';
+      badgesG.textContent = '';
+      positions.clear();
+      badgeByNilId.clear();
+      captionText.textContent = captionFor(scene);
+
+      if (!scene.root) {
+        cursorG.setAttribute('opacity', '0');
+        return;
+      }
+
+      const { nodes, edges } = layoutTree(scene.root);
 
       for (const e of edges) {
-        edgesG.appendChild(
-          el('line', {
-            x1: e.x1,
-            y1: e.y1,
-            x2: e.x2,
-            y2: e.y2,
-            stroke: e.kind === 'real' ? colors.border : colors.textMuted,
-            'stroke-width': 2,
-            'stroke-dasharray': e.kind === 'real' ? '' : '3 3',
-          }),
-        );
+        const line = el('line', {
+          x1: e.x1,
+          y1: e.y1,
+          x2: e.x2,
+          y2: e.y2,
+          stroke: e.kind === 'real' ? colors.border : colors.textMuted,
+          'stroke-width': 2,
+        });
+        if (e.kind === 'nil') line.setAttribute('stroke-dasharray', '3 3');
+        edgesG.appendChild(line);
       }
 
       for (const n of nodes) {
@@ -212,7 +394,14 @@ export const blackHeightEqualStageView: CanvasView = {
         if (n.kind === 'node' && n.color !== undefined && n.value !== undefined) {
           const g = el('g');
           g.appendChild(
-            el('circle', { cx: n.x, cy: n.y, r: NODE_R, fill: nodeFill(n.color), stroke: colors.border, 'stroke-width': 1 }),
+            el('circle', {
+              cx: n.x,
+              cy: n.y,
+              r: NODE_R,
+              fill: nodeFill(n.color),
+              stroke: colors.border,
+              'stroke-width': 1,
+            }),
           );
           const label = el('text', {
             x: n.x,
@@ -255,103 +444,156 @@ export const blackHeightEqualStageView: CanvasView = {
         }
       }
 
-      // 커서는 뿌리 위에서 숨어 시작한다.
-      const rootPos = positions.get(`node:${root.id}`);
-      if (rootPos) {
-        cursorG.style.transition = 'none';
-        cursorG.style.transform = `translate(${rootPos.x}px, ${rootPos.y}px)`;
-        cursorG.style.opacity = '0';
-        // 다음 변경부터 다시 애니메이션 — 강제 reflow 로 transition:none 을 확정.
-        void cursorG.getBoundingClientRect();
-        cursorG.style.transition = 'transform 260ms ease';
+      // 길들이 남긴 셈 — 되짚어도 살아나야 하는 것이 바로 이것이다.
+      for (const path of scene.settled) {
+        const at = positions.get(`nil:${path.nilId}`);
+        if (!at) continue;
+        badgeByNilId.set(path.nilId, drawBadge(at, path.blackCount, scene.allSettled));
       }
+
+      // 커서.
+      const root = rootPoint(scene);
+      if (!root) {
+        cursorG.setAttribute('opacity', '0');
+        return;
+      }
+      if (scene.cursorAt === 'walking') {
+        const last = scene.trail[scene.trail.length - 1];
+        const at = trailPoint(scene, scene.trail.length - 1);
+        if (last && at) {
+          setCursor(at, last.counted, false);
+          return;
+        }
+      }
+      setCursor(root, true, scene.cursorAt === 'hidden');
     }
 
-    function returnCursorToRoot(rootId: string): void {
-      const pos = positions.get(`node:${rootId}`);
-      if (!pos) return;
-      cursorG.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
-      cursorRing.setAttribute('stroke', colors.accent);
-      cursorRing.setAttribute('stroke-dasharray', '');
+    /** 커서가 한 자리 내려간다. 출발 자리는 길의 바로 앞 자리다 (`prev` 가 아니다). */
+    async function runWalk(scene: BlackHeightEqualScene, myGen: number): Promise<void> {
+      const to = trailPoint(scene, scene.trail.length - 1);
+      if (!to) return;
+      // 길의 첫 자리면 뿌리에서 출발한다 — 앞 걸음이 커서를 거기 두고 갔다.
+      const from = trailPoint(scene, scene.trail.length - 2) ?? rootPoint(scene);
+      if (!from) return;
+      await animate(
+        WALK_MS,
+        (t) => {
+          const x = t >= 1 ? to.x : from.x + (to.x - from.x) * t;
+          const y = t >= 1 ? to.y : from.y + (to.y - from.y) * t;
+          cursorG.setAttribute('transform', translate(x, y));
+        },
+        myGen,
+      );
     }
 
-    let rootId = '';
+    /**
+     * 길이 맺힌다 — 배지가 앉고 커서가 뿌리로 돌아온다.
+     *
+     * 둘은 한 걸음의 한 뜻이라 **시계를 나누지 않는다.** 정적 그리기가 이미 배지를
+     * 세워 두었으므로 아직 앉기 전으로 되물렸다 제자리로 돌려놓는다.
+     */
+    async function runSettle(scene: BlackHeightEqualScene, myGen: number): Promise<void> {
+      const just = scene.settled[scene.settled.length - 1];
+      if (!just) return;
+      const from = positions.get(`nil:${just.nilId}`);
+      const to = rootPoint(scene);
+      if (!from || !to) return;
+      const chip = badgeByNilId.get(just.nilId) ?? null;
+      if (chip) chip.setAttribute('opacity', '0');
+
+      await animate(
+        SETTLE_MS,
+        (t) => {
+          const x = t >= 1 ? to.x : from.x + (to.x - from.x) * t;
+          const y = t >= 1 ? to.y : from.y + (to.y - from.y) * t;
+          cursorG.setAttribute('transform', translate(x, y));
+          if (chip) {
+            // 앞 절반 동안 배지가 떠오른다. 끝에서는 속성을 지운다 — 값을 다시
+            // 쓰면 정적으로 세운 화면과 속성 하나가 달라진다 (프로토콜 4 절).
+            if (t >= 1) chip.removeAttribute('opacity');
+            else chip.setAttribute('opacity', String(Math.min(1, t * 2)));
+          }
+        },
+        myGen,
+      );
+    }
+
+    /** 배지 전부가 한 번 부푼다. 크기 변화라 opacity 전환이 아니다. */
+    async function runEmphasis(scene: BlackHeightEqualScene, myGen: number): Promise<void> {
+      const chips: { chip: SVGGElement; at: Point }[] = [];
+      for (const path of scene.settled) {
+        const chip = badgeByNilId.get(path.nilId);
+        const at = positions.get(`nil:${path.nilId}`);
+        if (chip && at) chips.push({ chip, at });
+      }
+      if (chips.length === 0) return;
+
+      await animate(
+        EMPHASIS_MS,
+        (t) => {
+          // 끝에서는 보간값이 아니라 목표값을 그대로 쓴다 — sin(π) 가 0 이 아니라
+          // 1.2e-16 이라 문자열이 정적 그리기와 갈린다 (프로토콜 4 절).
+          for (const { chip, at } of chips) {
+            const base = translate(at.x, at.y + BADGE_OFFSET_Y);
+            if (t >= 1) {
+              chip.setAttribute('transform', base);
+              continue;
+            }
+            const s = 1 + 0.3 * Math.sin(t * Math.PI);
+            chip.setAttribute('transform', `${base} scale(${s})`);
+          }
+        },
+        myGen,
+      );
+    }
+
+    async function render(
+      next: BlackHeightEqualScene,
+      /** 흐를 것을 `step` 이 말하므로 앞 장면을 들추지 않는다 (S-scene). */
+      _prev: BlackHeightEqualScene | null,
+      opts: { animate: boolean },
+    ): Promise<void> {
+      gen += 1;
+      const myGen = gen;
+      drawStatic(next);
+
+      // 되짚기는 여기서 끝. 타이머도 프레임도 걸지 않는다.
+      if (!opts.animate) return;
+
+      const step = next.step;
+      if (!step) return;
+
+      switch (step.kind) {
+        case 'walk':
+          await runWalk(next, myGen);
+          break;
+        case 'settle':
+          await runSettle(next, myGen);
+          break;
+        case 'emphasize':
+          await runEmphasis(next, myGen);
+          break;
+      }
+
+      // 흐름이 끝나면 그 장면을 통째로 다시 세운다 — 흐르며 선 화면과 곧바로 세운
+      // 화면이 속성 하나까지 같아진다 (S-scene). 옛 세대면 손대지 않고 물러난다.
+      if (!alive(myGen)) return;
+      drawStatic(next);
+    }
 
     return {
-      destroy() {
-        for (const t of badgeTimers) clearTimeout(t);
-        svg.replaceChildren();
-      },
+      render,
 
-      init(data: { root: RBNodeLike }) {
-        const root = data.root;
-        rootId = root.id;
-        drawTree(root);
-        setCaption('');
-      },
-
-      visitStep(payload: {
-        id: string;
-        kind: 'node' | 'nil';
-        counted: boolean;
-        caption: string;
-      }) {
-        const pos = positions.get(`${payload.kind}:${payload.id}`);
-        if (pos) moveCursorTo(pos.x, pos.y, payload.counted);
-        setCaption(payload.caption);
-      },
-
-      settlePath(payload: { blackCount: number; nilId: string; caption: string }) {
-        const pos = positions.get(`nil:${payload.nilId}`);
-        if (pos) {
-          const chip = el('g');
-          chip.appendChild(
-            el('rect', {
-              x: pos.x - BADGE_HALF_W,
-              y: pos.y + BADGE_OFFSET_Y - BADGE_HALF_H,
-              width: BADGE_HALF_W * 2,
-              height: BADGE_HALF_H * 2,
-              rx: 4,
-              fill: colors.accent,
-            }),
-          );
-          const label = el('text', {
-            x: pos.x,
-            y: pos.y + BADGE_OFFSET_Y,
-            'text-anchor': 'middle',
-            'dominant-baseline': 'central',
-            'font-family': fonts.mono,
-            'font-size': fontSizes.xs,
-            fill: colors.stateInk,
-          });
-          label.textContent = String(payload.blackCount);
-          chip.appendChild(label);
-          badgesG.appendChild(chip);
-        }
-        setCaption(payload.caption);
-        returnCursorToRoot(rootId);
-      },
-
-      settleAll(payload: { caption: string }) {
-        setCaption(payload.caption);
-        // 배지 전부를 잠깐 키워 강조한다 — 크기 변화라 opacity 전환이 아니다.
-        for (const chip of Array.from(badgesG.children)) {
-          const g = chip as SVGGElement;
-          g.style.transition = 'transform 220ms ease';
-          g.style.transformBox = 'fill-box';
-          g.style.transformOrigin = 'center';
-          g.style.transform = 'scale(1.3)';
-          const t = setTimeout(() => {
-            g.style.transform = 'scale(1)';
-          }, 220);
-          badgeTimers.push(t);
-        }
-      },
-
-      rewind(payload: { caption: string }) {
-        badgesG.replaceChildren();
-        setCaption(payload.caption);
-        returnCursorToRoot(rootId);
+      destroy(): void {
+        disposed = true;
+        gen += 1;
+        for (const id of timers) clearTimeout(id);
+        timers.clear();
+        for (const wake of [...waiters]) wake();
+        waiters.clear();
+        positions.clear();
+        badgeByNilId.clear();
+        svg.textContent = '';
       },
     };
   },

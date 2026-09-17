@@ -10,16 +10,20 @@
  *
  * ── 이벤트 (facet 고유 확장, C2). 전부 걸음의 경계이므로 silent 가 아니다.
  *
+ * **payload 가 하나도 없다.** 화면에 뜨는 것은 전부 바탕 다섯과 여섯에서 나오므로
+ * 여기서 실어 보내면 같은 물음에 답이 둘이 된다 (프로토콜 4 절 "payload 가 친절하면
+ * 오히려 위험하다"). 걸음이 내리는 판정이 하나도 없는 조각이라 이 자리가 비었다.
+ *
  *   board    {}
  *       판을 세운다. 과목 카드 다섯과 겹침 괄호 여섯이 왼쪽 판으로 들어선다.
- *   place    { subject: string; linkedTo: string[] }
- *       과목 하나가 마디 자리로 옮겨 앉는다. `linkedTo` 는 **이미 옮겨 앉은**
- *       이웃이며, 그 겹침들이 이 걸음에서 선이 된다. 겹침은 두 끝이 다 자리를
- *       잡아야 선이 될 수 있으므로 늦게 앉는 쪽의 걸음에서 한 번만 펴진다.
- *   color    { subjects: string[]; periods: number[]; total: number }
- *       이어진 마디를 서로 다른 색으로 칠한다. 두 배열은 자리가 맞물린다
- *       (`subjects[i]` 의 교시가 `periods[i]`). `total` 은 쓰인 색의 가짓수.
- *   schedule { total: number }
+ *   place    {}
+ *       과목 하나가 마디 자리로 옮겨 앉는다. **어느 과목인지는 선언한 차례가
+ *       말한다** — k 번째 `place` 가 곧 `subjects[k]` 다. 그때 어느 겹침이 선이
+ *       되는지도 두 끝이 다 앉았는지가 정한다 (`scene.ts` 의 `edgesOpenedAt`).
+ *   color    {}
+ *       이어진 마디를 서로 다른 색으로 칠한다. 어느 마디가 몇 교시인지는
+ *       `assignPeriods` 가 정하고 장면이 그것을 부른다.
+ *   schedule {}
  *       색 하나를 교시 하나로 되읽어 원래의 시간표를 채운다.
  *   rewind   {}
  *       되감는다. 자동 재생이 끝난 뒤 한 걸음씩 짚기 시작할 때 한 번 나간다.
@@ -51,10 +55,14 @@ function partner(pair: readonly [string, string], subject: string): string | nul
  * 번호를 준다.
  *
  * **어떻게 칠하는가는 이 조각의 주장이 아니다.** 바꿔 놓으면 이미 아는 문제가
- * 된다는 것까지가 주장이고, 그래서 칠하는 일은 걸음으로 쪼개지 않고 여기서 한 번에
- * 끝낸다.
+ * 된다는 것까지가 주장이고, 그래서 칠하는 일은 걸음으로 쪼개지 않는다.
+ *
+ * 그래서 이 함수를 **내준다** — 떼어 내도 조각이 말하려는 바가 남는다. 걸음이
+ * 배정을 실어 보내면 화면이 그 수를 믿고 그리게 되어 답이 두 자리에 적힌다
+ * (프로토콜 4 절 "바탕에서 결정되는 셈은 싣지 말고 같은 함수를 부르게 한다").
+ * `scene.ts` 의 `periodsOf` 와 `slotCount` 가 여기를 지난다.
  */
-function assignPeriods(
+export function assignPeriods(
   subjects: readonly string[],
   overlaps: ReadonlyArray<readonly [string, string]>,
 ): Map<string, number> {
@@ -78,11 +86,7 @@ export async function reduceToKnownAlgorithm(
   base: FacetContext<ReduceToKnownData>,
 ): Promise<void> {
   const ctx = base as ReactiveContext<ReduceToKnownData>;
-  const { subjects, overlaps, stepMs } = ctx.data;
-
-  const period = assignPeriods(subjects, overlaps);
-  const periods = subjects.map((s) => period.get(s) ?? 1);
-  const total = new Set(periods).size;
+  const { subjects, stepMs } = ctx.data;
 
   /** 한 걸음씩 짚는 중인가. 자동 재생을 마치면 참이 되고 다시 거짓이 되지 않는다. */
   let byHand = false;
@@ -110,6 +114,9 @@ export async function reduceToKnownAlgorithm(
   /**
    * 한 판을 처음부터 끝까지 보인다.
    *
+   * payload 를 걷어내고 나니 걸음의 박자만 남았다 — 판을 세우고, 과목 수만큼 건너
+   * 앉히고, 칠하고, 되읽는다. 무엇이 어떻게 보일지는 전부 장면이 바탕에서 셈한다.
+   *
    * **첫 걸음은 문을 지나지 않는다** (S-piece) — 문은 걸음 *사이*의 것이라 첫
    * 걸음 앞에는 기다릴 앞걸음이 없다. 그래서 되감은 직후 처음 누르는 `advance`
    * 도 되감기와 첫 걸음을 함께 보인다.
@@ -117,23 +124,16 @@ export async function reduceToKnownAlgorithm(
   async function play(): Promise<boolean> {
     await ctx.emit({ type: 'board', payload: {} });
 
-    const placed = new Set<string>();
-    for (const subject of subjects) {
+    for (let i = 0; i < subjects.length; i += 1) {
       if (!(await gate())) return false;
-      const linkedTo: string[] = [];
-      for (const pair of overlaps) {
-        const other = partner(pair, subject);
-        if (other !== null && placed.has(other)) linkedTo.push(other);
-      }
-      placed.add(subject);
-      await ctx.emit({ type: 'place', payload: { subject, linkedTo } });
+      await ctx.emit({ type: 'place', payload: {} });
     }
 
     if (!(await gate())) return false;
-    await ctx.emit({ type: 'color', payload: { subjects, periods, total } });
+    await ctx.emit({ type: 'color', payload: {} });
 
     if (!(await gate())) return false;
-    await ctx.emit({ type: 'schedule', payload: { total } });
+    await ctx.emit({ type: 'schedule', payload: {} });
     return true;
   }
 

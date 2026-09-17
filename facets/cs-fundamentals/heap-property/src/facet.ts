@@ -6,8 +6,11 @@
  *
  * @piece — 이 표식이 S-piece 의 적용 범위를 정한다.
  *
- * 조각의 규범: 필수 조작 없음(다시 보기 하나) / 제목 없음 / 한 주장 /
+ * 조각의 규범: 필수 조작 없음(다시 보기와 스크럽 띠) / 제목 없음 / 한 주장 /
  * 메트릭 없음 / 캔버스 폭 620 / 전제는 화면이 아니라 글이 밝힌다.
+ *
+ * 화면은 장면(Scene) 방식이다 — projector 대신 `scene.ts` 의 `ScenePlan` 을 선언하고,
+ * stage 가 `render` 하나로 산다 (S-scene). 그래서 띠를 끌어 아무 걸음으로나 갈 수 있다.
  *
  * 데이터는 호스트가 준 최소 힙 그대로다 (배열 인덱스 = 힙 인덱스).
  *   nodes = [3, 5, 8, 9, 6, 12, 10]
@@ -50,7 +53,7 @@ export const heapPropertyFacet: FacetJson = {
     pt: 'O pai sempre precede os filhos — mas entre irmãos não há ordem nenhuma',
   },
   algorithm: 'module:heapProperty',
-  projector: 'module:heapPropertyProjector',
+  scene: 'module:heapPropertyScene',
   initialData: {
     type: 'heap-property',
     nodes: [
@@ -107,7 +110,7 @@ export const heapPropertyFacet: FacetJson = {
     stage: { type: 'heap-property-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

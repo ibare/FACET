@@ -7,7 +7,7 @@
  * 놓는 장면이 한 번도 없다.
  */
 
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 import type { FacetJson } from '@ffacet/core/runtime';
 
 export const countThenPlaceFacet: FacetJson = {
@@ -38,7 +38,7 @@ export const countThenPlaceFacet: FacetJson = {
     pt: 'Contar cada valor fixa todas as casas de antemão — nenhum valor é comparado com outro.',
   },
   algorithm: 'module:countThenPlace',
-  projector: 'module:countThenPlaceProjector',
+  scene: 'module:countThenPlaceScene',
   initialData: {
     type: 'count-then-place',
     values: [2, 0, 1, 2, 0, 2],
@@ -47,10 +47,7 @@ export const countThenPlaceFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'count-then-place-stage' },
-    controls: {
-      type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
-    },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.count': {

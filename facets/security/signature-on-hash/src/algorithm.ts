@@ -17,7 +17,8 @@
  * 식별자 (C1): 단계를 가리키는 곳이 payload 뿐이라 target 을 쓰지 않는다.
  *
  * 이벤트 (C2) — 전부 facet 로컬 (StandardEventType 미포함):
- *   - init           payload: { documentBytes, digestBytes, signatureBytes, ... }
+ *   - init           payload: { hashLabel, signatureLabel, documentBytes, digestBytes,
+ *                    signatureBytes }   silent — 눈금을 세우지 않는다
  *   - rewind payload: {}   손으로 짚기 시작할 때 화면을 되감는다
  *   - show-document  payload: {}   문서가 놓인다. 막대가 화면을 넘어간다
  *   - hash-it        payload: {}   해시로 접힌다
@@ -96,9 +97,12 @@ export async function signatureOnHash(
     return ok && !ctx.cancelled;
   }
 
+  // 화면에 아무것도 세우지 않는 발신이라 silent 로 둔다. 걸음 눈금이 서면 첫 장면과
+  // 똑같은 화면을 가리키는 뜻 없는 눈금이 하나 생긴다 (S-runtime 의 silent).
   await ctx.emit({
     type: 'init',
     payload: { hashLabel, signatureLabel, documentBytes, digestBytes, signatureBytes },
+    silent: true,
   });
 
   // 네 걸음. 문서의 크기를 먼저 겪어야 32바이트가 작게 느껴진다.

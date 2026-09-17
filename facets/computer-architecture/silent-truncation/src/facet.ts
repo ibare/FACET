@@ -3,6 +3,9 @@
  *
  * @piece 질문 하나에 답하고 멈추는 조각 (S-piece).
  *   "여덟 자리 그릇에 300 을 담으면 무엇이 남는가."
+ *
+ * 화면을 명령이 아니라 **장면**으로 만들므로 (`scene:`) 어느 걸음의 화면이든
+ * 셈으로 얻는다. 그래서 재생 위치를 끌어 보는 띠를 붙인다 (`pieceScrub`).
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -37,11 +40,12 @@ export const silentTruncationFacet: FacetJson = {
   },
 
   algorithm: 'module:silentTruncation',
-  projector: 'module:silentTruncationProjector',
+  scene: 'module:silentTruncationScene',
 
   /*
    * 1차 데이터만 둔다 — 값과 두 비트 폭. 2진 표기 · 남는 값 · 떨어져 나간 값은
-   * algorithm 이 셈하고, 그림의 좌표는 stage 가 캔버스에서 역산한다 (S-piece).
+   * 장면이 비트 칸 구조에서 세고, 그림의 좌표는 stage 가 캔버스에서 역산한다
+   * (S-piece).
    */
   initialData: {
     type: 'silent-truncation',
@@ -53,7 +57,7 @@ export const silentTruncationFacet: FacetJson = {
 
   blocks: {
     stage: { type: 'silent-truncation-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
 
   messages: {

@@ -10,10 +10,10 @@
  * 걸음이 늘어나므로 `stepMs` 를 낮춰 잡았다 (선언에 있다).
  *
  * ── 이벤트 (C2)
- *   pair-meet    { row, col, k, a, b, product, sum }
- *       A[row][k] 와 B[k][col] 이 C[row][col] 에서 만난다. `sum` 은 이 곱까지의 누적.
- *   cell-formed  { row, col, k, a, b, product, sum }
- *       같은 만남이되 마지막 짝이다. 이 걸음으로 칸이 굳고 `sum` 이 곧 C[row][col].
+ *   pair-meet    { row, col, product }
+ *       A 의 row 행과 B 의 col 열이 C[row][col] 에서 맞물려 곱 하나를 놓는다.
+ *   cell-formed  { row, col, product }
+ *       같은 만남이되 마지막 짝이다. 이 걸음으로 칸이 굳는다.
  *   rewind       {}
  *       처음으로 되감는다. 자동 재생이 끝난 뒤의 첫 `advance` 가 낸다.
  *   done         {}
@@ -21,6 +21,11 @@
  *
  * silent 은 쓰지 않는다 — 넷 다 화면이 바뀌는 걸음 경계다.
  * 조각이므로 `ctx.metric` 을 부르지 않는다 (S-piece).
+ *
+ * 몇 번째 짝인가(`k`)와 그때까지의 합(`sum`)은 싣지 않는다 — 장면이 그 칸에 쌓인
+ * 항을 들고 있으므로 둘 다 거기서 센다. 맞물린 두 수(`a`·`b`)도 바탕을 번호로 읽는
+ * 것뿐이라 싣지 않는다. 남는 것은 **어느 칸을 짓고 있나**(`row`·`col`) 라는 판정과
+ * **맞대어 곱한다**(`product`) 는 이 조각의 알고리즘 그 자체다 (`scene.ts` 의 잣대표).
  */
 
 import type { FacetContext, ReactiveContext, ReactiveInputEvent } from '@ffacet/core/runtime';
@@ -83,15 +88,11 @@ export async function rowTimesColumnAlgorithm(
       if (ctx.cancelled) return false;
       for (let col = 0; col < cols; col += 1) {
         if (ctx.cancelled) return false;
-        let sum = 0;
         for (let k = 0; k < inner; k += 1) {
           // 문이 바디의 첫 줄이라 이것이 진입 검사를 대신한다 (C8).
           if (!(await gate())) return false;
-          const left = a[row]?.[k] ?? 0;
-          const up = b[k]?.[col] ?? 0;
-          const product = left * up;
-          sum += product;
-          const payload = { row, col, k, a: left, b: up, product, sum };
+          const product = (a[row]?.[k] ?? 0) * (b[k]?.[col] ?? 0);
+          const payload = { row, col, product };
           if (k === inner - 1) {
             await ctx.emit({ type: 'cell-formed', payload });
           } else {

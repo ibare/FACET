@@ -6,8 +6,11 @@
  *
  * @piece — 이 표식이 S-piece 의 적용 범위를 정한다.
  *
- * 조각의 규범: 필수 조작 없음(다시 보기 · 한 걸음) / 제목 없음 / 한 주장 /
+ * 조각의 규범: 필수 조작 없음(다시 보기 · 띠) / 제목 없음 / 한 주장 /
  * 메트릭 없음 / layout 선언 없음 / 캔버스 폭은 러너가 정한다.
+ *
+ * 화면은 장면(Scene) 방식이다 — 어느 걸음의 화면이든 셈으로 얻으므로 띠를 달아
+ * 임의의 자리로 갈 수 있다 (S-scene / S-piece 의 `CONTROL_SET.pieceScrub`).
  *
  * 데이터는 이미 최대 힙인 [9, 7, 8, 3, 4] 하나뿐이다. 꺼내는 순서도, 새 꼭대기도,
  * 끝난 줄도 알고리즘이 이 배열에서 셈한다 — 화면에 박아 둔 값이 없다.
@@ -43,7 +46,7 @@ export const heapSortExtractFacet: FacetJson = {
     pt: 'Tirar o topo libera a última casa do heap, e é exatamente aí que o resultado fica',
   },
   algorithm: 'module:heapSortExtract',
-  projector: 'module:heapSortExtractProjector',
+  scene: 'module:heapSortExtractScene',
   initialData: {
     type: 'heap-sort-extract',
     // 이미 최대 힙이다: 9 위에 7·8, 7 아래에 3·4.
@@ -79,7 +82,7 @@ export const heapSortExtractFacet: FacetJson = {
     },
     'caption.place': {
       en: 'The heap hands back its last slot, and that is exactly where {value} sits down.',
-      ko: '힙이 마지막 칸을 내놓고, 꺼낸 {value} 가 바로 그 칸에 앉는다.',
+      ko: '힙이 마지막 칸을 내놓는다. 꺼낸 값은 {value}, 앉을 자리는 바로 그 칸.',
       ja: 'ヒープが最後のマスを手放し、取り出した {value} がちょうどそこに座る。',
       zh: '堆交还最后一格，取出的 {value} 正好坐在那里。',
       ar: 'تتخلّى الكومة عن آخر خانة، وفيها بالضبط يجلس {value}.',
@@ -130,7 +133,7 @@ export const heapSortExtractFacet: FacetJson = {
     stage: { type: 'heap-sort-extract-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

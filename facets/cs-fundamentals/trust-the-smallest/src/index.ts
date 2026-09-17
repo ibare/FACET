@@ -9,7 +9,7 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
@@ -17,7 +17,7 @@ import { trustTheSmallestAlgorithm, type TrustTheSmallestData } from './algorith
 import { trustTheSmallestDescription } from './description.js';
 import { trustTheSmallestFacet } from './facet.js';
 import { trustTheSmallestIRs } from './irs.js';
-import { trustTheSmallestProjector } from './projector.js';
+import { trustTheSmallestScene } from './scene.js';
 import { trustTheSmallestStageView } from './trust-the-smallest-stage.js';
 
 export function registerTrustTheSmallest(): void {
@@ -26,7 +26,7 @@ export function registerTrustTheSmallest(): void {
     // reactive 만 준다 (S-piece).
     mechanismKind: 'reactive',
   });
-  registerProjector('trustTheSmallestProjector', trustTheSmallestProjector);
+  registerScenePlan('trustTheSmallestScene', trustTheSmallestScene);
   for (const ir of trustTheSmallestIRs) registerIR(ir.id, ir);
   registerView('trust-the-smallest-stage', trustTheSmallestStageView);
   registerFacets([trustTheSmallestFacet]);
@@ -34,14 +34,17 @@ export function registerTrustTheSmallest(): void {
 }
 
 export { trustTheSmallestAlgorithm, trustTheSmallestCellsOf } from './algorithm.js';
+export type { TrustTheSmallestData, TrustTheSmallestStreamItem } from './algorithm.js';
+export { trustTheSmallestScene } from './scene.js';
 export type {
-  TrustTheSmallestCell,
-  TrustTheSmallestData,
-  TrustTheSmallestStreamItem,
-} from './algorithm.js';
-export { trustTheSmallestProjector } from './projector.js';
+  TrustCellRef,
+  TrustProbe,
+  TrustStep,
+  TrustStreamKey,
+  TrustTheSmallestScene,
+  TrustTouch,
+} from './scene.js';
 export { trustTheSmallestIRs } from './irs.js';
 export { trustTheSmallestFacet } from './facet.js';
 export { trustTheSmallestDescription } from './description.js';
-export { readTrustScene, trustTheSmallestStageView } from './trust-the-smallest-stage.js';
-export type { TrustTheSmallestScene } from './trust-the-smallest-stage.js';
+export { trustTheSmallestStageView } from './trust-the-smallest-stage.js';

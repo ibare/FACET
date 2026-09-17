@@ -11,6 +11,23 @@
  * 건드리지 않는다는 것도 이 배치가 함께 말한다.
  *
  * 가로 자리는 캔버스 폭에서 역산한다. 상수는 상한만 준다 (S-piece).
+ *
+ * ## 장면을 받아 그린다
+ *
+ * 걸음마다 부르는 메서드(`init()` · `enter()` · `leave()` · `openBothEnds()` ·
+ * `rewind()`) 를 두지 않는다. 그 메서드들이 곧 되돌릴 수 없는 명령이었고, 통 안에
+ * 무엇이 앉아 있는지도 어느 문에 불이 들어왔는지도 DOM 안에만 있었다. 대신
+ * `render(next, prev, { animate })` 하나가 **그 장면의 화면 전체**를 세운다 — 어느
+ * 걸음에서 어느 걸음으로 가든 같은 길이다 (S-scene · `scene.ts`).
+ *
+ * `drawScene` 은 통·자리·칩·값 칸을 **통째로 다시 짓는다.** 자리 넷에 칩 넷이라
+ * 가볍고, 그렇게 하면 앞 걸음의 운동이 남긴 `transform` · `fill` · `opacity` 같은
+ * 자취가 하나도 남지 않는다. 운동이 끝난 뒤에도 같은 함수를 한 번 더 부른다 —
+ * 흐르며 선 화면과 곧바로 세운 화면이 속성 하나까지 같아진다.
+ *
+ * 부드러움은 `opts.animate` 가 정한다. 참이면 방금 밟은 걸음 하나만 흐르게 하고,
+ * 거짓이면 타이머도 프레임도 걸지 않고 곧바로 끝 그림을 세운다 — 되짚기가 그 길로
+ * 온다.
  */
 
 import {
@@ -22,8 +39,25 @@ import {
   fonts,
   fontSizes,
   getColors,
+  makeTranslator,
 } from '@ffacet/core/runtime';
-import type { CanvasView, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import type {
+  CanvasView,
+  SceneRenderer,
+  ViewInstance,
+  ViewMountParams,
+} from '@ffacet/core/runtime';
+import { ALL_DOORS } from './scene.js';
+import type {
+  DequeBothEndsScene,
+  DequeCaption,
+  DequeSide,
+  DequeStep,
+  DoorKey,
+  DoorKind,
+} from './scene.js';
+
+export type { DequeSide } from './scene.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -63,18 +97,9 @@ const MARK_OUT = 'OUT';
 const MARK_FRONT = 'front';
 const MARK_BACK = 'back';
 
-export type DequeSide = 'front' | 'back';
-type Door = 'in' | 'out';
+const SIDES: readonly DequeSide[] = ['front', 'back'];
 
-type Cell = { value: number; g: SVGGElement; rect: SVGRectElement; x: number };
-type Chip = {
-  box: SVGRectElement;
-  ring: SVGRectElement;
-  label: SVGTextElement;
-  arrow: SVGPathElement;
-  color: string;
-  used: boolean;
-};
+type Cell = { g: SVGGElement; rect: SVGRectElement };
 
 function el<K extends keyof SVGElementTagNameMap>(
   tag: K,
@@ -105,8 +130,9 @@ function chevron(sign: number): string {
 export const dequeBothEndsStageView: CanvasView = {
   canvas: { height: CANVAS_H },
 
-  mount(_container: HTMLElement, params: ViewMountParams & { canvas: SVGSVGElement }): ViewInstance {
+  mount(_container: HTMLElement, params: ViewMountParams & { canvas: SVGSVGElement }): ViewInstance & SceneRenderer<DequeBothEndsScene> {
     const colors = getColors(params.theme);
+    const tr = params.t ?? makeTranslator(params.locale);
     const seed = categorical(6, 'vivid');
     const blockColor = seed[CATEGORICAL_QUEUE_BLOCK];
     const inColor = seed[CATEGORICAL_QUEUE_IN];
@@ -135,11 +161,22 @@ export const dequeBothEndsStageView: CanvasView = {
 
     /**
      * 기다리다 만 것을 깨우는 자리. 타이머·프레임을 거두는 것만으로는 모자란다 —
-     * 취소된 tick 은 아예 불리지 않아 promise 를 풀 길이 사라지고, projector 가
-     * 그것을 기다리므로 `await ctx.emit` 이 영영 돌아오지 않는다 (S-view).
+     * 취소된 tick 은 아예 불리지 않아 promise 를 풀 길이 사라지고, 러너가 그것을
+     * 기다리므로 `await ctx.emit` 이 영영 돌아오지 않는다 (S-view).
      */
     const waiters = new Set<() => void>();
     let disposed = false;
+
+    /**
+     * 그림의 세대. `render` 가 화면을 새로 세울 때마다 올린다.
+     *
+     * 되짚기는 앞 걸음의 운동이 이어 도는 동안에도 화면을 새로 세운다. 값 칸은
+     * `drawScene` 이 매번 새로 지으므로 살아남은 옛 운동이 쥔 것은 이미 떨어져 나간
+     * 노드라 무해하지만, **운동 끝의 `drawScene(next)`** 은 재건 밖의 화면에 옛
+     * 장면을 덮어쓴다. 그 자리를 막는 것이 이 빗장이다 (S-scene).
+     */
+    let gen = 0;
+    const alive = (myGen: number): boolean => !disposed && myGen === gen;
 
     const wait = (ms: number): Promise<void> =>
       new Promise((resolve) => {
@@ -187,13 +224,14 @@ export const dequeBothEndsStageView: CanvasView = {
         raf.add(requestAnimationFrame(tick));
       });
 
-    // ── 기하. capacity 가 정해져야 폭이 나오므로 init 에서 다시 잡는다.
-    let capacity = 4;
-    let laneCount = capacity + 2;
+    // ── 기하. 장면이 자리 수를 말하면 거기서 폭을 역산한다.
+    let capacity = 1;
+    let laneCount = 3;
     let cellW = CELL_MAX_W;
     let originX = 0;
 
-    const layout = (): void => {
+    const layout = (cap: number): void => {
+      capacity = Math.max(1, Math.floor(cap));
       laneCount = capacity + 2; // 통 안 자리 + 양 바깥 대기 자리 하나씩
       const room = W - SIDE_MIN * 2 - LANE_GAP * (laneCount - 1);
       cellW = Math.min(CELL_MAX_W, Math.floor(room / laneCount));
@@ -208,19 +246,10 @@ export const dequeBothEndsStageView: CanvasView = {
     const tubeR = (): number => slotX(capacity - 1) + cellW + TUBE_PAD;
     const gateX = (side: DequeSide): number => (side === 'front' ? tubeL() : tubeR());
 
-    // ── 문 칩 넷. 조작이 넷인 것이 곧 칩이 넷인 것이다.
-    const chips = new Map<string, Chip>();
-    const chipKey = (side: DequeSide, door: Door): string => `${side}:${door}`;
-
-    const paintChip = (chip: Chip, active: boolean): void => {
-      chip.box.setAttribute('fill', chip.used ? chip.color : 'none');
-      chip.box.setAttribute('stroke', chip.used ? chip.color : colors.border);
-      chip.label.setAttribute('fill', chip.used ? colors.stateInk : colors.textMuted);
-      chip.arrow.setAttribute('fill', chip.used ? colors.stateInk : colors.border);
-      chip.ring.setAttribute('opacity', active ? '1' : '0');
-    };
-
-    const buildChip = (side: DequeSide, door: Door): void => {
+    // ── 문 칩. 칠(`lit`) 은 "쓰인 적 있다", 테(`ringed`) 는 "지금 쓰인다" 다.
+    //    둘 다 장면이 말하므로 여기에는 기억할 것이 없다.
+    const buildChip = (side: DequeSide, door: DoorKind, lit: boolean, ringed: boolean): void => {
+      const color = door === 'in' ? inColor : outColor;
       const cx = gateX(side);
       const cy = (door === 'in' ? IN_CHIP_Y : OUT_CHIP_Y) + CHIP_H / 2;
       const x0 = cx - CHIP_W / 2;
@@ -232,27 +261,32 @@ export const dequeBothEndsStageView: CanvasView = {
         ? `M ${ax} ${cy - 5} L ${ax + 11} ${cy} L ${ax} ${cy + 5} Z`
         : `M ${ax + 11} ${cy - 5} L ${ax} ${cy} L ${ax + 11} ${cy + 5} Z`;
 
-      const ring = el('rect', {
-        x: x0 - 3,
-        y: y0 - 3,
-        width: CHIP_W + 6,
-        height: CHIP_H + 6,
-        rx: 15,
-        fill: 'none',
-        stroke: colors.accent,
-        'stroke-width': 2,
-        opacity: 0,
-      });
-      const box = el('rect', {
-        x: x0,
-        y: y0,
-        width: CHIP_W,
-        height: CHIP_H,
-        rx: 12,
-        fill: 'none',
-        stroke: colors.border,
-        'stroke-width': 1.5,
-      });
+      sceneryG.appendChild(
+        el('rect', {
+          x: x0 - 3,
+          y: y0 - 3,
+          width: CHIP_W + 6,
+          height: CHIP_H + 6,
+          rx: 15,
+          fill: 'none',
+          stroke: colors.accent,
+          'stroke-width': 2,
+          opacity: ringed ? 1 : 0,
+        }),
+      );
+      sceneryG.appendChild(
+        el('rect', {
+          x: x0,
+          y: y0,
+          width: CHIP_W,
+          height: CHIP_H,
+          rx: 12,
+          fill: lit ? color : 'none',
+          stroke: lit ? color : colors.border,
+          'stroke-width': 1.5,
+        }),
+      );
+      sceneryG.appendChild(el('path', { d, fill: lit ? colors.stateInk : colors.border }));
       const label = el('text', {
         x: pointsRight ? x0 + 22 : x0 + 36,
         y: cy + 4,
@@ -261,42 +295,15 @@ export const dequeBothEndsStageView: CanvasView = {
         'font-size': fontSizes.xs,
         'font-weight': 700,
         'letter-spacing': 0.8,
-        fill: colors.textMuted,
+        fill: lit ? colors.stateInk : colors.textMuted,
       });
       label.textContent = door === 'in' ? MARK_IN : MARK_OUT;
-      const arrow = el('path', { d, fill: colors.border });
-
-      sceneryG.appendChild(ring);
-      sceneryG.appendChild(box);
-      sceneryG.appendChild(arrow);
       sceneryG.appendChild(label);
-      chips.set(chipKey(side, door), { box, ring, label, arrow, color: door === 'in' ? inColor : outColor, used: false });
     };
 
-    let activeChip: Chip | null = null;
-
-    const lightDoor = (side: DequeSide, door: Door): void => {
-      if (activeChip) paintChip(activeChip, false);
-      const chip = chips.get(chipKey(side, door));
-      if (!chip) return;
-      chip.used = true;
-      paintChip(chip, true);
-      activeChip = chip;
-    };
-
-    const dimDoors = (): void => {
-      activeChip = null;
-      for (const chip of chips.values()) {
-        chip.used = false;
-        paintChip(chip, false);
-      }
-    };
-
-    // ── 통. 좌우 마개가 없고 끝이 밖으로 벌어진다 — 그게 "양끝이 열려 있다" 다.
-    const buildScenery = (): void => {
+    /** 통과 자리와 문 넷. 좌우 마개가 없고 끝이 밖으로 벌어진다 — 그게 "양끝이 열려 있다" 다. */
+    const drawScenery = (s: DequeBothEndsScene): void => {
       clear(sceneryG);
-      chips.clear();
-      activeChip = null;
 
       const l = tubeL();
       const r = tubeR();
@@ -323,10 +330,10 @@ export const dequeBothEndsStageView: CanvasView = {
         }),
       );
 
-      for (let s = 0; s < capacity; s += 1) {
+      for (let i = 0; i < capacity; i += 1) {
         sceneryG.appendChild(
           el('rect', {
-            x: slotX(s),
+            x: slotX(i),
             y: CELL_Y,
             width: cellW,
             height: CELL_H,
@@ -339,7 +346,7 @@ export const dequeBothEndsStageView: CanvasView = {
         );
       }
 
-      for (const side of ['front', 'back'] as const) {
+      for (const side of SIDES) {
         const name = el('text', {
           x: gateX(side),
           y: GATE_LABEL_Y,
@@ -350,22 +357,19 @@ export const dequeBothEndsStageView: CanvasView = {
         });
         name.textContent = side === 'front' ? MARK_FRONT : MARK_BACK;
         sceneryG.appendChild(name);
-        buildChip(side, 'in');
-        buildChip(side, 'out');
+        for (const door of ['in', 'out'] as const) {
+          const key: DoorKey = `${side}:${door}`;
+          buildChip(side, door, s.used.includes(key), s.ringed.includes(key));
+        }
       }
     };
 
     // ── 값 칸.
-    let cells: Cell[] = [];
-    let frontSlot = 0;
-    let seedValues: number[] = [];
-
     const placeAt = (cell: Cell, x: number): void => {
-      cell.x = x;
       cell.g.setAttribute('transform', `translate(${x}, ${CELL_Y})`);
     };
 
-    const createCell = (value: number, x: number, fill: string): Cell => {
+    const createCell = (value: number, x: number, fill: string, into: SVGGElement): Cell => {
       const g = el('g', {});
       const rect = el('rect', { x: 0, y: 0, width: cellW, height: CELL_H, rx: 10, fill });
       const label = el('text', {
@@ -380,31 +384,112 @@ export const dequeBothEndsStageView: CanvasView = {
       label.textContent = String(value);
       g.appendChild(rect);
       g.appendChild(label);
-      cellsG.appendChild(g);
-      const cell: Cell = { value, g, rect, x };
+      into.appendChild(g);
+      const cell: Cell = { g, rect };
       placeAt(cell, x);
       return cell;
     };
 
-    const slide = async (cell: Cell, toX: number, ms: number): Promise<void> => {
-      const fromX = cell.x;
-      await animate(ms, (t) => {
-        cell.g.setAttribute('transform', `translate(${fromX + (toX - fromX) * t}, ${CELL_Y})`);
-      });
-      placeAt(cell, toX);
-    };
+    /** 자리 번호 → 지금 세워 둔 칸. `drawCells` 가 갈아 끼운다. */
+    let cellBySlot = new Map<number, Cell>();
 
-    const placeSeed = (): void => {
+    const drawCells = (s: DequeBothEndsScene): void => {
       clear(cellsG);
-      cells = [];
-      frontSlot = Math.max(0, Math.floor((capacity - seedValues.length) / 2));
-      seedValues.forEach((value, i) => {
-        cells.push(createCell(value, slotX(frontSlot + i), blockColor));
+      cellBySlot = new Map();
+      s.values.forEach((value, i) => {
+        const slot = s.frontSlot + i;
+        cellBySlot.set(slot, createCell(value, slotX(slot), blockColor, cellsG));
       });
     };
 
-    // ── 마무리. 네 문이 한꺼번에 켜지고 양쪽에서 안팎으로 화살이 지나간다.
-    const sweep = (side: DequeSide, door: Door): Promise<void> => {
+    /** 한 걸음의 말. 장면은 무엇을 말할지만 주고 문자는 여기서 만든다 (C10). */
+    const captionTextOf = (c: DequeCaption): string => {
+      switch (c.kind) {
+        case 'push':
+          return c.side === 'front'
+            ? tr('caption.pushFront', 'In through the front door')
+            : tr('caption.pushBack', 'In through the back door');
+        case 'pop':
+          return c.side === 'front'
+            ? tr('caption.popFront', 'Out through that same front door')
+            : tr('caption.popBack', 'Out through that same back door');
+        case 'bothEnds':
+          return tr(
+            'caption.bothEnds',
+            'Two doors, four operations — each end both takes in and gives out',
+          );
+      }
+    };
+
+    /**
+     * 그 장면이 말하는 것을 전부 세운다.
+     *
+     * 통째로 다시 짓는다 — 앞 걸음의 운동이 남긴 `transform` · `fill` · `opacity`
+     * 자취가 하나도 남지 않으므로, 어느 걸음에서 오든 같은 화면이 된다.
+     */
+    const drawScene = (s: DequeBothEndsScene): void => {
+      layout(s.capacity);
+      drawScenery(s);
+      drawCells(s);
+      clear(fxG);
+      captionText.textContent = s.caption === null ? '' : captionTextOf(s.caption);
+    };
+
+    // ── 걸음의 운동. 출발 그림은 전부 `step` 의 계기값에서 복원한다.
+
+    const slide = (cell: Cell, fromX: number, toX: number, ms: number): Promise<void> =>
+      animate(ms, (t) => {
+        // 끝에서는 보간값이 아니라 목표값을 그대로 쓴다 — 부동소수 끝자리가 정적
+        // 그리기와 갈리지 않게.
+        const x = t >= 1 ? toX : fromX + (toX - fromX) * t;
+        cell.g.setAttribute('transform', `translate(${x}, ${CELL_Y})`);
+      });
+
+    /** 밖에 섰다가 입을 지나 빈자리에 앉는다. */
+    const runEnter = async (
+      step: Extract<DequeStep, { kind: 'enter' }>,
+      myGen: number,
+    ): Promise<void> => {
+      const cell = cellBySlot.get(step.slot);
+      if (!cell) return;
+      const fromX = stagingX(step.side);
+      const toX = slotX(step.slot);
+      // 아직 들어오기 전으로 되물린다. 정적 그리기가 이미 끝 자리에 세워 두었으므로
+      // 여기서 되물리지 않으면 첫 프레임에 끝 자리가 번쩍인다. 그 사이에 타이머도
+      // 프레임도 없어 페인트가 끼지 않는다.
+      placeAt(cell, fromX);
+      cell.rect.setAttribute('fill', colors.itemActive);
+      await wait(HOLD_MS);
+      if (!alive(myGen)) return;
+      await slide(cell, fromX, toX, ENTER_MS);
+      if (!alive(myGen)) return;
+      cell.rect.setAttribute('fill', blockColor);
+    };
+
+    /**
+     * 들어온 길을 그대로 되짚어 나간다.
+     *
+     * 나가는 칸은 이 장면의 `values` 에 이미 없다. 그래서 정적 그리기가 짓지 않고,
+     * 운동만 쓰는 임시 칸을 `step` 의 값과 자리로 세워 흘려보낸다 — `fxG` 안이라
+     * 다음 `drawScene` 이 통째로 거둔다.
+     */
+    const runLeave = async (
+      step: Extract<DequeStep, { kind: 'leave' }>,
+      myGen: number,
+    ): Promise<void> => {
+      const fromX = slotX(step.slot);
+      const toX = stagingX(step.side);
+      const cell = createCell(step.value, fromX, colors.itemActive, fxG);
+      await slide(cell, fromX, toX, LEAVE_MS);
+      if (!alive(myGen)) return;
+      await wait(HOLD_MS);
+      if (!alive(myGen)) return;
+      await animate(FADE_MS, (t) => cell.g.setAttribute('opacity', String(1 - t)));
+      cell.g.remove();
+    };
+
+    /** 네 문이 한꺼번에 열린다 — 양쪽에서 안팎으로 화살이 지나간다. */
+    const sweep = (side: DequeSide, door: DoorKind): Promise<void> => {
       const outerX = stagingX(side) + cellW / 2;
       const innerX = (side === 'front' ? slotX(0) : slotX(capacity - 1)) + cellW / 2;
       const inward = door === 'in';
@@ -430,81 +515,62 @@ export const dequeBothEndsStageView: CanvasView = {
       });
     };
 
-    layout();
-    buildScenery();
+    /**
+     * 화살 넷을 나란히 흘린다.
+     *
+     * 하나도 `void` 로 던지지 않는다 — `render` 가 돌려주는 Promise 는 그 장면이 다
+     * 선 뒤에 풀려야 하고, 그것이 바깥이 걸음의 끝을 아는 유일한 통로다 (S-scene).
+     */
+    const runOpen = (): Promise<void> =>
+      Promise.all(
+        ALL_DOORS.map((key) => {
+          const [side, door] = key.split(':') as [DequeSide, DoorKind];
+          return sweep(side, door);
+        }),
+      ).then(() => undefined);
 
-    const stage: ViewInstance = {
-      /** 처음 상태를 세운다. capacity 가 정해져야 폭이 나온다. */
-      init(p: { values: number[]; capacity: number }): void {
-        capacity = Math.max(1, Math.floor(p.capacity));
-        seedValues = p.values.slice();
-        layout();
-        buildScenery();
-        clear(fxG);
-        placeSeed();
-        captionText.textContent = '';
-      },
+    async function render(
+      next: DequeBothEndsScene,
+      /** 출발 그림을 `step` 에서 셈하므로 앞 장면을 들추지 않는다 (S-scene). */
+      _prev: DequeBothEndsScene | null,
+      opts: { animate: boolean },
+    ): Promise<void> {
+      gen += 1;
+      const myGen = gen;
+      drawScene(next);
 
-      /** 그 문으로 값 하나가 들어온다. 밖에 섰다가 입을 지나 빈자리에 앉는다. */
-      async enter(p: { side: DequeSide; value: number }): Promise<void> {
-        const slot = p.side === 'front' ? frontSlot - 1 : frontSlot + cells.length;
-        if (slot < 0 || slot >= capacity) return;
-        lightDoor(p.side, 'in');
-        const cell = createCell(p.value, stagingX(p.side), colors.itemActive);
-        await wait(HOLD_MS);
-        await slide(cell, slotX(slot), ENTER_MS);
-        cell.rect.setAttribute('fill', blockColor);
-        if (p.side === 'front') {
-          cells.unshift(cell);
-          frontSlot = slot;
-        } else {
-          cells.push(cell);
-        }
-      },
+      // 되짚기는 여기서 끝. 타이머도 프레임도 걸지 않는다.
+      if (!opts.animate) return;
 
-      /** 그 문으로 끝의 값이 나간다. 들어온 길을 그대로 되짚는다. */
-      async leave(p: { side: DequeSide }): Promise<void> {
-        const cell = p.side === 'front' ? cells[0] : cells[cells.length - 1];
-        if (!cell) return;
-        if (p.side === 'front') {
-          cells.shift();
-          frontSlot += 1;
-        } else {
-          cells.pop();
-        }
-        lightDoor(p.side, 'out');
-        cell.rect.setAttribute('fill', colors.itemActive);
-        await slide(cell, stagingX(p.side), LEAVE_MS);
-        await wait(HOLD_MS);
-        await animate(FADE_MS, (t) => cell.g.setAttribute('opacity', String(1 - t)));
-        cell.g.remove();
-      },
+      // 방금 밟은 걸음 하나만 흐르게 한다. 걸음을 건너뛰어 온 길은 `animate` 가
+      // 거짓이라 위에서 이미 돌아갔다.
+      const step = next.step;
+      if (!step) return;
 
-      /** 네 문이 한꺼번에 열린다 — 두 끝이 저마다 안팎 양쪽으로 통한다. */
-      async openBothEnds(): Promise<void> {
-        activeChip = null;
-        for (const chip of chips.values()) {
-          chip.used = true;
-          paintChip(chip, true);
-        }
-        await Promise.all([sweep('front', 'in'), sweep('front', 'out'), sweep('back', 'in'), sweep('back', 'out')]);
-      },
+      switch (step.kind) {
+        case 'enter':
+          await runEnter(step, myGen);
+          break;
+        case 'leave':
+          await runLeave(step, myGen);
+          break;
+        case 'open':
+          await runOpen();
+          break;
+      }
 
-      /** 처음으로 되감는다. 한 걸음씩 짚어 보기의 출발점. */
-      rewind(): void {
-        clear(cellsG);
-        clear(fxG);
-        dimDoors();
-        placeSeed();
-        captionText.textContent = '';
-      },
+      // 운동이 끝나면 그 장면을 통째로 다시 세운다 — 흐르며 선 화면과 곧바로 세운
+      // 화면이 속성 하나까지 같아진다 (S-scene). 옛 세대면 손대지 않고 물러난다.
+      if (!alive(myGen)) return;
+      drawScene(next);
+    }
 
-      setCaption(text: string): void {
-        captionText.textContent = text;
-      },
+    return {
+      render,
 
       destroy(): void {
         disposed = true;
+        gen += 1;
         for (const id of timers) clearTimeout(id);
         timers.clear();
         if (typeof cancelAnimationFrame === 'function') {
@@ -513,6 +579,7 @@ export const dequeBothEndsStageView: CanvasView = {
         raf.clear();
         for (const wake of [...waiters]) wake();
         waiters.clear();
+        cellBySlot.clear();
         // remove() 는 이미 떨어져 나간 노드에도 안전하다 — 러너가 컨테이너를
         // 먼저 비운 뒤 destroy 를 부르는 경우가 있다.
         sceneryG.remove();
@@ -521,7 +588,5 @@ export const dequeBothEndsStageView: CanvasView = {
         captionText.remove();
       },
     };
-
-    return stage;
   },
 };

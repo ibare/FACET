@@ -5,8 +5,11 @@
  * 답 — 그 길에서 여유가 가장 적은 관만큼. 흘리고 나면 그 관이 꽉 차서 다음
  * 길은 그리로 지나지 못한다.
  *
- * 화면에 뜨는 수는 모두 알고리즘이 이 구조에서 셈한 것이다 (여유 · 흘린 양 ·
- * 도착 총량). 여기 선언하는 것은 관의 굵기뿐이다.
+ * 화면에 뜨는 수는 모두 이 구조에서 셈한 것이다 (여유 · 흘린 양 · 도착 총량).
+ * 여기 선언하는 것은 관의 굵기뿐이다.
+ *
+ * 화면을 명령이 아니라 장면(Scene)으로 만들므로 어느 걸음으로든 곧장 갈 수 있고,
+ * 그래서 띠를 단다 (S-piece · S-scene).
  */
 
 import { CONTROL_SET } from '@ffacet/core/runtime';
@@ -39,7 +42,7 @@ export const bottleneckSetsFlowFacet: FacetJson = {
     pt: 'O quanto uma rota consegue levar é decidido pelo seu tubo mais estreito.',
   },
   algorithm: 'module:bottleneckSetsFlow',
-  projector: 'module:bottleneckSetsFlowProjector',
+  scene: 'module:bottleneckSetsFlowScene',
   initialData: {
     type: 'bottleneck-sets-flow',
     nodes: ['S', 'A', 'B', 'T'],
@@ -56,7 +59,7 @@ export const bottleneckSetsFlowFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'bottleneck-sets-flow-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.pathFound': {

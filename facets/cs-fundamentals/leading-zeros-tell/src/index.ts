@@ -9,12 +9,12 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { leadingZerosTellAlgorithm } from './algorithm.js';
-import { leadingZerosTellProjector } from './projector.js';
+import { leadingZerosTellScene } from './scene.js';
 import { leadingZerosTellIRs } from './irs.js';
 import { leadingZerosTellStageView } from './leading-zeros-tell-stage.js';
 import { leadingZerosTellFacet } from './facet.js';
@@ -25,7 +25,11 @@ export {
   type LeadingZerosTellData,
   type LeadingZerosTellKey,
 } from './algorithm.js';
-export { leadingZerosTellProjector } from './projector.js';
+export {
+  leadingZerosTellScene,
+  type LeadingZerosTellScene,
+  type LeadingZerosTellStep,
+} from './scene.js';
 export { leadingZerosTellIRs } from './irs.js';
 export { leadingZerosTellStageView } from './leading-zeros-tell-stage.js';
 export { leadingZerosTellFacet } from './facet.js';
@@ -35,7 +39,7 @@ export function registerLeadingZerosTell(): void {
   registerAlgorithm('leadingZerosTell', leadingZerosTellAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('leadingZerosTellProjector', leadingZerosTellProjector);
+  registerScenePlan('leadingZerosTellScene', leadingZerosTellScene);
   for (const ir of leadingZerosTellIRs) registerIR(ir.id, ir);
   registerView('leading-zeros-tell-stage', leadingZerosTellStageView);
   registerFacets([leadingZerosTellFacet]);

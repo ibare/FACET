@@ -14,23 +14,32 @@
  *
  * ── 이벤트 (표준 어휘는 `done` 뿐이고 나머지는 이 facet 고유다, C2)
  *
- *   points-placed   { scatterMax: number }
- *                   점 열둘을 놓는다. scatterMax 는 앞으로 나올 흩어짐 합의
- *                   최대값 — 화면이 세로 눈금을 마운트 뒤 한 번만 정하도록 준다.
- *   k-chosen        { k: number; seeds: number[] }
- *                   k 를 정하고 시작 중심을 고른다. seeds 는 고른 차례대로의 점 번호.
- *   split-settled   { k: number; assign: number[]; sizes: number[];
- *                     centers: { x: number; y: number }[]; scatter: number }
- *                   무리가 갈려 자리를 잡았다. assign[i] 는 i 번 점이 든 무리 번호,
- *                   sizes[j] 는 j 번 무리의 크기, scatter 는 흩어짐 합.
- *   elbow-tested    { drops: number[] }
- *                   흩어짐 합이 걸음마다 줄어든 폭. 길이는 k 의 수보다 하나 적다.
- *   no-kink         (payload 없음) 줄어드는 폭이 꺾이지 않는다는 판정.
- *   all-alive       (payload 없음) 세 답을 한 화면에 겹쳐 남긴다.
- *   rewind          (payload 없음) 한 걸음씩 되짚기 위해 처음으로 돌린다.
- *   done            (payload 없음) 자동 재생이 끝났다.
+ * **싣는 것은 판정뿐이다.** 무리를 나누고 중심을 옮기고 흩어짐을 재는 셈이 이 조각의
+ * 알고리즘 그 자체라 그것만 실어 보내고, 세면 나오는 것은 장면이 센다 (`scene.ts`).
  *
- * silent 는 쓰지 않는다 — 모든 걸음이 화면을 바꾼다.
+ *   points-placed   payload 없음
+ *                   점 열둘을 놓는다. 흩어짐 눈금의 꼭대기는 담긴 값의 최댓값이라
+ *                   장면이 셈한다 — 흩어짐은 k 가 커질수록 줄어들므로 첫 답이
+ *                   들어오는 순간 정해지고 그 뒤로 바뀌지 않는다.
+ *   k-chosen        { seeds: number[] }
+ *                   시작 중심을 고른다. seeds 는 고른 차례대로의 점 번호이고 가장
+ *                   먼 점부터 고른 것이라 거리 셈이다. k 값은 싣지 않는다 —
+ *                   선언의 `ks` 와 **몇 번째로 묻는가**로 장면이 안다.
+ *   split-settled   { assign: number[]; centers: { x: number; y: number }[];
+ *                     scatter: number }
+ *                   무리가 갈려 자리를 잡았다. assign[i] 는 i 번 점이 든 무리 번호,
+ *                   centers[j] 는 j 번 무리의 중심, scatter 는 흩어짐 합이다.
+ *                   무리 크기는 싣지 않는다 — assign 을 세면 나온다.
+ *   elbow-tested    payload 없음
+ *                   흩어짐 합이 줄어든 폭을 잰다. 그 폭은 담긴 흩어짐 둘의 뺄셈이라
+ *                   장면이 셈한다 — 계단의 높이와 곁에 적히는 수가 갈리지 않는다.
+ *   no-kink         payload 없음. 줄어드는 폭이 꺾이지 않는다는 판정.
+ *   all-alive       payload 없음. 세 답을 한 화면에 겹쳐 남긴다.
+ *   rewind          payload 없음. 한 걸음씩 되짚기 위해 처음으로 돌린다.
+ *   done            payload 없음, **silent: true**. 자동 재생이 끝났다.
+ *                   앞 걸음(all-alive)이 이미 완결된 화면이라 제 몫의 주장이 없고,
+ *                   문을 지나지 않아 벽시계가 0 이다. 걸음을 늘리지 않고 앞 걸음의
+ *                   장면을 갈아 끼운다.
  */
 
 import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
@@ -47,15 +56,18 @@ export type KMustBeGivenData = {
 
 type Pt = { x: number; y: number };
 
-/** 한 k 를 돌린 결과. */
+/**
+ * 한 k 를 돌린 결과.
+ *
+ * 무리 크기는 담지 않는다 — `assign` 을 세면 나오는 값이라 두 벌로 두면 언젠가
+ * 갈린다. 세는 일은 화면 쪽 한 자리에서만 한다 (`scene.ts` 의 `sizesOf`).
+ */
 export type KMeansRun = {
   k: number;
   /** 시작 중심으로 고른 점 번호 (고른 차례대로). */
   seeds: number[];
   /** assign[i] = i 번 점이 든 무리 번호. */
   assign: number[];
-  /** sizes[j] = j 번 무리의 크기. */
-  sizes: number[];
   centers: Pt[];
   /** 각 점에서 제 중심까지 거리의 제곱을 다 더한 값. */
   scatter: number;
@@ -152,26 +164,15 @@ export function runKMeans(pts: Pt[], k: number): KMeansRun {
     if (settled) break;
   }
   const placed = reorderByPlace(assign, centers);
-  const sizes = new Array<number>(centers.length).fill(0);
-  for (const j of placed.assign) sizes[j] += 1;
   let scatter = 0;
   for (let i = 0; i < pts.length; i += 1) scatter += sqDist(pts[i], placed.centers[placed.assign[i]]);
-  return { k, seeds, assign: placed.assign, sizes, centers: placed.centers, scatter };
-}
-
-/** 이웃한 k 사이에서 흩어짐 합이 줄어든 폭. */
-function dropsBetween(runs: KMeansRun[]): number[] {
-  const out: number[] = [];
-  for (let i = 1; i < runs.length; i += 1) out.push(runs[i - 1].scatter - runs[i].scatter);
-  return out;
+  return { k, seeds, assign: placed.assign, centers: placed.centers, scatter };
 }
 
 export const kMustBeGivenAlgorithm = async (base: FacetContext<KMustBeGivenData>): Promise<void> => {
   const ctx = base as ReactiveContext<KMustBeGivenData>;
   const points: Pt[] = ctx.data.points.map(([x, y]) => ({ x, y }));
   const runs = ctx.data.ks.map((k) => runKMeans(points, k));
-  const drops = dropsBetween(runs);
-  const scatterMax = runs.reduce((m, r) => Math.max(m, r.scatter), 0);
   const stepMs = ctx.data.stepMs;
 
   /** 자동 재생이 끝나고 한 걸음씩 되짚는 중인가. */
@@ -196,24 +197,18 @@ export const kMustBeGivenAlgorithm = async (base: FacetContext<KMustBeGivenData>
    * 곧바로 나가고, 한 걸음 단추의 첫 누름이 되감기만 하고 멎지 않는다 (S-piece).
    */
   async function play(): Promise<boolean> {
-    await ctx.emit({ type: 'points-placed', payload: { scatterMax } });
+    await ctx.emit({ type: 'points-placed' });
     for (const run of runs) {
       if (!(await gate())) return false;
-      await ctx.emit({ type: 'k-chosen', payload: { k: run.k, seeds: run.seeds } });
+      await ctx.emit({ type: 'k-chosen', payload: { seeds: run.seeds } });
       if (!(await gate())) return false;
       await ctx.emit({
         type: 'split-settled',
-        payload: {
-          k: run.k,
-          assign: run.assign,
-          sizes: run.sizes,
-          centers: run.centers,
-          scatter: run.scatter,
-        },
+        payload: { assign: run.assign, centers: run.centers, scatter: run.scatter },
       });
     }
     if (!(await gate())) return false;
-    await ctx.emit({ type: 'elbow-tested', payload: { drops } });
+    await ctx.emit({ type: 'elbow-tested' });
     if (!(await gate())) return false;
     await ctx.emit({ type: 'no-kink' });
     if (!(await gate())) return false;
@@ -225,7 +220,8 @@ export const kMustBeGivenAlgorithm = async (base: FacetContext<KMustBeGivenData>
     for (;;) {
       if (ctx.cancelled) return;
       if (!(await play())) return;
-      await ctx.emit({ type: 'done' });
+      // 앞 걸음이 이미 완결된 화면이라 걸음을 하나 더 세우지 않는다 (silent).
+      await ctx.emit({ type: 'done', silent: true });
       manual = true;
       for (;;) {
         if (ctx.cancelled) return;

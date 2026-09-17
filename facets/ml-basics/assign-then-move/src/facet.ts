@@ -40,7 +40,9 @@ export const assignThenMoveFacet: FacetJson = {
     pt: 'Cada ponto agarra o centro mais próximo; cada centro desliza para o meio dos que o agarraram. Os dois se alternam até nada mais se mover.',
   },
   algorithm: 'module:assignThenMove',
-  projector: 'module:assignThenMoveProjector',
+  // 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든 셈으로
+  // 얻으므로 띠를 끌어 아무 자리로나 갈 수 있다 (S-scene).
+  scene: 'module:assignThenMoveScene',
   initialData: {
     type: 'assign-then-move',
     // 세 덩이로 놓인 점 열셋. 좌표는 데이터이고, 화면의 자리는 stage 가 셈한다.
@@ -69,7 +71,7 @@ export const assignThenMoveFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'assign-then-move-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.start': {

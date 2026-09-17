@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FACET — 스크럽 띠 실험</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 32px 24px 64px;
+        font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        background: #ffffff;
+        color: #171717;
+      }
+      main { max-width: 720px; margin: 0 auto; }
+      h1 { font-size: 18px; font-weight: 600; margin: 0 0 4px; }
+      p.lead { font-size: 13px; color: #737373; margin: 0 0 28px; line-height: 1.7; }
+      section { margin-bottom: 40px; }
+      h2 { font-size: 13px; font-weight: 600; color: #171717; margin: 0 0 10px; }
+      h2 small { font-weight: 400; color: #a3a3a3; margin-left: 8px; }
+      #probe {
+        font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+        font-size: 12px;
+        white-space: pre-wrap;
+        background: #fafafa;
+        border: 1px solid #e5e5e5;
+        border-radius: 6px;
+        padding: 12px;
+        color: #171717;
+        line-height: 1.6;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>스크럽 띠 실험</h1>
+      <p class="lead">
+        셋 다 장면(Scene) 방식으로 옮긴 조각이다. 자동 재생이 끝나면 띠를 끌 수 있다.
+        앞으로 끌면 걸음마다 애니메이션이 지나가며 화면이 뒤따라오고, 뒤로 끌면 곧바로
+        그 걸음에 선다. 핸들과 화면 사이의 얇아지는 구간이 그 간격이다.
+        아래 둘은 옮기기 전에는 되짚으면 화면이 어긋나던 것들이다.
+      </p>
+      <section>
+        <h2>해시 눈사태 효과 <small>고정 격자 · CSS 전환 · 5 걸음</small></h2>
+        <div id="stage-a"></div>
+      </section>
+      <section>
+        <h2>쪼개고 번호 붙이기 <small>rAF 궤적 · 좌표 이동 · 11 걸음</small></h2>
+        <div id="stage-b"></div>
+      </section>
+      <section>
+        <h2>한쪽으로 자란 나무 <small>동적 마디 · 46 걸음</small></h2>
+        <div id="stage-c"></div>
+      </section>
+      <h1 style="font-size:15px;margin:40px 0 4px">토큰화 여섯 — 한 배치로 옮긴 것들</h1>
+      <p class="lead">옮기기 전에는 여섯 다 되짚으면 화면이 흐트러졌다.</p>
+      <section>
+        <h2>언어마다 다른 조각 수 <small>rAF · 5 걸음</small></h2>
+        <div id="stage-tokens-per-language"></div>
+      </section>
+      <section>
+        <h2>글자와 낱말 사이 <small>rAF · 4 걸음</small></h2>
+        <div id="stage-between-letter-and-word"></div>
+      </section>
+      <section>
+        <h2>모르는 낱말을 받아 낸다 <small>setTimeout · 7 걸음</small></h2>
+        <div id="stage-unknown-becomes-known"></div>
+      </section>
+      <section>
+        <h2>한 글자 차이로 <small>setTimeout · 8 걸음</small></h2>
+        <div id="stage-boundary-shift"></div>
+      </section>
+      <section>
+        <h2>자주 붙어 다닌 둘을 합친다 <small>rAF · 12 걸음</small></h2>
+        <div id="stage-merge-the-frequent-pair"></div>
+      </section>
+      <section>
+        <h2>빈칸도 글자다 <small>setTimeout · 11 걸음</small></h2>
+        <div id="stage-space-is-part-of-it"></div>
+      </section>
+      <section>
+        <h2>계측</h2>
+        <div id="probe">준비 중…</div>
+      </section>
+    </main>
+    <script type="module" src="/src/scrub-demo.ts"></script>
+  </body>
+</html>

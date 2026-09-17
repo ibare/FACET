@@ -6,7 +6,11 @@
  * 무게 순으로 줄 세운 간선을 위에서부터 집고, 집어 든 간선의 양 끝이 이미 같은
  * 무리이면 버린다. 무리는 정점의 색이고, 간선을 놓을 때마다 두 무리가 하나로
  * 물든다. 버리기 직전에는 이미 이어져 있던 길이 켜지고 집어 든 간선이 그 위에
- * 놓여 고리를 닫는다 — 그것이 버리는 까닭이다.
+ * 놓여 고리를 닫는다 — 그것이 버리는 까닭이다. 그 자리에는 붉은 점선과 가위표가
+ * 자취로 남아, 다 끝난 화면에서도 무엇을 어디에 놓으려다 버렸는지 보인다.
+ *
+ * 화면은 명령이 아니라 **장면**에서 만들어지므로 (`scene.ts`) 어느 걸음으로든
+ * 곧장 갈 수 있다 (S-scene). 그래서 걸음 띠를 단다.
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -38,7 +42,7 @@ export const sortEdgesAvoidCycleFacet: FacetJson = {
     pt: 'Pegue as arestas da mais leve à mais pesada e descarte aquela cujos extremos já estão no mesmo grupo.',
   },
   algorithm: 'module:sortEdgesAvoidCycle',
-  projector: 'module:sortEdgesAvoidCycleProjector',
+  scene: 'module:sortEdgesAvoidCycleScene',
   initialData: {
     type: 'sort-edges-avoid-cycle',
     nodes: ['P', 'Q', 'R', 'S', 'T'],
@@ -57,7 +61,7 @@ export const sortEdgesAvoidCycleFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'sort-edges-avoid-cycle-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'label.queue': {

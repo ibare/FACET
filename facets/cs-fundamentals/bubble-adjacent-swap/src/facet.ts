@@ -40,7 +40,7 @@ export const bubbleAdjacentSwapFacet: FacetJson = {
     pt: 'Uma única varredura da esquerda para a direita comparando vizinhos leva o maior do momento uma casa por vez até ele parar na ponta direita.',
   },
   algorithm: 'module:bubbleAdjacentSwap',
-  projector: 'module:bubbleAdjacentSwapProjector',
+  scene: 'module:bubbleAdjacentSwapScene',
   initialData: {
     type: 'bubble-adjacent-swap',
     // 한 값이 옆칸 맞바꿈을 **연달아** 하며 끝까지 가는 장면이 이 조각의 논증이다.
@@ -52,12 +52,12 @@ export const bubbleAdjacentSwapFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'bubble-adjacent-swap-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.compare': {
       en: 'Compare {a} and {b} — only these two, side by side.',
-      ko: '{a} 와 {b} 를 견준다 — 나란한 이 둘만.',
+      ko: '나란한 둘을 견준다 — {a}, 그리고 {b}.',
       ja: '{a} と {b} を比べる — 隣り合うこの二つだけ。',
       zh: '比较 {a} 和 {b} — 只比挨着的这两个。',
       ar: 'قارن {a} و{b} — هذين الجارين فقط.',
@@ -69,7 +69,7 @@ export const bubbleAdjacentSwapFacet: FacetJson = {
     },
     'caption.swap': {
       en: '{big} is larger — it rises over its neighbour, one slot right.',
-      ko: '{big} 이 더 크다 — 이웃을 넘어 한 칸 오른쪽으로.',
+      ko: '더 큰 쪽은 {big} — 이웃을 넘어 한 칸 오른쪽으로.',
       ja: '{big} のほうが大きい — 隣を越えて一マス右へ。',
       zh: '{big} 更大 — 越过邻居，往右挪一格。',
       ar: '{big} أكبر — يتخطى جاره خانة واحدة إلى اليمين.',
@@ -81,7 +81,7 @@ export const bubbleAdjacentSwapFacet: FacetJson = {
     },
     'caption.keep': {
       en: '{b} is already larger — nothing moves, and the lead is now {b}.',
-      ko: '{b} 가 이미 더 크다 — 아무것도 옮기지 않고 선두만 {b} 에게 넘어간다.',
+      ko: '이미 더 큰 쪽은 {b} — 아무것도 옮기지 않고 선두가 거기로 넘어간다.',
       ja: '{b} のほうがすでに大きい — 何も動かさず、先頭が {b} に移るだけ。',
       zh: '{b} 本来就更大 — 什么都不动，领先的换成 {b}。',
       ar: '{b} أكبر أصلًا — لا شيء يتحرك، والصدارة تنتقل إلى {b}.',
@@ -93,7 +93,7 @@ export const bubbleAdjacentSwapFacet: FacetJson = {
     },
     'caption.settled': {
       en: '{n} neighbour comparisons, and {max} is at the far right. No step ever went looking for it.',
-      ko: '옆끼리 {n} 번 견줬을 뿐인데 {max} 가 오른쪽 끝에 와 있다. 그것을 찾아 나선 걸음은 없었다.',
+      ko: '옆끼리 {n} 번 견줬을 뿐인데 오른쪽 끝에 와 있는 것은 {max}. 그것을 찾아 나선 걸음은 없었다.',
       ja: '隣どうしを {n} 回比べただけなのに、{max} が右端に来ている。それを探しに行った歩みはひとつもない。',
       zh: '只把相邻的比了 {n} 次，{max} 就已经在最右端。没有哪一步是去找它的。',
       ar: '{n} مقارنة بين الجيران فحسب، و{max} في أقصى اليمين. ولم تسع خطوة واحدة للبحث عنه.',

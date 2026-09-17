@@ -10,26 +10,30 @@
  *   2회차 (marks: true)  — 표시를 읽는다. C 에서 A 는 이미 표시가 있어 건너뛰고
  *                          다음 이웃 D 로 나간다. 갈 곳이 없으면 멈춘다.
  *
- * 화면에 뜨는 수(걸음 수 · 닿은 자리 수 · 닿지 못한 자리)는 전부 이 걸음에서
- * 셈해 payload 로 나간다. 손으로 적은 걸음표는 없다 — 순서를 정하는 것은
- * `data.adjacency` 이지 저작자가 아니다 (S-piece).
+ * 화면에 뜨는 수(걸음 수 · 닿은 자리 수 · 닿지 못한 자리)는 **하나도 싣지 않는다.**
+ * 전부 밟은 자리의 차례에서 나오므로 장면이 센다 (`scene.ts` 의 `stepsOf` ·
+ * `reachedOf` · `missedOf` · `wearOf` · `markedOf`). 여기서 함께 세어 실으면 같은
+ * 것을 두 자리에서 세는 꼴이 되어 언젠가 갈린다.
+ *
+ * 손으로 적은 걸음표는 없다 — 순서를 정하는 것은 `data.adjacency` 이지 저작자가
+ * 아니다 (S-piece).
  *
  * ── 확장 이벤트 (C2) ──────────────────────────────────────────────────
  *
  * | type            | payload                                          | silent |
  * | --------------- | ------------------------------------------------ | ------ |
- * | `walk-begin`    | `{ marks: boolean; start: string }`              | 아니오 |
- * | `mark`          | (표준) target `node:<id>`                        | 아니오 |
- * | `skip-neighbor` | `{ from: string; to: string }`                   | 아니오 |
- * | `step-move`     | `{ from: string; to: string; step: number;`      | 아니오 |
- * |                 | ` revisit: boolean }`                            |        |
- * | `walk-stalled`  | `{ steps: number; reached: string[];`            | 아니오 |
- * |                 | ` missed: string[] }`                            |        |
- * | `walk-escaped`  | `{ steps: number; reached: string[] }`           | 아니오 |
+ * | `walk-begin`    | `{ marks: boolean }`                             | 아니오 |
+ * | `skip-neighbor` | `{ to: string }`                                 | 아니오 |
+ * | `step-move`     | `{ to: string }`                                 | 아니오 |
+ * | `walk-stalled`  | 없음 — 고리에 갇힌 채 상한에 걸렸다는 신호       | 아니오 |
+ * | `walk-escaped`  | 없음 — 갈 곳이 없는데 다 밟았다는 신호           | 아니오 |
  * | `rewind`        | 없음 — 한 걸음씩 보기로 되감는다는 신호          | 아니오 |
- * | `done`          | (표준) 자동 재생 끝                              | 아니오 |
+ * | `done`          | (표준) 자동 재생 끝                              | **예** |
  *
- * 식별자 (C1): `node:<id>`. `mark` 만 target 을 쓰고 나머지는 payload 가 정규 경로다.
+ * `done` 은 앞 걸음의 결말을 확정할 뿐 화면을 바꾸지 않는데 문(gate)을 지나지 않아
+ * 띠에 0ms 짜리 눈금이 선다. 앞 걸음과 한 뜻이므로 `silent` 로 접는다 (S-runtime).
+ *
+ * 식별자 (C1): 쓰지 않는다. 걸음이 가리키는 자리는 전부 payload 가 정규 경로다.
  *
  * 메트릭은 없다 (조각 — S-piece).
  */
@@ -82,16 +86,18 @@ async function walk(
   const data = ctx.data;
   const start = data.start;
 
-  await ctx.emit({ type: 'walk-begin', payload: { marks, start } });
+  await ctx.emit({ type: 'walk-begin', payload: { marks } });
 
-  const marked = new Set<string>();
-  const trail: string[] = [start];
+  /**
+   * 다녀간 자리.
+   *
+   * **표시란 바로 이 기록이고, 표시를 읽는 회차만 그것을 본다** — 그래서 `marked`
+   * 를 따로 두지 않는다. 한때 둘로 나뉘어 있었는데 marks 회차에서 내용이 언제나
+   * 같았다. 같은 것을 두 이름으로 두면 규칙이 두 곳에 적히는 것이다.
+   */
+  const reached = new Set<string>([start]);
   let current = start;
 
-  if (marks) {
-    marked.add(current);
-    await ctx.emit({ type: 'mark', target: `node:${current}` });
-  }
   if (!(await gate())) return false;
 
   let steps = 0;
@@ -102,9 +108,9 @@ async function walk(
     let choice: Choice = { kind: 'stop' };
     for (const neighbor of neighborsOf(data, current)) {
       if (ctx.cancelled) return false;
-      if (marks && marked.has(neighbor)) {
+      if (marks && reached.has(neighbor)) {
         choice = { kind: 'skip', to: neighbor };
-        await ctx.emit({ type: 'skip-neighbor', payload: { from: current, to: neighbor } });
+        await ctx.emit({ type: 'skip-neighbor', payload: { to: neighbor } });
         if (!(await gate())) return false;
         continue;
       }
@@ -116,27 +122,19 @@ async function walk(
 
     const next = choice.to;
     steps += 1;
-    const revisit = trail.includes(next);
-    trail.push(next);
-    await ctx.emit({
-      type: 'step-move',
-      payload: { from: current, to: next, step: steps, revisit },
-    });
+    await ctx.emit({ type: 'step-move', payload: { to: next } });
     current = next;
+    reached.add(current);
 
-    if (marks && !marked.has(current)) {
-      marked.add(current);
-      await ctx.emit({ type: 'mark', target: `node:${current}` });
-    }
     if (!(await gate())) return false;
   }
 
-  const reached = [...new Set(trail)];
-  const missed = data.nodes.filter((n) => !reached.includes(n));
+  // 갈림은 여기서만 내린다. 셈한 수는 싣지 않는다 — 장면이 같은 자취에서 센다.
+  const missed = data.nodes.filter((n) => !reached.has(n));
   if (missed.length > 0) {
-    await ctx.emit({ type: 'walk-stalled', payload: { steps, reached, missed } });
+    await ctx.emit({ type: 'walk-stalled' });
   } else {
-    await ctx.emit({ type: 'walk-escaped', payload: { steps, reached } });
+    await ctx.emit({ type: 'walk-escaped' });
   }
   return true;
 }
@@ -148,7 +146,8 @@ async function runBoth(ctx: ReactiveContext<MarkVisitedOrLoopData>, gate: Gate):
   // 마지막 회차의 결말 뒤에는 두지 않는다 — 지울 것이 오지 않으므로 빈 기다림이 된다.
   if (!(await gate())) return;
   if (!(await walk(ctx, true, gate))) return;
-  await ctx.emit({ type: 'done' });
+  // 문을 지나지 않는 발신이라 벽시계가 0 이다. 앞 걸음의 결말과 한 뜻이므로 접는다.
+  await ctx.emit({ type: 'done', silent: true });
 }
 
 export const markVisitedOrLoop = async (

@@ -41,7 +41,9 @@ export const noiseLeftOutFacet: FacetJson = {
     pt: 'O que um método faz com um ponto que não pertence a nenhum grupo.',
   },
   algorithm: 'module:noiseLeftOut',
-  projector: 'module:noiseLeftOutProjector',
+  // 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든 셈으로
+  // 얻으므로 띠로 임의의 자리에 갈 수 있다 (S-scene).
+  scene: 'module:noiseLeftOutScene',
 
   initialData: {
     type: 'noise-left-out',
@@ -74,7 +76,7 @@ export const noiseLeftOutFacet: FacetJson = {
 
   blocks: {
     stage: { type: 'noise-left-out-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
 
   messages: {

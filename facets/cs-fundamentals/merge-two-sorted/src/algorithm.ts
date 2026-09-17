@@ -7,27 +7,26 @@
  *
  * ── 이벤트 (전부 이 facet 고유 확장, C2)
  *
- *   compare  { leftIndex: number; rightIndex: number;
- *              leftValue: number; rightValue: number; winner: 'left' | 'right' }
- *            두 줄의 맨 앞끼리 한 번 견준다. 한쪽이 바닥나면 발신되지 않는다.
+ *   compare  payload 없음. 두 줄의 맨 앞끼리 한 번 견준다. 한쪽이 바닥나면
+ *            발신되지 않는다. 어느 둘을 견주었는지도, 몇 번째 견줌인지도 싣지
+ *            않는다 — 지금까지 무엇을 꺼냈는지가 그것을 이미 말한다.
  *            silent 아님 (견줌 자체가 화면에 뜬다).
  *
- *   take     { side: 'left' | 'right'; index: number; value: number;
- *              slot: number; compared: boolean }
- *            이긴 쪽(compared=true) 또는 남은 쪽(compared=false)이 결과줄의
- *            slot 자리로 내려간다. silent 아님.
+ *   take     { side: 'left' | 'right' }
+ *            그 줄의 맨 앞이 결과줄로 내려간다. **어느 쪽인가만 싣는다** —
+ *            그것이 이 알고리즘이 내리는 유일한 판정이다. 자리도 값도 내려앉을
+ *            칸 번호도 걸어온 자취에서 나온다. silent 아님.
  *
  *   rewind   payload 없음. 자동 재생을 마친 뒤 `advance` 로 한 걸음씩 다시
  *            짚을 때, 화면을 처음 상태로 되감는다. silent 아님 (화면이 바뀐다).
  *
- *   done     { comparisons: number; picks: number }
- *            합치기가 끝났다. 견줌 횟수는 이 루프가 실제로 센 값이다.
- *            silent 아님.
+ *   done     payload 없음. 합치기가 끝났다. 견줌 횟수는 화면 쪽이 발신을 세어
+ *            얻는다 — 같은 수를 두 곳에서 세지 않는다. silent 아님.
  *
  * `target` 은 쓰지 않는다. 이 조각의 자리는 "어느 줄의 몇 번째" 와 "결과줄의
- * 몇 번째" 두 축이라 표준 prefix (`index:` / `list:` …) 로 접히지 않는다. 새
- * prefix 를 만드는 대신 payload 를 정규 경로로 둔다 (C1 은 target 을 **파싱할
- * 때** 의 규율이며, projector 도 target 을 읽지 않는다).
+ * 몇 번째" 두 축이라 표준 prefix (`index:` / `list:` …) 로 접히지 않는다. 그런데
+ * 그 두 축이 **꺼낸 자취에서 그대로 셈해지므로** 자리를 실어 보낼 일 자체가 없다
+ * — 새 prefix 도, 자리를 담은 payload 도 필요 없다 (`scene.ts` 의 `headsOf`).
  *
  * 메트릭 없음 — 조각은 셀 것이 없다 (S-piece).
  *
@@ -78,54 +77,35 @@ async function mergeOnce(ctx: ReactiveContext<MergeTwoSortedData>, gate: Gate): 
   const right = ctx.data.right;
   let i = 0;
   let j = 0;
-  let slot = 0;
-  let comparisons = 0;
 
   while (i < left.length || j < right.length) {
     if (ctx.cancelled) return;
 
     const leftLive = i < left.length;
     const rightLive = j < right.length;
+
     // 견줄 상대가 양쪽에 다 있을 때만 견준다. 한쪽이 바닥나면 남은 쪽은
     // 견줌 없이 그대로 따라 내려간다.
-    const compared = leftLive && rightLive;
-
     let fromLeft = leftLive;
-    if (compared) {
-      const a = left[i];
-      const b = right[j];
-      fromLeft = a <= b;
-      comparisons += 1;
+    if (leftLive && rightLive) {
+      fromLeft = left[i] <= right[j];
       if (!(await gate())) return;
-      await ctx.emit({
-        type: 'compare',
-        payload: {
-          leftIndex: i,
-          rightIndex: j,
-          leftValue: a,
-          rightValue: b,
-          winner: fromLeft ? 'left' : 'right',
-        },
-      });
+      await ctx.emit({ type: 'compare' });
       if (ctx.cancelled) return;
     }
 
-    const index = fromLeft ? i : j;
-    const value = fromLeft ? left[i] : right[j];
     if (!(await gate())) return;
-    await ctx.emit({
-      type: 'take',
-      payload: { side: fromLeft ? 'left' : 'right', index, value, slot, compared },
-    });
+    // 싣는 것은 **판정 하나**다. 어느 자리에서 몇 번째 칸으로 가는지는 걸어온
+    // 자취가 이미 말하므로, 여기서 세어 보내면 같은 수를 두 곳에서 세게 된다.
+    await ctx.emit({ type: 'take', payload: { side: fromLeft ? 'left' : 'right' } });
     if (ctx.cancelled) return;
 
     if (fromLeft) i += 1;
     else j += 1;
-    slot += 1;
   }
 
   if (!(await gate())) return;
-  await ctx.emit({ type: 'done', payload: { comparisons, picks: slot } });
+  await ctx.emit({ type: 'done' });
 }
 
 export const mergeTwoSortedAlgorithm = async (

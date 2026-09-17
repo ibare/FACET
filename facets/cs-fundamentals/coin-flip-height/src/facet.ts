@@ -3,8 +3,12 @@
  *
  * @piece 질문 하나에 답하고 멈추는 조각 (S-piece).
  *
- * 동전 결과가 1차 데이터다. 높이와 층별 노드 수는 algorithm 이 여기서 셈하고,
+ * 동전 결과가 1차 데이터다. 높이와 층별 노드 수는 던진 자취에서 셈하고,
  * 그림의 좌표는 stage 가 캔버스에서 역산한다 — 선언에는 구조와 읽을 시간만 둔다.
+ *
+ * 화면은 장면(Scene) 방식이다 — projector 대신 `scene.ts` 의 `ScenePlan` 을
+ * 선언하고 stage 가 `render` 하나로 산다 (S-scene). 그래서 어느 걸음의 화면이든
+ * 셈으로 얻고, 띠를 끌어 아무 걸음으로나 갈 수 있다.
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -36,7 +40,7 @@ export const coinFlipHeightFacet: FacetJson = {
     pt: 'Uma moeda decide a altura de cada torre e os níveis caem pela metade sozinhos.',
   },
   algorithm: 'module:coinFlipHeight',
-  projector: 'module:coinFlipHeightProjector',
+  scene: 'module:coinFlipHeightScene',
   initialData: {
     type: 'coin-flip-height',
     values: [3, 7, 12, 19, 25, 31, 38, 44, 50, 57, 63, 70],
@@ -59,7 +63,7 @@ export const coinFlipHeightFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'coin-flip-height-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.stack': {

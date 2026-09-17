@@ -46,7 +46,7 @@ export const unknownBecomesKnownFacet: FacetJson = {
     pt: 'Uma palavra que o vocabulário nunca viu é cortada em duas metades que ele viu, e passa escrita com elas.',
   },
   algorithm: 'module:unknownBecomesKnown',
-  projector: 'module:unknownBecomesKnownProjector',
+  scene: 'module:unknownBecomesKnownScene',
   initialData: {
     type: 'unknown-becomes-known',
     // 병합 30회 끝에 낱말들이 잘려 있던 조각들. 선반에 세울 것을 정하는 **보여
@@ -90,7 +90,7 @@ export const unknownBecomesKnownFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'unknown-becomes-known-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.vocab': {

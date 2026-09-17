@@ -38,7 +38,7 @@ export const leastSquaresFacet: FacetJson = {
     pt: 'Por que desvios com sinal não podem ser somados, e o que a elevação ao quadrado resolve.',
   },
   algorithm: 'module:leastSquares',
-  projector: 'module:leastSquaresProjector',
+  scene: 'module:leastSquaresScene',
   initialData: {
     type: 'least-squares',
     points: [
@@ -57,7 +57,7 @@ export const leastSquaresFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'least-squares-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.opening': {

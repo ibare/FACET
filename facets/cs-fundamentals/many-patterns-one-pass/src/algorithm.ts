@@ -3,35 +3,46 @@
  *
  * 패턴을 글자별로 이어 붙여 한 나무(트라이)로 포갠 뒤, 텍스트를 왼쪽부터 한 번만
  * 지나가며 그 나무를 따라 내려간다. 한 마디가 두 패턴의 끝일 수 있으므로 한
- * 자리에서 둘이 함께 걸린다. 나무의 모양과 걸린 자리는 모두 여기서 셈한다 —
- * 선언에 있는 것은 패턴 목록과 텍스트뿐이다.
+ * 자리에서 둘이 함께 걸린다.
+ *
+ * ── 발신에 무엇을 싣고 무엇을 안 싣나
+ *
+ * **나무의 모양은 싣지 않는다.** 어느 마디가 어느 글자로 이어지는지는 무늬 목록
+ * 하나로 결정되는 순수한 셈이라, 같은 함수를 `manyPatternsOnePassNodes` 로 내주고
+ * 장면이 그것을 부른다 (프로토콜 4절의 B 갈래). 실어 보내면 나무가 두 자리에서
+ * 셈해져 언젠가 갈린다. 이 조각의 알고리즘은 나무 짓기가 아니라 **한 번만 지나가며
+ * 훑기** 이므로, 나무 짓기를 떼어 내도 조각이 말하려는 바가 그대로 남는다.
+ *
+ * **셀 수 있는 수도 싣지 않는다.** 몇 번째 글자를 읽고 있나(읽은 글자가 하나씩
+ * 쌓이므로 그 길이가 번호다) · 읽은 글자 · 어디서 왔나(앞 걸음의 커서) · 어떻게
+ * 옮겼나(`via` 가 있으면 미끄러짐, 제자리면 머무름) · 찾은 것의 수 · 마디 수 —
+ * 전부 장면이 센다.
+ *
+ * 남는 것은 **걸음이 내리는 판정** 둘뿐이다. 어느 마디로 가는가(`to` · `via`) 와
+ * 어느 무늬가 여기서 걸리는가(`patterns`). 둘 다 미끄럼길이 정하는 것이라 장면이
+ * 셀 수 없다.
  *
  * ── 이벤트 (전부 facet 고유 확장. silent 이벤트 없음)
  *
- *   patterns-laid  { passes: number }
- *       패턴마다 따로 훑을 때의 지나감 횟수 (= 패턴 수).
+ *   patterns-laid  {}
+ *       패턴 넉 줄을 늘어놓는다. 따로 훑을 때의 지나감 횟수는 무늬 수이므로
+ *       장면이 센다.
  *
- *   trie-merged    { nodes: NodeWire[]; paths: PathWire[]; nodeCount: number }
- *       NodeWire = { id: string; parent: string | null; char: string;
- *                    depth: number; terminal: boolean }
- *       PathWire = { pattern: string; nodeIds: string[] }
- *           패턴의 글자 하나하나가 어느 마디에 앉는지.
- *       nodeCount 는 뿌리를 포함한 마디 수.
- *       마디 id 는 뿌리에서 그 마디까지의 글자를 이은 것이고 뿌리는 빈 문자열이다.
+ *   trie-merged    {}
+ *       같은 앞머리를 포개어 한 나무로 세운다. 나무의 모양은 장면이
+ *       `manyPatternsOnePassNodes` 로 셈한다.
  *
- *   read           { index: number; char: string;
- *                    move: 'stay' | 'descend' | 'slide';
- *                    from: string; to: string; via?: string }
- *       index 는 텍스트에서 읽은 자리. from/to/via 는 마디 id.
- *       via 는 길이 끊겨 미끄러져 들른 마디 (미끄러지지 않았으면 없다).
+ *   read           { to: string; via?: string }
+ *       글자 하나를 읽고 커서가 `to` 마디로 간다. 길이 끊겨 물러났으면 들른
+ *       마디가 `via`. 마디 id 는 뿌리에서 그 마디까지의 글자를 이은 것이고
+ *       뿌리는 빈 문자열이다.
  *
- *   match          { nodeId: string; hits: HitWire[] }
- *       HitWire = { pattern: string; start: number; end: number }
- *       start/end 는 텍스트에서의 자리이며 양끝을 포함한다.
- *       한 마디에서 둘 이상이 끝나면 hits 가 여럿인 채로 한 번에 온다.
+ *   match          { patterns: string[] }
+ *       지금 선 마디에서 끝나는 무늬들. 미끄럼길로 이어진 것까지 한 번에 온다 —
+ *       한 마디에서 둘 이상이 끝나면 함께 걸리는 것이 이 조각의 주장이다.
  *
- *   done           { found: number; passes: number }
- *       passes 는 언제나 1 — 그것이 이 조각의 주장이다.
+ *   done           {}
+ *       훑기를 마쳤다. 찾은 수는 장면이 센다.
  *
  *   rewind         {}
  *       자동 재생을 마친 뒤 advance 를 받으면 처음으로 되감는다.
@@ -50,13 +61,48 @@ export type ManyPatternsOnePassData = {
 };
 
 /** 뿌리의 마디 id. 뿌리까지 이어진 글자가 없으므로 빈 문자열이다. */
-const ROOT = '';
+export const ROOT = '';
+
+/**
+ * 한 나무로 포갠 마디 하나.
+ *
+ * 부모 · 글자 · 깊이를 담지 않는다 — id 가 뿌리부터 이어진 글자 그 자체라
+ * 셋 다 id 에서 나온다 (`id.slice(0, -1)` · `id.slice(-1)` · `id.length`).
+ * 담아 두면 같은 사실이 두 자리에 적힌다.
+ */
+export type ManyPatternsOnePassNode = {
+  /** 뿌리에서 이 마디까지 이은 글자. 그대로 식별자다. 뿌리는 `''`. */
+  id: string;
+  /** 이 마디에서 무늬 하나가 끝나는가. */
+  terminal: boolean;
+};
+
+/**
+ * 무늬들을 한 나무로 포갠다. 같은 앞머리는 같은 마디가 된다.
+ *
+ * 무늬 목록 하나로 결정되는 순수 함수라 **장면이 그대로 부른다.** 발신에 실어
+ * 보내면 나무가 두 자리에서 셈해진다 (프로토콜 4절).
+ *
+ * 돌려주는 차례는 무늬를 훑는 차례 그대로다 — 형제의 앞뒤가 곧 그림의 위아래라
+ * 차례가 흔들리면 나무가 흔들린다.
+ */
+export function manyPatternsOnePassNodes(patterns: string[]): ManyPatternsOnePassNode[] {
+  const ids: string[] = [ROOT];
+  const seen = new Set<string>([ROOT]);
+  for (const pattern of patterns) {
+    for (let i = 0; i < pattern.length; i += 1) {
+      const id = pattern.slice(0, i + 1);
+      if (seen.has(id)) continue;
+      seen.add(id);
+      ids.push(id);
+    }
+  }
+  const ends = new Set(patterns.filter((pattern) => pattern.length > 0));
+  return ids.map((id) => ({ id, terminal: ends.has(id) }));
+}
 
 type TrieNode = {
   id: string;
-  parent: string | null;
-  char: string;
-  depth: number;
   terminal: boolean;
   children: Map<string, string>;
   /** 길이 끊겼을 때 미끄러질 마디. */
@@ -65,33 +111,11 @@ type TrieNode = {
   outputs: string[];
 };
 
-type NodeWire = {
-  id: string;
-  parent: string | null;
-  char: string;
-  depth: number;
-  terminal: boolean;
-};
-
-type PathWire = { pattern: string; nodeIds: string[] };
-
-type HitWire = { pattern: string; start: number; end: number };
-
+/** 한 걸음 — 커서가 어디로 가고 거기서 무엇이 걸리나. 나머지는 장면이 센다. */
 type ReadStep = {
-  index: number;
-  char: string;
-  move: 'stay' | 'descend' | 'slide';
-  from: string;
   to: string;
   via?: string;
-  hits: HitWire[];
-};
-
-type Scene = {
-  nodes: NodeWire[];
-  paths: PathWire[];
-  steps: ReadStep[];
-  found: number;
+  hits: string[];
 };
 
 function nodeOf(nodes: Map<string, TrieNode>, id: string): TrieNode {
@@ -100,47 +124,24 @@ function nodeOf(nodes: Map<string, TrieNode>, id: string): TrieNode {
   return node;
 }
 
-function makeNode(id: string, parent: string | null, char: string, depth: number): TrieNode {
-  return {
-    id,
-    parent,
-    char,
-    depth,
-    terminal: false,
-    children: new Map<string, string>(),
-    fail: ROOT,
-    outputs: [],
-  };
-}
-
-/** 패턴을 글자별로 이어 붙여 한 나무로 포갠다. 같은 앞머리는 같은 마디가 된다. */
-function buildTrie(patterns: string[]): { nodes: Map<string, TrieNode>; paths: PathWire[] } {
+/** 내주는 마디 목록에 훑기에 필요한 것(자식 · 미끄럼길 · 출력)을 얹는다. */
+function buildTrie(patterns: string[]): Map<string, TrieNode> {
   const nodes = new Map<string, TrieNode>();
-  nodes.set(ROOT, makeNode(ROOT, null, '', 0));
-  const paths: PathWire[] = [];
-
-  for (const pattern of patterns) {
-    const nodeIds: string[] = [];
-    let cursor = ROOT;
-    for (let i = 0; i < pattern.length; i += 1) {
-      const char = pattern.charAt(i);
-      const id = pattern.slice(0, i + 1);
-      const parent = nodeOf(nodes, cursor);
-      const existing = parent.children.get(char);
-      if (existing === undefined) {
-        nodes.set(id, makeNode(id, cursor, char, i + 1));
-        parent.children.set(char, id);
-        cursor = id;
-      } else {
-        cursor = existing;
-      }
-      nodeIds.push(cursor);
-    }
-    if (pattern.length > 0) nodeOf(nodes, cursor).terminal = true;
-    paths.push({ pattern, nodeIds });
+  for (const node of manyPatternsOnePassNodes(patterns)) {
+    nodes.set(node.id, {
+      id: node.id,
+      terminal: node.terminal,
+      children: new Map<string, string>(),
+      fail: ROOT,
+      outputs: [],
+    });
   }
-
-  return { nodes, paths };
+  // 부모와 이어 주는 글자는 id 의 마지막 글자다.
+  for (const node of nodes.values()) {
+    if (node.id === ROOT) continue;
+    nodeOf(nodes, node.id.slice(0, -1)).children.set(node.id.slice(-1), node.id);
+  }
+  return nodes;
 }
 
 /**
@@ -194,7 +195,6 @@ function scan(nodes: Map<string, TrieNode>, text: string): ReadStep[] {
 
   for (let index = 0; index < text.length; index += 1) {
     const char = text.charAt(index);
-    const from = cursor;
     let node = nodeOf(nodes, cursor);
     let next = node.children.get(char);
     let via: string | undefined;
@@ -206,41 +206,19 @@ function scan(nodes: Map<string, TrieNode>, text: string): ReadStep[] {
     }
 
     cursor = next ?? ROOT;
-    const move: ReadStep['move'] =
-      via !== undefined ? 'slide' : cursor === from ? 'stay' : 'descend';
-
-    const hits = nodeOf(nodes, cursor).outputs.map((pattern) => ({
-      pattern,
-      start: index - pattern.length + 1,
-      end: index,
-    }));
-
-    steps.push({ index, char, move, from, to: cursor, via, hits });
+    steps.push({ to: cursor, via, hits: nodeOf(nodes, cursor).outputs });
   }
 
   return steps;
-}
-
-function computeScene(patterns: string[], text: string): Scene {
-  const { nodes, paths } = buildTrie(patterns);
-  linkFails(nodes);
-  const steps = scan(nodes, text);
-  const wire: NodeWire[] = [...nodes.values()].map((node) => ({
-    id: node.id,
-    parent: node.parent,
-    char: node.char,
-    depth: node.depth,
-    terminal: node.terminal,
-  }));
-  const found = steps.reduce((sum, step) => sum + step.hits.length, 0);
-  return { nodes: wire, paths, steps, found };
 }
 
 export async function manyPatternsOnePassAlgorithm(
   base: FacetContext<ManyPatternsOnePassData>,
 ): Promise<void> {
   const ctx = base as ReactiveContext<ManyPatternsOnePassData>;
-  const scene = computeScene(ctx.data.patterns, ctx.data.text);
+  const nodes = buildTrie(ctx.data.patterns);
+  linkFails(nodes);
+  const steps = scan(nodes, ctx.data.text);
   const stepMs = ctx.data.stepMs;
 
   /** 자동 재생을 마치면 손으로 짚는 차례가 된다. */
@@ -268,30 +246,19 @@ export async function manyPatternsOnePassAlgorithm(
 
   async function runPass(): Promise<void> {
     if (!(await gate())) return;
-    await ctx.emit({
-      type: 'patterns-laid',
-      payload: { passes: ctx.data.patterns.length },
-    });
+    await ctx.emit({ type: 'patterns-laid', payload: {} });
 
     if (!(await gate())) return;
-    await ctx.emit({
-      type: 'trie-merged',
-      payload: { nodes: scene.nodes, paths: scene.paths, nodeCount: scene.nodes.length },
-    });
+    await ctx.emit({ type: 'trie-merged', payload: {} });
 
-    for (const step of scene.steps) {
+    for (let index = 0; index < steps.length; index += 1) {
+      const step = steps[index];
+      if (!step) continue;
       if (!(await gate())) return;
       await ctx.emit({
         type: 'read',
-        target: `index:${step.index}`,
-        payload: {
-          index: step.index,
-          char: step.char,
-          move: step.move,
-          from: step.from,
-          to: step.to,
-          via: step.via,
-        },
+        target: `index:${index}`,
+        payload: { to: step.to, via: step.via },
       });
 
       if (step.hits.length === 0) continue;
@@ -299,12 +266,12 @@ export async function manyPatternsOnePassAlgorithm(
       await ctx.emit({
         type: 'match',
         target: `node:${step.to}`,
-        payload: { nodeId: step.to, hits: step.hits },
+        payload: { patterns: step.hits },
       });
     }
 
     if (!(await gate())) return;
-    await ctx.emit({ type: 'done', payload: { found: scene.found, passes: 1 } });
+    await ctx.emit({ type: 'done', payload: {} });
   }
 
   await runPass();

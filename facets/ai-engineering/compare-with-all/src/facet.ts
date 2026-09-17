@@ -40,7 +40,9 @@ export const compareWithAllFacet: FacetJson = {
     pt: 'Exato, mas não se sustenta quando os números crescem — as multiplicações acumulam como candidatos vezes dimensões.',
   },
   algorithm: 'module:compareWithAll',
-  projector: 'module:compareWithAllProjector',
+  // 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든
+  // 셈으로 얻으므로 띠로 아무 자리에나 갈 수 있다 (S-scene).
+  scene: 'module:compareWithAllScene',
   initialData: {
     type: 'compare-with-all',
     // 실제로 하나씩 훑어 보는 작은 판.
@@ -57,7 +59,7 @@ export const compareWithAllFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'compare-with-all-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.sweep': {

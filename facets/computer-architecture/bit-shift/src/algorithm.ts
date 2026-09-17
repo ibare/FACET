@@ -7,29 +7,26 @@
  *
  * ── 이벤트 (facet 고유. 표준 어휘에 해당하는 것이 없다 — C2)
  *
- * | type   | payload | silent |
- * |--------|---------|--------|
- * | place  | Frame   | 아니오 |
- * | shift  | Frame   | 아니오 |
- * | rewind | 없음    | 아니오 |
+ * | type   | payload                                     | silent |
+ * |--------|---------------------------------------------|--------|
+ * | place  | { dir: 'left' \| 'right', start, bits }      | 아니오 |
+ * | shift  | { bits }                                     | 아니오 |
+ * | rewind | 없음                                         | 아니오 |
  *
- * `place` 는 시작값을 칸에 놓는 걸음이고 (`shiftCount` 는 언제나 0), `shift` 는
- * 거기서 한 칸씩 미는 걸음이다 (`shiftCount` 는 1 이상). `rewind` 는 칸을 비운다 —
+ * `bits` 는 `'0'`/`'1'` 로만 이루어진 `bits` 자리 길이의 문자열이다.
+ *
+ * `place` 는 시작값을 칸에 놓으며 밀기 하나를 여는 걸음이라 방향과 시작값을 함께
+ * 말한다. `shift` 는 거기서 한 칸 민 결과만 말한다 — 방향도 시작값도 몇 칸째인가도
+ * 그 밀기를 연 `place` 이후로 정해져 있어 장면이 잇는다. `rewind` 는 칸을 비운다 —
  * 자동 재생을 마친 뒤 `advance` 를 처음 받았을 때만 나간다. payload 가 없다.
  *
- * Frame = {
- *   dir:        'left' | 'right'  미는 방향
- *   start:      number            이 방향의 시작값
- *   shiftCount: number            시작값에서 몇 칸 밀었는가
- *   value:      number            지금 비트열이 뜻하는 수
- *   bits:       string            '0'/'1' 로만 이루어진 bits 자리 길이의 문자열
- *   factor:     number            2 ** shiftCount
- *   exact:      number            버림 없는 셈 — 왼쪽이면 start * factor, 오른쪽이면 start / factor
- *   dropped:    0 | 1             이 걸음에서 끝을 넘어가 버려진 비트
- * }
+ * **비트열 말고는 아무것도 싣지 않는다.** 지금 값은 비트를 세면 나오고, 곱하는 수는
+ * 밀린 칸 수에서, 버림 없는 셈은 시작값에 그것을 먹이면 나오며, 끝을 넘어간 비트는
+ * 앞 걸음의 비트열 끝자리가 이미 말한다. 실어 보내면 화면의 비트와 글자의 수가
+ * 서로 다른 출처를 갖게 된다.
  *
- * 1차 데이터는 시작값 둘과 비트 폭뿐이다. 비트열 · 값 · 곱하거나 나눈 수 ·
- * 떨어져 나간 비트는 전부 여기서 그 자리에 센다.
+ * 남긴 것이 `bits` 인 까닭은 그것이 **이 조각의 알고리즘 그 자체**이기 때문이다 —
+ * 그릇 폭으로 잘리는 밀기를 내주면 여기 남는 말이 없다.
  */
 
 import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
@@ -74,27 +71,13 @@ async function emitFrame(ctx: ReactiveContext<BitShiftData>, i: number): Promise
   const d = ctx.data;
   const mask = (1 << d.bits) - 1;
   const { dir, start, shiftCount } = frameAt(d, i);
-  const value = valueAt(dir, start, shiftCount, mask);
-  const factor = 2 ** shiftCount;
-  const exact = dir === 'left' ? start * factor : start / factor;
-  const bits = value.toString(2).padStart(d.bits, '0');
+  const bits = valueAt(dir, start, shiftCount, mask).toString(2).padStart(d.bits, '0');
 
   if (shiftCount === 0) {
-    await ctx.emit({
-      type: 'place',
-      payload: { dir, start, shiftCount, value, bits, factor, exact, dropped: 0 },
-    });
+    await ctx.emit({ type: 'place', payload: { dir, start, bits } });
     return;
   }
-
-  // 이 걸음에서 그릇 밖으로 나간 비트 — 왼쪽으로 밀면 맨 위 칸, 오른쪽으로 밀면
-  // 맨 아래 칸에 있던 것이다.
-  const before = valueAt(dir, start, shiftCount - 1, mask);
-  const dropped = dir === 'left' ? (before >>> (d.bits - 1)) & 1 : before & 1;
-  await ctx.emit({
-    type: 'shift',
-    payload: { dir, start, shiftCount, value, bits, factor, exact, dropped },
-  });
+  await ctx.emit({ type: 'shift', payload: { bits } });
 }
 
 export async function bitShiftAlgorithm(base: FacetContext<BitShiftData>): Promise<void> {

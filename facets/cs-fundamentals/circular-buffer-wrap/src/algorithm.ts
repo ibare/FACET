@@ -30,7 +30,7 @@
  *
  * 걸음을 배열로 순회하면 emit 의 type 이 리터럴이 아니게 되므로 한 줄씩 편다 (C2).
  *
- * 초기 배치 자체는 emit 하지 않는다 — projector 의 onInit 이 ctx.data 를 받아 그린다.
+ * 초기 배치 자체는 emit 하지 않는다 — 장면의 initial 이 ctx.data 를 받아 첫 장면을 세운다.
  * 되감기도 같은 자리로 돌아가는 일이라 rewind 하나면 족하다.
  */
 

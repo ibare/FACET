@@ -9,24 +9,37 @@
  *
  * ── 이벤트 (`done` 만 표준, 나머지는 facet 고유 확장)
  *
- * | type             | silent | payload                                                                               |
- * |------------------|--------|---------------------------------------------------------------------------------------|
- * | tree-ready       | false  | `{ nodes: { id, parent, ch, word, depth, terminal }[] }`                                 |
- * | rewind           | false  | 없음                                                                                     |
- * | pattern-inserted | false  | `{ pattern: string; nodeIds: number[] }`                                                 |
- * | fail-linked      | false  | `{ from: number; to: number; word: string; suffix: string }`                              |
- * | scan-advanced    | false  | `{ index: number; ch: string; from: number; to: number; word: string; matched: string \| null }` |
- * | fail-slid        | false  | `{ index: number; ch: string; from: number; to: number; word: string; suffix: string }`   |
- * | naive-restart    | false  | `{ index: number; from: number; ch: string; missed: string }`                             |
- * | done             | false  | `{ rescued: string }`                                                                    |
+ * | type             | silent | payload                                          |
+ * |------------------|--------|--------------------------------------------------|
+ * | tree-ready       | false  | `{ nodes: { id, parent, ch, terminal }[] }`         |
+ * | rewind           | false  | 없음                                               |
+ * | pattern-inserted | false  | 없음                                               |
+ * | fail-linked      | false  | `{ from: number; to: number }`                     |
+ * | scan-advanced    | false  | `{ to: number }`                                   |
+ * | fail-slid        | false  | `{ to: number }`                                   |
+ * | naive-restart    | false  | `{ missed: string[] }`                             |
+ * | done             | false  | 없음                                               |
  *
  * - `tree-ready` 는 그림이 자리를 미리 잡게 하는 이벤트다. **silent 가 아니다** —
- *   stage 가 이 이벤트에서 마디와 간선을 만들고 뿌리를 세우므로 시각 변화가
- *   있는 걸음이다 (C2). 한때 silent 로 적었다가 주석과 실제가 어긋나 고쳤다.
+ *   장면이 이 이벤트에서 나무를 쥐고 뿌리를 세우므로 시각 변화가 있는 걸음이다 (C2).
  * - `rewind` 는 자동 재생이 끝난 뒤 `advance` 를 처음 받아 처음으로 되돌아갈 때 발신한다.
- * - `word` 는 그 마디가 나타내는 글자열, `suffix` 는 미끄러져 닿는 마디의 글자열.
- * - `matched` 는 그 마디에서 끝나는 패턴. 없으면 `null`.
- * - `missed` · `rescued` 는 쉼표로 이은 패턴 이름이다.
+ *
+ * ── payload 를 얇게 두는 까닭
+ *
+ * 화면에 함께 뜨는 수가 두 자리에서 셈해지면 언젠가 갈린다. 그래서 **장면이 셀 수
+ * 있는 것은 싣지 않는다** — 몇 번째 무늬를 넣는지(`pattern` · `nodeIds`), 몇 번째
+ * 글자를 읽는지(`index`), 그 글자가 무엇인지(`ch`), 마디가 나타내는 글자열
+ * (`word` · `suffix`), 마디의 깊이(`depth`), 거기서 끝나는 무늬(`matched`) 는
+ * 전부 `scene.ts` 가 나무와 글줄에서 셈한다.
+ *
+ * 남긴 셋은 모두 **걸음이 내리는 판정**이다.
+ *
+ * - 나무의 모양(`tree-ready` 의 `nodes`) — 구조에서 셀 수 없는 바탕 그 자체.
+ * - 어디로 떨어지고 어디로 나아가는가(`to`, `from`) — **실패 링크는 이 조각의
+ *   알고리즘 그 자체다.** 순수 함수라 내줄 수는 있으나 내주면 장면이 알고리즘을
+ *   되풀이하고 발신이 장식이 된다. 조각의 이름이 `fail-link` 인 이유가 그것이다.
+ * - 놓쳤을 무늬(`missed`) — **뿌리로 돌아가는 쪽의 주행 결과**라 이 화면의 자취에는
+ *   없다. `done` 에서 같은 값을 다시 싣던 것은 걷어냈다 — 장면이 이미 쥐고 있다.
  *
  * ── 범위
  *
@@ -55,9 +68,8 @@ type TrieNode = {
   parent: number;
   /** 부모에서 이 마디로 들어오는 글자. 뿌리는 빈 문자열. */
   ch: string;
-  /** 이 마디가 나타내는 글자열. */
+  /** 이 마디가 나타내는 글자열. 실패 링크를 셈하는 데만 쓴다. */
   word: string;
-  depth: number;
   /** 이 마디에서 끝나는 패턴. 없으면 null. */
   terminal: string | null;
   children: Map<string, number>;
@@ -67,28 +79,27 @@ type Trie = {
   nodes: TrieNode[];
   /** 마디마다의 실패 링크. 가리킬 곳이 없으면 뿌리(0). */
   fail: number[];
-  /** 패턴별로, 그 패턴을 넣으며 새로 생긴 마디들. 자라는 차례 그대로. */
-  grown: Map<string, number[]>;
 };
 
-/** 화면으로 넘어가는 마디 — `children` 을 뺀 구조만. */
+/**
+ * 화면으로 넘어가는 마디 — 구조만.
+ *
+ * `word` 도 `depth` 도 넘기지 않는다. 부모와 글자만 있으면 둘 다 파생되므로,
+ * 실어 보내면 같은 것을 두 자리에서 세는 문을 열어 두는 꼴이다.
+ */
 type WireNode = {
   id: number;
   parent: number;
   ch: string;
-  word: string;
-  depth: number;
   terminal: string | null;
 };
 
 function buildTrie(patterns: string[]): Trie {
   const nodes: TrieNode[] = [
-    { id: 0, parent: -1, ch: '', word: '', depth: 0, terminal: null, children: new Map() },
+    { id: 0, parent: -1, ch: '', word: '', terminal: null, children: new Map() },
   ];
-  const grown = new Map<string, number[]>();
 
   for (const pattern of patterns) {
-    const added: number[] = [];
     let cur = 0;
     for (const ch of pattern) {
       const next = nodes[cur].children.get(ch);
@@ -98,20 +109,17 @@ function buildTrie(patterns: string[]): Trie {
           parent: cur,
           ch,
           word: nodes[cur].word + ch,
-          depth: nodes[cur].depth + 1,
           terminal: null,
           children: new Map(),
         };
         nodes.push(node);
         nodes[cur].children.set(ch, node.id);
-        added.push(node.id);
         cur = node.id;
       } else {
         cur = next;
       }
     }
     nodes[cur].terminal = pattern;
-    grown.set(pattern, added);
   }
 
   // 실패 링크는 정의 그대로 셈한다 — 자기 자신을 뺀 접미사 가운데 나무에 있는
@@ -126,7 +134,7 @@ function buildTrie(patterns: string[]): Trie {
     return 0;
   });
 
-  return { nodes, fail, grown };
+  return { nodes, fail };
 }
 
 /**
@@ -163,8 +171,6 @@ export const failLinkAlgorithm = async (ctx: FacetContext<FailLinkData>): Promis
     id: node.id,
     parent: node.parent,
     ch: node.ch,
-    word: node.word,
-    depth: node.depth,
     terminal: node.terminal,
   }));
 
@@ -183,16 +189,15 @@ export const failLinkAlgorithm = async (ctx: FacetContext<FailLinkData>): Promis
 
   const runOnce = async (gate: Gate): Promise<boolean> => {
     // 그림이 자리를 먼저 잡아야 마디가 자라도 배치가 흔들리지 않는다.
-    // silent 를 붙이지 않는다 — stage 가 이 이벤트에서 마디와 간선을 만들고
-    // 뿌리를 세우므로 시각 변화가 있는 걸음이다 (C2).
+    // silent 를 붙이지 않는다 — 장면이 이 이벤트에서 나무를 쥐고 뿌리를 세우므로
+    // 시각 변화가 있는 걸음이다 (C2).
     await ctx.emit({ type: 'tree-ready', payload: { nodes: wire } });
 
-    for (const pattern of patterns) {
+    // 몇 번째 무늬를 넣고 있는지도, 그 무늬가 새로 내는 마디가 무엇인지도 싣지
+    // 않는다 — 무늬 목록과 나무만 있으면 장면이 센다.
+    for (let left = patterns.length; left > 0; left -= 1) {
       if (!(await gate())) return false;
-      await ctx.emit({
-        type: 'pattern-inserted',
-        payload: { pattern, nodeIds: trie.grown.get(pattern) ?? [] },
-      });
+      await ctx.emit({ type: 'pattern-inserted' });
     }
 
     // 뿌리를 가리키는 링크는 그리지 않는다 — "어긋나면 처음으로" 라는 뜻이라
@@ -205,71 +210,38 @@ export const failLinkAlgorithm = async (ctx: FacetContext<FailLinkData>): Promis
       await ctx.emit({
         type: 'fail-linked',
         target: `node:${node.id}`,
-        payload: { from: node.id, to, word: node.word, suffix: trie.nodes[to].word },
+        payload: { from: node.id, to },
       });
     }
 
     let cur = 0;
-    let firstSlide: { index: number; from: number; ch: string } | null = null;
+    let slidOnce = false;
 
-    for (let i = 0; i < text.length; i += 1) {
-      const ch = text[i];
-
+    for (const ch of text) {
       while (cur !== 0 && !trie.nodes[cur].children.has(ch)) {
         const to = trie.fail[cur];
-        if (firstSlide === null) firstSlide = { index: i, from: cur, ch };
+        slidOnce = true;
         if (!(await gate())) return false;
-        await ctx.emit({
-          type: 'fail-slid',
-          target: `node:${to}`,
-          payload: {
-            index: i,
-            ch,
-            from: cur,
-            to,
-            word: trie.nodes[cur].word,
-            suffix: trie.nodes[to].word,
-          },
-        });
+        await ctx.emit({ type: 'fail-slid', target: `node:${to}`, payload: { to } });
         cur = to;
       }
 
-      const from = cur;
       const next = trie.nodes[cur].children.get(ch);
       cur = next === undefined ? 0 : next;
       if (!(await gate())) return false;
-      await ctx.emit({
-        type: 'scan-advanced',
-        target: `node:${cur}`,
-        payload: {
-          index: i,
-          ch,
-          from,
-          to: cur,
-          word: trie.nodes[cur].word,
-          matched: trie.nodes[cur].terminal,
-        },
-      });
+      await ctx.emit({ type: 'scan-advanced', target: `node:${cur}`, payload: { to: cur } });
     }
 
     // 대비 — 그 자리에서 처음으로 돌아갔다면 무엇을 놓쳤을까.
-    // 미끄러진 적이 없으면 보일 대비도 없다.
-    if (firstSlide !== null && rescued.length > 0) {
+    // 미끄러진 적이 없으면 보일 대비도 없다. 어느 마디에서 돌아가는지는 싣지
+    // 않는다 — 처음으로 미끄러진 자리를 장면이 이미 쥐고 있다.
+    if (slidOnce && rescued.length > 0) {
       if (!(await gate())) return false;
-      await ctx.emit({
-        type: 'naive-restart',
-        target: `node:${firstSlide.from}`,
-        payload: {
-          index: firstSlide.index,
-          from: firstSlide.from,
-          ch: firstSlide.ch,
-          missed: rescued.join(', '),
-        },
-      });
+      await ctx.emit({ type: 'naive-restart', payload: { missed: rescued } });
     }
 
     if (!(await gate())) return false;
-    await ctx.emit({ type: 'done', payload: { rescued: rescued.join(', ') } });
+    await ctx.emit({ type: 'done' });
     return true;
   };
 

@@ -37,7 +37,7 @@ export const badCharSkipFacet: FacetJson = {
     pt: 'Uma letra que o padrão não contém não pode coincidir com nenhuma de suas casas, então o padrão passa de um único salto para além dessa letra.',
   },
   algorithm: 'module:badCharSkip',
-  projector: 'module:badCharSkipProjector',
+  scene: 'module:badCharSkipScene',
   initialData: {
     type: 'bad-char-skip',
     text: 'here is a simple example',
@@ -46,7 +46,7 @@ export const badCharSkipFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'bad-char-skip-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'label.table': {

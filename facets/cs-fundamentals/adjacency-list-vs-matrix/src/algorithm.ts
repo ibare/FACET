@@ -5,43 +5,40 @@
  * 그릇(인접 리스트 / 인접 행렬)에 동시에 담고, 두 가지 물음의 비용을 실제로
  * 세어 어느 쪽이 싼지가 뒤바뀌는 것을 보인다.
  *
- * `ctx.data.vertices` / `ctx.data.edges` 를 실제로 순회해 인접 리스트
- * (Map<string, string[]>) 와 인접 행렬 (number[][]) 을 이 함수 안에서 채우고,
- * 두 물음(이웃 여부 / 이웃 전체)의 비용도 그 자료구조를 실제로 훑어 센다 —
- * 화면에 뜨는 수는 전부 이 계산에서 나온다 (지어내지 않는다).
+ * `ctx.data.vertices` / `ctx.data.edges` 를 실제로 순회해 인접 리스트를 채우고,
+ * 두 물음이 **어느 칸을 짚는지**를 그 자료구조에서 낸다. 짚은 칸이 몇인가 —
+ * 곧 물음의 비용 — 는 여기서 세지 않는다. 그것은 화면에 남는 자취 그 자체이고,
+ * 장면이 그 자취를 세어 낸다. 같은 수를 두 자리에서 세면 언젠가 갈린다.
  *
  * ── 확장 이벤트 어휘 (facet 고유, C2) ──────────────────────────────────
  *
  * `edge-added`   — 간선 하나가 두 그릇에 동시에 놓인다.
- *   payload: { a: string; b: string; aIndex: number; bIndex: number }
+ *   payload: { a: string; b: string }
  *   target:  [`node:${a}`, `node:${b}`]
  *   silent:  false — 두 패널이 실제로 자라고/채워지는 시각 변화가 있다.
  *
- * `query-begin`  — 새 물음이 시작된다 (캡션 전환).
+ *   목록 안에서 몇 번째 칸인가는 싣지 않는다 — 간선이 놓인 차례가 곧 목록의
+ *   차례라 장면이 `placed` 를 훑어 셀 수 있다.
+ *
+ * `query-begin`  — 새 물음이 시작된다.
  *   payload: { question: 1 | 2 }
- *   silent:  false — 캡션이 바뀐다.
+ *   silent:  false — 캡션이 바뀌고 앞 물음의 자취가 걷힌다.
  *
- * `scan-step`    — 물음에 답하려고 칸 하나를 짚는다 (커서 이동 + 카운트 증가).
- *   payload: {
- *     question: 1 | 2;
- *     side: 'list' | 'matrix';
- *     cellIndex: number;      // list: 그 정점 목록 안의 위치. matrix: 열 위치.
- *     cellVertex: string;     // 이 칸이 가리키는 이웃 후보 정점.
- *     count: number;          // 이 물음에서 지금까지 짚은 칸 수 (1부터).
- *     matched: boolean;       // 이 칸이 실제로 이웃(값 1)인가.
- *   }
+ *   어느 물음을 던지는가는 걸음의 판정이라 싣는다.
+ *
+ * `scan-step`    — 물음에 답하려고 칸 하나를 짚는다.
+ *   payload: { side: 'list' | 'matrix'; cellIndex: number }
  *   target:  `node:${cellVertex}`
- *   silent:  false — 커서가 실제로 움직인다.
+ *   silent:  false — 커서가 실제로 움직이고 짚음의 표식이 하나 남는다.
  *
- * `query-done`   — 물음 하나가 끝나고 두 비용을 나란히 보인다.
- *   payload: {
- *     question: 1 | 2;
- *     listCost: number;
- *     matrixCost: number;
- *     foundNeighbor: boolean;
- *     neighbors: string[];
- *   }
- *   silent:  false — 결과 배지가 새로 그려진다.
+ *   어느 그릇의 몇 번째 칸을 짚는가만 싣는다. 그 칸이 가리키는 정점 · 지금까지
+ *   짚은 수 · 그 칸이 이웃인가는 전부 구조에서 나오므로 장면이 낸다.
+ *
+ * `query-done`   — 물음 하나가 끝난다. 그 물음의 자취가 결과 줄로 굳는다.
+ *   payload: 없음. silent: false — 결과 줄이 새로 앉는다.
+ *
+ *   두 비용을 싣지 않는다 — 그것이 이 조각의 결론이고, 결론은 화면의 자취와
+ *   같은 자료에서 나와야 한다.
  *
  * `rewind`       — 자동 재생을 마친 뒤 `advance` 를 처음 누르면, 화면을
  *   초기 상태로 되돌리고 곧바로 첫 걸음을 보인다 (S-piece).
@@ -62,12 +59,47 @@ export type AdjacencyListVsMatrixData = {
   stepMs: number;
 };
 
+/**
+ * 간선 목록을 인접 리스트로 옮긴다.
+ *
+ * 이 조각이 견주는 두 그릇 중 하나이고, 화면도 이것으로 그린다. 그래서
+ * 장면이 같은 함수를 부른다 (`scene.ts`) — 목록을 두 자리에서 만들면 걸음이
+ * 짚는 칸과 화면에 선 칸이 언젠가 갈린다. 인접 행렬도 같은 사실을 담으므로
+ * 장면은 이 목록으로 표의 켜진 칸까지 낸다.
+ *
+ * 그 함수만 떼어 내도 "물음마다 어느 그릇이 싼가" 는 남는다 — 알고리즘 자체가
+ * 아니라 그릇을 짓는 일이므로 내준다.
+ */
+export function adjacencyOf(
+  vertices: readonly string[],
+  edges: readonly (readonly [string, string])[],
+): Map<string, string[]> {
+  const lists = new Map<string, string[]>();
+  for (const v of vertices) lists.set(v, []);
+  for (const [a, b] of edges) {
+    const aList = lists.get(a);
+    const bList = lists.get(b);
+    if (!aList || !bList) continue;
+    aList.push(b);
+    bList.push(a);
+  }
+  return lists;
+}
+
+/** 두 물음이 모두 물어보는 정점. 선언의 첫 정점이다. */
+export function queryVertexOf(vertices: readonly string[]): string {
+  return vertices[0] ?? '';
+}
+
+/** 물음 1 이 "이웃인가" 를 묻는 상대. 선언의 마지막 정점이다. */
+export function targetVertexOf(vertices: readonly string[]): string {
+  return vertices[vertices.length - 1] ?? '';
+}
+
 type EdgeStep = {
   kind: 'edge';
   a: string;
   b: string;
-  aIndex: number;
-  bIndex: number;
 };
 
 type QueryBeginStep = {
@@ -77,138 +109,68 @@ type QueryBeginStep = {
 
 type ScanStep = {
   kind: 'scan';
-  question: 1 | 2;
   side: 'list' | 'matrix';
   cellIndex: number;
+  /** 이 칸이 가리키는 정점. payload 가 아니라 `target` 을 짓는 데만 쓴다 (C1). */
   cellVertex: string;
-  count: number;
-  matched: boolean;
 };
 
 type QueryDoneStep = {
   kind: 'query-done';
-  question: 1 | 2;
-  listCost: number;
-  matrixCost: number;
-  foundNeighbor: boolean;
-  neighbors: string[];
 };
 
 type Step = EdgeStep | QueryBeginStep | ScanStep | QueryDoneStep;
 
 /**
- * ctx.data 를 실제로 읽어 인접 리스트 / 인접 행렬을 채우고, 두 물음의 비용을
- * 실제로 세어 걸음(Step) 목록을 만든다. 이 배열은 사람이 적은 대본이 아니라
- * 자료구조를 순회한 결과다 — emitStep 의 switch 만 리터럴 type 을 쓴다 (C2).
+ * ctx.data 를 실제로 읽어 인접 리스트를 채우고, 두 물음이 어느 칸을 짚는지를
+ * 그 자료구조에서 낸다. 이 배열은 사람이 적은 대본이 아니라 자료구조를 순회한
+ * 결과다 — emitStep 의 switch 만 리터럴 type 을 쓴다 (C2).
  */
 function buildSteps(data: AdjacencyListVsMatrixData): Step[] {
   const { vertices, edges } = data;
-  const indexOf = new Map(vertices.map((v, i) => [v, i]));
-  const adjacencyList = new Map<string, string[]>();
-  for (const v of vertices) adjacencyList.set(v, []);
-  const matrix: number[][] = vertices.map(() => vertices.map(() => 0));
-
   const steps: Step[] = [];
 
-  // ── 두 그릇에 같은 간선을 동시에 담는다.
+  // ── 두 그릇에 같은 간선을 동시에 담는다. 놓인 차례가 곧 목록의 차례다.
+  const placed: [string, string][] = [];
+  const known = new Set(vertices);
   for (const [a, b] of edges) {
-    const aList = adjacencyList.get(a);
-    const bList = adjacencyList.get(b);
-    if (!aList || !bList) continue;
-    aList.push(b);
-    bList.push(a);
-    const ai = indexOf.get(a);
-    const bi = indexOf.get(b);
-    if (ai === undefined || bi === undefined) continue;
-    const aRow = matrix[ai];
-    const bRow = matrix[bi];
-    if (aRow) aRow[bi] = 1;
-    if (bRow) bRow[ai] = 1;
-    steps.push({ kind: 'edge', a, b, aIndex: aList.length - 1, bIndex: bList.length - 1 });
+    if (!known.has(a) || !known.has(b)) continue;
+    placed.push([a, b]);
+    steps.push({ kind: 'edge', a, b });
   }
 
-  const queryVertex = vertices[0];
-  const targetVertex = vertices[vertices.length - 1];
-  if (queryVertex === undefined || targetVertex === undefined) return steps;
-  const queryIndex = indexOf.get(queryVertex);
-  const targetIndex = indexOf.get(targetVertex);
-  if (queryIndex === undefined || targetIndex === undefined) return steps;
-  const queryList = adjacencyList.get(queryVertex) ?? [];
-  const queryRow = matrix[queryIndex] ?? [];
+  const queryVertex = queryVertexOf(vertices);
+  const targetVertex = targetVertexOf(vertices);
+  if (queryVertex === '' || targetVertex === '') return steps;
+  const targetIndex = vertices.indexOf(targetVertex);
+  if (targetIndex < 0) return steps;
+  const queryList = adjacencyOf(vertices, placed).get(queryVertex) ?? [];
 
   // ── 물음 1: queryVertex 와 targetVertex 는 이웃인가?
+  //    목록은 처음부터 훑어야 하고, 표는 한 칸만 보면 끝난다.
   steps.push({ kind: 'query-begin', question: 1 });
   for (let i = 0; i < queryList.length; i++) {
     const cellVertex = queryList[i];
     if (cellVertex === undefined) continue;
-    steps.push({
-      kind: 'scan',
-      question: 1,
-      side: 'list',
-      cellIndex: i,
-      cellVertex,
-      count: i + 1,
-      matched: cellVertex === targetVertex,
-    });
+    steps.push({ kind: 'scan', side: 'list', cellIndex: i, cellVertex });
   }
-  const matrixHit1 = queryRow[targetIndex] === 1;
-  steps.push({
-    kind: 'scan',
-    question: 1,
-    side: 'matrix',
-    cellIndex: targetIndex,
-    cellVertex: targetVertex,
-    count: 1,
-    matched: matrixHit1,
-  });
-  steps.push({
-    kind: 'query-done',
-    question: 1,
-    listCost: queryList.length,
-    matrixCost: 1,
-    foundNeighbor: matrixHit1,
-    neighbors: [],
-  });
+  steps.push({ kind: 'scan', side: 'matrix', cellIndex: targetIndex, cellVertex: targetVertex });
+  steps.push({ kind: 'query-done' });
 
   // ── 물음 2: queryVertex 의 이웃을 모두 대라.
+  //    목록은 모아 둔 것을 그대로 읽고, 표는 그 행을 통째로 훑어야 한다.
   steps.push({ kind: 'query-begin', question: 2 });
   for (let i = 0; i < queryList.length; i++) {
     const cellVertex = queryList[i];
     if (cellVertex === undefined) continue;
-    steps.push({
-      kind: 'scan',
-      question: 2,
-      side: 'list',
-      cellIndex: i,
-      cellVertex,
-      count: i + 1,
-      matched: true,
-    });
+    steps.push({ kind: 'scan', side: 'list', cellIndex: i, cellVertex });
   }
-  let matrixHits2 = 0;
   for (let col = 0; col < vertices.length; col++) {
     const cellVertex = vertices[col];
     if (cellVertex === undefined) continue;
-    const hit = queryRow[col] === 1;
-    if (hit) matrixHits2 += 1;
-    steps.push({
-      kind: 'scan',
-      question: 2,
-      side: 'matrix',
-      cellIndex: col,
-      cellVertex,
-      count: col + 1,
-      matched: hit,
-    });
+    steps.push({ kind: 'scan', side: 'matrix', cellIndex: col, cellVertex });
   }
-  steps.push({
-    kind: 'query-done',
-    question: 2,
-    listCost: queryList.length,
-    matrixCost: vertices.length,
-    foundNeighbor: matrixHits2 > 0,
-    neighbors: [...queryList],
-  });
+  steps.push({ kind: 'query-done' });
 
   return steps;
 }
@@ -220,7 +182,7 @@ async function emitStep(ctx: FacetContext<AdjacencyListVsMatrixData>, step: Step
       await ctx.emit({
         type: 'edge-added',
         target: [`node:${step.a}`, `node:${step.b}`],
-        payload: { a: step.a, b: step.b, aIndex: step.aIndex, bIndex: step.bIndex },
+        payload: { a: step.a, b: step.b },
       });
       return;
     case 'query-begin':
@@ -233,27 +195,11 @@ async function emitStep(ctx: FacetContext<AdjacencyListVsMatrixData>, step: Step
       await ctx.emit({
         type: 'scan-step',
         target: `node:${step.cellVertex}`,
-        payload: {
-          question: step.question,
-          side: step.side,
-          cellIndex: step.cellIndex,
-          cellVertex: step.cellVertex,
-          count: step.count,
-          matched: step.matched,
-        },
+        payload: { side: step.side, cellIndex: step.cellIndex },
       });
       return;
     case 'query-done':
-      await ctx.emit({
-        type: 'query-done',
-        payload: {
-          question: step.question,
-          listCost: step.listCost,
-          matrixCost: step.matrixCost,
-          foundNeighbor: step.foundNeighbor,
-          neighbors: step.neighbors,
-        },
-      });
+      await ctx.emit({ type: 'query-done' });
       return;
   }
 }

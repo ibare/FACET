@@ -13,29 +13,39 @@
  *   z = wx·x + wy·y + bias
  *   p = 1 / (1 + e^(−z))
  *
- * 화면에 뜨는 z · p · 격자 확률은 전부 여기서 구조(무게 · 치우침 · 점 · 격자)
- * 에서 셈해 내보낸다. 선언에는 파생값이 하나도 없다.
+ * ── 이 파일이 내주는 것 (장면이 부른다)
+ *
+ * 화면에 뜨는 z · p · 격자 농도 · 넘나드는 칸은 전부 아래 순수 함수를 지난다
+ * (프로토콜 4 절의 B 갈래). 발신이 그 수를 실어 오면 같은 물음에 답이 둘이
+ * 되고 언젠가 갈린다 — 그래서 **일곱 발신 모두 payload 가 비어 있다.**
+ *
+ * 내주어도 조각이 피하려는 셈을 장면이 대신 하게 되지 않는다. 이 조각의
+ * 알고리즘은 **묻는 순서**이고 그것은 아래 `playOnce` 에 그대로 남아 있다.
+ * 내준 것은 무게·치우침만 있으면 정해지는 잣대라 떼어 내도 주장이 남는다.
  *
  * ── 이벤트 (전부 이 facet 고유. silent 는 없다) ─────────────────────────
  *
- *   point-probed      { index, total, x, y, z, p }
- *       target `point:<index>`. 점 하나에 확률을 매긴다. 평면의 점이 확률
+ *   point-probed      {}
+ *       점 하나에 확률을 매긴다. 평면의 점이 확률
  *       색으로 물들고, 같은 값이 오른쪽 확률자로 날아가 꽂힌다.
+ *       몇 번째 점인지 싣지 않는다 — 점은 올 때마다 하나씩 쌓이므로 차례는
+ *       장면이 센다. 그 점의 z · p 도 `decisionProbability` 가 낸다.
  *
- *   spread-noted      { low, high, threshold }
- *       여덟 확률이 두 끝으로 뭉쳤음을 짚는다. low 는 threshold 아래에서
- *       가장 큰 확률, high 는 위에서 가장 작은 확률. 그 사이는 비어 있다.
+ *   spread-noted      {}
+ *       여덟 확률이 두 끝으로 뭉쳤음을 짚는다. 빈 구간의 두 끝은 이미 꽂힌
+ *       확률들에서 나오므로 장면이 셈한다.
  *
- *   field-scanned     { col0, cols, rows, values }
- *       격자의 col0 열부터 cols 개 열을 훑는다. values 는 그 구간의 확률을
- *       열 우선으로 편 것 — 길이 cols*rows, values[i * rows + row].
+ *   field-scanned     {}
+ *       격자의 다음 물결을 훑는다. 어느 열부터 몇 열인지는 `decisionWaveSize`
+ *       하나가 정하고, 그 구간의 확률은 `decisionField` 가 낸다.
  *
- *   crossing-marked   { cells, total }
- *       확률이 반을 넘나드는 칸. cells 는 격자 전체 기준 평탄 색인
- *       (col * rows + row) 의 오름차순. total 은 격자 칸의 총수.
+ *   crossing-marked   {}
+ *       확률이 반을 넘나드는 칸을 표시한다. 어느 칸인지는
+ *       `decisionCrossings` 가 낸다.
  *
- *   boundary-revealed { wx, wy, bias }
- *       그 칸들을 잇는 선. wx·x + wy·y + bias = 0 이 곧 p = 0.5 다.
+ *   boundary-revealed {}
+ *       그 칸들을 잇는 선. wx·x + wy·y + bias = 0 이 곧 p = 0.5 다. 무게와
+ *       치우침은 선언에 있으므로 싣지 않는다.
  *
  *   rewind            {}
  *       처음 상태로 되감는다. 자동 재생이 끝난 뒤 처음 누르는 advance 가
@@ -65,11 +75,89 @@ export type DecisionBoundaryData = {
   stepMs: number;
 };
 
-/** 확률이 반이 되는 자리가 곧 경계다. */
-const HALF = 0.5;
+/**
+ * 확률이 반이 되는 자리가 곧 경계다.
+ *
+ * 잣대는 여기 하나다 — 장면도 그리는 쪽도 이 값을 지나 쓴다. 두 군데서 0.5 를
+ * 적으면 문턱을 옮기는 날 한쪽만 따라온다.
+ */
+export const DECISION_HALF = 0.5;
 
-function sigmoid(z: number): number {
-  return 1 / (1 + Math.exp(-z));
+/** 점수를 내는 모델. 선언이 주는 것이 전부이고 학습하지 않는다. */
+export type DecisionModel = {
+  weights: { x: number; y: number };
+  bias: number;
+};
+
+/** 그 자리의 점수. 클수록 위쪽 진영이다. */
+export function decisionScore(model: DecisionModel, x: number, y: number): number {
+  return model.weights.x * x + model.weights.y * y + model.bias;
+}
+
+/** 그 자리의 확률. 화면에 뜨는 모든 p 가 이 한 함수를 지난다. */
+export function decisionProbability(model: DecisionModel, x: number, y: number): number {
+  return 1 / (1 + Math.exp(-decisionScore(model, x, y)));
+}
+
+/**
+ * 격자 칸 가운데의 확률, 열 우선 (`col * rows + row`).
+ *
+ * 새 배열을 낸다 — 장면이 참조로 쥐어도 바깥이 제자리에서 고칠 것이 없다
+ * (S-scene).
+ */
+export function decisionField(
+  model: DecisionModel,
+  domain: { min: number; max: number },
+  grid: { cols: number; rows: number },
+): number[] {
+  const span = domain.max - domain.min;
+  const out: number[] = new Array<number>(grid.cols * grid.rows);
+  for (let c = 0; c < grid.cols; c += 1) {
+    const gx = domain.min + ((c + 0.5) / grid.cols) * span;
+    for (let r = 0; r < grid.rows; r += 1) {
+      const gy = domain.min + ((r + 0.5) / grid.rows) * span;
+      out[c * grid.rows + r] = decisionProbability(model, gx, gy);
+    }
+  }
+  return out;
+}
+
+/**
+ * 반을 "넘나드는" 칸 — 이웃과 반대편에 있는 칸. 평탄 색인의 오름차순.
+ *
+ * 임의의 여유폭으로 고르지 않는다. 넘나듦은 이웃 사이의 사실이지 사람이 정하는
+ * 굵기가 아니다.
+ */
+export function decisionCrossings(
+  field: readonly number[],
+  cols: number,
+  rows: number,
+): number[] {
+  const marked = new Set<number>();
+  for (let c = 0; c < cols; c += 1) {
+    for (let r = 0; r < rows; r += 1) {
+      const here = (field[c * rows + r] ?? DECISION_HALF) >= DECISION_HALF;
+      if (c + 1 < cols && ((field[(c + 1) * rows + r] ?? DECISION_HALF) >= DECISION_HALF) !== here) {
+        marked.add(c * rows + r);
+        marked.add((c + 1) * rows + r);
+      }
+      if (r + 1 < rows && ((field[c * rows + r + 1] ?? DECISION_HALF) >= DECISION_HALF) !== here) {
+        marked.add(c * rows + r);
+        marked.add(c * rows + r + 1);
+      }
+    }
+  }
+  return [...marked].sort((a, b) => a - b);
+}
+
+/**
+ * 한 물결이 훑는 열의 수.
+ *
+ * **자르는 잣대는 여기 하나다** — 걸음을 내는 쪽과 화면을 세우는 쪽이 각자
+ * 자르면 훑은 열과 발신 수가 갈린다 (프로토콜 4 절).
+ */
+export function decisionWaveSize(cols: number, waves: number): number {
+  return Math.max(1, Math.ceil(cols / Math.max(1, waves)));
 }
 
 /** 한 걸음을 여는 문. true 면 나아가고, false 면 취소된 것이라 멈춘다. */
@@ -80,84 +168,29 @@ export async function decisionBoundary(
 ): Promise<void> {
   const ctx = base as ReactiveContext<DecisionBoundaryData>;
   const d = ctx.data;
-  const { cols, rows } = d.grid;
-  const span = d.domain.max - d.domain.min;
-
-  const score = (x: number, y: number): number =>
-    d.weights.x * x + d.weights.y * y + d.bias;
-
-  // 격자의 확률 — 한 번 셈해 두고 물결마다 잘라 보낸다.
-  const field: number[] = new Array<number>(cols * rows);
-  for (let c = 0; c < cols; c += 1) {
-    const gx = d.domain.min + ((c + 0.5) / cols) * span;
-    for (let r = 0; r < rows; r += 1) {
-      const gy = d.domain.min + ((r + 0.5) / rows) * span;
-      field[c * rows + r] = sigmoid(score(gx, gy));
-    }
-  }
-
-  // 반을 "넘나드는" 칸 — 이웃과 반대편에 있는 칸. 임의의 여유폭으로 고르지
-  // 않는다. 넘나듦은 이웃 사이의 사실이지 사람이 정하는 굵기가 아니다.
-  const marked = new Set<number>();
-  for (let c = 0; c < cols; c += 1) {
-    for (let r = 0; r < rows; r += 1) {
-      const here = field[c * rows + r]! >= HALF;
-      if (c + 1 < cols && (field[(c + 1) * rows + r]! >= HALF) !== here) {
-        marked.add(c * rows + r);
-        marked.add((c + 1) * rows + r);
-      }
-      if (r + 1 < rows && (field[c * rows + r + 1]! >= HALF) !== here) {
-        marked.add(c * rows + r);
-        marked.add(c * rows + r + 1);
-      }
-    }
-  }
-  const crossing = [...marked].sort((a, b) => a - b);
+  const { cols } = d.grid;
+  const per = decisionWaveSize(cols, d.grid.waves);
 
   /** 한 회차 전체. 자동 재생과 되짚기가 같은 걸음을 밟도록 문만 갈아 끼운다. */
   const playOnce = async (gate: Gate): Promise<void> => {
     for (let i = 0; i < d.points.length; i += 1) {
       if (!(await gate())) return;
-      const pt = d.points[i]!;
-      const z = score(pt.x, pt.y);
-      await ctx.emit({
-        type: 'point-probed',
-        target: `point:${i}`,
-        payload: { index: i, total: d.points.length, x: pt.x, y: pt.y, z, p: sigmoid(z) },
-      });
+      await ctx.emit({ type: 'point-probed' });
     }
 
     if (!(await gate())) return;
-    let low = 0;
-    let high = 1;
-    for (const pt of d.points) {
-      const p = sigmoid(score(pt.x, pt.y));
-      if (p < HALF) low = Math.max(low, p);
-      else high = Math.min(high, p);
-    }
-    await ctx.emit({ type: 'spread-noted', payload: { low, high, threshold: HALF } });
+    await ctx.emit({ type: 'spread-noted', payload: {} });
 
-    const per = Math.max(1, Math.ceil(cols / d.grid.waves));
     for (let col0 = 0; col0 < cols; col0 += per) {
       if (!(await gate())) return;
-      const n = Math.min(per, cols - col0);
-      await ctx.emit({
-        type: 'field-scanned',
-        payload: { col0, cols: n, rows, values: field.slice(col0 * rows, (col0 + n) * rows) },
-      });
+      await ctx.emit({ type: 'field-scanned', payload: {} });
     }
 
     if (!(await gate())) return;
-    await ctx.emit({
-      type: 'crossing-marked',
-      payload: { cells: crossing, total: cols * rows },
-    });
+    await ctx.emit({ type: 'crossing-marked', payload: {} });
 
     if (!(await gate())) return;
-    await ctx.emit({
-      type: 'boundary-revealed',
-      payload: { wx: d.weights.x, wy: d.weights.y, bias: d.bias },
-    });
+    await ctx.emit({ type: 'boundary-revealed', payload: {} });
 
     if (!(await gate())) return;
     await ctx.emit({ type: 'done', payload: {} });

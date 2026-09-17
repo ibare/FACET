@@ -8,6 +8,10 @@
  * 정점 넷과 간선 넷뿐인 것은 축소판이라서가 아니라, 확정이 깨지는 데 필요한
  * 최소 구성이기 때문이다: 굳은 뒤에 닿는 더 짧은 길 하나와, 그 소식이 나가야 할
  * 곳 하나.
+ *
+ * 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`). 어느 걸음의 화면이든 셈으로
+ * 얻으므로 스크럽 띠로 아무 자리나 끌어 볼 수 있다 (S-scene). 그래서 컨트롤은
+ * `CONTROL_SET.pieceScrub` 이다 — 띠와 `advance` 를 함께 두지 않는다 (S-piece).
  */
 
 import { CONTROL_SET } from '@ffacet/core/runtime';
@@ -40,7 +44,7 @@ export const negativeEdgeBreaksFacet: FacetJson = {
     pt: 'Fixar primeiro o mais próximo deixa um número errado quando uma aresta é negativa.',
   },
   algorithm: 'module:negativeEdgeBreaks',
-  projector: 'module:negativeEdgeBreaksProjector',
+  scene: 'module:negativeEdgeBreaksScene',
   initialData: {
     type: 'negative-edge-breaks',
     nodes: ['S', 'A', 'B', 'T'],
@@ -56,7 +60,7 @@ export const negativeEdgeBreaksFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'negative-edge-breaks-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.start': {

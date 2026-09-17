@@ -39,7 +39,7 @@ export const repeatRelaxAllFacet: FacetJson = {
     pt: 'Por que uma varredura não basta: a frente avança exatamente um nó por rodada.',
   },
   algorithm: 'module:repeatRelaxAll',
-  projector: 'module:repeatRelaxAllProjector',
+  scene: 'module:repeatRelaxAllScene',
   initialData: {
     type: 'repeat-relax-all',
     nodes: ['S', 'A', 'B', 'C', 'D'],
@@ -60,7 +60,7 @@ export const repeatRelaxAllFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'repeat-relax-all-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'label.rounds': {

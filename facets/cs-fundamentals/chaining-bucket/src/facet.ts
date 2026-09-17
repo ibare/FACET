@@ -8,7 +8,7 @@
  * 지어낸 값은 하나도 없다 (S-piece).
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const chainingBucketFacet: FacetJson = {
   id: 'facet:chainingBucket',
@@ -37,7 +37,7 @@ export const chainingBucketFacet: FacetJson = {
     pt: 'Quando uma segunda chave cai numa casa já ocupada, nada é expulso. Ela se engata na ponta da corrente pendurada nessa casa, e a busca percorre apenas essa corrente.',
   },
   algorithm: 'module:chainingBucket',
-  projector: 'module:chainingBucketProjector',
+  scene: 'module:chainingBucketScene',
   initialData: {
     type: 'chaining-bucket',
     bucketCount: 8,
@@ -56,13 +56,13 @@ export const chainingBucketFacet: FacetJson = {
     stage: { type: 'chaining-bucket-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {
     'caption.hangFirst': {
       en: '{key} hashes to slot {bucket}. Nothing hangs there yet, so it hangs alone.',
-      ko: '{key} 는 자리 {bucket}. 아직 아무것도 없어서 혼자 매달린다.',
+      ko: '자리 {bucket} 로 가는 것은 {key}. 아직 아무것도 없어서 혼자 매달린다.',
       ja: '{key} は枠 {bucket}。まだ何も掛かっていないので、ひとりでぶら下がる。',
       zh: '{key} 落在格 {bucket}。那里还空着，所以它独自挂上。',
       ar: '{key} يقع في الخانة {bucket}. لا شيء معلّق هناك بعد، فيُعلَّق وحده.',
@@ -98,7 +98,7 @@ export const chainingBucketFacet: FacetJson = {
     },
     'caption.probeMiss': {
       en: '{key} is not it. Step one link down the chain.',
-      ko: '{key} 가 아니다. 사슬을 한 칸 내려간다.',
+      ko: '여기 있는 것은 {key} — 찾는 것과 다르다. 사슬을 한 칸 내려간다.',
       ja: '{key} ではない。鎖をひと駒だけ下る。',
       zh: '不是 {key}。沿着链往下走一环。',
       ar: 'ليس {key}. انزل حلقة واحدة على السلسلة.',

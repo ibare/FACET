@@ -9,7 +9,7 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
@@ -18,9 +18,9 @@ import { impurityDropsDescription } from './description.js';
 import { impurityDropsFacet } from './facet.js';
 import { impurityDropsIRs } from './irs.js';
 import { impurityDropsStageView } from './impurity-drops-stage.js';
-import { impurityDropsProjector } from './projector.js';
+import { impurityDropsScene } from './scene.js';
 
-export { impurityDropsAlgorithm } from './algorithm.js';
+export { impurityDropsAlgorithm, tallyOf, IMPURITY_ROOT_BOX } from './algorithm.js';
 export type {
   ImpurityDropsData,
   ImpurityPoint,
@@ -29,18 +29,37 @@ export type {
   BucketWire,
   CutWire,
 } from './algorithm.js';
-export { impurityDropsProjector } from './projector.js';
+export {
+  impurityDropsScene,
+  bucketsOf,
+  classCountOf,
+  countOf,
+  currentLevelOf,
+  dropOf,
+  giniOf,
+  lastCutsOf,
+  levelOf,
+  previousBucketsOf,
+  previousLevelOf,
+  pureClassOf,
+  totalOf,
+} from './scene.js';
+export type {
+  ImpurityBucket,
+  ImpurityCutMark,
+  ImpurityDropsScene,
+  ImpurityStep,
+} from './scene.js';
 export { impurityDropsIRs } from './irs.js';
 export { impurityDropsFacet } from './facet.js';
 export { impurityDropsDescription } from './description.js';
-export { impurityDropsStageView, readImpurityScene } from './impurity-drops-stage.js';
-export type { StageBox, StageBucket, StageCut, ImpurityScene } from './impurity-drops-stage.js';
+export { impurityDropsStageView } from './impurity-drops-stage.js';
 
 export function registerImpurityDrops(): void {
   registerAlgorithm<ImpurityDropsData>('impurityDrops', impurityDropsAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('impurityDropsProjector', impurityDropsProjector);
+  registerScenePlan('impurityDropsScene', impurityDropsScene);
   for (const ir of impurityDropsIRs) registerIR(ir.id, ir);
   registerView('impurity-drops-stage', impurityDropsStageView);
   registerFacets([impurityDropsFacet]);

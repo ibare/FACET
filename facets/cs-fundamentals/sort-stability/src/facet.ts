@@ -39,7 +39,7 @@ export const sortStabilityFacet: FacetJson = {
     pt: 'Com valores iguais há mais de uma ordenação correta. Só é estável a que mantém a ordem de entrada.',
   },
   algorithm: 'module:sortStability',
-  projector: 'module:sortStabilityProjector',
+  scene: 'module:sortStabilityScene',
   initialData: {
     type: 'sort-stability',
     items: [
@@ -54,7 +54,7 @@ export const sortStabilityFacet: FacetJson = {
     stage: { type: 'sort-stability-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {

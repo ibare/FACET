@@ -8,7 +8,7 @@
  * `column · gap 8 · blocks 키 순서` 로 만든다 (S-piece).
  */
 
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 import type { FacetJson } from '@ffacet/core/runtime';
 
 export const circularBufferWrapFacet: FacetJson = {
@@ -38,7 +38,7 @@ export const circularBufferWrapFacet: FacetJson = {
     pt: 'Depois da última casa vem a primeira. As casas são reaproveitadas, nunca acrescentadas.',
   },
   algorithm: 'module:circularBufferWrap',
-  projector: 'module:circularBufferWrapProjector',
+  scene: 'module:circularBufferWrapScene',
 
   initialData: {
     type: 'circular-buffer-wrap',
@@ -53,10 +53,7 @@ export const circularBufferWrapFacet: FacetJson = {
 
   blocks: {
     stage: { type: 'circular-buffer-wrap-stage' },
-    controls: {
-      type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
-    },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
 
   messages: {

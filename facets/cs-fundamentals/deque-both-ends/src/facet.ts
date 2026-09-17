@@ -4,10 +4,15 @@
  * @piece 양끝이 모두 열려 있다. 문이 넷이 아니라 둘인데, 그 둘이 저마다 넣기와
  * 빼기를 겸한다 — 어느 끝에서든 넣고 어느 끝에서든 뺀다.
  *
- * 조각이므로 header 도 metrics 도 layout 도 두지 않는다 (S-piece).
+ * 조각이므로 header 도 metrics 도 layout 도 두지 않는다 (S-piece). 컨트롤은 다시
+ * 보기와 스크럽 띠 둘뿐이며, 둘 다 눌러야 완성되는 조작이 아니다 — 아무것도 누르지
+ * 않아도 화면은 스스로 재생해 할 말을 마친다.
+ *
+ * 화면은 장면(Scene) 방식으로 만든다 — 이벤트를 상태로 옮기고 그 상태에서 그린다
+ * (`scene.ts` · S-scene). 그래서 띠를 끌어 아무 걸음으로나 갈 수 있다.
  */
 
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 import type { FacetJson } from '@ffacet/core/runtime';
 
 export const dequeBothEndsFacet: FacetJson = {
@@ -37,7 +42,7 @@ export const dequeBothEndsFacet: FacetJson = {
     pt: 'Uma deque tem duas portas, não quatro — e cada porta serve tanto para entrar quanto para sair.',
   },
   algorithm: 'module:dequeBothEnds',
-  projector: 'module:dequeBothEndsProjector',
+  scene: 'module:dequeBothEndsScene',
   initialData: {
     type: 'dequeBothEnds',
     values: [4, 9],
@@ -50,7 +55,7 @@ export const dequeBothEndsFacet: FacetJson = {
     stage: { type: 'deque-both-ends-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {

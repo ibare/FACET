@@ -5,6 +5,8 @@
  * 두 시스템은 IR/Transpiler 만 공유.
  */
 
+export { Timeline } from './timeline.js';
+export * from './scene.js';
 export * from '../types/event.js';
 export * from '../types/facet-json.js';
 export * from '../types/locale.js';

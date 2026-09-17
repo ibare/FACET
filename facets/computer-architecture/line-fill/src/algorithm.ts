@@ -8,18 +8,28 @@
  * 오는 색인 범위도, 올라온 원소 수도 여기서 셈한다 — 미리 적어 두면 데이터를
  * 바꿀 때 그 표가 따라오지 않는다.
  *
+ * ── 발신은 무엇을 싣지 않는가
+ *
+ * 줄 번호 · 줄의 첫 색인 · 줄에 드는 원소 수 · 바이트 범위 · 물은 칸 수 ·
+ * 올라온 칸 수를 **하나도 싣지 않는다.** 그것들은 전부 바탕(`lineSize` ·
+ * `elemSize` · `requests`)과 장면의 구조에서 나오므로, 실어 보내면 화면에
+ * 나란히 뜨는 수가 그림과 다른 출처를 갖게 된다. 줄 번호를 내는 셈만
+ * 순수 함수로 내주고 장면이 그것을 부른다.
+ *
+ * 싣는 것은 **걸음이 내리는 판정 하나** — 이번에 부른 칸이 어느 것인가.
+ *
  * ── 이벤트 (전부 facet 고유. silent 없음 — 넷 다 화면을 바꾼다)
  *
- *   ask        { index, addr, line }
- *              부른 것은 이 한 칸. `addr` 은 바이트 주소, `line` 은 `addr / lineSize` 의 몫.
+ *   ask        { index }
+ *              부른 것은 이 한 칸. 주소도 줄 번호도 여기서 셈해 나온다.
  *
- *   line-rise  { line, first, count, asked, lo, hi }
- *              그 칸이 속한 줄이 통째로 위층으로 올라온다. `first` 는 줄의 첫 색인,
- *              `count` 는 줄에 담기는 원소 수, `asked` 는 그중 실제로 부른 색인,
- *              `lo`·`hi` 는 줄이 덮는 바이트 범위(양끝 포함).
+ *   line-rise  {}
+ *              방금 부른 칸이 속한 줄이 통째로 위층으로 올라온다. 어느 줄인지는
+ *              직전 `ask` 와 `lineOf` 가 정한다.
  *
- *   tally      { asked, arrived }
- *              부른 칸 수와 올라온 칸 수. 둘의 어긋남이 이 조각의 주장이다.
+ *   tally      {}
+ *              부른 칸 수와 올라온 칸 수를 견준다. 둘의 어긋남이 이 조각의
+ *              주장이고, 두 수는 장면이 제 목록의 길이에서 센다.
  *
  *   rewind     {}
  *              처음 자리로 되돌린다. 자동 재생을 마친 뒤 `advance` 를 처음 받았을 때.
@@ -43,12 +53,29 @@ export type LineFillData = {
   stepMs: number;
 };
 
+/**
+ * 한 줄에 들어가는 원소 수. 16 바이트 줄에 4 바이트 원소면 넷이다.
+ *
+ * 장면이 이것을 부른다 — 발신에 실으면 화면의 칸 수와 다른 출처가 된다.
+ */
+export function perLineOf(lineSize: number, elemSize: number): number {
+  return Math.max(1, Math.floor(lineSize / elemSize));
+}
+
+/**
+ * 그 색인이 속한 줄 번호 — 주소를 라인 크기로 나눈 몫이다.
+ *
+ * 이 조각의 알고리즘 자체는 "하나를 부르면 줄이 온다" 이고, 줄 번호를 내는
+ * 셈은 그 위에 얹힌 **잣대**다. 떼어 내도 조각이 말하려는 바가 남으므로
+ * 내준다 (프로토콜 4 절의 B 갈래).
+ */
+export function lineOf(index: number, lineSize: number, elemSize: number): number {
+  return Math.floor((index * elemSize) / lineSize);
+}
+
 export async function lineFillAlgorithm(base: FacetContext<LineFillData>): Promise<void> {
   const ctx = base as ReactiveContext<LineFillData>;
-  const { lineSize, elemSize, requests, stepMs } = ctx.data;
-
-  /** 한 줄에 들어가는 원소 수. 16 바이트 줄에 4 바이트 원소면 넷이다. */
-  const perLine = Math.max(1, Math.floor(lineSize / elemSize));
+  const { requests, stepMs } = ctx.data;
 
   /**
    * 걸음 사이의 문.
@@ -77,30 +104,16 @@ export async function lineFillAlgorithm(base: FacetContext<LineFillData>): Promi
   };
 
   for (;;) {
-    /** 이 바퀴에서 실제로 올라온 줄. 같은 줄을 두 번 불러도 한 번만 올라온다. */
-    const risen = new Set<number>();
-
     for (const index of requests) {
-      const addr = index * elemSize;
-      const line = Math.floor(addr / lineSize);
-      risen.add(line);
+      if (!(await gate())) return;
+      await ctx.emit({ type: 'ask', payload: { index } });
 
       if (!(await gate())) return;
-      await ctx.emit({ type: 'ask', payload: { index, addr, line } });
-
-      if (!(await gate())) return;
-      const lo = line * lineSize;
-      await ctx.emit({
-        type: 'line-rise',
-        payload: { line, first: line * perLine, count: perLine, asked: index, lo, hi: lo + lineSize - 1 },
-      });
+      await ctx.emit({ type: 'line-rise', payload: {} });
     }
 
     if (!(await gate())) return;
-    await ctx.emit({
-      type: 'tally',
-      payload: { asked: requests.length, arrived: risen.size * perLine },
-    });
+    await ctx.emit({ type: 'tally', payload: {} });
 
     // 자동 재생은 여기까지다. 이제부터는 한 걸음씩 짚어 본다.
     auto = false;

@@ -39,7 +39,7 @@ export const writeBackVsThroughFacet: FacetJson = {
     pt: 'As mesmas sete escritas viram sete idas à memória no write-through e apenas quatro no write-back.',
   },
   algorithm: 'module:writeBackVsThrough',
-  projector: 'module:writeBackVsThroughProjector',
+  scene: 'module:writeBackVsThroughScene',
   initialData: {
     type: 'write-back-vs-through',
     /** 칸 둘. 자리가 모자라면 가장 오래전에 쓴 줄이 나간다 (LRU). */
@@ -52,7 +52,7 @@ export const writeBackVsThroughFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'write-back-vs-through-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.start': {

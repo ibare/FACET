@@ -5,6 +5,9 @@ import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
  *
  * 답하는 질문 하나 — *어긋났을 때 왜 처음으로 돌아가지 않아도 되는가.*
  * 패턴이 제 몸을 접어 자기와 겹치는 자리를 찾고, 텍스트에서는 겹친 만큼만 민다.
+ *
+ * 화면은 장면(Scene) 방식이라 `projector` 대신 `scene` 을 선언한다. 어느 걸음의
+ * 화면이든 셈으로 얻으므로 띠로 아무 자리에나 갈 수 있다 (S-scene · S-piece).
  */
 export const prefixSuffixJumpFacet: FacetJson = {
   id: 'facet:prefixSuffixJump',
@@ -33,7 +36,7 @@ export const prefixSuffixJumpFacet: FacetJson = {
     pt: 'O padrão dobra-se sobre si mesmo para achar onde se sobrepõe e desliza apenas essa sobreposição.',
   },
   algorithm: 'module:prefixSuffixJump',
-  projector: 'module:prefixSuffixJumpProjector',
+  scene: 'module:prefixSuffixJumpScene',
   initialData: {
     type: 'prefix-suffix-jump',
     pattern: 'ababc',
@@ -42,7 +45,7 @@ export const prefixSuffixJumpFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'prefix-suffix-jump-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.lookPrefix': {

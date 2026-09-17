@@ -6,14 +6,15 @@
  *
  * @piece — 이 표식이 S-piece 의 적용 범위를 정한다.
  *
- * 조각의 규범: 필수 조작 없음(다시 보기 하나) / 제목 없음 / 한 주장 /
- * 메트릭 없음 / 캔버스 폭 620 / 전제를 각주로 밝힘.
+ * 조각의 규범: 필수 조작 없음(다시 보기와 띠) / 제목 없음 / 한 주장 /
+ * 메트릭 없음 / 캔버스 폭 620 / 전제는 글이 밝힌다.
  *
  * 데이터는 실측 SHA-256 이다. 각 칸의 hash 는 sha256(prev + data) 이고, 첫 칸의
  * prev 는 0 으로 채웠다. 2번 칸을 'withdraw 90' 으로 고치면 그 칸부터 끝까지
- * 세 칸의 값이 전부 갈린다.
+ * 세 칸의 값이 전부 갈린다. 어느 칸을 고쳤는지는 두 사슬을 견주면 나오므로 따로
+ * 적지 않는다.
  *
- * 각주가 밝히는 전제: 뒤를 전부 다시 계산하면 사슬 자체는 다시 맞는다. 그래도
+ * 글이 밝히는 전제 (`description.ts`): 뒤를 전부 다시 계산하면 사슬 자체는 다시 맞는다. 그래도
  * 마지막 해시를 따로 갖고 있는 사람에게는 어긋남이 드러난다 — 사슬이 막는 것은
  * 조용한 수정이지 수정 자체가 아니다.
  *
@@ -50,7 +51,9 @@ export const hashChainFacet: FacetJson = {
     pt: 'Cada entrada leva o hash da anterior, por isso uma única edição quebra tudo o que vem depois',
   },
   algorithm: 'module:hashChain',
-  projector: 'module:hashChainProjector',
+  // 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든 셈으로
+  // 얻으므로 띠로 아무 걸음에나 갈 수 있다 (S-scene).
+  scene: 'module:hashChainScene',
   initialData: {
     type: 'hash-chain',
     algorithmLabel: 'SHA-256',
@@ -77,32 +80,29 @@ export const hashChainFacet: FacetJson = {
         hash: '492b3daec7b50381578e86195a41fff61a4525aaeff64b97c56ebf96106555e1',
       },
     ],
-    tamper: {
-      index: 1,
-      data: 'withdraw 90',
-      blocks: [
-        {
-          data: 'deposit 50',
-          prev: '0000000000000000000000000000000000000000000000000000000000000000',
-          hash: '0c6513b27fd55a42279d6b7ebdbeb229c75c896e437b0b9af2cbd6ae22e05bab',
-        },
-        {
-          data: 'withdraw 90',
-          prev: '0c6513b27fd55a42279d6b7ebdbeb229c75c896e437b0b9af2cbd6ae22e05bab',
-          hash: '3ba861d8bc6e9f056d87a15b41f4a6e1a87e5da002cff848186fffb74887993e',
-        },
-        {
-          data: 'deposit 10',
-          prev: '3ba861d8bc6e9f056d87a15b41f4a6e1a87e5da002cff848186fffb74887993e',
-          hash: '01ebd178d465e257d3957e5d636dba36be4b752358dbb9339fd92128fe149a34',
-        },
-        {
-          data: 'withdraw 5',
-          prev: '01ebd178d465e257d3957e5d636dba36be4b752358dbb9339fd92128fe149a34',
-          hash: '66c72b4c7f47eaaaa1d68e07a904fde103c63c58c3ac159f6615c2342d140c18',
-        },
-      ],
-    },
+    // 2번 칸을 고치고 그 뒤를 전부 다시 계산한 사슬. 전부 실측 SHA-256.
+    tamperedBlocks: [
+      {
+        data: 'deposit 50',
+        prev: '0000000000000000000000000000000000000000000000000000000000000000',
+        hash: '0c6513b27fd55a42279d6b7ebdbeb229c75c896e437b0b9af2cbd6ae22e05bab',
+      },
+      {
+        data: 'withdraw 90',
+        prev: '0c6513b27fd55a42279d6b7ebdbeb229c75c896e437b0b9af2cbd6ae22e05bab',
+        hash: '3ba861d8bc6e9f056d87a15b41f4a6e1a87e5da002cff848186fffb74887993e',
+      },
+      {
+        data: 'deposit 10',
+        prev: '3ba861d8bc6e9f056d87a15b41f4a6e1a87e5da002cff848186fffb74887993e',
+        hash: '01ebd178d465e257d3957e5d636dba36be4b752358dbb9339fd92128fe149a34',
+      },
+      {
+        data: 'withdraw 5',
+        prev: '01ebd178d465e257d3957e5d636dba36be4b752358dbb9339fd92128fe149a34',
+        hash: '66c72b4c7f47eaaaa1d68e07a904fde103c63c58c3ac159f6615c2342d140c18',
+      },
+    ],
     stepMs: 1000,
   },
   shuffleOnReset: false,
@@ -184,7 +184,7 @@ export const hashChainFacet: FacetJson = {
     stage: { type: 'chain-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

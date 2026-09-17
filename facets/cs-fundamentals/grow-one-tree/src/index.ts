@@ -7,13 +7,14 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { growOneTreeAlgorithm } from './algorithm.js';
 import type { GrowOneTreeData, GrowOneTreeEdge } from './algorithm.js';
-import { growOneTreeProjector } from './projector.js';
+import { growOneTreeScene } from './scene.js';
+import type { GrowOneTreeScene } from './scene.js';
 import { growOneTreeIRs } from './irs.js';
 import { growOneTreeStageView } from './grow-one-tree-stage.js';
 import { growOneTreeFacet } from './facet.js';
@@ -21,19 +22,19 @@ import { growOneTreeDescription } from './description.js';
 
 export {
   growOneTreeAlgorithm,
-  growOneTreeProjector,
+  growOneTreeScene,
   growOneTreeIRs,
   growOneTreeStageView,
   growOneTreeFacet,
   growOneTreeDescription,
 };
-export type { GrowOneTreeData, GrowOneTreeEdge };
+export type { GrowOneTreeData, GrowOneTreeEdge, GrowOneTreeScene };
 
 export function registerGrowOneTree(): void {
   registerAlgorithm<GrowOneTreeData>('growOneTree', growOneTreeAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('growOneTreeProjector', growOneTreeProjector);
+  registerScenePlan('growOneTreeScene', growOneTreeScene);
   for (const ir of growOneTreeIRs) registerIR(ir.id, ir);
   registerView('grow-one-tree-stage', growOneTreeStageView);
   registerFacets([growOneTreeFacet]);

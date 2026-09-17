@@ -8,15 +8,21 @@
  * `ctx.data` 로 받는 회전 전 트리(`RotateToBalanceData`)에 실제로 회전 연산을
  * 수행해 회전 후 트리를 계산한다 — 두 상태를 나란히 선언해 갈아 끼우지 않는다.
  *
+ * ── 발신은 나무만 싣는다
+ *
+ * 높이 · 균형 인수 · 범위밖 판정 · 중위 순회 · 회전 전후의 키 — 화면에 뜨는 수는
+ * 전부 **나무 모양에서 셀 수 있는 것**이라 여기서 싣지 않는다. 장면이 `scene.ts` 의
+ * `heightAt` · `metricsAt` · `inorderIds` 로 센다.
+ *
+ * 한때 그 여섯을 payload 로 실어 보냈고, 그래서 뿌리 배지의 `h 3` 과 캡션의
+ * "높이가 3 으로 줄었다" 가 **서로 다른 발신을 타고** 한 화면에 나란히 떴다. 항이 두
+ * 출처에서 오면 언젠가 갈리고, 갈리는 날 화면이 스스로 거짓이 된다.
+ *
  * ── 확장 이벤트 어휘 (C2) ──────────────────────────────────────────────
  *
  * `balance-computed`  두 번 발신 (회전 전 1회, 회전 후 1회).
- *   target: entries 의 각 노드에 대응하는 `node:<id>` 배열.
- *   payload: {
- *     phase: 'before' | 'after';
- *     rootId: string;
- *     entries: { id: string; value: number; height: number; balance: number; outOfRange: boolean }[];
- *   }
+ *   target: 그 시점 나무에서 뿌리로부터 닿는 각 마디의 `node:<id>` 배열.
+ *   payload: { phase: 'before' | 'after' }
  *   silent: 아니다 — 높이/균형 인수 배지가 화면에 나타나는 step boundary.
  *
  * `rotate`  1회 발신. 축이 내려가고 자식이 올라오며 가지 하나가 손을 바꾸는
@@ -24,9 +30,7 @@
  *   이벤트로 쪼개면 동시성이 훼손된다 (C2 의 layer-discovered/fold 와 같은 취지).
  *   target: [`node:<pivotId>`, `node:<newRootId>`, `node:<movedId>`?]
  *   payload: {
- *     pivotId: string; pivotValue: number;
- *     newRootId: string; newRootValue: number;
- *     movedId: string | null; movedValue: number | null;
+ *     pivotId: string; newRootId: string; movedId: string | null;
  *     afterNodes: RotateNode[]; afterRootId: string;
  *   }
  *   silent: 아니다 — 노드가 실제로 이동하는 애니메이션 step boundary.
@@ -34,13 +38,15 @@
  * `rewind`  자동 재생이 끝난 뒤 처음 누르는 `advance` 에서 1회 발신. 화면을
  *   회전 전 상태로 되돌린다(다시 보기와 달리 mechanism.reset 을 타지 않고
  *   algorithm 이 스스로 처음 장면을 다시 그린다 — S-piece 의 advance 루프).
- *   target: 없음. payload: { rootId: string }.
+ *   되돌아갈 나무는 장면이 이미 바탕으로 쥐고 있으므로 아무것도 싣지 않는다.
+ *   target: 없음. payload: 없음.
  *   silent: 아니다 — 화면이 실제로 초기 배치로 되돌아가는 step boundary.
  *
  * `done`  표준 어휘. 마지막 걸음에서 1회 발신. 회전으로 키가 줄고 중위 순회
- *   결과가 그대로임을 함께 알린다.
- *   payload: { heightBefore: number; heightAfter: number; order: { id: string; value: number }[] }
- *   silent: 아니다 — 결론 배지가 나타나는 step boundary.
+ *   결과가 그대로임을 결론짓는다 — 두 키도 순회도 나무에서 나오므로 "여기서
+ *   결론이 선다" 만 말한다.
+ *   target: 없음. payload: 없음.
+ *   silent: 아니다 — 결론 띠가 그어지는 step boundary.
  */
 
 import type {
@@ -65,79 +71,32 @@ export type RotateToBalanceData = {
   nodes: RotateNode[];
 };
 
-export type BalanceEntry = {
-  id: string;
-  value: number;
-  height: number;
-  balance: number;
-  outOfRange: boolean;
-};
-
-export type BalancePayload = {
-  phase: 'before' | 'after';
-  rootId: string;
-  entries: BalanceEntry[];
-};
+export type BalancePayload = { phase: 'before' | 'after' };
 
 export type RotatePayload = {
   pivotId: string;
-  pivotValue: number;
   newRootId: string;
-  newRootValue: number;
   movedId: string | null;
-  movedValue: number | null;
   afterNodes: RotateNode[];
   afterRootId: string;
 };
 
-export type RewindPayload = { rootId: string };
-
-export type DonePayload = {
-  heightBefore: number;
-  heightAfter: number;
-  order: { id: string; value: number }[];
-};
-
-const BALANCE_RANGE = 1;
-
-function computeHeightsAndBalances(
-  nodes: RotateNode[],
-  rootId: string,
-): Map<string, { height: number; balance: number }> {
+/** 뿌리에서 닿는 마디들. 재는 대상이자 발신의 target 이다. */
+function reachableIds(nodes: RotateNode[], rootId: string): string[] {
   const byId = new Map(nodes.map((n) => [n.id, n]));
-  const stats = new Map<string, { height: number; balance: number }>();
-
-  function heightOf(id: string | null): number {
-    if (!id) return 0;
+  const out: string[] = [];
+  const seen = new Set<string>();
+  const walk = (id: string | null): void => {
+    if (!id || seen.has(id)) return;
     const n = byId.get(id);
-    if (!n) return 0;
-    const hL = heightOf(n.left);
-    const hR = heightOf(n.right);
-    const h = 1 + Math.max(hL, hR);
-    stats.set(id, { height: h, balance: hL - hR });
-    return h;
-  }
-
-  heightOf(rootId);
-  return stats;
-}
-
-function toEntries(
-  nodes: RotateNode[],
-  stats: Map<string, { height: number; balance: number }>,
-): BalanceEntry[] {
-  return nodes
-    .filter((n) => stats.has(n.id))
-    .map((n) => {
-      const s = stats.get(n.id)!;
-      return {
-        id: n.id,
-        value: n.value,
-        height: s.height,
-        balance: s.balance,
-        outOfRange: s.balance < -BALANCE_RANGE || s.balance > BALANCE_RANGE,
-      };
-    });
+    if (!n) return;
+    seen.add(id);
+    out.push(id);
+    walk(n.left);
+    walk(n.right);
+  };
+  walk(rootId);
+  return out;
 }
 
 /**
@@ -198,23 +157,7 @@ export async function rotateToBalanceAlgorithm(
   const reactive = ctx as ReactiveContext<RotateToBalanceData>;
   const { nodes: beforeNodes, rootId: beforeRootId, pivotId, stepMs } = reactive.data;
 
-  const beforeStats = computeHeightsAndBalances(beforeNodes, beforeRootId);
-  const beforeEntries = toEntries(beforeNodes, beforeStats);
-
   const rotated = rotateLeft(beforeNodes, beforeRootId, pivotId);
-  const afterStats = computeHeightsAndBalances(rotated.nodes, rotated.rootId);
-  const afterEntries = toEntries(rotated.nodes, afterStats);
-
-  const pivotBefore = beforeNodes.find((n) => n.id === pivotId);
-  const newRootBefore = beforeNodes.find((n) => n.id === rotated.newRootId);
-  const movedBefore = rotated.movedId ? beforeNodes.find((n) => n.id === rotated.movedId) : undefined;
-  if (!pivotBefore || !newRootBefore) {
-    throw new Error('rotateToBalanceAlgorithm: pivot 또는 newRoot 노드를 initialData 에서 찾을 수 없음');
-  }
-
-  const order = [...beforeNodes]
-    .sort((a, b) => a.value - b.value)
-    .map((n) => ({ id: n.id, value: n.value }));
 
   /**
    * 네 걸음을 선형으로 편다. 자동 재생과 되짚기가 같은 순서를 지나므로
@@ -225,14 +168,10 @@ export async function rotateToBalanceAlgorithm(
    */
   const play = async (gate: Gate): Promise<boolean> => {
     // 1. 회전 전 — 자리마다 높이를 재고 균형 인수를 적는다.
-    const beforePayload: BalancePayload = {
-      phase: 'before',
-      rootId: beforeRootId,
-      entries: beforeEntries,
-    };
+    const beforePayload: BalancePayload = { phase: 'before' };
     await reactive.emit({
       type: 'balance-computed',
-      target: beforeEntries.map((e) => `node:${e.id}`),
+      target: reachableIds(beforeNodes, beforeRootId).map((id) => `node:${id}`),
       payload: beforePayload,
     });
     if (!(await gate())) return false;
@@ -240,11 +179,8 @@ export async function rotateToBalanceAlgorithm(
     // 2. 돈다 — 축이 내려가고 자식이 올라오며 가지 하나가 손을 바꾼다.
     const rotatePayload: RotatePayload = {
       pivotId,
-      pivotValue: pivotBefore.value,
       newRootId: rotated.newRootId,
-      newRootValue: newRootBefore.value,
       movedId: rotated.movedId,
-      movedValue: movedBefore?.value ?? null,
       afterNodes: rotated.nodes,
       afterRootId: rotated.rootId,
     };
@@ -260,25 +196,16 @@ export async function rotateToBalanceAlgorithm(
     if (!(await gate())) return false;
 
     // 3. 회전 뒤 — 다시 재면 모두 범위 안이다.
-    const afterPayload: BalancePayload = {
-      phase: 'after',
-      rootId: rotated.rootId,
-      entries: afterEntries,
-    };
+    const afterPayload: BalancePayload = { phase: 'after' };
     await reactive.emit({
       type: 'balance-computed',
-      target: afterEntries.map((e) => `node:${e.id}`),
+      target: reachableIds(rotated.nodes, rotated.rootId).map((id) => `node:${id}`),
       payload: afterPayload,
     });
     if (!(await gate())) return false;
 
     // 4. 키가 줄었고 중위 순회는 그대로다.
-    const donePayload: DonePayload = {
-      heightBefore: beforeStats.get(beforeRootId)?.height ?? 0,
-      heightAfter: afterStats.get(rotated.rootId)?.height ?? 0,
-      order,
-    };
-    await reactive.emit({ type: 'done', payload: donePayload });
+    await reactive.emit({ type: 'done' });
     return !reactive.cancelled;
   };
 
@@ -306,8 +233,7 @@ export async function rotateToBalanceAlgorithm(
   // 첫 걸음까지 곧바로 보인다. play 가 emit 을 문보다 앞에 두므로 그대로 된다.
   while (!reactive.cancelled) {
     if (!(await byPress())) return;
-    const rewindPayload: RewindPayload = { rootId: beforeRootId };
-    await reactive.emit({ type: 'rewind', payload: rewindPayload });
+    await reactive.emit({ type: 'rewind' });
     if (!(await play(byPress))) return;
   }
 }

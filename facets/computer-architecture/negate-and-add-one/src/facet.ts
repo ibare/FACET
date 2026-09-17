@@ -34,7 +34,7 @@ export const negateAndAddOneFacet: FacetJson = {
     pt: 'Inverta cada bit, some 1 e o padrão vira o negativo — o vai-um mostra por quê.',
   },
   algorithm: 'module:negateAndAddOne',
-  projector: 'module:negateAndAddOneProjector',
+  scene: 'module:negateAndAddOneScene',
   initialData: {
     type: 'negate-and-add-one',
     /** 음수로 만들 양수. */
@@ -46,7 +46,7 @@ export const negateAndAddOneFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'negate-and-add-one-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.start': {
@@ -120,6 +120,30 @@ export const negateAndAddOneFacet: FacetJson = {
       hi: 'मूल',
       id: 'asli',
       pt: 'original',
+    },
+    'label.flipped': {
+      en: 'flipped',
+      ko: '뒤집음',
+      ja: '反転',
+      zh: '翻转后',
+      ar: 'المقلوب',
+      es: 'invertido',
+      fr: 'inversé',
+      hi: 'पलटा हुआ',
+      id: 'dibalik',
+      pt: 'invertido',
+    },
+    'label.sum': {
+      en: 'sum',
+      ko: '합',
+      ja: '合計',
+      zh: '和',
+      ar: 'المجموع',
+      es: 'suma',
+      fr: 'somme',
+      hi: 'योग',
+      id: 'jumlah',
+      pt: 'soma',
     },
     'label.unsigned': {
       en: 'unsigned: {n}',

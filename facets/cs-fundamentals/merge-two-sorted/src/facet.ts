@@ -38,7 +38,7 @@ export const mergeTwoSortedFacet: FacetJson = {
     pt: 'Duas filas ordenadas viram uma — olhando apenas as duas frentes.',
   },
   algorithm: 'module:mergeTwoSorted',
-  projector: 'module:mergeTwoSortedProjector',
+  scene: 'module:mergeTwoSortedScene',
   initialData: {
     type: 'merge-two-sorted',
     left: [1, 4, 7],
@@ -48,7 +48,7 @@ export const mergeTwoSortedFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'merge-two-sorted-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.premise': {

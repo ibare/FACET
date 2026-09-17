@@ -18,16 +18,26 @@
  *
  * ── 이벤트 (전부 이 facet 고유. silent 는 하나도 없다 — 모두 걸음의 경계다)
  *
- *   place         {}                                       질의와 후보 셋이 평면에 선다
- *   length-shown  { ids: string[]; lengths: number[] }      화살의 길이가 제각각임을 보인다
- *   sweep         { id: string; deg: number; cos: number }  q 에서 후보까지 각이 벌어진다
- *   angle-ranked  { order: string[] }                       각이 좁은 순서
- *   chord-shown   { ids: string[]; dists: number[] }        끝점 사이의 직선 거리
- *   dist-ranked   { order: string[] }                       거리가 가까운 순서
- *   done          { id: string }                            각 1등이 거리 꼴찌다. 뒤집힘이 없으면 빈 문자열
- *   rewind        {}                                        처음으로 되돌린다
+ *   place         {}                            질의와 후보 셋이 평면에 선다
+ *   length-shown  {}                            화살의 길이가 제각각임을 보인다
+ *   sweep         { deg: number; cos: number }  q 에서 후보까지 각이 벌어진다
+ *   angle-ranked  { order: string[] }           각이 좁은 순서
+ *   chord-shown   { dists: number[] }           끝점 사이의 직선 거리
+ *   dist-ranked   { order: string[] }           거리가 가까운 순서
+ *   done          {}                            두 줄을 나란히 놓고 결론을 말한다
+ *   rewind        {}                            처음으로 되돌린다
  *
- * `ids` 와 `lengths`, `ids` 와 `dists` 는 자리를 맞춘 나란한 배열이다 (C2 평탄 payload).
+ * ── 싣는 것과 싣지 않는 것
+ *
+ * **재고 줄 세우는 셈이 이 조각의 알고리즘 그 자체**라 `deg` · `cos` · `dists` ·
+ * 두 `order` 는 싣는다 (판정). 반대로 **바탕에서 곧바로 나오는 것**은 싣지 않는다.
+ *
+ * - 길이 `|v|` 는 후보 제 좌표만으로 나온다. `vectorLength` 를 내주고 장면이 부른다 —
+ *   길이는 이 조각이 셈에서 **빼는** 것이라 재는 법의 알맹이가 아니다.
+ * - **누구를 짚었는가**는 발신이 온 차례가 말한다. `sweep` 은 후보 차례대로 하나씩
+ *   오므로 쌓인 수가 곧 그 후보의 자리다. `dists` 도 바탕과 같은 차례다.
+ * - **각 1등이 거리 꼴찌인가**는 두 `order` 에서 나온다. 그 결론을 여기서 적어
+ *   보내면 그림이 쓰는 자료와 갈릴 자리가 생긴다 — 같은 자료에서 나오게 둔다.
  */
 
 import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
@@ -44,7 +54,11 @@ export type AngleNotLengthData = {
 
 const DEG_PER_RAD = 180 / Math.PI;
 
-function norm(p: AngleNotLengthPoint): number {
+/**
+ * 화살의 길이. 바탕에서 곧바로 나오는 값이라 발신에 싣지 않고 여기서 내준다 —
+ * 좁히는 규칙과 마찬가지로 **한 벌만** 두려는 것이다 (scene.ts 가 부른다).
+ */
+export function vectorLength(p: AngleNotLengthPoint): number {
   return Math.hypot(p.x, p.y);
 }
 
@@ -53,7 +67,7 @@ function dot(a: AngleNotLengthPoint, b: AngleNotLengthPoint): number {
 }
 
 function cosine(a: AngleNotLengthPoint, b: AngleNotLengthPoint): number {
-  const scale = norm(a) * norm(b);
+  const scale = vectorLength(a) * vectorLength(b);
   return scale === 0 ? 0 : dot(a, b) / scale;
 }
 
@@ -66,14 +80,50 @@ function gapOf(a: AngleNotLengthPoint, b: AngleNotLengthPoint): number {
   return Math.hypot(a.x - b.x, a.y - b.y);
 }
 
+/** unknown → 점 하나. 생산자가 같은 패키지라도 경계는 경계다 (C9). */
+function readPoint(v: unknown): AngleNotLengthPoint | null {
+  if (typeof v !== 'object' || v === null) return null;
+  const r = v as Record<string, unknown>;
+  if (typeof r.id !== 'string') return null;
+  if (typeof r.x !== 'number' || typeof r.y !== 'number') return null;
+  return { id: r.id, x: r.x, y: r.y };
+}
+
+function asRecord(initialData: unknown): Record<string, unknown> {
+  return typeof initialData === 'object' && initialData !== null
+    ? (initialData as Record<string, unknown>)
+    : {};
+}
+
+/**
+ * 선언의 질의점. 좁히는 규칙을 한 벌만 두려고 여기서 내준다 — 장면이 첫 화면을
+ * 세울 때 부른다.
+ */
+export function readAngleQuery(initialData: unknown): AngleNotLengthPoint | null {
+  return readPoint(asRecord(initialData).query);
+}
+
+/**
+ * 선언의 후보들. **새 배열을 돌려준다** — 넘겨받은 것을 참조로 쥐면 장면이 이미
+ * 굴러간 자료를 바탕으로 삼게 된다 (S-scene).
+ */
+export function readAngleCandidates(initialData: unknown): AngleNotLengthPoint[] {
+  const raw = asRecord(initialData).candidates;
+  const rows: unknown[] = Array.isArray(raw) ? (raw as unknown[]) : [];
+  const out: AngleNotLengthPoint[] = [];
+  for (const row of rows) {
+    const p = readPoint(row);
+    if (p !== null) out.push(p);
+  }
+  return out;
+}
+
 export async function angleNotLengthAlgorithm(
   base: FacetContext<AngleNotLengthData>,
 ): Promise<void> {
   const ctx = base as ReactiveContext<AngleNotLengthData>;
   const { query, candidates, stepMs } = ctx.data;
 
-  const ids = candidates.map((c) => c.id);
-  const lengths = candidates.map((c) => norm(c));
   const cosines = candidates.map((c) => cosine(query, c));
   const degrees = candidates.map((c) => angleDeg(query, c));
   const dists = candidates.map((c) => gapOf(query, c));
@@ -86,10 +136,6 @@ export async function angleNotLengthAlgorithm(
   const byDist = [...candidates]
     .sort((a, b) => gapOf(query, a) - gapOf(query, b))
     .map((c) => c.id);
-
-  // 각으로 1등인 것이 거리로는 꼴찌인가. 그런 좌표일 때만 마지막 캡션이 뜬다 —
-  // 아니라면 화면이 없는 말을 하게 되므로 빈 문자열로 두고 입을 다문다.
-  const flipped = byAngle[0] === byDist[byDist.length - 1] ? byAngle[0] : '';
 
   /** 자동 재생을 마쳤는가. 마친 뒤로는 `advance` 한 번이 한 걸음이다. */
   let manual = false;
@@ -129,29 +175,29 @@ export async function angleNotLengthAlgorithm(
     await ctx.emit({ type: 'place' });
 
     if (!(await gate())) return false;
-    await ctx.emit({ type: 'length-shown', payload: { ids, lengths } });
+    // 길이는 바탕에서 나온다 — 싣지 않는다. `type` 은 리터럴이라 어휘를 grep 으로
+    // 찾을 수 있다. 본문이 같아졌다고 앞 발신과 삼항으로 합치지 않는다 (C2).
+    await ctx.emit({ type: 'length-shown' });
 
     // 후보를 도는 순회다 — 걸음표를 손으로 적은 배열이 아니라 데이터가 순서를
     // 정한다 (S-piece). 문이 루프 바디의 첫 줄이라 취소 검사를 겸한다 (C8).
     for (let i = 0; i < candidates.length; i += 1) {
       if (!(await gate())) return false;
-      await ctx.emit({
-        type: 'sweep',
-        payload: { id: ids[i], deg: degrees[i], cos: cosines[i] },
-      });
+      await ctx.emit({ type: 'sweep', payload: { deg: degrees[i], cos: cosines[i] } });
     }
 
     if (!(await gate())) return false;
     await ctx.emit({ type: 'angle-ranked', payload: { order: byAngle } });
 
     if (!(await gate())) return false;
-    await ctx.emit({ type: 'chord-shown', payload: { ids, dists } });
+    await ctx.emit({ type: 'chord-shown', payload: { dists } });
 
     if (!(await gate())) return false;
     await ctx.emit({ type: 'dist-ranked', payload: { order: byDist } });
 
     if (!(await gate())) return false;
-    await ctx.emit({ type: 'done', payload: { id: flipped } });
+    // 뒤집힘의 판정은 두 `order` 에 이미 다 있다. 결론을 따로 적어 보내지 않는다.
+    await ctx.emit({ type: 'done' });
     return true;
   }
 

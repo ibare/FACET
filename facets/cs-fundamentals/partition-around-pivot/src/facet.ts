@@ -6,6 +6,10 @@
  * 들어온 순서 그대로다.
  *
  * 조각이므로 header / metrics / layout 을 두지 않는다 (S-piece).
+ *
+ * 화면은 장면(Scene) 방식이다 — 걸음의 화면을 상태로 잡으므로 어느 걸음으로든
+ * 곧장 갈 수 있고, 그래서 컨트롤이 `CONTROL_SET.pieceScrub` (되돌리기 + 띠) 다
+ * (S-piece · S-scene).
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -38,7 +42,7 @@ export const partitionAroundPivotFacet: FacetJson = {
     pt: 'Cada valor é comparado com o mesmo pivô e atravessa para um lado. O pivô fica na linha.',
   },
   algorithm: 'module:partitionAroundPivot',
-  projector: 'module:partitionAroundPivotProjector',
+  scene: 'module:partitionAroundPivotScene',
   initialData: {
     type: 'partition-around-pivot',
     values: [7, 2, 9, 3, 8],
@@ -49,7 +53,7 @@ export const partitionAroundPivotFacet: FacetJson = {
     stage: { type: 'partition-around-pivot-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {
@@ -64,6 +68,18 @@ export const partitionAroundPivotFacet: FacetJson = {
       hi: 'हर मान उसी एक धुरी {pivot} से मिलता है।',
       id: 'Setiap nilai bertemu pivot yang sama, {pivot}.',
       pt: 'Cada valor encontra o mesmo pivô {pivot}.',
+    },
+    'caption.weigh': {
+      en: 'Now weighing {value} against the pivot {pivot}.',
+      ko: '지금 견주는 값 {value} — 기준은 {pivot}.',
+      ja: '今見比べている値 {value} — 基準は {pivot}。',
+      zh: '正在比较的值 {value} — 基准是 {pivot}。',
+      ar: 'القيمة قيد المقارنة {value} — والمحور {pivot}.',
+      es: 'Valor en comparación: {value}. Pivote: {pivot}.',
+      fr: 'Valeur comparée : {value} — pivot : {pivot}.',
+      hi: 'अभी तुलना में मान {value} — धुरी {pivot}।',
+      id: 'Nilai yang sedang dibandingkan {value} — pivotnya {pivot}.',
+      pt: 'Valor em comparação: {value}. Pivô: {pivot}.',
     },
     'caption.less': {
       en: '{value} < {pivot} — it crosses to the left.',

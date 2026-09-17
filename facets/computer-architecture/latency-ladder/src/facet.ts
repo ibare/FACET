@@ -4,8 +4,11 @@
  * @piece 한 질문에만 답한다. "층이 넷뿐인데 처음과 끝이 왜 쉰 배인가."
  *
  * 선언에 두는 것은 구조뿐이다 — 층 식별자와 사이클 수. 배수 · 총 배수 ·
- * 나노초 환산은 algorithm 이 셈하고, 좌표는 stage 가 캔버스에서 역산한다
- * (S-piece).
+ * 나노초 환산은 algorithm 이 내준 순수 함수가 내고 장면이 그것을 부르며,
+ * 좌표는 stage 가 캔버스에서 역산한다 (S-piece).
+ *
+ * 화면을 명령이 아니라 **장면**으로 만들므로 (`scene:`) 어느 걸음의 화면이든
+ * 셈으로 얻는다 — 그래서 재생 위치를 끌어 보는 띠를 단다 (S-scene).
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -37,7 +40,7 @@ export const latencyLadderFacet: FacetJson = {
     pt: 'Cada andar abaixo custa dezenas de vezes mais.',
   },
   algorithm: 'module:latencyLadder',
-  projector: 'module:latencyLadderProjector',
+  scene: 'module:latencyLadderScene',
   initialData: {
     type: 'latency-ladder',
     stepMs: 700,
@@ -50,7 +53,7 @@ export const latencyLadderFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'latency-ladder-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.ask': {

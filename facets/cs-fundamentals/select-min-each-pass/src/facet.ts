@@ -41,7 +41,7 @@ export const selectMinEachPassFacet: FacetJson = {
     pt: 'Durante a varredura só o marcador se move; o valor muda de lugar uma vez, quando a passada acaba',
   },
   algorithm: 'module:selectMinEachPass',
-  projector: 'module:selectMinEachPassProjector',
+  scene: 'module:selectMinEachPassScene',
   initialData: {
     type: 'select-min-each-pass',
     values: [7, 2, 9, 4],
@@ -51,7 +51,7 @@ export const selectMinEachPassFacet: FacetJson = {
     stage: { type: 'select-min-each-pass-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {
@@ -69,7 +69,7 @@ export const selectMinEachPassFacet: FacetJson = {
     },
     'caption.compare': {
       en: 'Is {value} smaller than {best}?',
-      ko: '{value} 가 {best} 보다 작은가?',
+      ko: '{value} 대 {best} — 더 작은가?',
       ja: '{value} は {best} より小さいか。',
       zh: '{value} 比 {best} 小吗？',
       ar: 'هل {value} أصغر من {best}؟',

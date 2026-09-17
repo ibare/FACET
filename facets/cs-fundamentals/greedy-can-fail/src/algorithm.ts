@@ -6,9 +6,10 @@
  *   fewest  — **개수가 가장 적은 조합**을 DP 로 구해 큰 것부터 늘어놓는다.
  * 걸음마다 두 줄의 남은 몫이 갈라지고, 끝에 닿았을 때 쌓인 개수가 다르다.
  *
- * 화면에 뜨는 수는 전부 여기서 셈한 것이다 — 걸음표를 손으로 적지 않았고,
- * 결과값을 선언에 박아 두지도 않았다. `coins` / `target` 만 바꾸면 두 줄의
- * 길이도 갈림의 자리도 그에 맞게 다시 셈해진다.
+ * 두 줄의 계획은 전부 여기서 셈한다 — 걸음표를 손으로 적지 않았고, 결과값을 선언에
+ * 박아 두지도 않았다. `coins` / `target` 만 바꾸면 두 줄의 길이도 갈림의 자리도 그에
+ * 맞게 다시 셈해진다. 다만 **그 계획에서 파생되는 수는 발신에 싣지 않는다** — 집은
+ * 액면만 보내고 남은 몫도 개수도 화면이 그 목록에서 센다.
  *
  * ── 식별자
  * 이 조각은 `index:` / `node:` 류 target 문법을 쓰지 않는다. 다룰 대상이 두 줄
@@ -16,19 +17,24 @@
  *
  * ── 이벤트 (전부 facet 고유 확장. silent 는 하나도 없다 — 모두 걸음의 경계다)
  *
+ * **payload 는 장면이 셀 수 없는 것만 싣는다.** 남은 몫도 개수도 차이도 차례도 집은
+ * 액면의 목록에서 나오므로 여기서 세어 보내지 않는다 — 두 곳에서 세면 언젠가 갈린다
+ * (`tasks/scene-migration-protocol.md` 4 절).
+ *
  * | type          | payload                                                              |
  * |---------------|----------------------------------------------------------------------|
- * | `goal-set`    | `{ target: number; capacity: number }`                               |
+ * | `goal-set`    | `{ capacity: number }`                                               |
  * |               | capacity = 두 줄 중 더 긴 쪽의 동전 개수. 무대의 칸 너비를 역산한다.  |
- * | `fork-picked` | `{ round: number; greedyValue?: number; greedyRemaining?: number;`    |
- * |               | ` fewestValue?: number; fewestRemaining?: number }`                   |
+ * |               | 첫 동전이 놓이기 전에 정해져야 하는데 장면은 앞일을 셀 수 없다.       |
+ * |               | 함수를 내주려면 두 계획기를 통째로 내주어야 해 알고리즘이 장식이 된다.|
+ * | `fork-picked` | `{ greedyValue?: number; fewestValue?: number }`                      |
  * |               | 첫 걸음. 두 줄이 서로 다른 동전을 집어 길이 갈리는 자리.              |
  * | `round-picked`| `fork-picked` 와 같은 스키마. 둘째 걸음부터.                          |
  * |               | 이미 끝난 줄의 필드는 아예 없다 (`typeof` 로 가른다).                 |
- * | `lane-settled`| `{ lane: 'greedy' \| 'fewest'; count: number; otherRemaining: number }`|
+ * | `lane-settled`| 없음. 끝난 줄은 **남은 몫이 0 인데 눈금이 없는 줄**이라 장면이 가린다.|
  * |               | 한 줄이 끝났는데 다른 줄이 아직 남았을 때만 발신한다.                 |
- * | `verdict`     | `{ greedyCount: number; fewestCount: number; difference: number }`    |
- * | `rewind`      | 없음. 자동 재생이 끝난 뒤 `advance` 로 처음으로 돌아갈 때.            |
+ * | `verdict`     | 없음. 두 개수도 그 차이도 집은 것의 길이에서 나온다.                  |
+ * | `rewind`      | 없음. 자동 재생이 끝난 뒤 처음으로 돌아갈 때.                         |
  *
  * ── 진행
  * `reactive` 메커니즘이다. 마운트하면 스스로 재생을 시작해 `ctx.sleep(stepMs)`
@@ -47,9 +53,6 @@ export type GreedyCanFailData = {
   /** 걸음 간격 (ms). 읽을 시간을 주는 것은 저작 결정이라 선언에 둔다. */
   stepMs: number;
 };
-
-/** 한 번 집은 결과 — 집은 액면과 그러고 나서 남은 몫. */
-type LanePick = { value: number; remaining: number };
 
 const DEFAULT_STEP_MS = 800;
 
@@ -99,17 +102,6 @@ function planFewest(coins: readonly number[], target: number): number[] {
   return picked.sort((a, b) => b - a);
 }
 
-/** 집을 때마다 남는 몫을 함께 적어 둔다. 화면의 두 수가 여기서 나온다. */
-function toPicks(plan: readonly number[], target: number): LanePick[] {
-  const picks: LanePick[] = [];
-  let left = target;
-  for (const value of plan) {
-    left -= value;
-    picks.push({ value, remaining: left });
-  }
-  return picks;
-}
-
 export const greedyCanFail = async (base: FacetContext<GreedyCanFailData>): Promise<void> => {
   // reactive 메커니즘이 주입한 확장 ctx (sleep / waitForInput) 를 쓴다.
   const ctx = base as ReactiveContext<GreedyCanFailData>;
@@ -117,12 +109,12 @@ export const greedyCanFail = async (base: FacetContext<GreedyCanFailData>): Prom
   const target = typeof ctx.data.target === 'number' ? ctx.data.target : 0;
   const stepMs = typeof ctx.data.stepMs === 'number' ? ctx.data.stepMs : DEFAULT_STEP_MS;
 
-  const greedy = toPicks(planGreedy(coins, target), target);
-  const fewest = toPicks(planFewest(coins, target), target);
+  const greedy = planGreedy(coins, target);
+  const fewest = planFewest(coins, target);
 
   // 한쪽이라도 만들 수 없는 금액이면 견줄 것이 없다. 목표만 세우고 멈춘다.
   if (greedy.length === 0 || fewest.length === 0) {
-    await ctx.emit({ type: 'goal-set', payload: { target, capacity: 0 } });
+    await ctx.emit({ type: 'goal-set', payload: { capacity: 0 } });
     return;
   }
 
@@ -133,16 +125,19 @@ export const greedyCanFail = async (base: FacetContext<GreedyCanFailData>): Prom
   const steps: Array<() => Promise<void>> = [];
 
   steps.push(async () => {
-    await ctx.emit({ type: 'goal-set', payload: { target, capacity: rounds } });
+    await ctx.emit({ type: 'goal-set', payload: { capacity: rounds } });
   });
+
+  /** 이 걸음에서 `a` 가 끝나는데 `b` 는 아직 남았나. 그 어긋남이 멈출 자리다. */
+  const stopsAlone = (a: readonly number[], b: readonly number[], round: number): boolean =>
+    a.length - 1 === round && b.length - 1 > round;
 
   for (let round = 0; round < rounds; round += 1) {
     const g = greedy[round];
     const f = fewest[round];
     const picked = {
-      round,
-      ...(g === undefined ? {} : { greedyValue: g.value, greedyRemaining: g.remaining }),
-      ...(f === undefined ? {} : { fewestValue: f.value, fewestRemaining: f.remaining }),
+      ...(g === undefined ? {} : { greedyValue: g }),
+      ...(f === undefined ? {} : { fewestValue: f }),
     };
     if (round === 0) {
       steps.push(async () => {
@@ -154,37 +149,17 @@ export const greedyCanFail = async (base: FacetContext<GreedyCanFailData>): Prom
       });
     }
 
-    // 한 줄이 끝났는데 다른 줄은 아직 모자란 자리. 그 어긋남에서 한 번 멈춘다.
-    if (fewest.length - 1 === round && greedy.length - 1 > round) {
-      const settled = {
-        lane: 'fewest',
-        count: fewest.length,
-        otherRemaining: greedy[round]?.remaining ?? 0,
-      };
+    // 한 줄이 끝났는데 다른 줄은 아직 모자란 자리. 어느 줄인지는 싣지 않는다 —
+    // 남은 몫이 0 인데 아직 눈금이 없는 줄이 그것이고, 화면이 그 둘을 다 안다.
+    if (stopsAlone(fewest, greedy, round) || stopsAlone(greedy, fewest, round)) {
       steps.push(async () => {
-        await ctx.emit({ type: 'lane-settled', payload: settled });
-      });
-    } else if (greedy.length - 1 === round && fewest.length - 1 > round) {
-      const settled = {
-        lane: 'greedy',
-        count: greedy.length,
-        otherRemaining: fewest[round]?.remaining ?? 0,
-      };
-      steps.push(async () => {
-        await ctx.emit({ type: 'lane-settled', payload: settled });
+        await ctx.emit({ type: 'lane-settled' });
       });
     }
   }
 
   steps.push(async () => {
-    await ctx.emit({
-      type: 'verdict',
-      payload: {
-        greedyCount: greedy.length,
-        fewestCount: fewest.length,
-        difference: greedy.length - fewest.length,
-      },
-    });
+    await ctx.emit({ type: 'verdict' });
   });
 
   // 자동 재생 — 아무것도 누르지 않아도 화면은 할 말을 마친다.

@@ -38,7 +38,7 @@ export const boundaryShiftFacet: FacetJson = {
     pt: 'Mude uma letra e a fronteira dos tokens desaba: uma palavra que estava inteira se parte em tres pecas.',
   },
   algorithm: 'module:boundaryShift',
-  projector: 'module:boundaryShiftProjector',
+  scene: 'module:boundaryShiftScene',
   initialData: {
     type: 'boundary-shift',
     /**
@@ -90,7 +90,7 @@ export const boundaryShiftFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'boundary-shift-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.whole': {

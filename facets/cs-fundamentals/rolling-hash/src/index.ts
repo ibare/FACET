@@ -9,12 +9,12 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { rollingHashAlgorithm, type RollingHashData } from './algorithm.js';
-import { rollingHashProjector } from './projector.js';
+import { rollingHashScene } from './scene.js';
 import { rollingHashIRs } from './irs.js';
 import { rollingHashStageView } from './rolling-hash-stage.js';
 import { rollingHashFacet } from './facet.js';
@@ -26,16 +26,23 @@ export function registerRollingHash(): void {
   registerAlgorithm<RollingHashData>('rollingHash', rollingHashAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('rollingHashProjector', rollingHashProjector);
+  registerScenePlan('rollingHashScene', rollingHashScene);
   for (const ir of rollingHashIRs) registerIR(ir.id, ir);
   registerView('rolling-hash-stage', rollingHashStageView);
   registerFacets([rollingHashFacet]);
   registerDescription(rollingHashFacet.id, rollingHashDescription);
 }
 
-export { rollingHashAlgorithm, type RollingHashData } from './algorithm.js';
-export { rollingHashProjector } from './projector.js';
+export { rollingHashAlgorithm, hashOf, type RollingHashData } from './algorithm.js';
+export { rollingHashScene } from './scene.js';
+export type {
+  RollingHashCaption,
+  RollingHashMark,
+  RollingHashScene,
+  RollingHashStep,
+  RollTerms,
+} from './scene.js';
 export { rollingHashIRs } from './irs.js';
-export { rollingHashStageView, readRollingHashScene } from './rolling-hash-stage.js';
+export { rollingHashStageView } from './rolling-hash-stage.js';
 export { rollingHashFacet } from './facet.js';
 export { rollingHashDescription } from './description.js';

@@ -12,12 +12,32 @@
  *      최소를 구하고 알고리즘의 답과 견준다. 알고리즘은 이웃이 안 쓴 가장 작은
  *      번호를 주는 식이라 일반적으로 최소를 보장하지 않는다. 이 그래프에서 둘이
  *      같다는 것은 여기서 재야 알 수 있다.
+ *
+ * ── 장면 방식으로 옮긴 뒤
+ *
+ * 발신에서 payload 를 전부 걷어냈다. 그래서 "무엇이 실려 왔나" 를 재던 단언은
+ * 잴 것이 없어졌고, **같은 뜻을 장면에서 잰다** — 발신을 `reduce` 에 먹여 장면을
+ * 쌓고, 화면이 실제로 쓰는 파생 함수(`edgeIndicesAt` · `edgesOpenedAt` ·
+ * `periodsOf` · `slotCount`)로 잰다. 화면과 검사가 같은 자료를 지난다.
+ *
+ * **정의상 늘 참이던 단언 셋은 버렸다.** `names === subjects`(발신이 그대로
+ * 되돌려준 배열), `total === new Set(slots).size`(algorithm 이 그렇게 셈해 실은 값),
+ * `schedule.total === color.total`(같은 변수) 는 아무것도 재지 않았다.
  */
 
 import { describe, expect, it } from 'vitest';
-import type { FacetContext } from '@ffacet/core/runtime';
+import type { FacetContext, FacetRuntimeEvent } from '@ffacet/core/runtime';
 import { reduceToKnownFacet } from '../src/facet.js';
 import { reduceToKnownAlgorithm, type ReduceToKnownData } from '../src/algorithm.js';
+import {
+  edgeIndicesAt,
+  edgesOpenedAt,
+  periodsOf,
+  reduceToKnownScene,
+  slotCount,
+  type ReduceToKnownBoard,
+  type ReduceToKnownScene,
+} from '../src/scene.js';
 
 type Emitted = { type: string; payload: Record<string, unknown> };
 
@@ -54,10 +74,22 @@ async function play(data: ReduceToKnownData): Promise<Emitted[]> {
   return events;
 }
 
+/** 발신을 장면으로 쌓는다. 러너가 하는 일과 같다 (`SceneTrack`). */
+function sceneTrack(events: Emitted[]): ReduceToKnownScene[] {
+  const track: ReduceToKnownScene[] = [reduceToKnownScene.initial(initial)];
+  for (const e of events) {
+    const last = track[track.length - 1]!;
+    track.push(reduceToKnownScene.reduce(last, e as FacetRuntimeEvent));
+  }
+  return track;
+}
+
 const initial = reduceToKnownFacet.initialData;
 const subjects = initial['subjects'] as string[];
 const overlaps = initial['overlaps'] as Array<[string, string]>;
 const stepMs = initial['stepMs'] as number;
+
+const board: ReduceToKnownBoard = { subjects, overlaps };
 
 const data: ReduceToKnownData = {
   type: 'reduce-to-known',
@@ -115,100 +147,131 @@ describe('1차 데이터', () => {
   });
 });
 
+describe('발신은 박자만 말한다', () => {
+  /**
+   * payload 가 하나라도 실리면 화면이 그것을 믿고 그릴 문이 다시 열린다 — 같은
+   * 물음에 답이 둘이 되는 길이다 (프로토콜 4 절).
+   */
+  it('어느 발신에도 payload 가 실리지 않는다', async () => {
+    const events = await play(data);
+    expect(events.length).toBeGreaterThan(0);
+    for (const e of events) expect(Object.keys(e.payload)).toEqual([]);
+  });
+});
+
 describe('옮겨 앉는다', () => {
   it('과목마다 한 번씩, 선언한 차례대로 마디 자리로 간다', async () => {
     const events = await play(data);
     expect(events[0]?.type).toBe('board');
+    expect(events.filter((e) => e.type === 'place')).toHaveLength(subjects.length);
 
-    const placed = events.filter((e) => e.type === 'place').map((e) => e.payload['subject']);
-    expect(placed).toEqual(subjects);
+    // 어느 과목이 건너갔는지는 장면이 선언한 차례로 셈한다.
+    const track = sceneTrack(events);
+    const seats = track.map((s) => s.seated);
+    expect(seats[0]).toBe(0);
+    expect(seats[seats.length - 1]).toBe(subjects.length);
+    // 한 걸음에 하나씩만 늘고 줄지 않는다.
+    for (let i = 1; i < seats.length; i += 1) {
+      const grew = seats[i]! - seats[i - 1]!;
+      expect(grew === 0 || grew === 1).toBe(true);
+    }
   });
 
   it('겹침 여섯이 저마다 한 번씩만 선이 된다', async () => {
-    const events = await play(data);
+    const track = sceneTrack(await play(data));
 
     const drawn: string[] = [];
-    for (const e of events) {
-      if (e.type !== 'place') continue;
-      const subject = e.payload['subject'] as string;
-      for (const other of e.payload['linkedTo'] as string[]) {
-        drawn.push([subject, other].sort().join('-'));
+    for (const scene of track) {
+      if (scene.step?.kind !== 'seat') continue;
+      for (const k of edgesOpenedAt(board, scene.seated)) {
+        const [a, b] = overlaps[k]!;
+        drawn.push([a, b].sort().join('-'));
       }
     }
     expect(drawn).toHaveLength(6);
     expect(new Set(drawn).size).toBe(6);
-    expect([...drawn].sort()).toEqual(
-      overlaps.map(([a, b]) => [a, b].sort().join('-')).sort(),
-    );
+    expect([...drawn].sort()).toEqual(overlaps.map(([a, b]) => [a, b].sort().join('-')).sort());
   });
 
-  it('선은 두 끝이 다 옮겨 앉은 뒤에만 그어진다', async () => {
-    const events = await play(data);
-    const seated = new Set<string>();
-    for (const e of events) {
-      if (e.type !== 'place') continue;
-      for (const other of e.payload['linkedTo'] as string[]) {
-        expect(seated.has(other)).toBe(true);
+  it('새로 선 겹침의 다른 끝은 언제나 더 일찍 앉은 과목이다', async () => {
+    const track = sceneTrack(await play(data));
+    for (const scene of track) {
+      if (scene.step?.kind !== 'seat') continue;
+      const just = subjects[scene.seated - 1]!;
+      for (const k of edgesOpenedAt(board, scene.seated)) {
+        const [a, b] = overlaps[k]!;
+        const other = a === just ? b : a;
+        expect(other).not.toBe(just);
+        expect(subjects.indexOf(other)).toBeLessThan(scene.seated - 1);
       }
-      seated.add(e.payload['subject'] as string);
     }
+  });
+
+  it('환원이 남김없이 일어난다 — 셈줄이 다섯과 여섯에서 멎는다', async () => {
+    const track = sceneTrack(await play(data));
+    const tally = track.map((s) => edgeIndicesAt(board, s.seated).length);
+    // 줄지 않고 자란다. 화면의 셈줄이 이 수를 그대로 쓴다.
+    for (let i = 1; i < tally.length; i += 1) expect(tally[i]!).toBeGreaterThanOrEqual(tally[i - 1]!);
+    expect(tally[0]).toBe(0);
+    expect(tally[tally.length - 1]).toBe(overlaps.length);
+    expect(track[track.length - 1]?.seated).toBe(subjects.length);
   });
 });
 
 describe('바꿔 놓으면 아는 문제다', () => {
-  it('겹치는 쌍이 같은 교시에 놓인 적이 없다', async () => {
-    const events = await play(data);
-    const color = events.find((e) => e.type === 'color');
-    expect(color).toBeDefined();
-
-    const names = color!.payload['subjects'] as string[];
-    const slots = color!.payload['periods'] as number[];
-    expect(names).toEqual(subjects);
+  it('겹치는 쌍이 같은 교시에 놓인 적이 없다', () => {
+    const slots = periodsOf(board);
     expect(slots).toHaveLength(subjects.length);
 
-    const slotOf = new Map(names.map((id, i) => [id, slots[i]!]));
+    const slotOf = new Map(subjects.map((id, i) => [id, slots[i]!]));
     for (const [a, b] of overlaps) {
       expect(slotOf.get(a)).not.toBe(slotOf.get(b));
     }
     for (const slot of slots) expect(slot).toBeGreaterThanOrEqual(1);
   });
 
-  it('필요한 교시 수가 낱낱이 훑어 구한 최소와 같다', async () => {
-    const events = await play(data);
-    const color = events.find((e) => e.type === 'color');
-    const slots = color!.payload['periods'] as number[];
-    const total = color!.payload['total'] as number;
+  it('필요한 교시 수가 낱낱이 훑어 구한 최소와 같다', () => {
+    const slots = periodsOf(board);
+    const total = slotCount(board);
 
-    expect(total).toBe(new Set(slots).size);
+    // 이웃이 안 쓴 가장 작은 번호를 주므로 쓰인 번호가 1 부터 이어진다.
     expect(total).toBe(Math.max(...slots));
     expect(total).toBe(fewestSlots());
     // 겹침 여섯이 삼각형을 품으므로 둘로는 안 된다 — 위 셈이 그것을 확인한다.
     expect(colorableWith(total - 1)).toBe(false);
   });
 
-  it('시간표로 되읽는 교시 수가 색의 가짓수와 같다', async () => {
+  it('시간표 줄이 과목을 남김없이 한 번씩 나눠 갖는다', async () => {
     const events = await play(data);
-    const color = events.find((e) => e.type === 'color');
-    const schedule = events.find((e) => e.type === 'schedule');
-    expect(schedule).toBeDefined();
-    expect(schedule!.payload['total']).toBe(color!.payload['total']);
     expect(events[events.length - 1]?.type).toBe('schedule');
+
+    // 화면의 줄은 교시 1..total 을 차례로 세운다. 빈 줄이 하나라도 있으면
+    // 색만 있고 이름이 없는 칸이 뜬다.
+    const slots = periodsOf(board);
+    const total = slotCount(board);
+    const rows: string[][] = [];
+    for (let slot = 1; slot <= total; slot += 1) {
+      rows.push(subjects.filter((_, i) => slots[i] === slot));
+    }
+    expect(rows).toHaveLength(total);
+    for (const members of rows) expect(members.length).toBeGreaterThan(0);
+    expect(rows.flat().sort()).toEqual([...subjects].sort());
   });
 });
 
 describe('선언한 문안', () => {
   /**
    * 고정 데이터에서 안 뜨는 갈래가 있으면 그 캡션은 코드에만 있는 죽은 문장이다
-   * (배치 공통 지침). 캡션은 `linkedTo` 가 비었는지로 갈린다.
+   * (배치 공통 지침). 캡션은 그 걸음에 선이 된 겹침이 있었는지로 갈린다.
    */
   it('캡션 두 갈래가 이 데이터에서 모두 일어난다', async () => {
-    const events = await play(data);
-    const linked = events
-      .filter((e) => e.type === 'place')
-      .map((e) => (e.payload['linkedTo'] as string[]).length);
+    const track = sceneTrack(await play(data));
+    const opened = track
+      .filter((s) => s.step?.kind === 'seat')
+      .map((s) => edgesOpenedAt(board, s.seated).length);
 
-    expect(linked.filter((n) => n === 0)).toHaveLength(1);
-    expect(linked.filter((n) => n > 0)).toHaveLength(4);
+    expect(opened.filter((n) => n === 0)).toHaveLength(1);
+    expect(opened.filter((n) => n > 0)).toHaveLength(4);
   });
 
   it('선언한 키가 그림이 부르는 것과 정확히 맞는다', () => {
@@ -222,6 +285,7 @@ describe('선언한 문안', () => {
       'label.history',
       'label.language',
       'label.math',
+      'label.moved',
       'label.period',
       'label.problem',
       'label.science',

@@ -19,7 +19,7 @@ last_verified: 2026-09-05
 | 파일 | 역할 | export |
 |------|------|--------|
 | `algorithm.ts` | `async (ctx: FacetContext<T>) => Promise<void>` 와 `computeResult?` 순수 함수 | `xxxAlgorithm` / `computeXxxResult` / `XxxData` (타입) |
-| `projector.ts` | `ProjectorFactory` — 이벤트 → View 메서드 번역 | `xxxProjector` |
+| `projector.ts` **또는** `scene.ts` | 화면을 만드는 방식에 따라 하나. `projector.ts` 는 `ProjectorFactory` (이벤트 → View 메서드 번역), `scene.ts` 는 `ScenePlan` (이벤트 → 장면 상태). 둘 다 두지 않는다 — facet 이 `projector` 와 `scene` 중 하나만 선언한다 (S-scene) | `xxxProjector` / `xxxScene` |
 | `irs.ts` | `IR[]` — 코드 패널 IR 정의 (없으면 빈 배열) | `xxxImperativeIR` (주 IR) + `xxxIRs` 배열 |
 | `facet.ts` | `FacetJson` — layout/blocks 선언 | `xxxFacet` |
 | `description.ts` | 학습 설명 마크다운 문자열 | `xxxDescription` |
@@ -51,7 +51,7 @@ SVG 렌더 코드를 1000+ LOC 두는 것은 책임 분리 위반이라 별도 �
 - 새 facet 은 반드시 위 6파일 구성을 따른다. 파일 이름도 그대로. stage view 가 필요하면 `<short>-stage.ts` 1파일을 추가한다 (예: `cdn-stage.ts`, `rsa-stage.ts`, `linear-regression-stage.ts`).
 - `index.ts::register<Name>()` 는 다음을 **이 순서대로** 호출한다:
   1. `registerAlgorithm(name, fn, { computeResult?, mechanismKind? })`
-  2. `registerProjector(<name>Projector, ...)`
+  2. `registerProjector(<name>Projector, ...)` — 장면 방식이면 `registerScenePlan('<name>Scene', <name>Scene)`
   3. `for (const ir of xxxIRs) registerIR(ir.id, ir)`
   4. (stage view 가 있으면) `registerView('<view-id>', xxxStageView)` — Facets 등록 직전
   5. `registerFacets([xxxFacet])`
@@ -61,11 +61,11 @@ SVG 렌더 코드를 1000+ LOC 두는 것은 책임 분리 위반이라 별도 �
 - **이 facet 의 projector / stage view 가 그리는 문안은 `facet.ts` 의 `messages` 에 선언한다.** 키는 네임스페이스 없이 `'caption.push'` / `'label.top'` 처럼 짧게 쓴다 (facet 안이라 충돌하지 않는다). 프레임워크 빌트인 view 의 기본 문구를 덮어쓸 때만 그쪽 키를 그대로 쓴다 (`'view.controlBar.play'`). 자세한 규약은 C10.
 - `description.ts` 에 등장하는 `{facet:<id>}` 토큰은 같은 패키지 `facet.ts::id` 와 일치해야 한다 (C4 참조).
 - `facet.ts` 의 control-bar 블록 `controls[]` 항목은 `{ widget, action, label? }` 객체 형식만 사용한다. `widget` 은 control-bar 가 해석할 위젯 어휘 (`'button'` / `'speed-slider'` / `'value-input'` / `'segmented-slider'`), `action` 은 mechanism `supportedControls` 와 매칭되는 어휘 (`'play' | 'step' | 'pause' | 'reset' | 'speed'`) 또는 facet 전용 onAction 어휘. 문자열 리터럴 / 구식 `{ type: 'speed-slider' }` 형태 금지.
-- **facet 영역 내 색 hex/rgba 리터럴 0건** (algorithm / projector / facet / description / irs / index 모두). Projector 는 view 메서드 호출만 하고 색은 view 가 토큰에서 받는다. 색 결정 트리는 S-view "색 토큰 결정 트리" 절을 따른다.
+- **facet 영역 내 색 hex/rgba 리터럴 0건** (algorithm / projector / scene / facet / description / irs / index 모두). Projector 는 view 메서드 호출만 하고 색은 view 가 토큰에서 받는다. 색 결정 트리는 S-view "색 토큰 결정 트리" 절을 따른다.
 
 ## MUST NOT
 
-- 표준 6파일 + 선택적 `*-stage.ts` 외 추가 `.ts` 파일을 `src/` 루트에 두지 않는다. 내부 헬퍼가 필요하면 `algorithm.ts` / `projector.ts` / `*-stage.ts` 내부에 두거나, 두 파일이 공유하는 경우 팀 논의를 거친 뒤 별도 파일을 만든다 (이 경우 index.ts 에서 re-export 금지 — 내부용).
+- 표준 6파일 + 선택적 `*-stage.ts` 외 추가 `.ts` 파일을 `src/` 루트에 두지 않는다 (`scene.ts` 는 `projector.ts` 의 자리를 대신하는 것이라 추가 파일이 아니다). 내부 헬퍼가 필요하면 `algorithm.ts` / `projector.ts` / `scene.ts` / `*-stage.ts` 내부에 두거나, 두 파일이 공유하는 경우 팀 논의를 거친 뒤 별도 파일을 만든다 (이 경우 index.ts 에서 re-export 금지 — 내부용).
 - stage view 가 빌트인 view 어휘 (bars / array-cells / linked-list / graph-canvas / text-display 등) 로 표현 가능한데도 `*-stage.ts` 를 만들지 않는다. stage 파일은 빌트인 어휘로 표현 불가능한 facet 고유 시각화에 한정한다.
 - facet 패키지가 **다른 facet 패키지를 import 하지 않는다**. 공유 로직은 `@ffacet/core` 로 올린다.
 - `facet.ts` 에서 알고리즘/Projector 를 함수 참조로 직접 넣지 않는다 — 반드시 `algorithm: 'module:<name>'`, `projector: 'module:<name>'` 문자열 참조.

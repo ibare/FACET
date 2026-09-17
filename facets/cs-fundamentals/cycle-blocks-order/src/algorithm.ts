@@ -6,30 +6,34 @@
  * 고리가 없으면 이 과정이 전부를 꺼내고, 고리가 있으면 **어느 순간 0 이 하나도
  * 남지 않아 멈춘다** — 그 멈추는 순간이 이 조각의 주장이다.
  *
- * 화면에 뜨는 수는 전부 여기서 `data.edges` 를 세어 얻는다. 손으로 적은 표를
- * 쓰지 않는다 (S-piece "화면에 쓰는 값은 실측한다").
+ * 화면에 뜨는 수는 전부 `data.edges` 를 세어 얻는다. 손으로 적은 표를 쓰지 않는다
+ * (S-piece "화면에 쓰는 값은 실측한다"). 세는 함수는 `remainingLoads` 하나뿐이고
+ * **장면도 같은 함수를 부른다** — 두 자리에서 세면 언젠가 갈린다.
  *
  * ── 식별자
  *   node:<정점 id>     — 정점 하나
  *
  * ── 발신 이벤트 (전부 facet 고유 확장. C2 에 따라 여기 적는다)
  *
- * | type      | payload                                                    | silent |
- * |-----------|------------------------------------------------------------|--------|
- * | `survey`  | `{ loads: { id: string; load: number }[] }`                  | 아니오 |
- * |           | 간선을 세어 얻은 각 정점의 짐. 첫 걸음이자 전제.             |        |
- * | `scan`    | `{ ready: string[]; remaining: string[] }`                   | 아니오 |
- * |           | 지금 꺼낼 수 있는 것(짐 0)들. `ready` 가 비면 그것이 멈춤이다. |        |
- * | `extract` | `{ id: string; slot: number;`                                | 아니오 |
- * |           | `  released: { to: string; load: number }[] }`               |        |
- * |           | `id` 를 꺼내 `slot` 번째 자리에 놓는다. `released` 는 그 바람에 |        |
- * |           | 짐이 줄어든 정점과 줄어든 뒤의 값.                            |        |
- * | `wait`    | `{ from: string; on: string; closes: boolean;`               | 아니오 |
- * |           | `  trailing: boolean; ring: string[] }`                      |        |
- * |           | `from` 이 `on` 을 기다린다. `closes` 면 이 한 발로 고리가 닫힌다. |      |
- * |           | `trailing` 이면 `from` 은 고리 밖에서 고리 뒤에 매달린 것.     |        |
- * | `done`    | `{ extracted: string[]; stuck: string[]; total: number }`     | 아니오 |
- * |           | 끝난 자리. 꺼낸 것과 끝내 못 꺼낸 것.                         |        |
+ * 싣는 것은 **걸음이 내리는 판정**뿐이다. 구조에서 세지는 것(각자 이고 있는 수,
+ * 꺼낼 수 있는 것, 몇 번째 자리, 짐이 준 것, 고리, 끝내 못 꺼낸 것)은 하나도
+ * 싣지 않는다 — 바탕과 지금까지 꺼낸 목록만 있으면 전부 셈으로 나온다.
+ *
+ * | type      | payload                                                      | silent |
+ * |-----------|--------------------------------------------------------------|--------|
+ * | `survey`  | 없음                                                          | 아니오 |
+ * |           | 각 정점이 무엇을 이고 있는지 드러난다. 첫 걸음이자 전제.       |        |
+ * | `scan`    | 없음                                                          | 아니오 |
+ * |           | 지금 꺼낼 수 있는 것을 훑는다. `target` 이 그것들이고,        |        |
+ * |           | **비어 있으면 그 자리가 멈춤이다.**                           |        |
+ * | `extract` | `{ id: string }`                                              | 아니오 |
+ * |           | 꺼낼 수 있는 것이 여럿일 때 **어느 것을 꺼내는가** — 판정이다. |        |
+ * | `wait`    | `{ from: string; on: string }`                                | 아니오 |
+ * |           | `from` 이 `on` 을 기다린다. 화살표를 거슬러 올라간 한 발이고,  |        |
+ * |           | **어느 발을 딛는가**가 판정이다. 고리인지 아닌지는 발자국이    |        |
+ * |           | 제자리로 돌아오는 것을 보고 장면이 안다.                       |        |
+ * | `done`    | 없음                                                          | 아니오 |
+ * |           | 끝난 자리. 꺼낸 것도 못 꺼낸 것도 장면이 쥐고 있다.            |        |
  * | `rewind`  | 없음                                                          | 아니오 |
  * |           | 자동 재생이 끝난 뒤 `advance` 를 받아 처음으로 되감는다.       |        |
  *
@@ -57,13 +61,29 @@ const FALLBACK_STEP_MS = 850;
 type Gate = () => Promise<boolean>;
 
 /**
- * 간선을 세어 각 정점이 이고 있는 수를 구한다.
- * 화면에 뜨는 모든 수의 출처가 이 함수 하나다.
+ * 아직 안 나간 것들이 **지금** 이고 있는 수.
+ *
+ * 이미 꺼낸 것에서 나가는 화살표는 사라진 것이므로 세지 않는다. 그래서 바탕(정점과
+ * 간선) 과 지금까지 꺼낸 목록만 있으면 어느 시점의 짐이든 이 함수 하나로 나온다 —
+ * 걸음을 밟아 오며 하나씩 깎아 둘 필요가 없다.
+ *
+ * **화면에 뜨는 모든 수의 출처가 이 함수 하나다.** 장면(`scene.ts`) 이 배지의 수도
+ * 꺼낼 수 있는 것도 여기서 얻고, 알고리즘도 같은 함수로 제 차례를 고른다. 두 자리에서
+ * 세면 언젠가 갈린다 (프로토콜 4 절 "바탕에서 결정되는 셈은 싣지 말고 같은 함수를
+ * 부르게 한다").
+ *
+ * @returns 아직 안 나간 정점만 담는다. 나간 것은 이고 있는 수라는 것이 없다.
  */
-function countLoads(vertices: string[], edges: CycleBlocksOrderEdge[]): Map<string, number> {
+export function remainingLoads(
+  vertices: readonly string[],
+  edges: readonly CycleBlocksOrderEdge[],
+  taken: Iterable<string>,
+): Map<string, number> {
+  const gone = new Set(taken);
   const load = new Map<string, number>();
-  for (const v of vertices) load.set(v, 0);
+  for (const v of vertices) if (!gone.has(v)) load.set(v, 0);
   for (const e of edges) {
+    if (gone.has(e.from)) continue;
     const cur = load.get(e.to);
     if (cur !== undefined) load.set(e.to, cur + 1);
   }
@@ -78,52 +98,31 @@ async function playOnce(rc: ReactiveContext<CycleBlocksOrderData>, gate: Gate): 
   const data = rc.data;
   const vertices = [...data.vertices].sort();
   const edges = data.edges;
-  const load = countLoads(vertices, edges);
 
   // ── 전제. 각 정점이 무엇을 이고 있는지부터 보인다.
   if (!(await gate())) return false;
-  await rc.emit({
-    type: 'survey',
-    target: vertices.map((v) => `node:${v}`),
-    payload: { loads: vertices.map((id) => ({ id, load: load.get(id) ?? 0 })) },
-  });
+  await rc.emit({ type: 'survey', target: vertices.map((v) => `node:${v}`) });
 
   // ── 꺼낼 수 있는 것을 꺼낸다. 꺼낼 것이 없어지면 그 자리가 멈춤이다.
-  const extracted: string[] = [];
   const removed = new Set<string>();
   for (;;) {
+    // 짐은 깎아 두지 않고 매번 다시 센다. 지금까지 꺼낸 것만 알면 나오는 값이라
+    // 장면도 같은 함수로 같은 수를 얻는다.
+    const load = remainingLoads(vertices, edges, removed);
     const ready = vertices.filter((v) => !removed.has(v) && (load.get(v) ?? 0) === 0);
-    const remaining = vertices.filter((v) => !removed.has(v));
 
     if (!(await gate())) return false;
-    await rc.emit({
-      type: 'scan',
-      target: ready.map((v) => `node:${v}`),
-      payload: { ready, remaining },
-    });
+    await rc.emit({ type: 'scan', target: ready.map((v) => `node:${v}`) });
     if (ready.length === 0) break;
 
+    // 꺼낼 수 있는 것이 여럿이면 알파벳 순으로 고른다. 이 고름이 걸음의 판정이라
+    // 유일하게 싣는 값이다 — 몇 번째 자리에 놓이는지도, 그 바람에 짐이 준 것이
+    // 무엇인지도 꺼낸 목록에서 나온다.
     const pick = ready[0]!;
-    const dropped = new Map<string, number>();
-    for (const e of edges) {
-      if (e.from !== pick || e.to === pick || removed.has(e.to)) continue;
-      const next = (load.get(e.to) ?? 0) - 1;
-      load.set(e.to, next);
-      dropped.set(e.to, next);
-    }
     removed.add(pick);
-    extracted.push(pick);
 
     if (!(await gate())) return false;
-    await rc.emit({
-      type: 'extract',
-      target: `node:${pick}`,
-      payload: {
-        id: pick,
-        slot: extracted.length - 1,
-        released: [...dropped].map(([to, value]) => ({ to, load: value })),
-      },
-    });
+    await rc.emit({ type: 'extract', target: `node:${pick}`, payload: { id: pick } });
   }
 
   const stuck = vertices.filter((v) => !removed.has(v));
@@ -137,21 +136,18 @@ async function playOnce(rc: ReactiveContext<CycleBlocksOrderData>, gate: Gate): 
 
     const path: string[] = [];
     let cur = stuck[0]!;
-    let deadEnd = false;
     for (;;) {
       if (path.includes(cur)) break; // 제자리로 돌아왔다 — 고리다.
       path.push(cur);
       const preds = waitsOn(cur);
-      if (preds.length === 0) {
-        // 짐이 0 이 아닌데 기다릴 것이 없을 수는 없다. 방어적으로만 둔다.
-        deadEnd = true;
-        break;
-      }
+      // 짐이 0 이 아닌데 기다릴 것이 없을 수는 없다. 방어적으로만 둔다.
+      if (preds.length === 0) break;
       cur = preds[0]!;
     }
-    const ring = deadEnd ? [] : path.slice(path.indexOf(cur));
-    const ringSet = new Set(ring);
 
+    // 한 발씩 거슬러 올라간다. 마지막 발이 이미 지나온 정점을 가리키면 그것이
+    // 고리가 닫히는 자리인데, **그 판정은 장면이 제 발자국을 보고 내린다** —
+    // 여기서 함께 적으면 같은 것을 두 자리에서 말하게 된다.
     for (let i = 0; i < path.length; i += 1) {
       const from = path[i]!;
       const on = i + 1 < path.length ? path[i + 1]! : cur;
@@ -159,13 +155,7 @@ async function playOnce(rc: ReactiveContext<CycleBlocksOrderData>, gate: Gate): 
       await rc.emit({
         type: 'wait',
         target: [`node:${from}`, `node:${on}`],
-        payload: {
-          from,
-          on,
-          closes: !deadEnd && i === path.length - 1,
-          trailing: !ringSet.has(from),
-          ring,
-        },
+        payload: { from, on },
       });
     }
 
@@ -178,16 +168,13 @@ async function playOnce(rc: ReactiveContext<CycleBlocksOrderData>, gate: Gate): 
       await rc.emit({
         type: 'wait',
         target: [`node:${v}`, `node:${on}`],
-        payload: { from: v, on, closes: false, trailing: true, ring },
+        payload: { from: v, on },
       });
     }
   }
 
   if (!(await gate())) return false;
-  await rc.emit({
-    type: 'done',
-    payload: { extracted, stuck, total: vertices.length },
-  });
+  await rc.emit({ type: 'done' });
   return true;
 }
 

@@ -10,7 +10,8 @@
  * 캔버스 폭은 러너가 정함 / 코드 패널 없음 / layout 선언 없음.
  *
  * initialData 에는 **구조만** 있다. 덩어리가 몇 개인지, 각각 크기가 얼마인지,
- * 몇 번 출발해야 하는지는 전부 알고리즘이 이 구조를 훑어 셈해 화면에 올린다.
+ * 몇 번 출발해야 하는지는 알고리즘이 이 구조를 훑어 드러내고, 그 수는 장면이
+ * 소속(`scene.lit`)에서 한 번만 셈해 화면에 올린다.
  * (셋 · 3 2 3 · 세 번이 나오지만 그 숫자는 선언 어디에도 적혀 있지 않다.)
  *
  * `holdMs` 는 한 번의 탐색이 끝난 자리에서 화면을 붙잡아 두는 시간이다. 곧바로
@@ -50,7 +51,7 @@ export const separateComponentsFacet: FacetJson = {
     pt: 'Uma busca nunca sai do próprio grupo — o resto fica apagado até você recomeçar',
   },
   algorithm: 'module:separateComponents',
-  projector: 'module:separateComponentsProjector',
+  scene: 'module:separateComponentsScene',
   initialData: {
     type: 'separate-components',
     // 정점 순서가 곧 "남은 것 중 어디서 다시 출발할지" 를 정한다. 첫 출발은 A.
@@ -123,7 +124,7 @@ export const separateComponentsFacet: FacetJson = {
     stage: { type: 'separate-components-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

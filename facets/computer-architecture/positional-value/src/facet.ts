@@ -41,11 +41,11 @@ export const positionalValueFacet: FacetJson = {
   },
 
   algorithm: 'module:positionalValue',
-  projector: 'module:positionalValueProjector',
+  scene: 'module:positionalValueScene',
 
   initialData: {
     type: 'positional-value',
-    /** 화면이 보이는 수. 자리값·합·8진/16진 표기는 algorithm 이 여기서 셈한다. */
+    /** 화면이 보이는 수. 자리값·합·8진/16진 표기는 이 둘에서 셈해진다 (computePositionalValueFacts). */
     value: 45,
     bitWidth: 8,
     /** 걸음 사이의 정지 시간. 애니메이션이 끝난 뒤의 쉼이다 (S-piece). */
@@ -54,7 +54,7 @@ export const positionalValueFacet: FacetJson = {
 
   blocks: {
     stage: { type: 'positional-value-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
 
   messages: {

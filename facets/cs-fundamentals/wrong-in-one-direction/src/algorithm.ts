@@ -11,11 +11,21 @@
  *
  * | type        | payload | 뜻 |
  * |-------------|---------|----|
- * | `probe`     | `{ word: string; probeIndex: number; slots: number[]; slot: number; bit: number }` | 자리 하나를 짚었다. `bit` 이 0 이면 여기서 막힌다 |
- * | `verdict`   | `{ word: string; present: boolean; truth: boolean; blockedSlot: number }` | 답을 냈다. `present` 면 `blockedSlot` 은 -1. `truth` 는 실제로 넣었는지 |
- * | `attribute` | `{ word: string; slots: number[]; owners: string[] }` | 그 자리들을 켠 것이 누구였는지. `owners[i]` 는 `slots[i]` 를 켠 낱말 (없으면 빈 문자열) |
+ * | `probe`     | `{ word: string }` | 그 낱말의 다음 자리를 짚었다 |
+ * | `verdict`   | `{}` | 방금 짚던 낱말에 답을 냈다 |
+ * | `attribute` | `{}` | 그 자리들을 켠 것이 누구였는지 밝힌다 |
  * | `rewind`    | `{}` | 처음으로 되감는다 (자동 재생을 마친 뒤 첫 `advance`) |
  * | `done`      | `{}` | 넷을 다 물었다 |
+ *
+ * ### payload 가 얇은 까닭
+ *
+ * 화면이 셈할 수 있는 수를 싣지 않는다. 몇 번째 자리인가는 그 낱말에 대해 지금까지
+ * 온 `probe` 의 수이고, 그 자리가 켜져 있나는 `bits` 가 말하고, 무엇이라 답했나는
+ * 짚은 자리들이 정하고, 넣은 것이 맞나는 `inserted` 가 안다. 그것을 payload 로도
+ * 보내면 같은 수가 두 출처에서 나와 언젠가 갈린다 (프로토콜 4 절).
+ *
+ * **자리를 셈하는 규칙은 한 함수를 지난다** — `slotsFor`. 이 파일과 장면이 같은 함수를
+ * 부르므로 화면에 뜨는 자리 번호와 algorithm 이 멈춘 자리가 갈릴 수 없다.
  *
  * 메트릭은 부르지 않는다 (S-piece).
  */
@@ -42,36 +52,31 @@ export type WrongInOneDirectionData = {
   stepMs: number;
 };
 
-/** 이중 해싱 — h_i = (h1 + i·h2) mod m. */
-function slotsOf(data: WrongInOneDirectionData, word: string): number[] {
-  const h = data.hashes[word];
-  if (h === undefined) return [];
+/**
+ * 이중 해싱 — h_i = (h1 + i·h2) mod m.
+ *
+ * **장면도 이 함수를 부른다.** 문에 적히는 자리 번호와 algorithm 이 멈추는 자리가
+ * 같은 셈에서 나와야 하므로, 규칙을 두 벌로 두지 않고 여기 하나만 둔다.
+ */
+export function slotsFor(
+  h: WordHash | undefined,
+  hashCount: number,
+  slotCount: number,
+): number[] {
+  if (h === undefined || slotCount <= 0) return [];
   const out: number[] = [];
-  for (let i = 0; i < data.hashCount; i += 1) {
-    out.push((h.h1 + i * h.h2) % data.slotCount);
+  for (let i = 0; i < hashCount; i += 1) {
+    out.push((h.h1 + i * h.h2) % slotCount);
   }
   return out;
 }
 
-function bitAt(data: WrongInOneDirectionData, slot: number): number {
-  return data.bits[slot] === '1' ? 1 : 0;
+function slotsOf(data: WrongInOneDirectionData, word: string): number[] {
+  return slotsFor(data.hashes[word], data.hashCount, data.slotCount);
 }
 
-/**
- * 자리마다 그 자리를 켠 낱말을 찾는다.
- *
- * 한 자리를 둘이 켤 수 있으므로(자리 2 는 kiwi 와 mango 가 함께 켠다) 넣은 순서가
- * 앞선 것을 답으로 삼는다. 이 조각이 묻는 것은 "누가 켰는가" 가 아니라 "켠 것이
- * 이 낱말이 아니다" 이므로 하나만 대면 족하다.
- */
-function ownersOf(data: WrongInOneDirectionData, slots: number[]): string[] {
-  const lit = new Map<number, string>();
-  for (const word of data.inserted) {
-    for (const slot of slotsOf(data, word)) {
-      if (!lit.has(slot)) lit.set(slot, word);
-    }
-  }
-  return slots.map((slot) => lit.get(slot) ?? '');
+function bitAt(data: WrongInOneDirectionData, slot: number): number {
+  return data.bits[slot] === '1' ? 1 : 0;
 }
 
 export async function wrongInOneDirectionAlgorithm(
@@ -103,29 +108,26 @@ export async function wrongInOneDirectionAlgorithm(
   async function walk(): Promise<void> {
     for (const word of data.queries) {
       const slots = slotsOf(data, word);
-      let blockedSlot = -1;
+      // 꺼진 자리를 만나 멈췄나. 어느 자리에서 멈췄나는 장면이 짚은 자리들에서 안다.
+      let blocked = false;
 
-      for (let i = 0; i < slots.length; i += 1) {
+      for (const slot of slots) {
         if (!(await gate())) return;
-        const slot = slots[i];
-        const bit = bitAt(data, slot);
-        await ctx.emit({ type: 'probe', payload: { word, probeIndex: i, slots, slot, bit } });
-        if (bit === 0) {
-          blockedSlot = slot;
+        await ctx.emit({ type: 'probe', payload: { word } });
+        if (bitAt(data, slot) === 0) {
+          blocked = true;
           break;
         }
       }
 
-      const present = blockedSlot < 0;
-      const truth = data.inserted.includes(word);
       if (!(await gate())) return;
-      await ctx.emit({ type: 'verdict', payload: { word, present, truth, blockedSlot } });
+      await ctx.emit({ type: 'verdict', payload: {} });
 
       // 넣은 적 없는데 "있다" 가 나왔을 때에만, 그 자리를 켠 것이 누구였는지 밝힌다.
       // 이 한 걸음이 이 조각의 논증이 서는 자리다.
-      if (present && !truth) {
+      if (!blocked && !data.inserted.includes(word)) {
         if (!(await gate())) return;
-        await ctx.emit({ type: 'attribute', payload: { word, slots, owners: ownersOf(data, slots) } });
+        await ctx.emit({ type: 'attribute', payload: {} });
       }
     }
 

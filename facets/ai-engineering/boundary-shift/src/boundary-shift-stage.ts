@@ -11,17 +11,28 @@
  *
  * 좌표는 캔버스에서 역산한다 (S-piece). 세로는 그림이 정하는 값이라 이 파일의
  * 상수로 둔다.
+ *
+ * 걸음마다 부르는 메서드는 두지 않는다. `render` 하나가 장면을 받아 화면 전체를
+ * 세우고, 방금 달라진 줄 하나만 흐르게 한다 (S-scene).
  */
 
 import {
   fonts,
   fontSizes,
   getColors,
+  makeTranslator,
   PIECE_CANVAS_W,
   type CanvasView,
   type ViewInstance,
   type ViewMountParams,
 } from '@ffacet/core/runtime';
+
+import type {
+  BoundaryCaption,
+  BoundaryPiece,
+  BoundaryShiftScene,
+  LaneScene,
+} from './scene.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -68,8 +79,8 @@ const SWAP_LIFT = 26;
 /** 한 프레임. */
 const FRAME_MS = 16;
 
-/** 조각 하나 — 글자와, 그 조각이 낱말의 끝을 물고 있는지. */
-type Piece = { text: string; end: boolean };
+/** 조각 하나 — 글자와, 그 조각이 낱말의 끝을 물고 있는지. 장면이 정하는 모양이다. */
+type Piece = BoundaryPiece;
 
 type Lane = {
   cy: number;
@@ -92,13 +103,14 @@ type Lane = {
   markIndex: number;
 };
 
-type Scene = { lanes: number; maxLen: number };
+/** 캔버스를 몇 줄로 나눌지, 칸 폭을 얼마로 잡을지 정하는 데 필요한 것. */
+type Geometry = { lanes: number; maxLen: number };
 
 /**
- * `initialData` 를 좁히는 자리는 여기다 — projector 가 없어도 반드시 불리는
- * 유일한 경로이므로 (S-piece).
+ * `initialData` 를 좁히는 자리는 여기다 — 장면이 비어 있어도 반드시 불리는 유일한
+ * 경로이므로 (S-piece).
  */
-function readScene(initialData: Record<string, unknown> | undefined): Scene {
+function readGeometry(initialData: Record<string, unknown> | undefined): Geometry {
   const raw = initialData ?? {};
   const pairs = Array.isArray(raw.pairs) ? raw.pairs : [];
   let lanes = 0;
@@ -168,14 +180,17 @@ export const boundaryShiftStageView: CanvasView = {
   ): ViewInstance {
     const svg = params.canvas;
     const colors = getColors(params.theme);
-    const scene = readScene(params.initialData);
+    const geometry = readGeometry(params.initialData);
+    // 문안은 그리는 쪽이 만든다. 장면은 무엇을 말할지만 담는다 (C10 의 조회는
+    // 저작자 오버라이드가 얹힌 `params.t` 로).
+    const t = params.t ?? makeTranslator(params.locale);
 
     // 칸 폭은 캔버스에서 역산하고 상수로는 상한만 둔다 (S-piece). 끝자리 표시와
     // 벌어질 틈의 자리를 먼저 빼 두어야 다 벌어졌을 때도 폭 안에 담긴다.
     const budget =
       PIECE_CANVAS_W - SIDE_MIN * 2 - END_W - GAP * GAP_ALLOWANCE;
-    const cellW = Math.min(CELL_MAX_W, Math.floor(budget / scene.maxLen));
-    const band = (STAGE_H - CAPTION_BAND) / scene.lanes;
+    const cellW = Math.min(CELL_MAX_W, Math.floor(budget / geometry.maxLen));
+    const band = (STAGE_H - CAPTION_BAND) / geometry.lanes;
 
     const root = el('g', {});
     svg.appendChild(root);
@@ -191,7 +206,7 @@ export const boundaryShiftStageView: CanvasView = {
     root.appendChild(caption);
 
     const lanes: Lane[] = [];
-    for (let i = 0; i < scene.lanes; i += 1) {
+    for (let i = 0; i < geometry.lanes; i += 1) {
       const laneRoot = el('g', {});
       const gGhost = el('g', {});
       const gBody = el('g', {});
@@ -226,9 +241,28 @@ export const boundaryShiftStageView: CanvasView = {
     const timers = new Set<ReturnType<typeof setTimeout>>();
     let destroyed = false;
 
+    /**
+     * 되짚는 중인가. 러너가 `params` 로 흘린다 (`ViewMountParams.isInstant`).
+     *
+     * 운동이 줄의 좌표 배열을 프레임마다 고쳐 쓰는 짜임이라, 되짚기가 화면을 새로
+     * 세운 뒤에도 앞 걸음의 운동이 살아 있으면 새 줄에 옛 좌표를 덮어쓴다 — 되짚은
+     * 직후가 아니라 반 초쯤 뒤에 무너지므로 눈으로도 늦게야 잡힌다.
+     */
+    const isInstant = params.isInstant ?? ((): boolean => false);
+    // 되짚기 직전에 걸어 둔 것을 거둔다 (destroy 와 같은 모양).
+    params.onScrubStart?.(() => {
+      for (const id of timers) clearTimeout(id);
+      timers.clear();
+      for (const wake of [...waiters]) wake();
+      waiters.clear();
+    });
+
     function animate(ms: number, onFrame: (p: number) => void): Promise<void> {
       return new Promise<void>((resolve) => {
-        if (destroyed) return resolve();
+        if (destroyed || isInstant()) {
+          onFrame(1);
+          return resolve();
+        }
         const started = Date.now();
         const finish = (): void => {
           waiters.delete(finish);
@@ -382,153 +416,244 @@ export const boundaryShiftStageView: CanvasView = {
       return pieces.length > 0 ? pieces : [{ text: word, end: true }];
     }
 
-    const instance: ViewInstance = {
-      setCaption(text: string): void {
-        caption.textContent = text;
-      },
+    /**
+     * 바뀐 글자에 남는 표시.
+     *
+     * 반짝이고 사라지는 강조가 아니라 **머무는** 강조다 — 어느 한 자리 때문에
+     * 경계가 무너졌는지가 이 조각의 주장이라 갈라진 뒤에도 그 자리에 남는다.
+     * 정적 그리기에 넣지 않으면 되짚었을 때 사라진다 (S-scene).
+     */
+    function markSwapped(lane: Lane, index: number): void {
+      lane.markIndex = index;
+      const mark = el('rect', {
+        x: 0,
+        y: 0,
+        width: cellW,
+        height: TILE_H,
+        rx: 8,
+        fill: colors.itemSwapping,
+        opacity: 1,
+      });
+      clearGroup(lane.gMark);
+      lane.gMark.appendChild(mark);
+      lane.markRect = mark;
+      lane.glyphs[index]?.setAttribute('fill', colors.stateInk);
+    }
 
-      reset(): void {
-        for (const lane of lanes) clearLane(lane);
-        caption.textContent = '';
-      },
-
-      /** 낱말이 제 조각 수로 선다. 위에서 한 번 내려앉는다. */
-      showWhole(arg: { lane: number; word: string; pieces: Piece[] }): Promise<void> {
-        const lane = laneAt(arg.lane);
-        if (!lane) return Promise.resolve();
-        clearLane(lane);
-        lane.pieces = orWhole(arg.pieces, arg.word);
-        lane.drop = lane.pieces.map(() => 0);
-        const placed = layoutPieces(lane.pieces, cellW, GAP);
-        lane.boxX = placed.boxX;
-        lane.letterX = placed.letterX;
-        buildBody(lane);
-        buildGlyphs(lane, arg.word);
-        return animate(ENTER_MS, (p) => {
-          lane.drop = lane.pieces.map(() => -(1 - p) * RISE);
-          lane.root.setAttribute('opacity', String(p));
-          sync(lane);
-        }).then(() => {
-          lane.drop = lane.pieces.map(() => 0);
-          lane.root.setAttribute('opacity', '1');
-          sync(lane);
-        });
-      },
-
-      /** 글자 하나가 바뀐다. 옛 글자는 위로 빠지고 새 글자가 아래에서 올라온다. */
-      swapLetter(arg: { lane: number; index: number; letter: string }): Promise<void> {
-        const lane = laneAt(arg.lane);
-        if (!lane) return Promise.resolve();
-        const glyph = lane.glyphs[arg.index];
-        if (!glyph) return Promise.resolve();
-
-        lane.markIndex = arg.index;
-        const mark = el('rect', {
-          x: 0,
-          y: 0,
-          width: cellW,
-          height: TILE_H,
-          rx: 8,
-          fill: colors.itemSwapping,
-          opacity: 0,
-        });
-        clearGroup(lane.gMark);
-        lane.gMark.appendChild(mark);
-        lane.markRect = mark;
-        glyph.setAttribute('fill', colors.stateInk);
-        sync(lane);
-
-        const owner = pieceOwners(lane.pieces);
-        const baseY =
-          lane.cy + LETTER_SIZE * 0.35 + (lane.drop[owner[arg.index] ?? 0] ?? 0);
-
-        return animate(SWAP_MS, (p) => {
-          mark.setAttribute('opacity', String(Math.min(1, p * 1.6)));
-          if (p < 0.5) {
-            const q = p * 2;
-            glyph.setAttribute('y', String(baseY - SWAP_LIFT * q));
-            glyph.setAttribute('opacity', String(1 - q));
-          } else {
-            const q = (p - 0.5) * 2;
-            if (glyph.textContent !== arg.letter) glyph.textContent = arg.letter;
-            glyph.setAttribute('y', String(baseY + SWAP_LIFT * (1 - q)));
-            glyph.setAttribute('opacity', String(q));
-          }
-        }).then(() => {
-          glyph.textContent = arg.letter;
-          glyph.setAttribute('opacity', '1');
-          mark.setAttribute('opacity', '1');
-          sync(lane);
-        });
-      },
-
-      /**
-       * 경계가 갈라진다.
-       *
-       * 글자는 그대로 있고 자리만 벌어진다. 통째로 서 있던 자리는 점선으로
-       * 남겨, 어디가 한 덩어리였는지를 조각이 벌어진 뒤에도 볼 수 있게 한다.
-       */
-      breakApart(arg: { lane: number; word: string; pieces: Piece[] }): Promise<void> {
-        const lane = laneAt(arg.lane);
-        if (!lane) return Promise.resolve();
-        const pieces = orWhole(arg.pieces, arg.word);
-        const fromLetters = lane.letterX.slice();
-        const tight = layoutPieces(pieces, cellW, 0);
-        const spread = layoutPieces(pieces, cellW, GAP);
-
-        if (fromLetters.length !== spread.letterX.length) {
-          // 글자 수가 달라지는 경우는 이 조각의 데이터에 없다. 그래도 화면이
-          // 어긋난 채 남지 않게 새로 세우고 끝낸다.
-          lane.pieces = pieces;
-          lane.boxX = spread.boxX;
-          lane.letterX = spread.letterX;
-          lane.drop = pieces.map(() => 0);
-          buildBody(lane);
-          buildGlyphs(lane, arg.word);
-          sync(lane);
-          return Promise.resolve();
-        }
-
-        const last = pieces.length - 1;
-        const ghost = el('rect', {
+    /**
+     * 통째로 서 있던 자리에 남기는 점선.
+     *
+     * 조각이 벌어진 뒤에도 어디가 한 덩어리였는지를 볼 수 있게 한다. 틈 없이 붙여
+     * 놓았을 때의 폭이라 지금 든 조각들로 셈이 선다.
+     */
+    function drawGhost(lane: Lane): void {
+      clearGroup(lane.gGhost);
+      if (lane.pieces.length === 0) return;
+      const tight = layoutPieces(lane.pieces, cellW, 0);
+      const last = lane.pieces.length - 1;
+      lane.gGhost.appendChild(
+        el('rect', {
           x: tight.boxX[0],
           y: lane.cy - TILE_H / 2,
-          width: tight.boxX[last] + pieceW(pieces[last], cellW) - tight.boxX[0],
+          width: tight.boxX[last] + pieceW(lane.pieces[last], cellW) - tight.boxX[0],
           height: TILE_H,
           rx: 8,
           fill: 'none',
           stroke: colors.ghostOutline,
           'stroke-width': 1.5,
           'stroke-dasharray': '5 5',
-        });
-        clearGroup(lane.gGhost);
-        lane.gGhost.appendChild(ghost);
+        }),
+      );
+    }
 
-        // 지금 붙어 있는 자리에서 조각을 세운다 — 금이 먼저 보이고 그 다음 벌어진다.
-        lane.pieces = pieces;
-        lane.boxX = tight.boxX.slice();
-        lane.letterX = tight.letterX.slice();
-        lane.drop = pieces.map(() => 0);
-        buildBody(lane);
+    // ── 장면 그리기 ─────────────────────────────────────────────────────────
+    //
+    // 늘 비우고 그 장면이 말하는 줄들을 다시 세운다. 되돌릴 명령을 따로 둘 필요가
+    // 없고, 어느 걸음에서 어느 걸음으로 가든 같은 길이다.
+
+    /** 줄 하나를 그 장면대로 세운다. 자리는 여기서 셈한다 (S-piece). */
+    function drawLane(lane: Lane, s: LaneScene): void {
+      lane.pieces = orWhole(s.pieces, s.word);
+      lane.drop = lane.pieces.map(() => 0);
+      const placed = layoutPieces(lane.pieces, cellW, GAP);
+      lane.boxX = placed.boxX;
+      lane.letterX = placed.letterX;
+      buildBody(lane);
+      buildGlyphs(lane, s.word);
+      if (s.swapped) markSwapped(lane, s.swapped.index);
+      if (s.broken) drawGhost(lane);
+      sync(lane);
+    }
+
+    /** 낱말이 제 조각 수로 선다. 위에서 한 번 내려앉는다. */
+    function enterLane(lane: Lane): Promise<void> {
+      return animate(ENTER_MS, (p) => {
+        lane.drop = lane.pieces.map(() => -(1 - p) * RISE);
+        lane.root.setAttribute('opacity', String(p));
         sync(lane);
+      }).then(() => {
+        lane.drop = lane.pieces.map(() => 0);
+        lane.root.setAttribute('opacity', '1');
+        sync(lane);
+      });
+    }
 
-        return animate(MOVE_MS, (p) => {
-          for (let i = 0; i < lane.letterX.length; i += 1) {
-            lane.letterX[i] = tight.letterX[i] + (spread.letterX[i] - tight.letterX[i]) * p;
-          }
-          for (let j = 0; j < lane.boxX.length; j += 1) {
-            lane.boxX[j] = tight.boxX[j] + (spread.boxX[j] - tight.boxX[j]) * p;
-          }
-          const dip = Math.sin(Math.PI * p);
-          lane.drop = pieces.map((_, j) => dip * DROP * (0.6 + j * 0.35));
-          sync(lane);
-        }).then(() => {
-          lane.boxX = spread.boxX.slice();
-          lane.letterX = spread.letterX.slice();
-          lane.drop = pieces.map(() => 0);
-          sync(lane);
-        });
-      },
+    /**
+     * 글자 하나가 바뀐다. 옛 글자는 위로 빠지고 새 글자가 아래에서 올라온다.
+     *
+     * 정적 그리기가 이미 새 글자를 세워 두었으므로, 흐르게 할 때만 앞 글자로
+     * 되돌려 놓고 시작한다.
+     */
+    function swapGlyph(lane: Lane, index: number, prevLetter: string): Promise<void> {
+      const glyph = lane.glyphs[index];
+      if (!glyph) return Promise.resolve();
+      const letter = glyph.textContent ?? '';
+      const mark = lane.markRect;
+      const owner = pieceOwners(lane.pieces);
+      const baseY = lane.cy + LETTER_SIZE * 0.35 + (lane.drop[owner[index] ?? 0] ?? 0);
+
+      glyph.textContent = prevLetter;
+      mark?.setAttribute('opacity', '0');
+
+      return animate(SWAP_MS, (p) => {
+        mark?.setAttribute('opacity', String(Math.min(1, p * 1.6)));
+        if (p < 0.5) {
+          const q = p * 2;
+          glyph.setAttribute('y', String(baseY - SWAP_LIFT * q));
+          glyph.setAttribute('opacity', String(1 - q));
+        } else {
+          const q = (p - 0.5) * 2;
+          if (glyph.textContent !== letter) glyph.textContent = letter;
+          glyph.setAttribute('y', String(baseY + SWAP_LIFT * (1 - q)));
+          glyph.setAttribute('opacity', String(q));
+        }
+      }).then(() => {
+        glyph.textContent = letter;
+        // 지운다 — `1` 로 되돌리지 않는다. 흐르지 않고 곧바로 세운 화면에는 이
+        // 속성이 아예 없어, 남겨 두면 같은 걸음인데 화면이 갈린다.
+        glyph.removeAttribute('opacity');
+        mark?.setAttribute('opacity', '1');
+        sync(lane);
+      });
+    }
+
+    /**
+     * 경계가 갈라진다.
+     *
+     * 글자는 그대로 있고 자리만 벌어진다. 정적 그리기가 이미 벌어진 자리에 세워
+     * 두었으므로, 흐르게 할 때만 붙어 있던 자리로 되돌려 놓고 시작한다 — 금이 먼저
+     * 보이고 그 다음 벌어진다.
+     */
+    function spreadLane(lane: Lane): Promise<void> {
+      const pieces = lane.pieces;
+      const tight = layoutPieces(pieces, cellW, 0);
+      const spread = layoutPieces(pieces, cellW, GAP);
+
+      lane.boxX = tight.boxX.slice();
+      lane.letterX = tight.letterX.slice();
+      lane.drop = pieces.map(() => 0);
+      sync(lane);
+
+      return animate(MOVE_MS, (p) => {
+        for (let i = 0; i < lane.letterX.length; i += 1) {
+          lane.letterX[i] = tight.letterX[i] + (spread.letterX[i] - tight.letterX[i]) * p;
+        }
+        for (let j = 0; j < lane.boxX.length; j += 1) {
+          lane.boxX[j] = tight.boxX[j] + (spread.boxX[j] - tight.boxX[j]) * p;
+        }
+        const dip = Math.sin(Math.PI * p);
+        lane.drop = pieces.map((_, j) => dip * DROP * (0.6 + j * 0.35));
+        sync(lane);
+      }).then(() => {
+        lane.boxX = spread.boxX.slice();
+        lane.letterX = spread.letterX.slice();
+        lane.drop = pieces.map(() => 0);
+        sync(lane);
+      });
+    }
+
+    /** 캡션은 장면이 무엇을 말할지만 담는다. 문자는 여기서 만든다 (C10). */
+    function drawCaption(cap: BoundaryCaption | null): void {
+      if (!cap) {
+        caption.textContent = '';
+        return;
+      }
+      switch (cap.kind) {
+        case 'whole':
+          caption.textContent = t(
+            'caption.whole',
+            '"{word}" — pieces: {n}. It holds together.',
+            { word: cap.word, n: cap.pieces },
+          );
+          return;
+        case 'swap':
+          caption.textContent = t(
+            'caption.swap',
+            'One letter changes: "{from}" becomes "{to}".',
+            { from: cap.from, to: cap.to },
+          );
+          return;
+        case 'shatter':
+          caption.textContent = t('caption.shatter', 'The boundary gives way — pieces: {n}.', {
+            n: cap.pieces,
+          });
+          return;
+        case 'done':
+          caption.textContent = t(
+            'caption.done',
+            'One letter apart, yet the cuts fall differently.',
+          );
+          return;
+      }
+    }
+
+    /** 늘 비우고 시작한다 — 되돌릴 명령이 필요 없다 (S-scene). */
+    function rewind(): void {
+      for (const lane of lanes) clearLane(lane);
+      caption.textContent = '';
+    }
+
+    async function render(
+      next: BoundaryShiftScene,
+      prev: BoundaryShiftScene | null,
+      opts: { animate: boolean },
+    ): Promise<void> {
+      rewind();
+
+      // 선 줄은 걷히지 않는다 — 이미 갈라진 줄도 갈라진 채로 다시 세운다.
+      next.lanes.forEach((s, i) => {
+        if (!s) return;
+        const lane = laneAt(i);
+        if (lane) drawLane(lane, s);
+      });
+
+      drawCaption(next.caption);
+
+      if (!opts.animate) return;
+
+      // 방금 밟은 걸음 하나만 흐르게 한다. 걸음을 건너뛰어 왔으면 `step` 이
+      // 이어지지 않으므로 그 경우도 여기서 걸러진다.
+      const step = next.step;
+      if (!step || step === prev?.step) return;
+      const lane = laneAt(step.lane);
+      const s = next.lanes[step.lane];
+      if (!lane || !s) return;
+
+      switch (step.kind) {
+        case 'stands':
+          await enterLane(lane);
+          return;
+        case 'swapped':
+          if (s.swapped) await swapGlyph(lane, s.swapped.index, s.swapped.prevLetter);
+          return;
+        case 'broken':
+          await spreadLane(lane);
+          return;
+      }
+    }
+
+    return {
+      render,
 
       destroy(): void {
         destroyed = true;
@@ -539,7 +664,5 @@ export const boundaryShiftStageView: CanvasView = {
         root.remove();
       },
     };
-
-    return instance;
   },
 };

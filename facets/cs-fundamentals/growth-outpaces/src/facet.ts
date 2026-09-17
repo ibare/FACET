@@ -9,6 +9,9 @@
  *
  * 좌표는 없다. 어디에 무엇을 놓을지는 질문이 정하는 형태의 일부라 stage 가
  * 캔버스에서 역산한다 (S-piece).
+ *
+ * 화면을 명령이 아니라 **장면**으로 만들므로 (`scene:`) 어느 걸음의 화면이든
+ * 셈으로 얻는다 — 그래서 재생 위치를 끌어 보는 띠를 단다 (S-scene).
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -40,7 +43,7 @@ export const growthOutpacesFacet: FacetJson = {
     pt: 'n² + 10n + 100 dividido em três partes de uma barra: quando n cresce, n² engole as outras.',
   },
   algorithm: 'module:growthOutpaces',
-  projector: 'module:growthOutpacesProjector',
+  scene: 'module:growthOutpacesScene',
   initialData: {
     type: 'growth-outpaces',
     quadratic: 1,
@@ -51,7 +54,7 @@ export const growthOutpacesFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'growth-outpaces-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.begin': {

@@ -10,14 +10,14 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { oneMoreRoundDropsAlgorithm } from './algorithm.js';
 import type { OneMoreRoundDropsData } from './algorithm.js';
-import { oneMoreRoundDropsProjector } from './projector.js';
 import { oneMoreRoundDropsIRs } from './irs.js';
+import { oneMoreRoundDropsScene } from './scene.js';
 import { oneMoreRoundDropsStageView } from './one-more-round-drops-stage.js';
 import { oneMoreRoundDropsFacet } from './facet.js';
 import { oneMoreRoundDropsDescription } from './description.js';
@@ -27,7 +27,7 @@ export function registerOneMoreRoundDrops(): void {
     // 조각은 mount 하면 스스로 재생을 시작하고 걸음 간격을 스스로 정한다 (S-piece).
     mechanismKind: 'reactive',
   });
-  registerProjector('oneMoreRoundDropsProjector', oneMoreRoundDropsProjector);
+  registerScenePlan('oneMoreRoundDropsScene', oneMoreRoundDropsScene);
   for (const ir of oneMoreRoundDropsIRs) registerIR(ir.id, ir);
   registerView('one-more-round-drops-stage', oneMoreRoundDropsStageView);
   registerFacets([oneMoreRoundDropsFacet]);
@@ -36,6 +36,8 @@ export function registerOneMoreRoundDrops(): void {
 
 export {
   oneMoreRoundDropsAlgorithm,
+  oneMoreRoundDropsBound,
+  oneMoreRoundDropsOpening,
   simulateOneMoreRoundDrops,
 } from './algorithm.js';
 export type {
@@ -44,7 +46,14 @@ export type {
   OneMoreRoundDropsEntry,
   OneMoreRoundDropsRun,
 } from './algorithm.js';
-export { oneMoreRoundDropsProjector } from './projector.js';
+export { oneMoreRoundDropsScene } from './scene.js';
+export type {
+  OneMoreRoundDropsCaption,
+  OneMoreRoundDropsLink,
+  OneMoreRoundDropsRound,
+  OneMoreRoundDropsScene,
+  OneMoreRoundDropsStep,
+} from './scene.js';
 export { oneMoreRoundDropsIRs } from './irs.js';
 export { oneMoreRoundDropsStageView } from './one-more-round-drops-stage.js';
 export { oneMoreRoundDropsFacet } from './facet.js';

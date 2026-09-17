@@ -1,8 +1,17 @@
 /**
- * @piece
+ * union-by-rank — FacetJson 선언. 로직 없음, 선언만 (S-facet).
  *
- * union-by-rank — 랭크 기반 합집합의 "고르기" 질문 하나에 답한다: 두 무리를
- * 합칠 때 어느 쪽 뿌리를 아래로 넣을지 고르면 나무가 길어지지 않는다는 것.
+ * 랭크 기반 합집합의 "고르기" 질문 하나에 답한다: 두 무리를 합칠 때 어느 쪽 뿌리를
+ * 아래로 넣을지 고르면 나무가 길어지지 않는다는 것.
+ *
+ * 화면은 **장면**에서 만들어진다 (`scene.ts`) — projector 가 stage 메서드를 부르는
+ * 대신, 이벤트가 장면이 되고 `render` 가 그 장면의 화면을 통째로 세운다. 그래서 띠를
+ * 끌어 어느 걸음으로 가도 같은 화면이 선다 (S-scene).
+ *
+ * 캡션에 뜨는 랭크는 여기 선언에 없고 장면이 숲에서 센다 — 배지의 수와 같은 함수를
+ * 지나야 두 항이 갈리지 않는다. 그래서 인자는 자리 번호뿐이다.
+ *
+ * @piece
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -34,7 +43,7 @@ export const unionByRankFacet: FacetJson = {
     pt: 'Ponha a árvore mais baixa sob a mais alta e a altura se mantém; só um empate a faz crescer.',
   },
   algorithm: 'module:unionByRank',
-  projector: 'module:unionByRankProjector',
+  scene: 'module:unionByRankScene',
   initialData: {
     type: 'unionByRank',
     n: 5,
@@ -50,7 +59,7 @@ export const unionByRankFacet: FacetJson = {
     stage: { type: 'union-by-rank-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {
@@ -67,16 +76,16 @@ export const unionByRankFacet: FacetJson = {
       pt: 'Compare o rank: nó {a} (rank {rankA}) contra o nó {b} (rank {rankB})',
     },
     'caption.attachDiffer': {
-      en: 'Ranks differ — node {loser} (rank {loserRank}) goes under node {winner} (rank {winnerRank}). Height stays the same.',
-      ko: '랭크가 다르다 — {loser}번(랭크 {loserRank})을 {winner}번(랭크 {winnerRank}) 밑에 넣는다. 키는 그대로다.',
-      ja: 'ランクが違う — ノード {loser}（ランク {loserRank}）をノード {winner}（ランク {winnerRank}）の下に入れる。高さはそのまま。',
-      zh: '秩不同 — 把节点 {loser}（秩 {loserRank}）接到节点 {winner}（秩 {winnerRank}）下面。高度不变。',
-      ar: 'الرتبتان مختلفتان — العقدة {loser} (رتبة {loserRank}) تدخل تحت العقدة {winner} (رتبة {winnerRank}). يبقى الارتفاع كما هو.',
-      es: 'Los rangos difieren: el nodo {loser} (rango {loserRank}) cuelga del nodo {winner} (rango {winnerRank}). La altura no cambia.',
-      fr: 'Les rangs diffèrent — le nœud {loser} (rang {loserRank}) passe sous le nœud {winner} (rang {winnerRank}). La hauteur ne bouge pas.',
-      hi: 'रैंक अलग हैं — नोड {loser} (रैंक {loserRank}) नोड {winner} (रैंक {winnerRank}) के नीचे जाता है। ऊँचाई वही रहती है।',
-      id: 'Rank berbeda — simpul {loser} (rank {loserRank}) masuk di bawah simpul {winner} (rank {winnerRank}). Tingginya tetap.',
-      pt: 'Os ranks diferem — o nó {loser} (rank {loserRank}) vai sob o nó {winner} (rank {winnerRank}). A altura se mantém.',
+      en: 'Ranks differ — node {loser} goes under the taller node {winner}. The height stays the same.',
+      ko: '랭크가 다르다 — 낮은 {loser}번을 높은 {winner}번 밑에 넣는다. 키는 그대로다.',
+      ja: 'ランクが違う — 低いノード {loser} を高いノード {winner} の下に入れる。高さはそのまま。',
+      zh: '秩不同 — 把较矮的节点 {loser} 接到较高的节点 {winner} 下面。高度不变。',
+      ar: 'الرتبتان مختلفتان — تدخل العقدة {loser} تحت العقدة الأطول {winner}. يبقى الارتفاع كما هو.',
+      es: 'Los rangos difieren: el nodo {loser} cuelga del nodo más alto {winner}. La altura no cambia.',
+      fr: 'Les rangs diffèrent — le nœud {loser} passe sous le nœud plus haut {winner}. La hauteur ne bouge pas.',
+      hi: 'रैंक अलग हैं — नोड {loser} ऊँचे नोड {winner} के नीचे जाता है। ऊँचाई वही रहती है।',
+      id: 'Rank berbeda — simpul {loser} masuk di bawah simpul yang lebih tinggi {winner}. Tingginya tetap.',
+      pt: 'Os ranks diferem — o nó {loser} vai sob o nó mais alto {winner}. A altura se mantém.',
     },
     'caption.attachTie': {
       en: 'Ranks tie — node {loser} goes under node {winner}. Height must grow by one.',
@@ -91,16 +100,16 @@ export const unionByRankFacet: FacetJson = {
       pt: 'Os ranks empatam — o nó {loser} vai sob o nó {winner}. A altura precisa crescer um.',
     },
     'caption.grow': {
-      en: "Node {root}'s height grows to {rank}.",
-      ko: '{root}번의 키가 {rank}로 는다.',
-      ja: 'ノード {root} の高さが {rank} に伸びる。',
-      zh: '节点 {root} 的高度长到 {rank}。',
-      ar: 'يرتفع ارتفاع العقدة {root} إلى {rank}.',
-      es: 'La altura del nodo {root} crece a {rank}.',
-      fr: 'La hauteur du nœud {root} passe à {rank}.',
-      hi: 'नोड {root} की ऊँचाई बढ़कर {rank} हो जाती है।',
-      id: 'Tinggi simpul {root} bertambah menjadi {rank}.',
-      pt: 'A altura do nó {root} cresce para {rank}.',
+      en: "Node {root}'s rank rises by one — now {rank}.",
+      ko: '{root}번의 랭크가 하나 오른다 — 이제 {rank}.',
+      ja: 'ノード {root} のランクが一つ上がる — いまは {rank}。',
+      zh: '节点 {root} 的秩长了一层 — 现在是 {rank}。',
+      ar: 'ترتفع رتبة العقدة {root} واحدًا — الآن {rank}.',
+      es: 'El rango del nodo {root} sube en uno: ahora es {rank}.',
+      fr: 'Le rang du nœud {root} monte de un — il vaut maintenant {rank}.',
+      hi: 'नोड {root} की रैंक एक बढ़ती है — अब {rank}।',
+      id: 'Rank simpul {root} naik satu — sekarang {rank}.',
+      pt: 'O rank do nó {root} sobe em um — agora é {rank}.',
     },
     'caption.rewind': {
       en: 'Replaying from the start.',

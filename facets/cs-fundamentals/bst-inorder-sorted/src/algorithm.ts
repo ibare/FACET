@@ -70,8 +70,11 @@ async function emitBeat(rctx: ReactiveContext<BstInorderSortedData>, beat: Beat)
     return;
   }
   await rctx.emit({ type: 'append', target: `node:${beat.value}`, payload: { value: beat.value } });
-  await rctx.emit({ type: 'mark', target: `node:${beat.value}` });
-  await rctx.emit({ type: 'unhighlight', target: `node:${beat.value}` });
+  // 뒤의 둘은 `append` 와 한 걸음이다 — 값이 흘러나온 그 순간에 마디가 굳고 강조가
+  // 걷힌다. 걸음으로 세면 띠에 0ms 짜리 눈금이 둘 더 서서 끌 때 서로 구별되지 않는다.
+  // `silent` 발신은 걸음을 늘리지 않고 그 걸음의 장면에 접힌다 (`runtime/scene.ts`).
+  await rctx.emit({ type: 'mark', target: `node:${beat.value}`, silent: true });
+  await rctx.emit({ type: 'unhighlight', target: `node:${beat.value}`, silent: true });
 }
 
 /** 취소 검사와 걸음 간격 대기를 한 자리에 묶는다 (S-piece). */

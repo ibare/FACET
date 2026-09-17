@@ -23,6 +23,51 @@ export type ViewMountParams = {
   /** 현재 테마. 색상 팔레트는 getColors(theme) 로 캡쳐. undefined 면 'light'. */
   theme?: Theme;
   /**
+   * 되짚는 중인가 — 참이면 stage 는 진행률을 그리지 말고 끝 상태로 건너뛴다.
+   *
+   * 스크럽이 뒤로 갈 때 러너는 목표까지의 발신을 한 묶음으로 몰아 먹인다
+   * (`runtime/timeline.ts`). 그때 걸음마다 tween 이 하나씩 떠서 같은 요소에 서로
+   * 다른 값을 쓰면 화면이 엉킨다 — 되짚은 직후가 아니라 1 초쯤 뒤에 무너지므로
+   * 눈으로도 늦게야 잡힌다.
+   *
+   * 애니메이션을 CSS transition 에 맡기는 stage 는 이것을 볼 필요가 없다. 속성을
+   * 덮어쓰면 마지막 값이 이기기 때문이다. **스스로 진행률을 그리는 stage** 만
+   * 자기 애니메이션 헬퍼 첫머리에서 본다.
+   *
+   * ```ts
+   * const isInstant = params.isInstant ?? (() => false);
+   * …
+   * if (destroyed || isInstant()) { draw(1); return resolve(); }
+   * ```
+   *
+   * 반환 객체가 아니라 여기에 둔 것은 stage 의 변경 표면을 줄이기 위해서다 —
+   * 메서드로 두면 stage 마다 반환 객체를 찾아 고쳐야 한다.
+   */
+  isInstant?: () => boolean;
+  /**
+   * 되짚기가 시작될 때 불러 달라고 맡기는 정리 함수.
+   *
+   * `isInstant` 만으로는 모자란 자리가 있다. 되짚기는 마이크로태스크로 끝나므로
+   * 그 사이 **이미 걸려 있던 프레임과 타이머** 는 즉시 모드를 보지 못하고, 되짚기가
+   * 끝난 뒤 깨어나 옛 목표를 마저 그린다. 몰아 먹여 세운 화면이 한 프레임 뒤에
+   * 덮어써지는 것이다.
+   *
+   * 그래서 되짚기 직전에 걸어 둔 것을 거둔다. `destroy` 에서 하는 일과 같되 화면은
+   * 그대로 둔다.
+   *
+   * ```ts
+   * params.onScrubStart?.(() => {
+   *   for (const id of frames) cancelAnimationFrame(id);
+   *   frames.clear();
+   *   for (const id of timers) clearTimeout(id);
+   *   timers.clear();
+   *   for (const wake of [...waiters]) wake();
+   *   waiters.clear();
+   * });
+   * ```
+   */
+  onScrubStart?: (fn: () => void) => void;
+  /**
    * View 사용자 입력을 메커니즘에 전달. control-bar 클릭과 직교한 채널이며
    * View 측 위젯이 이 콜백으로 발신 → 러너가 mechanism.dispatch 로 라우팅.
    * 미주입 시 View 는 사용자 입력을 받지 않는 정적 표시 모드로 작동.

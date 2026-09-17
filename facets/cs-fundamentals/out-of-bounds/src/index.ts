@@ -8,22 +8,22 @@
  */
 
 export { outOfBounds, type OutOfBoundsData } from './algorithm.js';
-export { outOfBoundsProjector } from './projector.js';
+export { outOfBoundsScene, type OutOfBoundsScene } from './scene.js';
 export { outOfBoundsIRs } from './irs.js';
 export { outOfBoundsFacet } from './facet.js';
 export { outOfBoundsDescription } from './description.js';
-export { outOfBoundsStageView, type OutOfBoundsStageInit } from './out-of-bounds-stage.js';
+export { outOfBoundsStageView } from './out-of-bounds-stage.js';
 
 import {
   registerAlgorithm,
-  registerProjector,
+  registerScenePlan,
   registerIR,
   registerFacets,
   registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { outOfBounds, type OutOfBoundsData } from './algorithm.js';
-import { outOfBoundsProjector } from './projector.js';
+import { outOfBoundsScene } from './scene.js';
 import { outOfBoundsIRs } from './irs.js';
 import { outOfBoundsFacet } from './facet.js';
 import { outOfBoundsDescription } from './description.js';
@@ -33,7 +33,7 @@ export function registerOutOfBounds(): void {
   registerAlgorithm<OutOfBoundsData>('outOfBounds', outOfBounds, {
     mechanismKind: 'reactive',
   });
-  registerProjector('outOfBoundsProjector', outOfBoundsProjector);
+  registerScenePlan('outOfBoundsScene', outOfBoundsScene);
   for (const ir of outOfBoundsIRs) registerIR(ir.id, ir);
   registerView('out-of-bounds-stage', outOfBoundsStageView);
   registerFacets([outOfBoundsFacet]);

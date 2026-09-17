@@ -6,9 +6,15 @@
  *
  * 그래서 header (title-block) 도 metrics 도 두지 않는다. 제목은 이 그림을
  * 안고 있는 글의 문단이 주고, 셀 것은 없다 (S-piece).
+ *
+ * 화면은 장면(Scene) 방식이다. projector 를 두지 않고 `scene.ts` 가 이벤트를 상태로
+ * 옮기며, stage 는 `render(next, prev, { animate })` 하나로 산다 (S-scene).
+ *
+ * 컨트롤은 `CONTROL_SET.pieceScrub` — 다시 보기와 스크럽 띠다. 어느 걸음의 화면이든
+ * 셈으로 얻으므로 띠를 끌어 아무 데나 갈 수 있다.
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const relinkInsertFacet: FacetJson = {
   id: 'facet:relinkInsert',
@@ -37,7 +43,7 @@ export const relinkInsertFacet: FacetJson = {
     pt: 'Inserir numa lista ligada reescreve setas, não posições.',
   },
   algorithm: 'module:relinkInsert',
-  projector: 'module:relinkInsertProjector',
+  scene: 'module:relinkInsertScene',
   initialData: {
     type: 'relink-insert',
     nodes: [
@@ -54,7 +60,7 @@ export const relinkInsertFacet: FacetJson = {
     stage: { type: 'relink-insert-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {

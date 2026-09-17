@@ -11,21 +11,22 @@
  * ── 이벤트 (표준 어휘는 `done` 뿐, 나머지는 이 facet 고유)
  *   question-posed     target 없음                payload {}
  *       가운데 물음점을 세운다. 아직 이름표가 없다.
- *   ring-grow          target 없음                payload { k: number; radius: number }
+ *   ring-grow          target 없음                payload { radius: number }
  *       테두리가 가장 가까운 k 개를 담는 크기까지 자란다. radius 는 데이터
- *       공간의 길이이며 화면 길이로 바꾸는 것은 stage 의 몫이다.
- *   neighbor-captured  target `index:<i>`          payload { label: string }
- *       테두리에 새로 든 이웃 하나가 자기 이름표에 표를 던진다.
- *   tally-settled      target 없음                payload
- *       { k: number; labels: string[]; counts: number[]; verdict: string; previous: string | null }
- *       표를 세어 답을 정한다. labels 와 counts 는 같은 자리끼리 짝이고,
- *       previous 는 **앞선 k 의 답**이다 (첫 k 에서는 null). 그것과 verdict 이
- *       다르면 뒤집힌 것이다 — 판정은 표현 계층이 한다.
+ *       공간의 길이이며 화면 길이로 바꾸는 것은 stage 의 몫이다. k 는 싣지
+ *       않는다 — 선언의 `ks` 와 **몇 번째 테두리인가**로 장면이 셈한다.
+ *   neighbor-captured  target `index:<i>`          payload {}
+ *       테두리에 새로 든 이웃 하나가 자기 이름표에 표를 던진다. 이름표는
+ *       `points[i].label` 이라 장면이 바탕에서 읽는다.
+ *   tally-settled      target 없음                payload { verdict: string }
+ *       표를 세어 답을 정한다. 표의 수는 **담긴 이웃에서 장면이 세고**, 뒤집혔는지는
+ *       앞선 답과 견주어 장면이 가린다. 여기서 싣는 것은 판정 하나뿐이다 —
+ *       표가 같을 때 가장 가까운 이웃을 따르는 규칙이 거리 셈에 기대기 때문이다.
  *   rewind             target 없음                payload {}
  *       처음으로 되감는다. 자동 재생이 끝난 뒤 첫 `advance` 에서만 나간다.
- *   done               target `index:<i>`          payload { nearest: string; verdict: string }
- *       한 바퀴가 끝났다. target 은 가장 가까운 이웃이고 nearest 는 그 이름표,
- *       verdict 은 마지막 답이다 — 둘이 다른 것이 이 조각의 맺음이다.
+ *   done               target `index:<i>`          payload {}
+ *       한 바퀴가 끝났다. target 은 가장 가까운 이웃이다 — 그 이름표도 마지막
+ *       답도 장면이 이미 쥐고 있어 실을 것이 없다. 둘이 다른 것이 이 조각의 맺음이다.
  *
  * silent 는 쓰지 않는다 — 여섯 모두 화면을 바꾼다.
  *
@@ -53,6 +54,16 @@ export type KChangesBoundaryData = {
 type Neighbor = { index: number; label: string; distance: number };
 
 const FALLBACK_STEP_MS = 900;
+
+/**
+ * 선언의 k 를 실제로 담을 수 있는 수로 좁힌다. 점의 수가 상한이다.
+ *
+ * 걸음이 이 값을 싣지 않고 장면이 같은 함수를 부른다 — 좁히는 잣대가 두 벌이
+ * 되면 알약이 선 자리와 캡션이 말하는 수가 갈린다.
+ */
+export function effectiveK(pointCount: number, rawK: number): number {
+  return Math.max(1, Math.min(pointCount, Math.floor(rawK)));
+}
 
 /** 물음점에서 가까운 순. 거리가 같으면 먼저 적힌 점이 앞선다. */
 function rankNeighbors(data: KChangesBoundaryData): Neighbor[] {
@@ -118,42 +129,33 @@ export async function kChangesBoundary(ctx: FacetContext<KChangesBoundaryData>):
     await ctx.emit({ type: 'question-posed', payload: {} });
 
     let shown = 0;
-    /** 앞선 k 의 답. 아직 아무것도 세지 않았으면 null 이라 뒤집힘이 아니다. */
-    let previous: string | null = null;
     for (const rawK of ctx.data.ks) {
-      const k = Math.max(1, Math.min(ranked.length, Math.floor(rawK)));
+      const k = effectiveK(ranked.length, rawK);
       if (!(await gate())) return;
-      await ctx.emit({ type: 'ring-grow', payload: { k, radius: radiusFor(ranked, k) } });
+      await ctx.emit({ type: 'ring-grow', payload: { radius: radiusFor(ranked, k) } });
 
       for (let i = shown; i < k; i += 1) {
         // 이 루프에는 문이 없다 — 이웃이 한 걸음 안에 함께 담기는 것이 k 의
         // 뜻이라서다. 그래서 취소 검사를 여기서 직접 진다 (C8).
         if (ctx.cancelled) return;
-        const neighbor = ranked[i];
         await ctx.emit({
           type: 'neighbor-captured',
-          target: `index:${neighbor.index}`,
-          payload: { label: neighbor.label },
+          target: `index:${ranked[i].index}`,
+          payload: {},
         });
       }
       shown = k;
 
       const near = ranked.slice(0, k);
       const counts = labels.map((label) => near.filter((n) => n.label === label).length);
-      const verdict = verdictOf(near, labels, counts);
       await ctx.emit({
         type: 'tally-settled',
-        payload: { k, labels, counts, verdict, previous },
+        payload: { verdict: verdictOf(near, labels, counts) },
       });
-      previous = verdict;
     }
 
     if (!(await gate())) return;
-    await ctx.emit({
-      type: 'done',
-      target: `index:${ranked[0].index}`,
-      payload: { nearest: ranked[0].label, verdict: previous ?? ranked[0].label },
-    });
+    await ctx.emit({ type: 'done', target: `index:${ranked[0].index}`, payload: {} });
   };
 
   for (;;) {

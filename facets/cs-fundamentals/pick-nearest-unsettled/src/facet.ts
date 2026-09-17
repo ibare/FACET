@@ -1,8 +1,8 @@
 /**
  * @piece 가장 가까운 것부터 확정하기 — 왜 지금 굳혀도 되는가.
  *
- * 정점 자리(x/y)는 0~1 로 적은 저작 결정이다. 픽셀 환산은 stage 가 캔버스
- * 크기에서 하므로 캔버스가 넓어지면 그림도 함께 커진다.
+ * 선언이 주는 것은 구조뿐이다 — 정점 · 간선 · 무게 · 출발점. 어디에 놓을지는
+ * 그림의 결정이라 stage 가 캔버스 크기에서 정한다 (S-piece).
  *
  * 간선은 무방향이며 from/to 는 적는 순서일 뿐이다. 걸리는 수(무게)만 사실이고,
  * 각 정점이 이게 될 수는 알고리즘이 이 구조에서 셈한다.
@@ -38,7 +38,7 @@ export const pickNearestUnsettledFacet: FacetJson = {
     pt: 'Entre os que ainda oscilam, o que carrega o menor número já não pode descer — endurece, e depois nada o abala.',
   },
   algorithm: 'module:pickNearestUnsettled',
-  projector: 'module:pickNearestUnsettledProjector',
+  scene: 'module:pickNearestUnsettledScene',
   initialData: {
     type: 'weighted-graph',
     // 자리는 여기 없다 — 어디에 놓을지는 그림의 결정이라 stage 가 정한다 (S-piece).
@@ -56,7 +56,7 @@ export const pickNearestUnsettledFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'pick-nearest-unsettled-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.start': {

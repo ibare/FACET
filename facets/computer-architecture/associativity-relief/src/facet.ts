@@ -6,9 +6,13 @@
  * 답하는 질문 하나: **캐시를 키우지 않고도 미스를 줄일 수 있는가.**
  *
  * 칸 수는 넷으로 고정하고 묶는 법만 바꾼다. 선언에 두는 것은 1차 데이터뿐이다 —
- * 칸 수 · 라인 크기 · 견줄 연관도 · 접근열. 자리 수 · 인덱스 · 태그 · 히트/미스 ·
- * 축출은 algorithm 이 그 자리에서 셈하고, 좌표는 stage 가 캔버스에서 역산한다
- * (S-piece).
+ * 칸 수 · 라인 크기 · 견줄 연관도 · 접근열. 히트/미스와 축출은 algorithm 이 그
+ * 자리에서 판정하고, 미스 수 · 밀어낸 횟수 · 몇 번째 접근인가는 장면이 자취에서
+ * 세며, 좌표는 stage 가 캔버스에서 역산한다 (S-piece).
+ *
+ * 화면은 장면(Scene) 방식이다. projector 를 두지 않고 `scene.ts` 가 이벤트를
+ * 상태로 옮기며, stage 는 `render(next, prev, { animate })` 하나로 산다 (S-scene).
+ * 그래서 컨트롤에 스크럽 띠가 선다.
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -40,7 +44,7 @@ export const associativityReliefFacet: FacetJson = {
     pt: 'As mesmas quatro linhas, reagrupadas. Uma por conjunto gera expulsões; duas permitem sentar lado a lado.',
   },
   algorithm: 'module:associativityRelief',
-  projector: 'module:associativityReliefProjector',
+  scene: 'module:associativityReliefScene',
   initialData: {
     type: 'associativity-relief',
     lineBytes: 16,
@@ -51,7 +55,7 @@ export const associativityReliefFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'associativity-relief-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.fillEmpty': {
@@ -67,28 +71,28 @@ export const associativityReliefFacet: FacetJson = {
       pt: '{addr} vai para o conjunto {set}. A via está livre, então simplesmente entra.',
     },
     'caption.sitTogether': {
-      en: '{addr} wants set {set} too. This seat holds two, so it sits alongside.',
-      ko: '{addr} → 같은 {set}번 자리. 이 자리는 둘을 담으므로 밀어내지 않고 곁에 앉는다.',
-      ja: '{addr} も同じセット {set}。この席は二つ入るので、追い出さず隣に座る。',
-      zh: '{addr} 也要第 {set} 组。这个位置能坐两个，于是并排坐下。',
-      ar: '{addr} يريد المجموعة {set} أيضًا. هذا المقعد يتسع لاثنين، فيجلس بجانبه.',
-      es: '{addr} también quiere el conjunto {set}. Este asiento admite dos, así que se sienta al lado.',
-      fr: "{addr} vise aussi l'ensemble {set}. Ce siège en accueille deux : il s'assoit à côté.",
-      hi: '{addr} को भी सेट {set} चाहिए। इस जगह पर दो बैठ सकते हैं, तो वह बगल में बैठ जाता है।',
-      id: '{addr} juga menuju set {set}. Tempat ini memuat dua, jadi ia duduk berdampingan.',
-      pt: '{addr} também quer o conjunto {set}. Este assento cabe dois, então senta ao lado.',
+      en: '{addr} wants set {set} too. This seat holds {ways}, so it sits alongside.',
+      ko: '{addr} → 같은 {set}번 자리. 이 자리는 {ways}칸을 담으므로 밀어내지 않고 곁에 앉는다.',
+      ja: '{addr} も同じセット {set}。この席は {ways} 枠入るので、追い出さず隣に座る。',
+      zh: '{addr} 也要第 {set} 组。这个位置能坐 {ways} 个，于是并排坐下。',
+      ar: '{addr} يريد المجموعة {set} أيضًا. هذا المقعد يتسع لـ {ways}، فيجلس بجانبه.',
+      es: '{addr} también quiere el conjunto {set}. Este asiento admite {ways}, así que se sienta al lado.',
+      fr: "{addr} vise aussi l'ensemble {set}. Ce siège en accueille {ways} : il s'assoit à côté.",
+      hi: '{addr} को भी सेट {set} चाहिए। इस जगह पर {ways} बैठ सकते हैं, तो वह बगल में बैठ जाता है।',
+      id: '{addr} juga menuju set {set}. Tempat ini memuat {ways}, jadi ia duduk berdampingan.',
+      pt: '{addr} também quer o conjunto {set}. Este assento cabe {ways}, então senta ao lado.',
     },
     'caption.evict': {
-      en: '{addr} wants set {set} too, but the only way is taken. {victim} is pushed out.',
-      ko: '{addr} → 같은 {set}번 자리. 하나뿐인 칸이 차 있어 밀어낸다. 나가는 것은 {victim}.',
-      ja: '{addr} も同じセット {set}。唯一の枠が埋まっているので追い出す。出るのは {victim}。',
-      zh: '{addr} 也要第 {set} 组，但唯一的路已被占。被挤出去的是 {victim}。',
-      ar: '{addr} يريد المجموعة {set} أيضًا، لكن الطريق الوحيد مشغول. يُطرد {victim}.',
-      es: '{addr} también quiere el conjunto {set}, pero la única vía está ocupada. Sale {victim}.',
-      fr: "{addr} vise aussi l'ensemble {set}, mais l'unique voie est occupée. {victim} est expulsé.",
-      hi: '{addr} को भी सेट {set} चाहिए, पर इकलौता रास्ता भरा है। बाहर जाता है {victim}।',
-      id: '{addr} juga menuju set {set}, tetapi satu-satunya jalur sudah terisi. Yang terusir adalah {victim}.',
-      pt: '{addr} também quer o conjunto {set}, mas a única via está ocupada. Sai {victim}.',
+      en: '{addr} wants set {set} too, but every way there is taken. {victim} is pushed out.',
+      ko: '{addr} → 같은 {set}번 자리. 그 자리의 칸이 다 차 있어 밀어낸다. 나가는 것은 {victim}.',
+      ja: '{addr} も同じセット {set}。その席の枠がすべて埋まっているので追い出す。出るのは {victim}。',
+      zh: '{addr} 也要第 {set} 组，但那里的路都被占了。被挤出去的是 {victim}。',
+      ar: '{addr} يريد المجموعة {set} أيضًا، لكن كل الطرق هناك مشغولة. يُطرد {victim}.',
+      es: '{addr} también quiere el conjunto {set}, pero todas las vías están ocupadas. Sale {victim}.',
+      fr: "{addr} vise aussi l'ensemble {set}, mais toutes les voies y sont occupées. {victim} est expulsé.",
+      hi: '{addr} को भी सेट {set} चाहिए, पर वहाँ के सभी रास्ते भरे हैं। बाहर जाता है {victim}।',
+      id: '{addr} juga menuju set {set}, tetapi semua jalur di sana sudah terisi. Yang terusir adalah {victim}.',
+      pt: '{addr} também quer o conjunto {set}, mas todas as vias estão ocupadas. Sai {victim}.',
     },
     'caption.hit': {
       en: '{addr} is still sitting in set {set}. Nobody pushed it out — hit.',
@@ -103,28 +107,28 @@ export const associativityReliefFacet: FacetJson = {
       pt: '{addr} continua no conjunto {set}. Ninguém o expulsou: acerto.',
     },
     'caption.regroup': {
-      en: 'Still four lines — only the grouping changes: {ways} per seat, {sets} seats.',
-      ko: '칸 수는 넷 그대로. 묶는 법만 바꾼다 — 한 자리에 {ways}칸씩, 자리는 {sets}.',
-      ja: '枠は四つのまま。まとめ方だけを変える — 一席に {ways} 枠ずつ、席は {sets}。',
-      zh: '仍是四个块，只改分组方式 — 每个位置放 {ways} 个，位置共 {sets} 个。',
-      ar: 'ما زالت أربعة أسطر — يتغير التجميع فقط: {ways} لكل مقعد، وعدد المقاعد {sets}.',
-      es: 'Siguen siendo cuatro líneas; solo cambia la agrupación: {ways} por asiento, {sets} asientos.',
-      fr: 'Toujours quatre lignes — seul le regroupement change : {ways} par siège, {sets} sièges.',
-      hi: 'ब्लॉक अब भी चार — केवल समूह बदलता है: हर जगह {ways}, कुल जगहें {sets}।',
-      id: 'Tetap empat baris — hanya pengelompokannya berubah: {ways} per tempat, {sets} tempat.',
-      pt: 'Ainda quatro linhas — só o agrupamento muda: {ways} por assento, {sets} assentos.',
+      en: 'Still {lines} lines — only the grouping changes: {ways} per seat, {sets} seats.',
+      ko: '칸 수는 {lines} 그대로. 묶는 법만 바꾼다 — 한 자리에 {ways}칸씩, 자리는 {sets}.',
+      ja: '枠は {lines} のまま。まとめ方だけを変える — 一席に {ways} 枠ずつ、席は {sets}。',
+      zh: '仍是 {lines} 个块，只改分组方式 — 每个位置放 {ways} 个，位置共 {sets} 个。',
+      ar: 'ما زال عدد الأسطر {lines} — يتغير التجميع فقط: {ways} لكل مقعد، وعدد المقاعد {sets}.',
+      es: 'Siguen siendo {lines} líneas; solo cambia la agrupación: {ways} por asiento, {sets} asientos.',
+      fr: 'Toujours {lines} lignes — seul le regroupement change : {ways} par siège, {sets} sièges.',
+      hi: 'ब्लॉक अब भी {lines} — केवल समूह बदलता है: हर जगह {ways}, कुल जगहें {sets}।',
+      id: 'Tetap {lines} baris — hanya pengelompokannya berubah: {ways} per tempat, {sets} tempat.',
+      pt: 'Ainda {lines} linhas — só o agrupamento muda: {ways} por assento, {sets} assentos.',
     },
     'caption.done': {
-      en: 'Same four lines, same accesses. Misses: {before} → {after}.',
-      ko: '같은 네 칸, 같은 접근. 미스: {before} → {after}.',
-      ja: '同じ四枠、同じアクセス。ミス: {before} → {after}。',
-      zh: '同样四个块，同样的访问。未命中: {before} → {after}。',
-      ar: 'نفس الأسطر الأربعة، ونفس الوصول. الإخفاقات: {before} → {after}.',
-      es: 'Las mismas cuatro líneas, los mismos accesos. Fallos: {before} → {after}.',
-      fr: 'Les mêmes quatre lignes, les mêmes accès. Défauts : {before} → {after}.',
-      hi: 'वही चार ब्लॉक, वही पहुँच। मिस: {before} → {after}।',
-      id: 'Empat baris yang sama, akses yang sama. Miss: {before} → {after}.',
-      pt: 'As mesmas quatro linhas, os mesmos acessos. Falhas: {before} → {after}.',
+      en: 'Same {lines} lines, same accesses. Misses: {before} → {after}.',
+      ko: '같은 {lines}칸, 같은 접근. 미스: {before} → {after}.',
+      ja: '同じ {lines} 枠、同じアクセス。ミス: {before} → {after}。',
+      zh: '同样 {lines} 个块，同样的访问。未命中: {before} → {after}。',
+      ar: 'نفس الأسطر وعددها {lines}، ونفس الوصول. الإخفاقات: {before} → {after}.',
+      es: 'Las mismas {lines} líneas, los mismos accesos. Fallos: {before} → {after}.',
+      fr: 'Les mêmes {lines} lignes, les mêmes accès. Défauts : {before} → {after}.',
+      hi: 'वही {lines} ब्लॉक, वही पहुँच। मिस: {before} → {after}।',
+      id: '{lines} baris yang sama, akses yang sama. Miss: {before} → {after}.',
+      pt: 'As mesmas {lines} linhas, os mesmos acessos. Falhas: {before} → {after}.',
     },
   },
 };

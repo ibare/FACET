@@ -35,7 +35,7 @@ export const manyPatternsOnePassFacet: FacetJson = {
     pt: 'Quatro padrões dobram-se numa única árvore, por isso uma só passagem pelo texto apanha todos.',
   },
   algorithm: 'module:manyPatternsOnePass',
-  projector: 'module:manyPatternsOnePassProjector',
+  scene: 'module:manyPatternsOnePassScene',
   initialData: {
     type: 'many-patterns-one-pass',
     patterns: ['he', 'she', 'his', 'hers'],
@@ -44,7 +44,7 @@ export const manyPatternsOnePassFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'many-patterns-one-pass-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.separate': {

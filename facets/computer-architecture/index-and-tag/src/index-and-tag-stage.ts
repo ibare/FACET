@@ -1,13 +1,46 @@
 /**
- * index-and-tag 조각의 그림.
+ * 인덱스와 태그 무대 — 장면(Scene) 하나를 받아 화면 전체를 세운다.
  *
- * 위쪽에 주소가 한 줄의 비트로 서고, 아래에 캐시가 줄 넷으로 눕는다.
- * 주소가 끊기면 세 토막이 서로 벌어지고, 벌어진 토막이 각자 제 자리로 **날아간다** —
+ * 걸음마다 부르는 메서드를 두지 않는다. `render` 하나가 장면을 받아 그 장면이
+ * 말하는 것을 전부 세우므로, 어느 걸음에서 오든 결과가 같고 되돌릴 명령이 필요
+ * 없다 (S-scene).
+ *
+ * ── 그림의 뼈대
+ *
+ * 위쪽에 주소가 한 줄의 비트로 서고, 아래에 캐시가 줄 넷으로 눕는다. 주소가
+ * 끊기면 세 토막이 벌어지고, 벌어진 토막이 각자 제 자리로 **날아간다** —
  * 인덱스는 상자 바깥 왼쪽에 내려앉아 그 줄을 가리키고, 태그는 그 줄의 태그 칸에
  * 들어가 남고, 오프셋은 바이트 눈금 위에 내려앉아 한 칸을 짚는다.
  *
- * 색은 그 자리를 물들인다 — 줄 테두리는 인덱스 색, 태그 칸은 태그 색, 짚힌
- * 눈금은 오프셋 색이다. 토막과 그 토막이 맡은 자리가 같은 색으로 묶인다.
+ * **셋 다 화면에 남는다.** 이 조각의 주장이 "하나가 셋으로 갈려 각자 다른 일을
+ * 한다" 이므로 어느 토막도 다음 국면에서 먼저 지워지지 않는다. 통째의 주소는
+ * 띠 위의 표식(`label.address`)으로 계속 서서 견줄 짝이 된다.
+ *
+ * ── 칠의 축을 가른다 (S-scene · 프로토콜 4 절)
+ *
+ *   채움     = **값의 형편** — 그 자리에 무엇이 들어 있나. 태그 칸이 찼나
+ *              비었나 (점선 빈 테두리), 이 바이트 눈금이 짚혔나.
+ *   색 테두리 = **이번 걸음이 짚은 것** — 인덱스가 고른 줄의 테와 화살표,
+ *              오프셋이 가리키는 점선.
+ *   흐린 글자 = **지나간 자취** — 그 줄을 거쳐 간 앞 태그들.
+ *
+ * 세 어휘가 서로를 덮지 않으므로, 한 줄이 "지금 누구의 것인가" 와 "누가 거쳐
+ * 갔나" 와 "이번에 고른 줄인가" 를 한 화면에서 함께 말한다. 한 축에 값을 셋
+ * 이상 싣는 자리가 없다.
+ *
+ * 토막마다 색이 하나씩 붙고(태그 · 인덱스 · 오프셋), 그 토막이 맡은 자리가 같은
+ * 색으로 물든다 — 토막과 일이 색으로 묶인다.
+ *
+ * ── 움직임
+ *
+ * 정적 그리기가 정본이라 토막들은 이미 끝 자리에 서 있다. 걸음은 **아직 못 온
+ * 만큼을 뒤로 물려** 두었다가 놓아 준다. 셋이 함께 흩어지는 걸음은 한 뜻으로
+ * 묶여 있으므로 **시계를 나누지 않고** 한 보간에 셋과 밀려나는 앞 태그까지 함께
+ * 싣는다 (S-scene).
+ *
+ * 출발 그림은 `prev` 가 아니라 장면의 `phase` 와 `fields` 에서 셈한다 — 국면마다
+ * 토막이 서는 자리가 순수 함수로 정해지므로 `render` 가 `prev` 를 아예 들추지
+ * 않는다 (S-scene MUST).
  *
  * 가로는 러너가 `PIECE_CANVAS_W` 로 정하고, 세로는 이 그림이 정해 여기 상수로 둔다
  * (S-piece). 줄 수가 달라져도 상자 높이는 그대로 두고 줄 높이를 줄여 담는다 (S-view).
@@ -18,11 +51,16 @@ import {
   fonts,
   fontSizes,
   getColors,
+  makeTranslator,
   PIECE_CANVAS_W,
   type CanvasView,
+  type SceneRenderer,
   type ViewInstance,
   type ViewMountParams,
 } from '@ffacet/core/runtime';
+
+import type { IndexAndTagScene } from './scene.js';
+import type { IndexAndTagFields } from './algorithm.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -45,8 +83,18 @@ const DOCK_Y = 88;
 /** 머리글과 바이트 눈금 숫자의 baseline. */
 const RULER_Y = 132;
 const BOX_Y = 138;
-const BOX_H = 162;
+/**
+ * 캐시 상자의 높이.
+ *
+ * 줄 하나가 태그 칸(30) 위에 여백을 두고 **그 아래에 지나간 태그의 자취**를
+ * 담을 만큼 높다. 자취를 둘 자리를 만드는 것이 이 그림에서 늘어난 몫이다.
+ */
+const BOX_H = 194;
 const ROW_GAP = 6;
+/** 태그 칸이 줄 위쪽에서 떨어지는 거리. 남는 아래가 자취의 자리다. */
+const CHIP_TOP = 3;
+/** 자취 글자의 baseline (줄 윗변 기준). */
+const TRACE_DY = CHIP_TOP + CHIP_H + 9;
 const CAPTION_Y = BOX_Y + BOX_H + 22;
 const CAPTION_LH = 16;
 const CAPTION_LINES = 2;
@@ -66,49 +114,25 @@ const MARK = { tag: 'tag', index: 'index', offset: 'offset', line: 'line' } as c
 /** 바이트 눈금 숫자를 몇 칸마다 적는가. */
 const RULER_EVERY = 4;
 
-type Scene = {
-  lineSize: number;
-  lineCount: number;
-  indexWidth: number;
-  tagWidth: number;
-};
-
-type ArrivePayload = {
-  addr: number;
-  label: string;
-  tagBits: string;
-  indexBits: string;
-  offsetBits: string;
-};
-
-type DispatchPayload = {
-  line: number;
-  offset: number;
-  evicted: boolean;
-};
-
-function widthOf(n: number): number {
-  return Math.max(1, Math.round(Math.log2(Math.max(1, n))));
-}
-
-function posInt(v: unknown, fallback: number): number {
-  return typeof v === 'number' && Number.isFinite(v) && v > 0 ? Math.floor(v) : fallback;
-}
-
 /**
- * `initialData` 를 좁히는 자리는 여기다 — projector 가 없어도 반드시 불리는
- * 유일한 경로이므로 좁히는 규칙이 두 벌이 되지 않는다 (S-piece).
+ * 캔버스에서 역산한 자리. 장면은 좌표를 모르므로 (S-piece) 여기서 매번 셈한다.
+ *
+ * 이름을 `Layout` 으로 둔다 — `Scene` 은 이제 장면의 이름이다.
  */
-function readScene(raw: unknown): Scene {
-  const d = (typeof raw === 'object' && raw !== null ? raw : {}) as Record<string, unknown>;
-  const cacheSize = posInt(d.cacheSize, 64);
-  const lineSize = posInt(d.lineSize, 16);
-  const lineCount = Math.max(1, Math.floor(cacheSize / lineSize));
-  const offsetWidth = widthOf(lineSize);
-  const indexWidth = widthOf(lineCount);
-  const addrBits = Math.max(offsetWidth + indexWidth + 1, posInt(d.addrBits, 10));
-  return { lineSize, lineCount, indexWidth, tagWidth: addrBits - offsetWidth - indexWidth };
-}
+type Layout = {
+  gutterW: number;
+  boxX: number;
+  boxW: number;
+  tagInnerW: number;
+  fieldX: number;
+  ticksX: number;
+  cellW: number;
+  rowH: number;
+  rowY(i: number): number;
+  tickX(i: number): number;
+};
+
+type Slot = { x: number; y: number };
 
 function el<K extends keyof SVGElementTagNameMap>(
   tag: K,
@@ -127,12 +151,28 @@ function clamp(v: number, lo: number, hi: number): number {
   return v < lo ? lo : v > hi ? hi : v;
 }
 
+function clamp01(v: number): number {
+  return clamp(v, 0, 1);
+}
+
 function lerp(a: number, b: number, p: number): number {
   return a + (b - a) * p;
 }
 
-/** 한글·한자처럼 넓은 글자를 가려 대강의 가로폭을 잰다. */
-const WIDE = /[ᄀ-ᇿ⺀-鿿ꥠ-꥿가-퟿豈-﫿＀-｠]/;
+/** 값을 width 자리 이진수 문자열로. 앞을 0 으로 채운다. */
+function toBits(value: number, width: number): string {
+  let out = '';
+  for (let i = width - 1; i >= 0; i -= 1) out += (value >> i) & 1;
+  return out;
+}
+
+/**
+ * 한글처럼 넓은 글자를 가려 대강의 가로폭을 잰다.
+ *
+ * 범위는 코드 포인트로 적는다 — 글자를 그대로 적으면 이 파일이 다른 문자 체계의
+ * 글자를 품게 된다.
+ */
+const WIDE = /[\u1100-\u11FF\u2E80-\u9FFF\uA960-\uA97F\uAC00-\uD7FF\uF900-\uFAFF\uFF00-\uFF60]/;
 
 function textWidth(s: string, fs: number): number {
   let w = 0;
@@ -168,578 +208,737 @@ function wrapText(s: string, maxW: number, fs: number, maxLines: number): string
   return out;
 }
 
+/** 캔버스와 바탕에서 자리를 역산한다. 남는 폭을 여백으로 버리지 않는다 (S-piece). */
+function layoutOf(f: IndexAndTagFields): Layout {
+  const gutterW = f.indexWidth * BIT_W;
+  const boxX = PAD + gutterW + 14;
+  const boxW = W - PAD - boxX;
+  const tagInnerW = f.tagWidth * BIT_W;
+  const tagW = tagInnerW + 8;
+  const fieldX = boxX + NUM_W + 4;
+  const ticksLeft = boxX + NUM_W + tagW + 8;
+  const ticksAvail = boxX + boxW - 8 - ticksLeft;
+  const cellW = Math.max(6, Math.floor(ticksAvail / f.lineSize));
+  const ticksX = ticksLeft + Math.round((ticksAvail - cellW * f.lineSize) / 2);
+  const rowH = Math.floor((BOX_H - (f.lineCount - 1) * ROW_GAP) / f.lineCount);
+  return {
+    gutterW,
+    boxX,
+    boxW,
+    tagInnerW,
+    fieldX,
+    ticksX,
+    cellW,
+    rowH,
+    rowY: (i) => BOX_Y + i * (rowH + ROW_GAP),
+    tickX: (i) => ticksX + i * cellW,
+  };
+}
+
+/** 토막 셋의 폭 (픽셀). */
+function widths(f: IndexAndTagFields): { tag: number; index: number; offset: number } {
+  return { tag: f.tagWidth * BIT_W, index: f.indexWidth * BIT_W, offset: f.offsetWidth * BIT_W };
+}
+
+/** 한 몸으로 붙어 선 자리 — 아직 끊기지 않았다. */
+function joinedSlots(f: IndexAndTagFields): {
+  tag: Slot;
+  index: Slot;
+  offset: Slot;
+  x0: number;
+  total: number;
+} {
+  const w = widths(f);
+  const total = w.tag + w.index + w.offset;
+  const x0 = Math.round((W - total) / 2);
+  return {
+    tag: { x: x0, y: STRIP_Y },
+    index: { x: x0 + w.tag, y: STRIP_Y },
+    offset: { x: x0 + w.tag + w.index, y: STRIP_Y },
+    x0,
+    total,
+  };
+}
+
+/** 끊긴 자리가 벌어진 자리. */
+function splitSlots(f: IndexAndTagFields): { tag: Slot; index: Slot; offset: Slot } {
+  const j = joinedSlots(f);
+  return {
+    tag: { x: j.tag.x - SPLIT_GAP, y: STRIP_Y },
+    index: j.index,
+    offset: { x: j.offset.x + SPLIT_GAP, y: STRIP_Y },
+  };
+}
+
+/** 셋이 제 일을 하러 간 자리. */
+function placedSlots(
+  f: IndexAndTagFields,
+  g: Layout,
+  line: number,
+  byte: number,
+): { tag: Slot; index: Slot; offset: Slot } {
+  const w = widths(f);
+  const dockY = g.rowY(line) + CHIP_TOP;
+  return {
+    index: { x: PAD, y: dockY },
+    tag: { x: g.fieldX, y: dockY },
+    offset: {
+      x: clamp(g.tickX(byte) + g.cellW / 2 - w.offset / 2, PAD, W - PAD - w.offset),
+      y: DOCK_Y,
+    },
+  };
+}
+
 export const indexAndTagStageView: CanvasView = {
   canvas: { height: CANVAS_H },
 
-  mount(_container: HTMLElement, params: ViewMountParams & { canvas: SVGSVGElement }): ViewInstance {
+  mount(
+    _container: HTMLElement,
+    params: ViewMountParams & { canvas: SVGSVGElement },
+  ): ViewInstance & SceneRenderer<IndexAndTagScene> {
     const svg = params.canvas;
     const colors = getColors(params.theme);
-    const scene = readScene(params.initialData);
+    // 문안은 그리는 쪽이 만든다. 장면은 무엇을 말할지만 담는다 (C10).
+    const t = params.t ?? makeTranslator(params.locale);
+    // 컨테이너가 아니라 캔버스 안쪽을 비운다 — 컨테이너를 비우면 러너가 먼저
+    // 붙여 둔 캔버스가 통째로 떨어져 나간다 (S-view).
+    svg.textContent = '';
+
     const hues = categorical(3, 'vivid');
     const tagColor = hues[0] ?? colors.accent;
     const indexColor = hues[1] ?? colors.accent;
     const offsetColor = hues[2] ?? colors.accent;
 
-    // ── 가로 자리 — 캔버스에서 역산한다. 남는 폭을 여백으로 버리지 않는다 (S-piece).
-    const gutterW = scene.indexWidth * BIT_W;
-    const boxX = PAD + gutterW + 14;
-    const boxW = W - PAD - boxX;
-    const tagInnerW = scene.tagWidth * BIT_W;
-    const tagW = tagInnerW + 8;
-    const fieldX = boxX + NUM_W + 4;
-    const ticksLeft = boxX + NUM_W + tagW + 8;
-    const ticksAvail = boxX + boxW - 8 - ticksLeft;
-    const cellW = Math.max(6, Math.floor(ticksAvail / scene.lineSize));
-    const ticksX = ticksLeft + Math.round((ticksAvail - cellW * scene.lineSize) / 2);
-    const rowH = Math.floor((BOX_H - (scene.lineCount - 1) * ROW_GAP) / scene.lineCount);
-    const chipDockDy = Math.round((rowH - CHIP_H) / 2);
-    const rowY = (i: number): number => BOX_Y + i * (rowH + ROW_GAP);
-    const tickX = (i: number): number => ticksX + i * cellW;
+    // ── 층. 넷 다 걸음마다 통째로 다시 세운다. 고정 자리에 남는 요소를 하나도
+    //    두지 않으므로 "재건 밖 요소" 가 없다 (S-scene).
+    const gBox = el('g', {});
+    const gMark = el('g', {});
+    const gStrip = el('g', {});
+    const gCaption = el('g', {});
+    svg.appendChild(gBox);
+    svg.appendChild(gMark);
+    svg.appendChild(gStrip);
+    svg.appendChild(gCaption);
 
-    // ── 애니메이션 살림 — 걸어 둔 것은 모아 두고 destroy 에서 일괄로 거둔다 (S-piece).
+    // ── 걸어 둔 것과 기다리는 것. destroy 가 일괄로 거둔다 (S-piece).
     let destroyed = false;
     const waiters = new Set<() => void>();
     const frames = new Set<number>();
 
-    function tween(ms: number, onFrame: (raw: number) => void): Promise<void> {
+    /**
+     * 지금 화면을 세운 `render` 의 번호.
+     *
+     * 걸음 하나가 rAF 를 여러 번 지난다. 가운데에 unmount 가 끼어들면 남은
+     * 프레임이 이미 새로 선 화면을 덮을 수 있으므로, 프레임마다 자기 번호가 아직
+     * 유효한지 보고 물러난다. `isInstant` 는 빗장이 아니다 — 러너는 장면 조각에서
+     * 그것을 부르지 않는다 (S-scene).
+     */
+    let gen = 0;
+    const alive = (mine: number): boolean => mine === gen && !destroyed;
+
+    const canAnimate = typeof requestAnimationFrame === 'function';
+
+    function tween(duration: number, mine: number, draw: (p: number) => void): Promise<void> {
       return new Promise<void>((resolve) => {
-        if (destroyed) {
-          onFrame(1);
-          resolve();
-          return;
-        }
-        const t0 = Date.now();
-        let raf = 0;
+        if (!alive(mine)) return resolve();
+        const started = Date.now();
         const finish = (): void => {
           waiters.delete(finish);
           resolve();
         };
         waiters.add(finish);
         const tick = (): void => {
-          frames.delete(raf);
-          if (destroyed) {
-            onFrame(1);
-            finish();
-            return;
-          }
-          const p = Math.min(1, (Date.now() - t0) / ms);
-          onFrame(p);
-          if (p >= 1) {
-            finish();
-            return;
-          }
-          raf = requestAnimationFrame(tick);
-          frames.add(raf);
-        };
-        raf = requestAnimationFrame(tick);
-        frames.add(raf);
-      });
-    }
-
-    // ── 층 ─────────────────────────────────────────────────────────────
-    const boxLayer = el('g', {});
-    const markLayer = el('g', {});
-    const stripLayer = el('g', {});
-    const captionLayer = el('g', {});
-    svg.appendChild(boxLayer);
-    svg.appendChild(markLayer);
-    svg.appendChild(stripLayer);
-    svg.appendChild(captionLayer);
-
-    // ── 캐시 상자 ───────────────────────────────────────────────────────
-    boxLayer.appendChild(
-      el('rect', {
-        x: boxX,
-        y: BOX_Y,
-        width: boxW,
-        height: BOX_H,
-        rx: 8,
-        fill: colors.bg,
-        stroke: colors.border,
-        'stroke-width': 1,
-      }),
-    );
-
-    function header(x: number, label: string): void {
-      const t = el('text', {
-        x,
-        y: RULER_Y,
-        'text-anchor': 'middle',
-        'font-family': fonts.body,
-        'font-size': fontSizes.xs,
-        fill: colors.textMuted,
-      });
-      t.textContent = label;
-      boxLayer.appendChild(t);
-    }
-    header(boxX + NUM_W / 2, MARK.line);
-    header(fieldX + tagInnerW / 2, MARK.tag);
-    for (let b = 0; b < scene.lineSize; b += RULER_EVERY) {
-      const t = el('text', {
-        x: tickX(b) + cellW / 2,
-        y: RULER_Y,
-        'text-anchor': 'middle',
-        'font-family': fonts.mono,
-        'font-size': fontSizes.xs,
-        fill: colors.textMuted,
-      });
-      t.textContent = String(b);
-      boxLayer.appendChild(t);
-    }
-
-    type Row = { field: SVGRectElement; stored: SVGGElement; ticks: SVGRectElement[] };
-    const rows: Row[] = [];
-
-    for (let i = 0; i < scene.lineCount; i += 1) {
-      const y = rowY(i);
-      const num = el('text', {
-        x: boxX + NUM_W / 2,
-        y: y + rowH / 2 + 5,
-        'text-anchor': 'middle',
-        'font-family': fonts.mono,
-        'font-size': fontSizes.sm,
-        fill: colors.textMuted,
-      });
-      num.textContent = String(i);
-      boxLayer.appendChild(num);
-
-      const field = el('rect', {
-        x: fieldX,
-        y: y + chipDockDy,
-        width: tagInnerW,
-        height: CHIP_H,
-        rx: 6,
-        fill: 'none',
-        stroke: colors.border,
-        'stroke-width': 1,
-        'stroke-dasharray': '3 3',
-      });
-      boxLayer.appendChild(field);
-
-      const stored = el('g', { transform: `translate(${fieldX},${y + chipDockDy})`, opacity: 0 });
-      boxLayer.appendChild(stored);
-
-      const ticks: SVGRectElement[] = [];
-      for (let b = 0; b < scene.lineSize; b += 1) {
-        const tick = el('rect', {
-          x: tickX(b) + 1,
-          y: y + rowH / 2 - 6,
-          width: Math.max(2, cellW - 2),
-          height: 12,
-          rx: 2,
-          fill: colors.border,
-        });
-        boxLayer.appendChild(tick);
-        ticks.push(tick);
-      }
-
-      rows.push({ field, stored, ticks });
-    }
-
-    // ── 표시물 (고른 줄 · 화살표 · 짚은 눈금으로 내리는 점선) ─────────────
-    const rowFrame = el('rect', {
-      x: boxX + 2,
-      y: BOX_Y,
-      width: boxW - 4,
-      height: rowH,
-      rx: 6,
-      fill: 'none',
-      stroke: indexColor,
-      'stroke-width': 2,
-      opacity: 0,
-    });
-    const pointer = el('path', { d: '', fill: indexColor, opacity: 0 });
-    const dropLine = el('line', {
-      x1: 0,
-      y1: 0,
-      x2: 0,
-      y2: 0,
-      stroke: offsetColor,
-      'stroke-width': 1.5,
-      'stroke-dasharray': '3 4',
-      opacity: 0,
-    });
-    markLayer.appendChild(rowFrame);
-    markLayer.appendChild(pointer);
-    markLayer.appendChild(dropLine);
-
-    // ── 주소 띠 ─────────────────────────────────────────────────────────
-    const wholeRect = el('rect', {
-      x: 0,
-      y: STRIP_Y,
-      width: 0,
-      height: CHIP_H,
-      rx: 6,
-      fill: colors.bgSubtle,
-      stroke: colors.border,
-      'stroke-width': 1,
-      opacity: 0,
-    });
-    stripLayer.appendChild(wholeRect);
-
-    const addrLabel = el('text', {
-      x: W / 2,
-      y: ADDR_LABEL_Y,
-      'text-anchor': 'middle',
-      'font-family': fonts.body,
-      'font-size': fontSizes.sm,
-      fill: colors.textMuted,
-      opacity: 0,
-    });
-    stripLayer.appendChild(addrLabel);
-
-    type Chip = {
-      g: SVGGElement;
-      rect: SVGRectElement;
-      label: SVGTextElement;
-      glyphs: SVGTextElement[];
-      bits: string;
-      w: number;
-      x: number;
-      y: number;
-      setBits(s: string): void;
-      place(x: number, y: number): void;
-      paint(filled: boolean, color: string): void;
-      show(v: number): void;
-    };
-
-    function makeChip(mark: string): Chip {
-      const g = el('g', { transform: 'translate(0,0)', opacity: 0 });
-      const rect = el('rect', {
-        x: 0,
-        y: 0,
-        width: 0,
-        height: CHIP_H,
-        rx: 6,
-        fill: 'none',
-        stroke: 'none',
-      });
-      const label = el('text', {
-        x: 0,
-        y: CHIP_LABEL_DY,
-        'text-anchor': 'middle',
-        'font-family': fonts.body,
-        'font-size': fontSizes.xs,
-        fill: colors.textMuted,
-        opacity: 0,
-      });
-      label.textContent = mark;
-      g.appendChild(rect);
-      g.appendChild(label);
-      stripLayer.appendChild(g);
-
-      const chip: Chip = {
-        g,
-        rect,
-        label,
-        glyphs: [],
-        bits: '',
-        w: 0,
-        x: 0,
-        y: 0,
-        setBits(s) {
-          chip.bits = s;
-          chip.w = s.length * BIT_W;
-          rect.setAttribute('width', String(chip.w));
-          label.setAttribute('x', String(chip.w / 2));
-          while (chip.glyphs.length < s.length) {
-            const t = el('text', {
-              x: 0,
-              y: CHIP_H / 2 + 5,
-              'text-anchor': 'middle',
-              'font-family': fonts.mono,
-              'font-size': fontSizes.md,
-              fill: colors.text,
-            });
-            g.appendChild(t);
-            chip.glyphs.push(t);
-          }
-          chip.glyphs.forEach((t, i) => {
-            t.textContent = i < s.length ? (s[i] ?? '') : '';
-            t.setAttribute('x', String(i * BIT_W + BIT_W / 2));
+          // 세대가 바뀌었으면 그리지 않고 물러난다. 남은 프레임이 새 화면을
+          // 덮는 길을 여기서 끊는다.
+          if (!alive(mine)) return finish();
+          const p = duration <= 0 ? 1 : clamp01((Date.now() - started) / duration);
+          draw(p);
+          if (p >= 1) return finish();
+          const id = requestAnimationFrame(() => {
+            frames.delete(id);
+            tick();
           });
-        },
-        place(x, y) {
-          chip.x = x;
-          chip.y = y;
-          g.setAttribute('transform', `translate(${x},${y})`);
-        },
-        paint(filled, color) {
-          rect.setAttribute('fill', filled ? color : 'none');
-          const ink = filled ? colors.stateInk : colors.text;
-          for (const t of chip.glyphs) t.setAttribute('fill', ink);
-          label.setAttribute('opacity', filled ? '1' : '0');
-        },
-        show(v) {
-          g.setAttribute('opacity', String(v));
-        },
-      };
-      return chip;
-    }
-
-    const tagChip = makeChip(MARK.tag);
-    const indexChip = makeChip(MARK.index);
-    const offsetChip = makeChip(MARK.offset);
-
-    // ── 캡션 ────────────────────────────────────────────────────────────
-    const captionFs = Number.parseFloat(fontSizes.sm);
-    const captionEls: SVGTextElement[] = [];
-    for (let i = 0; i < CAPTION_LINES; i += 1) {
-      const t = el('text', {
-        x: W / 2,
-        y: CAPTION_Y + i * CAPTION_LH,
-        'text-anchor': 'middle',
-        'font-family': fonts.body,
-        'font-size': fontSizes.sm,
-        fill: colors.text,
+          frames.add(id);
+        };
+        tick();
       });
-      captionLayer.appendChild(t);
-      captionEls.push(t);
     }
 
-    // ── 상태 ────────────────────────────────────────────────────────────
-    /** 지금 태그 칩이 앉아 있는 줄. 다음 주소가 오면 그 줄의 것으로 굳는다. */
-    let dockedLine: number | null = null;
-    let markedTick: SVGRectElement | null = null;
+    // ── 조각 만들기 ───────────────────────────────────────────────────────
 
-    function paintStored(line: number, bits: string): void {
-      const row = rows[line];
-      if (!row) return;
-      row.stored.textContent = '';
+    /** 비트 글자 한 줄. 칩 안에도, 줄에 굳은 태그에도 같은 것을 쓴다. */
+    function glyphs(parent: SVGGElement, bits: string, ink: string): void {
       for (let i = 0; i < bits.length; i += 1) {
-        const t = el('text', {
+        const node = el('text', {
           x: i * BIT_W + BIT_W / 2,
           y: CHIP_H / 2 + 5,
           'text-anchor': 'middle',
           'font-family': fonts.mono,
           'font-size': fontSizes.md,
-          fill: colors.stateInk,
+          fill: ink,
         });
-        t.textContent = bits[i] ?? '';
-        row.stored.appendChild(t);
-      }
-      row.stored.setAttribute('opacity', '1');
-      row.stored.setAttribute('transform', `translate(${fieldX},${rowY(line) + chipDockDy})`);
-      row.field.setAttribute('fill', tagColor);
-      row.field.setAttribute('stroke', 'none');
-      row.field.setAttribute('stroke-dasharray', '');
-    }
-
-    function clearStored(line: number): void {
-      const row = rows[line];
-      if (!row) return;
-      row.stored.textContent = '';
-      row.stored.setAttribute('opacity', '0');
-      row.stored.setAttribute('transform', `translate(${fieldX},${rowY(line) + chipDockDy})`);
-      row.field.setAttribute('fill', 'none');
-      row.field.setAttribute('stroke', colors.border);
-      row.field.setAttribute('stroke-dasharray', '3 3');
-    }
-
-    /** 앉아 있던 태그 칩을 그 줄의 것으로 굳힌다. */
-    function absorbDocked(): void {
-      if (dockedLine === null) return;
-      paintStored(dockedLine, tagChip.bits);
-      tagChip.show(0);
-      dockedLine = null;
-    }
-
-    function clearMarks(): void {
-      rowFrame.setAttribute('opacity', '0');
-      pointer.setAttribute('opacity', '0');
-      dropLine.setAttribute('opacity', '0');
-      if (markedTick) {
-        markedTick.setAttribute('fill', colors.border);
-        markedTick = null;
+        node.textContent = bits[i] ?? '';
+        parent.appendChild(node);
       }
     }
 
-    function layoutWhole(): void {
-      const total = tagChip.w + indexChip.w + offsetChip.w;
-      const x0 = Math.round((W - total) / 2);
-      tagChip.place(x0, STRIP_Y);
-      indexChip.place(x0 + tagChip.w, STRIP_Y);
-      offsetChip.place(x0 + tagChip.w + indexChip.w, STRIP_Y);
-      wholeRect.setAttribute('x', String(x0));
-      wholeRect.setAttribute('width', String(total));
+    /**
+     * 주소 띠의 토막 하나.
+     *
+     * 한 몸일 때는 채우지 않는다 — 색이 갈리는 것은 끊긴 뒤다. 채움은 값의
+     * 형편이고, 표식(`tag` · `index` · `offset`)은 그 칠에 딸린다.
+     */
+    function chip(
+      bits: string,
+      mark: string,
+      slot: Slot,
+      filled: boolean,
+      color: string,
+    ): SVGGElement {
+      const g = el('g', { transform: `translate(${slot.x},${slot.y})` });
+      const w = bits.length * BIT_W;
+      g.appendChild(
+        el('rect', {
+          x: 0,
+          y: 0,
+          width: w,
+          height: CHIP_H,
+          rx: 6,
+          fill: filled ? color : 'none',
+          stroke: 'none',
+        }),
+      );
+      if (filled) {
+        const label = el('text', {
+          x: w / 2,
+          y: CHIP_LABEL_DY,
+          'text-anchor': 'middle',
+          'font-family': fonts.body,
+          'font-size': fontSizes.xs,
+          fill: colors.textMuted,
+        });
+        label.textContent = mark;
+        g.appendChild(label);
+      }
+      glyphs(g, bits, filled ? colors.stateInk : colors.text);
+      gStrip.appendChild(g);
+      return g;
     }
 
-    // ── 바깥이 부르는 것 ────────────────────────────────────────────────
+    /** 줄에 굳은 태그 — 칸이 물들고 그 안에 비트가 남는다. */
+    function storedGroup(g: Layout, line: number, bits: string): SVGGElement {
+      const node = el('g', { transform: `translate(${g.fieldX},${g.rowY(line) + CHIP_TOP})` });
+      glyphs(node, bits, colors.stateInk);
+      gBox.appendChild(node);
+      return node;
+    }
 
-    async function showAddress(a: ArrivePayload): Promise<void> {
-      absorbDocked();
-      clearMarks();
+    // ── 정적 그리기 ───────────────────────────────────────────────────────
 
-      tagChip.setBits(a.tagBits);
-      indexChip.setBits(a.indexBits);
-      offsetChip.setBits(a.offsetBits);
-      // 통째로 뜰 때는 셋이 한 몸이다 — 색은 끊긴 뒤에 갈린다.
-      tagChip.paint(false, tagColor);
-      indexChip.paint(false, indexColor);
-      offsetChip.paint(false, offsetColor);
-      layoutWhole();
-      addrLabel.textContent = a.label;
+    type Drawn = {
+      g: Layout;
+      /** 줄에 굳은 태그. 없는 줄은 `null`. */
+      stored: (SVGGElement | null)[];
+      /** 줄의 자취 글자. 자취가 없으면 `null`. */
+      trace: (SVGGElement | null)[];
+      /** 띠 위에 선 토막. 이미 제 일을 하러 간 토막은 `null`. */
+      tagChip: SVGGElement | null;
+      indexChip: SVGGElement | null;
+      offsetChip: SVGGElement | null;
+      whole: SVGRectElement | null;
+      addrLabel: SVGTextElement | null;
+      /** 인덱스가 고른 줄의 테 · 화살표, 오프셋이 가리키는 점선과 짚힌 눈금. */
+      marks: SVGElement[];
+    };
 
-      const chips = [tagChip, indexChip, offsetChip];
-      const homeY = STRIP_Y;
-      // 제 자리에 앉아 있던 칩이 띠로 되돌아오는 길이라, 먼저 지워 두지 않으면
-      // 첫 프레임 앞에 한 번 번쩍인다.
-      for (const c of chips) c.show(0);
-      wholeRect.setAttribute('opacity', '0');
-      await tween(ENTER_MS, (raw) => {
-        const e = ease(raw);
-        const dy = lerp(-16, 0, e);
-        for (const c of chips) c.place(c.x, homeY + dy);
-        wholeRect.setAttribute('y', String(homeY + dy));
-        wholeRect.setAttribute('opacity', String(e));
-        addrLabel.setAttribute('opacity', String(e));
-        for (const c of chips) c.show(e);
+    function captionOf(scene: IndexAndTagScene): string {
+      const c = scene.current;
+      if (c === null || scene.phase === null) return '';
+      switch (scene.phase) {
+        case 'arrived':
+          return t('caption.arrives', 'One address arrives: {addr}.', { addr: c.addr });
+        case 'split':
+          return t('caption.splits', 'It breaks into three — tag, index, offset.');
+        case 'placed':
+          return c.evicted === null
+            ? t(
+                'caption.dispatch',
+                'The index picks line {line}, the tag stays in it, the offset points at byte {offset}.',
+                { line: c.line, offset: c.offset },
+              )
+            : t(
+                'caption.evicted',
+                'That line was holding tag {old}; tag {tag} takes its place — same line, different place.',
+                { old: c.evicted, tag: c.tag },
+              );
+        case 'done':
+          return t(
+            'caption.done',
+            'Different places can share one line. The tag is what tells them apart.',
+          );
+        default:
+          return '';
+      }
+    }
+
+    function drawCaption(text: string): void {
+      if (text === '') return;
+      const fs = Number.parseFloat(fontSizes.sm);
+      const lines = wrapText(text, W - PAD * 4, fs, CAPTION_LINES);
+      lines.forEach((line, i) => {
+        const node = el('text', {
+          x: W / 2,
+          y: CAPTION_Y + i * CAPTION_LH,
+          'text-anchor': 'middle',
+          'font-family': fonts.body,
+          'font-size': fontSizes.sm,
+          fill: colors.text,
+        });
+        node.textContent = line;
+        gCaption.appendChild(node);
       });
-      for (const c of chips) c.place(c.x, homeY);
-      wholeRect.setAttribute('y', String(homeY));
     }
 
-    /** 끊긴 자리가 벌어진다 — 이 걸음이 보이는 것은 갈라짐 그 자체다. */
-    async function splitAddress(): Promise<void> {
-      wholeRect.setAttribute('opacity', '0');
-      tagChip.paint(true, tagColor);
-      indexChip.paint(true, indexColor);
-      offsetChip.paint(true, offsetColor);
+    function drawScene(scene: IndexAndTagScene): Drawn {
+      gBox.textContent = '';
+      gMark.textContent = '';
+      gStrip.textContent = '';
+      gCaption.textContent = '';
 
-      const tagFrom = tagChip.x;
-      const offFrom = offsetChip.x;
-      await tween(SPLIT_MS, (raw) => {
-        const e = ease(raw);
-        tagChip.place(tagFrom - SPLIT_GAP * e, STRIP_Y);
-        offsetChip.place(offFrom + SPLIT_GAP * e, STRIP_Y);
-      });
-    }
+      const f = scene.fields;
+      const g = layoutOf(f);
+      const c = scene.current;
+      const phase = scene.phase;
 
-    /** 셋이 제 자리로 날아간다. 조금씩 어긋나게 떠나 저마다의 길이 보이게 한다. */
-    async function dispatch(a: DispatchPayload): Promise<void> {
-      const line = clamp(Math.floor(a.line), 0, scene.lineCount - 1);
-      const byte = clamp(Math.floor(a.offset), 0, scene.lineSize - 1);
-      const row = rows[line];
-      if (!row) return;
-      const dockY = rowY(line) + chipDockDy;
-      const offDockX = clamp(
-        tickX(byte) + cellW / 2 - offsetChip.w / 2,
-        PAD,
-        W - PAD - offsetChip.w,
+      // ── 캐시 상자와 머리글
+      gBox.appendChild(
+        el('rect', {
+          x: g.boxX,
+          y: BOX_Y,
+          width: g.boxW,
+          height: BOX_H,
+          rx: 8,
+          fill: colors.bg,
+          stroke: colors.border,
+          'stroke-width': 1,
+        }),
       );
 
-      const legs = [
-        { chip: indexChip, to: { x: PAD, y: dockY }, from: { x: indexChip.x, y: indexChip.y }, t0: 0 },
-        { chip: tagChip, to: { x: fieldX, y: dockY }, from: { x: tagChip.x, y: tagChip.y }, t0: 0.16 },
-        { chip: offsetChip, to: { x: offDockX, y: DOCK_Y }, from: { x: offsetChip.x, y: offsetChip.y }, t0: 0.32 },
-      ];
-
-      const evicting = a.evicted;
-      const evictFrom = rowY(line) + chipDockDy;
-
-      await tween(FLIGHT_MS, (raw) => {
-        for (const leg of legs) {
-          const q = clamp((raw - leg.t0) / (1 - leg.t0), 0, 1);
-          const e = ease(q);
-          const x = lerp(leg.from.x, leg.to.x, e);
-          // 살짝 떠올랐다 내려앉는다 — 곧장 미끄러지면 옮겨졌다기보다 늘어난 것으로 보인다.
-          const y = lerp(leg.from.y, leg.to.y, e) - Math.sin(Math.PI * e) * 12;
-          leg.chip.place(x, y);
-        }
-        if (evicting) {
-          const e = ease(clamp(raw / 0.6, 0, 1));
-          row.stored.setAttribute('transform', `translate(${fieldX},${evictFrom + 26 * e})`);
-          row.stored.setAttribute('opacity', String(1 - e));
-        }
-      });
-
-      for (const leg of legs) leg.chip.place(leg.to.x, leg.to.y);
-      if (evicting) clearStored(line);
-
-      rowFrame.setAttribute('y', String(rowY(line)));
-      rowFrame.setAttribute('opacity', '1');
-      const py = rowY(line) + rowH / 2;
-      pointer.setAttribute('d', `M ${boxX - 11} ${py - 6} L ${boxX - 2} ${py} L ${boxX - 11} ${py + 6} Z`);
-      pointer.setAttribute('opacity', '1');
-
-      const tick = row.ticks[byte];
-      if (tick) {
-        tick.setAttribute('fill', offsetColor);
-        markedTick = tick;
+      const header = (x: number, label: string): void => {
+        const node = el('text', {
+          x,
+          y: RULER_Y,
+          'text-anchor': 'middle',
+          'font-family': fonts.body,
+          'font-size': fontSizes.xs,
+          fill: colors.textMuted,
+        });
+        node.textContent = label;
+        gBox.appendChild(node);
+      };
+      header(g.boxX + NUM_W / 2, MARK.line);
+      header(g.fieldX + g.tagInnerW / 2, MARK.tag);
+      for (let b = 0; b < f.lineSize; b += RULER_EVERY) {
+        const node = el('text', {
+          x: g.tickX(b) + g.cellW / 2,
+          y: RULER_Y,
+          'text-anchor': 'middle',
+          'font-family': fonts.mono,
+          'font-size': fontSizes.xs,
+          fill: colors.textMuted,
+        });
+        node.textContent = String(b);
+        gBox.appendChild(node);
       }
-      const dropX = offDockX + offsetChip.w / 2;
-      dropLine.setAttribute('x1', String(dropX));
-      dropLine.setAttribute('y1', String(DOCK_Y + CHIP_H));
-      dropLine.setAttribute('x2', String(tickX(byte) + cellW / 2));
-      dropLine.setAttribute('y2', String(rowY(line) + rowH / 2 - 7));
-      dropLine.setAttribute('opacity', '0.9');
 
-      dockedLine = line;
+      // ── 줄
+      const stored: (SVGGElement | null)[] = [];
+      const trace: (SVGGElement | null)[] = [];
+      const hotByte = c !== null && (phase === 'placed' || phase === 'done') ? c.offset : -1;
+      const hotLine = c !== null && (phase === 'placed' || phase === 'done') ? c.line : -1;
+
+      for (let i = 0; i < f.lineCount; i += 1) {
+        const y = g.rowY(i);
+        const midY = y + CHIP_TOP + CHIP_H / 2;
+
+        const num = el('text', {
+          x: g.boxX + NUM_W / 2,
+          y: midY + 5,
+          'text-anchor': 'middle',
+          'font-family': fonts.mono,
+          'font-size': fontSizes.sm,
+          fill: colors.textMuted,
+        });
+        num.textContent = String(i);
+        gBox.appendChild(num);
+
+        // 태그 칸 — **채움이 값의 형편을 말한다.** 차 있으면 물들고, 비어 있으면
+        // 점선 빈 테두리로 남는다.
+        const held = scene.held[i] ?? null;
+        gBox.appendChild(
+          el('rect', {
+            x: g.fieldX,
+            y: y + CHIP_TOP,
+            width: g.tagInnerW,
+            height: CHIP_H,
+            rx: 6,
+            ...(held === null
+              ? { fill: 'none', stroke: colors.border, 'stroke-width': 1, 'stroke-dasharray': '3 3' }
+              : { fill: tagColor, stroke: 'none' }),
+          }),
+        );
+        stored.push(held === null ? null : storedGroup(g, i, toBits(held, f.tagWidth)));
+
+        // 지나간 태그 — **흐린 글자**로 남는 자취다. 이 줄을 여럿이 거쳐 갔다는
+        // 것이 이 조각의 결론이라 완주 화면에 남아야 한다 (프로토콜 4 절).
+        const gone = scene.passed[i] ?? [];
+        if (gone.length === 0) {
+          trace.push(null);
+        } else {
+          const node = el('g', {});
+          const step = f.tagWidth * 7 + 8;
+          gone.forEach((tagValue, k) => {
+            const text = el('text', {
+              x: g.fieldX + k * step,
+              y: y + TRACE_DY,
+              'font-family': fonts.mono,
+              'font-size': fontSizes.xs,
+              fill: colors.textMuted,
+              opacity: 0.7,
+            });
+            text.textContent = toBits(tagValue, f.tagWidth);
+            node.appendChild(text);
+          });
+          gBox.appendChild(node);
+          trace.push(node);
+        }
+
+        // 바이트 눈금. 짚힌 칸만 오프셋 색으로 찬다.
+        for (let b = 0; b < f.lineSize; b += 1) {
+          gBox.appendChild(
+            el('rect', {
+              x: g.tickX(b) + 1,
+              y: midY - 6,
+              width: Math.max(2, g.cellW - 2),
+              height: 12,
+              rx: 2,
+              fill: i === hotLine && b === hotByte ? offsetColor : colors.border,
+            }),
+          );
+        }
+      }
+
+      // ── 표시물. **색 테두리가 "이번 걸음이 짚은 것"** 을 말한다.
+      const marks: SVGElement[] = [];
+      if (c !== null && (phase === 'placed' || phase === 'done')) {
+        const y = g.rowY(c.line);
+        const midY = y + CHIP_TOP + CHIP_H / 2;
+        const frame = el('rect', {
+          x: g.boxX + 2,
+          y,
+          width: g.boxW - 4,
+          height: g.rowH,
+          rx: 6,
+          fill: 'none',
+          stroke: indexColor,
+          'stroke-width': 2,
+        });
+        const pointer = el('path', {
+          d: `M ${g.boxX - 11} ${midY - 6} L ${g.boxX - 2} ${midY} L ${g.boxX - 11} ${midY + 6} Z`,
+          fill: indexColor,
+        });
+        const dock = placedSlots(f, g, c.line, c.offset);
+        const wOff = widths(f).offset;
+        const drop = el('line', {
+          x1: dock.offset.x + wOff / 2,
+          y1: DOCK_Y + CHIP_H,
+          x2: g.tickX(c.offset) + g.cellW / 2,
+          y2: midY - 7,
+          stroke: offsetColor,
+          'stroke-width': 1.5,
+          'stroke-dasharray': '3 4',
+          opacity: 0.9,
+        });
+        gMark.appendChild(frame);
+        gMark.appendChild(pointer);
+        gMark.appendChild(drop);
+        marks.push(frame, pointer, drop);
+      }
+
+      // ── 주소 띠
+      let whole: SVGRectElement | null = null;
+      let addrLabel: SVGTextElement | null = null;
+      let tagChip: SVGGElement | null = null;
+      let indexChip: SVGGElement | null = null;
+      let offsetChip: SVGGElement | null = null;
+
+      if (c !== null && phase !== null) {
+        const joined = joinedSlots(f);
+        if (phase === 'arrived') {
+          whole = el('rect', {
+            x: joined.x0,
+            y: STRIP_Y,
+            width: joined.total,
+            height: CHIP_H,
+            rx: 6,
+            fill: colors.bgSubtle,
+            stroke: colors.border,
+            'stroke-width': 1,
+          });
+          gStrip.appendChild(whole);
+        }
+
+        addrLabel = el('text', {
+          x: W / 2,
+          y: ADDR_LABEL_Y,
+          'text-anchor': 'middle',
+          'font-family': fonts.body,
+          'font-size': fontSizes.sm,
+          fill: colors.textMuted,
+        });
+        addrLabel.textContent = t('label.address', 'address {addr}', { addr: c.addr });
+        gStrip.appendChild(addrLabel);
+
+        const slots =
+          phase === 'arrived'
+            ? joined
+            : phase === 'split'
+              ? splitSlots(f)
+              : placedSlots(f, g, c.line, c.offset);
+        const filled = phase !== 'arrived';
+
+        // 태그는 제 자리에 가면 줄에 굳어 `stored` 가 된다 — 띠에 두 벌로 서지
+        // 않는다. 날아가는 그림은 운동이 그때만 짓는다.
+        if (phase === 'arrived' || phase === 'split') {
+          tagChip = chip(toBits(c.tag, f.tagWidth), MARK.tag, slots.tag, filled, tagColor);
+        }
+        indexChip = chip(toBits(c.line, f.indexWidth), MARK.index, slots.index, filled, indexColor);
+        offsetChip = chip(
+          toBits(c.offset, f.offsetWidth),
+          MARK.offset,
+          slots.offset,
+          filled,
+          offsetColor,
+        );
+      }
+
+      drawCaption(captionOf(scene));
+
+      return { g, stored, trace, tagChip, indexChip, offsetChip, whole, addrLabel, marks };
     }
 
-    /** 남아 있는 증언들을 한 번 울린다. */
-    async function finish(): Promise<void> {
-      absorbDocked();
-      const rings: SVGRectElement[] = [];
-      for (let i = 0; i < rows.length; i += 1) {
-        const row = rows[i];
-        if (!row || row.stored.getAttribute('opacity') !== '1') continue;
-        const ring = el('rect', {
-          x: fieldX,
-          y: rowY(i) + chipDockDy,
-          width: tagInnerW,
+    // ── 국면마다의 운동 ───────────────────────────────────────────────────
+
+    /** 주소가 위에서 내려앉아 한 몸으로 선다. */
+    function flowArrived(d: Drawn, f: IndexAndTagFields, mine: number): Promise<void> {
+      const joined = joinedSlots(f);
+      const chips: { node: SVGGElement; x: number }[] = [];
+      if (d.tagChip !== null) chips.push({ node: d.tagChip, x: joined.tag.x });
+      if (d.indexChip !== null) chips.push({ node: d.indexChip, x: joined.index.x });
+      if (d.offsetChip !== null) chips.push({ node: d.offsetChip, x: joined.offset.x });
+      if (chips.length === 0) return Promise.resolve();
+      const whole = d.whole;
+      const label = d.addrLabel;
+      return tween(ENTER_MS, mine, (p) => {
+        const e = ease(p);
+        const dy = lerp(-16, 0, e);
+        const shade = String(e);
+        for (const c of chips) {
+          c.node.setAttribute('transform', `translate(${c.x},${STRIP_Y + dy})`);
+          c.node.setAttribute('opacity', shade);
+        }
+        if (whole !== null) {
+          whole.setAttribute('y', String(STRIP_Y + dy));
+          whole.setAttribute('opacity', shade);
+        }
+        if (label !== null) {
+          label.setAttribute('y', String(ADDR_LABEL_Y + dy));
+          label.setAttribute('opacity', shade);
+        }
+      });
+    }
+
+    /**
+     * 끊긴 자리가 벌어진다 — 이 걸음이 보이는 것은 갈라짐 그 자체다.
+     *
+     * 정적 그리기가 이미 벌어진 자리에 세워 두었으므로, 운동은 **아직 못 벌어진
+     * 만큼을 도로 붙여** 두었다가 놓아 준다. 한 몸을 감싸던 테두리는 벌어지며
+     * 사라지는 것이라 운동 중에만 짓는다.
+     */
+    function flowSplit(d: Drawn, f: IndexAndTagFields, mine: number): Promise<void> {
+      if (d.tagChip === null || d.offsetChip === null) return Promise.resolve();
+      const tagNode = d.tagChip;
+      const offNode = d.offsetChip;
+      const joined = joinedSlots(f);
+      const apart = splitSlots(f);
+      const ghost = el('rect', {
+        x: joined.x0,
+        y: STRIP_Y,
+        width: joined.total,
+        height: CHIP_H,
+        rx: 6,
+        fill: colors.bgSubtle,
+        stroke: colors.border,
+        'stroke-width': 1,
+      });
+      gStrip.insertBefore(ghost, gStrip.firstChild);
+
+      return tween(SPLIT_MS, mine, (p) => {
+        const e = ease(p);
+        // 목표 자리에 아직 안 벌어진 몫을 더한다 — 끝에서 그 몫이 0 이라 보간의
+        // 끝자리가 남지 않는다 (프로토콜 4 절).
+        const gap = SPLIT_GAP * (1 - e);
+        tagNode.setAttribute('transform', `translate(${apart.tag.x + gap},${STRIP_Y})`);
+        offNode.setAttribute('transform', `translate(${apart.offset.x - gap},${STRIP_Y})`);
+        ghost.setAttribute('opacity', String(1 - e));
+      });
+    }
+
+    /**
+     * 셋이 제 자리로 날아간다. 조금씩 어긋나게 떠나 저마다의 길이 보이게 한다.
+     *
+     * 셋이 흩어지는 것과 앞 태그가 밀려나는 것이 **한 뜻**이므로 시계를 나누지
+     * 않고 한 보간에 함께 싣는다 (S-scene). 태그 칩과 밀려나는 앞 태그는 정지
+     * 화면에 없는 요소라 여기서만 짓는다.
+     */
+    function flowPlaced(
+      d: Drawn,
+      scene: IndexAndTagScene,
+      mine: number,
+    ): Promise<void> {
+      const c = scene.current;
+      if (c === null || d.indexChip === null || d.offsetChip === null) return Promise.resolve();
+      const f = scene.fields;
+      const g = d.g;
+      const from = splitSlots(f);
+      const to = placedSlots(f, g, c.line, c.offset);
+
+      // 태그는 날아가 줄에 굳는다. 굳은 모습은 정적 그리기가 이미 세워 두었으니
+      // 날아오는 동안만 가려 둔다.
+      const landing = d.stored[c.line] ?? null;
+      if (landing !== null) landing.setAttribute('opacity', '0');
+      const flyingTag = chip(toBits(c.tag, f.tagWidth), MARK.tag, from.tag, true, tagColor);
+
+      // 밀려나는 앞 태그 — 떨어져 나가는 그림은 운동 중에만 있다.
+      const evicted = c.evicted;
+      const leaving =
+        evicted === null ? null : storedGroup(g, c.line, toBits(evicted, f.tagWidth));
+      const traceNode = evicted === null ? null : (d.trace[c.line] ?? null);
+      if (traceNode !== null) traceNode.setAttribute('opacity', '0');
+
+      for (const node of d.marks) node.setAttribute('opacity', '0');
+
+      const legs: { node: SVGGElement; from: Slot; to: Slot; t0: number }[] = [
+        { node: d.indexChip, from: from.index, to: to.index, t0: 0 },
+        { node: flyingTag, from: from.tag, to: to.tag, t0: 0.16 },
+        { node: d.offsetChip, from: from.offset, to: to.offset, t0: 0.32 },
+      ];
+
+      return tween(FLIGHT_MS, mine, (p) => {
+        for (const leg of legs) {
+          const q = clamp01((p - leg.t0) / (1 - leg.t0));
+          const e = ease(q);
+          const x = lerp(leg.from.x, leg.to.x, e);
+          // 살짝 떠올랐다 내려앉는다 — 곧장 미끄러지면 옮겨졌다기보다 늘어난
+          // 것으로 보인다.
+          const y = lerp(leg.from.y, leg.to.y, e) - Math.sin(Math.PI * e) * 12;
+          leg.node.setAttribute('transform', `translate(${x},${y})`);
+        }
+        if (leaving !== null) {
+          const e = ease(clamp01(p / 0.6));
+          leaving.setAttribute(
+            'transform',
+            `translate(${g.fieldX},${g.rowY(c.line) + CHIP_TOP + 26 * e})`,
+          );
+          leaving.setAttribute('opacity', String(1 - e));
+          if (traceNode !== null) traceNode.setAttribute('opacity', String(e));
+        }
+        // 짚은 표식은 토막이 닿고 나서 든다.
+        const showMarks = String(clamp01((p - 0.62) / 0.28));
+        for (const node of d.marks) node.setAttribute('opacity', showMarks);
+        if (landing !== null) landing.setAttribute('opacity', String(clamp01((p - 0.7) / 0.2)));
+      });
+    }
+
+    /** 줄에 남은 증언들을 한 번 울린다. 어느 줄인지는 장면이 안다. */
+    function flowDone(d: Drawn, scene: IndexAndTagScene, mine: number): Promise<void> {
+      const g = d.g;
+      const rings: { node: SVGRectElement; y: number }[] = [];
+      for (let i = 0; i < scene.fields.lineCount; i += 1) {
+        if ((scene.held[i] ?? null) === null) continue;
+        const y = g.rowY(i) + CHIP_TOP;
+        const node = el('rect', {
+          x: g.fieldX,
+          y,
+          width: g.tagInnerW,
           height: CHIP_H,
           rx: 6,
           fill: 'none',
           stroke: tagColor,
           'stroke-width': 2,
         });
-        markLayer.appendChild(ring);
-        rings.push(ring);
+        gMark.appendChild(node);
+        rings.push({ node, y });
       }
-      await tween(PULSE_MS, (raw) => {
-        const e = ease(raw);
+      if (rings.length === 0) return Promise.resolve();
+      return tween(PULSE_MS, mine, (p) => {
+        const e = ease(p);
         const grow = 7 * e;
         for (const ring of rings) {
-          ring.setAttribute('x', String(fieldX - grow));
-          ring.setAttribute('width', String(tagInnerW + grow * 2));
-          ring.setAttribute('height', String(CHIP_H + grow * 2));
-          ring.setAttribute('opacity', String(1 - e));
+          ring.node.setAttribute('x', String(g.fieldX - grow));
+          ring.node.setAttribute('y', String(ring.y - grow));
+          ring.node.setAttribute('width', String(g.tagInnerW + grow * 2));
+          ring.node.setAttribute('height', String(CHIP_H + grow * 2));
+          ring.node.setAttribute('opacity', String(1 - e));
         }
       });
-      for (const ring of rings) ring.remove();
     }
 
-    function rewind(): void {
-      dockedLine = null;
-      clearMarks();
-      for (let i = 0; i < rows.length; i += 1) clearStored(i);
-      for (const c of [tagChip, indexChip, offsetChip]) c.show(0);
-      wholeRect.setAttribute('opacity', '0');
-      addrLabel.setAttribute('opacity', '0');
-      addrLabel.textContent = '';
-      setCaption('');
+    function flowFor(d: Drawn, scene: IndexAndTagScene, mine: number): Promise<void> {
+      switch (scene.phase) {
+        case 'arrived':
+          return flowArrived(d, scene.fields, mine);
+        case 'split':
+          return flowSplit(d, scene.fields, mine);
+        case 'placed':
+          return flowPlaced(d, scene, mine);
+        case 'done':
+          return flowDone(d, scene, mine);
+        default:
+          return Promise.resolve();
+      }
     }
 
-    function setCaption(text: string): void {
-      const lines = text === '' ? [] : wrapText(text, W - PAD * 4, captionFs, CAPTION_LINES);
-      captionEls.forEach((t, i) => {
-        t.textContent = lines[i] ?? '';
-      });
+    // ── 장면 그리기 ───────────────────────────────────────────────────────
+
+    async function render(
+      next: IndexAndTagScene,
+      _prev: IndexAndTagScene | null,
+      opts: { animate: boolean },
+    ): Promise<void> {
+      const mine = (gen += 1);
+
+      const drawn = drawScene(next);
+      // 되짚기는 여기서 끝난다 — 타이머도 프레임도 걸지 않는다 (S-scene).
+      if (!opts.animate || destroyed || !canAnimate) return;
+
+      await flowFor(drawn, next, mine);
+      if (!alive(mine)) return;
+
+      // 보간이 남긴 좌표 끝자리와 운동 중에만 있던 조각이 노드째 사라진다.
+      // 되돌릴 목록을 손으로 관리하지 않는다 (S-scene).
+      drawScene(next);
     }
 
     return {
-      showAddress,
-      splitAddress,
-      dispatch,
-      finish,
-      rewind,
-      setCaption,
+      render,
+
       destroy(): void {
         destroyed = true;
+        gen += 1;
         for (const id of frames) cancelAnimationFrame(id);
         frames.clear();
-        // 기다리던 것을 깨우지 않으면 projector 의 await 가 영영 안 돌아온다 (S-piece).
+        // 기다리던 것을 깨운다 — 안 깨우면 render 의 await 가 영영 안 돌아온다.
         for (const wake of [...waiters]) wake();
         waiters.clear();
         svg.textContent = '';

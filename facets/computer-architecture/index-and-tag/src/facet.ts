@@ -5,10 +5,11 @@
  * 가운데 토막이 들어갈 줄을 가리키고, 윗 토막은 그 줄에 남아 누구의 것인지를
  * 증언하고, 아랫 토막은 줄 안에서 몇 번째 바이트인지를 말한다.
  *
- * 1차 데이터는 캐시 크기 · 라인 크기 · 주소 다섯뿐이다. 토막의 비트 폭 · 각
- * 토막의 값 · 비트열은 algorithm 이 그 자리에서 셈하고, 자리와 크기는 stage 가
- * 캔버스에서 역산한다 — 화면에 뜰 값을 선언에 적어 두면 데이터를 바꿀 때
- * 둘이 어긋난다 (S-piece).
+ * 1차 데이터는 캐시 크기 · 라인 크기 · 주소 다섯뿐이다. 토막의 비트 폭은
+ * `indexAndTagFields` 하나가 내고 (algorithm 과 장면이 같이 부른다), 각 토막의
+ * 값은 algorithm 이 그 자리에서 가르고, 비트열과 자리와 크기는 그리는 쪽이
+ * 만든다 — 화면에 뜰 값을 선언에 적어 두면 데이터를 바꿀 때 둘이 어긋난다
+ * (S-piece).
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -40,7 +41,7 @@ export const indexAndTagFacet: FacetJson = {
     pt: 'O endereço é cortado em três: o índice escolhe a linha, a etiqueta fica nela para dizer de quem é, e o deslocamento aponta o byte dentro da linha.',
   },
   algorithm: 'module:indexAndTag',
-  projector: 'module:indexAndTagProjector',
+  scene: 'module:indexAndTagScene',
   initialData: {
     type: 'index-and-tag',
     /** 캐시 64바이트 · 라인 16바이트 · 직접 사상 — 그러니 줄이 넷이다. */
@@ -60,7 +61,7 @@ export const indexAndTagFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'index-and-tag-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.arrives': {

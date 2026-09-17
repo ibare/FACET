@@ -35,7 +35,7 @@ export const severalHashesOneValueFacet: FacetJson = {
     pt: 'Inserção em um filtro de Bloom: um valor se divide em três ramos de hash e acende três posições no arranjo de bits.',
   },
   algorithm: 'module:severalHashesOneValue',
-  projector: 'module:severalHashesOneValueProjector',
+  scene: 'module:severalHashesOneValueScene',
   initialData: {
     type: 'several-hashes-one-value',
     bitCount: 16,
@@ -45,7 +45,7 @@ export const severalHashesOneValueFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'several-hashes-one-value-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.key': {

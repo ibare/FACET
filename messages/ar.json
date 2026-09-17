@@ -18,6 +18,7 @@
   "view.controlBar.search": "بحث",
   "view.controlBar.speed": "السرعة",
   "view.controlBar.step": "⏭ خطوة",
+  "view.controlBar.timeline": "موضع التشغيل",
   "view.conveyorQueue.empty": "(فارغ)",
   "view.conveyorQueue.size": "الحجم: {n}",
   "view.conveyorQueue.sizeBounded": "الحجم: {n} / {cap}",

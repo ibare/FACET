@@ -10,21 +10,23 @@
  *   자리는 텍스트의 인덱스(0-based) 그대로 쓴다. target 은 쓰지 않는다.
  *
  * ── 이벤트 (전부 이 facet 고유 확장. silent 인 것은 없다)
- *   scan   { at: number; matched: number; mismatchAt: number | null;
- *            mismatchChar: string | null }
- *          자리 `at` 에 놓고 오른쪽 끝부터 견준 결과. `matched` 는 오른쪽부터
- *          맞은 글자 수, `mismatchAt` 은 어긋난 텍스트 자리이며 전부 맞았으면
- *          null (그때 `mismatchChar` 도 null).
- *   skip   { from: number; to: number; lastIndex: number; badChar: string }
- *          어긋난 글자를 보고 패턴을 `from` 에서 `to` 로 민다. `lastIndex` 는
- *          그 글자가 패턴 안에서 마지막으로 선 자리이며 없으면 -1.
- *   found  { at: number }
- *          패턴이 통째로 맞아떨어진 자리.
- *   rewind {}
- *          자동 재생이 끝난 뒤 처음으로 되감는다. 페이로드 없음.
  *
- * `mismatchChar` / `badChar` 는 화면 문안이 아니라 텍스트의 글자 자체다 —
- * 캡션 문장은 projector 가 키로 고른다 (C10). 메트릭은 부르지 않는다 (S-piece).
+ * 걸음이 싣는 것은 **판정 둘**뿐이다. 선 자리 · 어긋난 글자 · 그 글자의 마지막
+ * 자리는 전부 바탕과 자취에서 나오므로 장면이 셈한다 (프로토콜 4 절).
+ *
+ *   scan   { matched: number }
+ *          지금 선 자리에서 오른쪽 끝부터 거꾸로 견준 결과 — 오른쪽부터 맞은
+ *          글자 수. 패턴 길이와 같으면 전부 맞은 것이다. 어느 자리에 서 있는지는
+ *          장면이 안다 (민 거리를 쌓은 것이 곧 지금 자리다).
+ *   skip   { shift: number }
+ *          패턴을 이만큼 민다 (최소 1). `어긋난 자리 − last` 라는 이 조각의
+ *          판정 그 자체라 싣는다.
+ *   found  {}
+ *          패턴이 통째로 맞아떨어졌다. 자리는 장면이 안다.
+ *   rewind {}
+ *          자동 재생이 끝난 뒤 처음으로 되감는다.
+ *
+ * 캡션 문장은 장면이 키로 고른다 (C10). 메트릭은 부르지 않는다 (S-piece).
  */
 
 import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
@@ -42,14 +44,32 @@ export type BadCharSkipData = {
 /** 걸음 사이의 문. true 면 계속 가고, false 면 취소된 것이다. */
 type Gate = () => Promise<boolean>;
 
+/** 표의 칸 하나 — 그 글자가 패턴 안에서 마지막으로 선 자리. */
+export type BadCharSlot = { ch: string; last: number };
+
 /**
- * 패턴의 각 글자가 패턴 안에서 마지막으로 선 자리.
- * 손으로 적은 표가 아니라 패턴을 훑어 만든다 — 표를 만드는 일이 곧 이 규칙의 절반이다.
+ * 나쁜 문자 표. 손으로 적은 표가 아니라 패턴을 훑어 만든다.
+ * 칸의 차례는 패턴에 처음 나온 순서다 — 화면의 표도 그 차례로 선다.
+ *
+ * **장면이 이 함수를 부른다** (프로토콜 4 절의 B 갈래). 표는 바탕(패턴)에 순수
+ * 함수를 먹이면 나오는 값이라, 걸음에 실으면 같은 물음에 답이 둘이 된다. 이
+ * 조각의 알고리즘 자체는 "오른쪽부터 거꾸로 견주고 `어긋난 자리 − last` 만큼
+ * 민다" 이고 표를 떼어 내도 그 주장은 남는다 — 그래서 내준다.
  */
-export function buildLastIndex(pattern: string): Map<string, number> {
-  const last = new Map<string, number>();
-  for (let i = 0; i < pattern.length; i += 1) last.set(pattern[i], i);
-  return last;
+export function badCharSlots(pattern: string): BadCharSlot[] {
+  const slots: BadCharSlot[] = [];
+  for (let i = 0; i < pattern.length; i += 1) {
+    const ch = pattern[i];
+    const seen = slots.find((s) => s.ch === ch);
+    if (seen) seen.last = i;
+    else slots.push({ ch, last: i });
+  }
+  return slots;
+}
+
+/** 그 글자가 패턴 안에서 마지막으로 선 자리. 패턴에 아예 없으면 -1. */
+export function lastStandOf(slots: readonly BadCharSlot[], ch: string): number {
+  return slots.find((s) => s.ch === ch)?.last ?? -1;
 }
 
 /** `advance` 를 받을 때까지 기다린다. 다른 종류의 입력은 걸음으로 세지 않는다. */
@@ -78,7 +98,7 @@ async function waitAdvance(ctx: ReactiveContext<BadCharSkipData>): Promise<boole
  */
 async function walk(ctx: ReactiveContext<BadCharSkipData>, gate: Gate): Promise<boolean> {
   const { text, pattern } = ctx.data;
-  const lastIndex = buildLastIndex(pattern);
+  const slots = badCharSlots(pattern);
   let passedFirst = false;
 
   const pause = async (): Promise<boolean> => {
@@ -98,33 +118,18 @@ async function walk(ctx: ReactiveContext<BadCharSkipData>, gate: Gate): Promise<
     while (j >= 0 && pattern[j] === text[at + j]) j -= 1;
 
     if (j < 0) {
-      await ctx.emit({
-        type: 'scan',
-        payload: { at, matched: pattern.length, mismatchAt: null, mismatchChar: null },
-      });
+      await ctx.emit({ type: 'scan', payload: { matched: pattern.length } });
       if (!(await pause())) return false;
-      await ctx.emit({ type: 'found', payload: { at } });
+      await ctx.emit({ type: 'found' });
       return true;
     }
 
-    const bad = text[at + j];
-    await ctx.emit({
-      type: 'scan',
-      payload: {
-        at,
-        matched: pattern.length - 1 - j,
-        mismatchAt: at + j,
-        mismatchChar: bad,
-      },
-    });
+    await ctx.emit({ type: 'scan', payload: { matched: pattern.length - 1 - j } });
 
-    const last = lastIndex.get(bad) ?? -1;
-    const shift = Math.max(1, j - last);
+    // 어긋난 글자가 패턴 안에서 마지막으로 선 자리까지가 겹칠 수 있는 한계다.
+    const shift = Math.max(1, j - lastStandOf(slots, text[at + j]));
     if (!(await pause())) return false;
-    await ctx.emit({
-      type: 'skip',
-      payload: { from: at, to: at + shift, lastIndex: last, badChar: bad },
-    });
+    await ctx.emit({ type: 'skip', payload: { shift } });
     at += shift;
   }
 

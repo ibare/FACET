@@ -6,16 +6,24 @@
  *   node:<정점 이름>   예) `node:A`
  *
  * ── 이벤트 (전부 이 facet 고유 확장)
- *   enter-root  { node: string; depth: number }
- *               target `node:<node>`. 출발점에 선다. silent 아님.
- *   descend     { from: string; to: string; depth: number }
- *               target `node:<to>`. 한 칸 파고든다. silent 아님.
- *   dead-end    { node: string; depth: number }
- *               target `node:<node>`. 더 갈 곳이 없음이 드러난다. silent 아님.
- *   retreat     { from: string; to: string; depth: number }
- *               target `node:<to>`. 왔던 길을 거슬러 한 칸 물러난다. silent 아님.
- *   done        { visited: number; backtracks: number; maxDepth: number }
- *               답사가 끝난다. 세 값은 모두 이 답사에서 실제로 센 값이다. silent 아님.
+ *
+ * payload 는 **걸음이 내리는 판정**만 싣는다. 구조에서 세지는 것 — 지금 깊이 ·
+ * 떠나온 자리 · 밟은 수 · 되짚은 수 · 가장 깊이 내려간 깊이 — 은 장면이 자기
+ * 자취에서 센다 (`scene.ts`). 실어 보내면 같은 수가 두 자리에서 나와 언젠가
+ * 갈린다.
+ *
+ *   enter-root  {}
+ *               target `node:<출발점>`. 출발점에 선다. silent 아님.
+ *   descend     { to: string }
+ *               target `node:<to>`. 한 칸 파고든다. **어느 이웃으로 갈지가 이
+ *               답사의 판정**이라 그것만 싣는다. 어디서 가는지는 길의 끝이다.
+ *   dead-end    {}
+ *               target `node:<막힌 자리>`. 더 갈 곳이 없음이 드러난다.
+ *   retreat     {}
+ *               target `node:<물러난 자리>`. 왔던 길을 거슬러 한 칸 물러난다.
+ *               떠나온 자리도 물러난 자리도 길의 끝 둘이라 싣지 않는다.
+ *   done        {}
+ *               답사가 끝난다. 밟은 수 · 되짚은 수 · 최대 깊이는 장면이 센다.
  *   rewind      {}
  *               한 걸음씩 보기로 넘어갈 때 화면을 처음으로 되돌린다. silent 아님
  *               (화면 전체가 바뀐다).
@@ -46,13 +54,16 @@ export type DiveThenBacktrackData = {
 /**
  * 답사가 낳는 걸음. 발신 형태가 아니라 순회의 산물이다 — 각 걸음이 어떤
  * 이벤트가 되는지는 `playBeat` 이 정한다.
+ *
+ * 이름은 식별자(`target`)를 짓는 데 쓰고, payload 로 나가는 것은 `descend` 의
+ * `to` 하나뿐이다.
  */
 type Beat =
-  | { kind: 'enter'; node: string; depth: number }
-  | { kind: 'descend'; from: string; to: string; depth: number }
-  | { kind: 'dead-end'; node: string; depth: number }
-  | { kind: 'retreat'; from: string; to: string; depth: number }
-  | { kind: 'done'; visited: number; backtracks: number; maxDepth: number };
+  | { kind: 'enter'; node: string }
+  | { kind: 'descend'; to: string }
+  | { kind: 'dead-end'; node: string }
+  | { kind: 'retreat'; to: string }
+  | { kind: 'done' };
 
 /** 무방향 간선 목록에서 인접 목록을 만든다. 이웃은 알파벳 오름차순. */
 function buildAdjacency(data: DiveThenBacktrackData): Map<string, string[]> {
@@ -70,8 +81,10 @@ function buildAdjacency(data: DiveThenBacktrackData): Map<string, string[]> {
  * 명시적 스택으로 깊이 우선 답사를 돈다.
  *
  * 스택이 곧 "왔던 길" 이다. 갈 곳이 있으면 쌓아 파고들고 (`descend`), 없으면
- * 그 사실을 말한 뒤 (`dead-end`) 하나를 덜어 물러난다 (`retreat`). 되짚는
- * 횟수도 여기서 실제로 세어 `done` 에 싣는다.
+ * 그 사실을 말한 뒤 (`dead-end`) 하나를 덜어 물러난다 (`retreat`).
+ *
+ * 되짚은 횟수도 깊이도 여기서 세지 않는다. 화면이 같은 것을 자기 자취에서 세므로
+ * 여기서 또 세면 한 물음에 두 답이 남는다.
  */
 function* walkDepthFirst(data: DiveThenBacktrackData): Generator<Beat, void, undefined> {
   const adj = buildAdjacency(data);
@@ -80,10 +93,8 @@ function* walkDepthFirst(data: DiveThenBacktrackData): Generator<Beat, void, und
 
   const visited = new Set<string>([start]);
   const path: string[] = [start];
-  let backtracks = 0;
-  let maxDepth = 0;
 
-  yield { kind: 'enter', node: start, depth: 0 };
+  yield { kind: 'enter', node: start };
 
   while (path.length > 0) {
     const cur = path[path.length - 1] ?? start;
@@ -92,60 +103,37 @@ function* walkDepthFirst(data: DiveThenBacktrackData): Generator<Beat, void, und
     if (next !== undefined) {
       visited.add(next);
       path.push(next);
-      const depth = path.length - 1;
-      if (depth > maxDepth) maxDepth = depth;
-      yield { kind: 'descend', from: cur, to: next, depth };
+      yield { kind: 'descend', to: next };
       continue;
     }
 
-    yield { kind: 'dead-end', node: cur, depth: path.length - 1 };
+    yield { kind: 'dead-end', node: cur };
 
     if (path.length === 1) break;
     path.pop();
-    backtracks += 1;
-    const parent = path[path.length - 1] ?? start;
-    yield { kind: 'retreat', from: cur, to: parent, depth: path.length - 1 };
+    yield { kind: 'retreat', to: path[path.length - 1] ?? start };
   }
 
-  yield { kind: 'done', visited: visited.size, backtracks, maxDepth };
+  yield { kind: 'done' };
 }
 
 /** 걸음 하나를 이벤트로 발신한다. type 은 걸음 종류마다 리터럴이다 (C2). */
 async function playBeat(ctx: FacetContext<DiveThenBacktrackData>, beat: Beat): Promise<void> {
   switch (beat.kind) {
     case 'enter':
-      await ctx.emit({
-        type: 'enter-root',
-        target: `node:${beat.node}`,
-        payload: { node: beat.node, depth: beat.depth },
-      });
+      await ctx.emit({ type: 'enter-root', target: `node:${beat.node}`, payload: {} });
       return;
     case 'descend':
-      await ctx.emit({
-        type: 'descend',
-        target: `node:${beat.to}`,
-        payload: { from: beat.from, to: beat.to, depth: beat.depth },
-      });
+      await ctx.emit({ type: 'descend', target: `node:${beat.to}`, payload: { to: beat.to } });
       return;
     case 'dead-end':
-      await ctx.emit({
-        type: 'dead-end',
-        target: `node:${beat.node}`,
-        payload: { node: beat.node, depth: beat.depth },
-      });
+      await ctx.emit({ type: 'dead-end', target: `node:${beat.node}`, payload: {} });
       return;
     case 'retreat':
-      await ctx.emit({
-        type: 'retreat',
-        target: `node:${beat.to}`,
-        payload: { from: beat.from, to: beat.to, depth: beat.depth },
-      });
+      await ctx.emit({ type: 'retreat', target: `node:${beat.to}`, payload: {} });
       return;
     case 'done':
-      await ctx.emit({
-        type: 'done',
-        payload: { visited: beat.visited, backtracks: beat.backtracks, maxDepth: beat.maxDepth },
-      });
+      await ctx.emit({ type: 'done', payload: {} });
       return;
   }
 }

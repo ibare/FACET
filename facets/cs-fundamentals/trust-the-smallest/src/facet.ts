@@ -40,7 +40,7 @@ export const trustTheSmallestFacet: FacetJson = {
   },
 
   algorithm: 'module:trustTheSmallest',
-  projector: 'module:trustTheSmallestProjector',
+  scene: 'module:trustTheSmallestScene',
 
   initialData: {
     type: 'trust-the-smallest',
@@ -62,7 +62,7 @@ export const trustTheSmallestFacet: FacetJson = {
 
   blocks: {
     stage: { type: 'trust-the-smallest-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
 
   messages: {

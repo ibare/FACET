@@ -4,13 +4,17 @@
  * @piece 들어오는 화살이 하나도 없는 것만 지금 꺼낼 수 있고, 꺼내고 나면
  *        다음 것이 0 이 된다.
  *
- * 진입 차수는 선언에 적지 않는다 — `edges` 에서 algorithm 이 센다. 손으로 적은
- * 표를 두면 그림이 구조와 어긋날 수 있고, 그때 화면이 거짓을 말하게 된다.
+ * 진입 차수는 선언에 적지 않는다 — `edges` 에서 세진다. 손으로 적은 표를 두면
+ * 그림이 구조와 어긋날 수 있고, 그때 화면이 거짓을 말하게 된다. 발신에도 싣지
+ * 않는다 — 화면은 같은 `edges` 를 세므로 같은 물음에 답이 하나로 남는다.
+ *
+ * 화면은 장면(Scene) 방식이라 어느 걸음으로든 끌어 볼 수 있다. 그래서 컨트롤이
+ * `pieceScrub` 이다 — 한 걸음 단추 대신 띠를 단다 (S-piece · S-scene).
  *
  * header 도 metrics 도 layout 도 두지 않는다 (S-piece).
  */
 
-import { CONTROL, type FacetJson } from '@ffacet/core/runtime';
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
 export const indegreeZeroFirstFacet: FacetJson = {
   id: 'facet:indegreeZeroFirst',
@@ -39,7 +43,7 @@ export const indegreeZeroFirstFacet: FacetJson = {
     pt: 'Só um vértice sem setas de entrada pode ser tirado. Tirá-lo derruba as setas que ele segurava, e quem chega a 0 cai em seguida.',
   },
   algorithm: 'module:indegreeZeroFirst',
-  projector: 'module:indegreeZeroFirstProjector',
+  scene: 'module:indegreeZeroFirstScene',
   initialData: {
     type: 'indegree-zero-first',
     nodes: ['a', 'b', 'c', 'd', 'e'],
@@ -56,7 +60,7 @@ export const indegreeZeroFirstFacet: FacetJson = {
     stage: { type: 'indegree-zero-first-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {

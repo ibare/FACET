@@ -37,7 +37,7 @@ export const shiftOnInsertFacet: FacetJson = {
     pt: 'Os valores após o ponto de inserção se deslocam mesmo uma casa para a direita, de trás para frente.',
   },
   algorithm: 'module:shiftOnInsert',
-  projector: 'module:shiftOnInsertProjector',
+  scene: 'module:shiftOnInsertScene',
   initialData: {
     type: 'shift-on-insert',
     values: [10, 20, 30, 40, 50],
@@ -49,7 +49,7 @@ export const shiftOnInsertFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'shift-on-insert-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.plan': {

@@ -11,9 +11,31 @@
  *
  * 범위는 256 칸이라 다 그릴 수 없다. 양 끝 세 칸씩만 두고 가운데는 점선과 ⋯
  * 로 생략한다. 생략했다는 전제를 화면에 각주로 달지 않는다 — 그것은 글의
- * 일이다 (S-piece). 비트열은 표식과 함께 움직이며, 값이 바뀔 때 달라지는
- * 자리가 오른쪽에서 왼쪽으로 차례로 뒤집힌다. 넘어가는 걸음에서는 그 번짐이
- * 부호 자리까지 닿는다.
+ * 일이다 (S-piece).
+ *
+ * ── 걸음마다 부르는 메서드는 두지 않는다
+ *
+ * `render` 하나가 장면을 받아 화면 **전체**를 세우고 (`drawStatic`), 그 다음에
+ * 방금 밟은 걸음 하나만 흐르게 한다 (S-scene). 되돌릴 명령이 없으므로
+ * `restore()` 도 `conclude()` 도 사라졌다 — 그 둘이 쥐고 있던 "넘어갔나 ·
+ * 결론에 이르렀나" 는 이제 장면이 말한다.
+ *
+ * 운동의 방향이 뒤집혀 있다. 정적 그리기가 정본이라 표식은 이미 닿을 자리에
+ * 서 있고 고리도 이미 그어져 있다. 흐르게 할 때만 출발 그림으로 도로 물려
+ * 놓고 시작하며, 운동이 끝나면 장면을 통째로 다시 세워 보간이 남긴 좌표
+ * 끝자리와 opacity 를 한꺼번에 지운다.
+ *
+ * ── 뜻마다 제 축을 준다 (프로토콜 4 절 "한 축에 값을 셋 이상 욱여넣지 않는다")
+ *
+ *   칸의 **채움**   지나온 자취인가          — 값의 형편
+ *   칸의 **테두리** 이 끝을 이미 짚었나      — 이음매의 표식
+ *   비트의 **색**   그 자리가 1 인가 0 인가  — 값 그 자체
+ *   비트의 **밑줄** 이번 걸음에 뒤집혔나     — 자리올림이 번진 자국
+ *   부호 자리의 칸막이는 구조라 늘 서 있다.
+ *
+ * 옛 화면은 비트 하나의 색에 "지금 뒤집히는 중 · 부호 자리 · 그 밖" 셋을
+ * 실어, 멎은 화면에서 **부호 자리가 이번에 켜졌다는 사실이 사라졌다.**
+ * 2의 보수에서 넘어감의 정체가 그것인데도 그랬다.
  *
  * 가로는 러너가 `PIECE_CANVAS_W` 로 정하고, 세로는 이 그림이 정해 여기 상수로
  * 둔다 (S-piece · S-view).
@@ -25,10 +47,22 @@ import {
   fontSizes,
   getColors,
   makeTranslator,
+  shiftLightness,
   type CanvasView,
+  type Palette,
+  type SceneRenderer,
   type ViewInstance,
   type ViewMountParams,
 } from '@ffacet/core/runtime';
+
+import { toBits } from './algorithm.js';
+import {
+  carryOrder,
+  nowValue,
+  type SignedWraparoundScene,
+  type WraparoundCaption,
+  type WraparoundStep,
+} from './scene.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -54,6 +88,11 @@ const TOKEN_INSET = 11;
 /** 비트 한 자리의 가로 간격과, 표식 위 비트열의 높이. */
 const BIT_ADV = 9;
 const BIT_DY = 30;
+/** 뒤집힌 자리의 밑줄과, 부호 자리를 가르는 칸막이. */
+const BIT_RULE_DY = 4;
+const BIT_RULE_HALF = 3.5;
+const SIGN_DIV_TOP = -11;
+const SIGN_DIV_BOT = 5;
 
 /** 고리 제어점이 바깥으로 나가는 거리와 아래로 내려가는 깊이. */
 const LOOP_OUT = 92;
@@ -74,33 +113,44 @@ const VALUE_SWITCH = 0.55;
 
 const LOOP_SAMPLES = 64;
 
+/** 지나온 칸의 옅은 칠 — 표식과 같은 색의 밝기 단계다 (S-view 결정 트리 5). */
+const TRAIL_SHIFT_LIGHT = 0.24;
+const TRAIL_SHIFT_DARK = -0.32;
+
 type Pt = { x: number; y: number };
 
-export type WraparoundStep = {
-  from: number;
-  to: number;
-  fromBits: string;
-  toBits: string;
-  atMax: boolean;
+/**
+ * 자리 셈. **먼저 한 번에 셈하고 그 다음에 그린다** — 그리면서 이웃의 지금
+ * 좌표를 읽으면 순회 순서가 곧 숨은 상태가 된다 (프로토콜 4 절).
+ */
+type Geom = {
+  /** 화면에 실제로 놓이는 여섯 값 — 왼쪽 끝 셋과 오른쪽 끝 셋. */
+  lane: number[];
+  cellW: number;
+  leftEnd: number;
+  rightEnd: number;
+  gapStart: number;
+  gapEnd: number;
+  cellX: (slot: number) => number;
+  /** 값이 놓인 칸. 여섯 칸 밖의 값은 생략 구간 쪽 끝으로 붙인다. */
+  slotOf: (value: number) => number;
+  onLoop: (t: number) => Pt;
+  loopLen: number;
+  p0: Pt;
+  p1: Pt;
+  p2: Pt;
+  p3: Pt;
 };
 
-type Scene = { bitWidth: number; start: number };
-
-/**
- * `initialData` 를 좁힌다. 받는 자리는 mount 하나뿐이다 (S-piece) — projector 는
- * 걸음마다 오는 payload 만 좁혀 넘긴다.
- */
-function readScene(initialData: Record<string, unknown> | undefined): Scene {
-  const d = initialData ?? {};
-  const rawWidth = d.bitWidth;
-  const bitWidth = typeof rawWidth === 'number' && rawWidth >= 4 ? Math.floor(rawWidth) : 8;
-  const max = 2 ** (bitWidth - 1) - 1;
-  const min = -(2 ** (bitWidth - 1));
-  const rawStart = d.start;
-  const start =
-    typeof rawStart === 'number' ? Math.min(max, Math.max(min, Math.trunc(rawStart))) : max - 2;
-  return { bitWidth, start };
-}
+/** 이번 장면이 세운 DOM 손잡이. 장면 상태가 아니라 그리기의 부산물이다. */
+type BitNode = { glyph: SVGTextElement; rule: SVGLineElement | null };
+type Drawn = {
+  geom: Geom;
+  loop: SVGPathElement | null;
+  tokenG: SVGGElement;
+  value: SVGTextElement;
+  bits: BitNode[];
+};
 
 function el<K extends keyof SVGElementTagNameMap>(
   name: K,
@@ -119,260 +169,164 @@ function clamp01(v: number): number {
   return v < 0 ? 0 : v > 1 ? 1 : v;
 }
 
+/** 자리를 한 번에 셈한다. 비트 폭만 알면 나머지는 캔버스에서 역산된다. */
+function geomOf(bitWidth: number): Geom {
+  const min = -(2 ** (bitWidth - 1));
+  const max = 2 ** (bitWidth - 1) - 1;
+  const lane = [min, min + 1, min + 2, max - 2, max - 1, max];
+
+  const cellW = Math.min(
+    CELL_MAX_W,
+    Math.floor((PIECE_CANVAS_W - SIDE_MIN * 2 - MID_GAP) / (LANE_CELLS * 2)),
+  );
+  const laneW = cellW * LANE_CELLS * 2 + MID_GAP;
+  const originX = Math.round((PIECE_CANVAS_W - laneW) / 2);
+  const leftEnd = originX;
+  const rightEnd = originX + laneW;
+  const gapStart = originX + cellW * LANE_CELLS;
+  const gapEnd = gapStart + MID_GAP;
+
+  const cellX = (slot: number): number =>
+    slot < LANE_CELLS
+      ? originX + cellW * (slot + 0.5)
+      : gapEnd + cellW * (slot - LANE_CELLS + 0.5);
+
+  const slotOf = (value: number): number => {
+    const found = lane.indexOf(value);
+    if (found >= 0) return found;
+    return value < 0 ? LANE_CELLS - 1 : LANE_CELLS;
+  };
+
+  const p0: Pt = { x: rightEnd, y: RAIL_Y };
+  const p1: Pt = { x: rightEnd + LOOP_OUT, y: RAIL_Y + LOOP_DROP };
+  const p2: Pt = { x: leftEnd - LOOP_OUT, y: RAIL_Y + LOOP_DROP };
+  const p3: Pt = { x: leftEnd, y: RAIL_Y };
+
+  const onLoop = (t: number): Pt => {
+    const u = 1 - t;
+    return {
+      x: u * u * u * p0.x + 3 * u * u * t * p1.x + 3 * u * t * t * p2.x + t * t * t * p3.x,
+      y: u * u * u * p0.y + 3 * u * u * t * p1.y + 3 * u * t * t * p2.y + t * t * t * p3.y,
+    };
+  };
+
+  // 길이는 직접 재서 쓴다 — DOM 의 기하 API 에 기대지 않는다.
+  let loopLen = 0;
+  let prev = onLoop(0);
+  for (let i = 1; i <= LOOP_SAMPLES; i += 1) {
+    const cur = onLoop(i / LOOP_SAMPLES);
+    loopLen += Math.hypot(cur.x - prev.x, cur.y - prev.y);
+    prev = cur;
+  }
+
+  return {
+    lane,
+    cellW,
+    leftEnd,
+    rightEnd,
+    gapStart,
+    gapEnd,
+    cellX,
+    slotOf,
+    onLoop,
+    loopLen,
+    p0,
+    p1,
+    p2,
+    p3,
+  };
+}
+
+/** 오른쪽 끝을 지나 고리를 돌아 왼쪽 끝으로 드는 길. */
+function wrapPath(g: Geom, fromX: number, toX: number): (p: number) => Pt {
+  return (p: number): Pt => {
+    if (p < ENTER_SHARE) {
+      return { x: fromX + (g.rightEnd - fromX) * (p / ENTER_SHARE), y: RAIL_Y };
+    }
+    if (p < ENTER_SHARE + LOOP_SHARE) {
+      return g.onLoop((p - ENTER_SHARE) / LOOP_SHARE);
+    }
+    const exitShare = 1 - ENTER_SHARE - LOOP_SHARE;
+    return {
+      x: g.leftEnd + (toX - g.leftEnd) * ((p - ENTER_SHARE - LOOP_SHARE) / exitShare),
+      y: RAIL_Y,
+    };
+  };
+}
+
+function straightPath(fromX: number, toX: number): (p: number) => Pt {
+  return (p: number): Pt => ({ x: fromX + (toX - fromX) * p, y: RAIL_Y });
+}
+
 export const signedWraparoundStageView: CanvasView = {
   canvas: { height: CANVAS_H },
 
   mount(
     _container: HTMLElement,
     params: ViewMountParams & { canvas: SVGSVGElement },
-  ): ViewInstance {
+  ): ViewInstance & SceneRenderer<SignedWraparoundScene> {
     const svg = params.canvas;
-    const c = getColors(params.theme);
+    const c: Palette = getColors(params.theme);
+    // 문안은 그리는 쪽이 만든다. 장면은 무엇을 말할지만 담는다 (C10).
     const tr = params.t ?? makeTranslator(params.locale);
-    const scene = readScene(params.initialData);
-
-    const min = -(2 ** (scene.bitWidth - 1));
-    const max = 2 ** (scene.bitWidth - 1) - 1;
-    /** 화면에 실제로 놓이는 여섯 값 — 왼쪽 끝 셋과 오른쪽 끝 셋. */
-    const lane = [min, min + 1, min + 2, max - 2, max - 1, max];
-
-    // ── 자리 셈. 크기는 캔버스에서 역산하고 상수는 상한만 잡는다 (S-piece).
-    const cellW = Math.min(
-      CELL_MAX_W,
-      Math.floor((PIECE_CANVAS_W - SIDE_MIN * 2 - MID_GAP) / (LANE_CELLS * 2)),
+    const trailFill = shiftLightness(
+      c.itemActive,
+      params.theme === 'dark' ? TRAIL_SHIFT_DARK : TRAIL_SHIFT_LIGHT,
     );
-    const laneW = cellW * LANE_CELLS * 2 + MID_GAP;
-    const originX = Math.round((PIECE_CANVAS_W - laneW) / 2);
-    const leftEnd = originX;
-    const rightEnd = originX + laneW;
-    const gapStart = originX + cellW * LANE_CELLS;
-    const gapEnd = gapStart + MID_GAP;
 
-    const cellX = (slot: number): number =>
-      slot < LANE_CELLS
-        ? originX + cellW * (slot + 0.5)
-        : gapEnd + cellW * (slot - LANE_CELLS + 0.5);
-
-    /** 값이 놓인 칸. 여섯 칸 밖의 값은 생략 구간 쪽 끝으로 붙인다. */
-    const slotOf = (value: number): number => {
-      const found = lane.indexOf(value);
-      if (found >= 0) return found;
-      return value < 0 ? LANE_CELLS - 1 : LANE_CELLS;
-    };
-
-    // ── 고리. 오른쪽 끝에서 나가 아래로 돌아 왼쪽 끝으로 들어온다.
-    const p0: Pt = { x: rightEnd, y: RAIL_Y };
-    const p1: Pt = { x: rightEnd + LOOP_OUT, y: RAIL_Y + LOOP_DROP };
-    const p2: Pt = { x: leftEnd - LOOP_OUT, y: RAIL_Y + LOOP_DROP };
-    const p3: Pt = { x: leftEnd, y: RAIL_Y };
-
-    const onLoop = (t: number): Pt => {
-      const u = 1 - t;
-      return {
-        x: u * u * u * p0.x + 3 * u * u * t * p1.x + 3 * u * t * t * p2.x + t * t * t * p3.x,
-        y: u * u * u * p0.y + 3 * u * u * t * p1.y + 3 * u * t * t * p2.y + t * t * t * p3.y,
-      };
-    };
-
-    // 길이는 직접 재서 쓴다 — DOM 의 기하 API 에 기대지 않는다.
-    let loopLen = 0;
-    {
-      let prev = onLoop(0);
-      for (let i = 1; i <= LOOP_SAMPLES; i += 1) {
-        const cur = onLoop(i / LOOP_SAMPLES);
-        loopLen += Math.hypot(cur.x - prev.x, cur.y - prev.y);
-        prev = cur;
-      }
-    }
-
-    // ── 그리기.
     const root = el('g', {});
     svg.appendChild(root);
 
-    const railLeft = el('line', {
-      x1: leftEnd,
-      y1: RAIL_Y,
-      x2: gapStart,
-      y2: RAIL_Y,
-      stroke: c.border,
-      'stroke-width': 2,
-      'stroke-linecap': 'round',
-    });
-    const railGap = el('line', {
-      x1: gapStart,
-      y1: RAIL_Y,
-      x2: gapEnd,
-      y2: RAIL_Y,
-      stroke: c.border,
-      'stroke-width': 2,
-      'stroke-dasharray': '3 7',
-      'stroke-linecap': 'round',
-    });
-    const railRight = el('line', {
-      x1: gapEnd,
-      y1: RAIL_Y,
-      x2: rightEnd,
-      y2: RAIL_Y,
-      stroke: c.border,
-      'stroke-width': 2,
-      'stroke-linecap': 'round',
-    });
-    root.appendChild(railLeft);
-    root.appendChild(railGap);
-    root.appendChild(railRight);
+    // 장면마다 통째로 다시 짓는 층들. 살아남은 옛 프레임이 쥔 것은 이미 떨어져
+    // 나간 노드가 되므로 화면을 더럽히지 못한다. 재건 밖에 두는 요소는 없다.
+    const railLayer = el('g', {});
+    const cellLayer = el('g', {});
+    const loopLayer = el('g', {});
+    const tokenLayer = el('g', {});
+    const captionLayer = el('g', {});
+    root.append(railLayer, cellLayer, loopLayer, tokenLayer, captionLayer);
 
-    const cells: SVGRectElement[] = [];
-    for (let slot = 0; slot < lane.length; slot += 1) {
-      const x = cellX(slot);
-      const rect = el('rect', {
-        x: x - cellW / 2 + CELL_INSET,
-        y: RAIL_Y - CELL_H / 2,
-        width: cellW - CELL_INSET * 2,
-        height: CELL_H,
-        rx: 8,
-        fill: c.bgSubtle,
-        stroke: c.border,
-        'stroke-width': 1,
-      });
-      cells.push(rect);
-      root.appendChild(rect);
+    // ── 걸어 둔 것과 기다리는 것. destroy 가 일괄로 거둔다 (S-piece).
+    const waiters = new Set<() => void>();
+    const timers = new Set<ReturnType<typeof setTimeout>>();
+    let destroyed = false;
 
-      const label = el('text', {
-        x,
-        y: RAIL_Y + LABEL_DY,
-        'text-anchor': 'middle',
-        'font-family': fonts.mono,
-        'font-size': fontSizes.xs,
-        fill: c.textMuted,
+    /**
+     * 세대 빗장 (S-scene).
+     *
+     * 걸음 하나가 타이머를 여러 번 지난다. 끊기가 그 가운데로 들어오면 남은
+     * 프레임이 이미 새로 선 화면을 덮을 수 있으므로, 프레임마다 자기 세대가
+     * 아직 유효한지 보고 아니면 화면에 손대지 않고 물러난다. `isInstant` 는
+     * 빗장이 아니다 — 러너가 장면 조각에서 그것을 부르지 않는다.
+     */
+    let gen = 0;
+    const alive = (mine: number): boolean => mine === gen && !destroyed;
+
+    function animate(ms: number, mine: number, onFrame: (p: number) => void): Promise<void> {
+      return new Promise<void>((resolve) => {
+        if (!alive(mine)) return resolve();
+        const startedAt = Date.now();
+        const finish = (): void => {
+          waiters.delete(finish);
+          resolve();
+        };
+        waiters.add(finish);
+        const tick = (): void => {
+          if (!alive(mine)) return finish();
+          const p = ms <= 0 ? 1 : clamp01((Date.now() - startedAt) / ms);
+          onFrame(p);
+          if (p >= 1) return finish();
+          const id = setTimeout(() => {
+            timers.delete(id);
+            tick();
+          }, FRAME_MS);
+          timers.add(id);
+        };
+        tick();
       });
-      label.textContent = String(lane[slot]);
-      root.appendChild(label);
     }
 
-    // 생략 표식. 도형에 새긴 글리프이므로 문안이 아니다 (C10).
-    const elision = el('text', {
-      x: (gapStart + gapEnd) / 2,
-      y: RAIL_Y + LABEL_DY,
-      'text-anchor': 'middle',
-      'font-family': fonts.mono,
-      'font-size': fontSizes.xs,
-      fill: c.textMuted,
-    });
-    elision.textContent = '⋯';
-    root.appendChild(elision);
-
-    const smallestTag = el('text', {
-      x: cellX(0),
-      y: TAG_Y,
-      'text-anchor': 'middle',
-      'font-family': fonts.body,
-      'font-size': fontSizes.xs,
-      fill: c.textMuted,
-    });
-    smallestTag.textContent = tr('label.smallest', 'smallest');
-    root.appendChild(smallestTag);
-
-    const largestTag = el('text', {
-      x: cellX(lane.length - 1),
-      y: TAG_Y,
-      'text-anchor': 'middle',
-      'font-family': fonts.body,
-      'font-size': fontSizes.xs,
-      fill: c.textMuted,
-    });
-    largestTag.textContent = tr('label.largest', 'largest');
-    root.appendChild(largestTag);
-
-    const loop = el('path', {
-      d:
-        `M ${p0.x} ${p0.y} C ${p1.x} ${p1.y} ${p2.x} ${p2.y} ${p3.x} ${p3.y}`,
-      fill: 'none',
-      stroke: c.accent,
-      'stroke-width': 2.5,
-      'stroke-linecap': 'round',
-      'stroke-dasharray': loopLen,
-      'stroke-dashoffset': loopLen,
-    });
-    root.appendChild(loop);
-
-    // ── 표식. 값과 비트열을 함께 싣고 움직인다.
-    const tokenG = el('g', {});
-    const tokenW = cellW - TOKEN_INSET * 2;
-    tokenG.appendChild(
-      el('rect', {
-        x: -tokenW / 2,
-        y: -TOKEN_H / 2,
-        width: tokenW,
-        height: TOKEN_H,
-        rx: 8,
-        fill: c.itemActive,
-      }),
-    );
-    const valueText = el('text', {
-      x: 0,
-      y: 5,
-      'text-anchor': 'middle',
-      'font-family': fonts.body,
-      'font-size': fontSizes.md,
-      'font-weight': '600',
-      fill: c.stateInk,
-    });
-    tokenG.appendChild(valueText);
-
-    const bitTexts: SVGTextElement[] = [];
-    for (let i = 0; i < scene.bitWidth; i += 1) {
-      const t = el('text', {
-        x: (i - (scene.bitWidth - 1) / 2) * BIT_ADV,
-        y: -BIT_DY,
-        'text-anchor': 'middle',
-        'font-family': fonts.mono,
-        'font-size': fontSizes.sm,
-        fill: c.textMuted,
-      });
-      bitTexts.push(t);
-      tokenG.appendChild(t);
-    }
-    root.appendChild(tokenG);
-
-    const captionLines = CAPTION_LINE_Y.map((y) => {
-      const t = el('text', {
-        x: PIECE_CANVAS_W / 2,
-        y,
-        'text-anchor': 'middle',
-        'font-family': fonts.body,
-        'font-size': fontSizes.sm,
-        fill: c.text,
-      });
-      root.appendChild(t);
-      return t;
-    });
-
-    // ── 상태 갱신.
-    const placeToken = (x: number, y: number): void => {
-      tokenG.setAttribute('transform', `translate(${x} ${y})`);
-    };
-
-    const setValue = (value: number): void => {
-      valueText.textContent = String(value);
-    };
-
-    /** 비트열을 칠한다. 부호 자리는 늘 진하고, 방금 뒤집힌 자리만 강조한다. */
-    const paintBits = (bits: string, hot: number): void => {
-      for (let i = 0; i < bitTexts.length; i += 1) {
-        const node = bitTexts[i];
-        node.textContent = bits[i] ?? '0';
-        node.setAttribute('fill', i === hot ? c.accent : i === 0 ? c.text : c.textMuted);
-      }
-    };
-
-    const setEndEmphasis = (slot: number, on: boolean): void => {
-      const rect = cells[slot];
-      rect.setAttribute('stroke', on ? c.accent : c.border);
-      rect.setAttribute('stroke-width', on ? '2' : '1');
-      const tag = slot === 0 ? smallestTag : largestTag;
-      tag.setAttribute('fill', on ? c.text : c.textMuted);
-    };
-
+    // ── 캡션 줄 나누기 ─────────────────────────────────────────────────────
     const CAPTION_PX = Number.parseFloat(fontSizes.sm);
     const CAPTION_MAX_W = PIECE_CANVAS_W - 40;
 
@@ -407,171 +361,364 @@ export const signedWraparoundStageView: CanvasView = {
         }
       }
       push();
-      return lines.slice(0, captionLines.length);
+      return lines.slice(0, CAPTION_LINE_Y.length);
     };
 
-    // ── 시간. 걸어 둔 것은 집합에 담아 destroy 에서 일괄로 거둔다 (S-piece).
-    let destroyed = false;
-    const waiters = new Set<() => void>();
-    const timers = new Set<ReturnType<typeof setTimeout>>();
+    /** 늘 비우고 시작한다 — 되돌릴 명령이 필요 없다 (S-scene). */
+    function rewind(): void {
+      railLayer.replaceChildren();
+      cellLayer.replaceChildren();
+      loopLayer.replaceChildren();
+      tokenLayer.replaceChildren();
+      captionLayer.replaceChildren();
+    }
 
-    function animate(dur: number, onFrame: (p: number) => void): Promise<void> {
-      return new Promise<void>((resolve) => {
-        if (destroyed) {
-          onFrame(1);
-          return resolve();
+    // ── 정적 그리기 ───────────────────────────────────────────────────────
+
+    function drawRails(g: Geom, concluded: boolean): void {
+      // 결론에 이르면 생략 구간까지 한 줄기로 묶인다 — 직선이 아니라 고리였다.
+      const tone = concluded ? c.accent : c.border;
+      const seg = (x1: number, x2: number, dashed: boolean): SVGLineElement =>
+        el('line', {
+          x1,
+          y1: RAIL_Y,
+          x2,
+          y2: RAIL_Y,
+          stroke: tone,
+          'stroke-width': 2,
+          'stroke-linecap': 'round',
+          ...(dashed ? { 'stroke-dasharray': '3 7' } : {}),
+        });
+      railLayer.append(
+        seg(g.leftEnd, g.gapStart, false),
+        seg(g.gapStart, g.gapEnd, true),
+        seg(g.gapEnd, g.rightEnd, false),
+      );
+    }
+
+    /**
+     * 칸과 그 아래 값. 채움은 자취, 테두리는 이음매의 표식이라 부딪히지 않는다.
+     *
+     * 양 끝 칸의 표식과 이름표는 **자취에서 센다** — 그 값을 이미 밟았는가가
+     * 곧 그 끝을 짚었는가다.
+     */
+    function drawCells(g: Geom, seen: ReadonlySet<number>): void {
+      const last = g.lane.length - 1;
+      for (let slot = 0; slot < g.lane.length; slot += 1) {
+        const value = g.lane[slot];
+        const walked = seen.has(value);
+        const isEnd = slot === 0 || slot === last;
+        const marked = isEnd && walked;
+        const x = g.cellX(slot);
+        cellLayer.appendChild(
+          el('rect', {
+            x: x - g.cellW / 2 + CELL_INSET,
+            y: RAIL_Y - CELL_H / 2,
+            width: g.cellW - CELL_INSET * 2,
+            height: CELL_H,
+            rx: 8,
+            fill: walked ? trailFill : c.bgSubtle,
+            stroke: marked ? c.accent : c.border,
+            'stroke-width': marked ? 2 : 1,
+          }),
+        );
+        const label = el('text', {
+          x,
+          y: RAIL_Y + LABEL_DY,
+          'text-anchor': 'middle',
+          'font-family': fonts.mono,
+          'font-size': fontSizes.xs,
+          fill: walked ? c.text : c.textMuted,
+        });
+        label.textContent = String(value);
+        cellLayer.appendChild(label);
+      }
+
+      // 생략 표식. 도형에 새긴 글리프이므로 문안이 아니다 (C10).
+      const elision = el('text', {
+        x: (g.gapStart + g.gapEnd) / 2,
+        y: RAIL_Y + LABEL_DY,
+        'text-anchor': 'middle',
+        'font-family': fonts.mono,
+        'font-size': fontSizes.xs,
+        fill: c.textMuted,
+      });
+      elision.textContent = '⋯';
+      cellLayer.appendChild(elision);
+
+      // `tr` 은 호출부에 리터럴로 둔다 — 래퍼로 감싸면 en 원본이 변수가 되어
+      // 선언과의 대조 검사가 이 조각을 통째로 못 본다 (C10).
+      const tag = (x: number, text: string, on: boolean): SVGTextElement => {
+        const node = el('text', {
+          x,
+          y: TAG_Y,
+          'text-anchor': 'middle',
+          'font-family': fonts.body,
+          'font-size': fontSizes.xs,
+          fill: on ? c.text : c.textMuted,
+        });
+        node.textContent = text;
+        return node;
+      };
+      cellLayer.append(
+        tag(g.cellX(0), tr('label.smallest', 'smallest'), seen.has(g.lane[0])),
+        tag(g.cellX(last), tr('label.largest', 'largest'), seen.has(g.lane[last])),
+      );
+    }
+
+    /**
+     * 고리. **아직 지나지 않았으면 짓지 않는다** — 숨기기만 하면 앞 걸음의
+     * 값이 함께 남는다 (프로토콜 4 절).
+     */
+    function drawLoop(g: Geom): SVGPathElement {
+      const path = el('path', {
+        d: `M ${g.p0.x} ${g.p0.y} C ${g.p1.x} ${g.p1.y} ${g.p2.x} ${g.p2.y} ${g.p3.x} ${g.p3.y}`,
+        fill: 'none',
+        stroke: c.itemActive,
+        'stroke-width': 2.5,
+        'stroke-linecap': 'round',
+      });
+      loopLayer.appendChild(path);
+      return path;
+    }
+
+    /** 비트 글자의 색은 그 자리의 값이다 — 1 이면 진하고 0 이면 옅다. */
+    function paintBits(bits: BitNode[], shown: string): void {
+      for (let i = 0; i < bits.length; i += 1) {
+        const on = shown[i] === '1';
+        bits[i].glyph.textContent = on ? '1' : '0';
+        bits[i].glyph.setAttribute('fill', on ? c.text : c.textMuted);
+      }
+    }
+
+    /** 표식. 값과 비트열을 함께 싣고 움직인다. */
+    function drawToken(
+      g: Geom,
+      bitWidth: number,
+      value: number,
+      step: WraparoundStep | null,
+    ): Pick<Drawn, 'tokenG' | 'value' | 'bits'> {
+      const tokenG = el('g', {
+        transform: `translate(${g.cellX(g.slotOf(value))} ${RAIL_Y})`,
+      });
+      const tokenW = g.cellW - TOKEN_INSET * 2;
+      tokenG.appendChild(
+        el('rect', {
+          x: -tokenW / 2,
+          y: -TOKEN_H / 2,
+          width: tokenW,
+          height: TOKEN_H,
+          rx: 8,
+          fill: c.itemActive,
+        }),
+      );
+      const valueText = el('text', {
+        x: 0,
+        y: 5,
+        'text-anchor': 'middle',
+        'font-family': fonts.body,
+        'font-size': fontSizes.md,
+        'font-weight': '600',
+        fill: c.stateInk,
+      });
+      valueText.textContent = String(value);
+      tokenG.appendChild(valueText);
+
+      const bitX = (i: number): number => (i - (bitWidth - 1) / 2) * BIT_ADV;
+
+      // 부호 자리를 가르는 칸막이. 구조라 늘 서 있다.
+      tokenG.appendChild(
+        el('line', {
+          x1: bitX(0) + BIT_ADV / 2,
+          y1: -BIT_DY + SIGN_DIV_TOP,
+          x2: bitX(0) + BIT_ADV / 2,
+          y2: -BIT_DY + SIGN_DIV_BOT,
+          stroke: c.border,
+          'stroke-width': 1,
+        }),
+      );
+
+      // 이번 걸음에 뒤집힌 자리. 자리올림이 번진 만큼 밑줄이 이어진다.
+      const flipped = step === null ? [] : carryOrder(step, bitWidth);
+      const bits: BitNode[] = [];
+      for (let i = 0; i < bitWidth; i += 1) {
+        const glyph = el('text', {
+          x: bitX(i),
+          y: -BIT_DY,
+          'text-anchor': 'middle',
+          'font-family': fonts.mono,
+          'font-size': fontSizes.sm,
+          fill: c.textMuted,
+        });
+        tokenG.appendChild(glyph);
+        let rule: SVGLineElement | null = null;
+        if (flipped.includes(i)) {
+          rule = el('line', {
+            x1: bitX(i) - BIT_RULE_HALF,
+            y1: -BIT_DY + BIT_RULE_DY,
+            x2: bitX(i) + BIT_RULE_HALF,
+            y2: -BIT_DY + BIT_RULE_DY,
+            stroke: c.accent,
+            'stroke-width': 1.6,
+            'stroke-linecap': 'round',
+          });
+          tokenG.appendChild(rule);
         }
-        const startedAt = Date.now();
-        const finish = (): void => {
-          waiters.delete(finish);
-          resolve();
-        };
-        waiters.add(finish);
-        const tick = (): void => {
-          if (destroyed) {
-            finish();
-            return;
-          }
-          const p = Math.min(1, (Date.now() - startedAt) / dur);
-          onFrame(p);
-          if (p >= 1) {
-            finish();
-            return;
-          }
-          const id = setTimeout(() => {
-            timers.delete(id);
-            tick();
-          }, FRAME_MS);
-          timers.add(id);
-        };
-        tick();
+        bits.push({ glyph, rule });
+      }
+      paintBits(bits, toBits(value, bitWidth));
+      tokenLayer.appendChild(tokenG);
+      return { tokenG, value: valueText, bits };
+    }
+
+    /** 그 장면이 말하는 것을 전부 세운다. 자리는 여기서 셈한다 (S-piece). */
+    function drawStatic(scene: SignedWraparoundScene): Drawn {
+      const g = geomOf(scene.bitWidth);
+      const seen = new Set<number>(scene.visited);
+      drawRails(g, scene.concluded);
+      drawCells(g, seen);
+      const loop = scene.wrapped ? drawLoop(g) : null;
+      const token = drawToken(g, scene.bitWidth, nowValue(scene), scene.step);
+      return { geom: g, loop, ...token };
+    }
+
+    /** 캡션은 장면이 무엇을 말할지만 담는다. 문자는 여기서 만든다 (C10). */
+    function captionText(cap: WraparoundCaption, bitWidth: number): string {
+      switch (cap.kind) {
+        case 'step':
+          return tr('caption.step', 'Add one — the marker steps one cell right: {to}', {
+            to: cap.to,
+          });
+        case 'atMax':
+          return tr(
+            'caption.atMax',
+            'The right end — the largest signed value {bits} bits hold is {to}',
+            { bits: bitWidth, to: cap.to },
+          );
+        case 'wrap':
+          return tr(
+            'caption.wrap',
+            'One more — the carry runs into the sign bit, and past the right end the marker comes out at the left: {to}',
+            { to: cap.to },
+          );
+        case 'afterWrap':
+          return tr('caption.afterWrap', 'From here it walks right again: {to}', { to: cap.to });
+        case 'conclusion':
+          return tr(
+            'caption.conclusion',
+            'Not a line but a ring — the largest value is followed by the smallest',
+          );
+      }
+    }
+
+    function drawCaption(scene: SignedWraparoundScene): void {
+      if (scene.caption === null) return;
+      const lines = wrapCaption(captionText(scene.caption, scene.bitWidth));
+      for (let i = 0; i < lines.length; i += 1) {
+        const node = el('text', {
+          x: PIECE_CANVAS_W / 2,
+          y: CAPTION_LINE_Y[i],
+          'text-anchor': 'middle',
+          'font-family': fonts.body,
+          'font-size': fontSizes.sm,
+          fill: c.text,
+        });
+        node.textContent = lines[i];
+        captionLayer.appendChild(node);
+      }
+    }
+
+    // ── 걸음 함수 ─────────────────────────────────────────────────────────
+
+    /**
+     * 표식을 길 위로 옮기면서 달라지는 비트를 오른쪽에서 왼쪽으로 뒤집는다.
+     * 고리를 지나는 걸음이면 지나온 만큼 길이 그어진다.
+     *
+     * 정적 그리기가 이미 끝 자리를 세워 두었으므로 첫 프레임이 출발 그림으로
+     * 도로 물린다. 출발값은 `step` 이 싣고 온 계기값이다 — `prev` 를 들추지
+     * 않는다 (S-scene). 옮길 것이 여럿이지만 한 뜻으로 묶인 운동이라 시계는
+     * 하나다.
+     */
+    async function flow(
+      scene: SignedWraparoundScene,
+      step: WraparoundStep,
+      drawn: Drawn,
+      mine: number,
+    ): Promise<void> {
+      const g = drawn.geom;
+      const fromX = g.cellX(g.slotOf(step.from));
+      const toX = g.cellX(g.slotOf(step.to));
+      const path = step.kind === 'wrap' ? wrapPath(g, fromX, toX) : straightPath(fromX, toX);
+      const order = carryOrder(step, scene.bitWidth);
+      const fromBits = toBits(step.from, scene.bitWidth);
+      const toBitsStr = toBits(step.to, scene.bitWidth);
+
+      await animate(step.kind === 'wrap' ? WRAP_MS : MOVE_MS, mine, (raw) => {
+        const e = easeInOut(raw);
+        const pt = path(e);
+        drawn.tokenG.setAttribute('transform', `translate(${pt.x} ${pt.y})`);
+
+        if (drawn.loop !== null && step.kind === 'wrap') {
+          const drawnShare = clamp01((e - ENTER_SHARE) / LOOP_SHARE);
+          drawn.loop.setAttribute('stroke-dasharray', String(g.loopLen));
+          drawn.loop.setAttribute('stroke-dashoffset', String(g.loopLen * (1 - drawnShare)));
+        }
+
+        const q = clamp01((e - RIPPLE_FROM) / (RIPPLE_TO - RIPPLE_FROM));
+        const reached = Math.round(q * order.length);
+        const shown = fromBits.split('');
+        for (let k = 0; k < reached; k += 1) shown[order[k]] = toBitsStr[order[k]] ?? '0';
+        paintBits(drawn.bits, shown.join(''));
+        // 밑줄은 자리올림이 닿은 자리까지만 따라간다.
+        for (let k = 0; k < order.length; k += 1) {
+          drawn.bits[order[k]]?.rule?.setAttribute('opacity', k < reached ? '1' : '0');
+        }
+
+        drawn.value.textContent = String(e >= VALUE_SWITCH ? step.to : step.from);
       });
     }
 
     /**
-     * 표식을 길 위로 옮기면서, 달라지는 비트를 오른쪽에서 왼쪽으로 뒤집는다.
-     * 고리를 지나는 걸음이면 지나온 만큼 길이 그어진다.
+     * 장면을 그린다.
+     *
+     * 늘 비우고 그 장면이 말하는 것을 전부 세운 뒤, 방금 밟은 걸음 하나만
+     * 흐르게 한다. `prev` 는 쓰지 않는다 — 고를 것이 `step` 하나뿐이다.
      */
-    const travel = async (opts: {
-      path: (p: number) => Pt;
-      dur: number;
-      fromBits: string;
-      toBits: string;
-      toValue: number;
-      drawLoop: boolean;
-    }): Promise<void> => {
-      const diff: number[] = [];
-      for (let i = opts.fromBits.length - 1; i >= 0; i -= 1) {
-        if (opts.fromBits[i] !== opts.toBits[i]) diff.push(i);
-      }
-      let switched = false;
+    async function render(
+      next: SignedWraparoundScene,
+      _prev: SignedWraparoundScene | null,
+      opts: { animate: boolean },
+    ): Promise<void> {
+      const mine = (gen += 1);
 
-      await animate(opts.dur, (raw) => {
-        const e = easeInOut(raw);
-        const pt = opts.path(e);
-        placeToken(pt.x, pt.y);
+      rewind();
+      const drawn = drawStatic(next);
+      drawCaption(next);
 
-        if (opts.drawLoop) {
-          const drawn = clamp01((e - ENTER_SHARE) / LOOP_SHARE);
-          loop.setAttribute('stroke-dashoffset', String(loopLen * (1 - drawn)));
-        }
+      // 되짚기는 여기서 끝난다. 타이머도 프레임도 걸지 않는다 (S-scene).
+      if (!opts.animate || destroyed) return;
+      const step = next.step;
+      if (step === null) return;
 
-        const q = clamp01((e - RIPPLE_FROM) / (RIPPLE_TO - RIPPLE_FROM));
-        const flipped = Math.round(q * diff.length);
-        const shown = opts.fromBits.split('');
-        for (let k = 0; k < flipped; k += 1) shown[diff[k]] = opts.toBits[diff[k]];
-        paintBits(shown.join(''), flipped > 0 ? diff[flipped - 1] : -1);
+      await flow(next, step, drawn, mine);
+      if (!alive(mine)) return;
 
-        if (!switched && e >= VALUE_SWITCH) {
-          switched = true;
-          setValue(opts.toValue);
-        }
-      });
-
-      paintBits(opts.toBits, -1);
-      setValue(opts.toValue);
-    };
-
-    /** 오른쪽 끝을 지나 고리를 돌아 왼쪽 끝으로 드는 길. */
-    const wrapPath = (fromX: number, toX: number) => (p: number): Pt => {
-      if (p < ENTER_SHARE) {
-        return { x: fromX + (rightEnd - fromX) * (p / ENTER_SHARE), y: RAIL_Y };
-      }
-      if (p < ENTER_SHARE + LOOP_SHARE) {
-        return onLoop((p - ENTER_SHARE) / LOOP_SHARE);
-      }
-      const exitShare = 1 - ENTER_SHARE - LOOP_SHARE;
-      return {
-        x: leftEnd + (toX - leftEnd) * ((p - ENTER_SHARE - LOOP_SHARE) / exitShare),
-        y: RAIL_Y,
-      };
-    };
-
-    const straightPath = (fromX: number, toX: number) => (p: number): Pt => ({
-      x: fromX + (toX - fromX) * p,
-      y: RAIL_Y,
-    });
-
-    const restore = (): void => {
-      for (const line of captionLines) line.textContent = '';
-      loop.setAttribute('stroke-dashoffset', String(loopLen));
-      for (const rail of [railLeft, railGap, railRight]) rail.setAttribute('stroke', c.border);
-      setEndEmphasis(0, false);
-      setEndEmphasis(lane.length - 1, false);
-      placeToken(cellX(slotOf(scene.start)), RAIL_Y);
-      setValue(scene.start);
-      paintBits(bitsOf(scene.start, scene.bitWidth), -1);
-    };
-
-    restore();
+      // 흐르며 남은 밑줄의 opacity · 고리의 점선 자국 · 보간된 좌표 끝자리가
+      // 노드째 사라진다. 그 사이에 타이머도 프레임도 없어 깜빡이지 않는다.
+      rewind();
+      drawStatic(next);
+      drawCaption(next);
+    }
 
     return {
-      setCaption(text: string): void {
-        const lines = wrapCaption(text);
-        for (let i = 0; i < captionLines.length; i += 1) {
-          captionLines[i].textContent = lines[i] ?? '';
-        }
-      },
-
-      async advanceTo(step: WraparoundStep): Promise<void> {
-        await travel({
-          path: straightPath(cellX(slotOf(step.from)), cellX(slotOf(step.to))),
-          dur: MOVE_MS,
-          fromBits: step.fromBits,
-          toBits: step.toBits,
-          toValue: step.to,
-          drawLoop: false,
-        });
-        if (step.atMax) setEndEmphasis(lane.length - 1, true);
-      },
-
-      async wrapTo(step: WraparoundStep): Promise<void> {
-        await travel({
-          path: wrapPath(cellX(slotOf(step.from)), cellX(slotOf(step.to))),
-          dur: WRAP_MS,
-          fromBits: step.fromBits,
-          toBits: step.toBits,
-          toValue: step.to,
-          drawLoop: true,
-        });
-        setEndEmphasis(0, true);
-      },
-
-      /** 다 보인 뒤 — 직선이던 것이 한 줄기 고리였음을 색으로 묶는다. */
-      conclude(): void {
-        for (const rail of [railLeft, railGap, railRight]) rail.setAttribute('stroke', c.accent);
-        setEndEmphasis(0, true);
-        setEndEmphasis(lane.length - 1, true);
-      },
-
-      restore(): void {
-        restore();
-      },
+      render,
 
       destroy(): void {
         destroyed = true;
+        gen += 1;
         for (const id of timers) clearTimeout(id);
         timers.clear();
+        // 기다리던 것을 깨운다 — 안 깨우면 render 의 await 가 영영 안 돌아온다.
         for (const wake of [...waiters]) wake();
         waiters.clear();
         root.remove();
@@ -579,14 +726,3 @@ export const signedWraparoundStageView: CanvasView = {
     };
   },
 };
-
-/** 2의 보수 비트열. algorithm 과 같은 셈을 화면 복원에도 쓴다. */
-function bitsOf(value: number, bitWidth: number): string {
-  const span = 2 ** bitWidth;
-  const raw = ((value % span) + span) % span;
-  let out = '';
-  for (let i = bitWidth - 1; i >= 0; i -= 1) {
-    out += Math.floor(raw / 2 ** i) % 2 === 1 ? '1' : '0';
-  }
-  return out;
-}

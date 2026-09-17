@@ -35,7 +35,7 @@ export const findRootFacet: FacetJson = {
     pt: 'Cada posição aponta para cima; a que aponta para si mesma é o nome do grupo.',
   },
   algorithm: 'module:findRoot',
-  projector: 'module:findRootProjector',
+  scene: 'module:findRootScene',
   initialData: {
     type: 'findRoot',
     // 자리 0~6 이 가리키는 자리. parent[i] === i 면 자기 자신 — 뿌리.
@@ -46,7 +46,7 @@ export const findRootFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'find-root-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.start': {
@@ -63,7 +63,7 @@ export const findRootFacet: FacetJson = {
     },
     'caption.hop': {
       en: 'Slot {from} points to slot {to} — climb up.',
-      ko: '자리 {from} 은 자리 {to} 를 가리킨다 — 오른다.',
+      ko: '자리 {from} → 자리 {to} — 가리키는 대로 오른다.',
       ja: '位置 {from} は位置 {to} を指している — 上る。',
       zh: '位置 {from} 指向位置 {to} — 往上走。',
       ar: 'الموضع {from} يشير إلى الموضع {to} — نصعد.',
@@ -75,7 +75,7 @@ export const findRootFacet: FacetJson = {
     },
     'caption.root': {
       en: 'Slot {n} points to itself — the root. Its name is {n}.',
-      ko: '자리 {n} 은 자기 자신을 가리킨다 — 뿌리다. 이름은 {n}.',
+      ko: '자리 {n} — 자기 자신을 가리킨다. 뿌리다. 이 무리의 이름이 {n}.',
       ja: '位置 {n} は自分自身を指している — 根だ。名前は {n}。',
       zh: '位置 {n} 指向自己 — 这就是根。它的名字是 {n}。',
       ar: 'الموضع {n} يشير إلى نفسه — إنه الجذر. واسمه {n}.',
@@ -87,7 +87,7 @@ export const findRootFacet: FacetJson = {
     },
     'caption.compareSame': {
       en: 'Slot {a} and slot {b} both reach name {name} — same group.',
-      ko: '자리 {a} 와 자리 {b} 는 둘 다 이름 {name} 에 닿는다 — 한 무리다.',
+      ko: '자리 {a}, 자리 {b} — 둘 다 이름 {name} 에 닿는다. 한 무리다.',
       ja: '位置 {a} と位置 {b} はどちらも名前 {name} に届く — 同じ集まりだ。',
       zh: '位置 {a} 与位置 {b} 都到达名字 {name} — 同一组。',
       ar: 'الموضعان {a} و{b} يصلان إلى الاسم {name} — المجموعة نفسها.',
@@ -99,7 +99,7 @@ export const findRootFacet: FacetJson = {
     },
     'caption.compareDiff': {
       en: 'Slot {a} reaches name {nameA}, slot {b} reaches name {nameB} — different groups.',
-      ko: '자리 {a} 는 이름 {nameA} 에, 자리 {b} 는 이름 {nameB} 에 닿는다 — 남남이다.',
+      ko: '이름 {nameA} 에 닿는 자리 {a}, 이름 {nameB} 에 닿는 자리 {b} — 남남이다.',
       ja: '位置 {a} は名前 {nameA} に、位置 {b} は名前 {nameB} に届く — 別々の集まりだ。',
       zh: '位置 {a} 到达名字 {nameA}，位置 {b} 到达名字 {nameB} — 不同的组。',
       ar: 'الموضع {a} يصل إلى الاسم {nameA}، والموضع {b} إلى الاسم {nameB} — مجموعتان مختلفتان.',
@@ -108,6 +108,18 @@ export const findRootFacet: FacetJson = {
       hi: 'स्थान {a} नाम {nameA} तक और स्थान {b} नाम {nameB} तक पहुँचता है — अलग-अलग समूह।',
       id: 'Posisi {a} sampai ke nama {nameA}, posisi {b} ke nama {nameB} — kelompok berbeda.',
       pt: 'A posição {a} chega ao nome {nameA} e a {b} ao nome {nameB} — grupos diferentes.',
+    },
+    'chip.walk': {
+      en: '{path} · {hops} hops',
+      ko: '{path} · {hops} 번',
+      ja: '{path} · {hops} 回',
+      zh: '{path} · {hops} 次',
+      ar: '{path} · {hops} قفزة',
+      es: '{path} · {hops} saltos',
+      fr: '{path} · {hops} sauts',
+      hi: '{path} · {hops} छलाँग',
+      id: '{path} · {hops} lompatan',
+      pt: '{path} · {hops} saltos',
     },
   },
 };

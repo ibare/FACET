@@ -9,7 +9,7 @@
  * 제목 블록도 메트릭도 두지 않는다. 배치는 러너가 만든다.
  */
 
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 import type { FacetJson } from '@ffacet/core/runtime';
 
 export const memoWriteOnceFacet: FacetJson = {
@@ -40,7 +40,7 @@ export const memoWriteOnceFacet: FacetJson = {
     pt: 'Um termo resolvido passa para a tabela; reencontrá-lo é ler o valor de lá em vez de ramificar.',
   },
   algorithm: 'module:memoWriteOnce',
-  projector: 'module:memoWriteOnceProjector',
+  scene: 'module:memoWriteOnceScene',
   initialData: {
     type: 'memo-write-once',
     n: 5,
@@ -50,7 +50,7 @@ export const memoWriteOnceFacet: FacetJson = {
     stage: { type: 'memo-write-once-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {
@@ -80,7 +80,7 @@ export const memoWriteOnceFacet: FacetJson = {
     },
     'caption.read': {
       en: 'f({n}) is already written — read {value}, branch no further.',
-      ko: 'f({n}) 은 이미 적혀 있다 — {value} 를 읽고 더 뻗지 않는다.',
+      ko: '이미 적혀 있다 — f({n}) 의 값은 {value}. 읽고 더 뻗지 않는다.',
       ja: 'f({n}) はすでに書いてある — {value} を読んで、これ以上は伸ばさない。',
       zh: 'f({n}) 已经写过了 — 读出 {value}，不再往下分叉。',
       ar: 'f({n}) مكتوبة سلفًا — اقرأ {value} ولا تتفرّع أكثر.',

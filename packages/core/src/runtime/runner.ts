@@ -14,9 +14,12 @@ import type { LocaleStr } from '../types/locale.js';
 import { resolveLocale } from '../types/locale.js';
 import { makeTranslator } from './i18n.js';
 import type { Theme } from '../views/design-tokens.js';
-import type { ProjectorViews } from './projector.js';
+import type { ProjectorViews, ProjectorInstance } from './projector.js';
+import type { FacetRuntimeEvent } from '../types/event.js';
 import { CoroutineMechanism, ReactiveMechanism, type Mechanism, type MechanismHooks } from './mechanism.js';
 import type { ReactiveContext } from './context.js';
+import { Timeline } from './timeline.js';
+import { SceneTrack, type SceneRenderer } from './scene.js';
 import { buildLayout, defaultLayout, mountBlocks } from './layout-builder.js';
 import {
   getAlgorithm,
@@ -26,6 +29,7 @@ import {
   getIR,
   listTranspilers,
   stripPrefix,
+  getScenePlan,
 } from './registry.js';
 
 export type FacetRunHandle = {
@@ -80,11 +84,21 @@ function findControlBarSpec(blocks: Record<string, BlockSpec>): ControlSpec[] | 
   return null;
 }
 
+/**
+ * 러너가 스스로 처리하는 컨트롤 어휘 — mechanism 에 닿지 않는다.
+ *
+ * `seek` 은 알고리즘을 다시 돌리는 일이 아니라 러너가 쥔 자취를 projector 에
+ * 다시 먹이는 일이라, 어느 mechanism 의 `supportedControls` 에도 없다. 걸러 두지
+ * 않으면 `'*'` 와일드카드가 없는 coroutine facet 에서 미지원으로 throw 한다.
+ */
+const RUNNER_CONTROLS = new Set(['seek']);
+
 function assertControlsSupported(controls: ControlSpec[], mechanism: Mechanism): void {
   // 메커니즘이 '*' 와일드카드를 supportedControls 에 두면 facet 고유 어휘를 자유 허용.
   const supported = new Set<string>(mechanism.supportedControls);
   const allowAny = supported.has('*');
   for (const c of controls) {
+    if (RUNNER_CONTROLS.has(c.action)) continue;
     if (allowAny) continue;
     if (!supported.has(c.action)) {
       throw new Error(
@@ -94,19 +108,49 @@ function assertControlsSupported(controls: ControlSpec[], mechanism: Mechanism):
   }
 }
 
+/** 장면을 그릴 View 를 고른다 — `render` 를 가진 첫 View. */
+function findSceneView(
+  blocks: Record<string, BlockSpec>,
+  views: ProjectorViews,
+): SceneRenderer | null {
+  for (const ref of Object.keys(blocks)) {
+    const v = views[ref];
+    if (v && typeof (v as { render?: unknown }).render === 'function') {
+      return v as unknown as SceneRenderer;
+    }
+  }
+  return null;
+}
+
 export function runFacet(
   json: FacetJson,
   mountEl: HTMLElement,
   options?: RunFacetOptions,
 ): FacetRunHandle {
   // 1. 모듈 조회
+  //
+  // 조각은 둘 중 한 길로 화면을 만든다.
+  //   projector  이벤트를 View 메서드 호출로 옮긴다 (본래의 길).
+  //   scene      이벤트를 장면 **상태**로 옮긴다 (`runtime/scene.ts`).
+  // 둘 다 없거나 둘 다 있으면 선언이 모호하므로 세우지 않는다.
   const algorithmName = stripPrefix(json.algorithm, 'module');
-  const projectorName = stripPrefix(json.projector, 'module');
   const algorithmFnRaw = getAlgorithm(algorithmName);
-  const projectorFactory = getProjector(projectorName);
   if (!algorithmFnRaw) throw new Error(`알고리즘 모듈 미등록: ${algorithmName}`);
-  if (!projectorFactory) throw new Error(`Projector 모듈 미등록: ${projectorName}`);
   const algorithmFn = algorithmFnRaw;
+
+  if ((json.projector === undefined) === (json.scene === undefined)) {
+    throw new Error(`화면 선언이 모호함: projector 와 scene 중 하나만 두어야 한다 — ${json.id}`);
+  }
+  const scenePlanName = json.scene !== undefined ? stripPrefix(json.scene, 'module') : null;
+  const scenePlan = scenePlanName !== null ? getScenePlan(scenePlanName) : null;
+  if (scenePlanName !== null && !scenePlan) {
+    throw new Error(`장면 설계 미등록: ${scenePlanName}`);
+  }
+  const projectorName = json.projector !== undefined ? stripPrefix(json.projector, 'module') : null;
+  const projectorFactory = projectorName !== null ? getProjector(projectorName) : null;
+  if (projectorName !== null && !projectorFactory) {
+    throw new Error(`Projector 모듈 미등록: ${projectorName}`);
+  }
 
   // 2. 메커니즘 인스턴스화 — algorithm 등록 시 지정된 mechanismKind 로 분기.
   //    init 은 projector / view mount 가 끝난 뒤에 호출.
@@ -180,10 +224,26 @@ export function runFacet(
 
   // 7. View mount — dispatch 콜백 주입으로 View 입력 → mechanism.dispatch 경로 확보.
   const dispatchToMechanism = (event: { type: string; payload?: unknown }) => mechanism.dispatch(event);
+  /**
+   * 되짚는 중인가. Timeline 이 켜고 끄고, stage 가 `params.isInstant()` 로 읽는다.
+   *
+   * 클로저라 mount 시점 이후의 값도 그대로 보인다.
+   */
+  let instantMode = false;
+  /** 되짚기 직전에 걸어 둔 것을 거두라고 view 들이 맡긴 함수. */
+  const scrubCleaners: Array<() => void> = [];
   const views = mountBlocks({
     blocks: enrichedBlocks,
     blockMounts: built.blockMounts,
-    mountParams: { initialData: initialDataClone, locale, theme, t: tr, dispatch: dispatchToMechanism },
+    mountParams: {
+      initialData: initialDataClone,
+      locale,
+      theme,
+      t: tr,
+      dispatch: dispatchToMechanism,
+      isInstant: () => instantMode,
+      onScrubStart: (fn: () => void) => scrubCleaners.push(fn),
+    },
   });
 
   // 8. goal-preview(computeFrom: 'sorted') 블록에 알고리즘의 computeResult 결과 주입
@@ -210,14 +270,82 @@ export function runFacet(
     }
   }
 
-  // 9. Projector 인스턴스화 — getSpeed 는 mechanism 위임, t 는 현재 locale 로 해석.
-  const projector = projectorFactory(views, {
-    getSpeed: () => mechanism.getSpeed(),
-    t: tr,
-  });
+  // 9. 화면을 만드는 이를 세운다.
+  //
+  // scene 조각은 projector 를 두지 않는다. 대신 장면을 쌓는 `SceneTrack` 과 그것을
+  // 그리는 View 를 어댑터로 묶어 같은 자리에 끼운다 — mechanism 은 자기가 무엇과
+  // 이야기하는지 몰라도 된다 (원칙 1 의 층 분리).
+  let sceneTrack: SceneTrack | null = null;
+  /** 장면을 그리는 View. 스크럽이 걸음을 건너뛸 때 곧바로 부른다. */
+  let sceneView: SceneRenderer | null = null;
+
+  const rawProjector: ProjectorInstance = projectorFactory
+    ? projectorFactory(views, { getSpeed: () => mechanism.getSpeed(), t: tr })
+    : (() => {
+        const plan = scenePlan;
+        if (!plan) throw new Error('장면 설계가 없다');
+        const stageRef = findSceneView(enrichedBlocks, views);
+        if (!stageRef) throw new Error(`장면을 그릴 View 를 찾지 못했다 — ${json.id}`);
+        sceneView = stageRef;
+        return {
+          onInit(initialData: unknown) {
+            sceneTrack = new SceneTrack(plan, initialData);
+            void stageRef.render(sceneTrack.at(0), null, { animate: false });
+          },
+          async onEvent(event: FacetRuntimeEvent) {
+            if (!sceneTrack) return;
+            const prev = sceneTrack.at(sceneTrack.length);
+            const next = sceneTrack.push(event);
+            await stageRef.render(next, prev, { animate: true });
+          },
+          onReset() {
+            sceneTrack?.reset(initialDataClone);
+          },
+        };
+      })();
 
   // 10. control-bar wire-up + hooks 정의.
   const controlBar = findControlBar(views);
+
+  /**
+   * 걸어간 자취. 스크럽 띠를 단 facet 만 쓴다.
+   *
+   * 자취는 언제나 적는다 — 띠가 없으면 흘려보낼 곳이 없을 뿐이다. 띠가 있는지로
+   * 기록 여부를 가르면, 같은 facet 이 컨트롤 선언에 따라 다른 경로를 타게 된다.
+   */
+  const timeline = new Timeline({
+    onLength(steps) {
+      if (controlBar) callMethod(controlBar, 'setTimelineLength', steps);
+    },
+    onCursor(step) {
+      if (controlBar) callMethod(controlBar, 'setTimelineCursor', step);
+    },
+    // **장면 조각에만 넘긴다.** Timeline 은 이 훅이 있는 것만으로 "장면을 쥐고 있다" 고
+    // 보아 되감고 다시 먹이는 길을 건너뛴다. projector 조각에 넘기면 `sceneTrack` 이
+    // 없어 곧바로 돌아오므로 **화면은 그대로인 채 띠만 움직인다.** 두 방식이 공존하는
+    // 동안 projector 조각에 띠를 달면 조용히 그렇게 된다.
+    ...(scenePlan
+      ? {
+          async renderStep(step: number, from: number, animate: boolean): Promise<void> {
+            if (!sceneTrack || !sceneView) return;
+            await sceneView.render(sceneTrack.at(step), sceneTrack.at(from), { animate });
+          },
+        }
+      : {}),
+    onInstant(on) {
+      instantMode = on;
+      // 켜질 때 걸어 둔 것을 거둔다. 두면 되짚기가 끝난 뒤 깨어나 옛 목표를 그린다.
+      if (!on) return;
+      for (const clean of scrubCleaners) {
+        try {
+          clean();
+        } catch {
+          // 한 view 가 실패해도 나머지는 거둔다.
+        }
+      }
+    },
+  });
+  const projector = timeline.wrap(rawProjector);
 
   const hooks: MechanismHooks = {
     onRunningChange(running) {
@@ -225,11 +353,20 @@ export function runFacet(
     },
     onComplete(complete) {
       if (controlBar) callMethod(controlBar, 'setComplete', complete);
+      // 알고리즘이 입력을 기다리기 시작하면 자동 재생이 완주한 것이다
+      // (`ReactiveMechanism.enterAwaiting`). 그 순간 자취가 닫히고 띠를 끌 수 있다.
+      if (complete) timeline.seal();
+      if (controlBar) callMethod(controlBar, 'setTimelineSeekable', timeline.complete);
     },
     onMetric(name, value) {
       if (controlBar) callMethod(controlBar, 'updateMetric', name, value);
     },
     onMetricsReset() {
+      // 되돌리기는 처음부터 다시 걷는 일이다 — 지난 자취를 버려야 같은 걸음이
+      // 두 번 쌓이지 않는다. `onComplete(false)` 는 손짚기로 깨어날 때도 오므로
+      // 되돌리기만 오는 이 훅에서 버린다.
+      timeline.clear();
+      if (controlBar) callMethod(controlBar, 'setTimelineSeekable', false);
       if (controlBar) {
         callMethod(controlBar, 'resetMetrics');
         // 위젯도 처음 자리로. 슬라이더가 가리키는 값과 화면이 어긋나지 않게 한다.
@@ -252,6 +389,10 @@ export function runFacet(
     callMethod(controlBar, 'onAction', (action: string, payload?: unknown) =>
       mechanism.onControl(action, payload),
     );
+    // 스크럽 띠는 mechanism 을 타지 않는다 — 되짚기는 알고리즘을 다시 돌리는 일이
+    // 아니라 적어 둔 자취를 projector 에 다시 먹이는 일이다. `onSpeedChange` 처럼
+    // 전용 통로를 둬 control-bar 액션 어휘와 섞이지 않게 한다 (S-runtime).
+    callMethod(controlBar, 'onSeek', (step: number) => timeline.seek(step));
     const initSpeed = (callMethod(controlBar, 'getSpeed') as number | undefined) ?? 1;
     mechanism.setSpeed(initSpeed);
   }
@@ -263,6 +404,7 @@ export function runFacet(
   }
 
   function destroy() {
+    timeline.destroy();
     mechanism.destroy();
     projector.onDestroy?.();
     for (const v of Object.values(views)) {

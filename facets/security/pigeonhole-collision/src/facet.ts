@@ -11,7 +11,7 @@
  * @piece — 이 표식이 S-piece 의 적용 범위를 정한다.
  *
  * 조각의 규범:
- *   - 필수 조작 없음. 다시 보기 하나만 둔다 (자리가 차는 운동이 논증의 일부다).
+ *   - 필수 조작 없음. 다시 보기와 띠만 둔다 (자리가 차는 운동이 논증의 일부다).
  *   - 제목 없음 — 제목은 글의 문단이 준다.
  *   - 짧음 — 네 걸음 재생하고 정지한다.
  *   - 한 주장 — 진행 캡션들은 한 논증의 단계이지 서로 다른 주장이 아니다.
@@ -61,11 +61,13 @@ export const pigeonholeCollisionFacet: FacetJson = {
     pt: 'Dezesseis lugares, dezessete entradas — um deles não tem lugar próprio',
   },
   algorithm: 'module:pigeonholeCollision',
-  projector: 'module:pigeonholeCollisionProjector',
+  // 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든 셈으로
+  // 얻으므로 띠로 임의의 자리에 갈 수 있다 (S-scene).
+  scene: 'module:pigeonholeCollisionScene',
   initialData: {
     type: 'pigeonhole',
-    slotCount: 16,
     // SHA-256 마지막 니블을 자리 번호로 삼은 실측값. 16개가 0~15 를 하나씩 채운다.
+    // **이 목록의 길이가 곧 자리 수다** — 따로 선언하면 둘이 어긋날 수 있다.
     fillers: [
       { input: 'ba', slot: 0 },
       { input: 'ac', slot: 1 },
@@ -143,9 +145,10 @@ export const pigeonholeCollisionFacet: FacetJson = {
     stage: { type: 'pigeonhole-stage' },
     controls: {
       type: 'control-bar',
+      // 장면 방식이라 띠를 단다 — 어느 걸음으로든 곧장 간다 (S-piece).
       // ReactiveMechanism 의 reset() 은 끝에 ensureStarted() 를 부른다 — 즉
       // reset 이 곧 다시 재생이다. 그래서 action 은 reset 이고 라벨만 다르다.
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

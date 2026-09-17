@@ -21,7 +21,7 @@
  * 식별자 (C1): 자리 번호를 쓰는 곳이 payload 뿐이라 target 을 쓰지 않는다.
  *
  * 이벤트 (C2) — 전부 facet 로컬 (StandardEventType 미포함):
- *   - init             payload: { slotCount, fillers, overflow }
+ *   - init             payload: { fillers, overflow }   silent — 눈금을 세우지 않는다
  *   - rewind payload: {}   손으로 짚기 시작할 때 화면을 되감는다
  *   - reveal-slots     payload: {}   빈 자리 N칸을 놓는다
  *   - fill-slots       payload: {}   입력 N개가 자리를 하나씩 채운다
@@ -49,9 +49,13 @@ const STEP_COUNT = 4;
 
 export type PigeonholeFacetData = {
   type: 'pigeonhole';
-  /** 출력 자리 수. 실제 해시보다 훨씬 작게 줄여 셈이 보이게 한다. */
-  slotCount: number;
-  /** 자리를 하나씩 채우는 입력들. 길이가 slotCount 와 같아야 자리가 꽉 찬다. */
+  /**
+   * 자리를 하나씩 채우는 입력들. **이 목록의 길이가 곧 출력 자리 수다.**
+   *
+   * 자리 수를 따로 선언하지 않는다 — 자리를 하나씩 채우도록 고른 목록이므로 둘이
+   * 같다는 것은 정의다. 따로 두면 어긋날 때 자리가 덜 찬 화면 위에 "모두 찼다" 는
+   * 캡션이 뜬다 (같은 물음에 답이 둘).
+   */
   fillers: PigeonholeEntry[];
   /** 자리가 다 찬 뒤 들어오는 입력. 어디에 앉든 이미 누가 있다. */
   overflow: PigeonholeEntry;
@@ -68,7 +72,7 @@ export async function pigeonholeCollision(
   ctxBase: FacetContext<PigeonholeFacetData>,
 ): Promise<void> {
   const ctx = ctxBase as ReactiveContext<PigeonholeFacetData>;
-  const { slotCount, fillers, overflow, stepMs } = ctx.data;
+  const { fillers, overflow, stepMs } = ctx.data;
 
   /**
    * 한 걸음을 실제로 발신한다. 자동 재생과 손으로 짚기가 같은 경로를 쓴다.
@@ -104,9 +108,13 @@ export async function pigeonholeCollision(
     return ok && !ctx.cancelled;
   }
 
+  // 바탕을 실어 보낸다. 자리 수는 싣지 않는다 — fillers 의 길이가 그것이다.
+  // 화면에 아무것도 세우지 않는 발신이라 silent 로 둔다. 걸음 눈금이 서면 첫
+  // 장면과 똑같은 화면을 가리키는 뜻 없는 눈금이 하나 생긴다 (S-runtime 의 silent).
   await ctx.emit({
     type: 'init',
-    payload: { slotCount, fillers, overflow },
+    payload: { fillers, overflow },
+    silent: true,
   });
 
   // 네 걸음. 자리를 다 채운 다음에야 하나를 더 넣는다 — 순서가 곧 논증이다.

@@ -5,7 +5,11 @@
  *   "기준을 어디서 고르느냐가 남는 일의 크기를 정하는가?"
  *
  * 같은 값들을 두 가지 기준으로 각각 한 번씩 가르고, 두 결과를 한 화면에 남겨
- * 견주게 한다. 컨트롤은 다시 보기와 한 걸음 — 둘 다 눌러야 완성되는 조작이
+ * 견주게 한다.
+ *
+ * 화면을 명령이 아니라 **장면**으로 만들므로 (`scene:`) 어느 걸음의 화면이든
+ * 셈으로 얻는다. 그래서 컨트롤이 다시 보기와 **스크럽 띠**다 — 재생 위치를 끌어
+ * 옮겨도 화면이 그 걸음의 장면으로 정확히 선다. 둘 다 눌러야 완성되는 조작이
  * 아니다.
  */
 
@@ -39,7 +43,7 @@ export const pivotChoiceMattersFacet: FacetJson = {
     pt: 'Partir duas vezes os mesmos valores ordenados: o valor do meio reduz o trabalho à metade, o primeiro tira apenas um.',
   },
   algorithm: 'module:pivotChoiceMatters',
-  projector: 'module:pivotChoiceMattersProjector',
+  scene: 'module:pivotChoiceMattersScene',
   initialData: {
     type: 'pivot-choice-matters',
     // 이미 줄이 선 입력. 셔플하면 이 조각의 전제가 사라지므로 shuffleOnReset 은 켜지 않는다.
@@ -52,13 +56,13 @@ export const pivotChoiceMattersFacet: FacetJson = {
     stage: { type: 'pivot-choice-matters-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {
     'caption.pickMiddle': {
       en: 'Take the middle value {pivot} as the pivot.',
-      ko: '가운데 값 {pivot} 을 기준으로 삼는다.',
+      ko: '기준은 가운데 값 {pivot}.',
       ja: '真ん中の値 {pivot} をピボットにする。',
       zh: '取中间的值 {pivot} 作为基准。',
       ar: 'اتخذ القيمة الوسطى {pivot} محورًا.',
@@ -70,7 +74,7 @@ export const pivotChoiceMattersFacet: FacetJson = {
     },
     'caption.pickFirst': {
       en: 'Now take the first value {pivot} as the pivot — the input is already sorted.',
-      ko: '이번엔 맨 앞 값 {pivot} 을 기준으로 삼는다. 입력은 이미 줄이 서 있다.',
+      ko: '이번 기준은 맨 앞 값 {pivot}. 입력은 이미 줄이 서 있다.',
       ja: '今度は先頭の値 {pivot} をピボットにする — 入力はすでに並んでいる。',
       zh: '这次取第一个值 {pivot} 作为基准 — 输入本来就已排好序。',
       ar: 'والآن اتخذ القيمة الأولى {pivot} محورًا — المدخلات مرتَّبة أصلًا.',

@@ -17,22 +17,27 @@
  *   edge:<from>-<to>     방향 간선
  *
  * ── 이벤트
- * | type              | target           | payload                                            | silent |
- * |-------------------|------------------|----------------------------------------------------|--------|
- * | indegrees-counted | —                | { counts: { id: string; count: number }[] }         | no     |
- * | layer-discovered  | node:<id>[]      | { distance: number; nodes: string[] }               | no     |
- * | dequeue           | node:<id>        | { id: string; slot: number }                        | no     |
- * | arrows-dropped    | edge:<f>-<t>[]   | { from: string; drops: { to; was; now }[] }         | no     |
- * | rewind            | —                | —                                                   | no     |
- * | done              | —                | { order: string[] }                                 | no     |
+ * | type              | target           | payload              | silent |
+ * |-------------------|------------------|----------------------|--------|
+ * | indegrees-counted | —                | —                    | no     |
+ * | layer-discovered  | node:<id>[]      | { nodes: string[] }  | no     |
+ * | dequeue           | node:<id>        | { id: string }       | no     |
+ * | arrows-dropped    | edge:<f>-<t>[]   | { from: string }     | no     |
+ * | rewind            | —                | —                    | no     |
+ * | done              | —                | —                    | no     |
+ *
+ * **payload 는 구조에서 셀 수 없는 것만 싣는다.** 진입 차수도, 몇 번째 칸인가도,
+ * 나온 차례도 `nodes` / `edges` 와 걸어온 자취에서 셈해진다 — 실어 보내면 같은
+ * 물음에 답이 둘이 되고 언젠가 갈린다. `layer-discovered` 의 `nodes` 만 남는데,
+ * 그것은 이 조각이 내리는 판정 그 자체다 (진입 차수 0 인 것만 꺼낼 수 있다).
  *
  * `layer-discovered` 는 표준 어휘를 그대로 쓴다. 같은 순간에 동시에 꺼낼 수 있게
- * 된 집합이며 `distance` 는 그 집합이 드러난 라운드다 (0 = 아직 아무것도 꺼내기
- * 전). C2 가 이 용도를 명시한다 — "위상 정렬의 같은 in-degree 0 집합 배치".
+ * 된 집합이며, 몇 번째 집합인가는 장면이 센다. C2 가 이 용도를 명시한다 —
+ * "위상 정렬의 같은 in-degree 0 집합 배치".
  *
  * `arrows-dropped` 는 한 정점이 걸어 두었던 화살을 한 걸음에 묶어 떨군다.
  * 정점이 빠지면 그 정점에서 나가는 화살은 동시에 사라지므로, 하나씩 나누어
- * 발신하면 없는 순서를 지어내는 것이 된다.
+ * 발신하면 없는 순서를 지어내는 것이 된다. 어느 화살인지는 `from` 하나로 정해진다.
  *
  * ── 메트릭
  * 없다. 조각은 셀 것이 없다 (S-piece).
@@ -71,11 +76,9 @@ async function play(ctx: ReactiveContext<IndegreeZeroFirstData>, gate: Gate): Pr
   const indeg = countIndegrees(data);
 
   // 1. 각 정점이 이고 있는 수를 띄운다. 세는 일 자체는 한 순간이므로 한 걸음이다.
+  //    수 자체는 싣지 않는다 — 화면이 같은 간선을 세면 답이 하나로 남는다.
   if (!(await gate())) return;
-  await ctx.emit({
-    type: 'indegrees-counted',
-    payload: { counts: data.nodes.map((id) => ({ id, count: indeg.get(id) ?? 0 })) },
-  });
+  await ctx.emit({ type: 'indegrees-counted' });
 
   // 2. 처음부터 0 인 것들. 여럿이면 알파벳 순으로 줄을 세운다.
   const ready = data.nodes.filter((id) => (indeg.get(id) ?? 0) === 0).sort();
@@ -83,19 +86,15 @@ async function play(ctx: ReactiveContext<IndegreeZeroFirstData>, gate: Gate): Pr
   await ctx.emit({
     type: 'layer-discovered',
     target: ready.map((id) => `node:${id}`),
-    payload: { distance: 0, nodes: [...ready] },
+    payload: { nodes: [...ready] },
   });
-
-  const order: string[] = [];
-  let round = 1;
 
   while (ready.length > 0) {
     const id = ready.shift() as string;
 
     // 3. 꺼낸다 — 이고 있는 수가 0 인 것만 여기 올 수 있다.
     if (!(await gate())) return;
-    await ctx.emit({ type: 'dequeue', target: `node:${id}`, payload: { id, slot: order.length } });
-    order.push(id);
+    await ctx.emit({ type: 'dequeue', target: `node:${id}`, payload: { id } });
 
     const outs = data.edges
       .filter((e) => e.from === id)
@@ -103,38 +102,36 @@ async function play(ctx: ReactiveContext<IndegreeZeroFirstData>, gate: Gate): Pr
 
     if (outs.length > 0) {
       // 4. 빠진 정점이 걸어 두었던 화살이 떨어지고, 그것을 이고 있던 수가 준다.
-      const drops = outs.map((e) => {
-        const was = indeg.get(e.to) ?? 0;
-        const now = was - 1;
+      const newlyZero: string[] = [];
+      for (const e of outs) {
+        const now = (indeg.get(e.to) ?? 0) - 1;
         indeg.set(e.to, now);
-        return { to: e.to, was, now };
-      });
+        if (now === 0) newlyZero.push(e.to);
+      }
       if (!(await gate())) return;
       await ctx.emit({
         type: 'arrows-dropped',
         target: outs.map((e) => `edge:${e.from}-${e.to}`),
-        payload: { from: id, drops },
+        payload: { from: id },
       });
 
       // 5. 그래서 새로 0 이 된 것들이 뒤따라 떨어질 차례가 된다.
-      const newlyZero = drops.filter((d) => d.now === 0).map((d) => d.to).sort();
       if (newlyZero.length > 0) {
+        newlyZero.sort();
         if (!(await gate())) return;
         await ctx.emit({
           type: 'layer-discovered',
           target: newlyZero.map((n) => `node:${n}`),
-          payload: { distance: round, nodes: newlyZero },
+          payload: { nodes: newlyZero },
         });
         for (const n of newlyZero) ready.push(n);
         ready.sort();
       }
     }
-
-    round++;
   }
 
   if (!(await gate())) return;
-  await ctx.emit({ type: 'done', payload: { order } });
+  await ctx.emit({ type: 'done' });
 }
 
 /** 다음 입력을 기다린다. 취소로 깨어나면 null. */

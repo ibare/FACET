@@ -10,12 +10,12 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { pickNearestUnsettledAlgorithm } from './algorithm.js';
-import { pickNearestUnsettledProjector } from './projector.js';
+import { pickNearestUnsettledScene } from './scene.js';
 import { pickNearestUnsettledIRs } from './irs.js';
 import { pickNearestUnsettledStageView } from './pick-nearest-unsettled-stage.js';
 import { pickNearestUnsettledFacet } from './facet.js';
@@ -25,7 +25,7 @@ export function registerPickNearestUnsettled(): void {
   registerAlgorithm('pickNearestUnsettled', pickNearestUnsettledAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('pickNearestUnsettledProjector', pickNearestUnsettledProjector);
+  registerScenePlan('pickNearestUnsettledScene', pickNearestUnsettledScene);
   for (const ir of pickNearestUnsettledIRs) registerIR(ir.id, ir);
   registerView('pick-nearest-unsettled-stage', pickNearestUnsettledStageView);
   registerFacets([pickNearestUnsettledFacet]);
@@ -33,7 +33,7 @@ export function registerPickNearestUnsettled(): void {
 }
 
 export * from './algorithm.js';
-export * from './projector.js';
+export * from './scene.js';
 export * from './irs.js';
 export * from './pick-nearest-unsettled-stage.js';
 export * from './facet.js';

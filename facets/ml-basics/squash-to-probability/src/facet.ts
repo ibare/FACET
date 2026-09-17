@@ -3,6 +3,13 @@
  *
  * @piece 질문 하나에 답하고 멈춘다. 재료는 수직선 하나와 띠 하나뿐이며,
  *        점 무리도 결정 경계도 여기 없다.
+ *
+ * 선언에 두는 것은 구조뿐이다 — 눌러 담을 점수와 걸음 간격. 확률은 algorithm 이
+ * 셈하고 밟는 차례는 그 목록에서 나오며, 좌표는 stage 가 캔버스에서 역산한다
+ * (S-piece).
+ *
+ * 화면을 명령이 아니라 **장면**으로 만들므로 (`scene:`) 어느 걸음의 화면이든
+ * 셈으로 얻는다 — 그래서 재생 위치를 끌어 보는 띠를 단다 (S-scene).
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -34,7 +41,7 @@ export const squashToProbabilityFacet: FacetJson = {
     pt: 'Um eixo sem fim dobrado na faixa entre 0 e 1.',
   },
   algorithm: 'module:squashToProbability',
-  projector: 'module:squashToProbabilityProjector',
+  scene: 'module:squashToProbabilityScene',
   initialData: {
     type: 'squash-to-probability',
     /** 눌러 담을 점수. 자리는 그림이 셈하고 확률은 알고리즘이 셈한다. */
@@ -44,7 +51,7 @@ export const squashToProbabilityFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'squash-to-probability-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.axis': {

@@ -3,9 +3,13 @@
  *
  * 답하는 질문 하나: **수가 클수록 바로 다음 수까지가 얼마나 멀어지는가.**
  *
- * 선언에 두는 것은 구조뿐이다 — 볼 지점과 가수 비트 수, 그리고 읽을 틈(stepMs).
- * 사이 거리도 개수도 좌표도 여기 없다. 거리와 개수는 algorithm 이 재고 셈하며,
- * 어디에 무엇을 놓을지는 stage 가 캔버스에서 역산한다 (S-piece).
+ * 선언에 두는 것은 구조뿐이다 — 볼 지점과 읽을 틈(stepMs). 사이 거리도 개수도
+ * 좌표도 여기 없다. 거리는 algorithm 의 자(`gapAt`)가 재고, 한 구간에 드는 값의
+ * 개수도 그 잰 거리에서 나오며(한때 여기 있던 `mantissaBits` 는 그림과 다른
+ * 출처였다), 어디에 무엇을 놓을지는 stage 가 캔버스에서 역산한다 (S-piece).
+ *
+ * 화면을 명령이 아니라 **장면**으로 만들므로 (`scene:`) 어느 걸음의 화면이든
+ * 셈으로 얻는다 — 그래서 재생 위치를 끌어 보는 띠를 단다 (S-scene).
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -37,16 +41,15 @@ export const unevenFloatGapsFacet: FacetJson = {
     pt: 'Cada passo para a direita dobra a distância até o próximo float32.',
   },
   algorithm: 'module:unevenFloatGaps',
-  projector: 'module:unevenFloatGapsProjector',
+  scene: 'module:unevenFloatGapsScene',
   initialData: {
     type: 'uneven-float-gaps',
     samples: [1, 2, 16, 1024, 65536],
-    mantissaBits: 23,
     stepMs: 700,
   },
   blocks: {
     stage: { type: 'uneven-float-gaps-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.anchor': {

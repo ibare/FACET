@@ -7,8 +7,11 @@
  *
  * @piece — 이 표식이 S-piece 의 적용 범위를 정한다.
  *
- * 조각의 규범: 필수 조작 없음(다시 보기 하나) / 제목 없음 / 한 주장 /
- * 메트릭 없음 / 캔버스 폭 620 / 전제를 각주로 밝힘.
+ * 조각의 규범: 필수 조작 없음(다시 보기와 재생 자리를 끄는 띠) / 제목 없음 /
+ * 한 주장 / 메트릭 없음 / 캔버스 폭 620.
+ *
+ * 화면은 걸음마다의 **장면**에서 만들어진다 (`scene.ts`) — 어느 걸음으로 끌어도
+ * 같은 그림이 서므로 컨트롤이 `CONTROL_SET.pieceScrub` 이다 (S-piece · S-scene).
  *
  * 데이터는 20, 10, 30, 5, 3 을 이 순서로 넣는 실제 삽입이다 — 미리 계산해 둔
  * 스냅샷이 아니라 algorithm 이 진짜 레드-블랙 트리 삽입+수선을 수행한다.
@@ -48,7 +51,7 @@ export const recolorThenRotateFacet: FacetJson = {
     pt: 'A mesma violação acontece duas vezes — a cor do vizinho decide se recolorir basta ou se a árvore tem de girar',
   },
   algorithm: 'module:recolorThenRotate',
-  projector: 'module:recolorThenRotateProjector',
+  scene: 'module:recolorThenRotateScene',
   initialData: {
     type: 'recolor-then-rotate',
     values: [20, 10, 30, 5, 3],
@@ -58,7 +61,7 @@ export const recolorThenRotateFacet: FacetJson = {
   messages: {
     'caption.insertRoot': {
       en: '{value} starts the tree — the root is always black.',
-      ko: '{value}이 트리를 시작한다 — 뿌리는 항상 검정이다.',
+      ko: '트리를 시작하는 것은 {value} — 뿌리는 항상 검정이다.',
       ja: '{value} が木を始める — 根はつねに黒だ。',
       zh: '{value} 开启这棵树 — 根总是黑色。',
       ar: '{value} يبدأ الشجرة — والجذر أسود دائمًا.',
@@ -70,7 +73,7 @@ export const recolorThenRotateFacet: FacetJson = {
     },
     'caption.insertRed': {
       en: '{value} enters red, under {parent}.',
-      ko: '{value}이 {parent} 아래 빨강으로 들어온다.',
+      ko: '{parent} 아래로 빨강 하나가 들어온다 — 값은 {value}.',
       ja: '{value} が {parent} の下に赤で入る。',
       zh: '{value} 以红色进入 {parent} 之下。',
       ar: '{value} يدخل أحمر تحت {parent}.',
@@ -106,7 +109,7 @@ export const recolorThenRotateFacet: FacetJson = {
     },
     'caption.recolorApplied': {
       en: '{parent} and {uncle} turn black, {grandparent} turns red.',
-      ko: '{parent}와 {uncle}은 검정으로, {grandparent}는 빨강으로 바뀐다.',
+      ko: '검정이 되는 것은 {parent} · {uncle}, 빨강이 되는 것은 {grandparent}.',
       ja: '{parent} と {uncle} が黒に、{grandparent} が赤になる。',
       zh: '{parent} 与 {uncle} 变黑，{grandparent} 变红。',
       ar: '{parent} و{uncle} يصيران أسودين، و{grandparent} يصير أحمر.',
@@ -118,7 +121,7 @@ export const recolorThenRotateFacet: FacetJson = {
     },
     'caption.rootFixApplied': {
       en: '{root} is the root, so it turns back to black.',
-      ko: '{root}는 뿌리라서 다시 검정이 된다.',
+      ko: '뿌리라서 다시 검정이 되는 것은 {root}.',
       ja: '{root} は根なので、また黒に戻る。',
       zh: '{root} 是根，所以又变回黑色。',
       ar: '{root} هو الجذر، فيعود أسود.',
@@ -130,7 +133,7 @@ export const recolorThenRotateFacet: FacetJson = {
     },
     'caption.rotateApplied': {
       en: '{grandparent} rotates — {parent} moves up in its place.',
-      ko: '{grandparent}가 돈다 — {parent}가 그 자리로 올라온다.',
+      ko: '도는 것은 {grandparent} — 그 자리로 올라오는 것은 {parent}.',
       ja: '{grandparent} が回る — {parent} がその位置へ上がる。',
       zh: '{grandparent} 旋转 — {parent} 升到它的位置。',
       ar: '{grandparent} يدور — و{parent} يصعد إلى مكانه.',
@@ -142,7 +145,7 @@ export const recolorThenRotateFacet: FacetJson = {
     },
     'caption.rotateSwapApplied': {
       en: '{parent} turns black, {grandparent} turns red.',
-      ko: '{parent}는 검정으로, {grandparent}는 빨강으로 바뀐다.',
+      ko: '검정이 되는 것은 {parent}, 빨강이 되는 것은 {grandparent}.',
       ja: '{parent} が黒に、{grandparent} が赤になる。',
       zh: '{parent} 变黑，{grandparent} 变红。',
       ar: '{parent} يصير أسود، و{grandparent} يصير أحمر.',
@@ -157,7 +160,7 @@ export const recolorThenRotateFacet: FacetJson = {
     stage: { type: 'recolor-then-rotate-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

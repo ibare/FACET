@@ -5,15 +5,16 @@
  * 논증은 "성한 것을 보인 뒤 손댄다" 순서다 — 무방향으로 걸어 전부 닿는 것을
  * 보이고, 같은 다섯 선에 방향을 붙이고, 다시 걸으면 한 정점이 남는다.
  *
- * 화면에 뜨는 수(닿은 정점 수 · 선 수 · 남은 정점)는 전부 이 파일이 구조에서
- * 셈한 값이다. 걸음표를 손으로 적은 배열은 없다 — 걸음은 BFS 순회의 결과다.
+ * 걸음표를 손으로 적은 배열은 없다 — 걸음은 BFS 순회의 결과다. 화면에 뜨는
+ * 수(닿은 정점 수 · 선 수 · 남은 정점)는 **발신에 싣지 않는다.** 장면이 같은
+ * 구조에서 세므로, 실어 보내면 한 물음에 답이 둘이 된다 (S-scene).
  *
  * ── 식별자
  *   node:<id>          정점 (S · A · B · T · C)
  *
  * ── 이벤트 (전부 리터럴 emit, silent 없음 — 모두 시각 변화가 있다)
  *
- *   mode-changed   payload: { mode: 'undirected' | 'directed'; source: string; lines: number }
+ *   mode-changed   payload: { mode: 'undirected' | 'directed' }
  *                  그림 전체의 모드 전이. 'undirected' 는 두 차선 + 출발점 표시,
  *                  'directed' 는 각 선에서 한 차선이 떨어져 나가고 한 방향만 남는다.
  *
@@ -27,23 +28,23 @@
  *                  payload: { from: string; to: string }
  *                  from 에서 to 로 한 걸음 건너가 to 를 처음 밟는다.
  *
- *   walk-done      payload: { mode: 'undirected' | 'directed'; source: string;
- *                             reached: number; total: number }
- *                  한 차례 답사가 끝났을 때의 셈.
+ *   walk-done      payload 없음.
+ *                  한 차례 답사가 끝났다는 선언. 닿은 수와 전체 수는 장면이 자취와
+ *                  명부에서 센다 — 여기 실으면 같은 수를 두 자리에서 세게 된다.
  *
  *   walk-blocked   target: node:<node>
- *                  payload: { node: string; from: string[] }
- *                  닿지 못한 정점으로 들어가려던 시도가 되튄다. from 은 그 정점과
- *                  선을 나눠 갖지만 화살이 반대라 들어갈 수 없는 정점들.
+ *                  payload: { node: string }
+ *                  닿지 못한 정점으로 들어가려던 시도가 되튄다. 어느 정점들이
+ *                  되튕겼는지는 바탕(선)과 자취(닿은 곳)에서 나오므로 장면이 센다
+ *                  (`scene.ts` 의 `blockedNeighborsOf`).
  *
  *   push-out       target: node:<node>
  *                  payload: { node: string }
  *                  닿지 못한 정점이 고리 밖으로 밀려난다.
  *
- *   done           payload: { source: string; reached: number; total: number;
- *                             stranded: string[] }
+ *   done           payload 없음. 셈도 남은 정점도 장면이 자취에서 낸다.
  *
- *   rewind         payload: { source: string }
+ *   rewind         payload 없음.
  *                  자동 재생이 끝난 뒤 advance 를 처음 눌렀을 때. 화면을 처음으로
  *                  되돌린다 (그리고 곧바로 첫 걸음까지 보인다).
  *
@@ -68,8 +69,14 @@ export type OneWayEdgeData = {
 
 type Hop = { from: string; to: string };
 
-/** 방향을 붙였을 때 이 선이 어디서 어디로 향하는가. */
-function directedEnds(line: OneWayEdgeLine): Hop {
+/**
+ * 방향을 붙였을 때 이 선이 어디서 어디로 향하는가.
+ *
+ * 화면도 같은 셈을 해야 화살을 그릴 수 있으므로 내준다 — 장면이 이것을 부른다
+ * (`scene.ts` 의 `keptLane`). 조각의 알고리즘은 `walkFrom` 이고, 이 함수만 떼어
+ * 내도 "화살 방향으로만 건넌다" 는 주장은 그대로 남는다.
+ */
+export function directedEnds(line: OneWayEdgeLine): Hop {
   return line.dir === 'uv' ? { from: line.u, to: line.v } : { from: line.v, to: line.u };
 }
 
@@ -110,21 +117,6 @@ function walkFrom(
     }
   }
   return { hops, reached };
-}
-
-/** `node` 와 선을 나눠 갖지만 화살이 반대라 들어올 수 없는, 이미 닿은 정점들. */
-function blockedNeighbors(
-  edges: OneWayEdgeLine[],
-  node: string,
-  reached: string[],
-): string[] {
-  const out: string[] = [];
-  for (const line of edges) {
-    const other = crossing(line, node, false);
-    if (other === null || !reached.includes(other)) continue;
-    if (!out.includes(other)) out.push(other);
-  }
-  return out;
 }
 
 export async function oneWayEdgeAlgorithm(ctx: FacetContext<OneWayEdgeData>): Promise<void> {
@@ -169,10 +161,7 @@ export async function oneWayEdgeAlgorithm(ctx: FacetContext<OneWayEdgeData>): Pr
   async function play(): Promise<void> {
     // 1) 성한 것 — 화살이 없는 다섯 선.
     await gate();
-    await r.emit({
-      type: 'mode-changed',
-      payload: { mode: 'undirected', source, lines: edges.length },
-    });
+    await r.emit({ type: 'mode-changed', payload: { mode: 'undirected' } });
 
     const open = walkFrom(edges, source, false);
     for (const hop of open.hops) {
@@ -185,23 +174,12 @@ export async function oneWayEdgeAlgorithm(ctx: FacetContext<OneWayEdgeData>): Pr
       });
     }
     await gate();
-    await r.emit({
-      type: 'walk-done',
-      payload: {
-        mode: 'undirected',
-        source,
-        reached: open.reached.length,
-        total: nodes.length,
-      },
-    });
+    await r.emit({ type: 'walk-done' });
     await beat();
 
     // 2) 손댄다 — 같은 선에 화살이 붙고 반대 차선이 끊긴다.
     await gate();
-    await r.emit({
-      type: 'mode-changed',
-      payload: { mode: 'directed', source, lines: edges.length },
-    });
+    await r.emit({ type: 'mode-changed', payload: { mode: 'directed' } });
 
     // 3) 다시 걷는다.
     const closed = walkFrom(edges, source, true);
@@ -219,25 +197,13 @@ export async function oneWayEdgeAlgorithm(ctx: FacetContext<OneWayEdgeData>): Pr
     for (const node of stranded) {
       if (r.cancelled) return;
       await gate();
-      await r.emit({
-        type: 'walk-blocked',
-        target: `node:${node}`,
-        payload: { node, from: blockedNeighbors(edges, node, closed.reached) },
-      });
+      await r.emit({ type: 'walk-blocked', target: `node:${node}`, payload: { node } });
       await gate();
       await r.emit({ type: 'push-out', target: `node:${node}`, payload: { node } });
     }
 
     await gate();
-    await r.emit({
-      type: 'done',
-      payload: {
-        source,
-        reached: closed.reached.length,
-        total: nodes.length,
-        stranded,
-      },
-    });
+    await r.emit({ type: 'done' });
   }
 
   await play();
@@ -249,7 +215,7 @@ export async function oneWayEdgeAlgorithm(ctx: FacetContext<OneWayEdgeData>): Pr
     if (input.type !== 'advance') continue;
     manual = true;
     passFirstGate = true;
-    await r.emit({ type: 'rewind', payload: { source } });
+    await r.emit({ type: 'rewind' });
     await play();
     manual = false;
   }

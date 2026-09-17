@@ -39,7 +39,7 @@ export const bstDegenerateFacet: FacetJson = {
     pt: 'Insira os mesmos seis valores em duas ordens diferentes e veja uma árvore virar corrente enquanto a outra se espalha.',
   },
   algorithm: 'module:bstDegenerate',
-  projector: 'module:bstDegenerateProjector',
+  scene: 'module:bstDegenerateScene',
   initialData: {
     type: 'bst-degenerate',
     // 오름차순 — 새 값이 언제나 지금 자리보다 커서 오른쪽으로만 뻗는다.
@@ -54,7 +54,7 @@ export const bstDegenerateFacet: FacetJson = {
     stage: { type: 'bst-degenerate-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: [CONTROL.replay, CONTROL.timeline],
     },
   },
   messages: {

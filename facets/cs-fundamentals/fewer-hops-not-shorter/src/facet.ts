@@ -7,7 +7,7 @@
  * 얼마인지는 algorithm 이 이 구조에서 셈한다 (파생값을 손으로 적지 않는다).
  */
 
-import { CONTROL } from '@ffacet/core/runtime';
+import { CONTROL_SET } from '@ffacet/core/runtime';
 import type { FacetJson } from '@ffacet/core/runtime';
 
 export const fewerHopsNotShorterFacet: FacetJson = {
@@ -37,7 +37,7 @@ export const fewerHopsNotShorterFacet: FacetJson = {
     pt: 'Duas rotas ligam o mesmo par de vértices. A que cruza menos arestas é a mais pesada.',
   },
   algorithm: 'module:fewerHopsNotShorter',
-  projector: 'module:fewerHopsNotShorterProjector',
+  scene: 'module:fewerHopsNotShorterScene',
   initialData: {
     type: 'fewer-hops-not-shorter',
     nodes: ['S', 'A', 'T', 'B', 'C', 'D'],
@@ -57,7 +57,7 @@ export const fewerHopsNotShorterFacet: FacetJson = {
     stage: { type: 'fewer-hops-not-shorter-stage' },
     controls: {
       type: 'control-bar',
-      controls: [CONTROL.replay, CONTROL.advance],
+      controls: CONTROL_SET.pieceScrub,
     },
   },
   messages: {

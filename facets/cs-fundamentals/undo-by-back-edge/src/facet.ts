@@ -8,6 +8,9 @@
  * 간선을 적은 차례가 곧 길을 찾는 차례다 (선언 순서대로 도는 DFS). S→A 를 S→B
  * 보다, A→B 를 A→T 보다 앞에 둔 것은 첫 길이 일부러 가운데 관을 지나게 하려는
  * 저작 결정이다 — 가운데로 먼저 흘려 두어야 되돌릴 일이 생긴다.
+ *
+ * 화면을 명령이 아니라 장면(Scene)으로 만든다. 어느 걸음의 화면이든 계산으로
+ * 얻으므로 임의의 자리로 곧장 갈 수 있고, 그래서 띠를 단다 (S-piece · S-scene).
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -39,7 +42,7 @@ export const undoByBackEdgeFacet: FacetJson = {
     pt: 'O que já fluiu pode ser empurrado de volta na mesma medida — e é isso que destrava o fluxo.',
   },
   algorithm: 'module:undoByBackEdge',
-  projector: 'module:undoByBackEdgeProjector',
+  scene: 'module:undoByBackEdgeScene',
   initialData: {
     type: 'undo-by-back-edge',
     stepMs: 950,
@@ -56,7 +59,7 @@ export const undoByBackEdgeFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'undo-by-back-edge-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.pathForward': {

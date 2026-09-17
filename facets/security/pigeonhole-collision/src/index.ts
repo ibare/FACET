@@ -5,8 +5,11 @@
  * 하나 외에는 조작을 받지 않는다. ReactiveMechanism 이라 컨트롤바 없이 스스로
  * 재생하고 걸음 간격도 스스로 정한다 (ctx.sleep).
  *
- * algorithm / projector / facet JSON / description / 전용 view (pigeonhole-stage)
+ * algorithm / 장면 설계 / facet JSON / description / 전용 view (pigeonhole-stage)
  * 를 함께 번들하고 등록 헬퍼를 제공한다. 코드 패널은 두지 않는다.
+ *
+ * 화면은 명령이 아니라 **장면**에서 만들어지므로 어느 걸음으로든 곧장 갈 수 있다
+ * (S-scene).
  */
 
 export {
@@ -14,7 +17,14 @@ export {
   type PigeonholeFacetData,
   type PigeonholeEntry,
 } from './algorithm.js';
-export { pigeonholeCollisionProjector } from './projector.js';
+export {
+  pigeonholeCollisionScene,
+  type PigeonholeCaption,
+  type PigeonholeChip,
+  type PigeonholeScene,
+  type PigeonholeSeat,
+  type PigeonholeStep,
+} from './scene.js';
 export { pigeonholeCollisionIRs } from './irs.js';
 export { pigeonholeCollisionFacet } from './facet.js';
 export { pigeonholeCollisionDescription } from './description.js';
@@ -22,14 +32,14 @@ export { pigeonholeStageView } from './pigeonhole-stage.js';
 
 import {
   registerAlgorithm,
-  registerProjector,
+  registerScenePlan,
   registerIR,
   registerFacets,
   registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { pigeonholeCollision, type PigeonholeFacetData } from './algorithm.js';
-import { pigeonholeCollisionProjector } from './projector.js';
+import { pigeonholeCollisionScene } from './scene.js';
 import { pigeonholeCollisionIRs } from './irs.js';
 import { pigeonholeCollisionFacet } from './facet.js';
 import { pigeonholeCollisionDescription } from './description.js';
@@ -39,7 +49,7 @@ export function registerPigeonholeCollision(): void {
   registerAlgorithm<PigeonholeFacetData>('pigeonholeCollision', pigeonholeCollision, {
     mechanismKind: 'reactive',
   });
-  registerProjector('pigeonholeCollisionProjector', pigeonholeCollisionProjector);
+  registerScenePlan('pigeonholeCollisionScene', pigeonholeCollisionScene);
   for (const ir of pigeonholeCollisionIRs) registerIR(ir.id, ir);
   registerView('pigeonhole-stage', pigeonholeStageView);
   registerFacets([pigeonholeCollisionFacet]);

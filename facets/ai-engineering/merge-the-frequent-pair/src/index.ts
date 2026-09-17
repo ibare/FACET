@@ -9,12 +9,12 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { mergeTheFrequentPairAlgorithm, type MergeTheFrequentPairData } from './algorithm.js';
-import { mergeTheFrequentPairProjector } from './projector.js';
+import { mergeTheFrequentPairScene } from './scene.js';
 import { mergeTheFrequentPairIRs } from './irs.js';
 import { mergeTheFrequentPairStageView } from './merge-the-frequent-pair-stage.js';
 import { mergeTheFrequentPairFacet } from './facet.js';
@@ -26,8 +26,8 @@ export function registerMergeTheFrequentPair(): void {
   registerAlgorithm<MergeTheFrequentPairData>('mergeTheFrequentPair', mergeTheFrequentPairAlgorithm, {
     mechanismKind: 'reactive',
   });
-  // projector 이름은 algorithm 과 겹치지 않게 둔다 (C4).
-  registerProjector('mergeTheFrequentPairProjector', mergeTheFrequentPairProjector);
+  // 장면 설계 이름은 algorithm 과 겹치지 않게 둔다 (C4).
+  registerScenePlan('mergeTheFrequentPairScene', mergeTheFrequentPairScene);
   for (const ir of mergeTheFrequentPairIRs) registerIR(ir.id, ir);
   registerView('merge-the-frequent-pair-stage', mergeTheFrequentPairStageView);
   registerFacets([mergeTheFrequentPairFacet]);
@@ -36,7 +36,7 @@ export function registerMergeTheFrequentPair(): void {
 
 export { mergeTheFrequentPairAlgorithm } from './algorithm.js';
 export type { MergeTheFrequentPairData } from './algorithm.js';
-export { mergeTheFrequentPairProjector } from './projector.js';
+export { mergeTheFrequentPairScene, type MergeScene } from './scene.js';
 export { mergeTheFrequentPairIRs } from './irs.js';
 export { mergeTheFrequentPairStageView } from './merge-the-frequent-pair-stage.js';
 export type { MergeTheFrequentPairStage } from './merge-the-frequent-pair-stage.js';

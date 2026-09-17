@@ -14,24 +14,29 @@
  *
  * ── 이벤트 (전부 이 facet 고유. silent 는 하나도 없다 — 모두 화면이 바뀐다)
  *
+ * payload 는 **올리는 법이 내놓는 판정만** 싣는다. 자름 자리도 · 몇 번째 자리인가도 ·
+ * 양쪽에 남은 이름표도 점에서 곧바로 세지는 것이라 장면이 센다 (S-scene).
+ *
  *   line-shown      {}
  *       한 줄 위의 점들이 자리를 잡는다.
- *   cut-tried       { cut: number; leftLabels: string[]; leftMixed: boolean;
- *                     rightLabels: string[]; rightMixed: boolean;
- *                     tried: number; total: number }
- *       자름 자리 하나. 양쪽에 어떤 이름표가 남는지와 섞였는지.
- *   cut-exhausted   { total: number }
- *       자를 수 있는 자리를 다 해 봤고 되는 것이 없었다.
+ *   cut-tried       {}
+ *       자름 자리 하나를 짚는다. 어느 자리인지는 `kernelCutsOf` 가 정하고 몇 번째인지는
+ *       장면이 센다. 양쪽에 어떤 이름표가 남는지도 점과 그 자리에서 나온다.
+ *   cut-exhausted   {}
+ *       자를 수 있는 자리를 다 해 봤고 되는 것이 없었다. 몇 자리였는지는 장면이 센다.
  *   height-opened   { ticks: number[] }
- *       없던 쪽(위)을 연다. ticks 는 실제로 나오는 높이들(오름차순).
+ *       없던 쪽(위)을 연다. ticks 는 실제로 나오는 높이들(오름차순) — 올리는 법이
+ *       정하는 값이라 장면이 셈할 수 없다.
  *   point-raised    { xs: number[]; height: number }
- *       같은 높이로 오르는 것끼리 함께 오른다. 낮은 것부터.
+ *       같은 높이로 오르는 것끼리 함께 오른다. 낮은 것부터. 오른 높이가 곧 올리는
+ *       법의 답이라 싣는다.
  *   curve-traced    {}
  *       앉은 자리를 이으면 굽어 있다.
  *   cut-placed      { height: number }
  *       곧은 선 하나가 내려와 그 높이에서 멈춘다.
- *   split-verified  { belowLabel: string; aboveLabel: string }
- *       아래는 한 이름표, 위는 다른 이름표.
+ *   split-verified  {}
+ *       아래는 한 이름표, 위는 다른 이름표. 어느 이름표가 어느 쪽인지는 오른 높이와
+ *       가르는 높이를 견주면 나오므로 장면이 센다 — 그림과 같은 자료를 쓴다.
  *   rewind          {}
  *       되감기. 자동 재생이 끝난 뒤 처음 누르는 `advance` 가 이것을 내고
  *       곧바로 첫 걸음(line-shown)까지 간다 (S-piece).
@@ -56,38 +61,26 @@ export type KernelLiftsData = {
   stepMs: number;
 };
 
-/** 자름 자리 하나가 낳는 양쪽의 사정. */
-type CutOutcome = {
-  cut: number;
-  leftLabels: string[];
-  leftMixed: boolean;
-  rightLabels: string[];
-  rightMixed: boolean;
-};
-
 /** 같은 높이로 오르는 무리. */
 type Rise = { height: number; xs: number[] };
-
-/** 가르는 높이와 위아래의 이름표. */
-type Separator = { height: number; belowLabel: string; aboveLabel: string };
 
 function sortedByX(points: KernelLiftsPointSpec[]): KernelLiftsPointSpec[] {
   return [...points].sort((a, b) => a.x - b.x);
 }
 
-/** 한 자리에 여러 점이 겹쳐 있어도 이름표는 한 번만 센다. */
-function distinctLabels(points: KernelLiftsPointSpec[]): string[] {
-  return [...new Set(points.map((p) => p.label))].sort();
-}
-
 /**
- * 한 줄 위에서 서로 다른 결과를 내는 자름 자리 **전부**.
+ * 한 줄 위에서 서로 다른 결과를 내는 자름 자리 **전부**, 왼쪽부터.
  *
  * 이웃한 두 점 사이의 한가운데가 그것이다. 그 사이 어디를 잘라도 양쪽에 담기는
  * 것이 같으므로, 이 목록을 다 해 보는 것이 곧 모든 자름을 해 보는 것이다.
  * 손으로 고른 자리가 아니라 데이터가 정하는 자리다 (S-piece).
+ *
+ * 장면도 이것을 부른다 — 몇 번째 자리를 짚는 중인지는 장면이 세고 그 자리가
+ * 어디인지는 이 함수가 정한다. 걸음이 자리를 실어 보내면 같은 물음에 답이 둘이
+ * 된다. 올리는 법과는 무관한 함수라 내주어도 조각의 주장이 남는다.
  */
-function cutsOf(sorted: KernelLiftsPointSpec[]): number[] {
+export function kernelCutsOf(points: readonly KernelLiftsPointSpec[]): number[] {
+  const sorted = sortedByX([...points]);
   const out: number[] = [];
   for (let i = 1; i < sorted.length; i += 1) {
     const prev = sorted[i - 1].x;
@@ -96,18 +89,6 @@ function cutsOf(sorted: KernelLiftsPointSpec[]): number[] {
     out.push((prev + cur) / 2);
   }
   return out;
-}
-
-function outcomeOf(sorted: KernelLiftsPointSpec[], cut: number): CutOutcome {
-  const leftLabels = distinctLabels(sorted.filter((p) => p.x < cut));
-  const rightLabels = distinctLabels(sorted.filter((p) => p.x > cut));
-  return {
-    cut,
-    leftLabels,
-    leftMixed: leftLabels.length > 1,
-    rightLabels,
-    rightMixed: rightLabels.length > 1,
-  };
 }
 
 /** 올린 높이. 제 자리를 제곱한 만큼이다. */
@@ -143,9 +124,10 @@ function heightTicksOf(rises: Rise[]): number[] {
  * 올린 뒤 두 이름표를 가르는 높이.
  *
  * 한 이름표의 가장 높은 것이 다른 이름표의 가장 낮은 것보다 아래여야 한다.
- * 그 둘의 한가운데가 가르는 높이다.
+ * 그 둘의 한가운데가 가르는 높이다. 어느 이름표가 아래인지는 돌려주지 않는다 —
+ * 오른 높이와 이 높이를 견주면 나오므로 장면이 센다.
  */
-function separatorOf(sorted: KernelLiftsPointSpec[], power: number): Separator {
+function separatorHeightOf(sorted: KernelLiftsPointSpec[], power: number): number {
   const span = new Map<string, { min: number; max: number }>();
   for (const p of sorted) {
     const h = heightOf(p.x, power);
@@ -165,12 +147,8 @@ function separatorOf(sorted: KernelLiftsPointSpec[], power: number): Separator {
   const second = labels[1];
   const a = span.get(first)!;
   const b = span.get(second)!;
-  if (a.max < b.min) {
-    return { height: (a.max + b.min) / 2, belowLabel: first, aboveLabel: second };
-  }
-  if (b.max < a.min) {
-    return { height: (b.max + a.min) / 2, belowLabel: second, aboveLabel: first };
-  }
+  if (a.max < b.min) return (a.max + b.min) / 2;
+  if (b.max < a.min) return (b.max + a.min) / 2;
   throw new Error(
     `들어올려도 높이 하나로 갈리지 않는다: ${first} [${a.min}, ${a.max}] · ${second} [${b.min}, ${b.max}]`,
   );
@@ -181,10 +159,10 @@ export const kernelLifts = async (ctx: FacetContext<KernelLiftsData>): Promise<v
   const { points, lift, stepMs } = rc.data;
 
   const sorted = sortedByX(points);
-  const cuts = cutsOf(sorted);
+  const cuts = kernelCutsOf(sorted);
   const rises = risesOf(sorted, lift.power);
   const ticks = heightTicksOf(rises);
-  const separator = separatorOf(sorted, lift.power);
+  const separatorHeight = separatorHeightOf(sorted, lift.power);
 
   /** 자동 재생이 끝나면 참이 된다. 그 뒤로는 `advance` 가 걸음을 민다. */
   let manual = false;
@@ -210,19 +188,14 @@ export const kernelLifts = async (ctx: FacetContext<KernelLiftsData>): Promise<v
     // (S-piece 의 "첫 누름은 되감고 첫 걸음까지").
     await rc.emit({ type: 'line-shown', payload: {} });
 
-    let tried = 0;
-    for (const cut of cuts) {
+    // 자리마다 한 걸음. 자리는 데이터가 정하고 몇 번째인지는 장면이 센다.
+    for (let i = 0; i < cuts.length; i += 1) {
       if (!(await gate())) return false;
-      tried += 1;
-      const outcome = outcomeOf(sorted, cut);
-      await rc.emit({
-        type: 'cut-tried',
-        payload: { ...outcome, tried, total: cuts.length },
-      });
+      await rc.emit({ type: 'cut-tried', payload: {} });
     }
 
     if (!(await gate())) return false;
-    await rc.emit({ type: 'cut-exhausted', payload: { total: cuts.length } });
+    await rc.emit({ type: 'cut-exhausted', payload: {} });
 
     if (!(await gate())) return false;
     await rc.emit({ type: 'height-opened', payload: { ticks } });
@@ -239,13 +212,10 @@ export const kernelLifts = async (ctx: FacetContext<KernelLiftsData>): Promise<v
     await rc.emit({ type: 'curve-traced', payload: {} });
 
     if (!(await gate())) return false;
-    await rc.emit({ type: 'cut-placed', payload: { height: separator.height } });
+    await rc.emit({ type: 'cut-placed', payload: { height: separatorHeight } });
 
     if (!(await gate())) return false;
-    await rc.emit({
-      type: 'split-verified',
-      payload: { belowLabel: separator.belowLabel, aboveLabel: separator.aboveLabel },
-    });
+    await rc.emit({ type: 'split-verified', payload: {} });
 
     if (!(await gate())) return false;
     await rc.emit({ type: 'done', payload: {} });

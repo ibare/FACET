@@ -10,7 +10,7 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
@@ -19,7 +19,7 @@ import { boundaryShiftStageView } from './boundary-shift-stage.js';
 import { boundaryShiftDescription } from './description.js';
 import { boundaryShiftFacet } from './facet.js';
 import { boundaryShiftIRs } from './irs.js';
-import { boundaryShiftProjector } from './projector.js';
+import { boundaryShiftScene } from './scene.js';
 
 export { boundaryShiftAlgorithm } from './algorithm.js';
 export type {
@@ -31,7 +31,7 @@ export { boundaryShiftStageView } from './boundary-shift-stage.js';
 export { boundaryShiftDescription } from './description.js';
 export { boundaryShiftFacet } from './facet.js';
 export { boundaryShiftIRs } from './irs.js';
-export { boundaryShiftProjector } from './projector.js';
+export { boundaryShiftScene, type BoundaryShiftScene } from './scene.js';
 
 export function registerBoundaryShift(): void {
   // 조각은 mount 하면 스스로 재생을 시작하고 걸음 간격을 스스로 정한다 — 그
@@ -39,7 +39,7 @@ export function registerBoundaryShift(): void {
   registerAlgorithm('boundaryShift', boundaryShiftAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('boundaryShiftProjector', boundaryShiftProjector);
+  registerScenePlan('boundaryShiftScene', boundaryShiftScene);
   for (const ir of boundaryShiftIRs) registerIR(ir.id, ir);
   registerView('boundary-shift-stage', boundaryShiftStageView);
   registerFacets([boundaryShiftFacet]);

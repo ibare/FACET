@@ -104,7 +104,19 @@ export type FacetJson = {
   title: LocaleStr;
   description?: LocaleStr;
   algorithm: ModuleRef;
-  projector: ModuleRef;
+  /**
+   * 이벤트를 View 메서드 호출로 옮기는 번역기.
+   *
+   * `scene` 을 쓰는 조각은 이것을 두지 않는다 — 둘 중 하나만 있으면 된다.
+   */
+  projector?: ModuleRef;
+  /**
+   * 장면 설계 (`runtime/scene.ts`).
+   *
+   * 이벤트를 화면 **명령**이 아니라 **상태**로 옮긴다. 어느 걸음의 화면이든 셈으로
+   * 얻을 수 있어, 되짚기가 앞으로 가기와 같은 연산이 된다.
+   */
+  scene?: ModuleRef;
   initialData: InitialData;
   /**
    * true 면 mount 시점과 reset 시점에 initialData 의 최상위 배열 필드를

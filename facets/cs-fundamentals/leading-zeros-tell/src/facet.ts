@@ -7,7 +7,7 @@
  * `keys` 의 차례는 **저작 결정**이다 — ρ 오름차순으로 세워 눈금이 계단처럼
  * 올라가는 것을 보인다. 데이터가 정하는 차례가 아니므로 선언에 적는다.
  * 이진 32자리는 murmur3 32bit (seed 0) 로 실측한 값이고, 앞자리 0 의 개수와
- * ρ 와 추정값은 algorithm 이 셈한다 — 선언에 적지 않는다.
+ * ρ 와 추정값은 **장면이 그 비트에서 센다** — 선언에도 발신에도 적지 않는다.
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -39,7 +39,7 @@ export const leadingZerosTellFacet: FacetJson = {
     pt: 'Ver uma sequência rara de zeros significa que você já viu muitos — conte itens distintos sem guardar nenhum.',
   },
   algorithm: 'module:leadingZerosTell',
-  projector: 'module:leadingZerosTellProjector',
+  scene: 'module:leadingZerosTellScene',
   initialData: {
     type: 'leading-zeros-tell',
     stepMs: 640,
@@ -56,7 +56,7 @@ export const leadingZerosTellFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'leading-zeros-tell-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.rise': {
