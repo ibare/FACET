@@ -786,6 +786,46 @@ const t = params.t ?? makeTranslator(params.locale);
   함께 고쳐야 한다 (`t(key, '<en 원본>', args)`). `rolling-hash` 가 열 로캘을 다 고치고
   호출부를 빠뜨려 `en-original-matches-declaration` 이 잡았다. 선언이 정본이다.
 
+- **띠를 달면 중간 걸음의 화면도 산출물이 된다.** 지금까지 "조각의 주장이 **완주
+  화면**에 남아야 한다" 를 잣대로 써 왔는데, `pieceScrub` 이 붙으면 어느 걸음이든
+  끌어서 볼 수 있으므로 **그 걸음의 화면도 도달 가능한 산출물**이다.
+  `spatial-locality` 는 자료가 `count: 8` · `perLine: 4` 라 여덟을 다 물어 **완주
+  화면에는 덤 칸이 남지 않는데**, 어휘를 갖춰 두었으므로 걸음 2·7 로 끌면 선다.
+  자료가 완주 시점에 그 주장을 못 보이는 조각이면 **어휘만 세우고 그 걸음으로 끌게
+  하는 것**이 답일 수 있다. 다만 **기본값은 여전히 완주 화면**이다 — 끌지 않는 사람이
+  훨씬 많다.
+
+- **얇은 걸음에는 한 겹이 더 있다 — 사양이 만든 얇음과 stage 가 만든 얇음.**
+  "이행 전에도 같은 값이면 사양 문제" 는 절반만 맞다. 값이 같아도 **그 값을 만든 것이
+  걸음 수·`stepMs`·문 배치(사양)인지, projector 의 `onEvent` 가 `void` 라 stage 가
+  운동을 아예 안 걸었던 것(게으름)인지**가 갈린다. 후자면 이행이 고칠 자리다 —
+  `write-back-vs-through` 의 `done` 은 `finish()` 가 동기 `void` 라 700ms 였고, 자(尺)가
+  자라는 260ms 를 얹어 960ms 가 됐다. **`stepMs` 를 올리는 것이 아니라 그 걸음이 하는
+  말과 같은 동사를 얹는다.**
+
+- **`Math.sin(π)` 는 0 이 아니다 (함정 "부동소수 끝자리" 의 변종).** `1.2246e-16` 이라
+  `translate(0 -6.1e-16)` 같은 끝자리가 남는다. 진폭이 양 끝에서 0 인 운동
+  (`sin(πe)` 로 부풀었다 돌아오는 꼴)은 이 도메인에서 여럿이 쓰는데, **양 끝에서 정확히
+  0 을 내는 헬퍼**로 감싸야 한다.
+
+- **`Map` 의 삽입 순서가 숨은 상태일 수 있다 ("순회 순서" 함정의 변종).**
+  `conflict-miss` 의 `chipsByCol: Map<number, number[]>` 는 **그 Map 의 키 삽입 순서**가
+  라벨이 설 가로 자리를 정하고 있었다. 좌표를 읽는 것이 아니라 **자료 구조의 순서**에
+  기대는 것이라 함정 13 의 grep 으로도 안 잡힌다. 자리를 정하는 것은 **값**(줄 번호 ·
+  색인)이어야 한다.
+
+- **캡션 문안이 상수를 못박는다.** `associativity-relief` 는 줄 수와 **연관도**를 열
+  언어에 상수로 적어 두었는데 **그 수가 바뀌는 것이 그 조각의 주제였다.** `line-fill` 은
+  "이웃 셋" 을, `growth-outpaces` 는 "가장 큰 항" 이라 써 놓고 언제나 n² 를 넣었다.
+  **화면에 나란히 뜨는 수만 의심하지 말고 산문도 읽어라** — 문안이 자료를 못박으면
+  자료가 바뀔 때 조용히 거짓이 된다. 지금 자료에서 이미 거짓인 것이 있는지 먼저 본다.
+
+- **`origin` 이 서브도메인을 가로지른다** 와 짝이 되는 것 — **카탈로그와 구현이 다르다.**
+  `computer-architecture` 는 카탈로그에 조각 39 개가 선언돼 있는데 facet 이 있는 것은
+  19 개다(파이프라인 8 · 분기 예측 6 · 데이터 배치 6 이 미구현). **대상을 셀 때
+  카탈로그만 보면 없는 것을 세고, 파일만 보면 `origin` 이 가로지르는 것을 놓친다.**
+  둘 다 세어 견준다.
+
 - **`t()` 를 지나지 않는 화면 글자는 어떤 검사도 못 잡는다.**
   `en-original-matches-declaration` 도 `facet-i18n` 도 **`t()` 호출만 훑기 때문에**
   `label.textContent = 'pattern'` 같은 자리는 통과한다. `rolling-hash` 는 거기에
@@ -928,7 +968,7 @@ grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 나온다. 실제로 두 번 걸렸고 한 번은 커밋을 amend 로 고쳤다 — 배치를 닫는 시점에는
 형제 배치가 이미 `facet.ts` 를 고쳐 놓았기 때문이다.
 
-2026-09-16 기준 **125 / 181**.
+2026-09-17 기준 **144 / 181**.
 
 옮긴 배치는 셋이다. 셋 다 **흔들림 0 · 왕복어긋남 0** 으로 닫았다.
 
@@ -959,6 +999,10 @@ grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 | 문자열 · 접미사와 아호코라식 넷 | 2026-09-16 | `all-suffixes-sorted` · `match-length-per-spot` · `many-patterns-one-pass` · `fail-link` |
 | 편집 거리 둘 + 수치 셋 | 2026-09-16 | `edit-table-fill` · `three-edit-choices` · `square-and-halve` · `divisor-pairs-sqrt` · `row-times-column` |
 | 계산 복잡도 다섯 | 2026-09-16 | `growth-outpaces` · `constant-fades` · `curves-cross` · `verify-vs-find` · `reduce-to-known` |
+| 컴퓨터 구조 · 수와 진법 다섯 | 2026-09-17 | `positional-value` · `negate-and-add-one` · `signed-wraparound` · `silent-truncation` · `byte-order` |
+| 컴퓨터 구조 · 부동소수 셋 + 비트 둘 | 2026-09-17 | `mantissa-and-exponent` · `unrepresentable-fraction` · `uneven-float-gaps` · `bit-mask` · `bit-shift` |
+| 컴퓨터 구조 · 캐시 줄과 지역성 다섯 | 2026-09-17 | `line-fill` · `temporal-locality` · `spatial-locality` · `latency-ladder` · `index-and-tag` |
+| 컴퓨터 구조 · 캐시 충돌과 쓰기 넷 | 2026-09-17 | `conflict-miss` · `associativity-relief` · `write-back-vs-through` · `false-sharing` |
 
 **자료 구조 42 · 확률적 자료구조 10 · 알고리즘 27 이 닫혔다.** 확률적 열 중 스킵
 리스트 둘(`skip-a-layer` · `coin-flip-height`)은 자료 구조 배치에 섞여 이미 옮겨져
@@ -972,8 +1016,13 @@ grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 `origin: graph` 라 양쪽 배치에서 빠져 있었다 — **대상을 서브도메인으로만 세면
 놓친다.**
 
-남은 56 은 다른 도메인이다 — `ml-basics` 23 · `computer-architecture` 19 ·
-`security` 8 · `ai-engineering` 6.
+**`computer-architecture` 도 닫혔다 — 구현된 조각 19 개 전부 Scene 이다**
+(수와 비트 표현 10 · 캐시 계층 9). 다만 **카탈로그에는 39 개가 선언돼 있고 facet 이
+있는 것은 19 개다** — 파이프라인 8 · 분기 예측 6 · 데이터 배치 6 은 항목만 있고 구현이
+없다. 그 스물은 이행이 아니라 **새로 만들 일**이고 `tasks/piece-batch-protocol.md` 의
+몫이다.
+
+남은 37 은 다른 도메인이다 — `ml-basics` 23 · `security` 8 · `ai-engineering` 6.
 
 ### 배치를 돌리는 법
 
@@ -1069,6 +1118,10 @@ SCC·최대유량 셋     4484 → 5580   +1096  +24%
 접미사·아호 넷      5067 → 6805   +1738  +34%
 편집거리 2+수치 3   5326 → 7570   +2244  +42%
 계산 복잡도 다섯    6371 → 8491   +2120  +33%
+수와 진법 다섯      5214 → 7110   +1896  +36%
+부동소수 3+비트 2   5575 → 7669   +2094  +38%
+캐시 줄과 지역성 5  5340 → 6996   +1656  +31%
+캐시 충돌과 쓰기 4  5208 → 7356   +2148  +41%
                                  ─────
                  백열여섯 조각 평균 +342 줄 (+34%)
 
