@@ -9,24 +9,24 @@
  * 자름 자리를 전부 소진한 뒤에야 세로축으로 넘어간다. 좋은 답을 먼저 보이지
  * 않는다.
  *
- * 셈은 전부 여기서 한다 — 양쪽에 이름표가 몇 개씩 담기는지는 점과 기준값에서
- * 직접 세며, 화면에 박아 넣은 수가 아니다.
+ * 셈은 전부 `tally` 하나를 지난다 — 양쪽에 이름표가 몇 개씩 담기는지는 점과
+ * 기준값에서 직접 세며, 화면에 박아 넣은 수가 아니다. 그 함수를 장면에 내주므로
+ * 걸음이 멈출지 정하는 수와 화면이 그리는 수가 한 출처에서 나온다.
  *
  * ── 이벤트 (전부 facet 고유. 시각 변화가 있는 step boundary 라 silent 없음)
  *
  *   axis-picked      { axis: 'x' | 'y' }
  *                    자름선이 설 축을 고른다. 'y' 는 갈아 세우는 회전이다.
+ *                    **어느 축에 설 것인가는 이 걸음이 내리는 판정**이라 싣는다.
  *
- *   cut-tried        { axis: 'x' | 'y'; threshold: number;
- *                      low:  { a: number; b: number };
- *                      high: { a: number; b: number };
- *                      pure: boolean }
- *                    자름선을 threshold 로 옮기고 양쪽을 센다. low 는 기준 미만,
- *                    high 는 기준 이상. a 는 classes[0], b 는 classes[1] 의 수.
- *                    pure 는 양쪽 모두 한 이름표만 담긴 상태.
+ *   cut-tried        payload 없음
+ *                    자름선을 다음 자리로 옮기고 양쪽을 센다. 자리도 셈도 싣지
+ *                    않는다 — 자리는 이 축에서 몇 번째 칼금인가가 정하고, 셈은
+ *                    아래 `tally` 를 장면이 그대로 부른다 (scene.ts).
  *
- *   axis-exhausted   { axis: 'x' | 'y'; tried: number }
- *                    그 축의 자름 자리를 다 써 보았는데도 갈리지 않았다.
+ *   axis-exhausted   payload 없음
+ *                    그 축의 자름 자리를 다 써 보았는데도 갈리지 않았다. 몇 자리를
+ *                    해 봤나는 장면이 센다.
  *
  *   rewind           payload 없음
  *                    자동 재생이 끝난 뒤 advance 로 처음으로 되돌아간다.
@@ -62,10 +62,16 @@ export type SplitByQuestionData = {
 
 export type SideTally = { a: number; b: number };
 
-/** 한 자름 자리에서 양쪽에 무엇이 몇 개씩 담기는지 센다. */
-function tally(
-  points: SplitPoint[],
-  classes: [string, string],
+/**
+ * 한 자름 자리에서 양쪽에 무엇이 몇 개씩 담기는지 센다.
+ *
+ * 장면이 그대로 부른다 (프로토콜 4 절의 B 갈래) — 점을 세는 일은 이 조각이
+ * 말하려는 바가 아니라 바탕에서 곧바로 나오는 수다. 떼어 내도 "가른 것은 자리가
+ * 아니라 축이다" 는 그대로 남는다.
+ */
+export function tally(
+  points: readonly SplitPoint[],
+  classes: readonly [string, string],
   axis: 'x' | 'y',
   threshold: number,
 ): { low: SideTally; high: SideTally } {
@@ -80,8 +86,8 @@ function tally(
   return { low, high };
 }
 
-/** 한쪽에 한 이름표만 담겼는가. */
-function oneLabelOnly(side: SideTally): boolean {
+/** 한쪽에 한 이름표만 담겼는가. 장면도 같은 잣대를 쓴다. */
+export function oneLabelOnly(side: SideTally): boolean {
   return side.a === 0 || side.b === 0;
 }
 
@@ -130,10 +136,7 @@ export async function splitByQuestionAlgorithm(
       if (!(await gate())) return 'cancelled';
       const { low, high } = tally(points, classes, axis, threshold);
       const pure = oneLabelOnly(low) && oneLabelOnly(high);
-      await rc.emit({
-        type: 'cut-tried',
-        payload: { axis, threshold, low, high, pure },
-      });
+      await rc.emit({ type: 'cut-tried' });
       if (pure) return 'pure';
     }
     return 'exhausted';
@@ -145,7 +148,7 @@ export async function splitByQuestionAlgorithm(
     if (onX === 'cancelled') return;
     if (onX === 'exhausted') {
       if (!(await gate())) return;
-      await rc.emit({ type: 'axis-exhausted', payload: { axis: 'x', tried: xCuts.length } });
+      await rc.emit({ type: 'axis-exhausted' });
       // 그러고 나서 축을 갈아 세운다.
       if ((await sweep('y', yCuts)) === 'cancelled') return;
     }

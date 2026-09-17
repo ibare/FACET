@@ -10,22 +10,27 @@
  *   query-arrived       {}
  *       이름표 없는 점이 들어온다.
  *
- *   neighbors-ranked    { order: number[] }
+ *   neighbors-ranked    { order: number[]; distances: number[] }
  *       거리를 재어 가까운 순으로 줄 세운다.
- *       order[i] = i+1 번째로 가까운 점의 인덱스 (initialData.points 기준).
- *       거리값 자체는 불려 나온 이웃의 voter-called 가 들고 간다.
+ *       order[i]     = i+1 번째로 가까운 점의 인덱스 (initialData.points 기준).
+ *       distances[j] = j 번째 점에서 물음점까지의 거리.
+ *       **이 조각에서 payload 를 싣는 유일한 발신이다.** 재고 줄 세우는 일이
+ *       이 조각의 알고리즘 그 자체라, 내주면 장면이 그 셈을 대신하게 된다.
+ *       잰 것과 줄 세운 것을 한 발신에 함께 실어 둘이 갈릴 자리를 없앤다.
  *
- *   voter-called        { index: number; label: string; rank: number;
- *                         distance: number; tally: number }
- *       target: `index:<i>`  (정규 경로는 payload — target 은 식별자 문법 표기)
+ *   voter-called        {}
+ *       target: `index:<i>`  (식별자 문법 표기)
  *       불려 나온 이웃 하나가 자기 이름표 쪽에 표를 놓는다.
- *       rank  = 1 부터. tally = 이 표까지 합한 그 쪽의 표 수.
+ *       순위 · 이름표 · 표 수를 싣지 않는다 — **이 발신의 차례가 곧 순위**이고,
+ *       누가 불렸는지는 order 가, 이름표는 선언이, 표 수는 쌓인 표가 말한다.
  *
- *   outsiders-silenced  { indices: number[] }
+ *   outsiders-silenced  {}
  *       부름을 받지 못한 이웃들. 표를 내지 못한다.
+ *       누구인지 싣지 않는다 — 부른 만큼을 뺀 나머지가 그들이다.
  *
- *   done                { winner: string }
- *       표가 가장 많은 이름표. 새 점이 받을 이름표다.
+ *   done                {}
+ *       표가 가장 많은 이름표가 새 점의 이름표가 된다.
+ *       승자를 싣지 않는다 — 상자에 쌓인 표에서 나와야 그림과 한 출처가 된다.
  *
  *   rewind              {}
  *       처음으로 되감는다. 자동 재생이 끝난 뒤 '한 걸음' 을 처음 누를 때 나간다.
@@ -59,6 +64,17 @@ export type VoteByNeighborsData = {
 
 const DEFAULT_STEP_MS = 850;
 
+/**
+ * 실제로 부를 이웃의 수.
+ *
+ * 선언의 k 를 점의 수 안으로 자른다. 장면도 같은 함수를 지난다 — 두 군데서 각자
+ * 자르면 표 상자의 칸 수와 실제로 불린 수가 갈린다.
+ */
+export function voteCallCount(k: unknown, pointCount: number): number {
+  const raw = typeof k === 'number' && Number.isFinite(k) ? Math.floor(k) : 1;
+  return Math.max(1, Math.min(raw, Math.max(1, pointCount)));
+}
+
 export const voteByNeighborsAlgorithm = async (
   base: FacetContext<VoteByNeighborsData>,
 ): Promise<void> => {
@@ -76,24 +92,7 @@ export const voteByNeighborsAlgorithm = async (
     .map((_, i) => i)
     .sort((a, b) => (distances[a] ?? 0) - (distances[b] ?? 0) || a - b);
 
-  const k = Math.max(1, Math.min(Math.floor(data.k), points.length));
-  const called = order.slice(0, k);
-  const rest = order.slice(k);
-
-  // 승자 — 가까운 순으로 표를 세면서 최다에 먼저 닿는 이름표를 잡는다.
-  // 동수가 나와도 더 가까운 쪽이 먼저 그 수에 닿으므로 결정이 흔들리지 않는다.
-  const final = new Map<string, number>();
-  let winner = '';
-  let best = 0;
-  for (const i of called) {
-    const label = points[i]?.label ?? '';
-    const n = (final.get(label) ?? 0) + 1;
-    final.set(label, n);
-    if (n > best) {
-      best = n;
-      winner = label;
-    }
-  }
+  const called = order.slice(0, voteCallCount(data.k, points.length));
 
   const stepMs =
     typeof data.stepMs === 'number' && data.stepMs > 0 ? data.stepMs : DEFAULT_STEP_MS;
@@ -116,27 +115,18 @@ export const voteByNeighborsAlgorithm = async (
     await ctx.emit({ type: 'query-arrived' });
     if (!(await pause())) return false;
 
-    await ctx.emit({ type: 'neighbors-ranked', payload: { order } });
+    await ctx.emit({ type: 'neighbors-ranked', payload: { order, distances } });
     if (!(await pause())) return false;
 
-    const running = new Map<string, number>();
-    for (let rank = 0; rank < called.length; rank += 1) {
-      const index = called[rank] ?? 0;
-      const label = points[index]?.label ?? '';
-      const tally = (running.get(label) ?? 0) + 1;
-      running.set(label, tally);
-      await ctx.emit({
-        type: 'voter-called',
-        target: `index:${index}`,
-        payload: { index, label, rank: rank + 1, distance: distances[index] ?? 0, tally },
-      });
+    for (const index of called) {
+      await ctx.emit({ type: 'voter-called', target: `index:${index}` });
       if (!(await pause())) return false;
     }
 
-    await ctx.emit({ type: 'outsiders-silenced', payload: { indices: rest } });
+    await ctx.emit({ type: 'outsiders-silenced' });
     if (!(await pause())) return false;
 
-    await ctx.emit({ type: 'done', payload: { winner } });
+    await ctx.emit({ type: 'done' });
     return true;
   };
 
