@@ -1348,16 +1348,39 @@ SCC·최대유량 셋     4484 → 5580   +1096  +24%
 **2026-09-17 로 조각 181 이 전부 Scene 이 되었다. 이 절이 이제 열렸다.**
 아래는 그날 기준으로 다시 잰 현황이다.
 
-- `ProjectorFactory` 와 그 배선을 러너에서 걷어낸다. **`ViewMountParams.isInstant` 와
-  `onScrubStart` 는 걷어내지 않는다** — projector 조각이 남아 있는 동안 쓴다. 다만
-  **장면 조각에서는 러너가 그 둘을 부르지 않는다** (3-4 절). 그 사실을 모른 채 걷어낼
-  자리를 고르면 엉뚱한 것을 지운다.
+- **`ProjectorFactory` 는 걷어내지 않는다 — 이 계획은 취소됐다 (2026-09-17).**
+
+  처음에는 "이행이 끝나면 projector 층이 사라진다" 로 적었으나, 그것은 **조각만
+  보고 세운 계획**이었다. **완제품 96 종이 projector 를 쓰고 그것을 옮길 계획이
+  없다.** 걷어낼 대상이 없어지지 않으므로 배선도 남는다.
+
+  **두 방식의 공존은 과도기가 아니라 설계다.** 쓰임이 갈리기 때문이다:
+
+  | | 조각 | 완제품 |
+  | --- | --- | --- |
+  | 조작 | `CONTROL_SET.pieceScrub` — 다시 보기 + **띠** | `CONTROL_SET.playback` — 재생·한 걸음·정지·리셋·속도 |
+  | 되짚기 | **아무 걸음에나 끌어다 놓는다** | 없다. 앞으로만 간다 |
+  | 사는 자리 | 글 속에 박힌다 | 한 화면을 차지한다 |
+  | 화면 | 장면(Scene) | projector |
+
+  **조각에 되짚기가 필요한 까닭이 곧 Scene 이 필요한 까닭이다** — 글을 읽다 어느
+  걸음이든 다시 보려면 그 걸음의 화면을 셈으로 얻을 수 있어야 한다. 완제품은 그
+  요구가 없으므로 명령 방식이 그대로 맞다.
+
+  따라오는 귀결 둘:
+  - **`ViewMountParams.isInstant` 와 `onScrubStart` 도 남는다.** 다만 **장면 조각에서는
+    러너가 그 둘을 부르지 않는다** (3-4 절). 그 사실을 모른 채 걷어낼 자리를 고르면
+    엉뚱한 것을 지운다.
+  - **완제품에 남은 CSS `transition` 은 위반이 아니다.** 되짚기가 없으면 "화면이 나중에
+    저 혼자 바뀐다" 가 어긋날 대상이 없다. S-scene MUST NOT 은 **장면 조각의 규범**이다.
 - `packages/authoring/src/screen-labels.generated.ts` 를 다시 만든다 (`pnpm screen:gen`).
   띠를 단 조각은 `advance` 단추가 없는데 생성물이 아직 `⏭ 한 걸음` 을 담고 있다. 호스트
   쪽에 없는 조작이 광고되는 셈이다. 배치마다 다시 만들면 커밋 잡음만 커지므로 이행이
   끝난 뒤 한 번에 한다.
-- `rules/principles.md` 의 "Projector 단일 번역기" 를 장면 방식으로 다시 쓴다.
-- `S-facet` 의 6 파일 구성에서 `projector.ts` 를 `scene.ts` 로 바꾼다.
+- `rules/principles.md` 의 "Projector 단일 번역기" 와 `S-facet` 의 6 파일 구성을
+  **둘 다 적는 문면으로** 고친다. `projector.ts` 를 `scene.ts` 로 **갈아 치우는 것이
+  아니다** — 조각은 `scene.ts`, 완제품은 `projector.ts` 이고 그것이 최종 모습이다.
+  어느 쪽인지는 facet 이 `scene:` 또는 `projector:` 중 무엇을 선언하는가로 갈린다.
 - 스크럽 띠는 **이미 전 조각에 달렸다** (`CONTROL_SET.pieceScrub` 181/181). 남은 것은
   조각 algorithm 의 **손짚기 루프**(`waitForInput` → `rewind`)다 — `pieceScrub` 에
   `advance` 가 없어 **도달 불능인 죽은 코드**인데 181 곳에 그대로 있다. 자취를 닫는
