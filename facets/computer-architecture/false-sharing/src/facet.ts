@@ -36,7 +36,7 @@ export const falseSharingFacet: FacetJson = {
     pt: 'Dois núcleos alteram valores diferentes, mas uma única linha de cache contém ambos: cada escrita invalida a cópia do outro.',
   },
   algorithm: 'module:falseSharing',
-  projector: 'module:falseSharingProjector',
+  scene: 'module:falseSharingScene',
   initialData: {
     type: 'false-sharing',
     lineBytes: 16,
@@ -48,7 +48,7 @@ export const falseSharingFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'false-sharing-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.together': {

@@ -10,7 +10,7 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
@@ -18,26 +18,31 @@ import { writeBackVsThroughAlgorithm, type WriteBackVsThroughData } from './algo
 import { writeBackVsThroughDescription } from './description.js';
 import { writeBackVsThroughFacet } from './facet.js';
 import { writeBackVsThroughIRs } from './irs.js';
-import { writeBackVsThroughProjector } from './projector.js';
+import { writeBackVsThroughScene } from './scene.js';
 import { writeBackVsThroughStageView } from './write-back-vs-through-stage.js';
 
 export { writeBackVsThroughAlgorithm, type WriteBackVsThroughData } from './algorithm.js';
 export { writeBackVsThroughDescription } from './description.js';
 export { writeBackVsThroughFacet } from './facet.js';
 export { writeBackVsThroughIRs } from './irs.js';
-export { writeBackVsThroughProjector } from './projector.js';
 export {
-  writeBackVsThroughStageView,
-  type WriteBackStepView,
-  type WriteBackFlushView,
-  type WriteBackDoneView,
-} from './write-back-vs-through-stage.js';
+  writeBackVsThroughScene,
+  loadCapacity,
+  pendingLoads,
+  throughLoads,
+  type WriteBackCell,
+  type WriteBackLoad,
+  type WriteBackSceneCaption,
+  type WriteBackSceneStep,
+  type WriteBackVsThroughScene,
+} from './scene.js';
+export { writeBackVsThroughStageView } from './write-back-vs-through-stage.js';
 
 export function registerWriteBackVsThrough(): void {
   registerAlgorithm<WriteBackVsThroughData>('writeBackVsThrough', writeBackVsThroughAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('writeBackVsThroughProjector', writeBackVsThroughProjector);
+  registerScenePlan('writeBackVsThroughScene', writeBackVsThroughScene);
   for (const ir of writeBackVsThroughIRs) registerIR(ir.id, ir);
   registerView('write-back-vs-through-stage', writeBackVsThroughStageView);
   registerFacets([writeBackVsThroughFacet]);

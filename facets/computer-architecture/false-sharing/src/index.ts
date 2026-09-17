@@ -10,7 +10,7 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
@@ -19,20 +19,30 @@ import { falseSharingDescription } from './description.js';
 import { falseSharingFacet } from './facet.js';
 import { falseSharingStageView } from './false-sharing-stage.js';
 import { falseSharingIRs } from './irs.js';
-import { falseSharingProjector } from './projector.js';
+import { falseSharingScene } from './scene.js';
 
 export { falseSharingAlgorithm, type FalseSharingData } from './algorithm.js';
 export { falseSharingDescription } from './description.js';
 export { falseSharingFacet } from './facet.js';
 export { falseSharingStageView } from './false-sharing-stage.js';
 export { falseSharingIRs } from './irs.js';
-export { falseSharingProjector } from './projector.js';
+export { falseSharingScene } from './scene.js';
+export { falseSharingLine } from './algorithm.js';
+export type {
+  FalseSharingScene,
+  Arrangement,
+  WriteMark,
+  WriteRound,
+  FalseSharingStep,
+  FalseSharingCaption,
+  CoreMark,
+} from './scene.js';
 
 export function registerFalseSharing(): void {
   registerAlgorithm<FalseSharingData>('falseSharing', falseSharingAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('falseSharingProjector', falseSharingProjector);
+  registerScenePlan('falseSharingScene', falseSharingScene);
   for (const ir of falseSharingIRs) registerIR(ir.id, ir);
   registerView('false-sharing-stage', falseSharingStageView);
   registerFacets([falseSharingFacet]);

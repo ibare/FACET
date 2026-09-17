@@ -5,29 +5,40 @@
  * 2-way 는 자리 둘에 둘씩이다. 같은 접근열을 두 번 굴려, 늘린 것이 하나도
  * 없는데 미스가 주는 것을 보인다.
  *
- * 1차 데이터는 칸 수 · 라인 크기 · 연관도 · 접근열뿐이다. 자리 수 · 인덱스 ·
- * 태그 · 히트/미스 · 축출은 전부 여기서 셈한다.
+ * 1차 데이터는 칸 수 · 라인 크기 · 연관도 · 접근열뿐이다.
+ *
+ * ── 발신에 무엇을 싣고 무엇을 안 싣나
+ *
+ * 걸음이 **판정한 것만** 싣는다. 몇 번째 접근인가는 발신이 오는 차례가 이미
+ * 말하고(장면이 센다), 어느 자리를 노리는가는 짜임이 정하는 잣대라 아래
+ * `setIndexOf` 를 내주어 화면이 같은 함수를 부른다. 미스 수 · 밀려난 주소 ·
+ * 그 자리에 이미 앉아 있던 수는 전부 자취에서 세어지므로 싣지 않는다 —
+ * 실으면 화면에 나란히 뜨는 수가 그림과 다른 출처를 갖는다.
+ *
+ * 남긴 것은 `wayIndex` 하나다. 한 자리 안의 어느 칸을 쓸 것인가(빈 칸 고르기와
+ * LRU)는 이 조각의 알고리즘 그 자체라 내주지 않고 판정만 싣는다.
  *
  * ── 발신 이벤트 (facet 고유. 전부 걸음 경계라 silent 인 것이 없다)
  *
- *   regroup      { ways: number; sets: number }
+ *   regroup      payload 없음
  *       자리 짜임을 다시 긋는다. 칸은 그대로 두고 묶음만 바꾸며, 새 판이므로
- *       앉아 있던 것은 비운다. 첫 판의 짜임은 stage 가 initialData 로 이미
- *       그려 두었으므로 둘째 판부터 나간다.
+ *       앉아 있던 것은 비운다. 몇씩 묶는지는 선언의 `ways` 가 차례로 정하므로
+ *       장면이 몇 번째 판인지 세어 안다. 첫 판의 짜임은 선언이 이미 말하므로
+ *       둘째 판부터 나간다.
  *
- *   cache-fill   { ways, step, addr, setIndex, wayIndex, occupied }
- *       빈 칸에 올린다. `occupied` 는 올리기 **전** 그 자리에 이미 앉아 있던
- *       칸의 수다. 0 보다 크면 아무도 밀어내지 않고 곁에 앉는 것이다.
+ *   cache-fill   { wayIndex: number }
+ *       빈 칸에 올린다. 그 자리에 이미 앉은 것이 있었는지(곁에 앉는 것인지)는
+ *       장면이 자취에서 센다.
  *
- *   cache-evict  { ways, step, addr, setIndex, wayIndex, victimAddr }
- *       자리가 꽉 차 앞서 온 것을 밀어내고 그 칸을 차지한다. `victimAddr` 는
- *       밀려나는 주소다.
+ *   cache-evict  { wayIndex: number }
+ *       자리가 꽉 차 앞서 온 것을 밀어내고 그 칸을 차지한다. 밀려나는 주소는
+ *       그 칸에 앉아 있던 것이므로 장면이 자취에서 꺼낸다.
  *
- *   cache-hit    { ways, step, addr, setIndex, wayIndex }
+ *   cache-hit    { wayIndex: number }
  *       찾는 것이 이미 그 자리에 앉아 있다.
  *
- *   done         { firstMisses: number; lastMisses: number }
- *       두 판의 미스 수. 화면의 셈은 이 둘로 맺는다.
+ *   done         payload 없음
+ *       두 판을 맞댄다. 미스 수는 장면이 도장 자취에서 센다.
  *
  *   rewind       payload 없음
  *       한 걸음씩 다시 보려고 처음으로 되감는다.
@@ -56,10 +67,40 @@ export type AssociativityReliefData = {
 };
 
 /** 한 칸에 앉아 있는 것. `usedAt` 은 마지막으로 쓴 때 — 밀어낼 것을 고르는 자다. */
-type Resident = { tag: number; addr: number; usedAt: number };
+type Resident = { tag: number; usedAt: number };
 
 /** 걸음 사이의 문. 계속 가면 true, 취소됐으면 false. */
 type Gate = () => Promise<boolean>;
+
+/** 주소가 앉을 줄. 라인 크기가 나눗수다. */
+function lineOf(addr: number, lineBytes: number): number {
+  return Math.floor(addr / Math.max(1, lineBytes));
+}
+
+/**
+ * 연관도가 정하는 자리 수. 칸 수는 그대로이고 몇씩 묶느냐만 바뀐다.
+ *
+ * 화면이 같은 함수를 부른다 — 자르는 잣대가 두 군데면 언젠가 갈린다.
+ */
+export function setsOf(totalLines: number, ways: number): number {
+  return Math.max(1, Math.floor(Math.max(1, totalLines) / Math.max(1, ways)));
+}
+
+/**
+ * 그 주소가 노리는 자리.
+ *
+ * 짜임이 정하는 **잣대**이지 이 조각의 알고리즘이 아니다 — 이 함수만 떼어 내도
+ * "묶는 법만 바꾸면 미스가 준다" 는 말이 남는다. 그래서 내주고 장면이 부른다.
+ * 실어 보내면 같은 물음에 답이 둘이 되어 언젠가 화면 안에서 갈린다.
+ */
+export function setIndexOf(addr: number, lineBytes: number, sets: number): number {
+  return lineOf(addr, lineBytes) % Math.max(1, sets);
+}
+
+/** 한 자리 안에서 무엇이 앉아 있는지 가르는 표. 히트 판정은 algorithm 의 몫이다. */
+function tagOf(addr: number, lineBytes: number, sets: number): number {
+  return Math.floor(lineOf(addr, lineBytes) / Math.max(1, sets));
+}
 
 /**
  * `advance` 가 올 때까지 기다린다. 취소되면 false.
@@ -86,11 +127,14 @@ async function waitForAdvance(rc: ReactiveContext<AssociativityReliefData>): Pro
 }
 
 /**
- * 한 판의 접근을 차례로 굴리고 미스 수를 돌려준다.
+ * 한 판의 접근을 차례로 굴린다. 끝까지 갔으면 true.
  *
  * 자리 수는 `칸 수 ÷ 연관도`, 인덱스는 `줄 mod 자리 수`, 태그는 `줄 ÷ 자리 수` 다.
  * 연관도가 올라가면 자리 수가 줄어 인덱스 나눗수가 바뀌지만, 이 접근열에서는
  * 두 판 모두 0번 자리로 간다 — 달라지는 것은 그 자리가 몇을 담느냐뿐이다.
+ *
+ * 미스를 세지 않는다. 화면이 도장 자취에서 세므로 여기서 또 세면 같은 물음에
+ * 답이 둘이 된다.
  */
 async function playAccesses(
   rc: ReactiveContext<AssociativityReliefData>,
@@ -98,45 +142,33 @@ async function playAccesses(
   gate: Gate,
   ways: number,
   sets: number,
-): Promise<number> {
+): Promise<boolean> {
   const seats: (Resident | null)[][] = Array.from({ length: sets }, () =>
     Array.from({ length: ways }, () => null),
   );
   let clock = 0;
-  let misses = 0;
 
-  for (let step = 0; step < data.accesses.length; step += 1) {
-    const addr = data.accesses[step]!;
-    const line = Math.floor(addr / data.lineBytes);
-    const setIndex = line % sets;
-    const tag = Math.floor(line / sets);
+  for (const addr of data.accesses) {
+    const setIndex = setIndexOf(addr, data.lineBytes, sets);
+    const tag = tagOf(addr, data.lineBytes, sets);
     const seat = seats[setIndex]!;
 
-    if (!(await gate())) return misses;
+    if (!(await gate())) return false;
     clock += 1;
 
     const hitWay = seat.findIndex((r) => r !== null && r.tag === tag);
     if (hitWay >= 0) {
       seat[hitWay]!.usedAt = clock;
-      await rc.emit({
-        type: 'cache-hit',
-        payload: { ways, step, addr, setIndex, wayIndex: hitWay },
-      });
-      if (rc.cancelled) return misses;
+      await rc.emit({ type: 'cache-hit', payload: { wayIndex: hitWay } });
+      if (rc.cancelled) return false;
       continue;
     }
 
-    misses += 1;
-
     const freeWay = seat.findIndex((r) => r === null);
     if (freeWay >= 0) {
-      const occupied = seat.reduce((n, r) => (r === null ? n : n + 1), 0);
-      seat[freeWay] = { tag, addr, usedAt: clock };
-      await rc.emit({
-        type: 'cache-fill',
-        payload: { ways, step, addr, setIndex, wayIndex: freeWay, occupied },
-      });
-      if (rc.cancelled) return misses;
+      seat[freeWay] = { tag, usedAt: clock };
+      await rc.emit({ type: 'cache-fill', payload: { wayIndex: freeWay } });
+      if (rc.cancelled) return false;
       continue;
     }
 
@@ -146,45 +178,35 @@ async function playAccesses(
     for (let w = 1; w < seat.length; w += 1) {
       if (seat[w]!.usedAt < seat[victimWay]!.usedAt) victimWay = w;
     }
-    const victimAddr = seat[victimWay]!.addr;
-    seat[victimWay] = { tag, addr, usedAt: clock };
-    await rc.emit({
-      type: 'cache-evict',
-      payload: { ways, step, addr, setIndex, wayIndex: victimWay, victimAddr },
-    });
-    if (rc.cancelled) return misses;
+    seat[victimWay] = { tag, usedAt: clock };
+    await rc.emit({ type: 'cache-evict', payload: { wayIndex: victimWay } });
+    if (rc.cancelled) return false;
   }
 
-  return misses;
+  return true;
 }
 
-/** 한 바퀴 — 연관도마다 한 판씩 굴리고 두 판의 미스를 맞댄다. */
+/** 한 바퀴 — 연관도마다 한 판씩 굴리고 두 판을 맞댄다. */
 async function playRound(
   rc: ReactiveContext<AssociativityReliefData>,
   data: AssociativityReliefData,
   gate: Gate,
 ): Promise<boolean> {
-  const misses: number[] = [];
-
   for (let round = 0; round < data.ways.length; round += 1) {
     const ways = Math.max(1, data.ways[round]!);
-    const sets = Math.max(1, Math.floor(data.totalLines / ways));
+    const sets = setsOf(data.totalLines, ways);
 
     if (round > 0) {
       if (!(await gate())) return false;
-      await rc.emit({ type: 'regroup', payload: { ways, sets } });
+      await rc.emit({ type: 'regroup' });
       if (rc.cancelled) return false;
     }
 
-    misses.push(await playAccesses(rc, data, gate, ways, sets));
-    if (rc.cancelled) return false;
+    if (!(await playAccesses(rc, data, gate, ways, sets))) return false;
   }
 
   if (!(await gate())) return false;
-  await rc.emit({
-    type: 'done',
-    payload: { firstMisses: misses[0] ?? 0, lastMisses: misses[misses.length - 1] ?? 0 },
-  });
+  await rc.emit({ type: 'done' });
   return !rc.cancelled;
 }
 
