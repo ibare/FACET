@@ -15,22 +15,26 @@
  * 알 수 없다. 안쪽부터 밟아야 얻는 폭이 걸음마다 줄어드는 것이 순서 자체로
  * 드러난다.
  *
+ * 그 차례를 정하는 `squashOrder` 와 점수를 거르는 `squashScoresOf` 는 **내준다** —
+ * 장면이 같은 함수를 불러 몇 번째 걸음인지와 바탕을 셈한다 (S-scene). 둘 다
+ * 목록만 있으면 정해지는 잣대라 떼어 내도 이 조각이 말하려는 바가 남는다.
+ * 반대로 **σ 는 내주지 않는다** — 그것이 이 조각의 알고리즘 그 자체라, 장면이
+ * 대신 풀면 발신이 장식이 된다.
+ *
  * ── 이벤트 (전부 facet 고유. silent 인 것은 없다)
  *
- *   axis-extends    { scores: number[] }
- *                   점수 축이 양쪽 끝까지 뻗는다. scores 는 오름차순.
+ *   axis-extends    {}
+ *                   점수 축이 양쪽 끝까지 뻗는다. 점수 목록은 선언에서 온다.
  *   band-appears    {}
  *                   확률의 띠가 두 벽 사이에 선다.
- *   score-squashed  { index: number; z: number; p: number;
- *                     fromIndex: number | null; fromZ: number | null;
- *                     fromP: number | null;
- *                     axisGap: number | null; bandGap: number | null }
- *                   점수 하나가 띠로 내려앉는다. index 는 오름차순 scores 에서의
- *                   자리. from* / *Gap 은 이미 내려앉은 이웃이 없을 때 (한가운데
- *                   첫 걸음) 전부 null.
- *   tails-pressed   { lowP: number; highP: number }
+ *   score-squashed  { p: number }
+ *                   점수 하나가 띠로 내려앉는다. p 는 σ(z) — 이 걸음이 내리는
+ *                   판정 하나다. 어느 자리인지는 싣지 않는다 (밟는 차례가
+ *                   `squashOrder` 로 정해지므로 장면이 센다).
+ *   tails-pressed   {}
  *                   축의 나머지 (가장 작은 점수 바깥 · 가장 큰 점수 바깥) 가
- *                   양 끝 자투리로 눌려 든다. 두 값은 그 자투리의 안쪽 끝.
+ *                   양 끝 자투리로 눌려 든다. 그 안쪽 끝 두 값은 그때 이미
+ *                   내려앉아 있으므로 장면의 자취가 쥐고 있다.
  *   rewind          {}
  *                   한 걸음씩 다시 보려고 처음으로 되감는다.
  *   done            {}
@@ -55,15 +59,31 @@ function sigmoid(z: number): number {
 }
 
 /**
- * 이미 내려앉은 이웃. 가운데에서 바깥으로 밟으므로 안쪽 이웃이 먼저 있다.
- * 데이터에 0 이 없어 양쪽 첫 걸음이 갈리는 경우를 위해 바깥쪽도 본다.
+ * 눌러 담을 점수를 오름차순으로 거른다.
+ *
+ * **새 배열을 돌려준다** — 선언이 준 배열을 그대로 쥐면 장면이 바탕을 참조로 쥐는
+ * 꼴이 된다 (S-scene).
  */
-function landedNeighbour(index: number, z: number, landed: Set<number>): number | null {
-  const inner = z < 0 ? index + 1 : index - 1;
-  const outer = z < 0 ? index - 1 : index + 1;
-  if (landed.has(inner)) return inner;
-  if (landed.has(outer)) return outer;
-  return null;
+export function squashScoresOf(raw: unknown): number[] {
+  if (!Array.isArray(raw)) return [];
+  const out: number[] = [];
+  for (const one of raw) {
+    if (typeof one === 'number' && Number.isFinite(one)) out.push(one);
+  }
+  return out.sort((a, b) => a - b);
+}
+
+/**
+ * 밟는 차례 — 오름차순 점수 목록에서의 자리를 가운데부터 바깥으로.
+ *
+ * 원점에서의 거리 오름차순, 같으면 값 오름차순. 저작자가 손으로 적은 걸음표가
+ * 아니라 축 위의 자리에서 나온 순서다 (S-piece).
+ */
+export function squashOrder(asc: readonly number[]): number[] {
+  return asc
+    .map((z, index) => ({ z, index }))
+    .sort((a, b) => Math.abs(a.z) - Math.abs(b.z) || a.z - b.z)
+    .map((one) => one.index);
 }
 
 export async function squashToProbabilityAlgorithm(
@@ -71,10 +91,7 @@ export async function squashToProbabilityAlgorithm(
 ): Promise<void> {
   const ctx = base as ReactiveContext<SquashToProbabilityData>;
   const stepMs = typeof ctx.data.stepMs === 'number' ? ctx.data.stepMs : FALLBACK_STEP_MS;
-  const asc = [...ctx.data.scores].sort((a, b) => a - b);
-  const order = asc
-    .map((z, index) => ({ z, index }))
-    .sort((a, b) => Math.abs(a.z) - Math.abs(b.z) || a.z - b.z);
+  const asc = squashScoresOf(ctx.data.scores);
 
   /** 자동 재생을 마치면 걸음의 동력이 시간에서 사용자 입력으로 바뀐다. */
   let manual = false;
@@ -95,39 +112,18 @@ export async function squashToProbabilityAlgorithm(
    * 첫 걸음이 문에 걸리지 않고 바로 보인다 (S-piece).
    */
   async function play(): Promise<boolean> {
-    await ctx.emit({ type: 'axis-extends', payload: { scores: asc } });
+    await ctx.emit({ type: 'axis-extends', payload: {} });
     if (!(await gate())) return false;
 
     await ctx.emit({ type: 'band-appears', payload: {} });
     if (!(await gate())) return false;
 
-    const landed = new Set<number>();
-    for (const { z, index } of order) {
-      const p = sigmoid(z);
-      const fromIndex = landedNeighbour(index, z, landed);
-      const fromZ = fromIndex === null ? null : asc[fromIndex];
-      const fromP = fromZ === null ? null : sigmoid(fromZ);
-      await ctx.emit({
-        type: 'score-squashed',
-        payload: {
-          index,
-          z,
-          p,
-          fromIndex,
-          fromZ,
-          fromP,
-          axisGap: fromZ === null ? null : Math.abs(z - fromZ),
-          bandGap: fromP === null ? null : Math.abs(p - fromP),
-        },
-      });
-      landed.add(index);
+    for (const index of squashOrder(asc)) {
+      await ctx.emit({ type: 'score-squashed', payload: { p: sigmoid(asc[index]) } });
       if (!(await gate())) return false;
     }
 
-    await ctx.emit({
-      type: 'tails-pressed',
-      payload: { lowP: sigmoid(asc[0]), highP: sigmoid(asc[asc.length - 1]) },
-    });
+    await ctx.emit({ type: 'tails-pressed', payload: {} });
     await ctx.emit({ type: 'done', payload: {} });
     return true;
   }
