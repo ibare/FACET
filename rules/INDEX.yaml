@@ -81,7 +81,7 @@ concerns:
       paths:
         - "facets/**/facet.ts"
         - "facets/**/index.ts"
-        - "facets/**/description.ts"
+        - "apps/playground/src/descriptions/*.md"
         - "packages/core/src/runtime/registry.ts"
       patterns:
         - "module:"
@@ -180,7 +180,7 @@ concerns:
 specifics:
   - id: S-facet
     file: specifics/S-facet.md
-    description: facets/**/<name>/src/ 내부 6파일 구성 (algorithm / projector / irs / facet / description / index) + 빌트인 view 로 표현 불가능할 때만 추가하는 선택적 *-stage.ts 1파일
+    description: facets/**/<name>/src/ 내부 5파일 구성 (algorithm / projector 또는 scene / irs / facet / index) — 데모 설명 글은 facet 이 아니라 playground 에 + 빌트인 view 로 표현 불가능할 때만 추가하는 선택적 *-stage.ts 1파일
     triggers:
       paths:
         - "facets/**/*.ts"

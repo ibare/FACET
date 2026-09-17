@@ -877,7 +877,8 @@ const t = params.t ?? makeTranslator(params.locale);
 - **`captionBase` · `note` 죽은 요소** — security **여덟 모두**에서 나왔다.
   `setBaseCaption`/`setNote` 를 projector 가 한 번도 안 불러 영영 빈 글자였다.
   S-piece 가 상시 캡션과 화면 각주를 **둘 다 MUST NOT** 으로 막으므로 되살리지
-  말고 걷어내고, 전제는 `description.ts` 로 옮긴다. `signature-on-hash` 의
+  말고 걷어내고, 전제는 글로 옮긴다 (그때는 `description.ts` 였다 — 호스트 writer 에게는
+  가지 않는 데모 글이라 지금은 개념 메타가 그 자리다, S-piece). `signature-on-hash` 의
   `note` 는 하필 "최소 폭 눈속임" 을 밝힌다던 각주였다.
 - **되짚으면 주장이 통째로 뒤집히는 조각이 있다.** `probe-a-few-cells` 는 견준
   점이 오직 `fill` 누적에만 있어 **맺음 걸음으로 곧바로 뛰면 스물넷이 전부

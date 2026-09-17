@@ -24,7 +24,7 @@ last_verified: 2026-09-05
 
 ## 3. 레지스트리 경유
 
-- Algorithm / Projector / IR / Transpiler / View / Facet / Description 은 `@ffacet/core/runtime` 의 `register*` 함수를 통해서만 시스템에 등록된다.
+- Algorithm / Projector / ScenePlan / IR / Transpiler / View / Facet 은 `@ffacet/core/runtime` 의 `register*` 함수를 통해서만 시스템에 등록된다.
 - 소비자는 반드시 `get*` 계열로 조회한다. 다른 패키지의 구체 구현 파일을 직접 import 해서 쓰지 않는다.
 - `FacetJson.algorithm` / `projector` 는 `module:<name>` 참조 문자열만 허용한다. 함수 리터럴 금지.
 

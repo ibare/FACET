@@ -56,16 +56,19 @@ facet id  facet:<camelCase>
 
 ## 산출
 
-`facets/<domain>/<name>/src/` 아래 여섯 파일.
+`facets/<domain>/<name>/src/` 아래 다섯 파일과, 데모 사이트 설명 글 하나.
 
 ```
 algorithm.ts     걸음마다 리터럴 emit (C2). reactive + ctx.sleep(stepMs)
 projector.ts     payload 를 좁혀 stage 로 (C9)
 <name>-stage.ts  그림. PIECE_CANVAS_W, 세로는 내용이 정한다
 facet.ts         @piece 표식, mechanismKind: 'reactive', controls: [CONTROL.replay, CONTROL.advance]
-description.ts   글
 index.ts         등록 진입점 (호스트가 나중에 부른다)
 ```
+
+설명 글은 facet 패키지에 두지 않는다 — `apps/playground/src/descriptions/<facet id 에서 facet: 을 뗀 것>.md`
+에 마크다운으로 쓰고, 자기 토큰 `{facet:<id>}` 을 반드시 담는다. 데모 사이트만 읽는 글이라
+facet 에 두면 발행 번들에 실린다.
 
 ## 마치기 전에
 

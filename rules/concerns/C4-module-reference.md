@@ -13,14 +13,14 @@ last_verified: 2026-09-05
 - `FacetJson.algorithm: 'module:<name>'` / `projector: 'module:<name>'` 작성
 - `FacetJson.blocks.<ref>.type === 'code-view'` 의 `ir: 'ir:<id>'` / `transpiler: 'transpiler:<id>'` 작성
 - `FacetJson.id: 'facet:<name>'` 작성
-- `description.ts` 본문에 `{facet:<id>}` DSL 토큰 삽입
+- 데모 설명 글(`apps/playground/src/descriptions/<facet id>.md`) 본문에 `{facet:<id>}` DSL 토큰 삽입
 - `registerAlgorithm/Projector/IR/Transpiler/Facet` 호출
 
 ## MUST
 
 - 같은 facet 패키지의 `index.ts::register<Name>()` 에서 `registerAlgorithm('<name>', ...)` 의 `<name>` 과 `facet.ts` 의 `algorithm: 'module:<name>'` 의 `<name>` 은 **문자 단위로 일치**해야 한다. `projector` / `ir` / `transpiler` 도 동일.
 - `FacetJson.id` 는 `facet:<Name>` 형식. `<Name>` 은 **lowerCamelCase 단일 세그먼트** (예: `facet:bubbleSort`, `facet:queueFifo`). 아래 "facet id 명명 규칙" 을 따른다.
-- `description.ts` 본문에 `{facet:<Name>}` 가 나오면 그 `<Name>` 은 **같은 패키지의** `facet.ts::id` 와 정확히 일치해야 한다. 다른 facet 을 참조하려면 그 facet 의 id 를 그대로 쓴다.
+- 데모 설명 글 `<Name>.md` 는 **자기 facet 의 토큰 `{facet:<Name>}` 을 반드시 담는다** — 파일 이름이 곧 facet id 다. 다른 facet 을 참조하려면 그 facet 의 id 를 그대로 쓰고, 그 facet 은 실재해야 한다 (`test/playground-descriptions.test.ts`).
 - IR id (`bubblesort-imperative` 같은) 는 kebab-case. `registerIR(ir.id, ir)` 와 `code-view.ir: 'ir:<id>'` 가 일치해야 한다.
 - Transpiler id 는 언어 이름 단일 소문자 (`python`, `java`, `javascript` 등).
 - **`registerAlgorithm` / `registerProjector` 의 이름은 lowerCamelCase 단일 세그먼트**이며,
