@@ -41,7 +41,9 @@ export const kMustBeGivenFacet: FacetJson = {
     pt: 'Os mesmos doze pontos dividem-se de três maneiras, e a dispersão não escolhe entre elas.',
   },
   algorithm: 'module:kMustBeGiven',
-  projector: 'module:kMustBeGivenProjector',
+  // 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든 셈으로
+  // 얻으므로 띠를 끌어 아무 자리로나 갈 수 있다 (S-scene).
+  scene: 'module:kMustBeGivenScene',
   initialData: {
     type: 'k-must-be-given',
     // 큰 덩이 둘, 각 덩이 안에 작은 덩이가 둘씩. 왼아래 · 오른아래 · 왼위 · 오른위.
@@ -64,7 +66,7 @@ export const kMustBeGivenFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'k-must-be-given-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'label.membership': {

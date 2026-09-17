@@ -9,6 +9,9 @@
  * 선언에 두는 것은 점과 걸음 간격뿐이다. 자리·축척·자의 눈금은 stage 가
  * 캔버스에서 역산한다 (S-piece).
  *
+ * 화면은 장면(Scene)으로 만든다. 어느 걸음의 화면이든 셈으로 얻으므로 띠를
+ * 끌어 임의의 자리로 갈 수 있다 (`CONTROL_SET.pieceScrub`).
+ *
  * @piece
  */
 
@@ -41,7 +44,9 @@ export const mergeNearestPairFacet: FacetJson = {
     pt: 'Junte os dois mais próximos e pendure a junção na altura dessa distância. A árvore que cresce daí diz o quanto tudo estava afastado.',
   },
   algorithm: 'module:mergeNearestPair',
-  projector: 'module:mergeNearestPairProjector',
+  // 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든
+  // 셈으로 얻으므로 임의의 자리로 갈 수 있다 (S-scene).
+  scene: 'module:mergeNearestPairScene',
   initialData: {
     type: 'merge-nearest-pair',
     // 세 무리와 외톨이 하나. h 가 끝에서 두 번째에야 붙는 것이 이 배치의 요점이다.
@@ -59,7 +64,7 @@ export const mergeNearestPairFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'merge-nearest-pair-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'label.axis': {
@@ -86,17 +91,19 @@ export const mergeNearestPairFacet: FacetJson = {
       id: 'kelompok tersisa',
       pt: 'grupos restantes',
     },
+    // 점의 개수를 글자로 못박지 않는다 — 세어서 나오는 수라 선언이 바뀌면
+    // 조용히 거짓이 된다 (프로토콜 4 절 "캡션 문안이 상수를 못박는다").
     'caption.start': {
-      en: 'Eight points, and each is a cluster of its own.',
-      ko: '점 여덟, 저마다 한 무리다.',
-      ja: '点は八つ、それぞれが一つのクラスタだ。',
-      zh: '八个点，各自成一簇。',
-      ar: 'ثماني نقاط، كلٌّ منها عنقود بذاته.',
-      es: 'Ocho puntos, y cada uno es un grupo por sí solo.',
-      fr: 'Huit points, et chacun forme son propre groupe.',
-      hi: 'आठ बिंदु, हर एक अपने आप में एक समूह।',
-      id: 'Delapan titik, masing-masing kelompoknya sendiri.',
-      pt: 'Oito pontos, e cada um é um grupo por si.',
+      en: '{n} points, and each is a cluster of its own.',
+      ko: '점 {n} 개, 저마다 한 무리다.',
+      ja: '点は{n}つ、それぞれが一つのクラスタだ。',
+      zh: '{n} 个点，各自成一簇。',
+      ar: '{n} نقاط، كلٌّ منها عنقود بذاته.',
+      es: '{n} puntos, y cada uno es un grupo por sí solo.',
+      fr: '{n} points, et chacun forme son propre groupe.',
+      hi: '{n} बिंदु, हर एक अपने आप में एक समूह।',
+      id: '{n} titik, masing-masing kelompoknya sendiri.',
+      pt: '{n} pontos, e cada um é um grupo por si.',
     },
     'caption.merge': {
       en: 'The nearest two join, and the joint hangs at the height of that gap. Height: {d}',
@@ -110,17 +117,21 @@ export const mergeNearestPairFacet: FacetJson = {
       id: 'Dua yang terdekat menyatu, dan sambungannya tergantung pada tinggi jarak itu. Tinggi: {d}',
       pt: 'Os dois mais próximos se juntam, e a junção pende na altura dessa distância. Altura: {d}',
     },
+    // 낮게 몰린 것과 높이 뛴 것의 수도 못박지 않는다. **이 조각의 결론**이라
+    // 그림과 같은 자료에서 나와야 한다 — `lowHighOf` 가 걸린 높이들을 줄 세워
+    // 가장 크게 벌어진 자리에서 가른다 (프로토콜 4 절 "결론을 셈하지 않고 적어
+    // 둔 자리").
     'caption.done': {
-      en: 'Four bars huddle low, three leap high — the height is how far apart they were.',
-      ko: '넷은 바닥에 몰리고 셋은 훌쩍 뛴다. 높이가 곧 얼마나 먼 것들을 합쳤는가다.',
-      ja: '四つは低く固まり、三つは高く跳ぶ — 高さがそのまま隔たりの大きさだ。',
-      zh: '四条挤在低处，三条跃到高处 — 高度就是它们相隔多远。',
-      ar: 'أربعة أعمدة تتكدّس في الأسفل وثلاثة تقفز عاليًا — الارتفاع هو مقدار التباعد.',
-      es: 'Cuatro barras se apiñan abajo y tres saltan alto: la altura es cuán lejos estaban.',
-      fr: 'Quatre barres se serrent en bas, trois bondissent haut — la hauteur dit à quel point elles étaient éloignées.',
-      hi: 'चार पट्टियाँ नीचे सिमटी हैं, तीन ऊपर छलाँग लगाती हैं — ऊँचाई ही बताती है कि वे कितनी दूर थीं।',
-      id: 'Empat batang berkerumun rendah, tiga melompat tinggi — tingginya itulah seberapa jauh jaraknya.',
-      pt: 'Quatro barras se juntam embaixo, três saltam alto — a altura é o quanto estavam afastados.',
+      en: '{low} bars huddle low, {high} leap high — the height is how far apart they were.',
+      ko: '가로대 {low} 개는 바닥에 몰리고 {high} 개는 훌쩍 뛴다. 높이가 곧 얼마나 먼 것들을 합쳤는가다.',
+      ja: '{low} 本は低く固まり、{high} 本は高く跳ぶ — 高さがそのまま隔たりの大きさだ。',
+      zh: '{low} 条挤在低处，{high} 条跃到高处 — 高度就是它们相隔多远。',
+      ar: '{low} أعمدة تتكدّس في الأسفل و{high} تقفز عاليًا — الارتفاع هو مقدار التباعد.',
+      es: '{low} barras se apiñan abajo y {high} saltan alto: la altura es cuán lejos estaban.',
+      fr: '{low} barres se serrent en bas, {high} bondissent haut — la hauteur dit à quel point elles étaient éloignées.',
+      hi: '{low} पट्टियाँ नीचे सिमटी हैं, {high} ऊपर छलाँग लगाती हैं — ऊँचाई ही बताती है कि वे कितनी दूर थीं।',
+      id: '{low} batang berkerumun rendah, {high} melompat tinggi — tingginya itulah seberapa jauh jaraknya.',
+      pt: '{low} barras se juntam embaixo, {high} saltam alto — a altura é o quanto estavam afastados.',
     },
   },
 };

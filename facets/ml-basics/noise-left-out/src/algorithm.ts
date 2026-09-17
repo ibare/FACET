@@ -12,34 +12,43 @@
  * 여기서 좌표로부터 셈한다. 선언에는 점과 두 손잡이(eps · minPts · 시작 중심)만
  * 있다.
  *
+ * ── 싣는 것과 싣지 않는 것
+ *
+ * 화면은 이제 명령이 아니라 **장면**에서 만들어진다 (`scene.ts`). 그래서 바탕과
+ * 자취에서 곧바로 나오는 수는 싣지 않는다 — 점의 개수 · eps · minPts · 시작 중심은
+ * 선언에 있고, 속과 성김 · 무리 번호 · 무리 크기 · 가장자리 · 남겨진 것 · 표식 ·
+ * 몇 번째인가 · 아직 남은 수 · 뻗은 거리 · eps 의 몇 배는 장면이 셈한다.
+ *
+ * 싣는 것은 **거리 셈이 내린 판정**뿐이다. 그것을 내주면 장면이 이 조각이 피하려는
+ * 셈을 하게 된다.
+ *
  * ── 이벤트 어휘 (facet 고유. 표준 어휘는 `done` 하나뿐) ──────────────────
  *
- *  points-placed      { count: number }
+ *  points-placed      {}
  *      점을 놓는다. 마운트 직후의 첫 걸음이라 문(gate)을 지나지 않는다.
- *  radius-shown       { eps: number; minPts: number; counts: number[] }
+ *  radius-shown       { counts: number[] }
  *      점마다 이웃 반지름을 편다. counts[i] 는 그 안에 든 점의 수 (자기 포함).
- *  cores-marked       { core: number[]; sparse: number[]; minPts: number }
- *      문턱을 넘은 점(속)과 못 넘은 점을 가른다.
- *  spread-advanced    { cluster: number; edges: [number, number][] }
+ *  cores-marked       {}
+ *      문턱을 넘은 점(속)과 못 넘은 점을 가른다. 어느 쪽인지는 counts 와 minPts 의
+ *      견줌 하나라 다시 싣지 않는다.
+ *  spread-advanced    { edges: [number, number][] }
  *      번짐 한 물결. edges 는 이번 물결에서 새로 이어진 [속, 새 점] 쌍이다.
  *      물결의 수와 순서는 이웃 그래프가 정한다 — 사람이 적은 걸음표가 아니다.
- *  spread-halted      { sizes: number[]; border: { index: number; cluster: number }[] }
- *      번짐이 멎었다. sizes 는 무리별 크기, border 는 속이 아닌 채 무리에 든
- *      가장자리 점과 그 무리 번호.
- *  left-out-listed    { items: { index: number; x: number; y: number; neighbors: number }[] }
- *      어느 번짐도 닿지 않은 점들. 이 조각의 주인공이다.
- *  nearest-begun      { k: number; seeds: { x: number; y: number }[] }
- *      두 번째 방법을 건다. 시작 중심을 놓는다.
+ *  spread-halted      {}
+ *      번짐이 멎었다. 무리 크기와 가장자리는 지나온 물결을 접으면 나온다.
+ *  left-out-listed    {}
+ *      어느 번짐도 닿지 않은 점들이 드러난다. 이 조각의 주인공이다.
+ *  nearest-begun      {}
+ *      두 번째 방법을 건다. 시작 중심은 선언에 있다.
  *  centroids-settled  { centroids: { x: number; y: number }[]; rounds: number }
- *      중심이 자리를 잡는다. rounds 는 배정을 다시 매긴 횟수.
- *  stray-claimed      { index: number; cluster: number; dist: number; ratio: number;
- *                       anchor: number; rank: number; total: number; remaining: number }
- *      남았던 점 하나가 무리에 든다. dist 는 그 무리의 덩이 점 가운데 가장
- *      가까운 것까지의 거리, ratio 는 그것이 eps 의 몇 배인지, anchor 는 그
- *      가장 가까운 점의 인덱스, remaining 은 아직 남은 수. 거리 오름차순으로
- *      온다 — 가장 먼 것이 마지막에 와서 논증을 맺는다.
- *  done               { densityLeft: number; nearestLeft: number }
- *      두 방법이 각각 남긴 수.
+ *      중심이 자리를 잡는다. rounds 는 배정을 다시 매긴 횟수. 수렴 셈이라 싣는다.
+ *  stray-claimed      { index: number; cluster: number; anchor: number }
+ *      남았던 점 하나가 무리에 든다. cluster 는 어느 중심의 무리인가, anchor 는 그
+ *      무리에서 가장 가까운 점이다 — 둘 다 거리 셈이 내린 판정이다. 뻗은 거리는
+ *      두 점의 좌표에서 나오므로 싣지 않는다. 거리 오름차순으로 온다 — 가장 먼
+ *      것이 마지막에 와서 논증을 맺는다.
+ *  done               {}
+ *      두 방법이 각각 남긴 수를 나란히 놓는다. 두 수 다 자취에서 나온다.
  *  rewind             {}
  *      자동 재생이 끝난 뒤 `advance` 로 처음으로 돌아간다 (S-piece).
  *
@@ -82,15 +91,19 @@ function neighborhoods(points: NoisePoint[], eps: number): number[][] {
   );
 }
 
-type Wave = { cluster: number; edges: [number, number][] };
+/** 번짐 한 물결 — 이번 물결에서 새로 이어진 `[속, 새 점]` 쌍들. */
+type Wave = [number, number][];
 
+/**
+ * 밀도로 묶은 결과.
+ *
+ * 속과 성김 · 무리 번호 · 무리 크기 · 가장자리는 담지 않는다 — 셋 다 `counts` 와
+ * `waves` 와 문턱에서 나오는 값이라 화면이 셈한다. 여기 남은 셋만이 좌표를 보아야
+ * 나오는 것들이다.
+ */
 type DensityResult = {
   counts: number[];
-  core: number[];
-  sparse: number[];
   waves: Wave[];
-  members: number[][];
-  border: { index: number; cluster: number }[];
   leftOut: number[];
 };
 
@@ -107,45 +120,37 @@ function densityGroups(points: NoisePoint[], eps: number, minPts: number): Densi
   const UNSEEN = -1;
   const label = points.map(() => UNSEEN);
   const waves: Wave[] = [];
-  const members: number[][] = [];
+  let clusters = 0;
 
   for (let seed = 0; seed < points.length; seed += 1) {
     if (label[seed] !== UNSEEN || !isCore[seed]) continue;
-    const cluster = members.length;
+    const cluster = clusters;
+    clusters += 1;
     label[seed] = cluster;
-    const mine = [seed];
     let front = [seed];
     while (front.length > 0) {
-      const edges: [number, number][] = [];
+      const edges: Wave = [];
       const next: number[] = [];
       for (const a of front) {
         if (!isCore[a]) continue; // 속이 아닌 점은 번짐을 잇지 않는다
         for (const b of nb[a]) {
           if (label[b] !== UNSEEN) continue;
           label[b] = cluster;
-          mine.push(b);
           edges.push([a, b]);
           next.push(b);
         }
       }
-      if (edges.length > 0) waves.push({ cluster, edges });
+      if (edges.length > 0) waves.push(edges);
       front = next;
     }
-    members.push(mine);
   }
 
-  const core: number[] = [];
-  const sparse: number[] = [];
-  const border: { index: number; cluster: number }[] = [];
   const leftOut: number[] = [];
   for (let i = 0; i < points.length; i += 1) {
-    if (isCore[i]) core.push(i);
-    else sparse.push(i);
     if (label[i] === UNSEEN) leftOut.push(i);
-    else if (!isCore[i]) border.push({ index: i, cluster: label[i] });
   }
 
-  return { counts, core, sparse, waves, members, border, leftOut };
+  return { counts, waves, leftOut };
 }
 
 function nearestCentroid(centroids: NoisePoint[], p: NoisePoint): number {
@@ -187,28 +192,25 @@ function nearestGroups(points: NoisePoint[], seeds: NoisePoint[]): NearestResult
   return { centroids, assign, rounds };
 }
 
+/**
+ * 남았던 점 하나가 무리에 든 판정.
+ *
+ * `dist` 는 여기서만 쓴다 — 가까운 것부터 오게 줄 세우는 데 필요하지 실어 보낼
+ * 값은 아니다. 그 거리는 `index` 와 `anchor` 의 좌표에서 나오므로 화면이 셈한다.
+ */
 type Claim = {
   index: number;
   cluster: number;
-  dist: number;
-  ratio: number;
   anchor: number;
-  rank: number;
-  total: number;
-  remaining: number;
+  dist: number;
 };
 
 /**
- * 남았던 점마다 "들어간 무리의 덩이 점 가운데 가장 가까운 것" 까지의 거리를 잰다.
+ * 남았던 점마다 "들어간 무리의 덩이 점 가운데 가장 가까운 것" 을 찾는다.
  * 중심까지의 거리가 아니라 이것을 재는 까닭은, 그 수가 eps 와 같은 자로 견줄 수
  * 있는 유일한 수이기 때문이다 — 이웃이라 부르는 거리와 실제로 뻗은 거리.
  */
-function claimsOf(
-  points: NoisePoint[],
-  leftOut: number[],
-  assign: number[],
-  eps: number,
-): Claim[] {
+function claimsOf(points: NoisePoint[], leftOut: number[], assign: number[]): Claim[] {
   const settled = points.map((_, i) => i).filter((i) => !leftOut.includes(i));
   const rows = leftOut.map((index) => {
     const cluster = assign[index];
@@ -223,16 +225,12 @@ function claimsOf(
         anchor = i;
       }
     }
-    return { index, cluster, dist: best, ratio: best / eps, anchor };
+    return { index, cluster, anchor, dist: best };
   });
 
+  // 가장 먼 것이 마지막에 와서 논증을 맺는다. 몇 번째인가는 자취가 센다.
   rows.sort((a, b) => a.dist - b.dist);
-  return rows.map((row, i) => ({
-    ...row,
-    rank: i + 1,
-    total: rows.length,
-    remaining: rows.length - (i + 1),
-  }));
+  return rows;
 }
 
 export async function noiseLeftOutAlgorithm(
@@ -243,7 +241,7 @@ export async function noiseLeftOutAlgorithm(
 
   const density = densityGroups(points, eps, minPts);
   const nearest = nearestGroups(points, seeds);
-  const claims = claimsOf(points, density.leftOut, nearest.assign, eps);
+  const claims = claimsOf(points, density.leftOut, nearest.assign);
 
   /** 자동 재생을 마치면 참이 된다. 그 뒤로는 `advance` 가 걸음을 민다. */
   let manual = false;
@@ -263,46 +261,27 @@ export async function noiseLeftOutAlgorithm(
   /** 한 바퀴. 끝까지 갔으면 true, 도중에 취소됐으면 false. */
   async function play(): Promise<boolean> {
     // 첫 걸음은 문을 지나지 않는다 — 앞에 기다릴 걸음이 없다 (S-piece).
-    await rc.emit({ type: 'points-placed', payload: { count: points.length } });
+    await rc.emit({ type: 'points-placed', payload: {} });
 
     if (!(await gate())) return false;
-    await rc.emit({ type: 'radius-shown', payload: { eps, minPts, counts: density.counts } });
+    await rc.emit({ type: 'radius-shown', payload: { counts: density.counts } });
 
     if (!(await gate())) return false;
-    await rc.emit({
-      type: 'cores-marked',
-      payload: { core: density.core, sparse: density.sparse, minPts },
-    });
+    await rc.emit({ type: 'cores-marked', payload: {} });
 
     for (const wave of density.waves) {
       if (!(await gate())) return false;
-      await rc.emit({
-        type: 'spread-advanced',
-        payload: { cluster: wave.cluster, edges: wave.edges },
-      });
+      await rc.emit({ type: 'spread-advanced', payload: { edges: wave } });
     }
 
     if (!(await gate())) return false;
-    await rc.emit({
-      type: 'spread-halted',
-      payload: { sizes: density.members.map((m) => m.length), border: density.border },
-    });
+    await rc.emit({ type: 'spread-halted', payload: {} });
 
     if (!(await gate())) return false;
-    await rc.emit({
-      type: 'left-out-listed',
-      payload: {
-        items: density.leftOut.map((index) => ({
-          index,
-          x: points[index].x,
-          y: points[index].y,
-          neighbors: density.counts[index],
-        })),
-      },
-    });
+    await rc.emit({ type: 'left-out-listed', payload: {} });
 
     if (!(await gate())) return false;
-    await rc.emit({ type: 'nearest-begun', payload: { k: seeds.length, seeds } });
+    await rc.emit({ type: 'nearest-begun', payload: {} });
 
     if (!(await gate())) return false;
     await rc.emit({
@@ -312,19 +291,17 @@ export async function noiseLeftOutAlgorithm(
 
     for (const claim of claims) {
       if (!(await gate())) return false;
-      await rc.emit({ type: 'stray-claimed', payload: { ...claim } });
+      await rc.emit({
+        type: 'stray-claimed',
+        payload: { index: claim.index, cluster: claim.cluster, anchor: claim.anchor },
+      });
     }
 
     if (!(await gate())) return false;
-    await rc.emit({
-      type: 'done',
-      payload: {
-        densityLeft: density.leftOut.length,
-        // 배정을 못 받은 점의 수. 이 방법에는 그런 자리가 없어 언제나 0 이지만,
-        // 화면에 뜨는 수라 지어 넣지 않고 결과에서 센다.
-        nearestLeft: nearest.assign.filter((a) => a < 0).length,
-      },
-    });
+    // 두 방법이 각각 남긴 수는 싣지 않는다. 밀도가 남긴 수는 번짐이 닿지 않은 점의
+    // 수이고 가까운 쪽이 남긴 수는 선반에 적힌 줄과 데려간 자취의 차이라, 둘 다
+    // 화면이 그리는 것과 같은 자료에서 나온다 (그 편이 이 조각의 결론에 옳다).
+    await rc.emit({ type: 'done', payload: {} });
     return !rc.cancelled;
   }
 

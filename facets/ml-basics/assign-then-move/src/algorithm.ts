@@ -8,26 +8,28 @@
  *
  * ── 이벤트 (표준 어휘는 `done` 뿐이고 나머지 셋은 이 facet 고유다. C2)
  *
- *   points-attach   { round: number; assign: number[]; counts: number[] }
- *                   붙는 몸짓. `assign[i]` 는 점 i 가 붙은 중심의 번호이고
- *                   `counts[c]` 는 중심 c 에 붙은 점의 수다. 둘은 같은 사실의
- *                   두 쓰임이다 — 앞은 그림이 색과 살을 잇는 데 쓰고, 뒤는
- *                   캡션이 무리 크기를 말하는 데 쓴다.
+ * **싣는 것은 판정 둘뿐이다.** 구조에서 세지는 것(몇 회째인가 · 무리 크기 · 옮긴
+ * 거리 · 멎었는가)은 장면이 센다 — 두 자리에서 세면 화면이 제 안에서 갈린다
+ * (`scene.ts` 머리, 프로토콜 4 절).
+ *
+ *   points-attach   { assign: number[] }
+ *                   붙는 몸짓. `assign[i]` 는 점 i 가 붙은 중심의 번호다. 가장
+ *                   가까운 중심을 가리는 것이 거리 셈이라 걸음의 판정이다.
  *                   silent 아님.
  *
- *   centroids-move  { round: number; to: { x: number; y: number }[]; moved: number[] }
- *                   옮기는 몸짓. `to[c]` 는 중심 c 가 옮겨 갈 자리(붙은 점들의
- *                   평균)이고 `moved[c]` 는 그 자리까지의 거리다. 거리는 좌표에서
- *                   직접 셈한 값이다.
+ *   centroids-move  { to: { x: number; y: number }[] }
+ *                   옮기는 몸짓. `to[c]` 는 중심 c 가 옮겨 갈 자리, 곧 저에게 붙은
+ *                   점들의 평균이다. 그 평균이 이 조각의 알고리즘 그 자체라 내주지
+ *                   않고 자리를 싣는다. 옮긴 거리는 자취의 두 칸 사이라 싣지 않는다.
  *                   silent 아님.
  *
  *   rewind          {}
  *                   자동 재생이 끝난 뒤 `advance` 를 받아 처음으로 되감는다.
  *                   silent 아님 (화면이 첫 상태로 돌아간다).
  *
- *   done            { rounds: number; settled: boolean }
- *                   `settled` 는 아무도 안 움직여서 멎었는지 여부다. 상한까지
- *                   돌고도 움직이고 있으면 false.
+ *   done            {}
+ *                   멎었다. 돈 횟수도 아무도 안 움직였는지도 자취에 이미 있으므로
+ *                   (`ASSIGN_SETTLE_EPS` 를 내준다) 실을 것이 없다.
  *                   silent 아님.
  *
  * 메트릭은 없다 (조각이므로 `ctx.metric` 을 부르지 않는다 — S-piece).
@@ -47,8 +49,13 @@ export type AssignThenMoveData = {
   stepMs: number;
 };
 
-/** 옮긴 거리가 이보다 작으면 멎은 것으로 본다. */
-const SETTLE_EPS = 1e-9;
+/**
+ * 옮긴 거리가 이보다 작으면 멎은 것으로 본다.
+ *
+ * **잣대를 한 군데로 모으려고 내준다** — 장면도 마지막 회의 거리를 이 값으로 재어
+ * "멎었다" 를 판정한다. 두 군데에 적으면 화면과 결론이 갈린다 (프로토콜 4 절).
+ */
+export const ASSIGN_SETTLE_EPS = 1e-9;
 
 /**
  * 돌 수 있는 횟수의 상한.
@@ -133,30 +140,26 @@ export async function assignThenMoveAlgorithm(
   /** 붙기와 옮기기를 번갈아 돌린다. 끝까지 돌았으면 true, 취소됐으면 false. */
   async function sweep(): Promise<boolean> {
     const centers = seeds.map((s) => ({ x: s.x, y: s.y }));
-    let rounds = 0;
-    let settled = false;
 
-    for (let round = 1; round <= MAX_ROUNDS; round += 1) {
+    for (let round = 0; round < MAX_ROUNDS; round += 1) {
       if (!(await gate())) return false;
       const assign = points.map((p) => nearestIndex(p, centers));
-      const counts = centers.map((_, i) => assign.filter((a) => a === i).length);
-      await ctx.emit({ type: 'points-attach', payload: { round, assign, counts } });
+      await ctx.emit({ type: 'points-attach', payload: { assign } });
 
       if (!(await gate())) return false;
       const to = centers.map((c, i) => centerOfMembers(points, assign, i, c));
-      const moved = centers.map((c, i) => Math.hypot(to[i].x - c.x, to[i].y - c.y));
-      await ctx.emit({ type: 'centroids-move', payload: { round, to, moved } });
+      await ctx.emit({ type: 'centroids-move', payload: { to } });
 
+      // 멎었는지는 옮기기 전과 뒤를 견주어 안다. 장면도 같은 잣대로 같은 두 자리를 잰다.
+      const settled = to.every(
+        (t, i) => Math.hypot(t.x - centers[i].x, t.y - centers[i].y) < ASSIGN_SETTLE_EPS,
+      );
       for (let i = 0; i < centers.length; i += 1) centers[i] = to[i];
-      rounds = round;
-      if (moved.every((d) => d < SETTLE_EPS)) {
-        settled = true;
-        break;
-      }
+      if (settled) break;
     }
 
     if (!(await gate())) return false;
-    await ctx.emit({ type: 'done', payload: { rounds, settled } });
+    await ctx.emit({ type: 'done' });
     return true;
   }
 

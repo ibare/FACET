@@ -9,7 +9,7 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
@@ -18,22 +18,41 @@ import { mergeNearestPairDescription } from './description.js';
 import { mergeNearestPairFacet } from './facet.js';
 import { mergeNearestPairIRs } from './irs.js';
 import { mergeNearestPairStageView } from './merge-nearest-pair-stage.js';
-import { mergeNearestPairProjector } from './projector.js';
+import { mergeNearestPairScene } from './scene.js';
 
 export { mergeNearestPairAlgorithm } from './algorithm.js';
 export type { MergeNearestPairData, MergePoint } from './algorithm.js';
-export { mergeNearestPairProjector } from './projector.js';
+export {
+  mergeNearestPairScene,
+  beforeTreeOf,
+  gapOf,
+  heightsOf,
+  lastJoinOf,
+  lowHighOf,
+  remainingOf,
+  runnerUpOf,
+  standingTreeOf,
+  treeOf,
+} from './scene.js';
+export type {
+  MergeDot,
+  MergeJoin,
+  MergeKnot,
+  MergeNearestPairScene,
+  MergePair,
+  MergeStep,
+  MergeTree,
+} from './scene.js';
 export { mergeNearestPairIRs } from './irs.js';
 export { mergeNearestPairFacet } from './facet.js';
 export { mergeNearestPairDescription } from './description.js';
-export { mergeNearestPairStageView, readMergeScene } from './merge-nearest-pair-stage.js';
-export type { MergeScene, MergeScenePoint, StageMerge } from './merge-nearest-pair-stage.js';
+export { mergeNearestPairStageView } from './merge-nearest-pair-stage.js';
 
 export function registerMergeNearestPair(): void {
   registerAlgorithm<MergeNearestPairData>('mergeNearestPair', mergeNearestPairAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('mergeNearestPairProjector', mergeNearestPairProjector);
+  registerScenePlan('mergeNearestPairScene', mergeNearestPairScene);
   for (const ir of mergeNearestPairIRs) registerIR(ir.id, ir);
   registerView('merge-nearest-pair-stage', mergeNearestPairStageView);
   registerFacets([mergeNearestPairFacet]);
