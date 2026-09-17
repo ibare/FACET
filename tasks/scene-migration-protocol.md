@@ -843,6 +843,43 @@ const t = params.t ?? makeTranslator(params.locale);
   세던 탓에 scene 조각을 "발신 없음" 으로 잘못 잡았다. 이미 고쳤지만, 다른 검사에서
   비슷한 것이 나올 수 있다.
 
+### 머신러닝 기초 스물셋이 새로 물어 온 것
+
+- **④ 의 grep 은 `node.x` 꼴을 못 잡는다.** 보간 루프가 **프레임마다 제자리에서
+  고치는 객체 필드**는 곧 화면 좌표의 사본이다. `const fromX = node.x` 나
+  `nodes.map((n) => ({ x: n.x, y: n.y }))` 는 `getAttribute` 도 `let` 도 아니라
+  ②④ 어느 grep 에도 안 걸린다. 한 조각에서 **grep 이 셋 중 하나만 잡았다.**
+  운동이 고치는 필드를 먼저 찾고 그것을 읽는 자리를 전부 훑어라.
+- **`dataset.*` 에 적어 두는 것도 ④ 다.** `rect.dataset.alpha` 처럼 목표값을 DOM
+  속성에 적어 두고 나중에 꺼내 쓰면 `getAttribute` 도 `Number()` 도 안 써서 통과한다.
+- **`showInside()` 가 인자를 하나도 안 받는 것이 거울의 증거다.** 그릴 것을 전부
+  모듈 스코프의 표에서 꺼낸다는 뜻이다. **인자 없는 그리기 함수를 먼저 의심하라.**
+- **`const` 로 묶인 객체의 필드가 제자리에서 고쳐진다.** `const model` 의 `scale` 을
+  `unroll` 이 고치고 되감기가 되돌리지 않았다 — `let` 에도 `new Map` 에도 안 걸린다.
+- **`Map` 은 값만이 아니라 "자리가 있느냐" 와 삽입 순서도 상태다.** 이 도메인에서
+  다섯 번 나왔다 — `chutes` 의 자리 유무가 "이미 내려앉았나", `openDisks` 가 "지금
+  앞자락인가", `bucket` 의 넣은 차례가 눈금 칸을, `letters` 가 a·b·c·d 표식을,
+  `layout.height.keys()` 가 가지 그리는 차례를 정했다.
+- **장면이 안 읽는 `target` 도 두 단계의 대상이다.** payload 는 다 걷어냈는데
+  `target` 에는 그것이 안 미친 조각이 다섯이었다. 러너는 `event.target` 을 보지
+  않으므로(`runner.ts` · `scene.ts` 참조 0 건) 장면이 안 읽으면 **완전히 죽은 값**이다.
+  한 조각은 머리 주석이 "차례를 싣지 않는다" 고 적어 두고 바로 그 차례를 `target`
+  으로 싣고 있었다.
+- **색판 함정(12)을 네 번 의심해 네 번 다 반증됐다.** `categorical(xs.length)` 를
+  보면 의심하기 쉽지만, 그 `xs` 가 **`readXxx(params.initialData)` 를 지나 온
+  바탕**이면 함정이 아니다. **의심 전에 그 배열의 출처를 좇아라.** 실제로 걸린 것은
+  하나뿐이었고(`classColors` 가 `categorical(2)` → `categorical(labels.length)` 로
+  **두 번** 정해졌다), 그 모양은 *같은 변수가 두 자리에서 다르게 정해지는 것*이다.
+- **결론이 캡션 글자에 못박힌 것은 펼 수 있다.** 앞 도메인들은 "열 로캘을 다시 써야
+  하니 사양 변경" 이라며 보고만 했는데, 이 도메인에서 셋이 실제로 폈다
+  (`Four bars huddle low, three leap high` → `{low}`/`{high}`,
+  `Nine of the ten neighbor pairs` → `{kept}/{total}`).
+  **선언과 stage 호출부 두 자리를 함께 고쳐야** 전수 검사를 지난다.
+  펴고 나면 그 수가 화면의 자취에서 나오므로 함정 34 도 같이 닫힌다.
+- **"셈한 척한 상수" 를 찾아라.** `assign.filter(a => a < 0).length` 가 그 방법에는
+  음수 자리가 생길 길이 없어 **구조적으로 언제나 0** 이었다. 셈하는 모양을 갖췄으니
+  함정 10 의 grep 으로는 안 잡힌다 — **그 식이 낼 수 있는 값의 범위를 따져라.**
+
 ---
 
 ## 5. 검증
@@ -869,6 +906,32 @@ npx tsc --noEmit -p packages/core/tsconfig.json
    안 풀려 있는 것도 함께 확인해야 검사가 헛돌지 않는다.
 이것을 붙인 뒤로 배치 감사에서 어긋남이 한 건도 안 나왔다. 앞서는 배치가 다 끝난 뒤에야
 알던 것이다.
+
+### 네 축이 구조적으로 못 잡는 자리 (담당들이 음성 대조로 찾아냈다)
+
+이빨이 없는 자리를 알아 두어야 "통과했다" 를 잘못 읽지 않는다.
+
+- **`reduce` 의 순수성은 네 축이 못 잰다.** 네 축이 전부 *같은 장면 배열*을 읽으므로
+  `reduce` 가 앞 장면을 제자리에서 고쳐도 모든 축이 똑같이 고쳐진 것을 본다.
+  **두 번 따로 쌓아 견주는 축으로도 모자랐다** — 한 담당이 `scene.settled = true` 를
+  심었더니 그 축까지 포함해 전부 통과했다. 확실한 것은 둘이다:
+  **장면을 `Object.freeze` 로 깊이 얼려 두고 다시 쌓거나**(제자리 수정이 있으면
+  `TypeError: Cannot assign to read only property` 로 곧바로 터진다),
+  **쌓는 도중의 사본과 다 쌓은 뒤의 실물을 견주거나.**
+- **`drawStatic` 이 `step` 을 읽으면 못 잡는다.** 머무는 표식을 `step.kind === '…'` 일
+  때만 그리게 해도 흘려 세우는 경로와 곧바로 세우는 경로가 **같은 `step`** 을 보므로
+  축 1 이 통과한다. **규율로만 지킨다 — 정적 그리기는 `step` 을 읽지 않는다.**
+  국면이 필요하면 `step` 이 아니라 **자취에서** 파생시켜라(`assigns.length >
+  paths.length` 가 "붙는 국면"). 그러면 규율이 구조가 된다.
+- **축 3 은 `await` 사슬이 깊으면 마이크로태스크 두어 번으로 모자란다.** `render →
+  flow → tween` 이 셋이면 `await Promise.resolve()` 2 회로는 헛돈다. **마이크로태스크만
+  수십 번 흘려라**(프레임·타이머는 한 번도 돌리지 않는다). 담당들이 32~64 회를 썼다.
+- **`drawStatic(next)` 한 줄만 빼도 아무 축이 안 잡히는 조각이 있다.** 걸음 함수가
+  이미 끝 자리에 정확히 내려앉으면 그 한 줄을 빼도 차이가 안 난다 — **그것만으로는
+  보간 경로가 돌았다는 증거가 못 된다.** 그때는 **끝 자리 오차를 겹쳐라**: 운동의 끝
+  반지름을 `+0.7` 로 빗나가게 하고 `drawStatic` 을 뺀 채 돌려 축 1 이 잡는지 보고,
+  거기서 `drawStatic` 만 되돌려 다시 통과하는지 본다. 그래야 **그 한 줄이 끝자리를
+  덮는다**는 것까지 확인된다. 세 담당이 독립적으로 같은 결론에 이르렀다.
 
 ### 넷째 축을 만들려다 접었다 — 러너가 그 상황을 만들지 않는다
 
@@ -968,7 +1031,7 @@ grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 나온다. 실제로 두 번 걸렸고 한 번은 커밋을 amend 로 고쳤다 — 배치를 닫는 시점에는
 형제 배치가 이미 `facet.ts` 를 고쳐 놓았기 때문이다.
 
-2026-09-17 기준 **144 / 181**.
+2026-09-17 기준 **167 / 181**.
 
 옮긴 배치는 셋이다. 셋 다 **흔들림 0 · 왕복어긋남 0** 으로 닫았다.
 
@@ -1003,6 +1066,11 @@ grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 | 컴퓨터 구조 · 부동소수 셋 + 비트 둘 | 2026-09-17 | `mantissa-and-exponent` · `unrepresentable-fraction` · `uneven-float-gaps` · `bit-mask` · `bit-shift` |
 | 컴퓨터 구조 · 캐시 줄과 지역성 다섯 | 2026-09-17 | `line-fill` · `temporal-locality` · `spatial-locality` · `latency-ladder` · `index-and-tag` |
 | 컴퓨터 구조 · 캐시 충돌과 쓰기 넷 | 2026-09-17 | `conflict-miss` · `associativity-relief` · `write-back-vs-through` · `false-sharing` |
+| 머신러닝 · 회귀와 로지스틱 넷 | 2026-09-17 | `residual-distance` · `least-squares` · `squash-to-probability` · `decision-boundary` |
+| 머신러닝 · 이웃과 나무 넷 | 2026-09-17 | `vote-by-neighbors` · `k-changes-boundary` · `split-by-question` · `impurity-drops` |
+| 머신러닝 · 숲과 마진 다섯 | 2026-09-17 | `many-trees-vote` · `bagging-sample` · `widest-margin` · `support-vectors-only` · `kernel-lifts` |
+| 머신러닝 · 군집과 밀도 여섯 | 2026-09-17 | `assign-then-move` · `k-must-be-given` · `merge-nearest-pair` · `dendrogram-cut` · `dense-neighborhood` · `noise-left-out` |
+| 머신러닝 · 차원 축소 넷 | 2026-09-17 | `direction-of-most-spread` · `project-and-lose` · `keep-neighbors-close` · `global-and-local` |
 
 **자료 구조 42 · 확률적 자료구조 10 · 알고리즘 27 이 닫혔다.** 확률적 열 중 스킵
 리스트 둘(`skip-a-layer` · `coin-flip-height`)은 자료 구조 배치에 섞여 이미 옮겨져
@@ -1022,7 +1090,21 @@ grep -L "scene: 'module:" $(grep -rl "@piece" facets --include="facet.ts")
 없다. 그 스물은 이행이 아니라 **새로 만들 일**이고 `tasks/piece-batch-protocol.md` 의
 몫이다.
 
-남은 37 은 다른 도메인이다 — `ml-basics` 23 · `security` 8 · `ai-engineering` 6.
+**`ml-basics` 도 닫혔다 — 조각 23 개 전부 Scene 이다** (지도 학습 13 · 비지도 10).
+같은 디렉터리의 완제품 11 종은 아직 projector 이고 그것이 정상이다. 여기서도
+**카탈로그 48 vs 구현 23** 으로 갈렸다 — 신경망 기초 6 · 학습 기전 8 · 규제 5 ·
+평가 6 은 항목만 있고 facet 이 없다. 그 스물다섯도 새로 만들 일이다.
+
+남은 14 는 `security` 와 `ai-engineering` 이다.
+
+**이 도메인의 성격** — 그래프 조각은 노드가 격자에 박히지만 ml 조각은 **점의 값에서
+화면 자리를 셈한다.** 그래서 척도(`kx` · `domX0` · `xUnit` · `domainSpan` · `unitLo`)
+가 stage 의 `let` 에 앉아 화면의 모든 좌표를 정하는 모양이 **스물셋 중 열일곱**에서
+나왔다. `constant-fades` 가 옮긴 자리와 같다.
+
+그리고 **스물셋 중 열아홉이 견줄 짝을 잃고 있었다.** 이 계열의 조각은 대부분
+"A 와 B 를 견주면 이렇다" 를 말하는데 화면이 B 를 그리는 순간 A 를 지웠다. 앞
+도메인들과 같은 병이되 가장 짙었다.
 
 ### 배치를 돌리는 법
 
