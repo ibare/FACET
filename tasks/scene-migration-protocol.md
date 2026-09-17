@@ -1373,10 +1373,18 @@ SCC·최대유량 셋     4484 → 5580   +1096  +24%
     엉뚱한 것을 지운다.
   - **완제품에 남은 CSS `transition` 은 위반이 아니다.** 되짚기가 없으면 "화면이 나중에
     저 혼자 바뀐다" 가 어긋날 대상이 없다. S-scene MUST NOT 은 **장면 조각의 규범**이다.
-- `packages/authoring/src/screen-labels.generated.ts` 를 다시 만든다 (`pnpm screen:gen`).
-  띠를 단 조각은 `advance` 단추가 없는데 생성물이 아직 `⏭ 한 걸음` 을 담고 있다. 호스트
-  쪽에 없는 조작이 광고되는 셈이다. 배치마다 다시 만들면 커밋 잡음만 커지므로 이행이
-  끝난 뒤 한 번에 한다.
+- ~~`packages/authoring/src/screen-labels.generated.ts` 를 다시 만든다 (`pnpm screen:gen`).~~
+  **다시 만드는 것으로는 풀리지 않았다 (2026-09-17).** 이 줄은 "생성물이 낡았다" 고
+  보았는데, 실제로는 **생성기가** control-bar 를 쓰는 facet 에 `view.controlBar.*` 키를
+  통째로 붙이고 있었다. 0.7.0 발행 전에 재생성했으나 조각 181 의 목록에는 여전히
+  `⏭ 한 걸음 · ⏸ 일시정지 · 속도` 가 들어 있었다. 생성기가 facet 이 선언한 컨트롤만
+  풀도록 고쳤다 (`f63eb85`).
+
+  **같은 어긋남이 손으로 쓴 쪽에도 있었다.** 개념 메타의 `briefing.screen.affordances`
+  가 조각 181 전부에서 "Replay 와 Step 두 단추" 를 말했고, 띠를 말한 곳은 0 이었다.
+  개념 메타는 띠가 들어오기(09-13) 전에 쓰였고 이행 절차 어디에도 그것을 다시 보라는
+  걸음이 없었다. **조작을 바꾸는 이행은 개념 메타의 조작 서술도 함께 옮긴다** — 화면을
+  고치는 절차만 있으면 호스트 writer 가 없는 단추를 권하는 글을 쓴다.
 - `rules/principles.md` 의 "Projector 단일 번역기" 와 `S-facet` 의 6 파일 구성을
   **둘 다 적는 문면으로** 고친다. `projector.ts` 를 `scene.ts` 로 **갈아 치우는 것이
   아니다** — 조각은 `scene.ts`, 완제품은 `projector.ts` 이고 그것이 최종 모습이다.
