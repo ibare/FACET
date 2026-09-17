@@ -19,7 +19,6 @@
  *       잰 것과 줄 세운 것을 한 발신에 함께 실어 둘이 갈릴 자리를 없앤다.
  *
  *   voter-called        {}
- *       target: `index:<i>`  (식별자 문법 표기)
  *       불려 나온 이웃 하나가 자기 이름표 쪽에 표를 놓는다.
  *       순위 · 이름표 · 표 수를 싣지 않는다 — **이 발신의 차례가 곧 순위**이고,
  *       누가 불렸는지는 order 가, 이름표는 선언이, 표 수는 쌓인 표가 말한다.
@@ -118,8 +117,9 @@ export const voteByNeighborsAlgorithm = async (
     await ctx.emit({ type: 'neighbors-ranked', payload: { order, distances } });
     if (!(await pause())) return false;
 
-    for (const index of called) {
-      await ctx.emit({ type: 'voter-called', target: `index:${index}` });
+    // 누가 불렸는지는 `order` 가 말하므로 걸음은 몇 번째 부름인가만 옮긴다.
+    for (let n = 0; n < called.length; n += 1) {
+      await ctx.emit({ type: 'voter-called' });
       if (!(await pause())) return false;
     }
 

@@ -124,6 +124,7 @@ const MS_VERDICT = 460;
 const MS_REWIND = 260;
 const SHIFT_DROP = 16;
 
+/** 수 앞에 붙는 음수 기호 — 번역 대상이 아니다 (C10 판정 3). */
 const MINUS = '−';
 
 type Pt = LeastSquaresPoint;

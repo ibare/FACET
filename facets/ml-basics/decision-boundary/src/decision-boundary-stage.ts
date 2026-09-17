@@ -150,11 +150,18 @@ const TICKS: ReadonlyArray<{ p: number; text: string }> = [
 
 /** 축 이름을 마지막 눈금 자리에 세운다. 그 앞의 눈금만 숫자로 적는다. */
 const AXIS_TICKS: readonly number[] = [0, 2, 4];
+/**
+ * 도형에 새겨지는 표식 — 번역 대상이 아니다.
+ * 축 이름 `x`·`y` 와 확률 기호 `p` 는 수식의 글자라 C10 판정 3,
+ * 자리지킴이·화살표·음수 기호는 도형의 일부라 판정 1 이다.
+ */
 const AXIS_MAX_LABEL_X = 'x';
 const AXIS_MAX_LABEL_Y = 'y';
 const PLACEHOLDER = '—';
 const ARROW = '→';
 const MINUS = '−';
+/** 확률자의 머리글자. 수식의 글자다 (C10 판정 3). */
+const PROB_MARK = 'p';
 
 /** 그라디언트 id 가 한 문서 안에서 겹치지 않게 하는 일련번호. */
 let gradientSeq = 0;
@@ -614,7 +621,7 @@ export const decisionBoundaryStageView: CanvasView = {
       gPanel.appendChild(el('text', {
         x: RULER_X + RULER_W / 2, y: RULER_TOP - 8, fill: c.text,
         'font-family': fonts.mono, 'font-size': fontSizes.md, 'text-anchor': 'middle',
-      })).textContent = 'p';
+      })).textContent = PROB_MARK;
       for (const tick of TICKS) {
         gPanel.appendChild(el('text', {
           x: TICK_X, y: geom.rulerY(tick.p) + 4, fill: c.textMuted,

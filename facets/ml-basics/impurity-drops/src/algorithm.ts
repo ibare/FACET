@@ -20,10 +20,6 @@
  * (`scene.ts`). 세는 자리를 하나로 묶으려 이름표 세기(`tallyOf`)만 내준다 —
  * 프로토콜 4 절의 B 갈래다.
  *
- * ── 식별자
- *   bucket:<path>   통. path 는 뿌리에서의 갈림길. 'root' · 'root/L' · 'root/L/H' …
- *                   'L' 은 기준값 미만, 'H' 는 기준값 이상.
- *
  * ── 이벤트 (전부 facet 고유)
  *
  *   'sample-shown'   {}
@@ -185,10 +181,7 @@ export const impurityDropsAlgorithm = async (
     ];
 
     if (!(await gate())) return false;
-    await rc.emit({
-      type: 'sample-shown',
-      target: leaves.map((l) => `bucket:${idOf(l.path)}`),
-    });
+    await rc.emit({ type: 'sample-shown' });
 
     // 층은 선언된 가름선이 마르면 끝난다 — 걸음표를 손으로 적지 않는다.
     for (;;) {
@@ -207,20 +200,12 @@ export const impurityDropsAlgorithm = async (
       if (layerCuts.length === 0) break;
 
       if (!(await gate())) return false;
-      await rc.emit({
-        type: 'cut-drawn',
-        target: layerCuts.map((c) => `bucket:${c.bucketId}`),
-        payload: { cuts: layerCuts },
-      });
+      await rc.emit({ type: 'cut-drawn', payload: { cuts: layerCuts } });
 
       const wires = next.map((l) => wireOf(l, classes));
 
       if (!(await gate())) return false;
-      await rc.emit({
-        type: 'buckets-split',
-        target: wires.map((w) => `bucket:${w.id}`),
-        payload: { buckets: wires },
-      });
+      await rc.emit({ type: 'buckets-split', payload: { buckets: wires } });
 
       if (!(await gate())) return false;
       await rc.emit({ type: 'level-measured' });
@@ -229,10 +214,7 @@ export const impurityDropsAlgorithm = async (
     }
 
     if (!(await gate())) return false;
-    await rc.emit({
-      type: 'settled',
-      target: leaves.map((l) => `bucket:${idOf(l.path)}`),
-    });
+    await rc.emit({ type: 'settled' });
     await rc.emit({ type: 'done', silent: true });
     return true;
   }

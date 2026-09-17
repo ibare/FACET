@@ -5,10 +5,6 @@
  * 지는 표는 지우지 않는다 — 지우면 "여럿이라 낫다" 가 아니라 "다 맞혔다" 로
  * 읽힌다. 맺음에서 나무별 맞힌 수와 다수결의 맞힌 수를 나란히 놓는다.
  *
- * ── 식별자
- *   index:<q>   물음의 열 번호 (0-based). 열 하나를 가리키는 표기이고, 장면은
- *               이것을 읽지 않는다 — 발신이 온 차례가 몇 번째 열인지 말한다.
- *
  * ── 이벤트 (facet 고유 + 표준 done). 전부 silent 아님 — 걸음마다 화면이 바뀐다.
  *
  * **어느 발신도 payload 를 싣지 않는다.** 화면에 나란히 뜨는 수는 전부 판에서
@@ -158,7 +154,7 @@ export const manyTreesVoteAlgorithm = async (
     for (let q = 0; q < questions.length; q += 1) {
       if (!(await gate())) return false;
 
-      await rc.emit({ type: 'votes-split', target: `index:${q}` });
+      await rc.emit({ type: 'votes-split' });
 
       if (!(await gate())) return false;
 
@@ -169,7 +165,7 @@ export const manyTreesVoteAlgorithm = async (
         );
       }
 
-      await rc.emit({ type: 'votes-gathered', target: `index:${q}` });
+      await rc.emit({ type: 'votes-gathered' });
     }
 
     if (!(await gate())) return false;

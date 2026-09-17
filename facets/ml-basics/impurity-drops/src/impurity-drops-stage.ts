@@ -77,6 +77,12 @@ const HEAD_Y = 20;
 const FORMULA_Y = 36;
 
 // 산점도 (무대)
+/**
+ * 산점도 두 축의 이름. 수식의 글자라 번역 대상이 아니다 (C10 판정 3).
+ */
+const AXIS_MARK_X = 'x';
+const AXIS_MARK_Y = 'y';
+
 const PLOT_X = 16;
 const PLOT_Y = 48;
 const PLOT_W = 186;
@@ -589,10 +595,10 @@ export const impurityDropsStageView: CanvasView = {
         }),
       );
       gFrame.appendChild(
-        textNode(PLOT_X + PLOT_W - 6, PLOT_Y + PLOT_H - 6, 'x', fontSizes.xs, c.textMuted, 'end', fonts.mono),
+        textNode(PLOT_X + PLOT_W - 6, PLOT_Y + PLOT_H - 6, AXIS_MARK_X, fontSizes.xs, c.textMuted, 'end', fonts.mono),
       );
       gFrame.appendChild(
-        textNode(PLOT_X + 6, PLOT_Y + 14, 'y', fontSizes.xs, c.textMuted, 'start', fonts.mono),
+        textNode(PLOT_X + 6, PLOT_Y + 14, AXIS_MARK_Y, fontSizes.xs, c.textMuted, 'start', fonts.mono),
       );
       for (const p of scene.points) {
         const k = Math.max(0, scene.classes.indexOf(p.label));

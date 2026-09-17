@@ -18,7 +18,6 @@
  * 차례를 선언이 이미 적어 두었으므로 걸음이 내리는 판정이 없다.
  *
  *   draw       한 번 뽑아 담고 도로 넣는다.
- *              target  'index:<poolIndex>'  이 걸음이 손을 댄 주머니 자리
  *              payload 없음
  *
  *   left-out   한 벌을 다 뽑고 나서, 한 번도 안 뽑힌 것이 드러난다.
@@ -114,9 +113,11 @@ export async function baggingSampleAlgorithm(
     for (const draws of sets) {
       if (ctx.cancelled) return false;
 
-      for (const value of draws) {
+      // 무슨 값을 뽑았는지는 싣지 않는다 — 선언의 `sets` 에 이미 있고 장면이
+      // 그것을 읽는다. 걸음은 몇 번째 뽑음인가만 옮긴다.
+      for (let k = 0; k < draws.length; k += 1) {
         if (!(await gate())) return false;
-        await ctx.emit({ type: 'draw', target: `index:${pool.indexOf(value)}` });
+        await ctx.emit({ type: 'draw' });
       }
 
       // 남은 것을 여기서 세지 않는다 — 한 번도 안 나온 자리가 어디인가는 이

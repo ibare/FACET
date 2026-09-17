@@ -26,7 +26,7 @@
  * ── 이벤트 (전부 이 facet 고유. silent 는 없다) ─────────────────────────
  *
  *   point-probed      {}
- *       target `point:<index>`. 점 하나에 확률을 매긴다. 평면의 점이 확률
+ *       점 하나에 확률을 매긴다. 평면의 점이 확률
  *       색으로 물들고, 같은 값이 오른쪽 확률자로 날아가 꽂힌다.
  *       몇 번째 점인지 싣지 않는다 — 점은 올 때마다 하나씩 쌓이므로 차례는
  *       장면이 센다. 그 점의 z · p 도 `decisionProbability` 가 낸다.
@@ -175,8 +175,7 @@ export async function decisionBoundary(
   const playOnce = async (gate: Gate): Promise<void> => {
     for (let i = 0; i < d.points.length; i += 1) {
       if (!(await gate())) return;
-      // 자리 번호는 식별자에만 쓴다. payload 로는 싣지 않는다 (위 주석).
-      await ctx.emit({ type: 'point-probed', target: `point:${i}`, payload: {} });
+      await ctx.emit({ type: 'point-probed' });
     }
 
     if (!(await gate())) return;
