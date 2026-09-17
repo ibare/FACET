@@ -9,7 +9,7 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
@@ -17,31 +17,38 @@ import { widestMarginAlgorithm } from './algorithm.js';
 import { widestMarginDescription } from './description.js';
 import { widestMarginFacet } from './facet.js';
 import { widestMarginIRs } from './irs.js';
-import { widestMarginProjector } from './projector.js';
+import { widestMarginScene } from './scene.js';
 import { widestMarginStageView } from './widest-margin-stage.js';
 
 export { widestMarginAlgorithm, widestBand, widestBandFor } from './algorithm.js';
 export type { MarginBand, MarginPoint, WidestMarginData } from './algorithm.js';
-export { widestMarginProjector } from './projector.js';
+export {
+  widestMarginScene,
+  beatsCandidates,
+  bestRowIndex,
+  rowAt,
+  isAnswerRow,
+} from './scene.js';
+export type {
+  BandPose,
+  MarginLine,
+  MarginPt,
+  MarginRow,
+  WidestMarginScene,
+  WidestMarginStep,
+} from './scene.js';
 export { widestMarginIRs } from './irs.js';
 export { widestMarginFacet } from './facet.js';
 export { widestMarginDescription } from './description.js';
 export {
   widestMarginStageView,
-  readWidestMarginModel,
   formatSlope,
   formatThickness,
-} from './widest-margin-stage.js';
-export type {
-  BandSpec,
-  LockSpec,
-  MarginPointModel,
-  WidestMarginModel,
 } from './widest-margin-stage.js';
 
 export function registerWidestMargin(): void {
   registerAlgorithm('widestMargin', widestMarginAlgorithm, { mechanismKind: 'reactive' });
-  registerProjector('widestMarginProjector', widestMarginProjector);
+  registerScenePlan('widestMarginScene', widestMarginScene);
   for (const ir of widestMarginIRs) registerIR(ir.id, ir);
   registerView('widest-margin-stage', widestMarginStageView);
   registerFacets([widestMarginFacet]);

@@ -12,24 +12,25 @@
  * 이벤트 어휘 — `done` 만 표준이고 나머지는 이 facet 고유 확장이다. 전부 시각
  * 변화가 있는 걸음 경계라 silent 를 붙이지 않는다 (C2).
  *
+ * **payload 를 싣는 발신이 하나도 없다.** 화면이 말하는 수는 전부 선언의 `pool` ·
+ * `sets` 와 **발신이 온 차례**에서 나온다 — 어느 벌 몇 번째 뽑기인지, 무슨 값이
+ * 나왔는지, 몇 번 나왔는지, 무엇이 남았는지가 모두 그렇다 (`scene.ts`). 뽑는
+ * 차례를 선언이 이미 적어 두었으므로 걸음이 내리는 판정이 없다.
+ *
  *   draw       한 번 뽑아 담고 도로 넣는다.
- *              target  'index:<poolIndex>'
- *              payload { set: number; slot: number; value: number;
- *                        count: number; first: boolean }
- *                set    벌 번호 (0-based)
- *                slot   이 벌에서 몇 번째 뽑기인지 (0-based)
- *                value  뽑힌 번호
- *                count  도로 넣은 뒤 이 벌에서 그 번호가 뽑힌 누적 횟수
- *                first  이 벌의 첫 뽑기인가 (화면이 벌을 갈아 끼우는 신호)
+ *              target  'index:<poolIndex>'  이 걸음이 손을 댄 주머니 자리
+ *              payload 없음
  *
  *   left-out   한 벌을 다 뽑고 나서, 한 번도 안 뽑힌 것이 드러난다.
- *              target  ['index:<poolIndex>', ...]  안 뽑힌 자리들
- *              payload { set: number; values: number[]; ratio: number }
- *                values 안 뽑힌 번호들
- *                ratio  주머니에서 안 뽑힌 것의 비율 (0~1)
+ *              payload 없음
+ *              target 도 없다 — 어느 자리가 남았는지는 **이 조각의 결론**이라
+ *              그림과 같은 자료에서 나와야 한다. 여기서 세어 실어 보내면 같은
+ *              물음에 답이 둘이 된다.
  *
- *   done       (표준) 벌마다의 남은 비율과, 공식이 말하는 값.
- *              payload { ratios: number[]; theoretical: number }
+ *   done       (표준) 벌마다 남는 것이 다르다.
+ *              payload 없음
+ *              비율도 공식값도 싣지 않는다 — 앞의 것은 남은 자리의 수에서,
+ *              뒤의 것은 아래 `neverDrawnProbability` 에서 나온다.
  *
  *   rewind     되짚기로 들어갈 때 화면을 처음으로 되돌린다.
  *              payload 없음
@@ -58,8 +59,12 @@ export type BaggingSampleData = {
  *
  * 이것은 뽑은 순서에서 나오는 값이 아니라 공식이 주는 값이다. 화면이 실측값
  * 옆에 견주어 보이므로 셈을 여기 두고 근거를 남긴다.
+ *
+ * 장면이 그대로 부른다 (프로토콜 4 절의 B 갈래) — 주머니 크기와 뽑는 횟수만으로
+ * 정해지는 순수 함수라 실어 보낼 까닭이 없고, 떼어 내도 "되돌리기 때문에 남는
+ * 것이 생긴다" 는 이 조각의 주장이 그대로 남는다.
  */
-function neverDrawnProbability(n: number, k: number): number {
+export function neverDrawnProbability(n: number, k: number): number {
   if (n <= 0 || k <= 0) return 0;
   return Math.pow(1 - 1 / n, k);
 }
@@ -106,60 +111,22 @@ export async function baggingSampleAlgorithm(
 
   /** 세 벌을 처음부터 끝까지 뽑는다. 끝까지 갔으면 true. */
   async function play(): Promise<boolean> {
-    const ratios: number[] = [];
-
-    for (let s = 0; s < sets.length; s += 1) {
+    for (const draws of sets) {
       if (ctx.cancelled) return false;
-      const draws = sets[s];
-      const counts = new Array<number>(pool.length).fill(0);
 
-      for (let slot = 0; slot < draws.length; slot += 1) {
+      for (const value of draws) {
         if (!(await gate())) return false;
-        const value = draws[slot];
-        const poolIndex = pool.indexOf(value);
-        counts[poolIndex] += 1;
-        await ctx.emit({
-          type: 'draw',
-          target: `index:${poolIndex}`,
-          payload: {
-            set: s,
-            slot,
-            value,
-            count: counts[poolIndex],
-            first: slot === 0,
-          },
-        });
+        await ctx.emit({ type: 'draw', target: `index:${pool.indexOf(value)}` });
       }
 
-      // 뽑은 순서에서 직접 센다 — 남은 것은 counts 가 0 인 자리다. 셈만 하는
-      // 동기 루프라 문(gate)도 취소 검사도 두지 않는다 (C8).
-      const leftIndices: number[] = [];
-      const leftValues: number[] = [];
-      for (let i = 0; i < pool.length; i += 1) {
-        if (counts[i] === 0) {
-          leftIndices.push(i);
-          leftValues.push(pool[i]);
-        }
-      }
-      const ratio = pool.length === 0 ? 0 : leftValues.length / pool.length;
-      ratios.push(ratio);
-
+      // 남은 것을 여기서 세지 않는다 — 한 번도 안 나온 자리가 어디인가는 이
+      // 조각의 결론이고, 장면이 같은 `sets` 에서 셈한다 (scene.ts 의 leftOutIn).
       if (!(await gate())) return false;
-      await ctx.emit({
-        type: 'left-out',
-        target: leftIndices.map((i) => `index:${i}`),
-        payload: { set: s, values: leftValues, ratio },
-      });
+      await ctx.emit({ type: 'left-out' });
     }
 
     if (!(await gate())) return false;
-    await ctx.emit({
-      type: 'done',
-      payload: {
-        ratios,
-        theoretical: neverDrawnProbability(pool.length, sets[0]?.length ?? 0),
-      },
-    });
+    await ctx.emit({ type: 'done' });
     return true;
   }
 

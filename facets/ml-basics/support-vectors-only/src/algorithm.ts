@@ -11,34 +11,41 @@
  *
  * ── 이벤트 (전부 facet 고유. silent 없음 — 걸음마다 화면이 바뀐다)
  *
- *   points-placed    { points: Pt[] }
- *                    점을 놓는다. Pt = { x: number; y: number; group: 'A' | 'B' }.
+ *   points-placed    {}
+ *                    점을 놓는다. 어느 점인지는 선언이 이미 말하므로 싣지 않는다 —
+ *                    장면이 `initialData.points` 에서 값을 복사해 쥔다.
  *
- *   boundary-solved  { slope: number; intercept: number; lower: number;
- *                      upper: number; margin: number; supports: number[];
- *                      verdict: 'first' | 'same' | 'moved' }
+ *   boundary-solved  { slope: number; lower: number; upper: number;
+ *                      supports: number[]; verdict: 'first' | 'same' | 'moved' }
  *                    훑어 얻은 선. lower/upper 는 띠 두 가장자리의 y 절편,
- *                    margin 은 가장자리 사이 수직 거리, supports 는 가장자리에
- *                    닿은 점의 첨자, verdict 는 처음 선과 견준 결과.
+ *                    supports 는 가장자리에 닿은 점의 첨자, verdict 는 처음 선과
+ *                    견준 결과다. 넷 다 훑기가 내리는 **판정**이라 싣는다.
  *
- *   supports-marked  { indices: number[]; restCount: number }
- *                    선을 정한 점과 그러지 못한 점의 수.
+ *                    선의 절편과 띠 두께는 싣지 않는다 — 절편은 두 가장자리의
+ *                    한가운데이고 두께는 `(upper - lower) / √(1 + slope²)` 라,
+ *                    화면이 띠를 그리며 이미 쓰는 자료에서 곧바로 나온다. 실어
+ *                    보내면 같은 물음에 답이 둘이 된다.
+ *
+ *   supports-marked  {}
+ *                    선을 정한 점을 짚는 걸음. 어느 점인지도 몇인지도 바로 앞
+ *                    `boundary-solved` 가 이미 말했다.
  *
  *   points-dropped   { indices: number[] }
- *                    가장자리에 닿지 않은 점을 버린다.
+ *                    가장자리에 닿지 않은 점을 버린다. 어느 점을 버릴지가 이
+ *                    걸음이 내리는 판정이라 싣는다.
  *
- *   points-restored  { points: Pt[] }
+ *   points-restored  {}
  *                    앞 손질을 되돌린다. 손질끼리 겹치면 대비가 성립하지 않는다.
+ *                    되돌린 자리는 처음 자리이므로 장면이 바탕에서 안다.
  *
- *   point-moved      { index: number; toX: number; toY: number; steps: number;
- *                      wasSupport: boolean }
- *                    점 하나를 옮긴다. steps 는 옮긴 거리(칸), wasSupport 는
- *                    그 점이 처음 선을 정했는지.
+ *   point-moved      { index: number; toX: number; toY: number }
+ *                    점 하나를 옮긴다. 옮긴 거리도, 그 점이 선을 정했는지도
+ *                    장면이 셈한다 — 떠난 자리와 처음 선의 supports 를 쥐고 있다.
  *
  *   rewind           {}
  *                    자동 재생이 끝난 뒤 처음 누르는 advance 가 되감는다.
  *
- *   done             { supports: number[] }
+ *   done             {}
  */
 
 import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
@@ -194,20 +201,25 @@ export async function supportVectorsOnlyAlgorithm(
     const work = copyPoints(origin);
     const alive = origin.map(() => true);
 
-    await rc.emit({ type: 'points-placed', payload: { points: copyPoints(work) } });
+    await rc.emit({ type: 'points-placed' });
 
     if (!(await gate())) return false;
     const first = solveMaxMargin(work, alive);
     if (first === null) throw new Error('최대 마진 선을 찾지 못했다: 두 무리가 어느 방향으로도 갈라지지 않는다');
-    await rc.emit({ type: 'boundary-solved', payload: { ...first, verdict: 'first' } });
-
-    if (!(await gate())) return false;
     await rc.emit({
-      type: 'supports-marked',
-      payload: { indices: [...first.supports], restCount: work.length - first.supports.length },
+      type: 'boundary-solved',
+      payload: {
+        slope: first.slope,
+        lower: first.lower,
+        upper: first.upper,
+        supports: [...first.supports],
+        verdict: 'first',
+      },
     });
 
-    let latest = first;
+    if (!(await gate())) return false;
+    await rc.emit({ type: 'supports-marked' });
+
     let edited = false;
     for (const edit of edits) {
       if (!(await gate())) return false;
@@ -217,7 +229,7 @@ export async function supportVectorsOnlyAlgorithm(
           if (p !== undefined) work[k] = { x: p.x, y: p.y, group: p.group };
           alive[k] = true;
         }
-        await rc.emit({ type: 'points-restored', payload: { points: copyPoints(work) } });
+        await rc.emit({ type: 'points-restored' });
       }
       edited = true;
 
@@ -236,28 +248,27 @@ export async function supportVectorsOnlyAlgorithm(
         work[edit.index] = { x: edit.toX, y: edit.toY, group: from.group };
         await rc.emit({
           type: 'point-moved',
-          payload: {
-            index: edit.index,
-            toX: edit.toX,
-            toY: edit.toY,
-            steps: Math.hypot(edit.toX - from.x, edit.toY - from.y),
-            wasSupport: first.supports.includes(edit.index),
-          },
+          payload: { index: edit.index, toX: edit.toX, toY: edit.toY },
         });
       }
 
       if (!(await gate())) return false;
       const again = solveMaxMargin(work, alive);
       if (again === null) throw new Error('손질 뒤 최대 마진 선을 찾지 못했다: 두 무리가 겹친다');
-      latest = again;
       await rc.emit({
         type: 'boundary-solved',
-        payload: { ...again, verdict: isSameLine(again, first) ? 'same' : 'moved' },
+        payload: {
+          slope: again.slope,
+          lower: again.lower,
+          upper: again.upper,
+          supports: [...again.supports],
+          verdict: isSameLine(again, first) ? 'same' : 'moved',
+        },
       });
     }
 
     if (!(await gate())) return false;
-    await rc.emit({ type: 'done', payload: { supports: [...latest.supports] } });
+    await rc.emit({ type: 'done' });
     return true;
   }
 

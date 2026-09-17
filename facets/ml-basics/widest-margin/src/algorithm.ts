@@ -14,17 +14,17 @@
  *   candidates-drawn  { lines: { slope: number; intercept: number }[] }
  *                     후보 중심선이 그어진다. 전부 두 무리를 가른다.
  *   band-grow         target: index:<i>[]  (그 띠에 닿은 점)
- *                     { row: number; slope: number; intercept: number;
- *                       thickness: number; best: boolean }
- *                     띠가 0 에서 thickness 까지 벌어지다 멈춘다. row 는 두께
- *                     기록장의 몇째 줄인지.
+ *                     { slope: number; intercept: number; thickness: number }
+ *                     띠가 0 에서 thickness 까지 벌어지다 멈춘다. 몇째 줄인지는
+ *                     싣지 않는다 — 줄은 올 때마다 하나씩 쌓이므로 장면이 센다.
  *   line-pivot        { slope: number; intercept: number }
  *                     띠가 접히고 선이 최적 기울기로 돈다.
- *   contacts-locked   target: index:<i>[]  (최적 띠에 닿은 점)
- *                     { slope: number; intercept: number }
- *                     닿은 점에서 중심선까지 수선이 내려온다.
- *   done              { row: number; thickness: number }
- *                     가장 두꺼운 줄이 답이다.
+ *   contacts-locked   payload 없음
+ *                     닿은 점에서 중심선까지 수선이 내려온다. 어느 점인지는
+ *                     그 띠를 실어 보낸 band-grow 의 target 이 이미 말했다.
+ *   done              payload 없음
+ *                     가장 두꺼운 줄이 답이다. 어느 줄이 가장 두꺼운지는 기록장에
+ *                     쌓인 두께가 정한다 — 답을 적어 보내지 않는다.
  *   rewind            payload 없음
  *                     되짚기 시작 — 화면을 처음 상태로 돌린다.
  *
@@ -230,18 +230,15 @@ export async function widestMarginAlgorithm(
       },
     });
 
-    for (let row = 0; row < candidates.length; row += 1) {
+    for (const band of candidates) {
       if (!(await gate())) return false;
-      const band = candidates[row];
       await ctx.emit({
         type: 'band-grow',
         target: contactTargets(band),
         payload: {
-          row,
           slope: band.slope,
           intercept: band.intercept,
           thickness: band.thickness,
-          best: false,
         },
       });
     }
@@ -257,26 +254,17 @@ export async function widestMarginAlgorithm(
       type: 'band-grow',
       target: contactTargets(best),
       payload: {
-        row: candidates.length,
         slope: best.slope,
         intercept: best.intercept,
         thickness: best.thickness,
-        best: true,
       },
     });
 
     if (!(await gate())) return false;
-    await ctx.emit({
-      type: 'contacts-locked',
-      target: contactTargets(best),
-      payload: { slope: best.slope, intercept: best.intercept },
-    });
+    await ctx.emit({ type: 'contacts-locked' });
 
     if (!(await gate())) return false;
-    await ctx.emit({
-      type: 'done',
-      payload: { row: candidates.length, thickness: best.thickness },
-    });
+    await ctx.emit({ type: 'done' });
     return true;
   }
 

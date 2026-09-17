@@ -6,6 +6,9 @@
  * 선언에 두는 것은 **구조**뿐이다 — 나무 · 물음 · 선택지 · 정답 · 스물다섯 개의
  * 답. 어디에 무엇을 놓을지는 stage 가 캔버스에서 역산한다 (S-piece).
  * `stepMs` 만 예외로 여기 둔다. 읽을 시간을 주는 것은 저작 결정이다.
+ *
+ * 화면을 명령이 아니라 **장면**으로 만들므로 (`scene:`) 어느 걸음의 화면이든
+ * 계산으로 얻는다. 그래서 컨트롤에 띠를 단다 (`pieceScrub` — S-piece / S-scene).
  */
 
 import { CONTROL_SET } from '@ffacet/core/runtime';
@@ -38,7 +41,7 @@ export const manyTreesVoteFacet: FacetJson = {
     pt: 'Cinco árvores respondem às mesmas cinco perguntas. Nenhuma acerta todas; a votação acerta.',
   },
   algorithm: 'module:manyTreesVote',
-  projector: 'module:manyTreesVoteProjector',
+  scene: 'module:manyTreesVoteScene',
   initialData: {
     type: 'many-trees-vote',
     trees: ['T1', 'T2', 'T3', 'T4', 'T5'],
@@ -56,7 +59,7 @@ export const manyTreesVoteFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'many-trees-vote-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.intro': {

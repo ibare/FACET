@@ -6,27 +6,21 @@
  * 읽힌다. 맺음에서 나무별 맞힌 수와 다수결의 맞힌 수를 나란히 놓는다.
  *
  * ── 식별자
- *   index:<q>   물음의 열 번호 (0-based). payload.question 이 정규 경로이고
- *               target 은 열 하나를 가리키는 보조 표기다.
+ *   index:<q>   물음의 열 번호 (0-based). 열 하나를 가리키는 표기이고, 장면은
+ *               이것을 읽지 않는다 — 발신이 온 차례가 몇 번째 열인지 말한다.
  *
  * ── 이벤트 (facet 고유 + 표준 done). 전부 silent 아님 — 걸음마다 화면이 바뀐다.
  *
- *   board-ready    { trees: number; questions: number; total: number }
- *                  판이 다 놓였다. total 은 화면에 놓인 답의 개수 (나무 × 물음).
+ * **어느 발신도 payload 를 싣지 않는다.** 화면에 나란히 뜨는 수는 전부 판에서
+ * 세지는 것이라, 실어 보내면 그림과 다른 출처가 되어 언젠가 갈린다. 세는 규칙이
+ * 한 벌이어야 하는 것만 아래 두 함수로 내주고 `scene.ts` 가 그것을 부른다.
  *
- *   votes-split    { question: number; votes: string[]; counts: number[] }
- *                  votes 는 나무 순서대로의 답, counts 는 options 순서대로의 표수.
- *
- *   votes-gathered { question: number; majority: string; truth: string;
- *                    correct: boolean; winners: number[]; losers: number[] }
- *                  winners/losers 는 나무 인덱스. losers 는 화면에 남는다.
- *
- *   done           { treeScores: number[]; best: number; perfect: number;
- *                    majorityScore: number; total: number }
- *                  total 은 물음의 개수 (분모). perfect 는 다 맞힌 나무의 수.
- *
- *   rewind         {}
- *                  자동 재생을 마친 뒤 advance 를 받아 처음으로 돌아간다.
+ *   board-ready    {}  판이 다 놓였다. 나무 수 · 물음 수 · 놓인 답의 수는 바탕에서 센다.
+ *   votes-split    {}  이 열의 답이 갈린다. 표의 셈은 `voteCounts` 로 나온다.
+ *   votes-gathered {}  다수 쪽이 하나로 모여 앉고 정답과 견주어진다. 다수도 정답도
+ *                      판에 놓인 답과 선언된 정답에서 나온다.
+ *   done           {}  맺음. 나무별 맞힌 수와 다수결의 맞힌 수 전부 판에서 센다.
+ *   rewind         {}  자동 재생을 마친 뒤 advance 를 받아 처음으로 돌아간다.
  *
  * ── metric 은 부르지 않는다 (조각).
  */
@@ -50,6 +44,45 @@ export type ManyTreesVoteData = {
 };
 
 const DEFAULT_STEP_MS = 800;
+
+/**
+ * 물음 하나의 표를 options 순서대로 센다.
+ *
+ * **algorithm 과 장면이 이 한 벌을 함께 쓴다.** 셈을 발신에 실으면 화면이 그리는
+ * 표와 캡션이 말하는 수가 서로 다른 출처가 된다. 표를 세는 일은 이 조각이 피하려는
+ * 셈이 아니라 바탕에서 곧바로 나오는 것이라 내주는 편이 옳다.
+ */
+export function voteCounts(options: readonly string[], votes: readonly string[]): number[] {
+  const counts = options.map(() => 0);
+  for (const vote of votes) {
+    const at = options.indexOf(vote);
+    if (at >= 0) counts[at] += 1;
+  }
+  return counts;
+}
+
+/**
+ * 표가 가장 많은 선택지의 자리. 최다가 갈리면 -1.
+ *
+ * 다수를 고르는 잣대도 한 벌이다 — 화면의 다수결 칸과 algorithm 의 동수 검사가
+ * 같은 함수를 지난다.
+ */
+export function majorityIndex(counts: readonly number[]): number {
+  let top = -1;
+  let best = -1;
+  let tied = false;
+  for (let i = 0; i < counts.length; i += 1) {
+    const n = counts[i] ?? 0;
+    if (n > best) {
+      best = n;
+      top = i;
+      tied = false;
+    } else if (n === best) {
+      tied = true;
+    }
+  }
+  return tied || top < 0 ? -1 : top;
+}
 
 /** 데이터가 판을 이룰 수 있는지 본다. 어긋나면 화면이 조용히 거짓을 말하게 된다. */
 function assertShape(data: ManyTreesVoteData): void {
@@ -76,6 +109,14 @@ function assertShape(data: ManyTreesVoteData): void {
         `앙상블 투표 답표 열 불일치: ${trees[t]} 의 답 ${answers[t].length}개 · questions ${questions.length}개`,
       );
     }
+    // 선택지 밖의 답은 표로 세어지지 않아 화면의 셈이 조용히 비어 버린다.
+    for (let q = 0; q < answers[t].length; q += 1) {
+      if (!options.includes(answers[t][q])) {
+        throw new Error(
+          `앙상블 투표 선택지 밖의 답: ${trees[t]} 가 ${questions[q]} 에 "${answers[t][q]}" 라 했다`,
+        );
+      }
+    }
   }
 }
 
@@ -86,7 +127,7 @@ export const manyTreesVoteAlgorithm = async (
   const data = rc.data;
   assertShape(data);
 
-  const { trees, questions, options, truth, answers } = data;
+  const { questions, options, answers } = data;
   const stepMs = typeof data.stepMs === 'number' ? data.stepMs : DEFAULT_STEP_MS;
 
   /** 자동 재생을 마쳤는가. 마친 뒤로는 걸음마다 advance 를 기다린다. */
@@ -110,88 +151,30 @@ export const manyTreesVoteAlgorithm = async (
     }
   }
 
-  /** 물음 하나의 표를 options 순서대로 센다. */
-  function tally(q: number): number[] {
-    const counts = options.map(() => 0);
-    for (let t = 0; t < trees.length; t += 1) {
-      const pick = options.indexOf(answers[t][q]);
-      if (pick < 0) {
-        throw new Error(
-          `앙상블 투표 선택지 밖의 답: ${trees[t]} 가 ${questions[q]} 에 "${answers[t][q]}" 라 했다`,
-        );
-      }
-      counts[pick] += 1;
-    }
-    return counts;
-  }
-
   /** 한 바퀴 — 판을 놓고 물음을 차례로 투표에 부친 뒤 견준다. 취소되면 false. */
   async function playThrough(): Promise<boolean> {
-    await rc.emit({
-      type: 'board-ready',
-      payload: {
-        trees: trees.length,
-        questions: questions.length,
-        total: trees.length * questions.length,
-      },
-    });
-
-    const treeScores = trees.map(() => 0);
-    let majorityScore = 0;
+    await rc.emit({ type: 'board-ready' });
 
     for (let q = 0; q < questions.length; q += 1) {
       if (!(await gate())) return false;
 
-      const votes = answers.map((row) => row[q]);
-      const counts = tally(q);
-      await rc.emit({
-        type: 'votes-split',
-        target: `index:${q}`,
-        payload: { question: q, votes, counts },
-      });
+      await rc.emit({ type: 'votes-split', target: `index:${q}` });
 
       if (!(await gate())) return false;
 
-      let top = 0;
-      for (let i = 1; i < counts.length; i += 1) {
-        if (counts[i] > counts[top]) top = i;
-      }
-      const tied = counts.filter((c) => c === counts[top]).length > 1;
-      if (tied) {
+      // 동수면 다수가 없어 화면이 "모인다" 를 말할 수 없다. 자료의 문제다.
+      if (majorityIndex(voteCounts(options, answers.map((row) => row[q]))) < 0) {
         throw new Error(
           `앙상블 투표 동수: ${questions[q]} 에서 최다 표가 갈렸다 — 나무 수를 홀수로 둔다`,
         );
       }
-      const majority = options[top];
-      const winners: number[] = [];
-      const losers: number[] = [];
-      for (let t = 0; t < trees.length; t += 1) {
-        if (votes[t] === majority) winners.push(t);
-        else losers.push(t);
-        if (votes[t] === truth[q]) treeScores[t] += 1;
-      }
-      const correct = majority === truth[q];
-      if (correct) majorityScore += 1;
 
-      await rc.emit({
-        type: 'votes-gathered',
-        target: `index:${q}`,
-        payload: { question: q, majority, truth: truth[q], correct, winners, losers },
-      });
+      await rc.emit({ type: 'votes-gathered', target: `index:${q}` });
     }
 
     if (!(await gate())) return false;
 
-    let best = 0;
-    let perfect = 0;
-    for (const s of treeScores) {
-      if (s > best) best = s;
-      if (s === questions.length) perfect += 1;
-    }
-    await rc.emit({
-      type: 'done',
-      payload: { treeScores, best, perfect, majorityScore, total: questions.length },
-    });
+    await rc.emit({ type: 'done' });
     return true;
   }
 

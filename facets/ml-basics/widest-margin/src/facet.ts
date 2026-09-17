@@ -39,7 +39,9 @@ export const widestMarginFacet: FacetJson = {
     pt: 'Entre as retas que separam os dois grupos, vence a que abre a faixa mais larga.',
   },
   algorithm: 'module:widestMargin',
-  projector: 'module:widestMarginProjector',
+  // 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든 셈으로
+  // 얻으므로 띠를 끌어 임의의 자리로 갈 수 있다 (S-scene).
+  scene: 'module:widestMarginScene',
   initialData: {
     type: 'widest-margin',
     points: [
@@ -55,7 +57,7 @@ export const widestMarginFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'widest-margin-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.points': {

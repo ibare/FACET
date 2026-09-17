@@ -1,6 +1,9 @@
 /**
  * widest-margin stage — 띠가 벌어지다 닿아서 멈추는 그림.
  *
+ * 장면 하나를 받아 그 화면을 **통째로** 세운다 (`render`). 걸음마다 부르는 메서드를
+ * 두지 않는다 — 그 메서드들이 곧 되돌릴 수 없는 명령이었다 (S-scene).
+ *
  * ── 화면을 어떻게 갈랐는가
  *
  * 산점도는 주인공이 아니라 무대다. 주인공은 **두께** 이므로, 두께를 점에서
@@ -9,6 +12,20 @@
  * 후보를 다 훑고 나면 기록장에 여섯 줄이 쌓이고, 가장 긴 줄이 답이다 —
  * 견주는 일이 화면 한쪽에서 통째로 일어난다.
  *
+ * ── 형편과 표식을 갈랐다
+ *
+ * 옛 그림은 막대의 **채움** 하나에 세 뜻을 실었다 — 지금 재는 중(accent) · 재어
+ * 놓았다(옅은 회색) · 답이 가려진 뒤의 진 후보(더 옅은 회색). 거기에 "이것이
+ * 답이다" 까지 채움으로 실려, 답이 정해지는 순간 *그것이 후보 중에서 골라졌다*는
+ * 사실이 흐려졌다. 지금은 축을 둘로 갈랐다.
+ *
+ * - **채움 = 값의 형편** — 지금 화면에 서 있는 띠의 줄이 진한 채움, 이미 재어 둔
+ *   줄은 옅은 채움. 답이 가려져도 진 후보가 더 옅어지지 않는다 (재었다는 사실이
+ *   지워지지 않는다).
+ * - **테두리 = 견줌·짚음의 표식** — 가장 두꺼운 줄에만 테두리가 서고, 우승 길이를
+ *   가리키는 눈금선이 기록장을 타고 올라간다. 진 후보 다섯이 그 선에 못 미치는
+ *   것이 한 화면에 함께 선다.
+ *
  * ── 축척
  *
  * 그림판은 정사각이고 가로세로 눈금이 같다. 두께는 선에 수직인 거리라, 눈금이
@@ -16,12 +33,24 @@
  * 길이 눈금은 두 무리 사이 가장 가까운 점쌍의 거리에서 잡는다 — 마진은 그
  * 거리를 넘을 수 없으므로 막대가 자를 넘칠 일이 없다.
  *
+ * **척도는 `let` 이 아니라 `layoutOf(scene)` 가 낸다.** 예전에는 `domainMin` ·
+ * `domainSpan` · `unit` · `railUnit` · `rowHeight` 다섯이 stage 의 `let` 이었고
+ * 화면의 모든 좌표가 거기서 나왔다. 장면이 값의 범위만 말하고 자리는 그리는 쪽이
+ * 매번 셈한다 (S-piece: 장면에 좌표를 담지 않는다).
+ *
  * ── 운동
  *
  * 점은 제 무리의 중심에서 자기 자리로 나오고, 후보 선은 왼쪽에서 오른쪽으로
  * 그어지고, 띠 가장자리는 중심선에서 양옆으로 **밀려난다**. 후보가 바뀔 때는
  * 띠가 접히고 선이 돌아간다. 마지막에 우승 길이를 가리키는 세로 눈금선이
  * 기록장을 타고 올라가 나머지가 모두 못 미친 것을 보인다.
+ *
+ * 운동의 **출발 자세**는 화면에서 되읽지 않는다. `step.from` 이 어느 기울기·절편·
+ * 두께에서 접히기 시작하는지 말한다 — 되짚어 세운 직후의 화면은 옛 걸음의 것이라
+ * 거기서 꺼내면 엉뚱한 자세에서 출발한다 (S-scene).
+ *
+ * CSS `transition` 은 쓰지 않는다. 되짚기는 `animate:false` 로 오는데 transition 은
+ * 그 뒤에도 화면을 저 혼자 흘러가게 한다 (S-scene MUST NOT).
  */
 
 import {
@@ -32,35 +61,22 @@ import {
   getColors,
   makeTranslator,
 } from '@ffacet/core/runtime';
-import type { CanvasView, ViewInstance, ViewMountParams } from '@ffacet/core/runtime';
+import type {
+  CanvasView,
+  SceneRenderer,
+  ViewInstance,
+  ViewMountParams,
+} from '@ffacet/core/runtime';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 선언 읽기 — mount 와 projector 가 이 한 벌을 함께 쓴다 (C9 / S-piece).
-// ─────────────────────────────────────────────────────────────────────────────
-
-export type MarginPointModel = { x: number; y: number; group: string };
-
-export type WidestMarginModel = {
-  points: MarginPointModel[];
-  /** 두께 기록장의 줄 수 = 견줄 후보 + 최적 하나. */
-  rowCount: number;
-};
-
-export function readWidestMarginModel(raw: unknown): WidestMarginModel {
-  const src = raw as { points?: unknown; candidateSlopes?: unknown } | undefined;
-  const points: MarginPointModel[] = [];
-  const rawPoints = src?.points;
-  if (Array.isArray(rawPoints)) {
-    for (const item of rawPoints) {
-      const p = item as { x?: unknown; y?: unknown; group?: unknown };
-      if (typeof p?.x !== 'number' || typeof p?.y !== 'number') continue;
-      points.push({ x: p.x, y: p.y, group: typeof p.group === 'string' ? p.group : '' });
-    }
-  }
-  const rawSlopes = src?.candidateSlopes;
-  const slopeCount = Array.isArray(rawSlopes) ? rawSlopes.length : 0;
-  return { points, rowCount: slopeCount + 1 };
-}
+import {
+  beatsCandidates,
+  bestRowIndex,
+  rowAt,
+  type BandPose,
+  type MarginPt,
+  type WidestMarginScene,
+  type WidestMarginStep,
+} from './scene.js';
 
 /** 기울기 표기. 수식이라 번역하지 않는다 (C10 표식 판정 3). */
 export function formatSlope(v: number): string {
@@ -131,6 +147,9 @@ const CROWN_MS = 520;
 const PHASE_FOLD = 0.16;
 const PHASE_TURN = 0.4;
 
+/** rAF 가 없는 환경(헤드리스)에서 쓰는 프레임 간격. */
+const FRAME_MS = 16;
+
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 /** clipPath id 가 한 문서 안에서 겹치지 않게. 조각은 한 글에 여럿 박힌다. */
@@ -170,22 +189,39 @@ function el<K extends keyof SVGElementTagNameMap>(
   return place(document.createElementNS(SVG_NS, name), attrs);
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-
-export type BandSpec = {
-  row: number;
-  slope: number;
-  intercept: number;
-  thickness: number;
-  contacts: number[];
-  best: boolean;
+/**
+ * 척도. 장면이 말하는 값의 범위에서 매번 셈한다.
+ *
+ * 이름을 `Layout` 으로 둔다 — `Scene` 은 이미 다른 뜻을 가진 낱말이다.
+ */
+type Layout = {
+  /** 그림판 두 축이 함께 쓰는 아래 끝 (데이터 단위). */
+  domainMin: number;
+  /** 그림판 두 축이 함께 쓰는 폭 (데이터 단위). */
+  domainSpan: number;
+  /** 데이터 한 칸이 몇 픽셀인가. 가로세로가 같다. */
+  unit: number;
+  /** 두께 한 칸이 막대에서 몇 픽셀인가. */
+  railUnit: number;
+  /** 기록장 한 줄의 높이. */
+  rowHeight: number;
 };
 
-export type LockSpec = {
-  contacts: number[];
-  slope: number;
-  intercept: number;
-};
+/** 점 P 에서 선분 AB 까지의 거리. 캘리퍼 자리를 고르는 데만 쓴다. */
+function distToSegment(
+  pxv: number,
+  pyv: number,
+  ax: number,
+  ay: number,
+  bx: number,
+  by: number,
+): number {
+  const dx = bx - ax;
+  const dy = by - ay;
+  const len2 = dx * dx + dy * dy;
+  const t = len2 === 0 ? 0 : clamp01(((pxv - ax) * dx + (pyv - ay) * dy) / len2);
+  return Math.hypot(pxv - (ax + dx * t), pyv - (ay + dy * t));
+}
 
 export const widestMarginStageView: CanvasView = {
   canvas: { height: STAGE_H },
@@ -193,44 +229,108 @@ export const widestMarginStageView: CanvasView = {
   mount(
     _container: HTMLElement,
     params: ViewMountParams & { canvas: SVGSVGElement },
-  ): ViewInstance {
+  ): ViewInstance & SceneRenderer<WidestMarginScene> {
     const svg = params.canvas;
     // 캔버스 **안쪽** 만 비운다. 컨테이너를 비우면 러너가 붙여 준 이 캔버스가
     // 떨어져 나가고 그림이 통째로 사라진다 (S-view).
     svg.textContent = '';
 
     const c = getColors(params.theme);
-    const tr = params.t ?? makeTranslator(params.locale);
+    // 문안은 그리는 쪽이 만든다. 장면은 무엇을 말할지만 담는다 (C10).
+    const t = params.t ?? makeTranslator(params.locale);
     // 두 이름표를 가르는 색. 알고리즘 상태가 아니라 카테고리 식별이므로
-    // categorical 시드에서 뽑는다 (S-view 결정 트리 3).
+    // categorical 시드에서 뽑는다 (S-view 결정 트리 3). 바탕 자료가 두 무리라
+    // 상수 2 다 — 지금까지 드러난 수로 색판을 정하지 않는다.
     const groupInk = categorical(2, 'vivid');
     const inkA = groupInk.at(0) ?? c.text;
     const inkB = groupInk.at(1) ?? c.textMuted;
 
+    const barIdleFill = hexToRgba(c.text, 0.24);
+    const bandTint = hexToRgba(c.accent, 0.22);
+
     mountSeq += 1;
     const clipId = `widest-margin-plot-${mountSeq}`;
 
-    // ── 기다림 관리 (S-piece). destroy 는 걸어 둔 프레임을 거두고 기다리던
-    //    promise 를 전부 깨운다. 그러지 않으면 취소된 tick 이 아예 불리지 않아
-    //    projector 가 영영 돌아오지 않는다.
+    // ── 뼈대. 층은 한 번 짓고 정적 그리기가 자식만 갈아 끼운다.
+    const defs = el('defs', {});
+    const clip = el('clipPath', { id: clipId });
+    clip.appendChild(
+      el('rect', { x: PLOT_X, y: PLOT_TOP, width: PLOT_SIDE, height: PLOT_SIDE }),
+    );
+    defs.appendChild(clip);
+    svg.appendChild(defs);
+
+    // 재건 밖에 있는 하나. 자리는 고정이고 글자만 정적 그리기가 매번 다시 쓴다.
+    const caption = el('text', {
+      x: PAD,
+      y: CAPTION_BASELINE,
+      fill: c.text,
+      'font-family': fonts.body,
+      'font-size': fontSizes.md,
+    });
+    svg.appendChild(caption);
+
+    const legendLayer = el('g', {});
+    const axisLayer = el('g', {});
+    const clippedLayer = el('g', { 'clip-path': `url(#${clipId})` });
+    const pastLayer = el('g', {});
+    const bandLayer = el('g', {});
+    const supportLayer = el('g', {});
+    clippedLayer.appendChild(pastLayer);
+    clippedLayer.appendChild(bandLayer);
+    clippedLayer.appendChild(supportLayer);
+    const pointLayer = el('g', {});
+    const ringLayer = el('g', {});
+    const railLayer = el('g', {});
+    const layers = [legendLayer, axisLayer, clippedLayer, pointLayer, ringLayer, railLayer];
+    svg.appendChild(legendLayer);
+    svg.appendChild(axisLayer);
+    svg.appendChild(clippedLayer);
+    svg.appendChild(pointLayer);
+    svg.appendChild(ringLayer);
+    svg.appendChild(railLayer);
+
+    const rebuilt = [
+      legendLayer,
+      axisLayer,
+      pastLayer,
+      bandLayer,
+      supportLayer,
+      pointLayer,
+      ringLayer,
+      railLayer,
+    ];
+
+    // ── 걸어 둔 것과 기다리는 것. destroy 가 일괄로 거둔다 (S-piece).
     const waiters = new Set<() => void>();
     const frames = new Set<number>();
     let destroyed = false;
 
+    /**
+     * 지금 화면을 세운 `render` 의 번호.
+     *
+     * 걸음 하나가 여러 마디를 지난다 (벌어짐 → 닿음). `destroy` 가 그 가운데 오면
+     * 남은 마디가 **살아 있는 층**에 손을 대므로, 마디마다 자기 번호가 아직
+     * 유효한지 보고 물러난다. `isInstant` 는 빗장이 아니다 — 러너는 장면 조각에서
+     * 그것을 부르지 않는다 (S-scene).
+     */
+    let gen = 0;
+    const alive = (mine: number): boolean => mine === gen && !destroyed;
+
     const schedule = (fn: () => void): number =>
       typeof requestAnimationFrame === 'function'
         ? requestAnimationFrame(fn)
-        : (setTimeout(fn, 16) as unknown as number);
+        : (setTimeout(fn, FRAME_MS) as unknown as number);
 
     const unschedule = (id: number): void => {
       if (typeof cancelAnimationFrame === 'function') cancelAnimationFrame(id);
       else clearTimeout(id as unknown as ReturnType<typeof setTimeout>);
     };
 
-    function animate(duration: number, onFrame: (t: number) => void): Promise<void> {
+    /** 보간 한 마디. 끝나거나 끊기면 반드시 풀린다. */
+    function tween(duration: number, mine: number, draw: (p: number) => void): Promise<void> {
       return new Promise<void>((resolve) => {
-        if (destroyed) {
-          onFrame(1);
+        if (!alive(mine)) {
           resolve();
           return;
         }
@@ -241,13 +341,14 @@ export const widestMarginStageView: CanvasView = {
         };
         waiters.add(finish);
         const tick = (): void => {
-          if (destroyed) {
+          // 세대가 바뀌었으면 그리지 않고 물러난다.
+          if (!alive(mine)) {
             finish();
             return;
           }
-          const t = clamp01((Date.now() - started) / duration);
-          onFrame(t);
-          if (t >= 1) {
+          const p = duration <= 0 ? 1 : clamp01((Date.now() - started) / duration);
+          draw(p);
+          if (p >= 1) {
             finish();
             return;
           }
@@ -257,129 +358,25 @@ export const widestMarginStageView: CanvasView = {
           });
           frames.add(id);
         };
+        // 첫 마디를 곧바로 그린다 — 기다리면 그 사이에 끝 자리가 번쩍인다.
         tick();
       });
     }
 
-    // ── 뼈대
-    const defs = el('defs', {});
-    const clip = el('clipPath', { id: clipId });
-    clip.appendChild(
-      el('rect', { x: PLOT_X, y: PLOT_TOP, width: PLOT_SIDE, height: PLOT_SIDE }),
-    );
-    defs.appendChild(clip);
-    svg.appendChild(defs);
+    // ── 척도 ─────────────────────────────────────────────────────────────
 
-    const caption = el('text', {
-      x: PAD,
-      y: CAPTION_BASELINE,
-      fill: c.text,
-      'font-family': fonts.body,
-      'font-size': fontSizes.md,
-    });
-    svg.appendChild(caption);
-
-    const legendG = el('g', {});
-    svg.appendChild(legendG);
-
-    const axisG = el('g', {});
-    svg.appendChild(axisG);
-
-    const clippedG = el('g', { 'clip-path': `url(#${clipId})` });
-    svg.appendChild(clippedG);
-    const pastG = el('g', {});
-    const bandG = el('g', {});
-    const supportG = el('g', {});
-    clippedG.appendChild(pastG);
-    clippedG.appendChild(bandG);
-    clippedG.appendChild(supportG);
-
-    const pointG = el('g', {});
-    svg.appendChild(pointG);
-    const ringG = el('g', {});
-    svg.appendChild(ringG);
-
-    const railG = el('g', {});
-    svg.appendChild(railG);
-
-    // ── 띠 (지금 재고 있는 것)
-    const bandFill = el('polygon', {
-      points: '',
-      fill: hexToRgba(c.accent, 0.22),
-      stroke: 'none',
-    });
-    const edgeLo = el('line', {
-      stroke: c.accent,
-      'stroke-width': 2.2,
-      'stroke-linecap': 'round',
-    });
-    const edgeHi = el('line', {
-      stroke: c.accent,
-      'stroke-width': 2.2,
-      'stroke-linecap': 'round',
-    });
-    const centerLine = el('line', {
-      stroke: c.text,
-      'stroke-width': 1.5,
-      'stroke-dasharray': '6 4',
-    });
-        // 캘리퍼는 "두께가 선에 수직인 거리" 라는 것을 그림 안에서 말한다. 닿음을
-    // 보이는 수선(검정 점선)과 헷갈리지 않게 옅은 회색 실선으로 둔다.
-    const caliper = el('line', { stroke: c.textMuted, 'stroke-width': 1.1 });
-    const caliperCapLo = el('line', { stroke: c.textMuted, 'stroke-width': 1.1 });
-    const caliperCapHi = el('line', { stroke: c.textMuted, 'stroke-width': 1.1 });
-    /** 띠 자체 — 두께가 0 이면 보이지 않는다. 중심선은 따로 다룬다. */
-    const bandParts = [bandFill, edgeLo, edgeHi, caliper, caliperCapLo, caliperCapHi];
-    for (const node of [centerLine, ...bandParts]) {
-      node.setAttribute('opacity', '0');
-      bandG.appendChild(node);
-    }
-
-    const recordLine = el('line', {
-      stroke: c.text,
-      'stroke-width': 1.2,
-      'stroke-dasharray': '4 3',
-      opacity: 0,
-    });
-    railG.appendChild(recordLine);
-
-    // ── 모델에 따라 바뀌는 것
-    let model: WidestMarginModel = { points: [], rowCount: 1 };
-    let domainMin = 0;
-    let domainSpan = 1;
-    let unit = 1;
-    let railUnit = 1;
-    let rowHeight = 1;
-
-    let pointNodes: SVGElement[] = [];
-    let ringNodes: SVGCircleElement[] = [];
-    let supportNodes: SVGLineElement[] = [];
-    let barNodes: SVGRectElement[] = [];
-    let barLabels: SVGTextElement[] = [];
-    let barValues: SVGTextElement[] = [];
-    const pastLines: SVGLineElement[] = [];
-
-    let activeSlope = 0;
-    let activeIntercept = 0;
-    let activeHalf = 0;
-    let lineShown = false;
-    let caliperAt = CALIPER_SPOTS[Math.floor(CALIPER_SPOTS.length / 2)] ?? 0.5;
-
-    const px = (x: number): number => PLOT_X + (x - domainMin) * unit;
-    const py = (y: number): number => PLOT_BOTTOM - (y - domainMin) * unit;
-    const rowCenter = (row: number): number => ROWS_TOP + rowHeight * (row + 0.5);
-
-    function clearGroup(node: SVGElement): void {
-      node.textContent = '';
-    }
-
-    function layoutFromPoints(points: MarginPointModel[]): void {
+    function layoutOf(scene: WidestMarginScene): Layout {
+      const rowCount = Math.max(1, scene.candidateCount + 1);
+      const rowHeight = (PLOT_BOTTOM - ROWS_TOP) / rowCount;
+      const points = scene.points;
       if (points.length === 0) {
-        domainMin = 0;
-        domainSpan = 1;
-        unit = PLOT_SIDE;
-        railUnit = BAR_MAX_W;
-        return;
+        return {
+          domainMin: 0,
+          domainSpan: 1,
+          unit: PLOT_SIDE,
+          railUnit: BAR_MAX_W,
+          rowHeight,
+        };
       }
       const xs = points.map((p) => p.x);
       const ys = points.map((p) => p.y);
@@ -387,9 +384,7 @@ export const widestMarginStageView: CanvasView = {
       const hi = Math.max(Math.max(...xs), Math.max(...ys)) + DOMAIN_MARGIN;
       // 가로세로 눈금을 같게 둔다 — 두께는 선에 수직인 거리라 축척이 어긋나면
       // 기울기가 다른 띠끼리 견줄 수 없다.
-      domainMin = lo;
-      domainSpan = Math.max(hi - lo, 1e-6);
-      unit = PLOT_SIDE / domainSpan;
+      const domainSpan = Math.max(hi - lo, 1e-6);
 
       // 마진은 서로 다른 무리의 가장 가까운 점쌍 거리를 넘을 수 없다. 그것을
       // 막대 자의 상한으로 삼으면 우승 막대가 자를 거의 채운다.
@@ -403,12 +398,293 @@ export const widestMarginStageView: CanvasView = {
         }
       }
       if (!Number.isFinite(bound) || bound <= 0) bound = domainSpan;
-      railUnit = BAR_MAX_W / (bound * RAIL_HEADROOM);
+
+      return {
+        domainMin: lo,
+        domainSpan,
+        unit: PLOT_SIDE / domainSpan,
+        railUnit: BAR_MAX_W / (bound * RAIL_HEADROOM),
+        rowHeight,
+      };
     }
 
-    function drawAxes(): void {
-      clearGroup(axisG);
-      axisG.appendChild(
+    const px = (l: Layout, x: number): number => PLOT_X + (x - l.domainMin) * l.unit;
+    const py = (l: Layout, y: number): number => PLOT_BOTTOM - (y - l.domainMin) * l.unit;
+    const rowCenter = (l: Layout, row: number): number => ROWS_TOP + l.rowHeight * (row + 0.5);
+
+    function isFirstGroup(scene: WidestMarginScene, group: string): boolean {
+      const first = scene.points.at(0);
+      return first !== undefined && group === first.group;
+    }
+
+    function groupInkOf(scene: WidestMarginScene, group: string): string {
+      return isFirstGroup(scene, group) ? inkA : inkB;
+    }
+
+    /** 제 무리의 중심 (데이터 단위). 점이 거기서 걸어 나온다. */
+    function groupCentre(
+      scene: WidestMarginScene,
+      l: Layout,
+      group: string,
+    ): { x: number; y: number } {
+      let sx = 0;
+      let sy = 0;
+      let n = 0;
+      for (const p of scene.points) {
+        if (p.group !== group) continue;
+        sx += p.x;
+        sy += p.y;
+        n += 1;
+      }
+      if (n === 0) {
+        const mid = l.domainMin + l.domainSpan / 2;
+        return { x: mid, y: mid };
+      }
+      return { x: sx / n, y: sy / n };
+    }
+
+    function setPointAt(
+      node: SVGElement,
+      scene: WidestMarginScene,
+      p: MarginPt,
+      x: number,
+      y: number,
+      l: Layout,
+    ): void {
+      if (isFirstGroup(scene, p.group)) place(node, { cx: px(l, x), cy: py(l, y) });
+      else
+        place(node, {
+          x: px(l, x) - SQUARE_SIDE / 2,
+          y: py(l, y) - SQUARE_SIDE / 2,
+        });
+    }
+
+    /**
+     * 캘리퍼를 어디에 놓을지 고른다.
+     *
+     * 자가 점에 닿아 있으면 "이 점에서 뻗어 나온 선" 으로 읽혀 닿음을 보이는
+     * 수선과 뒤섞인다. 그래서 후보 자리 가운데 어느 점에서도 가장 먼 곳을
+     * 고른다. **띠 하나에서 한 번만 셈하는 순수 함수**라 프레임마다 흔들리지
+     * 않고, 같은 장면이면 언제나 같은 자리가 나온다.
+     */
+    function caliperSpotOf(
+      scene: WidestMarginScene,
+      l: Layout,
+      pose: BandPose | null,
+    ): number {
+      const fallback = CALIPER_SPOTS[Math.floor(CALIPER_SPOTS.length / 2)] ?? 0.5;
+      if (pose === null) return fallback;
+      const norm = Math.hypot(pose.slope, 1);
+      const ox = (-pose.slope / norm) * pose.half;
+      const oy = (1 / norm) * pose.half;
+      const hi = l.domainMin + l.domainSpan;
+      let bestSpot = fallback;
+      let bestScore = Number.NEGATIVE_INFINITY;
+      for (const frac of CALIPER_SPOTS) {
+        const x = l.domainMin + l.domainSpan * frac;
+        const y = pose.slope * x + pose.intercept;
+        const ax = x - ox;
+        const ay = y - oy;
+        const bx = x + ox;
+        const by = y + oy;
+        const inside =
+          Math.min(ax, bx) >= l.domainMin &&
+          Math.max(ax, bx) <= hi &&
+          Math.min(ay, by) >= l.domainMin &&
+          Math.max(ay, by) <= hi;
+        let score = inside ? 0 : -10;
+        let nearest = Number.POSITIVE_INFINITY;
+        for (const p of scene.points) {
+          nearest = Math.min(nearest, distToSegment(p.x, p.y, ax, ay, bx, by));
+        }
+        score += Number.isFinite(nearest) ? nearest : 0;
+        if (score > bestScore) {
+          bestScore = score;
+          bestSpot = frac;
+        }
+      }
+      return bestSpot;
+    }
+
+    // ── 띠 ───────────────────────────────────────────────────────────────
+
+    /** 한 자세를 받아 그 모양으로 서는 띠. 정적 그리기와 운동이 같은 것을 쓴다. */
+    type Band = {
+      g: SVGGElement;
+      apply(pose: BandPose): void;
+    };
+
+    /**
+     * 띠를 짓는다. `caliperAt` 은 그 걸음이 향하는 자세에서 한 번 고른 것을 받아
+     * 프레임 내내 같은 자리에 둔다.
+     */
+    function makeBand(l: Layout, caliperAt: number, withBody: boolean): Band {
+      const g = el('g', {});
+      const center = el('line', {
+        stroke: c.text,
+        'stroke-width': 1.5,
+        'stroke-dasharray': '6 4',
+      });
+      const fill = withBody
+        ? el('polygon', { points: '', fill: bandTint, stroke: 'none' })
+        : null;
+      const edgeLo = withBody
+        ? el('line', { stroke: c.accent, 'stroke-width': 2.2, 'stroke-linecap': 'round' })
+        : null;
+      const edgeHi = withBody
+        ? el('line', { stroke: c.accent, 'stroke-width': 2.2, 'stroke-linecap': 'round' })
+        : null;
+      // 캘리퍼는 "두께가 선에 수직인 거리" 라는 것을 그림 안에서 말한다. 닿음을
+      // 보이는 수선(검정 점선)과 헷갈리지 않게 옅은 회색 실선으로 둔다.
+      const caliper = withBody
+        ? el('line', { stroke: c.textMuted, 'stroke-width': 1.1 })
+        : null;
+      const capLo = withBody ? el('line', { stroke: c.textMuted, 'stroke-width': 1.1 }) : null;
+      const capHi = withBody ? el('line', { stroke: c.textMuted, 'stroke-width': 1.1 }) : null;
+      const body = [fill, edgeLo, edgeHi, caliper, capLo, capHi];
+      for (const node of body) if (node !== null) g.appendChild(node);
+      g.appendChild(center);
+      bandLayer.appendChild(g);
+
+      const xa = l.domainMin;
+      const xb = l.domainMin + l.domainSpan;
+
+      return {
+        g,
+        apply(pose: BandPose): void {
+          const norm = Math.hypot(pose.slope, 1);
+          const at = (b: number, x: number): number => py(l, pose.slope * x + b);
+          place(center, {
+            x1: px(l, xa),
+            y1: at(pose.intercept, xa),
+            x2: px(l, xb),
+            y2: at(pose.intercept, xb),
+          });
+          if (
+            fill === null ||
+            edgeLo === null ||
+            edgeHi === null ||
+            caliper === null ||
+            capLo === null ||
+            capHi === null
+          ) {
+            return;
+          }
+          const offset = pose.half * norm;
+          const lo = pose.intercept - offset;
+          const hi = pose.intercept + offset;
+          fill.setAttribute(
+            'points',
+            [
+              `${px(l, xa)},${at(lo, xa)}`,
+              `${px(l, xb)},${at(lo, xb)}`,
+              `${px(l, xb)},${at(hi, xb)}`,
+              `${px(l, xa)},${at(hi, xa)}`,
+            ].join(' '),
+          );
+          place(edgeLo, { x1: px(l, xa), y1: at(lo, xa), x2: px(l, xb), y2: at(lo, xb) });
+          place(edgeHi, { x1: px(l, xa), y1: at(hi, xa), x2: px(l, xb), y2: at(hi, xb) });
+
+          // 캘리퍼 — 띠를 수직으로 가로질러 재는 자를 그린다.
+          const cxData = xa + l.domainSpan * caliperAt;
+          const cx = px(l, cxData);
+          const cy = at(pose.intercept, cxData);
+          const nx = (pose.slope / norm) * pose.half * l.unit;
+          const ny = (1 / norm) * pose.half * l.unit;
+          place(caliper, { x1: cx - nx, y1: cy - ny, x2: cx + nx, y2: cy + ny });
+          const tx = (1 / norm) * CALIPER_TICK;
+          const ty = (-pose.slope / norm) * CALIPER_TICK;
+          place(capLo, {
+            x1: cx - nx - tx,
+            y1: cy - ny - ty,
+            x2: cx - nx + tx,
+            y2: cy - ny + ty,
+          });
+          place(capHi, {
+            x1: cx + nx - tx,
+            y1: cy + ny - ty,
+            x2: cx + nx + tx,
+            y2: cy + ny + ty,
+          });
+          // 갓 벌어지는 동안은 옅게 들어온다. 두께가 곧 드러남이다.
+          const shown = String(clamp01((pose.half * l.unit) / 5));
+          for (const node of body) node?.setAttribute('opacity', shown);
+        },
+      };
+    }
+
+    // ── 정적 그리기 ───────────────────────────────────────────────────────
+
+    /** 수선의 발 (데이터 단위). 점에서 중심선까지 수직으로 내린다. */
+    function footOf(
+      p: MarginPt,
+      slope: number,
+      intercept: number,
+    ): { x: number; y: number } {
+      const norm = slope * slope + 1;
+      const f = (slope * p.x - p.y + intercept) / norm;
+      return { x: p.x - f * slope, y: p.y + f };
+    }
+
+    type Support = {
+      node: SVGLineElement;
+      x1: number;
+      y1: number;
+      x2: number;
+      y2: number;
+    };
+
+    type Drawn = {
+      layout: Layout;
+      caliperAt: number;
+      points: SVGElement[];
+      rings: Map<number, SVGCircleElement>;
+      band: Band | null;
+      candidateLines: SVGLineElement[];
+      bars: SVGRectElement[];
+      supports: Support[];
+      record: { node: SVGLineElement; x: number; from: number } | null;
+    };
+
+    function captionText(scene: WidestMarginScene): string {
+      const step = scene.step;
+      if (step === null) return '';
+      switch (step.kind) {
+        case 'place':
+          return t('caption.points', 'Points carrying two different labels.');
+        case 'candidates':
+          return t('caption.candidates', 'Every one of these lines separates the two groups.');
+        case 'grow': {
+          const index = scene.rows.length - 1;
+          const row = scene.rows.at(index);
+          if (row === undefined) return '';
+          // "어느 후보보다 두껍다" 는 실제로 견주어 본 뒤에만 말한다. 답을
+          // 적어 받지 않으므로 지금 자료에서 참이 아니면 그렇게 말하지 않는다.
+          return beatsCandidates(scene, index)
+            ? t('caption.growBest', 'Slope {slope}: this band opens wider than any candidate.', {
+                slope: formatSlope(row.slope),
+              })
+            : t(
+                'caption.grow',
+                'Slope {slope}: the band widens until it touches a point, then stops.',
+                { slope: formatSlope(row.slope) },
+              );
+        }
+        case 'pivot':
+          return t('caption.pivot', 'Turning to the slope that lets the band open widest.');
+        case 'lock':
+          return t('caption.contacts', 'The points the band touched are what fix this line.');
+        case 'crown': {
+          const best = rowAt(scene, bestRowIndex(scene));
+          return t('caption.done', 'The widest gap wins. Thickness: {thickness}', {
+            thickness: formatThickness(best?.thickness ?? 0),
+          });
+        }
+      }
+    }
+
+    function drawAxes(scene: WidestMarginScene, l: Layout): void {
+      axisLayer.appendChild(
         el('rect', {
           x: PLOT_X,
           y: PLOT_TOP,
@@ -419,33 +695,34 @@ export const widestMarginStageView: CanvasView = {
           'stroke-width': 1,
         }),
       );
-      const first = Math.ceil(domainMin);
-      const last = Math.floor(domainMin + domainSpan);
+      if (scene.points.length === 0) return;
+      const first = Math.ceil(l.domainMin);
+      const last = Math.floor(l.domainMin + l.domainSpan);
       for (let v = first; v <= last; v += 1) {
         const labelled = v % 2 === 0;
-        axisG.appendChild(
+        axisLayer.appendChild(
           el('line', {
-            x1: px(v),
+            x1: px(l, v),
             y1: PLOT_BOTTOM,
-            x2: px(v),
+            x2: px(l, v),
             y2: PLOT_BOTTOM + (labelled ? 5 : 3),
             stroke: c.border,
             'stroke-width': 1,
           }),
         );
-        axisG.appendChild(
+        axisLayer.appendChild(
           el('line', {
             x1: PLOT_X - (labelled ? 5 : 3),
-            y1: py(v),
+            y1: py(l, v),
             x2: PLOT_X,
-            y2: py(v),
+            y2: py(l, v),
             stroke: c.border,
             'stroke-width': 1,
           }),
         );
         if (!labelled) continue;
         const xLabel = el('text', {
-          x: px(v),
+          x: px(l, v),
           y: PLOT_BOTTOM + 17,
           fill: c.textMuted,
           'font-family': fonts.mono,
@@ -453,24 +730,23 @@ export const widestMarginStageView: CanvasView = {
           'text-anchor': 'middle',
         });
         xLabel.textContent = String(v);
-        axisG.appendChild(xLabel);
+        axisLayer.appendChild(xLabel);
         const yLabel = el('text', {
           x: PLOT_X - 8,
-          y: py(v) + 4,
+          y: py(l, v) + 4,
           fill: c.textMuted,
           'font-family': fonts.mono,
           'font-size': fontSizes.xs,
           'text-anchor': 'end',
         });
         yLabel.textContent = String(v);
-        axisG.appendChild(yLabel);
+        axisLayer.appendChild(yLabel);
       }
     }
 
-    function drawLegend(): void {
-      clearGroup(legendG);
+    function drawLegend(scene: WidestMarginScene): void {
       const groups: string[] = [];
-      for (const p of model.points) if (!groups.includes(p.group)) groups.push(p.group);
+      for (const p of scene.points) if (!groups.includes(p.group)) groups.push(p.group);
       if (groups.length === 0) return;
       const entryW = 24;
       const gap = 16;
@@ -480,7 +756,7 @@ export const widestMarginStageView: CanvasView = {
         const x = startX + i * (entryW + gap);
         const cy = CAPTION_BASELINE - 4;
         const ink = i === 0 ? inkA : inkB;
-        legendG.appendChild(
+        legendLayer.appendChild(
           i === 0
             ? el('circle', { cx: x + 5, cy, r: 4.5, fill: ink })
             : el('rect', {
@@ -500,41 +776,35 @@ export const widestMarginStageView: CanvasView = {
           'font-size': fontSizes.xs,
         });
         label.textContent = name;
-        legendG.appendChild(label);
+        legendLayer.appendChild(label);
       });
     }
 
-    function isFirstGroup(group: string): boolean {
-      const first = model.points.at(0);
-      return first !== undefined && group === first.group;
-    }
-
-    function groupInkOf(group: string): string {
-      return isFirstGroup(group) ? inkA : inkB;
-    }
-
-    function setPointAt(index: number, x: number, y: number): void {
-      const node = pointNodes.at(index);
-      const p = model.points.at(index);
-      if (node === undefined || p === undefined) return;
-      if (isFirstGroup(p.group)) place(node, { cx: px(x), cy: py(y) });
-      else
-        place(node, {
-          x: px(x) - SQUARE_SIDE / 2,
-          y: py(y) - SQUARE_SIDE / 2,
+    function drawCandidateLines(scene: WidestMarginScene, l: Layout): SVGLineElement[] {
+      const xa = l.domainMin;
+      const xb = l.domainMin + l.domainSpan;
+      return scene.candidates.map((line) => {
+        const node = el('line', {
+          stroke: c.textMuted,
+          'stroke-width': 1.1,
+          'stroke-dasharray': '5 4',
+          opacity: 0.75,
+          x1: px(l, xa),
+          y1: py(l, line.slope * xa + line.intercept),
+          x2: px(l, xb),
+          y2: py(l, line.slope * xb + line.intercept),
         });
+        pastLayer.appendChild(node);
+        return node;
+      });
     }
 
-    function buildPoints(): void {
-      clearGroup(pointG);
-      clearGroup(ringG);
-      clearGroup(supportG);
-      pointNodes = [];
-      ringNodes = [];
-      supportNodes = [];
-      model.points.forEach((p) => {
-        const ink = groupInkOf(p.group);
-        const node = isFirstGroup(p.group)
+    function drawPoints(scene: WidestMarginScene, l: Layout): SVGElement[] {
+      // 아직 나오지 않은 점은 숨기지 않고 짓지 않는다.
+      if (!scene.placed) return [];
+      return scene.points.map((p) => {
+        const ink = groupInkOf(scene, p.group);
+        const node: SVGElement = isFirstGroup(scene, p.group)
           ? el('circle', {
               cx: 0,
               cy: 0,
@@ -542,7 +812,6 @@ export const widestMarginStageView: CanvasView = {
               fill: ink,
               stroke: c.bg,
               'stroke-width': 1.6,
-              opacity: 0,
             })
           : el('rect', {
               x: 0,
@@ -552,41 +821,85 @@ export const widestMarginStageView: CanvasView = {
               fill: ink,
               stroke: c.bg,
               'stroke-width': 1.6,
-              opacity: 0,
             });
-        pointG.appendChild(node);
-        pointNodes.push(node);
+        setPointAt(node, scene, p, p.x, p.y, l);
+        pointLayer.appendChild(node);
+        return node;
+      });
+    }
 
+    /**
+     * 지금 재고 있는 띠를 멈춘 점에 고리를 씌운다.
+     *
+     * 고리는 다음 후보가 시작될 때까지 남아, 이 띠를 멈춘 것이 어느 점이었는지
+     * 읽을 시간을 준다. 어느 점인지는 기록장의 **마지막 줄**이 말한다.
+     */
+    function drawRings(
+      scene: WidestMarginScene,
+      l: Layout,
+    ): Map<number, SVGCircleElement> {
+      const out = new Map<number, SVGCircleElement>();
+      const row = scene.rows.at(-1);
+      if (row === undefined) return out;
+      for (const i of row.contacts) {
+        const p = scene.points.at(i);
+        if (p === undefined) continue;
         const ring = el('circle', {
-          cx: 0,
-          cy: 0,
+          cx: px(l, p.x),
+          cy: py(l, p.y),
           r: RING_R,
           fill: 'none',
           stroke: c.text,
           'stroke-width': 2,
-          opacity: 0,
         });
-        ringG.appendChild(ring);
-        ringNodes.push(ring);
-
-        const support = el('line', {
-          stroke: c.text,
-          'stroke-width': 1.2,
-          'stroke-dasharray': '3 3',
-          opacity: 0,
-        });
-        supportG.appendChild(support);
-        supportNodes.push(support);
-      });
+        ringLayer.appendChild(ring);
+        out.set(i, ring);
+      }
+      return out;
     }
 
-    function buildRail(): void {
-      clearGroup(railG);
-      railG.appendChild(recordLine);
-      barNodes = [];
-      barLabels = [];
-      barValues = [];
+    /** 닿은 점에서 중심선까지 내려온 수선. 넷 다 정확히 반 두께다. */
+    function drawSupports(scene: WidestMarginScene, l: Layout): Support[] {
+      if (!scene.locked) return [];
+      const best = rowAt(scene, bestRowIndex(scene));
+      if (best === null) return [];
+      const out: Support[] = [];
+      for (const i of best.contacts) {
+        const p = scene.points.at(i);
+        if (p === undefined) continue;
+        const foot = footOf(p, best.slope, best.intercept);
+        const support: Support = {
+          node: el('line', {
+            stroke: c.text,
+            'stroke-width': 1.2,
+            'stroke-dasharray': '3 3',
+            x1: px(l, p.x),
+            y1: py(l, p.y),
+            x2: px(l, foot.x),
+            y2: py(l, foot.y),
+          }),
+          x1: px(l, p.x),
+          y1: py(l, p.y),
+          x2: px(l, foot.x),
+          y2: py(l, foot.y),
+        };
+        supportLayer.appendChild(support.node);
+        out.push(support);
+      }
+      return out;
+    }
 
+    /**
+     * 두께 기록장.
+     *
+     * 채움은 값의 형편(지금 선 띠의 줄인가 / 이미 재어 둔 줄인가)만 말하고,
+     * 테두리가 견줌의 표식(가장 두꺼운 줄)을 맡는다. 한 축에 두 뜻을 싣지 않으면
+     * 진 후보와 이긴 후보가 한 화면에 함께 선다.
+     */
+    function drawRail(
+      scene: WidestMarginScene,
+      l: Layout,
+    ): { bars: SVGRectElement[]; record: Drawn['record'] } {
       const header = el('text', {
         x: RAIL_X,
         y: RAIL_HEADER_BASELINE,
@@ -594,12 +907,11 @@ export const widestMarginStageView: CanvasView = {
         'font-family': fonts.body,
         'font-size': fontSizes.xs,
       });
-      header.textContent = tr('label.thickness', 'band thickness');
-      railG.appendChild(header);
+      header.textContent = t('label.thickness', 'band thickness');
+      railLayer.appendChild(header);
 
-      rowHeight = (PLOT_BOTTOM - ROWS_TOP) / Math.max(1, model.rowCount);
-
-      railG.appendChild(
+      const rowCount = Math.max(1, scene.candidateCount + 1);
+      railLayer.appendChild(
         el('line', {
           x1: BAR_X - 4,
           y1: ROWS_TOP,
@@ -610,9 +922,13 @@ export const widestMarginStageView: CanvasView = {
         }),
       );
 
-      for (let row = 0; row < model.rowCount; row += 1) {
-        const cy = rowCenter(row);
-        railG.appendChild(
+      const best = bestRowIndex(scene);
+      const live = scene.rows.length - 1;
+      const bars: SVGRectElement[] = [];
+
+      for (let row = 0; row < rowCount; row += 1) {
+        const cy = rowCenter(l, row);
+        railLayer.appendChild(
           el('line', {
             x1: BAR_X,
             y1: cy + BAR_H / 2 + 4,
@@ -622,6 +938,10 @@ export const widestMarginStageView: CanvasView = {
             'stroke-width': 1,
           }),
         );
+        const measured = scene.rows.at(row);
+        if (measured === undefined) continue;
+
+        const crowned = scene.crowned && row === best;
         const label = el('text', {
           x: RAIL_X + RAIL_LABEL_W,
           y: cy + 4,
@@ -630,402 +950,342 @@ export const widestMarginStageView: CanvasView = {
           'font-size': fontSizes.xs,
           'text-anchor': 'end',
         });
-        railG.appendChild(label);
-        barLabels.push(label);
+        label.textContent = `m = ${formatSlope(measured.slope)}`;
+        railLayer.appendChild(label);
 
         const bar = el('rect', {
           x: BAR_X,
           y: cy - BAR_H / 2,
-          width: 0,
+          width: Math.max(0, measured.thickness * l.railUnit),
           height: BAR_H,
           rx: 2,
-          fill: hexToRgba(c.text, 0.2),
+          // 채움 = 값의 형편. 지금 화면에 서 있는 띠의 줄이 진하다.
+          fill: row === live ? c.accent : barIdleFill,
         });
-        railG.appendChild(bar);
-        barNodes.push(bar);
+        // 테두리 = 견줌의 표식. 가장 두꺼운 줄에만 선다.
+        if (crowned) place(bar, { stroke: c.text, 'stroke-width': 1.4 });
+        railLayer.appendChild(bar);
+        bars[row] = bar;
 
         const value = el('text', {
           x: RAIL_X + RAIL_W,
           y: cy + 4,
-          fill: c.textMuted,
+          fill: row === live || crowned ? c.text : c.textMuted,
           'font-family': fonts.mono,
           'font-size': fontSizes.xs,
           'text-anchor': 'end',
         });
-        railG.appendChild(value);
-        barValues.push(value);
+        value.textContent = formatThickness(measured.thickness);
+        railLayer.appendChild(value);
       }
+
+      // 우승 길이를 가리키는 눈금선. 가로 자리는 우승 줄의 **두께**에서 셈한다 —
+      // 막대의 `width` 속성을 되읽으면 되짚어 세운 직후에 옛 화면의 것이 나온다.
+      let record: Drawn['record'] = null;
+      const bestRow = rowAt(scene, best);
+      if (scene.crowned && best !== null && bestRow !== null) {
+        const x = BAR_X + Math.max(0, bestRow.thickness * l.railUnit);
+        const from = rowCenter(l, best) + BAR_H / 2;
+        const node = el('line', {
+          stroke: c.text,
+          'stroke-width': 1.2,
+          'stroke-dasharray': '4 3',
+          x1: x,
+          y1: from,
+          x2: x,
+          y2: ROWS_TOP - 4,
+        });
+        railLayer.appendChild(node);
+        record = { node, x, from };
+      }
+
+      return { bars, record };
     }
 
-    /** 띠를 그린다. half 는 중심선에서 가장자리까지의 수직 거리. */
-    function renderBand(slope: number, intercept: number, half: number): void {
-      const norm = Math.hypot(slope, 1);
-      const offset = half * norm;
-      const xa = domainMin;
-      const xb = domainMin + domainSpan;
-      const at = (b: number, x: number): number => py(slope * x + b);
+    /** 그 장면이 말하는 것을 전부 세운다. 앞 화면과 견주지 않는다 (S-scene). */
+    function drawStatic(scene: WidestMarginScene): Drawn {
+      for (const g of rebuilt) g.textContent = '';
+      caption.textContent = captionText(scene);
 
-      const lo = intercept - offset;
-      const hi = intercept + offset;
-      bandFill.setAttribute(
-        'points',
-        [
-          `${px(xa)},${at(lo, xa)}`,
-          `${px(xb)},${at(lo, xb)}`,
-          `${px(xb)},${at(hi, xb)}`,
-          `${px(xa)},${at(hi, xa)}`,
-        ].join(' '),
-      );
-      place(edgeLo, { x1: px(xa), y1: at(lo, xa), x2: px(xb), y2: at(lo, xb) });
-      place(edgeHi, { x1: px(xa), y1: at(hi, xa), x2: px(xb), y2: at(hi, xb) });
-      place(centerLine, {
-        x1: px(xa),
-        y1: at(intercept, xa),
-        x2: px(xb),
-        y2: at(intercept, xb),
-      });
+      const layout = layoutOf(scene);
+      const caliperAt = caliperSpotOf(scene, layout, scene.pose);
 
-      // 캘리퍼 — 띠를 수직으로 가로질러 재는 자를 그린다.
-      const cxData = xa + domainSpan * caliperAt;
-      const cx = px(cxData);
-      const cy = at(intercept, cxData);
-      const nx = (slope / norm) * half * unit;
-      const ny = (1 / norm) * half * unit;
-      place(caliper, { x1: cx - nx, y1: cy - ny, x2: cx + nx, y2: cy + ny });
-      const tx = (1 / norm) * CALIPER_TICK;
-      const ty = (-slope / norm) * CALIPER_TICK;
-      place(caliperCapLo, {
-        x1: cx - nx - tx,
-        y1: cy - ny - ty,
-        x2: cx - nx + tx,
-        y2: cy - ny + ty,
-      });
-      place(caliperCapHi, {
-        x1: cx + nx - tx,
-        y1: cy + ny - ty,
-        x2: cx + nx + tx,
-        y2: cy + ny + ty,
-      });
-      // 접혀 있는 동안은 띠가 아예 보이지 않아야 중심선이 노랗게 물들지 않는다.
-      const shown = lineShown ? String(clamp01((half * unit) / 5)) : '0';
-      for (const node of bandParts) node.setAttribute('opacity', shown);
+      drawLegend(scene);
+      drawAxes(scene, layout);
+      const candidateLines = drawCandidateLines(scene, layout);
+      // 두께가 0 인 띠는 아직 벌어지지 않은 것이라 몸통을 짓지 않는다. 중심선만
+      // 선다 — 아직 없는 것을 숨기기만 하면 앞 걸음의 속성이 함께 남는다.
+      const band =
+        scene.pose === null
+          ? null
+          : makeBand(layout, caliperAt, scene.pose.half > 0);
+      if (band !== null && scene.pose !== null) band.apply(scene.pose);
+      const supports = drawSupports(scene, layout);
+      const points = drawPoints(scene, layout);
+      const rings = drawRings(scene, layout);
+      const rail = drawRail(scene, layout);
 
-      activeSlope = slope;
-      activeIntercept = intercept;
-      activeHalf = half;
+      return {
+        layout,
+        caliperAt,
+        points,
+        rings,
+        band,
+        candidateLines,
+        bars: rail.bars,
+        supports,
+        record: rail.record,
+      };
     }
 
-    /** 점 P 에서 선분 AB 까지의 거리. 캘리퍼 자리를 고르는 데만 쓴다. */
-    function distToSegment(
-      pxv: number,
-      pyv: number,
-      ax: number,
-      ay: number,
-      bx: number,
-      by: number,
-    ): number {
-      const dx = bx - ax;
-      const dy = by - ay;
-      const len2 = dx * dx + dy * dy;
-      const t = len2 === 0 ? 0 : clamp01(((pxv - ax) * dx + (pyv - ay) * dy) / len2);
-      return Math.hypot(pxv - (ax + dx * t), pyv - (ay + dy * t));
+    // ── 걸음의 운동 ───────────────────────────────────────────────────────
+
+    /** 점이 제 무리 중심에서 자기 자리로 걸어 나온다. */
+    function flowPlace(
+      scene: WidestMarginScene,
+      drawn: Drawn,
+      mine: number,
+    ): Promise<void> {
+      const n = scene.points.length;
+      if (n === 0 || drawn.points.length !== n) return Promise.resolve();
+      const centres = scene.points.map((p) => groupCentre(scene, drawn.layout, p.group));
+      return tween(ENTER_MS, mine, (p) => {
+        scene.points.forEach((pt, i) => {
+          const node = drawn.points[i];
+          const from = centres[i];
+          if (node === undefined || from === undefined) return;
+          const d = staggered(p, i, n, 0.65);
+          const e = easeOut(d);
+          setPointAt(
+            node,
+            scene,
+            pt,
+            lerp(from.x, pt.x, e),
+            lerp(from.y, pt.y, e),
+            drawn.layout,
+          );
+          node.setAttribute('opacity', String(clamp01(d * 2.2)));
+        });
+      });
+    }
+
+    /** 후보 선이 왼쪽에서 오른쪽으로 그어진다. */
+    function flowCandidates(
+      scene: WidestMarginScene,
+      drawn: Drawn,
+      mine: number,
+    ): Promise<void> {
+      const lines = scene.candidates;
+      if (lines.length === 0 || drawn.candidateLines.length !== lines.length) {
+        return Promise.resolve();
+      }
+      const l = drawn.layout;
+      const xa = l.domainMin;
+      const xb = l.domainMin + l.domainSpan;
+      return tween(DRAW_MS, mine, (p) => {
+        lines.forEach((line, i) => {
+          const node = drawn.candidateLines[i];
+          if (node === undefined) return;
+          const d = easeOut(staggered(p, i, lines.length, 0.72));
+          const x = lerp(xa, xb, d);
+          place(node, {
+            x2: px(l, x),
+            y2: py(l, line.slope * x + line.intercept),
+          });
+        });
+      });
     }
 
     /**
-     * 캘리퍼를 어디에 놓을지 고른다.
+     * 띠가 벌어지다 점에 닿아 멈춘다.
      *
-     * 자가 점에 닿아 있으면 "이 점에서 뻗어 나온 선" 으로 읽혀 닿음을 보이는
-     * 수선과 뒤섞인다. 그래서 후보 자리 가운데 어느 점에서도 가장 먼 곳을
-     * 고른다 — 띠가 정해질 때 한 번만 셈하므로 프레임마다 흔들리지 않는다.
+     * 앞서 재던 띠가 접히고(fold) 선이 다음 기울기로 돌고(turn) 그다음 양옆으로
+     * 밀려난다(grow). 접히기 시작하는 자세는 `step.from` 이 말한다.
      */
-    function pickCaliperSpot(slope: number, intercept: number, thickness: number): void {
-      const norm = Math.hypot(slope, 1);
-      const ox = (-slope / norm) * (thickness / 2);
-      const oy = (1 / norm) * (thickness / 2);
-      const hi = domainMin + domainSpan;
-      let bestSpot = caliperAt;
-      let bestScore = Number.NEGATIVE_INFINITY;
-      for (const frac of CALIPER_SPOTS) {
-        const x = domainMin + domainSpan * frac;
-        const y = slope * x + intercept;
-        const ax = x - ox;
-        const ay = y - oy;
-        const bx = x + ox;
-        const by = y + oy;
-        const inside =
-          Math.min(ax, bx) >= domainMin &&
-          Math.max(ax, bx) <= hi &&
-          Math.min(ay, by) >= domainMin &&
-          Math.max(ay, by) <= hi;
-        let score = inside ? 0 : -10;
-        let nearest = Number.POSITIVE_INFINITY;
-        for (const p of model.points) {
-          nearest = Math.min(nearest, distToSegment(p.x, p.y, ax, ay, bx, by));
+    async function flowGrow(
+      scene: WidestMarginScene,
+      drawn: Drawn,
+      from: BandPose | null,
+      mine: number,
+    ): Promise<void> {
+      const index = scene.rows.length - 1;
+      const row = scene.rows.at(index);
+      const pose = scene.pose;
+      if (row === undefined || pose === null) return;
+
+      // 정적 그리기가 세운 띠를 거두고 운동용을 짓는다 — 접히는 동안에는 몸통이
+      // 있어야 하고, 끝난 뒤에는 정적 그리기가 통째로 다시 세운다.
+      drawn.band?.g.remove();
+      const band = makeBand(drawn.layout, drawn.caliperAt, true);
+
+      const bar = drawn.bars[index];
+      bar?.setAttribute('width', '0');
+      for (const ring of drawn.rings.values()) ring.setAttribute('opacity', '0');
+
+      const half = pose.half;
+      await tween(GROW_MS, mine, (p) => {
+        if (from !== null && p < PHASE_FOLD) {
+          // 앞서 재던 띠가 접힌다.
+          band.apply({
+            slope: from.slope,
+            intercept: from.intercept,
+            half: from.half * (1 - p / PHASE_FOLD),
+          });
+          return;
         }
-        score += Number.isFinite(nearest) ? nearest : 0;
-        if (score > bestScore) {
-          bestScore = score;
-          bestSpot = frac;
+        if (from !== null && p < PHASE_TURN) {
+          // 선이 다음 후보의 기울기로 돈다.
+          const e = easeInOut((p - PHASE_FOLD) / (PHASE_TURN - PHASE_FOLD));
+          band.apply({
+            slope: lerp(from.slope, pose.slope, e),
+            intercept: lerp(from.intercept, pose.intercept, e),
+            half: 0,
+          });
+          return;
         }
+        // 띠가 양쪽으로 밀려난다. 오른쪽 막대가 같은 값으로 자란다.
+        const e = from === null ? easeOut(p) : easeOut((p - PHASE_TURN) / (1 - PHASE_TURN));
+        band.apply({ slope: pose.slope, intercept: pose.intercept, half: half * e });
+        bar?.setAttribute(
+          'width',
+          String(Math.max(0, row.thickness * e * drawn.layout.railUnit)),
+        );
+      });
+      if (!alive(mine)) {
+        band.g.remove();
+        return;
       }
-      caliperAt = bestSpot;
+
+      // 닿았다 — 멈춘 자리를 점이 되받는다.
+      await tween(TOUCH_MS, mine, (p) => {
+        const e = easeOut(p);
+        for (const ring of drawn.rings.values()) {
+          place(ring, { r: RING_R * lerp(1.7, 1, e), opacity: e });
+        }
+      });
+      band.g.remove();
     }
 
-    /** 중심선을 켜고 끈다. 띠 자체의 드러남은 두께가 정한다. */
-    function showLine(visible: boolean): void {
-      lineShown = visible;
-      centerLine.setAttribute('opacity', visible ? '1' : '0');
-      if (!visible) for (const node of bandParts) node.setAttribute('opacity', '0');
+    /** 띠가 접히고 선이 최적 기울기로 돈다. */
+    async function flowPivot(
+      scene: WidestMarginScene,
+      drawn: Drawn,
+      from: BandPose,
+      mine: number,
+    ): Promise<void> {
+      const pose = scene.pose;
+      if (pose === null) return;
+      drawn.band?.g.remove();
+      const band = makeBand(drawn.layout, drawn.caliperAt, true);
+      await tween(PIVOT_MS, mine, (p) => {
+        if (p < PHASE_FOLD) {
+          band.apply({
+            slope: from.slope,
+            intercept: from.intercept,
+            half: from.half * (1 - p / PHASE_FOLD),
+          });
+          return;
+        }
+        const e = easeInOut((p - PHASE_FOLD) / (1 - PHASE_FOLD));
+        band.apply({
+          slope: lerp(from.slope, pose.slope, e),
+          intercept: lerp(from.intercept, pose.intercept, e),
+          half: 0,
+        });
+      });
+      band.g.remove();
     }
 
-    function setBar(row: number, thickness: number, active: boolean): void {
-      const bar = barNodes.at(row);
-      const value = barValues.at(row);
-      if (bar === undefined || value === undefined) return;
-      bar.setAttribute('width', String(Math.max(0, thickness * railUnit)));
-      bar.setAttribute('fill', active ? c.accent : hexToRgba(c.text, 0.24));
-      value.textContent = formatThickness(thickness);
-      value.setAttribute('fill', active ? c.text : c.textMuted);
-    }
-
-    function resetVisuals(): void {
-      clearGroup(pastG);
-      pastLines.length = 0;
-      showLine(false);
-      for (const node of pointNodes) node.setAttribute('opacity', '0');
-      for (const node of ringNodes) node.setAttribute('opacity', '0');
-      for (const node of supportNodes) node.setAttribute('opacity', '0');
-      for (const bar of barNodes) {
-        place(bar, { width: 0, fill: hexToRgba(c.text, 0.24), stroke: 'none' });
-      }
-      for (const label of barLabels) label.textContent = '';
-      for (const value of barValues) value.textContent = '';
-      recordLine.setAttribute('opacity', '0');
-      activeHalf = 0;
-    }
-
-    function setModel(next: WidestMarginModel): void {
-      model = next;
-      layoutFromPoints(model.points);
-      drawAxes();
-      drawLegend();
-      buildPoints();
-      buildRail();
-      resetVisuals();
-      // 점은 제 무리 중심에 모여 있다가 자기 자리로 나온다.
-      model.points.forEach((p, i) => {
-        const centre = groupCentre(p.group);
-        setPointAt(i, centre.x, centre.y);
+    /** 닿은 점에서 중심선까지 수선이 내려온다. */
+    function flowLock(drawn: Drawn, mine: number): Promise<void> {
+      const supports = drawn.supports;
+      if (supports.length === 0) return Promise.resolve();
+      return tween(LOCK_MS, mine, (p) => {
+        supports.forEach((s, k) => {
+          const e = easeOut(staggered(p, k, supports.length, 0.8));
+          place(s.node, {
+            x2: lerp(s.x1, s.x2, e),
+            y2: lerp(s.y1, s.y2, e),
+            opacity: clamp01(e * 2),
+          });
+        });
       });
     }
 
-    function groupCentre(group: string): { x: number; y: number } {
-      let sx = 0;
-      let sy = 0;
-      let n = 0;
-      for (const p of model.points) {
-        if (p.group !== group) continue;
-        sx += p.x;
-        sy += p.y;
-        n += 1;
-      }
-      if (n === 0) return { x: domainMin + domainSpan / 2, y: domainMin + domainSpan / 2 };
-      return { x: sx / n, y: sy / n };
+    /** 우승 길이를 가리키는 눈금선이 기록장을 타고 올라간다. */
+    function flowCrown(drawn: Drawn, mine: number): Promise<void> {
+      const record = drawn.record;
+      if (record === null) return Promise.resolve();
+      return tween(CROWN_MS, mine, (p) => {
+        const e = easeOut(p);
+        place(record.node, {
+          y1: record.from,
+          y2: lerp(record.from, ROWS_TOP - 4, e),
+        });
+      });
     }
 
-    setModel(readWidestMarginModel(params.initialData));
+    function flowFor(
+      step: WidestMarginStep,
+      scene: WidestMarginScene,
+      drawn: Drawn,
+      mine: number,
+    ): Promise<void> {
+      switch (step.kind) {
+        case 'place':
+          return flowPlace(scene, drawn, mine);
+        case 'candidates':
+          return flowCandidates(scene, drawn, mine);
+        case 'grow':
+          return flowGrow(scene, drawn, step.from, mine);
+        case 'pivot':
+          return flowPivot(scene, drawn, step.from, mine);
+        case 'lock':
+          return flowLock(drawn, mine);
+        case 'crown':
+          return flowCrown(drawn, mine);
+      }
+    }
 
-    // ── projector 가 부르는 것 ────────────────────────────────────────────
+    // ── 장면 그리기 ───────────────────────────────────────────────────────
 
-    const instance: ViewInstance = {
-      setCaption(text: string): void {
-        caption.textContent = text;
-      },
+    async function render(
+      next: WidestMarginScene,
+      _prev: WidestMarginScene | null,
+      opts: { animate: boolean },
+    ): Promise<void> {
+      const mine = (gen += 1);
 
-      setModel(next: WidestMarginModel): void {
-        setModel(next);
-      },
+      const drawn = drawStatic(next);
+      // 되짚기는 여기서 끝난다 — 타이머도 프레임도 걸지 않는다 (S-scene).
+      if (!opts.animate || destroyed) return;
 
-      async placePoints(): Promise<void> {
-        const n = model.points.length;
-        const centres = model.points.map((p) => groupCentre(p.group));
-        await animate(ENTER_MS, (t) => {
-          model.points.forEach((p, i) => {
-            const d = staggered(t, i, n, 0.65);
-            const e = easeOut(d);
-            const from = centres.at(i) ?? p;
-            setPointAt(i, lerp(from.x, p.x, e), lerp(from.y, p.y, e));
-            pointNodes[i]?.setAttribute('opacity', String(clamp01(d * 2.2)));
-          });
-        });
-      },
+      const step = next.step;
+      if (step === null) return;
 
-      async drawCandidates(lines: Array<{ slope: number; intercept: number }>): Promise<void> {
-        clearGroup(pastG);
-        pastLines.length = 0;
-        for (const line of lines) {
-          const node = el('line', {
-            stroke: c.textMuted,
-            'stroke-width': 1.1,
-            'stroke-dasharray': '5 4',
-            opacity: 0.75,
-            x1: px(domainMin),
-            y1: py(line.slope * domainMin + line.intercept),
-            x2: px(domainMin),
-            y2: py(line.slope * domainMin + line.intercept),
-          });
-          pastG.appendChild(node);
-          pastLines.push(node);
-        }
-        const xa = domainMin;
-        const xb = domainMin + domainSpan;
-        await animate(DRAW_MS, (t) => {
-          lines.forEach((line, i) => {
-            const d = easeOut(staggered(t, i, lines.length, 0.72));
-            const x = lerp(xa, xb, d);
-            pastLines[i]?.setAttribute('x2', String(px(x)));
-            pastLines[i]?.setAttribute('y2', String(py(line.slope * x + line.intercept)));
-          });
-        });
-      },
+      await flowFor(step, next, drawn, mine);
+      if (!alive(mine)) return;
 
-      async growBand(spec: BandSpec): Promise<void> {
-        const fromSlope = lineShown ? activeSlope : spec.slope;
-        const fromIntercept = lineShown ? activeIntercept : spec.intercept;
-        const fromHalf = lineShown ? activeHalf : 0;
-        const target = spec.thickness / 2;
+      // 운동이 남긴 속성과 보간 끝자리가 노드째 사라진다. 되돌릴 목록을 손으로
+      // 관리하지 않는다 (S-scene).
+      drawStatic(next);
+    }
 
-        pickCaliperSpot(spec.slope, spec.intercept, spec.thickness);
-        const label = barLabels.at(spec.row);
-        if (label !== undefined) label.textContent = `m = ${formatSlope(spec.slope)}`;
-        for (const ring of ringNodes) ring.setAttribute('opacity', '0');
-
-        showLine(true);
-        await animate(GROW_MS, (t) => {
-          if (t < PHASE_FOLD) {
-            // 앞서 재던 띠가 접힌다.
-            renderBand(fromSlope, fromIntercept, fromHalf * (1 - t / PHASE_FOLD));
-            return;
-          }
-          if (t < PHASE_TURN) {
-            // 선이 다음 후보의 기울기로 돈다.
-            const e = easeInOut((t - PHASE_FOLD) / (PHASE_TURN - PHASE_FOLD));
-            renderBand(
-              lerp(fromSlope, spec.slope, e),
-              lerp(fromIntercept, spec.intercept, e),
-              0,
-            );
-            return;
-          }
-          // 띠가 양쪽으로 밀려난다. 오른쪽 막대가 같은 값으로 자란다.
-          const e = easeOut((t - PHASE_TURN) / (1 - PHASE_TURN));
-          renderBand(spec.slope, spec.intercept, target * e);
-          setBar(spec.row, spec.thickness * e, true);
-        });
-
-        // 닿았다 — 멈춘 자리를 점이 되받는다. 고리는 다음 후보가 시작될 때까지
-        // 남아, 이 띠를 멈춘 것이 어느 점이었는지 읽을 시간을 준다.
-        await animate(TOUCH_MS, (t) => {
-          const e = easeOut(t);
-          for (const i of spec.contacts) {
-            const p = model.points.at(i);
-            const ring = ringNodes.at(i);
-            if (p === undefined || ring === undefined) continue;
-            place(ring, {
-              cx: px(p.x),
-              cy: py(p.y),
-              r: RING_R * lerp(1.7, 1, e),
-              opacity: e,
-            });
-          }
-        });
-        setBar(spec.row, spec.thickness, spec.best);
-      },
-
-      async pivotLine(spec: { slope: number; intercept: number }): Promise<void> {
-        const fromSlope = activeSlope;
-        const fromIntercept = activeIntercept;
-        const fromHalf = activeHalf;
-        await animate(PIVOT_MS, (t) => {
-          if (t < PHASE_FOLD) {
-            renderBand(fromSlope, fromIntercept, fromHalf * (1 - t / PHASE_FOLD));
-            return;
-          }
-          const e = easeInOut((t - PHASE_FOLD) / (1 - PHASE_FOLD));
-          renderBand(lerp(fromSlope, spec.slope, e), lerp(fromIntercept, spec.intercept, e), 0);
-        });
-      },
-
-      async lockContacts(spec: LockSpec): Promise<void> {
-        // 닿은 점마다 중심선까지 수선을 내린다 — 넷 다 정확히 반 두께다.
-        const norm = spec.slope * spec.slope + 1;
-        const feet = spec.contacts.map((i) => {
-          const p = model.points.at(i);
-          if (p === undefined) return null;
-          const f = (spec.slope * p.x - p.y + spec.intercept) / norm;
-          return { p, fx: p.x - f * spec.slope, fy: p.y + f };
-        });
-        await animate(LOCK_MS, (t) => {
-          spec.contacts.forEach((i, k) => {
-            const foot = feet.at(k);
-            const node = supportNodes.at(i);
-            if (foot === undefined || foot === null || node === undefined) return;
-            const e = easeOut(staggered(t, k, spec.contacts.length, 0.8));
-            place(node, {
-              x1: px(foot.p.x),
-              y1: py(foot.p.y),
-              x2: px(lerp(foot.p.x, foot.fx, e)),
-              y2: py(lerp(foot.p.y, foot.fy, e)),
-              opacity: clamp01(e * 2),
-            });
-          });
-        });
-      },
-
-      async crownRow(row: number): Promise<void> {
-        const bar = barNodes.at(row);
-        const value = barValues.at(row);
-        if (bar === undefined || value === undefined) return;
-        place(bar, { stroke: c.text, 'stroke-width': 1.4 });
-        value.setAttribute('fill', c.text);
-        barNodes.forEach((other, i) => {
-          if (i !== row) other.setAttribute('fill', hexToRgba(c.text, 0.16));
-        });
-        // 우승 길이를 가리키는 눈금선이 기록장을 타고 올라간다 — 나머지 막대가
-        // 모두 그 선에 못 미치는 것이 한눈에 보인다.
-        const x = BAR_X + Number(bar.getAttribute('width') ?? 0);
-        const from = rowCenter(row) + BAR_H / 2;
-        recordLine.setAttribute('opacity', '1');
-        await animate(CROWN_MS, (t) => {
-          const e = easeOut(t);
-          place(recordLine, {
-            x1: x,
-            y1: from,
-            x2: x,
-            y2: lerp(from, ROWS_TOP - 4, e),
-          });
-        });
-      },
-
-      rewind(): void {
-        caption.textContent = '';
-        resetVisuals();
-        model.points.forEach((p, i) => {
-          const centre = groupCentre(p.group);
-          setPointAt(i, centre.x, centre.y);
-        });
-      },
+    return {
+      render,
 
       destroy(): void {
         destroyed = true;
+        gen += 1;
         for (const id of frames) unschedule(id);
         frames.clear();
+        // 기다리던 것을 깨운다 — 안 깨우면 render 의 await 가 영영 안 돌아온다.
         for (const wake of [...waiters]) wake();
         waiters.clear();
-        svg.textContent = '';
+        for (const g of layers) g.remove();
+        caption.remove();
+        defs.remove();
       },
     };
-
-    return instance;
   },
 };
