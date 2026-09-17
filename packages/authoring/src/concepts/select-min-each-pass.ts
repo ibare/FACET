@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const selectMinEachPassConcept: FacetConceptSource = {
   id: 'selectMinEachPass',
   label: 'Selecting the Minimum (Only the Marker Moves)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:selectMinEachPass',
 
   surface: {

@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const supportVectorsOnlyConcept: FacetConceptSource = {
   id: 'supportVectorsOnly',
   label: 'Support Vectors (The Points That Fix the Boundary)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:supportVectorsOnly',
 
   surface: {

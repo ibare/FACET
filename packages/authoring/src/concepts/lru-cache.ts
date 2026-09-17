@@ -12,7 +12,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const lruCacheConcept: FacetConceptSource = {
   id: 'lruCache',
   label: 'LRU Cache',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:lruCache',
 
   surface: {

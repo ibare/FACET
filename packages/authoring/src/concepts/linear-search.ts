@@ -20,7 +20,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const linearSearchConcept: FacetConceptSource = {
   id: 'linearSearch',
   label: 'Linear Search (Looking at Every Cell in Turn)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:linearSearch',
 
   surface: {

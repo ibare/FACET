@@ -18,7 +18,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const loadFactorRehashConcept: FacetConceptSource = {
   id: 'loadFactorRehash',
   label: 'Load Factor and Rehashing',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:loadFactorRehash',
 
   surface: {

@@ -20,7 +20,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const adjacencyListVsMatrixConcept: FacetConceptSource = {
   id: 'adjacencyListVsMatrix',
   label: 'Adjacency List vs. Adjacency Matrix',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:adjacencyListVsMatrix',
 
   surface: {

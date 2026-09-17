@@ -12,7 +12,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const conditionalStatementConcept: FacetConceptSource = {
   id: 'conditionalStatement',
   label: 'Conditional (if / else if / else)',
-  domain: 'programming-fundamentals',
   canonicalFacet: 'facet:conditionalStatement',
 
   surface: {

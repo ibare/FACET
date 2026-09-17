@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const kmpConcept: FacetConceptSource = {
   id: 'kmp',
   label: 'KMP (What the Overlap Table Is Worth on a Text)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:kmp',
 
   surface: {

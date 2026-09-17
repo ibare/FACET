@@ -20,7 +20,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const assignThenMoveConcept: FacetConceptSource = {
   id: 'assignThenMove',
   label: 'Assign, Then Move (One Turn of the Alternation)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:assignThenMove',
 
   surface: {

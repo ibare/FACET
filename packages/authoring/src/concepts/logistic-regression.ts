@@ -25,7 +25,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const logisticRegressionConcept: FacetConceptSource = {
   id: 'logisticRegression',
   label: 'Logistic Regression',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:logisticRegression',
 
   surface: {

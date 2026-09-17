@@ -27,7 +27,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const vocabularyConcept: FacetConceptSource = {
   id: 'vocabulary',
   label: 'Vocabulary (Which Corpus Taught a Tokenizer Its Pieces)',
-  domain: 'ai-engineering',
   canonicalFacet: 'facet:vocabulary',
 
   surface: {

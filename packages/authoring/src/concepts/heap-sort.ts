@@ -16,7 +16,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const heapSortConcept: FacetConceptSource = {
   id: 'heapSort',
   label: 'Heap Sort',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:heapSort',
 
   surface: {

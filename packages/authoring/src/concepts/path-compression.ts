@@ -17,7 +17,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const pathCompressionConcept: FacetConceptSource = {
   id: 'pathCompression',
   label: 'Path Compression',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:pathCompression',
 
   surface: {

@@ -12,7 +12,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const signatureOnHashConcept: FacetConceptSource = {
   id: 'signatureOnHash',
   label: 'Signing the Digest, Not the Document',
-  domain: 'security',
   canonicalFacet: 'facet:signatureOnHash',
 
   surface: {

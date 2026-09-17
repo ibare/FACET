@@ -27,7 +27,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const hierarchicalConcept: FacetConceptSource = {
   id: 'hierarchical',
   label: 'Hierarchical Clustering (Choice of Linkage)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:hierarchical',
 
   surface: {

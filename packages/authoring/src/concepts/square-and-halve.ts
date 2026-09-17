@@ -24,7 +24,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const squareAndHalveConcept: FacetConceptSource = {
   id: 'squareAndHalve',
   label: 'Square and Halve (Fast Power from the Binary Exponent)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:squareAndHalve',
 
   surface: {

@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const interpolationSearchConcept: FacetConceptSource = {
   id: 'interpolationSearch',
   label: 'Interpolation Search',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:interpolationSearch',
 
   surface: {

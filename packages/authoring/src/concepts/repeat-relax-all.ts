@@ -19,7 +19,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const repeatRelaxAllConcept: FacetConceptSource = {
   id: 'repeatRelaxAll',
   label: 'Sweeping Every Edge, Round After Round',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:repeatRelaxAll',
 
   surface: {

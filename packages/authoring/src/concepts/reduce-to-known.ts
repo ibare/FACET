@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const reduceToKnownConcept: FacetConceptSource = {
   id: 'reduceToKnown',
   label: 'Restating a Problem as One Already Studied',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:reduceToKnown',
 
   surface: {

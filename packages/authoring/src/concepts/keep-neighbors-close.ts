@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const keepNeighborsCloseConcept: FacetConceptSource = {
   id: 'keepNeighborsClose',
   label: 'Keeping Neighbours Close (What the Flattening Tears)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:keepNeighborsClose',
 
   surface: {

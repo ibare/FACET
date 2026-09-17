@@ -36,7 +36,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const silentTruncationConcept: FacetConceptSource = {
   id: 'silentTruncation',
   label: 'Narrowing a Value (The High Places Are Dropped)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:silentTruncation',
 
   surface: {

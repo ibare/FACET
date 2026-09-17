@@ -27,7 +27,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const floatingPointConcept: FacetConceptSource = {
   id: 'floatingPoint',
   label: 'Floating Point (Splitting Bits Between Reach and Resolution)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:floatingPoint',
 
   surface: {

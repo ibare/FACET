@@ -27,7 +27,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const unknownBecomesKnownConcept: FacetConceptSource = {
   id: 'unknownBecomesKnown',
   label: 'Unknown Becomes Known (A Word the Pieces Do Not Hold)',
-  domain: 'ai-engineering',
   canonicalFacet: 'facet:unknownBecomesKnown',
 
   surface: {

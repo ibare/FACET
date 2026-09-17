@@ -15,7 +15,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const separateComponentsConcept: FacetConceptSource = {
   id: 'separateComponents',
   label: 'Separate Components (One Search Is Not Enough)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:separateComponents',
 
   surface: {

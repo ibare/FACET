@@ -29,7 +29,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const writeBackVsThroughConcept: FacetConceptSource = {
   id: 'writeBackVsThrough',
   label: 'Write-Back and Write-Through Side by Side',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:writeBackVsThrough',
 
   surface: {

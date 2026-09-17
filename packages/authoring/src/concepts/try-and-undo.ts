@@ -19,7 +19,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const tryAndUndoConcept: FacetConceptSource = {
   id: 'tryAndUndo',
   label: 'Taking a Move Back (the Undo Half of a Trial)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:tryAndUndo',
 
   surface: {

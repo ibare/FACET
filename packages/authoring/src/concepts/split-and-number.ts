@@ -27,7 +27,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const splitAndNumberConcept: FacetConceptSource = {
   id: 'splitAndNumber',
   label: 'Split and Number (Keeping the Label Instead of the Values)',
-  domain: 'ai-engineering',
   canonicalFacet: 'facet:splitAndNumber',
 
   surface: {

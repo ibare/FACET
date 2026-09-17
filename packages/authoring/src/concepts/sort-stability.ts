@@ -24,7 +24,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const sortStabilityConcept: FacetConceptSource = {
   id: 'sortStability',
   label: 'Sort Stability (Ties Keep Their Input Order)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:sortStability',
 
   surface: {

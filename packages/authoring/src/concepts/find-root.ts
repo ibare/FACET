@@ -16,7 +16,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const findRootConcept: FacetConceptSource = {
   id: 'findRoot',
   label: 'Finding the Representative',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:findRoot',
 
   surface: {

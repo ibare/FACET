@@ -18,7 +18,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const avlTreeConcept: FacetConceptSource = {
   id: 'avlTree',
   label: 'AVL Tree',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:avlTree',
 
   surface: {

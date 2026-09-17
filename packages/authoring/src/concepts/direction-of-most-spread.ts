@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const directionOfMostSpreadConcept: FacetConceptSource = {
   id: 'directionOfMostSpread',
   label: 'The Direction of Most Spread (Variance as a Function of Angle)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:directionOfMostSpread',
 
   surface: {

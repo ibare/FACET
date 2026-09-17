@@ -19,7 +19,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const mutuallyReachableConcept: FacetConceptSource = {
   id: 'mutuallyReachable',
   label: 'Mutually Reachable (Both Ways or Not a Group)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:mutuallyReachable',
 
   surface: {

@@ -23,7 +23,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const editTableFillConcept: FacetConceptSource = {
   id: 'editTableFill',
   label: 'Edit-Distance Table (Filled Prefix by Prefix)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:editTableFill',
 
   surface: {

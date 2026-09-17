@@ -29,7 +29,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const cycleBlocksOrderConcept: FacetConceptSource = {
   id: 'cycleBlocksOrder',
   label: 'A Ring Leaves No Order',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:cycleBlocksOrder',
 
   surface: {

@@ -27,7 +27,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const productQuantizationConcept: FacetConceptSource = {
   id: 'productQuantization',
   label: 'Product Quantization (Finer Chunks, Truer Values, More Storage)',
-  domain: 'ai-engineering',
   canonicalFacet: 'facet:productQuantization',
 
   surface: {

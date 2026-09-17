@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const hyperloglogConcept: FacetConceptSource = {
   id: 'hyperloglog',
   label: 'HyperLogLog (What More Buckets Buy)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:hyperloglog',
 
   surface: {

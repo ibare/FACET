@@ -17,7 +17,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const redBlackTreeConcept: FacetConceptSource = {
   id: 'redBlackTree',
   label: 'Red-Black Tree',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:redBlackTree',
 
   surface: {

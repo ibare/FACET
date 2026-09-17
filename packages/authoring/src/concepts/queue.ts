@@ -25,7 +25,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const queueFifoConcept: FacetConceptSource = {
   id: 'queueFifo',
   label: 'FIFO Queue',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:queueFifo',
 
   surface: {

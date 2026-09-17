@@ -20,7 +20,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const manyTreesVoteConcept: FacetConceptSource = {
   id: 'manyTreesVote',
   label: 'Ensemble Vote (Why Scattered Mistakes Cancel)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:manyTreesVote',
 
   surface: {

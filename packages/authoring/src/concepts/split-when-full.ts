@@ -18,7 +18,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const splitWhenFullConcept: FacetConceptSource = {
   id: 'splitWhenFull',
   label: 'Splitting a Full Node',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:splitWhenFull',
 
   surface: {

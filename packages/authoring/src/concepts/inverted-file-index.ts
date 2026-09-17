@@ -29,7 +29,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const invertedFileIndexConcept: FacetConceptSource = {
   id: 'invertedFileIndex',
   label: 'Inverted File Index (One Setting Fixes Accuracy and Cost)',
-  domain: 'ai-engineering',
   canonicalFacet: 'facet:invertedFileIndex',
 
   surface: {

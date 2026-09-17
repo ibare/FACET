@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const sortEdgesAvoidCycleConcept: FacetConceptSource = {
   id: 'sortEdgesAvoidCycle',
   label: 'Dropping the Edge That Closes a Loop',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:sortEdgesAvoidCycle',
 
   surface: {

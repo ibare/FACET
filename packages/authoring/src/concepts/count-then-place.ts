@@ -24,7 +24,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const countThenPlaceConcept: FacetConceptSource = {
   id: 'countThenPlace',
   label: 'Ordering Without Comparing (Count, Then Place)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:countThenPlace',
 
   surface: {

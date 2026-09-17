@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const selectionSortConcept: FacetConceptSource = {
   id: 'selectionSort',
   label: 'Selection Sort (Many Comparisons, Few Moves)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:selectionSort',
 
   surface: {

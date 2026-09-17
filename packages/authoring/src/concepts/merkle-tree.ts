@@ -11,7 +11,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const merkleTreeConcept: FacetConceptSource = {
   id: 'merkleTree',
   label: 'Merkle Tree',
-  domain: 'security',
   canonicalFacet: 'facet:merkleTree',
 
   surface: {

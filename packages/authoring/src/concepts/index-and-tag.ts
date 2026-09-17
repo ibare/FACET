@@ -33,7 +33,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const indexAndTagConcept: FacetConceptSource = {
   id: 'indexAndTag',
   label: 'Index and Tag (One Address Cut Into Three Jobs)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:indexAndTag',
 
   surface: {

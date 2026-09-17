@@ -32,6 +32,7 @@ const external = [/^@ffacet\/core(\/.*)?$/, /^@tiptap\/core/, /^@tiptap\/pm(\/.*
  * chunk 분리 + 이름 부여.
  *
  *  - facet (facets/<group>/<name>/src) → 'facet-<name>' (개별 lazy chunk).
+ *  - bootstrap 의 언어별 카탈로그 (src/catalog/<locale>.generated.ts) → 'catalog-<locale>' (언어별 lazy chunk).
  *  - ir-interpreter / view-code / transpiler-* → 'runtime' (entry 와 facet 모두가 공유).
  *    core 는 external 이라 그래프에 들어오지 않는다.
  *
@@ -42,6 +43,8 @@ const external = [/^@ffacet\/core(\/.*)?$/, /^@tiptap\/core/, /^@tiptap\/pm(\/.*
 function manualChunks(id) {
   const facet = id.match(/facets\/[^/]+\/([^/]+)\/src\//);
   if (facet) return `facet-${facet[1]}`;
+  const catalog = id.match(/\/packages\/bootstrap\/src\/catalog\/([a-z]+)\.generated\.ts$/);
+  if (catalog && catalog[1] !== 'loaders') return `catalog-${catalog[1]}`;
   if (
     id.includes('/packages/ir-interpreter/') ||
     id.includes('/packages/view-code/') ||
@@ -52,10 +55,11 @@ function manualChunks(id) {
   return undefined;
 }
 
-/** chunk 의 출력 디렉터리 결정. facet → facets/, vendor → vendor/, 나머지 → runtime/. */
+/** chunk 의 출력 디렉터리 결정. facet → facets/, 카탈로그 → catalog/, vendor → vendor/, 나머지 → runtime/. */
 function chunkFileName(info) {
   const name = info.name ?? '';
   if (name.startsWith('facet-')) return 'facets/[name]-[hash].js';
+  if (name.startsWith('catalog-')) return 'catalog/[name]-[hash].js';
   const id = info.facadeModuleId ?? info.moduleIds?.[0] ?? '';
   if (id.includes('node_modules')) return 'vendor/[name]-[hash].js';
   return 'runtime/[name]-[hash].js';
@@ -88,6 +92,9 @@ const jsBundle = {
       target: 'es2022',
       sourceMap: false,
       tsconfig: '../../tsconfig.base.json',
+      // 비 ASCII 문자열을 \uXXXX 로 풀지 않는다 (bootstrap 설정과 같은 판단 — 언어별
+      // 카탈로그가 한국어 기준 절반 가까이 부푼다).
+      charset: 'utf8',
       // 타입체크는 pnpm typecheck (tsc --noEmit) 가 담당. 여기는 transpile only.
     }),
     VISUALIZE &&

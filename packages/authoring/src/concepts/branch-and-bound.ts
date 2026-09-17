@@ -24,7 +24,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const branchAndBoundConcept: FacetConceptSource = {
   id: 'branchAndBound',
   label: 'Branch and Bound (Exact Search Without a Table)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:branchAndBound',
 
   surface: {

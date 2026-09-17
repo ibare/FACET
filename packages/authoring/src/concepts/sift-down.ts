@@ -16,7 +16,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const siftDownConcept: FacetConceptSource = {
   id: 'siftDown',
   label: 'Sift Down (Sinking After a Removal)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:siftDown',
 
   surface: {

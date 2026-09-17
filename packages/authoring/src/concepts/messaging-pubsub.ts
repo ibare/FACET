@@ -12,7 +12,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const messagingPubsubConcept: FacetConceptSource = {
   id: 'messagingPubsub',
   label: 'Publish/Subscribe Messaging',
-  domain: 'system-design',
   canonicalFacet: 'facet:messagingPubsub',
 
   surface: {

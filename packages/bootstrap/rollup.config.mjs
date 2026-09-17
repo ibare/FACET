@@ -24,12 +24,15 @@ const external = [/^@ffacet\/core(\/.*)?$/];
 /**
  * chunk 분리 + 이름 부여.
  *  - algorithm facet (facets/<group>/<name>/src) → 'facet-<name>' (개별 lazy chunk).
+ *  - 언어별 카탈로그 (src/catalog/<locale>.generated.ts) → 'catalog-<locale>' (언어별 lazy chunk).
  *  - view-code / transpiler-* → 'runtime' (entry 와 facet 모두 공유).
  * id 는 절대 파일 경로로 들어온다.
  */
 function manualChunks(id) {
   const facet = id.match(/facets\/[^/]+\/([^/]+)\/src\//);
   if (facet) return `facet-${facet[1]}`;
+  const catalog = id.match(/\/src\/catalog\/([a-z]+)\.generated\.ts$/);
+  if (catalog && catalog[1] !== 'loaders') return `catalog-${catalog[1]}`;
   if (
     id.includes('/packages/view-code/') ||
     /\/packages\/transpiler-[^/]+\//.test(id)
@@ -39,10 +42,11 @@ function manualChunks(id) {
   return undefined;
 }
 
-/** chunk 출력 디렉터리. facet → facets/, vendor → vendor/, 나머지 → runtime/. */
+/** chunk 출력 디렉터리. facet → facets/, 카탈로그 → catalog/, vendor → vendor/, 나머지 → runtime/. */
 function chunkFileName(info) {
   const name = info.name ?? '';
   if (name.startsWith('facet-')) return 'facets/[name]-[hash].js';
+  if (name.startsWith('catalog-')) return 'catalog/[name]-[hash].js';
   const id = info.facadeModuleId ?? info.moduleIds?.[0] ?? '';
   if (id.includes('node_modules')) return 'vendor/[name]-[hash].js';
   return 'runtime/[name]-[hash].js';
@@ -71,6 +75,9 @@ const jsBundle = {
     esbuild({
       target: 'es2022',
       sourceMap: false,
+      // 한글 · 한자권 · 데바나가리 문자열을 \uXXXX 로 풀지 않는다. 풀면 언어별
+      // 카탈로그가 한국어 73KB → 110KB, 힌디어 117KB → 195KB 로 부푼다.
+      charset: 'utf8',
       tsconfig: '../../tsconfig.base.json',
     }),
   ],

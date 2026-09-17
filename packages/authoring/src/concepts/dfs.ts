@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const dfsConcept: FacetConceptSource = {
   id: 'dfs',
   label: 'Depth-First Search',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:dfs',
 
   surface: {

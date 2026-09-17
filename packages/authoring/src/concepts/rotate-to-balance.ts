@@ -19,7 +19,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const rotateToBalanceConcept: FacetConceptSource = {
   id: 'rotateToBalance',
   label: 'What a Rotation Changes',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:rotateToBalance',
 
   surface: {

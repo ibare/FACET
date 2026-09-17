@@ -44,7 +44,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const setAssociativeCacheConcept: FacetConceptSource = {
   id: 'setAssociativeCache',
   label: 'Set-Associative Cache (How Far Widening Pays)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:setAssociativeCache',
 
   surface: {

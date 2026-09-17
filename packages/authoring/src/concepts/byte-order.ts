@@ -38,7 +38,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const byteOrderConcept: FacetConceptSource = {
   id: 'byteOrder',
   label: 'Byte Order (Endianness)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:byteOrder',
 
   surface: {

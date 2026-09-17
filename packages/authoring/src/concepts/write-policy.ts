@@ -31,7 +31,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const writePolicyConcept: FacetConceptSource = {
   id: 'writePolicy',
   label: 'Write Policy (Deciding When the Edit Goes Down)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:writePolicy',
 
   surface: {

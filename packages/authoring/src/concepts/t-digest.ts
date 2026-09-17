@@ -24,7 +24,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const tDigestConcept: FacetConceptSource = {
   id: 'tDigest',
   label: 't-Digest (What the Compression Budget Buys at the Tail)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:tDigest',
 
   surface: {

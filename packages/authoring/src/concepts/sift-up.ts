@@ -17,7 +17,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const siftUpConcept: FacetConceptSource = {
   id: 'siftUp',
   label: 'Sift Up (Climbing After an Insert)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:siftUp',
 
   surface: {

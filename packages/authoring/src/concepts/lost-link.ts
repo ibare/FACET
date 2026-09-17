@@ -18,7 +18,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const lostLinkConcept: FacetConceptSource = {
   id: 'lostLink',
   label: 'Losing the Tail by Relinking Out of Order',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:lostLink',
 
   surface: {

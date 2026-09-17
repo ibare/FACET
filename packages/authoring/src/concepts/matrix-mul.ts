@@ -30,7 +30,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const matrixMulConcept: FacetConceptSource = {
   id: 'matrixMul',
   label: 'Strassen Multiplication (One Fewer Product per Layer)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:matrixMul',
 
   surface: {

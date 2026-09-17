@@ -26,7 +26,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const falseSharingConcept: FacetConceptSource = {
   id: 'falseSharing',
   label: 'False Sharing (One Line, Two Owners)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:falseSharing',
 
   surface: {

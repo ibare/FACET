@@ -26,7 +26,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const unevenFloatGapsConcept: FacetConceptSource = {
   id: 'unevenFloatGaps',
   label: 'Uneven Float Gaps (Neighbours Farther Apart as Values Grow)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:unevenFloatGaps',
 
   surface: {

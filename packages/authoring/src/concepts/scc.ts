@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const sccConcept: FacetConceptSource = {
   id: 'scc',
   label: 'Strongly Connected Components (Tarjan)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:scc',
 
   surface: {

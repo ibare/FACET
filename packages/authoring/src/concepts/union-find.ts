@@ -17,7 +17,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const unionFindConcept: FacetConceptSource = {
   id: 'unionFind',
   label: 'Union-Find (Disjoint Sets)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:unionFind',
 
   surface: {

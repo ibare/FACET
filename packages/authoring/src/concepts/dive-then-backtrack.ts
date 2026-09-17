@@ -19,7 +19,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const diveThenBacktrackConcept: FacetConceptSource = {
   id: 'diveThenBacktrack',
   label: 'Backing Out (the Retreat Half of a Deep Walk)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:diveThenBacktrack',
 
   surface: {

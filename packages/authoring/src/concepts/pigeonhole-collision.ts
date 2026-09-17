@@ -14,7 +14,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const pigeonholeCollisionConcept: FacetConceptSource = {
   id: 'pigeonholeCollision',
   label: 'Why Hash Collisions Must Exist',
-  domain: 'security',
   canonicalFacet: 'facet:pigeonholeCollision',
 
   surface: {

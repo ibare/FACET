@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const bellmanFordConcept: FacetConceptSource = {
   id: 'bellmanFord',
   label: 'Bellman-Ford (Shortest Paths with Negative Edges)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:bellmanFord',
 
   surface: {

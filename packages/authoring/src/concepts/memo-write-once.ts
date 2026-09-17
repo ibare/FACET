@@ -19,7 +19,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const memoWriteOnceConcept: FacetConceptSource = {
   id: 'memoWriteOnce',
   label: 'Memoization (Write Once, Read Afterwards)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:memoWriteOnce',
 
   surface: {

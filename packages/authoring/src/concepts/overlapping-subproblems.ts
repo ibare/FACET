@@ -18,7 +18,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const overlappingSubproblemsConcept: FacetConceptSource = {
   id: 'overlappingSubproblems',
   label: 'Overlapping Subproblems (Why Plain Recursion Repeats Itself)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:overlappingSubproblems',
 
   surface: {

@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const halveTheRangeConcept: FacetConceptSource = {
   id: 'halveTheRange',
   label: 'Halving the Range (What One Comparison Removes)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:halveTheRange',
 
   surface: {

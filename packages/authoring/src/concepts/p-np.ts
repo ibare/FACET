@@ -24,7 +24,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const pNpConcept: FacetConceptSource = {
   id: 'pNp',
   label: 'P vs NP (Checking Gains a Step, Finding Doubles)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:pNp',
 
   surface: {

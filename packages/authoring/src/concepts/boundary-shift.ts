@@ -29,7 +29,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const boundaryShiftConcept: FacetConceptSource = {
   id: 'boundaryShift',
   label: 'One Character Apart (Unstable Fragment Boundaries)',
-  domain: 'ai-engineering',
   canonicalFacet: 'facet:boundaryShift',
 
   surface: {

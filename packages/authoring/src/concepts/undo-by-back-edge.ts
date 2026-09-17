@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const undoByBackEdgeConcept: FacetConceptSource = {
   id: 'undoByBackEdge',
   label: 'Undo by Back Edge (Room to Push Flow Back)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:undoByBackEdge',
 
   surface: {

@@ -27,7 +27,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const failLinkConcept: FacetConceptSource = {
   id: 'failLink',
   label: 'Fail Link (Where a Dead End Goes Instead of the Root)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:failLink',
 
   surface: {

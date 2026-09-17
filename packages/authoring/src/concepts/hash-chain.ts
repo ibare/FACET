@@ -11,7 +11,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const hashChainConcept: FacetConceptSource = {
   id: 'hashChain',
   label: 'Hash Chain (Tamper-Evident Log)',
-  domain: 'security',
   canonicalFacet: 'facet:hashChain',
 
   surface: {

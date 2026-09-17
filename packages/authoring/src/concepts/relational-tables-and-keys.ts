@@ -12,7 +12,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const relationalTablesAndKeysConcept: FacetConceptSource = {
   id: 'relationalTablesAndKeys',
   label: 'Tables and Keys',
-  domain: 'database',
   canonicalFacet: 'facet:relationalTablesAndKeys',
 
   surface: {

@@ -24,7 +24,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const decisionTreeConcept: FacetConceptSource = {
   id: 'decisionTree',
   label: 'Decision Tree',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:decisionTree',
 
   surface: {

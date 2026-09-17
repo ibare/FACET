@@ -18,7 +18,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const chainingBucketConcept: FacetConceptSource = {
   id: 'chainingBucket',
   label: 'Chaining onto an Occupied Bucket',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:chainingBucket',
 
   surface: {

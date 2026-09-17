@@ -23,7 +23,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const quickSortConcept: FacetConceptSource = {
   id: 'quickSort',
   label: 'Quick Sort (Partition, Then Recurse on Both Sides)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:quickSort',
 
   surface: {

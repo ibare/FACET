@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const coinFlipHeightConcept: FacetConceptSource = {
   id: 'coinFlipHeight',
   label: 'A Coin Decides How High a Node Stands',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:coinFlipHeight',
 
   surface: {

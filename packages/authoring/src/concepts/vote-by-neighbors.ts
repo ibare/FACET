@@ -24,7 +24,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const voteByNeighborsConcept: FacetConceptSource = {
   id: 'voteByNeighbors',
   label: 'Vote by Neighbours (Who Is Allowed to Speak)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:voteByNeighbors',
 
   surface: {

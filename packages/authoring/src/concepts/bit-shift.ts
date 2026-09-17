@@ -39,7 +39,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const bitShiftConcept: FacetConceptSource = {
   id: 'bitShift',
   label: 'Bit Shift (Moving Places, Doubling and Halving)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:bitShift',
 
   surface: {

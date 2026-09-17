@@ -24,7 +24,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const relaxShorterPathConcept: FacetConceptSource = {
   id: 'relaxShorterPath',
   label: 'Relaxation (Rewriting a Distance Downward)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:relaxShorterPath',
 
   surface: {

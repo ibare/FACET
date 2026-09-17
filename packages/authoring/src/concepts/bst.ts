@@ -12,7 +12,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const bstConcept: FacetConceptSource = {
   id: 'bst',
   label: 'Binary Search Tree',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:bst',
 
   surface: {

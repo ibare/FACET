@@ -35,7 +35,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const bitwiseOpsConcept: FacetConceptSource = {
   id: 'bitwiseOps',
   label: 'Bitwise Operations (Each Place on Its Own)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:bitwiseOps',
 
   surface: {

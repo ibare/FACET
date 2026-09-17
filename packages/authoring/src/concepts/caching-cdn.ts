@@ -12,7 +12,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const cachingCdnConcept: FacetConceptSource = {
   id: 'cachingCdn',
   label: 'CDN (Edge Caching)',
-  domain: 'system-design',
   canonicalFacet: 'facet:cachingCdn',
 
   surface: {

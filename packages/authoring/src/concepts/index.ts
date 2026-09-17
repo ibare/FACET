@@ -2,8 +2,9 @@
  * 개념 선언 집합.
  *
  * 개념이 늘어나면 이 배열에 추가한다. facet 카탈로그(@ffacet/bootstrap)와의
- * 정합 — canonicalFacet 이 실재하는 facet id 인지, domain 이 디렉터리 구조와
- * 맞는지 — 은 향후 catalog codegen 이 검사한다.
+ * 정합 — canonicalFacet 이 실재하는 facet id 인지 — 은
+ * `test/concept-covers-facets.test.ts` 가 검사한다. 분야는 선언하지 않는다 —
+ * canonicalFacet 으로 분류표에서 찾아 붙인다.
  *
  * contrastWith 참조 무결성
  * ────────────────────────────

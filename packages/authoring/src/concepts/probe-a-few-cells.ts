@@ -30,7 +30,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const probeAFewCellsConcept: FacetConceptSource = {
   id: 'probeAFewCells',
   label: 'Probing Only a Few Partitions',
-  domain: 'ai-engineering',
   canonicalFacet: 'facet:probeAFewCells',
 
   surface: {

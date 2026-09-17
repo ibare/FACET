@@ -31,7 +31,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const negateAndAddOneConcept: FacetConceptSource = {
   id: 'negateAndAddOne',
   label: 'Negate by Flipping and Adding One',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:negateAndAddOne',
 
   surface: {

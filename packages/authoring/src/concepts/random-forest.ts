@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const randomForestConcept: FacetConceptSource = {
   id: 'randomForest',
   label: 'Random Forest (Ensemble of Decision Trees)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:randomForest',
 
   surface: {

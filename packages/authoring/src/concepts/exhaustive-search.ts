@@ -26,7 +26,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const exhaustiveSearchConcept: FacetConceptSource = {
   id: 'exhaustiveSearch',
   label: 'Exhaustive Search (Which Factor Actually Drives the Work)',
-  domain: 'ai-engineering',
   canonicalFacet: 'facet:exhaustiveSearch',
 
   surface: {

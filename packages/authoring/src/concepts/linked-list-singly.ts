@@ -15,7 +15,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const linkedListSinglyConcept: FacetConceptSource = {
   id: 'linkedListSingly',
   label: 'Singly Linked List',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:linkedListSingly',
 
   surface: {

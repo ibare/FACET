@@ -26,7 +26,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const badCharSkipConcept: FacetConceptSource = {
   id: 'badCharSkip',
   label: 'Bad Character Skip (The Letter That Failed Sets the Distance)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:badCharSkip',
 
   surface: {

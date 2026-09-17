@@ -19,7 +19,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const markVisitedOrLoopConcept: FacetConceptSource = {
   id: 'markVisitedOrLoop',
   label: 'The Visited Mark (Why a Graph Walk Ends)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:markVisitedOrLoop',
 
   surface: {

@@ -20,7 +20,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const shiftOnInsertConcept: FacetConceptSource = {
   id: 'shiftOnInsert',
   label: 'Making Room by Shifting Right',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:shiftOnInsert',
 
   surface: {

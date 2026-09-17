@@ -23,7 +23,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const dijkstraConcept: FacetConceptSource = {
   id: 'dijkstra',
   label: 'Dijkstra (Single-Source Shortest Paths)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:dijkstra',
 
   surface: {

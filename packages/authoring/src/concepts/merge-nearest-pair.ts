@@ -32,7 +32,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const mergeNearestPairConcept: FacetConceptSource = {
   id: 'mergeNearestPair',
   label: 'Clustering Without Fixing the Number First',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:mergeNearestPair',
 
   surface: {

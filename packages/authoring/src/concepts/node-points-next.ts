@@ -17,7 +17,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const nodePointsNextConcept: FacetConceptSource = {
   id: 'nodePointsNext',
   label: 'What a Node Holds Beside Its Value',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:nodePointsNext',
 
   surface: {

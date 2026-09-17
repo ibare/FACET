@@ -26,7 +26,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const pushPopTopConcept: FacetConceptSource = {
   id: 'pushPopTop',
   label: 'One Opening: Push, Pop, and Top',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:pushPopTop',
 
   surface: {

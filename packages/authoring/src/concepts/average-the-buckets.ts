@@ -20,7 +20,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const averageTheBucketsConcept: FacetConceptSource = {
   id: 'averageTheBuckets',
   label: 'Average the Buckets (Confining One Lucky Draw)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:averageTheBuckets',
 
   surface: {

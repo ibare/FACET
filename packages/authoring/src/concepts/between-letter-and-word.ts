@@ -28,7 +28,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const betweenLetterAndWordConcept: FacetConceptSource = {
   id: 'betweenLetterAndWord',
   label: 'Between Letter and Word (Choosing How Coarse to Divide)',
-  domain: 'ai-engineering',
   canonicalFacet: 'facet:betweenLetterAndWord',
 
   surface: {

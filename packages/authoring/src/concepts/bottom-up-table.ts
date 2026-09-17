@@ -19,7 +19,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const bottomUpTableConcept: FacetConceptSource = {
   id: 'bottomUpTable',
   label: 'Bottom-Up Table (Filling in Order Instead of Calling)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:bottomUpTable',
 
   surface: {

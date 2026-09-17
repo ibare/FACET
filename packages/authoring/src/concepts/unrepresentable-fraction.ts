@@ -23,7 +23,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const unrepresentableFractionConcept: FacetConceptSource = {
   id: 'unrepresentableFraction',
   label: 'Unrepresentable Fraction (A Decimal That Never Ends in Binary)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:unrepresentableFraction',
 
   surface: {

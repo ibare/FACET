@@ -13,7 +13,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const bfsConcept: FacetConceptSource = {
   id: 'bfs',
   label: 'Breadth-First Search',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:bfs',
 
   surface: {

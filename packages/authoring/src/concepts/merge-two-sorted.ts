@@ -17,7 +17,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const mergeTwoSortedConcept: FacetConceptSource = {
   id: 'mergeTwoSorted',
   label: 'Merging Two Sorted Runs',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:mergeTwoSorted',
 
   surface: {

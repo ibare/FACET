@@ -12,7 +12,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const ipRoutingConcept: FacetConceptSource = {
   id: 'ipRouting',
   label: 'IP Routing',
-  domain: 'network',
   canonicalFacet: 'facet:ipRouting',
 
   surface: {

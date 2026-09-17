@@ -18,7 +18,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const sharePrefixPathConcept: FacetConceptSource = {
   id: 'sharePrefixPath',
   label: 'Words Sharing One Path',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:sharePrefixPath',
 
   surface: {

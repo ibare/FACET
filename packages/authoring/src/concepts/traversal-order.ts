@@ -16,7 +16,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const traversalOrderConcept: FacetConceptSource = {
   id: 'traversalOrder',
   label: 'Preorder, Inorder, Postorder',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:traversalOrder',
 
   surface: {

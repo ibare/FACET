@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const svmConcept: FacetConceptSource = {
   id: 'svm',
   label: 'Support Vector Machine (Soft Margin)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:svm',
 
   surface: {

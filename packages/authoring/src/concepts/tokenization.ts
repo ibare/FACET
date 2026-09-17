@@ -12,7 +12,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const tokenizationConcept: FacetConceptSource = {
   id: 'tokenization',
   label: 'Tokenization (Lexical Analysis)',
-  domain: 'compilers',
   canonicalFacet: 'facet:tokenization',
 
   surface: {

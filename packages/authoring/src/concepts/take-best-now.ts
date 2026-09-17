@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const takeBestNowConcept: FacetConceptSource = {
   id: 'takeBestNow',
   label: 'Greedy Choice (One Pick, No Second Look)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:takeBestNow',
 
   surface: {

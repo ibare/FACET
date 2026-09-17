@@ -20,7 +20,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const shiftOnRemoveConcept: FacetConceptSource = {
   id: 'shiftOnRemove',
   label: 'Closing the Gap After a Removal',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:shiftOnRemove',
 
   surface: {

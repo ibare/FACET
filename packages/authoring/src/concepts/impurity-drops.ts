@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const impurityDropsConcept: FacetConceptSource = {
   id: 'impurityDrops',
   label: 'Impurity Drop (Scoring a Split)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:impurityDrops',
 
   surface: {

@@ -27,7 +27,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const allSuffixesSortedConcept: FacetConceptSource = {
   id: 'allSuffixesSorted',
   label: 'All Suffixes, Sorted (Occurrences Gather in One Block)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:allSuffixesSorted',
 
   surface: {

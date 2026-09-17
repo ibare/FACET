@@ -17,7 +17,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const depthDoublesCountConcept: FacetConceptSource = {
   id: 'depthDoublesCount',
   label: 'Each Level Doubles the Number of Positions',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:depthDoublesCount',
 
   surface: {

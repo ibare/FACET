@@ -37,7 +37,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const conflictMissConcept: FacetConceptSource = {
   id: 'conflictMiss',
   label: 'Conflict Miss (Thrown Out With Lines to Spare)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:conflictMiss',
 
   surface: {

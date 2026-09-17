@@ -24,7 +24,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const kChangesBoundaryConcept: FacetConceptSource = {
   id: 'kChangesBoundary',
   label: 'How k Changes the Answer (The Same Point, Two Verdicts)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:kChangesBoundary',
 
   surface: {

@@ -25,7 +25,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const sieveConcept: FacetConceptSource = {
   id: 'sieve',
   label: 'Sieve of Eratosthenes (The Board Grows, the Erasers Do Not)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:sieve',
 
   surface: {

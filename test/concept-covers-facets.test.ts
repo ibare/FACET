@@ -31,7 +31,7 @@ import { getFacetConcepts } from '@ffacet/authoring';
 
 bootstrapFacet();
 
-const catalog = getFacetCatalog();
+const catalog = (await getFacetCatalog()).facets;
 const concepts = getFacetConcepts();
 
 /** 개념이 가리키는 facet id — canonical 하나 + aspect 여럿. */
@@ -73,16 +73,16 @@ describe('개념 메타와 facet', () => {
   });
 
   /*
-   * 개념의 domain 은 손으로 적고 facet 의 domain 은 디렉터리에서 나온다. 어긋나면
-   * 호스트 카탈로그의 도메인 묶음이 facet 과 다른 자리를 가리킨다.
+   * 개념의 domain 은 예전엔 손으로 적었다. 이제는 canonicalFacet 으로 분류표에서
+   * 찾아 붙이므로 어긋날 수 없어야 한다 — 그 배선이 끊기지 않았는지만 본다.
    */
-  it('개념의 domain 이 canonicalFacet 의 domain 과 같다', () => {
+  it('개념의 domain 이 카탈로그의 canonicalFacet 분야와 같다', () => {
     const domainOf = new Map(catalog.map((e) => [e.id, e.domain]));
     const mismatch: string[] = [];
     for (const c of concepts) {
       const real = domainOf.get(c.canonicalFacet);
-      if (real !== undefined && real !== c.domain) {
-        mismatch.push(`${c.id}: 선언 ${c.domain} ≠ 실제 ${real}`);
+      if (real !== c.domain) {
+        mismatch.push(`${c.id}: 개념 ${c.domain} ≠ 카탈로그 ${real}`);
       }
     }
     expect(mismatch).toEqual([]);

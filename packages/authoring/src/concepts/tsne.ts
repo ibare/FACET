@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const tsneConcept: FacetConceptSource = {
   id: 'tsne',
   label: 't-SNE (Perplexity and What the Picture Loses)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:tsne',
 
   surface: {

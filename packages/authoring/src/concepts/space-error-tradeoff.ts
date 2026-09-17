@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const spaceErrorTradeoffConcept: FacetConceptSource = {
   id: 'spaceErrorTradeoff',
   label: 'Paying for a Smaller Counter Table in Error',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:spaceErrorTradeoff',
 
   surface: {

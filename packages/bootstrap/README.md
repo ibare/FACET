@@ -17,18 +17,23 @@ import { bootstrapFacet, getFacetCatalog } from '@ffacet/bootstrap';
 
 bootstrapFacet(); // 앱 부팅 시 1회 — View/트랜스파일러 등록 + facet lazy loader 매핑
 
-const catalog = getFacetCatalog(); // [{ id, title, description, domain }, ...] — facet 모듈 미로드
+const catalog = await getFacetCatalog('ko'); // facet 모듈 미로드
+// catalog.locale   — 실제로 담긴 언어 (없는 언어를 달라고 하면 'en')
+// catalog.domains  — [{ id, name, subdomains: [{ id, name }] }]  분야 이름표
+// catalog.facets   — [{ id, title, description, domain, subdomain }]
 ```
 
-`bootstrapFacet()` 호출 후, 각 facet 은 실제 재생 시점에 lazy chunk 로 로드된다. `getFacetCatalog()` 는 빌드타임 매니페스트만 동기 조회하므로 facet chunk 를 로드하지 않는다.
+`bootstrapFacet()` 호출 후, 각 facet 은 실제 재생 시점에 lazy chunk 로 로드된다. `getFacetCatalog()` 는 facet chunk 를 로드하지 않고, 빌드타임에 만든 카탈로그 중 **요청한 언어 하나**만 불러온다. 문자열은 이미 그 언어로 골라져 있다. 순서는 분야 → 하위 분야 → facet 이라 그대로 묶어 그리면 된다.
+
+제목·설명은 각 facet 의 `facet.ts`, 분야는 저장소의 `taxonomy/taxonomy.json` 이 원본이다.
 
 ## 공개 API
 
 | export | 설명 |
 | --- | --- |
 | `bootstrapFacet()` | View/트랜스파일러 정적 등록 + facet lazy loader 매핑 (부팅 시 1회) |
-| `getFacetCatalog()` | facet 모듈 미로드 상태로 추가 가능 시각화 목록 조회 |
-| `FacetCatalogEntry` | 카탈로그 항목 타입 |
+| `getFacetCatalog(locale?)` | facet 모듈 미로드 상태로 추가 가능 시각화 목록을 한 언어로 불러온다 (Promise) |
+| `FacetCatalog` · `FacetCatalogEntry` · `FacetCatalogDomain` · `FacetCatalogSubdomain` | 카탈로그 타입 |
 
 ## 라이선스
 

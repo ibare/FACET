@@ -25,7 +25,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const boyerMooreConcept: FacetConceptSource = {
   id: 'boyerMoore',
   label: 'Boyer-Moore (A Longer Pattern Searches Faster)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:boyerMoore',
 
   surface: {

@@ -18,7 +18,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const bTreeConcept: FacetConceptSource = {
   id: 'bTree',
   label: 'B-Tree',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:bTree',
 
   surface: {

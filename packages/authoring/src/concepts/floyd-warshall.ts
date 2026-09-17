@@ -18,7 +18,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const floydWarshallConcept: FacetConceptSource = {
   id: 'floydWarshall',
   label: 'Floyd–Warshall (All-Pairs Shortest Paths)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:floydWarshall',
 
   surface: {

@@ -25,7 +25,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const bottleneckSetsFlowConcept: FacetConceptSource = {
   id: 'bottleneckSetsFlow',
   label: 'The Narrowest Pipe Sets the Amount',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:bottleneckSetsFlow',
 
   surface: {

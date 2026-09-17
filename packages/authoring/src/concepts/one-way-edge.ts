@@ -16,7 +16,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const oneWayEdgeConcept: FacetConceptSource = {
   id: 'oneWayEdge',
   label: 'Directed Edge (One-Way Reachability)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:oneWayEdge',
 
   surface: {

@@ -17,7 +17,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const heightStaysLowConcept: FacetConceptSource = {
   id: 'heightStaysLow',
   label: 'Branching Factor and Tree Height',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:heightStaysLow',
 
   surface: {

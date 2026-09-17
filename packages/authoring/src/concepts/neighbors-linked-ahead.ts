@@ -26,7 +26,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const neighborsLinkedAheadConcept: FacetConceptSource = {
   id: 'neighborsLinkedAhead',
   label: 'Links Laid Before the Question (Walking Instead of Measuring)',
-  domain: 'ai-engineering',
   canonicalFacet: 'facet:neighborsLinkedAhead',
 
   surface: {

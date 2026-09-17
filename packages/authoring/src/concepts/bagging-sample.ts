@@ -19,7 +19,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const baggingSampleConcept: FacetConceptSource = {
   id: 'baggingSample',
   label: 'Bagging (Bootstrap Sample with Replacement)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:baggingSample',
 
   surface: {

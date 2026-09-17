@@ -20,7 +20,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const growthOutpacesConcept: FacetConceptSource = {
   id: 'growthOutpaces',
   label: 'The Highest-Degree Term Takes Over the Total',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:growthOutpaces',
 
   surface: {

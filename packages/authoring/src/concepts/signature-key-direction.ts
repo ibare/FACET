@@ -11,7 +11,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const signatureKeyDirectionConcept: FacetConceptSource = {
   id: 'signatureKeyDirection',
   label: 'Encryption vs Signing: Key Roles Reverse',
-  domain: 'security',
   canonicalFacet: 'facet:signatureKeyDirection',
 
   surface: {

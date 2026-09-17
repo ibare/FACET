@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const twosComplementConcept: FacetConceptSource = {
   id: 'twosComplement',
   label: "Two's Complement (One Pattern, Two Readings)",
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:twosComplement',
 
   surface: {

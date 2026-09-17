@@ -17,7 +17,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const relinkInsertConcept: FacetConceptSource = {
   id: 'relinkInsert',
   label: 'Inserting by Rewriting Two Arrows',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:relinkInsert',
 
   surface: {

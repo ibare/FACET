@@ -17,7 +17,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const fewerHopsNotShorterConcept: FacetConceptSource = {
   id: 'fewerHopsNotShorter',
   label: 'Fewer Hops Is Not the Shorter Path',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:fewerHopsNotShorter',
 
   surface: {

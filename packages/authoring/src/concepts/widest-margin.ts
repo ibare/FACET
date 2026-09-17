@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const widestMarginConcept: FacetConceptSource = {
   id: 'widestMargin',
   label: 'Widest Margin (Choosing Among Separating Lines)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:widestMargin',
 
   surface: {

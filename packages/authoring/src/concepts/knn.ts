@@ -23,7 +23,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const knnConcept: FacetConceptSource = {
   id: 'knn',
   label: 'k-Nearest Neighbours (Nothing Is Learned Before the Question)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:knn',
 
   surface: {

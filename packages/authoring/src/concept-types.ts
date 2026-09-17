@@ -199,8 +199,6 @@ export type FacetConceptSource = {
    * 실제로는 형제다.
    */
   label: string;
-  /** facet 디렉터리 구조에서 오는 도메인 (cs-fundamentals / network / os ...). */
-  domain: string;
   /**
    * 이 개념의 기본 진입점 facet id. 정확히 하나.
    * `{FACET:<id>}` 는 언제나 이것으로 해석되므로 선택의 모호함이 남지 않는다.
@@ -231,6 +229,13 @@ export type FacetConceptSource = {
  * 않는다 (채우지 않을 필드를 타입에 두지 않는다).
  */
 export type FacetConcept = Omit<FacetConceptSource, 'briefing'> & {
+  /**
+   * 분야 id (cs-fundamentals / networks / ml-foundations ...). canonicalFacet 이
+   * `taxonomy/taxonomy.json` 에서 속한 분야이며, 호스트 카탈로그
+   * (`getFacetCatalog`) 의 `domain` 과 같은 값이다. 손으로 적지 않고 생성된 표에서
+   * 붙이므로 둘이 어긋날 수 없다.
+   */
+  domain: string;
   briefing: Omit<ConceptBriefing, 'screen'> & { screen: ResolvedConceptScreen };
   /** definition 콘텐츠 해시. 이 값이 그대로면 재임베딩할 필요가 없다. */
   definitionHash: string;

@@ -26,7 +26,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const heuristicGuidesConcept: FacetConceptSource = {
   id: 'heuristicGuides',
   label: 'A Guess at the Remaining Distance Steers the Search',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:heuristicGuides',
 
   surface: {

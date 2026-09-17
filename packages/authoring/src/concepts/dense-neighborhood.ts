@@ -23,7 +23,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const denseNeighborhoodConcept: FacetConceptSource = {
   id: 'denseNeighborhood',
   label: 'Dense Neighbourhood (A Group Is What the Chaining Reaches)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:denseNeighborhood',
 
   surface: {

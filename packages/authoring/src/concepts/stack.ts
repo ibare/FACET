@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const stackConcept: FacetConceptSource = {
   id: 'stack',
   label: 'Stack (LIFO)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:stack',
 
   surface: {

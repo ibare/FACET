@@ -17,7 +17,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const bstInorderSortedConcept: FacetConceptSource = {
   id: 'bstInorderSorted',
   label: 'Why Inorder Comes Out Sorted',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:bstInorderSorted',
 
   surface: {

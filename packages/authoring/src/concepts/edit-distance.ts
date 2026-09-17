@@ -25,7 +25,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const editDistanceConcept: FacetConceptSource = {
   id: 'editDistance',
   label: 'Edit Distance (Walking Back for the List of Fixes)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:editDistance',
 
   surface: {

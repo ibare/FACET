@@ -23,7 +23,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const partitionAroundPivotConcept: FacetConceptSource = {
   id: 'partitionAroundPivot',
   label: 'Partitioning Around a Pivot (Split Is Not Sort)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:partitionAroundPivot',
 
   surface: {

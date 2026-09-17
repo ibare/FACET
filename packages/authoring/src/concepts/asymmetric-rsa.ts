@@ -12,7 +12,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const asymmetricRsaConcept: FacetConceptSource = {
   id: 'asymmetricRsa',
   label: 'RSA (Public-Key Cryptography)',
-  domain: 'security',
   canonicalFacet: 'facet:asymmetricRsa',
 
   surface: {

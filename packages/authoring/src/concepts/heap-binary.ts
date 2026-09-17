@@ -19,7 +19,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const heapBinaryConcept: FacetConceptSource = {
   id: 'heapBinary',
   label: 'Binary Heap (Min-Heap)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:heapBinary',
 
   surface: {

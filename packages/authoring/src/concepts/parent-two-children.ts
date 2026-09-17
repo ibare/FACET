@@ -18,7 +18,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const parentTwoChildrenConcept: FacetConceptSource = {
   id: 'parentTwoChildren',
   label: 'Left and Right: Two Named Child Positions',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:parentTwoChildren',
 
   surface: {

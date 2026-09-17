@@ -15,7 +15,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const digitByDigitConcept: FacetConceptSource = {
   id: 'digitByDigit',
   label: 'Digit by Digit (Why the Passes Accumulate)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:digitByDigit',
 
   surface: {

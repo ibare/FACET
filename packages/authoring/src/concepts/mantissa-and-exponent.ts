@@ -26,7 +26,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const mantissaAndExponentConcept: FacetConceptSource = {
   id: 'mantissaAndExponent',
   label: 'Mantissa and Exponent (How One Number Is Assembled)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:mantissaAndExponent',
 
   surface: {

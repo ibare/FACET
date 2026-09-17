@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const growAndCopyConcept: FacetConceptSource = {
   id: 'growAndCopy',
   label: 'Growing a Full Array by Copying',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:growAndCopy',
 
   surface: {

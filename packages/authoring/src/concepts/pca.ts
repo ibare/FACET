@@ -25,7 +25,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const pcaConcept: FacetConceptSource = {
   id: 'pca',
   label: 'Principal Component Analysis (and What the Answer Depends On)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:pca',
 
   surface: {

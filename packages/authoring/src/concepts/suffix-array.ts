@@ -24,7 +24,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const suffixArrayConcept: FacetConceptSource = {
   id: 'suffixArray',
   label: 'Suffix Array (Searching a Text Ordered in Advance)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:suffixArray',
 
   surface: {

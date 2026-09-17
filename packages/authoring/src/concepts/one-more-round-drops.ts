@@ -19,7 +19,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const oneMoreRoundDropsConcept: FacetConceptSource = {
   id: 'oneMoreRoundDrops',
   label: 'One More Round, and It Drops Again (Negative Cycle)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:oneMoreRoundDrops',
 
   surface: {

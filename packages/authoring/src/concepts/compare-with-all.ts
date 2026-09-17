@@ -26,7 +26,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const compareWithAllConcept: FacetConceptSource = {
   id: 'compareWithAll',
   label: 'Compare With All (The Bill for Skipping Nobody)',
-  domain: 'ai-engineering',
   canonicalFacet: 'facet:compareWithAll',
 
   surface: {

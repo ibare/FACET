@@ -30,7 +30,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const fastPowerConcept: FacetConceptSource = {
   id: 'fastPower',
   label: 'Fast Power (What Squaring Saves as the Exponent Grows)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:fastPower',
 
   surface: {

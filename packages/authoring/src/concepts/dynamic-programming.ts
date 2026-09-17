@@ -27,7 +27,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const dynamicProgrammingConcept: FacetConceptSource = {
   id: 'dynamicProgramming',
   label: 'Dynamic Programming (Table Method)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:dynamicProgramming',
 
   surface: {

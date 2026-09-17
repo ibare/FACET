@@ -23,7 +23,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const crowdTheTailsConcept: FacetConceptSource = {
   id: 'crowdTheTails',
   label: 'Crowd the Tails (Bucket Widths That Narrow at the Extremes)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:crowdTheTails',
 
   surface: {

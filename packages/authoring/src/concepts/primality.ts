@@ -25,7 +25,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const primalityConcept: FacetConceptSource = {
   id: 'primality',
   label: 'Primality by Trial Division (What Stopping at the Square Root Saves)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:primality',
 
   surface: {

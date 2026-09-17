@@ -30,7 +30,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const positionalValueConcept: FacetConceptSource = {
   id: 'positionalValue',
   label: 'Place Value and Base (One Number, Three Notations)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:positionalValue',
 
   surface: {

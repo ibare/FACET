@@ -23,7 +23,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const negativeEdgeBreaksConcept: FacetConceptSource = {
   id: 'negativeEdgeBreaks',
   label: 'A Negative Edge Breaks Committing Early',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:negativeEdgeBreaks',
 
   surface: {

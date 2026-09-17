@@ -35,7 +35,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const skipListConcept: FacetConceptSource = {
   id: 'skipList',
   label: 'Skip List',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:skipList',
 
   surface: {

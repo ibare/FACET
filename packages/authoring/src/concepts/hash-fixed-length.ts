@@ -13,7 +13,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const hashFixedLengthConcept: FacetConceptSource = {
   id: 'hashFixedLength',
   label: 'Fixed-Length Hash Output',
-  domain: 'security',
   canonicalFacet: 'facet:hashFixedLength',
 
   surface: {

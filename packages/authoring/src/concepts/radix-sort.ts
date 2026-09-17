@@ -16,7 +16,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const radixSortConcept: FacetConceptSource = {
   id: 'radixSort',
   label: 'Radix Sort (Least Significant Digit First)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:radixSort',
 
   surface: {

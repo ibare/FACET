@@ -19,7 +19,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const walkPerCharacterConcept: FacetConceptSource = {
   id: 'walkPerCharacter',
   label: 'One Character, One Level Down',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:walkPerCharacter',
 
   surface: {

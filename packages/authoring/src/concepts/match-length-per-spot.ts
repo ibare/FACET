@@ -41,7 +41,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const matchLengthPerSpotConcept: FacetConceptSource = {
   id: 'matchLengthPerSpot',
   label: 'Match Length at Every Position (Borrowing from the Mirror Spot)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:matchLengthPerSpot',
 
   surface: {

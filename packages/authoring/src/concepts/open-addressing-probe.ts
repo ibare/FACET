@@ -19,7 +19,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const openAddressingProbeConcept: FacetConceptSource = {
   id: 'openAddressingProbe',
   label: 'Open Addressing: Probing for a Free Bucket',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:openAddressingProbe',
 
   surface: {

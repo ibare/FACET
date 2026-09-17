@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const kmeansConcept: FacetConceptSource = {
   id: 'kmeans',
   label: 'k-Means (Where the Answer Settles Depends on Where It Started)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:kmeans',
 
   surface: {

@@ -19,7 +19,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const boundAndCutConcept: FacetConceptSource = {
   id: 'boundAndCut',
   label: 'Bound and Cut (Pruning a Branch That Broke No Rule)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:boundAndCut',
 
   surface: {

@@ -27,7 +27,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const enqueueDequeueEndsConcept: FacetConceptSource = {
   id: 'enqueueDequeueEnds',
   label: 'Opposite Ends: In One, Out the Other',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:enqueueDequeueEnds',
 
   surface: {

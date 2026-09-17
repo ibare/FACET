@@ -24,7 +24,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const maxFlowConcept: FacetConceptSource = {
   id: 'maxFlow',
   label: 'Maximum Flow (Edmonds-Karp)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:maxFlow',
 
   surface: {

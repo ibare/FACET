@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const kMustBeGivenConcept: FacetConceptSource = {
   id: 'kMustBeGiven',
   label: 'k Has to Be Given (the Number of Groups Is an Input)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:kMustBeGiven',
 
   surface: {

@@ -19,8 +19,9 @@
  *  - @ffacet/host-tiptap-bundle (외부 호스트 workspace 의존) — re-export
  *
  * 카탈로그 접근:
- *  - getFacetCatalog() — facet 모듈을 로드하지 않고 추가 가능 목록(id/title/description/domain)
- *    을 동기 조회. 빌드타임 codegen 산출(facet-catalog.generated.ts)을 그대로 노출.
+ *  - getFacetCatalog(locale) — facet 모듈을 로드하지 않고 추가 가능 목록(제목 · 설명 · 분야)
+ *    을 한 언어로 불러온다. 빌드타임 codegen 산출(catalog/<locale>.generated.ts)을 언어별
+ *    chunk 로 노출.
  */
 
 import {
@@ -37,7 +38,12 @@ import { registerCsharpTranspiler } from '@ffacet/transpiler-csharp';
 
 export { getFacetCatalog } from './catalog.js';
 export { loadFrameworkMessages } from './messages.js';
-export type { FacetCatalogEntry } from './catalog-types.js';
+export type {
+  FacetCatalog,
+  FacetCatalogDomain,
+  FacetCatalogEntry,
+  FacetCatalogSubdomain,
+} from './catalog-types.js';
 
 let initialized = false;
 

@@ -20,7 +20,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const verifyVsFindConcept: FacetConceptSource = {
   id: 'verifyVsFind',
   label: 'Checking a Given Answer Against Finding One',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:verifyVsFind',
 
   surface: {

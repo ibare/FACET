@@ -11,7 +11,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const linearRegressionConcept: FacetConceptSource = {
   id: 'linearRegression',
   label: 'Linear Regression',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:linearRegression',
 
   surface: {

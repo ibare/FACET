@@ -30,7 +30,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const recallSpeedTradeoffConcept: FacetConceptSource = {
   id: 'recallSpeedTradeoff',
   label: 'Recall Lost by Searching Less',
-  domain: 'ai-engineering',
   canonicalFacet: 'facet:recallSpeedTradeoff',
 
   surface: {

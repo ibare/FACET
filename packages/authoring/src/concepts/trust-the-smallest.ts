@@ -25,7 +25,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const trustTheSmallestConcept: FacetConceptSource = {
   id: 'trustTheSmallest',
   label: 'Taking the Smallest of the Readings',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:trustTheSmallest',
 
   surface: {

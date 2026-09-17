@@ -28,7 +28,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const euclideanConcept: FacetConceptSource = {
   id: 'euclidean',
   label: 'Euclidean Algorithm (Trading the Larger Number for the Remainder)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:euclidean',
 
   surface: {

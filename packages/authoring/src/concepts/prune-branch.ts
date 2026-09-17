@@ -20,7 +20,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const pruneBranchConcept: FacetConceptSource = {
   id: 'pruneBranch',
   label: 'Pruning a Branch (Skipping a Subtree Safely)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:pruneBranch',
 
   surface: {

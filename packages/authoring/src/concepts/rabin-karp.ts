@@ -28,7 +28,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const rabinKarpConcept: FacetConceptSource = {
   id: 'rabinKarp',
   label: 'Rabin-Karp (Matching by Number, Settling by Letter)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:rabinKarp',
 
   surface: {

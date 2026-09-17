@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const bubbleAdjacentSwapConcept: FacetConceptSource = {
   id: 'bubbleAdjacentSwap',
   label: 'One Sweep of Neighbour Swaps',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:bubbleAdjacentSwap',
 
   surface: {

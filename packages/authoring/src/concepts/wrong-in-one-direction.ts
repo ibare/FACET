@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const wrongInOneDirectionConcept: FacetConceptSource = {
   id: 'wrongInOneDirection',
   label: 'Wrong in Only One Direction',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:wrongInOneDirection',
 
   surface: {

@@ -18,7 +18,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const nodeHoldsManyConcept: FacetConceptSource = {
   id: 'nodeHoldsMany',
   label: 'Many Keys in One Node',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:nodeHoldsMany',
 
   surface: {

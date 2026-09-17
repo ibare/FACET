@@ -27,7 +27,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const coarseThenFineConcept: FacetConceptSource = {
   id: 'coarseThenFine',
   label: 'Coarse Above, Fine Below (Handing the Spot Down)',
-  domain: 'ai-engineering',
   canonicalFacet: 'facet:coarseThenFine',
 
   surface: {

@@ -36,7 +36,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const hnswConcept: FacetConceptSource = {
   id: 'hnsw',
   label: 'HNSW (How Deep the Layers Have to Be)',
-  domain: 'ai-engineering',
   canonicalFacet: 'facet:hnsw',
 
   surface: {

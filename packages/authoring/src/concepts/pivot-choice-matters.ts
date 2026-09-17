@@ -23,7 +23,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const pivotChoiceMattersConcept: FacetConceptSource = {
   id: 'pivotChoiceMatters',
   label: 'Pivot Choice (What the Split Leaves Behind)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:pivotChoiceMatters',
 
   surface: {

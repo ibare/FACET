@@ -17,7 +17,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const unionByRankConcept: FacetConceptSource = {
   id: 'unionByRank',
   label: 'Union by Rank',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:unionByRank',
 
   surface: {

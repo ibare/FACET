@@ -23,7 +23,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const compareAndSwapConcept: FacetConceptSource = {
   id: 'compareAndSwap',
   label: 'Comparing Versus Swapping',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:compareAndSwap',
 
   surface: {

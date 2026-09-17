@@ -19,7 +19,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const backtrackingConcept: FacetConceptSource = {
   id: 'backtracking',
   label: 'Backtracking (Enumerating Every Arrangement)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:backtracking',
 
   surface: {

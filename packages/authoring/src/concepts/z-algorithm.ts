@@ -24,7 +24,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const zAlgorithmConcept: FacetConceptSource = {
   id: 'zAlgorithm',
   label: 'Z-Algorithm (Searching Falls Out of the Table)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:zAlgorithm',
 
   surface: {

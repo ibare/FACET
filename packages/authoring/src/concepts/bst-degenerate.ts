@@ -17,7 +17,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const bstDegenerateConcept: FacetConceptSource = {
   id: 'bstDegenerate',
   label: 'Insertion Order Skews the Tree',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:bstDegenerate',
 
   surface: {

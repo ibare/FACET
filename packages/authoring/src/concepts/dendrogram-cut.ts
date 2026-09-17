@@ -27,7 +27,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const dendrogramCutConcept: FacetConceptSource = {
   id: 'dendrogramCut',
   label: 'Cutting the Dendrogram (Deciding How Many Groups)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:dendrogramCut',
 
   surface: {

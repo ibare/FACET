@@ -27,7 +27,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const vectorSimilarityConcept: FacetConceptSource = {
   id: 'vectorSimilarity',
   label: 'Vector Similarity (The Ruler Decides the Ranking)',
-  domain: 'ai-engineering',
   canonicalFacet: 'facet:vectorSimilarity',
 
   surface: {

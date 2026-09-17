@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const projectAndLoseConcept: FacetConceptSource = {
   id: 'projectAndLose',
   label: 'Projecting Onto an Axis (What the Drop Discards)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:projectAndLose',
 
   surface: {

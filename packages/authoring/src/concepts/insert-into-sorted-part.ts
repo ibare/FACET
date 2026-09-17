@@ -20,7 +20,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const insertIntoSortedPartConcept: FacetConceptSource = {
   id: 'insertIntoSortedPart',
   label: 'Placing a Value into the Ordered Part',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:insertIntoSortedPart',
 
   surface: {

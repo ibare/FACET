@@ -25,7 +25,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const tokensPerLanguageConcept: FacetConceptSource = {
   id: 'tokensPerLanguage',
   label: 'Tokens per Language (What a Lopsided Inventory Costs)',
-  domain: 'ai-engineering',
   canonicalFacet: 'facet:tokensPerLanguage',
 
   surface: {

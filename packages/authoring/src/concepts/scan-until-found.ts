@@ -20,7 +20,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const scanUntilFoundConcept: FacetConceptSource = {
   id: 'scanUntilFound',
   label: 'Scan Until Found (Why the Miss Costs More Than the Hit)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:scanUntilFound',
 
   surface: {

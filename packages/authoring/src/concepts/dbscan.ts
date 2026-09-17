@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const dbscanConcept: FacetConceptSource = {
   id: 'dbscan',
   label: 'DBSCAN (Two Handles That Touch Different Things)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:dbscan',
 
   surface: {

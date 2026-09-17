@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const binarySearchConcept: FacetConceptSource = {
   id: 'binarySearch',
   label: 'Binary Search (Both Ways a Search Can End)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:binarySearch',
 
   surface: {

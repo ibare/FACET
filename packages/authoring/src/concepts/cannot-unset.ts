@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const cannotUnsetConcept: FacetConceptSource = {
   id: 'cannotUnset',
   label: 'Cannot Unset (Why Removal Breaks the Filter)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:cannotUnset',
 
   surface: {

@@ -25,7 +25,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const manyPatternsOnePassConcept: FacetConceptSource = {
   id: 'manyPatternsOnePass',
   label: 'Many Patterns in One Pass (One Tree Instead of One Sweep Each)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:manyPatternsOnePass',
 
   surface: {

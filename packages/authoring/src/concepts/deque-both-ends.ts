@@ -26,7 +26,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const dequeBothEndsConcept: FacetConceptSource = {
   id: 'dequeBothEnds',
   label: 'Both Ends Open: Two Doors, Four Operations',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:dequeBothEnds',
 
   surface: {

@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const globalAndLocalConcept: FacetConceptSource = {
   id: 'globalAndLocal',
   label: 'Global and Local Structure (Two Flattenings Compared)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:globalAndLocal',
 
   surface: {

@@ -20,7 +20,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const greedyCanFailConcept: FacetConceptSource = {
   id: 'greedyCanFail',
   label: 'When a Greedy Rule Fails (Counterexample)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:greedyCanFail',
 
   surface: {

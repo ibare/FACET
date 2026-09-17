@@ -33,7 +33,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const bpeTrainingConcept: FacetConceptSource = {
   id: 'bpeTraining',
   label: 'BPE Training (Why a Vocabulary Holds What It Holds)',
-  domain: 'ai-engineering',
   canonicalFacet: 'facet:bpeTraining',
 
   surface: {

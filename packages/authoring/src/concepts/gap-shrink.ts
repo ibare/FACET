@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const gapShrinkConcept: FacetConceptSource = {
   id: 'gapShrink',
   label: 'Shrinking the Stride (Far Pairs First)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:gapShrink',
 
   surface: {

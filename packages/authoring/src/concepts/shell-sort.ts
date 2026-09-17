@@ -20,7 +20,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const shellSortConcept: FacetConceptSource = {
   id: 'shellSort',
   label: 'Shell Sort',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:shellSort',
 
   surface: {

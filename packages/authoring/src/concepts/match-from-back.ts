@@ -26,7 +26,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const matchFromBackConcept: FacetConceptSource = {
   id: 'matchFromBack',
   label: 'Matching from the Back (Why the Front Goes Unread)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:matchFromBack',
 
   surface: {

@@ -25,7 +25,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const countMinSketchConcept: FacetConceptSource = {
   id: 'countMinSketch',
   label: 'Count-Min Sketch (Sizing a Counter Table Against Its Error)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:countMinSketch',
 
   surface: {

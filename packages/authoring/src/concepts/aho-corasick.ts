@@ -30,7 +30,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const ahoCorasickConcept: FacetConceptSource = {
   id: 'ahoCorasick',
   label: 'Aho-Corasick (What One Pass Over Many Patterns Costs)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:ahoCorasick',
 
   surface: {

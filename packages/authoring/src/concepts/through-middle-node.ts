@@ -17,7 +17,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const throughMiddleNodeConcept: FacetConceptSource = {
   id: 'throughMiddleNode',
   label: 'Shorter Through the Middle Vertex?',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:throughMiddleNode',
 
   surface: {

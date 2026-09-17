@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const leadingZerosTellConcept: FacetConceptSource = {
   id: 'leadingZerosTell',
   label: 'Leading Zeros Tell the Count (A Single Register)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:leadingZerosTell',
 
   surface: {

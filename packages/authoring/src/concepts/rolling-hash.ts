@@ -31,7 +31,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const rollingHashConcept: FacetConceptSource = {
   id: 'rollingHash',
   label: 'Rolling Hash (Carrying One Window’s Value Into the Next)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:rollingHash',
 
   surface: {

@@ -18,7 +18,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const trieConcept: FacetConceptSource = {
   id: 'trie',
   label: 'Trie (Prefix Tree)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:trie',
 
   surface: {

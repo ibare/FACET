@@ -19,7 +19,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const recolorThenRotateConcept: FacetConceptSource = {
   id: 'recolorThenRotate',
   label: 'Why Recoloring Alone Is Not Always Enough',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:recolorThenRotate',
 
   surface: {

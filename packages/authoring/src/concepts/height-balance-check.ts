@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const heightBalanceCheckConcept: FacetConceptSource = {
   id: 'heightBalanceCheck',
   label: 'Balance Factor at Every Node',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:heightBalanceCheck',
 
   surface: {

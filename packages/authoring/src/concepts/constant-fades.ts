@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const constantFadesConcept: FacetConceptSource = {
   id: 'constantFades',
   label: 'What a Constant Multiplier Can and Cannot Do',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:constantFades',
 
   surface: {

@@ -23,7 +23,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const pickNearestUnsettledConcept: FacetConceptSource = {
   id: 'pickNearestUnsettled',
   label: 'Why the Nearest One Can Be Committed To',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:pickNearestUnsettled',
 
   surface: {

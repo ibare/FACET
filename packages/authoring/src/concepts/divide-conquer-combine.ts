@@ -24,7 +24,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const divideConquerCombineConcept: FacetConceptSource = {
   id: 'divideConquerCombine',
   label: 'Divide and Conquer (Down, Then Back Up)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:divideConquerCombine',
 
   surface: {

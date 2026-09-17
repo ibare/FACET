@@ -23,7 +23,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const asymptoticConcept: FacetConceptSource = {
   id: 'asymptotic',
   label: 'Growth Classes (Whether Two Functions Stay Within a Constant)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:asymptotic',
 
   surface: {

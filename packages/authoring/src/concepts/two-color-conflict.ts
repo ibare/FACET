@@ -14,7 +14,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const twoColorConflictConcept: FacetConceptSource = {
   id: 'twoColorConflict',
   label: 'Two-Colour Conflict on an Odd Cycle',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:twoColorConflict',
 
   surface: {

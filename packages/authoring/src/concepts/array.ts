@@ -14,7 +14,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const arrayConcept: FacetConceptSource = {
   id: 'array',
   label: 'Array',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:array',
 
   surface: {

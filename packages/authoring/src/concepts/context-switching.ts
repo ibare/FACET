@@ -13,7 +13,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const contextSwitchingConcept: FacetConceptSource = {
   id: 'contextSwitching',
   label: 'Context Switching',
-  domain: 'os',
   canonicalFacet: 'facet:contextSwitching',
 
   surface: {

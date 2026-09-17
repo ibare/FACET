@@ -23,7 +23,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const decisionBoundaryConcept: FacetConceptSource = {
   id: 'decisionBoundary',
   label: 'Decision Boundary (Where the Probability Crosses the Cut-off)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:decisionBoundary',
 
   surface: {

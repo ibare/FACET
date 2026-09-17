@@ -18,7 +18,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const splitUntilOneConcept: FacetConceptSource = {
   id: 'splitUntilOne',
   label: 'Splitting Down to Single Items',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:splitUntilOne',
 
   surface: {

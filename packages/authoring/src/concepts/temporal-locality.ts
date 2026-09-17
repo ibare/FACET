@@ -29,7 +29,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const temporalLocalityConcept: FacetConceptSource = {
   id: 'temporalLocality',
   label: 'Temporal Locality (Coming Back Before It Is Gone)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:temporalLocality',
 
   surface: {

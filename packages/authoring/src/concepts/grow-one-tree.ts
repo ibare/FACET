@@ -20,7 +20,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const growOneTreeConcept: FacetConceptSource = {
   id: 'growOneTree',
   label: 'Growing One Tree (What Counts as a Candidate Edge)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:growOneTree',
 
   surface: {

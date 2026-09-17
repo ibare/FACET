@@ -17,7 +17,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const bstCompareAndGoConcept: FacetConceptSource = {
   id: 'bstCompareAndGo',
   label: 'One Comparison, One Branch Gone',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:bstCompareAndGo',
 
   surface: {

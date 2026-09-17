@@ -24,7 +24,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const noiseLeftOutConcept: FacetConceptSource = {
   id: 'noiseLeftOut',
   label: 'Noise Points (Belonging to Nothing as an Answer)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:noiseLeftOut',
 
   surface: {

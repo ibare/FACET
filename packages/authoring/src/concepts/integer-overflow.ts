@@ -32,7 +32,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const integerOverflowConcept: FacetConceptSource = {
   id: 'integerOverflow',
   label: 'Integer Overflow (A Growing Value Outgrows Its Width)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:integerOverflow',
 
   surface: {

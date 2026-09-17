@@ -13,7 +13,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const hashAvalancheConcept: FacetConceptSource = {
   id: 'hashAvalanche',
   label: 'Hash Avalanche Effect',
-  domain: 'security',
   canonicalFacet: 'facet:hashAvalanche',
 
   surface: {

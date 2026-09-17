@@ -28,7 +28,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const mergeTheFrequentPairConcept: FacetConceptSource = {
   id: 'mergeTheFrequentPair',
   label: 'Merge the Frequent Pair (One Turn of Building Up Pieces)',
-  domain: 'ai-engineering',
   canonicalFacet: 'facet:mergeTheFrequentPair',
 
   surface: {

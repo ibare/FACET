@@ -33,6 +33,7 @@ import type {
 import { CONCEPT_SOURCES } from './concepts/index.js';
 import { contentHash } from './hash.js';
 import { SCREEN_LABELS } from './screen-labels.generated.js';
+import { FACET_DOMAINS } from './facet-domains.generated.js';
 
 export type {
   FacetConcept,
@@ -56,20 +57,24 @@ export { contentHash } from './hash.js';
 const FALLBACK_LOCALE = 'en';
 
 /**
- * id 중복 검사 + definitionHash 계산. 모듈 로드 시 1회.
+ * id 중복 검사 + 분야 부착 + definitionHash 계산. 모듈 로드 시 1회.
  *
  * id 가 중복되면 여기서 throw 하므로 import 자체가 실패한다. 의도된 fail-fast
  * 다 — 소비자가 호스트의 LLM 서버라, 중복 개념이 조용히 하나로 덮여 임베딩
  * 인덱스가 어긋난 채 돌아가는 것보다 부팅에서 멈추는 편이 낫다.
  */
-function validate(): readonly (FacetConceptSource & { definitionHash: string })[] {
+function validate(): readonly (FacetConceptSource & { domain: string; definitionHash: string })[] {
   const seen = new Set<string>();
   return CONCEPT_SOURCES.map((source) => {
     if (seen.has(source.id)) {
       throw new Error(`개념 id 중복 선언: ${source.id}`);
     }
     seen.add(source.id);
-    return { ...source, definitionHash: contentHash(source.surface.definition) };
+    const domain = FACET_DOMAINS[source.canonicalFacet];
+    if (domain === undefined) {
+      throw new Error(`분류표에 없는 canonicalFacet: ${source.id} → ${source.canonicalFacet}`);
+    }
+    return { ...source, domain, definitionHash: contentHash(source.surface.definition) };
   });
 }
 

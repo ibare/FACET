@@ -19,7 +19,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const inPlaceVsExtraConcept: FacetConceptSource = {
   id: 'inPlaceVsExtra',
   label: 'In-Place or Borrowed Room',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:inPlaceVsExtra',
 
   surface: {

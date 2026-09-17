@@ -193,7 +193,7 @@ async function measureOne(facet: FacetJson): Promise<Result> {
 }
 
 async function main(): Promise<void> {
-  const catalog = getFacetCatalog();
+  const catalog = (await getFacetCatalog()).facets;
   const q = new URLSearchParams(location.search);
   const only = (q.get('only') ?? '').split(',').filter(Boolean);
   const limit = Number(q.get('limit') ?? '0');

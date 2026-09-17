@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const kernelLiftsConcept: FacetConceptSource = {
   id: 'kernelLifts',
   label: 'Kernel Trick (Lifting Into One More Dimension)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:kernelLifts',
 
   surface: {

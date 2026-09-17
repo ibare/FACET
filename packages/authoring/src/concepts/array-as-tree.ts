@@ -16,7 +16,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const arrayAsTreeConcept: FacetConceptSource = {
   id: 'arrayAsTree',
   label: 'A Tree Stored in an Array',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:arrayAsTree',
 
   surface: {

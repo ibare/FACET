@@ -23,7 +23,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const queueVsStackOrderConcept: FacetConceptSource = {
   id: 'queueVsStackOrder',
   label: 'Queue or Stack (the Container That Sets the Visiting Order)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:queueVsStackOrder',
 
   surface: {

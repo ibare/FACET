@@ -42,7 +42,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const cacheReplacementConcept: FacetConceptSource = {
   id: 'cacheReplacement',
   label: 'Cache Replacement Policy (Choosing What to Discard)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:cacheReplacement',
 
   surface: {

@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const skipALayerConcept: FacetConceptSource = {
   id: 'skipALayer',
   label: 'Leap, Then Drop a Level',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:skipALayer',
 
   surface: {

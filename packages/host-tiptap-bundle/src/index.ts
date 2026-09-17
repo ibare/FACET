@@ -5,7 +5,7 @@
  *  - @ffacet/host-tiptap 의 공개 표면 재노출 (FacetExtension, parseFacetRaw, createFacetNodeView, renderFacetMarkdown).
  *  - @ffacet/bootstrap 의 bootstrapFacet 재노출 (카탈로그 단일 출처).
  *  - @ffacet/bootstrap 의 getFacetCatalog 재노출 — 호스트가 facet 모듈 로드 없이
- *    추가 가능 시각화 목록(id/title/description/domain)에 접근하는 경로.
+ *    추가 가능 시각화 목록(제목 · 설명 · 분야)을 한 언어로 불러오는 경로.
  *  - @ffacet/bootstrap 의 loadFrameworkMessages 재노출 — 빌트인 view 문구(C10 의
  *    프레임워크 층)를 호스트 locale 로 주입하는 경로. 이 번들을 단일 의존으로 쓰는
  *    호스트에는 여기 말고 다른 주입 수단이 없다.
@@ -32,5 +32,8 @@ export {
   bootstrapFacet,
   getFacetCatalog,
   loadFrameworkMessages,
+  type FacetCatalog,
+  type FacetCatalogDomain,
   type FacetCatalogEntry,
+  type FacetCatalogSubdomain,
 } from '@ffacet/bootstrap';

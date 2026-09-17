@@ -18,7 +18,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const heapPropertyConcept: FacetConceptSource = {
   id: 'heapProperty',
   label: 'The Heap Property (Parent Before Child)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:heapProperty',
 
   surface: {

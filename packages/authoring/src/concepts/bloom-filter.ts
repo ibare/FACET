@@ -20,7 +20,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const bloomFilterConcept: FacetConceptSource = {
   id: 'bloomFilter',
   label: 'Bloom Filter (Sizing Bits Against the Error Rate)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:bloomFilter',
 
   surface: {

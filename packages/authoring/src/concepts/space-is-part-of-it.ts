@@ -30,7 +30,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const spaceIsPartOfItConcept: FacetConceptSource = {
   id: 'spaceIsPartOfIt',
   label: 'The Blank as a Character (Keeping the Division Reversible)',
-  domain: 'ai-engineering',
   canonicalFacet: 'facet:spaceIsPartOfIt',
 
   surface: {

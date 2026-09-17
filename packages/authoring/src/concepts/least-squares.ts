@@ -25,7 +25,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const leastSquaresConcept: FacetConceptSource = {
   id: 'leastSquares',
   label: 'Least Squares (Why the Errors Get Squared)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:leastSquares',
 
   surface: {

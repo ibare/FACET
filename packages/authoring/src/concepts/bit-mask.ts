@@ -36,7 +36,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const bitMaskConcept: FacetConceptSource = {
   id: 'bitMask',
   label: 'Bit Mask (Keeping the Positions You Chose)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:bitMask',
 
   surface: {

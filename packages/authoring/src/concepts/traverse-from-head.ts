@@ -17,7 +17,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const traverseFromHeadConcept: FacetConceptSource = {
   id: 'traverseFromHead',
   label: 'Why You Must Walk From the Head',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:traverseFromHead',
 
   surface: {

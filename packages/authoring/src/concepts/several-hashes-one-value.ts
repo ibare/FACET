@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const severalHashesOneValueConcept: FacetConceptSource = {
   id: 'severalHashesOneValue',
   label: 'One Value Lights Several Positions',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:severalHashesOneValue',
 
   surface: {

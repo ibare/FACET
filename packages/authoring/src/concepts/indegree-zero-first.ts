@@ -27,7 +27,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const indegreeZeroFirstConcept: FacetConceptSource = {
   id: 'indegreeZeroFirst',
   label: 'Why a Vertex With Nothing Pointing At It May Go First',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:indegreeZeroFirst',
 
   surface: {

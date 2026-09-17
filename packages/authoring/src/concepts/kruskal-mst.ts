@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const kruskalMstConcept: FacetConceptSource = {
   id: 'kruskalMst',
   label: "Kruskal's Minimum Spanning Tree",
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:kruskalMst',
 
   surface: {

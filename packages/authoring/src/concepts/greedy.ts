@@ -24,7 +24,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const greedyConcept: FacetConceptSource = {
   id: 'greedy',
   label: 'Greedy Method (Activity Selection)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:greedy',
 
   surface: {

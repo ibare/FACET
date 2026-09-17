@@ -24,7 +24,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const latencyLadderConcept: FacetConceptSource = {
   id: 'latencyLadder',
   label: 'Latency Ladder (What Each Floor Down Costs)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:latencyLadder',
 
   surface: {

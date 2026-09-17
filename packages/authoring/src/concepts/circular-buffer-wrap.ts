@@ -27,7 +27,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const circularBufferWrapConcept: FacetConceptSource = {
   id: 'circularBufferWrap',
   label: 'Circular Buffer: Wrapping to the First Slot',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:circularBufferWrap',
 
   surface: {

@@ -24,7 +24,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const primMstConcept: FacetConceptSource = {
   id: 'primMst',
   label: 'Prim (Minimum Spanning Tree by Growing One Tree)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:primMst',
 
   surface: {

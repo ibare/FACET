@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const curvesCrossConcept: FacetConceptSource = {
   id: 'curvesCross',
   label: 'The Input Size Where Two Algorithms Trade Places',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:curvesCross',
 
   surface: {

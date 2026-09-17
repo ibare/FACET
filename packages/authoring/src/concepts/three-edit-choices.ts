@@ -25,7 +25,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const threeEditChoicesConcept: FacetConceptSource = {
   id: 'threeEditChoices',
   label: 'Three Ways into One Cell (Delete, Insert, Replace)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:threeEditChoices',
 
   surface: {

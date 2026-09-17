@@ -16,7 +16,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const heapSortExtractConcept: FacetConceptSource = {
   id: 'heapSortExtract',
   label: 'Heap Extract Into the Vacated Cell',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:heapSortExtract',
 
   surface: {

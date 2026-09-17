@@ -26,7 +26,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const spatialLocalityConcept: FacetConceptSource = {
   id: 'spatialLocality',
   label: 'Spatial Locality (Going On to the Next Address)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:spatialLocality',
 
   surface: {

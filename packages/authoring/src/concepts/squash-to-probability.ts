@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const squashToProbabilityConcept: FacetConceptSource = {
   id: 'squashToProbability',
   label: 'Squashing a Score into a Probability (Sigmoid)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:squashToProbability',
 
   surface: {

@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const naiveShiftByOneConcept: FacetConceptSource = {
   id: 'naiveShiftByOne',
   label: 'Shifting the Pattern One Place (What a Mismatch Throws Away)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:naiveShiftByOne',
 
   surface: {

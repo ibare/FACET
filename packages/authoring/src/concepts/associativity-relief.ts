@@ -36,7 +36,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const associativityReliefConcept: FacetConceptSource = {
   id: 'associativityRelief',
   label: 'Associativity Relief (Room to Sit Together)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:associativityRelief',
 
   surface: {

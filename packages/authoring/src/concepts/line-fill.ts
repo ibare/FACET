@@ -25,7 +25,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const lineFillConcept: FacetConceptSource = {
   id: 'lineFill',
   label: 'Line Fill (One Request, a Whole Block)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:lineFill',
 
   surface: {

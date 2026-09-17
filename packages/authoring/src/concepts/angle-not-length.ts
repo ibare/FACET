@@ -25,7 +25,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const angleNotLengthConcept: FacetConceptSource = {
   id: 'angleNotLength',
   label: 'Angle, Not Length (Direction Compared, Size Left Out)',
-  domain: 'ai-engineering',
   canonicalFacet: 'facet:angleNotLength',
 
   surface: {

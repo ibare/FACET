@@ -24,7 +24,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const bigOConcept: FacetConceptSource = {
   id: 'bigO',
   label: 'Big-O Notation (Which Term Is Left to Write)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:bigO',
 
   surface: {

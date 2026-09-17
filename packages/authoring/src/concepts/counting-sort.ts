@@ -23,7 +23,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const countingSortConcept: FacetConceptSource = {
   id: 'countingSort',
   label: 'Counting Sort',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:countingSort',
 
   surface: {

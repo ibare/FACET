@@ -36,7 +36,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const directMappedCacheConcept: FacetConceptSource = {
   id: 'directMappedCache',
   label: 'Direct-Mapped Cache (Fits, Then a Cliff)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:directMappedCache',
 
   surface: {

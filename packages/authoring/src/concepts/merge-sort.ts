@@ -20,7 +20,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const mergeSortConcept: FacetConceptSource = {
   id: 'mergeSort',
   label: 'Merge Sort',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:mergeSort',
 
   surface: {

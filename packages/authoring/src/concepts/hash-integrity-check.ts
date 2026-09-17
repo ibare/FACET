@@ -11,7 +11,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const hashIntegrityCheckConcept: FacetConceptSource = {
   id: 'hashIntegrityCheck',
   label: 'Verifying a File With Its Hash',
-  domain: 'security',
   canonicalFacet: 'facet:hashIntegrityCheck',
 
   surface: {

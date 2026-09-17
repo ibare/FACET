@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const splitByQuestionConcept: FacetConceptSource = {
   id: 'splitByQuestion',
   label: 'Choosing the Split (Axis Before Threshold)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:splitByQuestion',
 
   surface: {

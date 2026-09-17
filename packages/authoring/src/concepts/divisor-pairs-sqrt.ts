@@ -25,7 +25,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const divisorPairsSqrtConcept: FacetConceptSource = {
   id: 'divisorPairsSqrt',
   label: 'Divisor Pairs (Why the Square Root Is Far Enough)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:divisorPairsSqrt',
 
   surface: {

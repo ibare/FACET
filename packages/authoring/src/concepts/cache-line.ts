@@ -26,7 +26,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const cacheLineConcept: FacetConceptSource = {
   id: 'cacheLine',
   label: 'Cache Line (Choosing the Width)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:cacheLine',
 
   surface: {

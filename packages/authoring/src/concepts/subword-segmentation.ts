@@ -31,7 +31,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const subwordSegmentationConcept: FacetConceptSource = {
   id: 'subwordSegmentation',
   label: 'Subword Segmentation (Growing the Vocabulary)',
-  domain: 'ai-engineering',
   canonicalFacet: 'facet:subwordSegmentation',
 
   surface: {

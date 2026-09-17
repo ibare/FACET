@@ -22,7 +22,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const requiresSortedConcept: FacetConceptSource = {
   id: 'requiresSorted',
   label: 'The Sorted Precondition (Where Halving Loses Its Warrant)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:requiresSorted',
 
   surface: {

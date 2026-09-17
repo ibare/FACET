@@ -14,7 +14,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const hashTableChainingConcept: FacetConceptSource = {
   id: 'hashTableChaining',
   label: 'Hash Table (Separate Chaining)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:hashTableChaining',
 
   surface: {

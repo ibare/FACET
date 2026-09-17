@@ -19,7 +19,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const outOfBoundsConcept: FacetConceptSource = {
   id: 'outOfBounds',
   label: 'Reading Past the End of an Array',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:outOfBounds',
 
   surface: {

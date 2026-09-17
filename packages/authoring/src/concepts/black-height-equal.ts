@@ -20,7 +20,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const blackHeightEqualConcept: FacetConceptSource = {
   id: 'blackHeightEqual',
   label: 'Black Height Is Equal on Every Path',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:blackHeightEqual',
 
   surface: {

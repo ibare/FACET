@@ -19,7 +19,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const hashToBucketConcept: FacetConceptSource = {
   id: 'hashToBucket',
   label: 'Computing a Bucket from a Key',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:hashToBucket',
 
   surface: {

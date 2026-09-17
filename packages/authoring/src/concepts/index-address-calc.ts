@@ -20,7 +20,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const indexAddressCalcConcept: FacetConceptSource = {
   id: 'indexAddressCalc',
   label: 'Index to Address Arithmetic',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:indexAddressCalc',
 
   surface: {

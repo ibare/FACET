@@ -12,7 +12,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const bubbleSortConcept: FacetConceptSource = {
   id: 'bubbleSort',
   label: 'Bubble Sort',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:bubbleSort',
 
   surface: {

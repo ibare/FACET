@@ -19,7 +19,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const insertionSortConcept: FacetConceptSource = {
   id: 'insertionSort',
   label: 'Insertion Sort',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:insertionSort',
 
   surface: {

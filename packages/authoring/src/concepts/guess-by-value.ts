@@ -24,7 +24,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const guessByValueConcept: FacetConceptSource = {
   id: 'guessByValue',
   label: 'The Value Says Where to Look',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:guessByValue',
 
   surface: {

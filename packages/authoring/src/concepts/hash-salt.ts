@@ -11,7 +11,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const hashSaltConcept: FacetConceptSource = {
   id: 'hashSalt',
   label: 'Salting Stored Passwords',
-  domain: 'security',
   canonicalFacet: 'facet:hashSalt',
 
   surface: {

@@ -26,7 +26,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const rowTimesColumnConcept: FacetConceptSource = {
   id: 'rowTimesColumn',
   label: 'Row Times Column (Where One Entry of a Matrix Product Comes From)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:rowTimesColumn',
 
   surface: {

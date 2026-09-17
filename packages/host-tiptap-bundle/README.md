@@ -35,10 +35,12 @@ const editor = new Editor({
 ```ts
 import { getFacetCatalog } from '@ffacet/host-tiptap-bundle';
 
-const catalog = getFacetCatalog(); // [{ id, title, description, domain }, ...]
+const catalog = await getFacetCatalog('ko');
+// catalog.domains — 분야 이름표 [{ id, name, subdomains: [{ id, name }] }]
+// catalog.facets  — [{ id, title, description, domain, subdomain }]
 ```
 
-`getFacetCatalog()` 는 facet chunk 를 로드하지 않고 빌드타임 매니페스트만 동기 조회한다. "추가 가능한 시각화 목록" UI 등에 쓴다.
+`getFacetCatalog()` 는 facet chunk 를 로드하지 않고, 요청한 언어의 카탈로그 하나만 불러온다. 없는 언어면 영어가 오고 `catalog.locale` 이 `'en'` 이 된다. "추가 가능한 시각화 목록" UI 등에 쓴다.
 
 ## 공개 API
 
@@ -47,8 +49,8 @@ const catalog = getFacetCatalog(); // [{ id, title, description, domain }, ...]
 | `FacetExtension` | facet NodeView 를 제공하는 Tiptap 익스텐션 |
 | `FacetExtensionOptions` | 익스텐션 옵션 타입 |
 | `bootstrapFacet()` | 앱 부팅 시 1회 호출 — 카탈로그 단일 출처 등록 |
-| `getFacetCatalog()` | facet 모듈 미로드 상태로 추가 가능 시각화 목록 조회 |
-| `FacetCatalogEntry` | 카탈로그 항목 타입 |
+| `getFacetCatalog(locale?)` | facet 모듈 미로드 상태로 추가 가능 시각화 목록을 한 언어로 불러온다 (Promise) |
+| `FacetCatalog` · `FacetCatalogEntry` · `FacetCatalogDomain` · `FacetCatalogSubdomain` | 카탈로그 타입 |
 | `parseFacetRaw` | facet DSL 원시 파싱 |
 | `createFacetNodeView` | NodeView 팩토리 |
 | `renderFacetMarkdown` | facet 마크다운 렌더 |

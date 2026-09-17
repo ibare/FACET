@@ -26,7 +26,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const residualDistanceConcept: FacetConceptSource = {
   id: 'residualDistance',
   label: 'Residual (Vertical Gap Between Observed and Predicted)',
-  domain: 'ml-basics',
   canonicalFacet: 'facet:residualDistance',
 
   surface: {

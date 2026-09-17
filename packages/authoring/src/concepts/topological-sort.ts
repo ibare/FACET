@@ -26,7 +26,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const topologicalSortConcept: FacetConceptSource = {
   id: 'topologicalSort',
   label: 'Topological Sort (Kahn)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:topologicalSort',
 
   surface: {

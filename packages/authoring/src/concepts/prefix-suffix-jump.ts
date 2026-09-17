@@ -21,7 +21,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const prefixSuffixJumpConcept: FacetConceptSource = {
   id: 'prefixSuffixJump',
   label: 'Prefix–Suffix Overlap (How Far the Pattern May Jump)',
-  domain: 'cs-fundamentals',
   canonicalFacet: 'facet:prefixSuffixJump',
 
   surface: {

@@ -37,7 +37,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const signedWraparoundConcept: FacetConceptSource = {
   id: 'signedWraparound',
   label: 'Wraparound (The Largest Value Is Followed by the Smallest)',
-  domain: 'computer-architecture',
   canonicalFacet: 'facet:signedWraparound',
 
   surface: {

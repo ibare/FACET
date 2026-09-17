@@ -12,7 +12,6 @@ import type { FacetConceptSource } from '../concept-types.js';
 export const matrixTransform2dConcept: FacetConceptSource = {
   id: 'matrixTransform2d',
   label: '2D Matrix Transform',
-  domain: 'graphics',
   canonicalFacet: 'facet:matrixTransform2d',
 
   surface: {
