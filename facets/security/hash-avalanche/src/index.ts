@@ -5,7 +5,7 @@
  * 받지 않는다. ReactiveMechanism 이라 컨트롤바 없이 스스로 재생하고, 걸음
  * 간격도 스스로 정한다 (ctx.sleep).
  *
- * algorithm / projector / facet JSON / description / 전용 view (avalanche-stage)
+ * algorithm / scene / facet JSON / description / 전용 view (avalanche-stage)
  * 를 함께 번들하고 등록 헬퍼를 제공한다. 코드 패널은 두지 않는다.
  */
 

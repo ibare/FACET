@@ -24,12 +24,20 @@
  * 궤도의 폭과 간격은 캔버스에서 역산한다 (S-piece).
  *
  * `drawStatic` 은 궤도·자국·값을 **통째로 다시 짓는다.** 값 셋에 자국 셋이라 가볍고,
- * 그렇게 하면 앞 걸음의 운동이 남긴 전환·transform 같은 인라인 자취가 하나도 남지
- * 않는다. 운동이 끝난 뒤에도 같은 함수를 한 번 더 불러 — 흐르며 선 화면과 곧바로 세운
- * 화면이 속성 하나까지 같아진다.
+ * 그렇게 하면 앞 걸음의 운동이 남긴 transform 같은 인라인 자취가 하나도 남지 않는다.
+ * 운동이 끝난 뒤에도 같은 함수를 한 번 더 불러 — 흐르며 선 화면과 곧바로 세운 화면이
+ * 속성 하나까지 같아진다.
  *
  * 부드러움은 `opts.animate` 가 정한다. 참이면 방금 밟은 걸음 하나만 흐르게 하고,
  * 거짓이면 타이머도 걸지 않고 곧바로 끝 자리에 세운다 — 되짚기가 그 길로 온다.
+ *
+ * ## CSS transition 을 쓰지 않는다
+ *
+ * 옛 화면은 인라인 CSS 전환을 걸어 두고 끝 자리를 주는 꼴이었다. 되짚기는 `animate:false`
+ * 로 오는데 전환은 그 뒤에도 화면을 저 혼자 흘러가게 하므로, 되짚어 세운 화면이 나중에
+ * 저절로 바뀌었다 — "그 걸음의 화면" 이라는 말이 서지 않는다 (S-scene MUST NOT).
+ * 지금은 `tween` 한 마디가 시계를 직접 재며 속성을 보간한다. 벽시계는 `setTimeout` 으로
+ * 재고 rAF 를 쓰지 않는다 — 걸음이 프레임 없는 자리에서도 돌아야 하기 때문이다.
  *
  * 화면 문안은 `params.t` 로 만든다 — 문자 리소스는 `facet.ts` 의 `messages` 에 있다
  * (C10). `IN` / `OUT` 은 문틀에 새겨진 표식이라 상수다.
@@ -85,6 +93,13 @@ const DOOR_LABEL_Y = TRACK_Y - PIPE_PAD - 8;
 const MOVE_MS = 260;
 const STATION_MS = 90;
 const PULSE_MS = 260;
+/** 보간 한 프레임. */
+const FRAME_MS = 16;
+
+const clamp01 = (p: number): number => (p < 0 ? 0 : p > 1 ? 1 : p);
+/** 옛 `ease-in-out` 을 그대로 옮긴 것 — 떠날 때와 설 때가 함께 느려진다. */
+const easeInOut = (p: number): number =>
+  p < 0.5 ? 4 * p * p * p : 1 - (-2 * p + 2) ** 3 / 2;
 
 type Track = {
   /** 대기 · 줄 · 나온 자리 각각의 칸 수. */
@@ -194,33 +209,60 @@ export const enqueueDequeueEndsStageView: CanvasView = {
     let gen = 0;
     const alive = (mine: number): boolean => !destroyed && mine === gen;
 
-    const after = (ms: number): Promise<void> =>
-      new Promise<void>((resolve) => {
-        if (destroyed) return resolve();
-        const settle = (): void => {
-          waiters.delete(settle);
+    /**
+     * 보간 한 마디.
+     *
+     * CSS `transition` 을 쓰지 않는다 (S-scene MUST NOT). `resolve` 를 `waiters` 에
+     * 담아 두므로 `destroy` 가 타이머를 취소해도 기다리던 약속이 함께 풀린다 —
+     * 콜백 안에만 두면 취소된 tick 이 아예 안 불려 약속이 영영 안 풀린다 (S-piece).
+     */
+    function tween(ms: number, mine: number, draw: (p: number) => void): Promise<void> {
+      return new Promise<void>((resolve) => {
+        if (!alive(mine)) {
+          resolve();
+          return;
+        }
+        const started = Date.now();
+        const finish = (): void => {
+          waiters.delete(finish);
           resolve();
         };
-        waiters.add(settle);
-        const id = window.setTimeout(() => {
-          timers.delete(id);
-          settle();
-        }, Math.max(0, ms));
-        timers.add(id);
+        waiters.add(finish);
+        const tick = (): void => {
+          if (!alive(mine)) {
+            finish();
+            return;
+          }
+          const p = ms <= 0 ? 1 : clamp01((Date.now() - started) / ms);
+          draw(p);
+          if (p >= 1) {
+            finish();
+            return;
+          }
+          const id = window.setTimeout(() => {
+            timers.delete(id);
+            tick();
+          }, FRAME_MS);
+          timers.add(id);
+        };
+        // 첫 마디를 곧바로 그린다 — 기다리면 그 사이에 끝 자리가 번쩍인다.
+        tick();
       });
-
-    /**
-     * 지금 세운 자리를 브라우저가 한 번 재게 한다.
-     *
-     * 정적으로 세운 직후에 곧바로 전환을 걸면 두 값이 한 프레임 안에 겹쳐 들어가
-     * 운동이 통째로 사라진다. `opts.animate` 인 길에서만 부르므로 되짚기에는 끼지 않는다.
-     */
-    const flush = (): void => {
-      svg.getBoundingClientRect();
-    };
+    }
 
     const place = (node: SVGGElement | SVGRectElement, station: number): void => {
       node.style.transform = `translate(${stationX(track, station)}px, ${TRACK_Y}px)`;
+    };
+
+    /**
+     * 정거장 사이의 한 지점에 세운다.
+     *
+     * 문 두 개가 구역을 밀어 놓으므로 정거장 번호는 자리에 고르게 대응하지 않는다.
+     * 그래서 번호가 아니라 **자리(px)** 를 직접 보간한다. 끝 자리는 이 함수가 아니라
+     * `place` 가 세운다 — 보간 끝값과 정적 그리기의 글자가 어긋나지 않게.
+     */
+    const placeAt = (node: SVGGElement, x: number): void => {
+      node.style.transform = `translate(${x.toFixed(2)}px, ${TRACK_Y}px)`;
     };
 
     const clearChildren = (node: SVGGElement): void => {
@@ -416,16 +458,23 @@ export const enqueueDequeueEndsStageView: CanvasView = {
       caption.textContent = s.caption ? captionTextOf(s.caption) : '';
     }
 
-    /** 두 문을 한 번 짚는다 — 서로 반대편에 있다는 것이 이 조각의 전제다. */
-    async function runDoors(mine: number): Promise<void> {
+    /**
+     * 두 문을 한 번 짚는다 — 서로 반대편에 있다는 것이 이 조각의 전제다.
+     *
+     * 밝아졌다 돌아오는 한 뜻의 운동이라 시계도 하나다. 반쯤에서 접는 삼각으로 셈하고,
+     * 끝에서는 보간값이 아니라 정적 그리기가 세우는 `'0'` 을 글자 그대로 쓴다.
+     */
+    function runDoors(mine: number): Promise<void> {
       const shown = pulses;
-      for (const pulse of shown) pulse.style.transition = `opacity ${PULSE_MS}ms ease-in-out`;
-      flush();
-      for (const pulse of shown) pulse.style.opacity = '1';
-      await after(PULSE_MS);
-      if (!alive(mine)) return;
-      for (const pulse of shown) pulse.style.opacity = '0';
-      await after(PULSE_MS);
+      if (shown.length === 0) return Promise.resolve();
+      return tween(PULSE_MS * 2, mine, (p) => {
+        if (p >= 1) {
+          for (const pulse of shown) pulse.setAttribute('opacity', '0');
+          return;
+        }
+        const lit = easeInOut(p < 0.5 ? p * 2 : (1 - p) * 2).toFixed(3);
+        for (const pulse of shown) pulse.setAttribute('opacity', lit);
+      });
     }
 
     /**
@@ -435,20 +484,23 @@ export const enqueueDequeueEndsStageView: CanvasView = {
      * 않는다 (S-scene). 정적 그리기가 이미 끝 자리에 세워 두었으므로, 아직 못 온
      * 만큼을 뒤로 물려 놓고 시작한다.
      */
-    async function runAdmit(
+    function runAdmit(
       s: EnqueueDequeueEndsScene,
       order: number,
+      mine: number,
     ): Promise<void> {
       const piece = pieces.get(order);
-      if (!piece) return;
+      if (!piece) return Promise.resolve();
       const from = s.seed.length * 2 + order;
-      const ms = glideMs(from - piece.station);
-      piece.g.style.transition = 'none';
-      place(piece.g, from);
-      flush();
-      piece.g.style.transition = `transform ${ms}ms ease-in-out`;
-      place(piece.g, piece.station);
-      await after(ms);
+      const x0 = stationX(track, from);
+      const x1 = stationX(track, piece.station);
+      return tween(glideMs(from - piece.station), mine, (p) => {
+        if (p >= 1) {
+          place(piece.g, piece.station);
+          return;
+        }
+        placeAt(piece.g, x0 + (x1 - x0) * easeInOut(p));
+      });
     }
 
     /**
@@ -460,24 +512,28 @@ export const enqueueDequeueEndsStageView: CanvasView = {
      * 아직 뒤쪽 문을 지나지 않은 것은 움직이지 않는다. 대기 자리는 나가는 걸음과
      * 무관하므로, 그린 것 전부를 밀면 서 있어야 할 값이 함께 흔들린다.
      */
-    async function runRelease(s: EnqueueDequeueEndsScene): Promise<void> {
-      const moving: Piece[] = [];
+    function runRelease(s: EnqueueDequeueEndsScene, mine: number): Promise<void> {
+      const legs: { piece: Piece; x0: number; x1: number }[] = [];
       for (const rider of [...s.gone, ...s.lane]) {
         const piece = pieces.get(rider.order);
-        if (piece) moving.push(piece);
+        if (!piece) continue;
+        // 정적 그리기가 이미 끝 자리에 세워 두었으므로 한 칸 뒤로 물려 놓고 출발한다.
+        legs.push({
+          piece,
+          x0: stationX(track, piece.station + 1),
+          x1: stationX(track, piece.station),
+        });
       }
-      if (moving.length === 0) return;
-      for (const piece of moving) {
-        piece.g.style.transition = 'none';
-        place(piece.g, piece.station + 1);
-      }
-      flush();
-      const ms = glideMs(1);
-      for (const piece of moving) {
-        piece.g.style.transition = `transform ${ms}ms ease-in-out`;
-        place(piece.g, piece.station);
-      }
-      await after(ms);
+      if (legs.length === 0) return Promise.resolve();
+      // 줄 전체가 **함께** 한 칸 밀린다는 것이 이 걸음의 주장이라 어긋남을 두지 않는다.
+      return tween(glideMs(1), mine, (p) => {
+        if (p >= 1) {
+          for (const leg of legs) place(leg.piece.g, leg.piece.station);
+          return;
+        }
+        const e = easeInOut(p);
+        for (const leg of legs) placeAt(leg.piece.g, leg.x0 + (leg.x1 - leg.x0) * e);
+      });
     }
 
     /**
@@ -506,10 +562,10 @@ export const enqueueDequeueEndsStageView: CanvasView = {
           await runDoors(mine);
           break;
         case 'admit':
-          await runAdmit(next, step.order);
+          await runAdmit(next, step.order, mine);
           break;
         case 'release':
-          await runRelease(next);
+          await runRelease(next, mine);
           break;
       }
 

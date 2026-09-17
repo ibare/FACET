@@ -18,10 +18,24 @@
  * 장면의 화면 전체**를 세운다 — 어느 걸음에서 어느 걸음으로 가든 같은 길이다
  * (S-scene). 장면의 모양은 `scene.ts`.
  *
- * 흐르게 하는 것은 그 위에 덧댄다. 정적 그리기가 정본이므로 운동은 **끝 자리에
- * 서 있는 것을 출발 자리로 물렸다가 되돌리는** 꼴이 되고, 운동이 끝나면 그 장면을
- * 다시 한 번 통째로 세운다 — 흐르며 선 화면과 곧바로 세운 화면이 속성 하나라도
- * 다르면 되짚기 판정이 어긋나기 때문이다.
+ * ── CSS transition 을 쓰지 않는다
+ *
+ * 옛 stage 는 `style.transition` 을 걸어 두고 rAF 한 틱 뒤에 목표값을 넣는 짜임이라
+ * 세 곳이 그것을 지났다. 되짚기는 `animate:false` 로 오는데 transition 은 그 뒤에도
+ * 화면을 저 혼자 흘러가게 하므로, 되짚어 세운 화면이 나중에 저절로 바뀐다 — "그
+ * 걸음의 화면" 이라는 말이 서지 않는다 (S-scene MUST NOT). 전부 `tween` 보간으로
+ * 옮겼다. 벽시계는 `setTimeout` 으로 재고 rAF 를 쓰지 않는다 — 프레임이 없는 자리
+ * 에서도 걸음이 실제로 돌아야 하기 때문이다.
+ *
+ * 한 걸음 안에서 흐르는 것이 여럿이면 **시계를 나누지 않는다.** 옛 블록이 떨어지고
+ * 새 블록이 미끄러져 드는 것은 두 운동이 아니라 "옮겨 담기" 한 뜻이므로, 한 `tween`
+ * 안에서 마디마다 어긋난 시각을 줄 뿐이다. 그래야 `render` 의 Promise 도 그 전부가
+ * 선 뒤에 구조적으로 풀린다.
+ *
+ * 흐르게 하는 것은 정적 그리기 위에 덧댄다. 정적 그리기가 정본이므로 운동은 **끝
+ * 자리에 서 있는 것을 출발 자리로 물렸다가 되돌리는** 꼴이 되고, 운동이 끝나면 그
+ * 장면을 다시 한 번 통째로 세운다 — 붉어진 테두리나 보간의 끝자리 하나가 곧바로
+ * 세운 화면과의 차이가 되어 되짚기 판정을 어긋나게 하기 때문이다.
  *
  * 화면 문자열은 `params.t` 로만 짓는다 (C10). 이 파일에 en 원본이 있는 것은
  * 조회가 빗나갔을 때의 되받이뿐이고, 칸 안의 숫자와 주소 표기는 데이터 그대로다.
@@ -70,6 +84,11 @@ const DROP_Y = 78;
 const META_ADDR_Y = ROW_Y + CELL_H + 22;
 const META_SIZE_Y = META_ADDR_Y + 17;
 
+/** 새 자리가 펼쳐지기 시작하는 폭의 비율. 0 이면 무엇이 자라는지 안 보인다. */
+const UNROLL_FROM = 0.02;
+/** 크기 표기가 떠오르는 거리. */
+const META_RISE = 12;
+
 const blockWidth = (capacity: number): number => capacity * PITCH - CELL_GAP;
 const centeredX = (capacity: number): number => Math.round((W - blockWidth(capacity)) / 2);
 
@@ -83,12 +102,38 @@ const T_ARC = 220;
 const T_RELEASE = 380;
 const T_SLIDE = 460;
 const T_LAND = 360;
-
-const EASE_OUT = 'cubic-bezier(0.22, 0.61, 0.36, 1)';
-const EASE_IN = 'cubic-bezier(0.55, 0.06, 0.68, 0.19)';
-const EASE_BOTH = 'cubic-bezier(0.65, 0, 0.35, 1)';
+/** 색이 갈리는 데 드는 시간. 자리 옮김과 겹쳐 흐른다. */
+const T_TINT = 200;
+/** 보간 한 마디. rAF 가 아니라 벽시계로 잰다. */
+const FRAME_MS = 16;
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
+
+const clamp01 = (p: number): number => (p < 0 ? 0 : p > 1 ? 1 : p);
+const easeOut = (p: number): number => 1 - (1 - p) ** 3;
+const easeIn = (p: number): number => p ** 3;
+const easeBoth = (p: number): number => (p < 0.5 ? 4 * p ** 3 : 1 - (-2 * p + 2) ** 3 / 2);
+
+/**
+ * 두 색 사이. `p >= 1` 이면 목표 색을 **글자 그대로** 돌려준다 — 보간이 끝났는데
+ * `rgb(…)` 가 남으면 정적 그리기가 세운 hex 와 글자가 달라진다.
+ */
+function mixColor(from: string, to: string, p: number): string {
+  if (p >= 1) return to;
+  const a = parseHex(from);
+  const b = parseHex(to);
+  if (a === null || b === null) return to;
+  const at = (i: number): number => Math.round(a[i] + (b[i] - a[i]) * p);
+  return `rgb(${at(0)}, ${at(1)}, ${at(2)})`;
+}
+
+function parseHex(value: string): [number, number, number] | null {
+  const raw = value.trim().replace('#', '');
+  const full = raw.length === 3 ? raw.replace(/./g, (ch) => ch + ch) : raw;
+  if (!/^[0-9a-fA-F]{6}$/.test(full)) return null;
+  const n = Number.parseInt(full, 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
 
 type CellState = 'empty' | 'filled' | 'active' | 'copied' | 'released';
 
@@ -96,7 +141,6 @@ type Cell = { rect: SVGRectElement; label: SVGTextElement };
 
 type Block = {
   root: SVGGElement;
-  cellsG: SVGGElement;
   metaG: SVGGElement;
   addr: SVGTextElement;
   cells: Cell[];
@@ -116,8 +160,7 @@ export type GrowAndCopyStage = ViewInstance & {
   ): Promise<void>;
 };
 
-const tf = (x: number, y: number, sx = 1, sy = 1): string =>
-  `translate(${x}px, ${y}px) scale(${sx}, ${sy})`;
+const tf = (x: number, y: number): string => `translate(${x}px, ${y}px)`;
 
 export const growAndCopyStageView: CanvasView = {
   canvas: { height: H },
@@ -155,89 +198,63 @@ export const growAndCopyStageView: CanvasView = {
     container.appendChild(root);
 
     // ── 시간 관리 ────────────────────────────────────────────────────────
-    // 애니메이션 promise 는 반드시 타이머로만 풀린다. 러너의 reset 이
-    // 실행 중인 알고리즘을 await 하므로, 풀리지 않는 promise 는 곧 잠금이다.
+    // 보간 promise 는 반드시 `waiters` 로도 풀린다. 러너의 reset 이 실행 중인
+    // 알고리즘을 await 하므로, 풀리지 않는 promise 는 곧 잠금이다 (S-piece).
     let destroyed = false;
     const timers = new Set<ReturnType<typeof setTimeout>>();
-    const frames = new Set<number>();
     const waiters = new Set<() => void>();
 
     /**
-     * 되짚는 중인가. 러너가 `params` 로 흘린다 (`ViewMountParams.isInstant`).
+     * 지금 화면을 세운 `render` 의 번호.
      *
-     * 이 조각의 운동은 CSS 전환이 아니라 **타이머로 길이를 재는** 것이라, 되짚기가
-     * 끼어들면 앞 걸음의 타이머가 뒤늦게 깨어나 이미 세운 화면 위에 옛 장면을 다시
-     * 세운다. 참이면 기다리지 않고 곧바로 끝 자리로 간다.
+     * 걸음 하나가 여러 프레임을 지난다. `destroy` 나 다음 걸음이 그 가운데 오면
+     * 남은 프레임이 이미 갈아 치운 화면에 쓰므로, 프레임마다 자기 번호가 아직
+     * 유효한지 보고 물러난다. `isInstant` 는 빗장이 아니다 — 러너는 장면 조각에서
+     * 그것을 부르지 않는다 (S-scene).
      */
-    const isInstant = params.isInstant ?? ((): boolean => false);
-
-    // 되짚기 직전에 걸어 둔 것을 거둔다 (S-piece 의 destroy 규약과 같은 모양).
-    params.onScrubStart?.(() => {
-      for (const id of frames) cancelAnimationFrame(id);
-      frames.clear();
-      for (const id of timers) clearTimeout(id);
-      timers.clear();
-      for (const wake of [...waiters]) wake();
-      waiters.clear();
-    });
-
-    const wait = (ms: number): Promise<void> =>
-      new Promise<void>((resolve) => {
-        if (destroyed || isInstant()) return resolve();
-        const settleOne = (): void => {
-          waiters.delete(settleOne);
-          resolve();
-        };
-        waiters.add(settleOne);
-        const id = setTimeout(() => {
-          timers.delete(id);
-          settleOne();
-        }, ms);
-        timers.add(id);
-      });
-
-    const raf = (fn: () => void): void => {
-      if (typeof requestAnimationFrame !== 'function') {
-        fn();
-        return;
-      }
-      const outer = requestAnimationFrame(() => {
-        frames.delete(outer);
-        const inner = requestAnimationFrame(() => {
-          frames.delete(inner);
-          fn();
-        });
-        frames.add(inner);
-      });
-      frames.add(outer);
-    };
+    let gen = 0;
+    const alive = (mine: number): boolean => mine === gen && !destroyed;
 
     /**
-     * 요소를 목표 transform 으로 흘려보낸다.
+     * 보간 한 마디.
      *
-     * 되짚는 중이면 전환을 걸지 않고 곧바로 목표에 세운다 — 되짚기 경로에서는
-     * 타이머도 프레임도 남기지 않아야 한다 (S-scene).
+     * `resolve` 를 `waiters` 에 담아 두므로 `destroy` 가 타이머를 취소해도 기다리던
+     * 약속이 함께 풀린다 — 콜백 안에만 두면 취소된 tick 이 아예 안 불려 약속이
+     * 영영 안 풀린다 (S-piece).
      */
-    const glide = (
-      el: SVGGElement,
-      transform: string,
-      ms: number,
-      easing: string = EASE_BOTH,
-      opacity?: number,
-    ): Promise<void> => {
-      if (destroyed || isInstant()) {
-        el.style.removeProperty('transition');
-        el.style.transform = transform;
-        if (opacity !== undefined) el.style.opacity = String(opacity);
-        return Promise.resolve();
-      }
-      el.style.transition = `transform ${ms}ms ${easing}, opacity ${ms}ms linear`;
-      raf(() => {
-        el.style.transform = transform;
-        if (opacity !== undefined) el.style.opacity = String(opacity);
+    function tween(ms: number, mine: number, draw: (p: number) => void): Promise<void> {
+      return new Promise<void>((resolve) => {
+        if (!alive(mine)) {
+          resolve();
+          return;
+        }
+        const started = Date.now();
+        const finish = (): void => {
+          waiters.delete(finish);
+          resolve();
+        };
+        waiters.add(finish);
+        const tick = (): void => {
+          if (!alive(mine)) {
+            finish();
+            return;
+          }
+          const p = ms <= 0 ? 1 : clamp01((Date.now() - started) / ms);
+          draw(p);
+          if (p >= 1) {
+            finish();
+            return;
+          }
+          const id = setTimeout(() => {
+            timers.delete(id);
+            tick();
+          }, FRAME_MS);
+          timers.add(id);
+        };
+        // 첫 마디를 곧바로 그린다 — 기다리면 그 사이에 끝 자리가 번쩍인다.
+        tick();
       });
-      return wait(ms + 60);
-    };
+    }
 
     // ── SVG 조립 ─────────────────────────────────────────────────────────
     const node = <K extends keyof SVGElementTagNameMap>(
@@ -253,7 +270,6 @@ export const growAndCopyStageView: CanvasView = {
 
     const paintCell = (cell: Cell, state: CellState, value?: number): void => {
       const { rect, label } = cell;
-      rect.style.transition = 'fill 200ms linear, stroke 200ms linear';
       rect.removeAttribute('stroke-dasharray');
       switch (state) {
         case 'empty':
@@ -331,8 +347,6 @@ export const growAndCopyStageView: CanvasView = {
       blockRoot.style.transform = tf(x, 0);
 
       const cellsG = node('g');
-      cellsG.style.transformOrigin = '0 0';
-      cellsG.style.transform = tf(0, 0);
 
       const cells: Cell[] = [];
       for (let i = 0; i < b.capacity; i += 1) {
@@ -362,7 +376,7 @@ export const growAndCopyStageView: CanvasView = {
 
       blockRoot.appendChild(cellsG);
       blockRoot.appendChild(metaG);
-      return { root: blockRoot, cellsG, metaG, addr, cells, x, capacity: b.capacity };
+      return { root: blockRoot, metaG, addr, cells, x, capacity: b.capacity };
     };
 
     const makeChip = (value: number, x: number, y: number): SVGGElement => {
@@ -489,7 +503,7 @@ export const growAndCopyStageView: CanvasView = {
     };
 
     /** 장면 하나를 통째로 세운다 — 칸도 블록도 칩도 캡션도. */
-    const settle = (s: GrowAndCopyScene): void => {
+    const drawStatic = (s: GrowAndCopyScene): void => {
       stand(s);
       captionEl.textContent = captionText(s.caption);
     };
@@ -497,14 +511,21 @@ export const growAndCopyStageView: CanvasView = {
     // ── 운동 ─────────────────────────────────────────────────────────────
     //
     // 정적 그리기가 정본이라 요소는 이미 끝 자리에 서 있다. 그러니 운동은 출발
-    // 자리로 **물렸다가** 되돌아오는 꼴이 된다. 물리는 일은 `stand` 직후 아직
-    // 어떤 기다림도 지나지 않은 동안 하므로 첫 프레임에 끝 자리가 번쩍이지 않는다.
+    // 자리로 **물렸다가** 되돌아오는 꼴이 된다. 물리는 일은 `tween` 의 첫 마디가
+    // 곧바로 그리므로 첫 프레임에 끝 자리가 번쩍이지 않는다.
 
-    /** 막힌 값이 내려와 없는 칸을 파고들다 튕겨 나와 줄 위에서 기다린다. */
-    const runBlocked = async (m: Extract<GrowMark, { kind: 'blocked' }>): Promise<void> => {
+    /**
+     * 막힌 값이 내려와 없는 칸을 파고들다 튕겨 나와 줄 위에서 기다린다.
+     *
+     * 네 마디(내려옴 · 파고듦 · 머묾 · 튕김)가 한 뜻이라 시계를 나누지 않는다.
+     */
+    const runBlocked = (
+      m: Extract<GrowMark, { kind: 'blocked' }>,
+      mine: number,
+    ): Promise<void> => {
       const block = oldB;
       const chip = parked;
-      if (!block || !chip) return;
+      if (!block || !chip) return Promise.resolve();
 
       const ghostX = OLD_X + m.slotIndex * PITCH;
       const ghost = node('rect', {
@@ -518,81 +539,160 @@ export const growAndCopyStageView: CanvasView = {
       ghost.setAttribute('stroke', colors.danger);
       ghost.setAttribute('stroke-width', '1.5');
       ghost.setAttribute('stroke-dasharray', '4 4');
-      ghost.style.opacity = '0';
-      ghost.style.transition = 'opacity 200ms linear';
+      ghost.setAttribute('opacity', '0');
       svg.insertBefore(ghost, chipLayer);
 
-      // 출발 자리로 물린다 — 칩은 이미 기다리는 자리에 서 있다.
-      chip.style.transform = tf(PARK_X, DROP_IN_Y);
-
-      await glide(chip, tf(PARK_X, PARK_Y), T_DROP_IN, EASE_OUT);
-      ghost.style.opacity = '1';
-      await glide(chip, tf(ghostX, ROW_Y), T_BUMP, EASE_IN);
-
-      // 벽에 부딪혔다 — 들어갈 자리가 없다.
       const chipRect = chip.firstElementChild;
-      if (chipRect) {
-        chipRect.setAttribute('fill', colors.danger);
-        chipRect.setAttribute('stroke', colors.danger);
-      }
-      for (const cell of block.cells) cell.rect.setAttribute('stroke', colors.danger);
-      await wait(T_HOLD);
 
-      await glide(chip, tf(PARK_X, PARK_Y), T_BOUNCE, EASE_OUT);
+      const bumpAt = T_DROP_IN;
+      const holdAt = bumpAt + T_BUMP;
+      const backAt = holdAt + T_HOLD;
+      const total = backAt + T_BOUNCE;
+
+      return tween(total, mine, (p) => {
+        const now = p * total;
+        const done = p >= 1;
+
+        // 칩의 길. 끝에서는 보간값이 아니라 기다리는 자리를 그대로 쓴다.
+        if (done) {
+          chip.style.transform = tf(PARK_X, PARK_Y);
+        } else if (now < bumpAt) {
+          const e = easeOut(clamp01(now / T_DROP_IN));
+          chip.style.transform = tf(PARK_X, DROP_IN_Y + (PARK_Y - DROP_IN_Y) * e);
+        } else if (now < holdAt) {
+          const e = easeIn(clamp01((now - bumpAt) / T_BUMP));
+          chip.style.transform = tf(
+            PARK_X + (ghostX - PARK_X) * e,
+            PARK_Y + (ROW_Y - PARK_Y) * e,
+          );
+        } else if (now < backAt) {
+          chip.style.transform = tf(ghostX, ROW_Y);
+        } else {
+          const e = easeOut(clamp01((now - backAt) / T_BOUNCE));
+          chip.style.transform = tf(
+            ghostX + (PARK_X - ghostX) * e,
+            ROW_Y + (PARK_Y - ROW_Y) * e,
+          );
+        }
+
+        // 있지도 않은 다섯째 칸이 점선으로 드러난다.
+        const g = done ? 1 : clamp01((now - bumpAt) / T_TINT);
+        if (g >= 1) ghost.removeAttribute('opacity');
+        else if (g > 0) ghost.setAttribute('opacity', String(g));
+
+        // 벽에 부딪혔다 — 칩도 칸도 붉어진다. 색은 두 색을 직접 섞어 옮긴다.
+        const r = done ? 1 : clamp01((now - holdAt) / T_TINT);
+        if (r > 0) {
+          const hot = mixColor(colors.itemActive, colors.danger, r);
+          if (chipRect) {
+            chipRect.setAttribute('fill', hot);
+            chipRect.setAttribute('stroke', hot);
+          }
+          const edge = mixColor(colors.border, colors.danger, r);
+          for (const cell of block.cells) cell.rect.setAttribute('stroke', edge);
+        }
+      });
     };
 
-    /** 더 큰 자리가 오른쪽으로 펼쳐진다. */
-    const runAllocated = async (): Promise<void> => {
+    /**
+     * 더 큰 자리가 오른쪽으로 펼쳐진다.
+     *
+     * `scaleX` 대신 칸의 `x`·`width` 를 바로 보간한다 — 점선 테두리가 찌그러지지
+     * 않고, 끝 자리에 배율의 끝자리가 남지 않는다.
+     */
+    const runAllocated = (mine: number): Promise<void> => {
       const block = newB;
-      if (!block) return;
-      // 펼쳐지기 전으로 물린다.
-      block.cellsG.style.transform = tf(0, 0, 0.02, 1);
-      block.metaG.style.transform = tf(0, 12);
-      block.metaG.style.opacity = '0';
+      if (!block) return Promise.resolve();
+      const meta = block.metaG;
 
-      // 둘을 함께 기다린다. render 가 돌려주는 Promise 는 그 장면이 다 선 뒤에
-      // 풀려야 하므로 (S-scene), 하나를 던져 두면 계약상 먼저 풀릴 수 있다.
-      await Promise.all([
-        glide(block.metaG, tf(0, 0), T_UNROLL, EASE_OUT, 1),
-        glide(block.cellsG, tf(0, 0, 1, 1), T_UNROLL, EASE_OUT),
-      ]);
+      return tween(T_UNROLL, mine, (p) => {
+        const done = p >= 1;
+        const e = done ? 1 : easeOut(p);
+        const s = UNROLL_FROM + (1 - UNROLL_FROM) * e;
+
+        block.cells.forEach((cell, i) => {
+          if (done) {
+            cell.rect.setAttribute('x', String(i * PITCH));
+            cell.rect.setAttribute('width', String(CELL_W));
+            cell.label.setAttribute('x', String(i * PITCH + CELL_W / 2));
+            return;
+          }
+          cell.rect.setAttribute('x', String(i * PITCH * s));
+          cell.rect.setAttribute('width', String(CELL_W * s));
+          cell.label.setAttribute('x', String((i * PITCH + CELL_W / 2) * s));
+        });
+
+        if (done) {
+          meta.style.transform = tf(0, 0);
+          meta.style.removeProperty('opacity');
+        } else {
+          meta.style.transform = tf(0, META_RISE * (1 - e));
+          meta.style.opacity = String(e);
+        }
+      });
     };
 
     /** 값 하나가 옛 칸에서 새 칸으로 건너간다. 원본은 남아 어두워진다. */
-    const runCopied = async (m: Extract<GrowMark, { kind: 'copied' }>): Promise<void> => {
+    const runCopied = (
+      m: Extract<GrowMark, { kind: 'copied' }>,
+      mine: number,
+    ): Promise<void> => {
       const from = oldB;
       const to = newB;
-      if (!from || !to) return;
+      if (!from || !to) return Promise.resolve();
       const src = from.cells[m.index];
       const dst = to.cells[m.index];
-      if (!src || !dst) return;
+      if (!src || !dst) return Promise.resolve();
 
-      // 건너기 전으로 물린다 — 원본은 아직 밝고 새 칸은 아직 비었다.
+      // 건너기 전으로 물린다 — 원본은 아직 밝고 새 칸도 갓 앉은 빛이다.
       paintCell(src, 'active', m.value);
       paintCell(dst, 'active');
 
       const fromX = from.x + m.index * PITCH;
       const toX = to.x + m.index * PITCH;
+      const midX = (fromX + toX) / 2;
       const chip = makeChip(m.value, fromX, ROW_Y);
       chipLayer.appendChild(chip);
 
-      await glide(chip, tf((fromX + toX) / 2, ROW_Y - ARC_LIFT), T_ARC, EASE_OUT);
-      paintCell(src, 'copied', m.value);
-      await glide(chip, tf(toX, ROW_Y), T_ARC, EASE_IN);
+      const total = T_ARC * 2;
+      return tween(total, mine, (p) => {
+        const now = p * total;
+        const done = p >= 1;
+
+        if (done) {
+          chip.style.transform = tf(toX, ROW_Y);
+        } else if (now < T_ARC) {
+          const e = easeOut(clamp01(now / T_ARC));
+          chip.style.transform = tf(fromX + (midX - fromX) * e, ROW_Y - ARC_LIFT * e);
+        } else {
+          const e = easeIn(clamp01((now - T_ARC) / T_ARC));
+          chip.style.transform = tf(midX + (toX - midX) * e, ROW_Y - ARC_LIFT * (1 - e));
+        }
+
+        // 마루를 넘는 순간부터 원본이 어두워진다 — 값은 남고 빛만 건너간다.
+        const d = done ? 1 : clamp01((now - T_ARC) / T_TINT);
+        if (d > 0) {
+          const dim = mixColor(colors.itemActive, colors.itemSorted, d);
+          src.rect.setAttribute('fill', dim);
+          src.rect.setAttribute('stroke', dim);
+        }
+      });
     };
 
     /**
      * 옛 자리를 버린다 — 옛 블록이 아래로 떨어지고 새 블록이 가운데로 미끄러진다.
      *
      * 이 장면에는 옛 블록이 없다. 표식이 실어 온 `gone` 으로 출발 그림을 셈으로
-     * 복원한다 (S-scene — `prev` 는 그리기 재료가 아니다).
+     * 복원한다 (S-scene — `prev` 는 그리기 재료가 아니다). 떨어짐과 미끄러짐은 두
+     * 운동이 아니라 "옮겨 담기" 한 뜻이라 한 시계로 흐른다.
      */
-    const runFreed = async (
+    const runFreed = (
       s: GrowAndCopyScene,
       m: Extract<GrowMark, { kind: 'freed' }>,
+      mine: number,
     ): Promise<void> => {
       const block = newB;
-      if (!block || !s.newBlock) return;
+      if (!block || !s.newBlock) return Promise.resolve();
 
       // 버려지는 블록은 칸이 모두 흐려지되 값은 남는다 — 무엇을 두고 가는지가
       // 보여야 하기 때문이다.
@@ -600,27 +700,56 @@ export const growAndCopyStageView: CanvasView = {
       dying.addr.setAttribute('fill', colors.textMuted);
       svg.insertBefore(dying.root, block.root);
 
-      // 미끄러지기 전으로 물린다 — 새 블록은 아직 옛 블록 오른쪽이다.
-      block.root.style.transform = tf(besideX(m.gone.capacity), 0);
+      const fromX = besideX(m.gone.capacity);
+      const toX = centeredX(s.newBlock.capacity);
+      const total = T_RELEASE + T_SLIDE;
 
-      await glide(dying.root, tf(OLD_X, DROP_Y), T_RELEASE, EASE_IN, 0);
-      dying.root.remove();
-      await glide(block.root, tf(centeredX(s.newBlock.capacity), 0), T_SLIDE, EASE_BOTH);
+      return tween(total, mine, (p) => {
+        const now = p * total;
+        const done = p >= 1;
+
+        if (!done && now < T_RELEASE) {
+          const e = easeIn(clamp01(now / T_RELEASE));
+          dying.root.style.transform = tf(OLD_X, DROP_Y * e);
+          dying.root.style.opacity = String(1 - e);
+        } else if (dying.root.parentNode) {
+          // 다 떨어졌다. 노드째 지우므로 보간의 끝자리가 남을 자리가 없다.
+          dying.root.remove();
+        }
+
+        if (done) {
+          block.root.style.transform = tf(toX, 0);
+        } else {
+          const e = easeBoth(clamp01((now - T_RELEASE) / T_SLIDE));
+          block.root.style.transform = tf(fromX + (toX - fromX) * e, 0);
+        }
+      });
     };
 
     /** 기다리던 값이 새 블록의 빈 칸으로 내려앉는다. */
-    const runAppended = async (m: Extract<GrowMark, { kind: 'appended' }>): Promise<void> => {
+    const runAppended = (
+      m: Extract<GrowMark, { kind: 'appended' }>,
+      mine: number,
+    ): Promise<void> => {
       const block = newB;
-      if (!block) return;
+      if (!block) return Promise.resolve();
       const dst = block.cells[m.index];
-      if (!dst) return;
+      if (!dst) return Promise.resolve();
 
-      // 앉기 전으로 물린다 — 칸은 아직 비었고 값은 줄 위에 있다.
+      // 앉기 전으로 물린다 — 칸은 갓 앉은 빛이고 값은 줄 위에 있다.
       paintCell(dst, 'active');
       const chip = makeChip(m.value, PARK_X, PARK_Y);
       chipLayer.appendChild(chip);
+      const toX = block.x + m.index * PITCH;
 
-      await glide(chip, tf(block.x + m.index * PITCH, ROW_Y), T_LAND, EASE_OUT);
+      return tween(T_LAND, mine, (p) => {
+        if (p >= 1) {
+          chip.style.transform = tf(toX, ROW_Y);
+          return;
+        }
+        const e = easeOut(p);
+        chip.style.transform = tf(PARK_X + (toX - PARK_X) * e, PARK_Y + (ROW_Y - PARK_Y) * e);
+      });
     };
 
     /**
@@ -633,31 +762,32 @@ export const growAndCopyStageView: CanvasView = {
     const flow = async (
       next: GrowAndCopyScene,
       prev: GrowAndCopyScene | null,
-    ): Promise<boolean> => {
+      mine: number,
+    ): Promise<void> => {
       const m = next.mark;
-      if (!m || prev === null) return false;
+      if (!m || prev === null) return;
 
       switch (m.kind) {
         case 'blocked':
-          if (prev.pending !== null || prev.newBlock !== null) return false;
-          await runBlocked(m);
-          return true;
+          if (prev.pending !== null || prev.newBlock !== null) return;
+          await runBlocked(m, mine);
+          return;
         case 'allocated':
-          if (prev.newBlock !== null) return false;
-          await runAllocated();
-          return true;
+          if (prev.newBlock !== null) return;
+          await runAllocated(mine);
+          return;
         case 'copied':
-          if (prev.copied !== next.copied - 1 || prev.newBlock === null) return false;
-          await runCopied(m);
-          return true;
+          if (prev.copied !== next.copied - 1 || prev.newBlock === null) return;
+          await runCopied(m, mine);
+          return;
         case 'freed':
-          if (prev.oldBlock === null) return false;
-          await runFreed(next, m);
-          return true;
+          if (prev.oldBlock === null) return;
+          await runFreed(next, m, mine);
+          return;
         case 'appended':
-          if (prev.pending === null) return false;
-          await runAppended(m);
-          return true;
+          if (prev.pending === null) return;
+          await runAppended(m, mine);
+          return;
       }
     };
 
@@ -668,19 +798,22 @@ export const growAndCopyStageView: CanvasView = {
      * (`animate` 가 거짓) 는 덧대지 않는다 — 지나온 걸음을 되밟을 까닭이 없고,
      * 되밟으면 그 운동이 되짚기보다 오래 남아 화면이 흔들린다.
      *
-     * 운동이 끝나면 그 장면을 **다시 한 번 통째로** 세운다. 흐르며 남은 전환 속성
-     * 하나가 곧바로 세운 화면과의 차이가 되어 되짚기 판정을 어긋나게 하기 때문이다
-     * (프로토콜 4절). 사이에 타이머도 프레임도 없어 같은 그림이 다시 그려질 뿐이다.
+     * 운동이 끝나면 그 장면을 **다시 한 번 통째로** 세운다. 붉어진 테두리 · 어두워진
+     * 칸 · 건너간 칩 같은 것이 그대로 남으면 곧바로 세운 화면과 글자가 달라져
+     * 되짚기 판정이 어긋난다. 사이에 타이머도 프레임도 없어 같은 그림이 다시 그려질
+     * 뿐이다.
      */
     async function render(
       next: GrowAndCopyScene,
       prev: GrowAndCopyScene | null,
       opts: { animate: boolean },
     ): Promise<void> {
-      settle(next);
+      const mine = (gen += 1);
+      drawStatic(next);
       if (!opts.animate || destroyed) return;
-      const ran = await flow(next, prev);
-      if (ran && !destroyed) settle(next);
+      await flow(next, prev, mine);
+      if (!alive(mine)) return;
+      drawStatic(next);
     }
 
     const instance: GrowAndCopyStage = {
@@ -688,11 +821,12 @@ export const growAndCopyStageView: CanvasView = {
 
       destroy(): void {
         destroyed = true;
-        for (const id of frames) cancelAnimationFrame(id); // 걸어 둔 것을 먼저 거두고
-        frames.clear();
+        gen += 1; // 살아 있는 보간이 더는 화면에 손대지 못하게 빗장을 올린다
         for (const id of timers) clearTimeout(id);
         timers.clear();
-        for (const wake of [...waiters]) wake(); // 기다리던 것을 깨운다
+        // 걸어 둔 것을 거두는 것만으로는 모자라다 — 취소된 콜백은 아예 불리지
+        // 않으므로 기다리던 것을 직접 깨워야 `await ctx.emit` 이 돌아온다 (S-piece).
+        for (const wake of [...waiters]) wake();
         waiters.clear();
         if (root.parentElement) root.remove();
       },

@@ -104,8 +104,8 @@ const PROBE_MS = 320;
 const JOLT_MS = 130;
 const BREATH_MS = 260;
 const ARC_MS = 220;
-
-const EASE = 'cubic-bezier(0.34, 0.02, 0.2, 1)';
+/** 보간 한 마디의 길이. CSS 전환이 아니라 이 간격으로 손수 그린다. */
+const FRAME_MS = 16;
 
 /** 문 앞에서 갈매기표가 숨 쉬는 깊이. */
 const BREATH_DY = 7;
@@ -125,6 +125,35 @@ function el<K extends keyof SVGElementTagNameMap>(
   for (const [k, v] of Object.entries(attrs)) node.setAttribute(k, String(v));
   return node;
 }
+
+// ── 보간 ──────────────────────────────────────────────────────────────────
+//
+// CSS `transition` 은 쓰지 않는다. 되짚어 세운 화면을 그 뒤에도 저 혼자 흘러가게
+// 두기 때문이다 (S-scene MUST NOT). 운동은 전부 `tween` 이 마디마다 손수 그린다.
+
+const clamp01 = (p: number): number => (p < 0 ? 0 : p > 1 ? 1 : p);
+
+/** 오르내리는 한 마디. 천천히 떠나 천천히 닿는다 — 실려 가는 무게가 읽히게. */
+const ease = (p: number): number => (p < 0.5 ? 4 * p ** 3 : 1 - (-2 * p + 2) ** 3 / 2);
+
+/** 자라나는 한 마디. 뻗어 나가 느리게 닿는다. */
+const easeOut = (p: number): number => 1 - (1 - p) ** 3;
+
+/**
+ * 두 수 사이의 `p` 지점.
+ *
+ * **`p` 가 1 이면 목표값을 글자 그대로** 돌려준다 — `a + (b - a) * 1` 이 `b` 와
+ * 글자가 다를 수 있고, 그러면 흘려 세운 화면과 곧바로 세운 화면이 갈린다.
+ */
+const at = (a: number, b: number, p: number): number => (p >= 1 ? b : a + (b - a) * p);
+
+/** 보간 끝자리를 자른다. 끝 마디는 목표값을 그대로 쓰므로 여기를 지나지 않는다. */
+const round1 = (v: number): number => Math.round(v * 10) / 10;
+const round3 = (v: number): number => Math.round(v * 1000) / 1000;
+
+type Pt = readonly [number, number];
+
+const lerpPt = (a: Pt, b: Pt, p: number): Pt => [at(a[0], b[0], p), at(a[1], b[1], p)];
 
 /** 쌓인 개수 level 일 때의 꼭대기 면 높이. level 0 이면 바닥. */
 function surfaceY(level: number): number {
@@ -146,6 +175,49 @@ function outX(order: number): number {
 
 function place(x: number, y: number, scale: number): string {
   return `translate(${x}px, ${y}px) scale(${scale})`;
+}
+
+/**
+ * 두 자리 사이의 `p` 지점.
+ *
+ * 끝에서는 목표 자리를 **글자 그대로** 적는다. 보간이 만든 `-0` 이나 배율 끝자리가
+ * 남으면 흘려 세운 화면과 곧바로 세운 화면이 속성 하나만큼 갈린다.
+ */
+function poseAt(from: Spot, to: Spot, p: number): string {
+  if (p >= 1) return place(to.x, to.y, to.scale);
+  return place(
+    round1(at(from.x, to.x, p)),
+    round1(at(from.y, to.y, p)),
+    round3(at(from.scale, to.scale, p)),
+  );
+}
+
+/** 활 하나의 제어점 셋. 들어온 k 번째와 나간 (count-1-k) 번째를 잇는다. */
+function arcPts(k: number, count: number): readonly Pt[] {
+  const x0 = inX(k) + CHIP_W / 2;
+  const x1 = outX(count - 1 - k) + CHIP_W / 2;
+  const peak = 10 + k * 6;
+  return [
+    [x0, ROW_Y],
+    [(x0 + x1) / 2, 2 * peak - ROW_Y],
+    [x1, ROW_Y],
+  ];
+}
+
+/**
+ * 활의 앞머리 `p` 만큼. de Casteljau 로 잘라 내므로 길이를 재 볼 일이 없다.
+ *
+ * `p` 가 1 이면 제어점을 글자 그대로 적어 정적 그리기와 한 글자도 다르지 않다.
+ * `p` 가 0 이면 길이가 0 이라 둥근 마감이 점으로 찍힌다 — 그래서 아직 자라지 않은
+ * 활은 숨기는 것이 아니라 **짓지 않는다** (`growArcs`).
+ */
+function arcD(pts: readonly Pt[], p: number): string {
+  const [p0, p1, p2] = pts;
+  if (p >= 1) return `M ${p0[0]} ${p0[1]} Q ${p1[0]} ${p1[1]} ${p2[0]} ${p2[1]}`;
+  const a = lerpPt(p0, p1, p);
+  const b = lerpPt(p1, p2, p);
+  const c = lerpPt(a, b, p);
+  return `M ${p0[0]} ${p0[1]} Q ${round1(a[0])} ${round1(a[1])} ${round1(c[0])} ${round1(c[1])}`;
 }
 
 /**
@@ -388,51 +460,58 @@ export const pushPopTopStageView: CanvasView = {
     /** 이 세대의 운동이 아직 화면에 손대도 되나. */
     const alive = (myGen: number): boolean => !destroyed && myGen === gen;
 
-    const wait = (ms: number): Promise<void> =>
-      new Promise<void>((resolve) => {
-        if (destroyed) {
+    /**
+     * 보간 한 마디.
+     *
+     * `resolve` 를 `waiters` 에 담아 두므로 `destroy` 가 타이머를 취소해도 기다리던
+     * 약속이 함께 풀린다 — 콜백 안에만 두면 취소된 tick 이 아예 안 불려 약속이
+     * 영영 안 풀린다 (S-piece).
+     */
+    function tween(ms: number, mine: number, draw: (p: number) => void): Promise<void> {
+      return new Promise<void>((resolve) => {
+        if (!alive(mine)) {
           resolve();
           return;
         }
+        const started = Date.now();
         const finish = (): void => {
           waiters.delete(finish);
-          clearTimeout(id);
           resolve();
         };
-        const id = setTimeout(() => {
-          timers.delete(id);
-          finish();
-        }, ms);
-        timers.add(id);
         waiters.add(finish);
+        const tick = (): void => {
+          if (!alive(mine)) {
+            finish();
+            return;
+          }
+          const p = ms <= 0 ? 1 : clamp01((Date.now() - started) / ms);
+          draw(p);
+          if (p >= 1) {
+            finish();
+            return;
+          }
+          const id = setTimeout(() => {
+            timers.delete(id);
+            tick();
+          }, FRAME_MS);
+          timers.add(id);
+        };
+        // 첫 마디를 곧바로 그린다 — 기다리면 그 사이에 끝 자리가 번쩍인다.
+        tick();
       });
+    }
 
     /**
-     * 전환 없이 그 자리에 세운다. 정적 그리기와 운동의 출발 자리가 이것을 쓴다.
+     * 그 자리에 세운다. 정적 그리기와 운동의 마디마다가 이것을 쓴다.
      *
-     * 전환을 `none` 으로 **남기지 않고 지운다** — 남겨 두면 곧바로 세운 화면과
-     * 흐르고 난 화면이 속성 하나만큼 달라진다 (S-scene 의 되짚기 판정).
+     * **inline style 을 통째로 갈아 끼운다.** 운동이 남기는 것은 값만이 아니라
+     * 속성이 적힌 **차례**다 — `style.display` 를 빈 값으로 지웠다 다시 적으면
+     * 그 속성이 목록의 끝으로 밀려, 눈에는 똑같은 화면이 글자로는 갈린다
+     * (탐침이 실제로 그랬다). 값을 하나씩 되돌리는 대신 매번 새로 적는다.
      */
     const setT = (node: SVGElement, transform: string): void => {
-      node.style.removeProperty('transition');
+      node.removeAttribute('style');
       node.style.transform = transform;
-    };
-
-    const move = async (node: SVGElement, transform: string, ms: number): Promise<void> => {
-      node.style.transition = `transform ${ms}ms ${EASE}`;
-      node.style.transform = transform;
-      await wait(ms);
-    };
-
-    /**
-     * 지금 세운 자리를 브라우저가 한 번 재게 한다.
-     *
-     * 정적으로 세운 직후에 곧바로 전환을 걸면 두 값이 한 프레임 안에 겹쳐 들어가
-     * 운동이 통째로 사라진다. `opts.animate` 인 길에서만 부르므로 되짚기에는
-     * 끼지 않는다.
-     */
-    const settleFrame = (): void => {
-      if (typeof svg.getBoundingClientRect === 'function') svg.getBoundingClientRect();
     };
 
     // ── 장면 그리기 ─────────────────────────────────────────────────────
@@ -474,17 +553,13 @@ export const pushPopTopStageView: CanvasView = {
     /** 들어온 차례 → 지금 세워 둔 상자. 장면에서 다시 셈하는 것이라 상태가 아니다. */
     let blocks: (BlockEl | null)[] = [];
 
-    /** 활 하나. 들어온 k 번째와 나간 (count-1-k) 번째를 잇는다. */
-    const makeArc = (k: number, count: number): SVGPathElement => {
-      const x0 = inX(k) + CHIP_W / 2;
-      const x1 = outX(count - 1 - k) + CHIP_W / 2;
-      const peak = 10 + k * 6;
-      return el('path', {
-        d: `M ${x0} ${ROW_Y} Q ${(x0 + x1) / 2} ${2 * peak - ROW_Y} ${x1} ${ROW_Y}`,
+    /** 활 하나를 앞머리 `p` 만큼 지어 낸다. 다 자란 활은 `p` 가 1 이다. */
+    const makeArc = (pts: readonly Pt[], p: number): SVGPathElement =>
+      el('path', {
+        d: arcD(pts, p),
         fill: 'none', stroke: colors.accent, 'stroke-width': 3,
-        'stroke-linecap': 'round', pathLength: 100,
+        'stroke-linecap': 'round',
       });
-    };
 
     /** 캡션은 장면이 무엇을 말할지만 담는다. 문자는 여기서 만든다 (C10). */
     const drawCaption = (cap: PushPopTopCaption | null): void => {
@@ -540,7 +615,7 @@ export const pushPopTopStageView: CanvasView = {
      * 그 장면이 말하는 것을 전부 세운다.
      *
      * 늘 비우고 시작하므로 되돌릴 명령이 필요 없다 (S-scene). 운동이 끝난 뒤에도
-     * 한 번 더 불러 흐르며 남은 전환·임시 노드를 통째로 거둔다 — 속성을 하나씩
+     * 한 번 더 불러 보간이 남긴 끝자리와 임시 노드를 통째로 거둔다 — 속성을 하나씩
      * 되돌리는 목록을 두면 반드시 하나를 빠뜨린다.
      */
     const settle = (s: PushPopTopScene): void => {
@@ -585,7 +660,7 @@ export const pushPopTopStageView: CanvasView = {
       arcLayer.textContent = '';
       if (s.linked) {
         const count = Math.min(s.values.length, s.out.length);
-        for (let k = 0; k < count; k += 1) arcLayer.appendChild(makeArc(k, count));
+        for (let k = 0; k < count; k += 1) arcLayer.appendChild(makeArc(arcPts(k, count), 1));
       }
 
       drawCaption(s.caption);
@@ -599,52 +674,66 @@ export const pushPopTopStageView: CanvasView = {
 
     /** 문제 — 문이 하나뿐임을 보인다. 두 방향이 같은 자리를 쓴다. */
     async function breatheOpening(myGen: number): Promise<void> {
-      settleFrame();
-      await Promise.all([
-        move(inChevron, place(0, BREATH_DY, 1), BREATH_MS),
-        move(outChevron, place(0, -BREATH_DY, 1), BREATH_MS),
-      ]);
+      const home: Spot = { x: 0, y: 0, scale: 1 };
+      const inDown: Spot = { x: 0, y: BREATH_DY, scale: 1 };
+      const outUp: Spot = { x: 0, y: -BREATH_DY, scale: 1 };
+      // 두 갈매기표는 한 숨이다 — 시계를 하나로 둔다.
+      await tween(BREATH_MS, myGen, (p) => {
+        const e = ease(p);
+        setT(inChevron, poseAt(home, inDown, e));
+        setT(outChevron, poseAt(home, outUp, e));
+      });
       if (!alive(myGen)) return;
-      await Promise.all([
-        move(inChevron, place(0, 0, 1), BREATH_MS),
-        move(outChevron, place(0, 0, 1), BREATH_MS),
-      ]);
+      await tween(BREATH_MS, myGen, (p) => {
+        const e = ease(p);
+        setT(inChevron, poseAt(inDown, home, e));
+        setT(outChevron, poseAt(outUp, home, e));
+      });
     }
 
     /** 장치 — 기록줄에서 문 위로 날아와 아래로 내려가 얹힌다. */
     async function flyIn(order: number, slot: number, myGen: number): Promise<void> {
       const block = blocks[order];
       if (!block) return;
+      const filed: Spot = { x: inX(order), y: ROW_Y, scale: CHIP_SCALE };
+      const lane: Spot = { x: BLOCK_X, y: LANE_Y, scale: 1 };
+      const rest: Spot = { x: BLOCK_X, y: blockTopY(slot), scale: 1 };
+      const markLow: Spot = { x: 0, y: surfaceY(slot), scale: 1 };
+      const markHigh: Spot = { x: 0, y: surfaceY(slot + 1), scale: 1 };
       // 출발 그림 — 상자는 아직 왼쪽 기록줄에 있고 통은 한 칸 낮았다.
-      setT(block.g, place(inX(order), ROW_Y, CHIP_SCALE));
-      setT(markerG, place(0, surfaceY(slot), 1));
-      settleFrame();
+      setT(block.g, poseAt(filed, filed, 1));
+      setT(markerG, poseAt(markLow, markLow, 1));
 
-      await move(block.g, place(BLOCK_X, LANE_Y, 1), FLY_MS);
+      await tween(FLY_MS, myGen, (p) => setT(block.g, poseAt(filed, lane, ease(p))));
       if (!alive(myGen)) return;
-      await Promise.all([
-        move(block.g, place(BLOCK_X, blockTopY(slot), 1), DROP_MS),
-        move(markerG, place(0, surfaceY(slot + 1), 1), DROP_MS),
-      ]);
+      // 내려앉는 것과 눈금이 오르는 것은 한 뜻이다 — 시계를 하나로 둔다.
+      await tween(DROP_MS, myGen, (p) => {
+        const e = ease(p);
+        setT(block.g, poseAt(lane, rest, e));
+        setT(markerG, poseAt(markLow, markHigh, e));
+      });
     }
 
     /** 막힘 — 깔린 값을 꺼내려는 탐침이 꼭대기에서 막혀 되돌아간다. */
     async function probeAndStop(topSlot: number, myGen: number): Promise<void> {
       const stopY = blockTopY(topSlot);
+      const park: Spot = { x: 0, y: PROBE_PARK, scale: 1 };
+      const tip: Spot = { x: 0, y: stopY - PROBE_TIP_Y, scale: 1 };
+      const jolt: Spot = { x: 0, y: stopY - PROBE_TIP_Y - JOLT_LIFT, scale: 1 };
       // 출발 그림 — 띠는 아직 뜨지 않았고 탐침은 화면 밖에 있다.
       stopBar.style.display = 'none';
-      setT(probeG, place(0, PROBE_PARK, 1));
+      setT(probeG, poseAt(park, park, 1));
       probeG.style.display = '';
-      settleFrame();
 
-      await move(probeG, place(0, stopY - PROBE_TIP_Y, 1), PROBE_MS);
+      await tween(PROBE_MS, myGen, (p) => setT(probeG, poseAt(park, tip, ease(p))));
       if (!alive(myGen)) return;
+      // 꼭대기에서 막힌다 — 띠가 걸리고 탐침이 한 번 움찔했다 물러난다.
       stopBar.style.display = '';
-      await move(probeG, place(0, stopY - PROBE_TIP_Y - JOLT_LIFT, 1), JOLT_MS);
+      await tween(JOLT_MS, myGen, (p) => setT(probeG, poseAt(tip, jolt, ease(p))));
       if (!alive(myGen)) return;
-      await move(probeG, place(0, stopY - PROBE_TIP_Y, 1), JOLT_MS);
+      await tween(JOLT_MS, myGen, (p) => setT(probeG, poseAt(jolt, tip, ease(p))));
       if (!alive(myGen)) return;
-      await move(probeG, place(0, PROBE_PARK, 1), PROBE_MS);
+      await tween(PROBE_MS, myGen, (p) => setT(probeG, poseAt(tip, park, ease(p))));
     }
 
     /** 장치 — 꼭대기 것만 문으로 솟아 나가고, 나간 차례대로 오른쪽에 놓인다. */
@@ -656,36 +745,51 @@ export const pushPopTopStageView: CanvasView = {
     ): Promise<void> {
       const block = blocks[order];
       if (!block) return;
+      const rest: Spot = { x: BLOCK_X, y: blockTopY(fromSlot), scale: 1 };
+      const lane: Spot = { x: BLOCK_X, y: LANE_Y, scale: 1 };
+      const filed: Spot = { x: outX(outIndex), y: ROW_Y, scale: CHIP_SCALE };
+      const markHigh: Spot = { x: 0, y: surfaceY(fromSlot + 1), scale: 1 };
+      const markLow: Spot = { x: 0, y: surfaceY(fromSlot), scale: 1 };
       // 출발 그림 — 상자는 아직 통 안 그 자리에 있고 통은 한 칸 높았다.
-      setT(block.g, place(BLOCK_X, blockTopY(fromSlot), 1));
-      setT(markerG, place(0, surfaceY(fromSlot + 1), 1));
-      settleFrame();
+      setT(block.g, poseAt(rest, rest, 1));
+      setT(markerG, poseAt(markHigh, markHigh, 1));
 
-      await Promise.all([
-        move(block.g, place(BLOCK_X, LANE_Y, 1), RISE_MS),
-        move(markerG, place(0, surfaceY(fromSlot), 1), RISE_MS),
-      ]);
+      // 솟는 것과 눈금이 내려앉는 것은 한 뜻이다 — 시계를 하나로 둔다.
+      await tween(RISE_MS, myGen, (p) => {
+        const e = ease(p);
+        setT(block.g, poseAt(rest, lane, e));
+        setT(markerG, poseAt(markHigh, markLow, e));
+      });
       if (!alive(myGen)) return;
-      await move(block.g, place(outX(outIndex), ROW_Y, CHIP_SCALE), FILE_MS);
+      await tween(FILE_MS, myGen, (p) => setT(block.g, poseAt(lane, filed, ease(p))));
     }
 
     /** 결과 — 들어온 차례와 나간 차례를 잇는다. 활이 겹치지 않고 포개진다. */
     async function growArcs(s: PushPopTopScene, myGen: number): Promise<void> {
       const count = Math.min(s.values.length, s.out.length);
+      if (count <= 0) return;
       // 출발 그림 — 아직 한 줄도 그어지지 않았다.
       arcLayer.textContent = '';
-      for (let k = 0; k < count; k += 1) {
-        const path = makeArc(k, count);
-        // pathLength 로 길이를 100 에 맞춰 놓았으므로 실측 없이 선이 자라난다.
-        path.style.strokeDasharray = '100';
-        path.style.strokeDashoffset = '100';
-        arcLayer.appendChild(path);
-        settleFrame();
-        path.style.transition = `stroke-dashoffset ${ARC_MS}ms ease-out`;
-        path.style.strokeDashoffset = '0';
-        await wait(ARC_MS);
-        if (!alive(myGen)) return;
-      }
+      // 아직 자라지 않은 활은 **짓지 않는다.** 길이 0 짜리 곡선에 둥근 마감을 두면
+      // 활이 자라기도 전에 점 셋이 먼저 찍힌다.
+      const grown = new Array<SVGPathElement | null>(count).fill(null);
+      // 하나씩 차례로 자라지만 시계는 하나다. 각자의 몫만 어긋나게 둔다.
+      await tween(ARC_MS * count, myGen, (p) => {
+        for (let k = 0; k < count; k += 1) {
+          const local = p >= 1 ? 1 : clamp01(p * count - k);
+          if (local <= 0) continue;
+          const pts = arcPts(k, count);
+          const eased = easeOut(local);
+          const drawnArc = grown[k];
+          if (drawnArc) {
+            drawnArc.setAttribute('d', arcD(pts, eased));
+            continue;
+          }
+          const path = makeArc(pts, eased);
+          grown[k] = path;
+          arcLayer.appendChild(path);
+        }
+      });
     }
 
     /** 방금 밟은 걸음 하나만 흐르게 한다. */
@@ -721,7 +825,7 @@ export const pushPopTopStageView: CanvasView = {
       settle(next);
       if (!opts.animate || destroyed) return;
       await flow(next, myGen);
-      // 흐르며 남은 전환·보간 끝자리·임시 속성이 통째로 사라진다.
+      // 운동이 남긴 보간 끝자리와 임시 속성이 통째로 사라진다.
       if (alive(myGen)) settle(next);
     }
 

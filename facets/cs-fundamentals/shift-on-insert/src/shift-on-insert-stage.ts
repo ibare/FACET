@@ -25,6 +25,20 @@
  * `initialData` 를 좁히는 자리가 mount 이기 때문이다 (S-piece). 그 위에 얹히는
  * 값·테두리·캡션은 걸음마다 장면에서 다시 만든다.
  *
+ * ── CSS transition 을 쓰지 않는다
+ *
+ * 옛 stage 는 타일에 `style.transition` 을 걸고 곧바로 끝 자리를 주는 짜임이었다.
+ * 되짚기는 `animate:false` 로 오는데 transition 은 그 뒤에도 화면을 저 혼자
+ * 흘러가게 하므로 "그 걸음의 화면" 이라는 말이 성립하지 않는다 (S-scene MUST NOT).
+ * 이제 `tween` 이 벽시계를 `setTimeout` 으로 재며 `translate` 의 x·y 를 **직접**
+ * 보간한다 — rAF 를 쓰지 않는 것은 프레임이 없는 자리에서도 걸음이 돌아야 하기
+ * 때문이고, 배율이 아니라 좌표를 보간하는 것은 `-0` 이나 끝자리 부스러기가
+ * transform 문자열에 남지 않아야 되짚은 화면과 글자까지 같아지기 때문이다.
+ *
+ * `render` 는 정적 그리기를 **두 번** 부른다. 첫 번째가 그 걸음의 화면을 전부
+ * 세우고, 운동이 끝난 뒤의 두 번째가 흐르며 남은 속성(움직이는 타일 색, 잠깐
+ * 열어 둔 칸 테두리)을 통째로 지운다. 되돌릴 목록을 손으로 관리하지 않는다.
+ *
  * 색은 design-tokens 만 쓴다 (S-view). 움직이는 값 = itemActive, 새로 넣는 값 =
  * accent, 빈 칸 = ghostOutline 점선, 받을 자리 = accent 점선.
  */
@@ -75,6 +89,8 @@ const OPEN_MS = 150;
 const DROP_MS = 320;
 /** 못 들어가고 튕기는 시간 (한 방향). */
 const BUMP_MS = 170;
+/** 보간 한 프레임. rAF 가 아니라 벽시계로 잰다. */
+const FRAME_MS = 16;
 
 type SlotState = 'filled' | 'empty' | 'blocked' | 'open' | 'settled';
 type TileKind = 'resting' | 'moving' | 'incoming';
@@ -90,6 +106,32 @@ type Geometry = { capacity: number; targetIndex: number };
 
 function num(v: unknown): number {
   return typeof v === 'number' && Number.isFinite(v) ? v : 0;
+}
+
+function clamp01(v: number): number {
+  return v < 0 ? 0 : v > 1 ? 1 : v;
+}
+
+/** 부딪히러 갈 때 — 점점 빨라진다. */
+function easeIn(p: number): number {
+  return p * p;
+}
+
+/** 튕겨 돌아올 때 — 점점 느려진다. */
+function easeOut(p: number): number {
+  return 1 - (1 - p) * (1 - p);
+}
+
+/** 옆으로 미는 운동. cubic-bezier(.4,0,.2,1) 자리를 대신한다. */
+function easeInOut(p: number): number {
+  return p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+}
+
+/** 내려앉으며 한 번 지나쳤다 돌아온다. cubic-bezier(.34,1.3,.64,1) 자리. */
+function easeBackOut(p: number): number {
+  const c1 = 1.2;
+  const u = p - 1;
+  return 1 + (c1 + 1) * u * u * u + c1 * u * u;
 }
 
 /**
@@ -125,58 +167,63 @@ export const shiftOnInsertStageView: CanvasView = {
     let destroyed = false;
 
     /**
-     * 되짚는 중인가. 러너가 `params` 로 흘린다 (`ViewMountParams.isInstant`).
-     *
-     * 운동이 **칸 테두리**를 걸음 중간에 고쳐 쓰는 짜임이라 (받을 자리를 잠깐
-     * `open` 으로 보였다가 `filled` 로 돌린다), 되짚기가 화면을 새로 세운 뒤에도 앞
-     * 걸음의 운동이 살아 있으면 칸이 옛 뜻으로 덮인다. 타일은 걸음마다 새로
-     * 만들지만 칸은 mount 에서 한 번 세워 계속 쓰는 것이라 더욱 그렇다.
-     */
-    const isInstant = params.isInstant ?? ((): boolean => false);
-    // 되짚기 직전에 걸어 둔 것을 거둔다 (destroy 와 같은 모양).
-    params.onScrubStart?.(() => {
-      for (const id of timers) clearTimeout(id);
-      timers.clear();
-      for (const wake of [...waiters]) wake();
-      waiters.clear();
-    });
-
-    /**
      * 그림의 세대. `render` 가 화면을 새로 세울 때마다 올린다.
      *
-     * 깨어난 운동이 다음 세대의 화면에 손대지 않게 하는 빗장이다 — 되짚기가
-     * 기다리던 것을 깨우면 그 뒷처리가 곧바로 이어 돌기 때문이다.
+     * 깨어난 운동이 다음 세대의 화면에 손대지 않게 하는 빗장이다. 운동이 **칸
+     * 테두리**를 걸음 중간에 고쳐 쓰는 짜임이라 (받을 자리를 잠깐 `open` 으로
+     * 보였다가 되돌린다), 앞 걸음의 운동이 살아 있으면 칸이 옛 뜻으로 덮인다.
+     * 타일은 걸음마다 새로 만들지만 칸은 mount 에서 한 번 세워 계속 쓰는 것이라
+     * 더욱 그렇다.
+     *
+     * `isInstant` 와 `onScrubStart` 는 빗장이 아니다 — 러너는 장면 조각에서 그
+     * 둘을 부르지 않는다 (S-scene). 실효 있는 것은 `opts.animate` 검사와 이 세대
+     * 빗장 둘뿐이라 그 둘만 둔다.
      */
     let gen = 0;
 
-    const wait = (ms: number): Promise<void> =>
-      new Promise<void>((resolve) => {
-        if (destroyed || isInstant()) return resolve();
+    /** 이 세대의 운동이 아직 화면에 손대도 되나. */
+    const alive = (mine: number): boolean => mine === gen && !destroyed;
+
+    /**
+     * 보간 한 마디.
+     *
+     * CSS `transition` 을 쓰지 않는다 (S-scene MUST NOT). `resolve` 를 `waiters` 에
+     * 담아 두므로 `destroy` 가 타이머를 취소해도 기다리던 약속이 함께 풀린다 —
+     * 콜백 안에만 두면 취소된 tick 이 아예 안 불려 약속이 영영 안 풀린다 (S-piece).
+     */
+    function tween(ms: number, mine: number, draw: (p: number) => void): Promise<void> {
+      return new Promise<void>((resolve) => {
+        if (!alive(mine)) {
+          resolve();
+          return;
+        }
+        const started = Date.now();
         const finish = (): void => {
           waiters.delete(finish);
           resolve();
         };
         waiters.add(finish);
-        const id = setTimeout(() => {
-          timers.delete(id);
-          finish();
-        }, ms);
-        timers.add(id);
+        const tick = (): void => {
+          if (!alive(mine)) {
+            finish();
+            return;
+          }
+          const p = ms <= 0 ? 1 : clamp01((Date.now() - started) / ms);
+          draw(p);
+          if (p >= 1) {
+            finish();
+            return;
+          }
+          const id = setTimeout(() => {
+            timers.delete(id);
+            tick();
+          }, FRAME_MS);
+          timers.add(id);
+        };
+        // 첫 마디를 곧바로 그린다 — 기다리면 그 사이에 끝 자리가 번쩍인다.
+        tick();
       });
-
-    /** 이 세대의 운동이 아직 화면에 손대도 되나. */
-    const alive = (myGen: number): boolean => !destroyed && myGen === gen;
-
-    /**
-     * 지금 세운 자리를 브라우저가 한 번 재게 한다.
-     *
-     * 정적으로 세운 직후에 곧바로 전환을 걸면 두 값이 한 프레임 안에 겹쳐 들어가
-     * 운동이 통째로 사라진다. 여기서 한 번 재게 해 출발 자리를 확정한다.
-     * `opts.animate` 인 길에서만 부르므로 되짚기에는 끼지 않는다.
-     */
-    const settle = (): void => {
-      svg.getBoundingClientRect();
-    };
+    }
 
     // ── 자리 셈. 칸 수가 폭을 정하고 남는 폭은 좌우로 고르게 나눈다 (S-piece).
     const rowW = geometry.capacity * SLOT_W + (geometry.capacity - 1) * SLOT_GAP;
@@ -263,9 +310,18 @@ export const shiftOnInsertStageView: CanvasView = {
       }
     };
 
+    /**
+     * 타일을 그 자리에 세운다.
+     *
+     * 정적 그리기와 보간이 같은 함수를 쓴다 — 끝에서 목표 좌표를 **그대로** 넘기면
+     * 흐르고 난 transform 문자열이 곧바로 세운 것과 글자까지 같아진다 (S-scene).
+     */
+    const placeTile = (tile: Tile, x: number, y: number): void => {
+      tile.g.style.transform = `translate(${x}px, ${y}px)`;
+    };
+
     const makeTile = (value: number, x: number, y: number, kind: TileKind): Tile => {
       const g = document.createElementNS(SVG_NS, 'g');
-      g.style.transform = `translate(${x}px, ${y}px)`;
 
       const box = document.createElementNS(SVG_NS, 'rect');
       box.setAttribute('width', String(TILE_W));
@@ -286,21 +342,9 @@ export const shiftOnInsertStageView: CanvasView = {
       g.appendChild(label);
 
       const tile: Tile = { g, box, label };
+      placeTile(tile, x, y);
       paintTile(tile, kind);
       return tile;
-    };
-
-    /** 전환 없이 그 자리에 세운다. 정적 그리기와 운동의 출발 자리가 이것을 쓴다. */
-    const placeTile = (tile: Tile, x: number, y: number): void => {
-      // 값을 '없음' 으로 되돌린다 — `none` 을 남겨 두면 곧바로 세운 화면과 흐르고
-      // 난 화면이 속성 하나만큼 달라진다 (S-scene 의 되짚기 판정).
-      tile.g.style.removeProperty('transition');
-      tile.g.style.transform = `translate(${x}px, ${y}px)`;
-    };
-
-    const moveTile = (tile: Tile, x: number, y: number, ms: number, easing: string): void => {
-      tile.g.style.transition = `transform ${ms}ms ${easing}`;
-      tile.g.style.transform = `translate(${x}px, ${y}px)`;
     };
 
     // ── 한 번만 세우는 뼈대 ──────────────────────────────────────────────────
@@ -384,47 +428,6 @@ export const shiftOnInsertStageView: CanvasView = {
       return filled ? 'filled' : 'empty';
     };
 
-    /** 늘 비우고 시작한다 — 되돌릴 명령이 필요 없다 (S-scene). */
-    const rewind = (): number => {
-      gen += 1;
-      tileLayer.textContent = '';
-      tiles = [];
-      incomingTile = null;
-      captionEl.textContent = '';
-      return gen;
-    };
-
-    /** 그 장면이 말하는 것을 전부 세운다. 자리는 여기서 셈한다 (S-piece). */
-    const drawStatic = (s: ShiftOnInsertScene): void => {
-      // 새 값이 이미 칸에 앉았나. 앉았으면 위에 떠 있는 것도 내려올 길도 없다.
-      const placed = s.phase === 'placed' || s.phase === 'done';
-
-      tiles = new Array<Tile | null>(slotEls.length).fill(null);
-      for (let i = 0; i < slotEls.length; i += 1) {
-        paintSlot(i, slotStateOf(s, i));
-        const value = s.cells[i];
-        if (value == null) continue;
-        // 새로 넣은 값은 앉은 뒤에도 accent 로 남는다 — 어느 것이 새 값인지가
-        // 이 조각의 결론이다.
-        const kind: TileKind = placed && i === s.targetIndex ? 'incoming' : 'resting';
-        const tile = makeTile(value, tileX(i), TILE_Y, kind);
-        tileLayer.appendChild(tile.g);
-        tiles[i] = tile;
-      }
-
-      if (placed) {
-        arrow.setAttribute('opacity', '0');
-      } else {
-        // 지운다 — `1` 로 되돌리지 않는다. 곧바로 세운 화면에는 이 속성이 아예
-        // 없어, 남겨 두면 같은 걸음인데 화면이 갈린다 (S-scene).
-        arrow.removeAttribute('opacity');
-        incomingTile = makeTile(s.incoming, tileX(s.targetIndex), HOVER_Y, 'incoming');
-        tileLayer.appendChild(incomingTile.g);
-      }
-
-      counterEl.textContent = tr('label.moveCount', 'moved: {n}', { n: s.moves });
-    };
-
     /** 캡션은 장면이 무엇을 말할지만 담는다. 문자는 여기서 만든다 (C10). */
     const drawCaption = (cap: ShiftCaption | null): void => {
       if (!cap) {
@@ -469,24 +472,72 @@ export const shiftOnInsertStageView: CanvasView = {
       }
     };
 
+    /**
+     * 그 장면이 말하는 것을 전부 세운다. 자리는 여기서 셈한다 (S-piece).
+     *
+     * 늘 비우고 시작하므로 되돌릴 명령이 필요 없다 (S-scene). 운동이 끝난 뒤
+     * 한 번 더 부르면 흐르며 남은 것이 통째로 사라진다.
+     */
+    const drawStatic = (s: ShiftOnInsertScene): void => {
+      tileLayer.textContent = '';
+      tiles = new Array<Tile | null>(slotEls.length).fill(null);
+      incomingTile = null;
+
+      // 새 값이 이미 칸에 앉았나. 앉았으면 위에 떠 있는 것도 내려올 길도 없다.
+      const placed = s.phase === 'placed' || s.phase === 'done';
+
+      for (let i = 0; i < slotEls.length; i += 1) {
+        paintSlot(i, slotStateOf(s, i));
+        const value = s.cells[i];
+        if (value == null) continue;
+        // 새로 넣은 값은 앉은 뒤에도 accent 로 남는다 — 어느 것이 새 값인지가
+        // 이 조각의 결론이다.
+        const kind: TileKind = placed && i === s.targetIndex ? 'incoming' : 'resting';
+        const tile = makeTile(value, tileX(i), TILE_Y, kind);
+        tileLayer.appendChild(tile.g);
+        tiles[i] = tile;
+      }
+
+      if (placed) {
+        arrow.setAttribute('opacity', '0');
+      } else {
+        // 지운다 — `1` 로 되돌리지 않는다. 곧바로 세운 화면에는 이 속성이 아예
+        // 없어, 남겨 두면 같은 걸음인데 화면이 갈린다 (S-scene).
+        arrow.removeAttribute('opacity');
+        incomingTile = makeTile(s.incoming, tileX(s.targetIndex), HOVER_Y, 'incoming');
+        tileLayer.appendChild(incomingTile.g);
+      }
+
+      counterEl.textContent = tr('label.moveCount', 'moved: {n}', { n: s.moves });
+      drawCaption(s.caption);
+    };
+
     // ── 걸음 함수 ───────────────────────────────────────────────────────────
     //
-    // 셋 다 `withAnim` 을 받아 정적/애니 두 쓰임을 겸한다. 거짓이면 아무것도 걸지
-    // 않고 곧바로 돌아온다 — 정적 그리기가 이미 끝 자리를 세워 두었으므로 그것이
-    // 곧 답이다 (S-scene 의 "animate 가 거짓이면 타이머도 프레임도 걸지 않는다").
+    // 정적 그리기가 이미 끝 자리에 세워 두었으므로, 여기서는 아직 못 온 만큼을
+    // 뒤로 물리고 시계를 돌리는 꼴이 된다. 출발 그림은 `prev` 를 들추지 않고
+    // 장면에서 셈한다 (S-scene). 흐르며 덮어쓴 색과 테두리는 되돌리지 않는다 —
+    // `render` 가 마지막에 정적 그리기를 한 번 더 부르는 것이 그 자리다.
 
     /** 문제 — 넣고 싶은 자리가 이미 차 있다. 새 값이 부딪혔다가 튕겨 오른다. */
-    async function bumpIncoming(at: number, withAnim: boolean, myGen: number): Promise<void> {
+    function flowBump(at: number, mine: number): Promise<void> {
       const tile = incomingTile;
-      if (!tile || !withAnim) return;
-      settle();
-      moveTile(tile, tileX(at), HOVER_Y + BUMP_DROP, BUMP_MS, 'ease-in');
-      await wait(BUMP_MS);
-      if (!alive(myGen)) return;
-      moveTile(tile, tileX(at), HOVER_Y, BUMP_MS, 'ease-out');
-      await wait(BUMP_MS);
-      if (!alive(myGen)) return;
-      placeTile(tile, tileX(at), HOVER_Y);
+      if (!tile) return Promise.resolve();
+      const x = tileX(at);
+      const total = BUMP_MS * 2;
+      return tween(total, mine, (p) => {
+        if (p >= 1) {
+          // 끝에서는 보간값이 아니라 목표 좌표를 그대로 쓴다.
+          placeTile(tile, x, HOVER_Y);
+          return;
+        }
+        const now = p * total;
+        const drop =
+          now < BUMP_MS
+            ? BUMP_DROP * easeIn(now / BUMP_MS)
+            : BUMP_DROP * (1 - easeOut((now - BUMP_MS) / BUMP_MS));
+        placeTile(tile, x, HOVER_Y + drop);
+      });
     }
 
     /**
@@ -495,49 +546,55 @@ export const shiftOnInsertStageView: CanvasView = {
      * 운동의 방향이 뒤집힌다. 정적 그리기가 타일을 이미 **도착 칸**에 세워 두었으므로
      * 떠나온 칸으로 되돌려 놓고 시작한다. 그 사이에 타이머도 프레임도 없어 페인트가
      * 끼지 않는다 — 끝 자리가 번쩍이지 않는다.
+     *
+     * 자리를 보이는 뜸과 옮기는 운동을 `Promise` 둘로 가르지 않는다. 한 뜻의 운동은
+     * 시계가 하나여야 하므로 한 `tween` 안에서 마디만 나눈다.
      */
-    async function shiftTile(
+    function flowShift(
       p: { from: number; to: number; fromIsTarget: boolean },
-      withAnim: boolean,
-      myGen: number,
+      mine: number,
     ): Promise<void> {
       const tile = tiles[p.to];
-      if (!tile || !withAnim) return;
+      if (!tile) return Promise.resolve();
 
-      placeTile(tile, tileX(p.from), TILE_Y);
+      const fromX = tileX(p.from);
+      const toX = tileX(p.to);
+
+      placeTile(tile, fromX, TILE_Y);
       paintTile(tile, 'moving');
       // 떠나기 전의 두 칸 — 출발 칸은 아직 차 있고, 도착 칸은 받을 준비를 한다.
       paintSlot(p.from, p.fromIsTarget ? 'blocked' : 'filled');
       paintSlot(p.to, 'open');
-      settle();
-      await wait(OPEN_MS);
-      if (!alive(myGen)) return;
 
-      moveTile(tile, tileX(p.to), TILE_Y, MOVE_MS, 'cubic-bezier(.4,0,.2,1)');
-      await wait(MOVE_MS);
-      if (!alive(myGen)) return;
-
-      placeTile(tile, tileX(p.to), TILE_Y);
-      paintTile(tile, 'resting');
-      paintSlot(p.to, 'filled');
-      // 떠난 자리는 즉시 빈 칸이 된다 — "자리를 비운다" 가 눈에 보여야 한다.
-      paintSlot(p.from, 'empty');
+      const total = OPEN_MS + MOVE_MS;
+      let left = false;
+      return tween(total, mine, (q) => {
+        const m = clamp01((q * total - OPEN_MS) / MOVE_MS);
+        placeTile(tile, m >= 1 ? toX : fromX + (toX - fromX) * easeInOut(m), TILE_Y);
+        if (m >= 1 && !left) {
+          left = true;
+          // 떠난 자리는 즉시 빈 칸이 된다 — "자리를 비운다" 가 눈에 보여야 한다.
+          paintSlot(p.from, 'empty');
+        }
+      });
     }
 
     /** 비워 둔 칸으로 새 값이 내려앉는다. 떠 있던 자리로 되돌려 놓고 시작한다. */
-    async function dropIncoming(at: number, withAnim: boolean, myGen: number): Promise<void> {
+    function flowDrop(at: number, mine: number): Promise<void> {
       const tile = tiles[at];
-      if (!tile || !withAnim) return;
+      if (!tile) return Promise.resolve();
 
-      placeTile(tile, tileX(at), HOVER_Y);
+      const x = tileX(at);
+      placeTile(tile, x, HOVER_Y);
       paintSlot(at, 'open');
-      settle();
-      moveTile(tile, tileX(at), TILE_Y, DROP_MS, 'cubic-bezier(.34,1.3,.64,1)');
-      await wait(DROP_MS);
-      if (!alive(myGen)) return;
 
-      placeTile(tile, tileX(at), TILE_Y);
-      paintSlot(at, 'filled');
+      return tween(DROP_MS, mine, (p) => {
+        if (p >= 1) {
+          placeTile(tile, x, TILE_Y);
+          return;
+        }
+        placeTile(tile, x, HOVER_Y + (TILE_Y - HOVER_Y) * easeBackOut(p));
+      });
     }
 
     async function render(
@@ -546,31 +603,35 @@ export const shiftOnInsertStageView: CanvasView = {
       _prev: ShiftOnInsertScene | null,
       opts: { animate: boolean },
     ): Promise<void> {
-      const myGen = rewind();
+      const mine = (gen += 1);
       drawStatic(next);
-      drawCaption(next.caption);
+      // 되짚기는 여기서 끝난다 — 타이머도 프레임도 걸지 않는다 (S-scene).
+      if (!opts.animate || destroyed) return;
 
       // 방금 밟은 걸음 하나만 흐르게 한다. 걸음을 건너뛰어 와도 걸음 함수가 자기
-      // 출발 그림을 장면에서 스스로 세우고, `animate` 가 거짓이면 곧바로 끝 자리에
-      // 선다 — 그래서 `prev` 와 견줄 일이 없다.
+      // 출발 그림을 장면에서 스스로 세우므로 `prev` 와 견줄 일이 없다.
       const step = next.step;
       if (!step) return;
 
       switch (step.kind) {
         case 'bump':
-          await bumpIncoming(next.targetIndex, opts.animate, myGen);
-          return;
+          await flowBump(next.targetIndex, mine);
+          break;
         case 'shift':
-          await shiftTile(
+          await flowShift(
             { from: step.from, to: step.to, fromIsTarget: step.from === next.targetIndex },
-            opts.animate,
-            myGen,
+            mine,
           );
-          return;
+          break;
         case 'drop':
-          await dropIncoming(step.index, opts.animate, myGen);
-          return;
+          await flowDrop(step.index, mine);
+          break;
       }
+
+      if (!alive(mine)) return;
+      // 흐르며 남은 속성 — 움직이는 타일 색, 잠깐 열어 둔 칸 테두리, 보간의 끝자리
+      // 부스러기 — 가 통째로 사라진다. 되돌릴 목록을 손으로 관리하지 않는다.
+      drawStatic(next);
     }
 
     return {
@@ -581,6 +642,8 @@ export const shiftOnInsertStageView: CanvasView = {
         gen += 1;
         for (const id of timers) clearTimeout(id);
         timers.clear();
+        // 걸어 둔 것을 거두는 것만으로는 모자라다 — 취소된 콜백은 아예 불리지
+        // 않으므로 기다리던 것을 직접 깨워야 `render` 의 `await` 가 돌아온다.
         for (const wake of [...waiters]) wake();
         waiters.clear();
         if (svg.parentElement) svg.remove();

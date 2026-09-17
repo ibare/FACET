@@ -27,13 +27,25 @@
  * ── 움직임
  *
  * 정적 그리기가 정본이라 자리들은 이미 끝 자리에 서 있다. 걸음은 **아직 못 온
- * 만큼을 뒤로 물려 두었다가** 놓아 준다 — 새 자리는 어미 자리에서 한 층 위로
- * 물려 두었다 제자리로 미끄러지고 (transform), 어미와 잇는 선은 어미 쪽부터
- * 그려진다 (stroke-dashoffset).
+ * 만큼을 뒤로 물려 두었다가** 프레임마다 그 물림을 줄인다 — 새 자리는 어미 자리
+ * 에서 한 층 위에서 출발해 제자리로 미끄러지고 (transform), 어미와 잇는 선은
+ * 어미 쪽부터 그려지고 (stroke-dashoffset), 지난 층은 살아 있는 칠에서 가라앉는
+ * 칠로 물든다 (fill).
  *
- * 운동이 끝나면 **장면을 통째로 다시 세운다.** 전이가 남긴 인라인 `transition`·
- * `transform`·`stroke-dashoffset` 이 노드째 사라지므로 되돌릴 목록을 손으로
- * 관리하지 않는다 (S-scene).
+ * **CSS `transition` 을 쓰지 않는다** (S-scene MUST NOT). 전이는 자기 시계로
+ * 흐르므로 걸음의 화면이 `render` 가 풀린 뒤에도 저 혼자 바뀔 수 있고, 그러면
+ * "그 걸음의 화면" 이라는 말이 성립하지 않는다. 여기서는 `tween` 하나가 시계를
+ * 쥐고 `setTimeout(FRAME_MS)` 로 걸어가므로, 화면이 바뀌는 일은 전부 세대 빗장
+ * 안에서 일어난다.
+ *
+ * 한때 `hold()` 가 `transition: 'none'` 으로 끄고 한 프레임 뒤 `release()` 가
+ * 다시 켜는 짜임이었다. 지연 발화가 새지는 않았지만 (걸어 둔 노드를 다음 정적
+ * 그리기가 통째로 걷어 갔다) 시계가 둘이라, 타이머가 전이보다 먼저 깨는 만큼을
+ * `TAIL_MS` 라는 어림수로 메우고 있었다. 시계를 하나로 하면 그 어림이 없어진다.
+ *
+ * 운동이 끝나면 **장면을 통째로 다시 세운다.** 보간이 남긴 인라인 `transform`·
+ * `stroke-dashoffset`·`fill` 이 노드째 사라지므로 되돌릴 목록을 손으로 관리하지
+ * 않는다 (S-scene).
  *
  * 걸음 벽시계는 **운동 + `stepMs`** 다 — `render` 가 운동이 다 선 뒤에 풀리므로
  * (S-scene 의 Promise 계약) 선언의 쉼이 그 위에 얹힌다. 그래서 운동을 걸음
@@ -100,14 +112,38 @@ const DEFAULT_STEP_MS = 700;
 
 const BRACE_MS = 420;
 
+/** 보간 한 마디. 프레임을 쓰지 않으므로 이 값이 곧 걸음의 해상도다. */
+const FRAME_MS = 16;
+
+const clamp01 = (p: number): number => (p < 0 ? 0 : p > 1 ? 1 : p);
+/** 옛 `cubic-bezier(0.22, 0.61, 0.36, 1)` 자리. */
+const easeOut = (p: number): number => 1 - (1 - p) ** 3;
+/** 보간 끝자리를 자른다. 마지막 마디는 인라인 값을 지우므로 여기를 지나지 않는다. */
+const round2 = (v: number): number => Math.round(v * 100) / 100;
+const round3 = (v: number): number => Math.round(v * 1000) / 1000;
+
+function parseHex(value: string): [number, number, number] | null {
+  const raw = value.trim().replace('#', '');
+  const full = raw.length === 3 ? raw.replace(/./g, (ch) => ch + ch) : raw;
+  if (!/^[0-9a-fA-F]{6}$/.test(full)) return null;
+  const n = Number.parseInt(full, 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
 /**
- * 전이가 다 끝나기를 기다리는 여유.
+ * 두 칠을 섞는다. CSS `transition` 의 색 전환을 대신한다.
  *
- * 타이머는 `release()` 를 부른 순간부터 재고 CSS 전이는 그 다음 스타일 재계산부터
- * 재므로, 타이머가 한 프레임쯤 먼저 깬다. 그 자리에서 장면을 다시 세우면 마지막
- * 몇 %가 튄다.
+ * `p` 가 1 이면 **목표 칠을 글자 그대로** 돌려준다 — 보간이 만든 `rgb(…)` 표기가
+ * 끝자리에 남으면 흘려 세운 화면과 곧바로 세운 화면이 갈린다.
  */
-const TAIL_MS = 40;
+function mixColor(from: string, to: string, p: number): string {
+  if (p >= 1) return to;
+  const a = parseHex(from);
+  const b = parseHex(to);
+  if (a === null || b === null) return to;
+  const at = (i: number): number => Math.round(a[i] + (b[i] - a[i]) * p);
+  return `rgb(${at(0)}, ${at(1)}, ${at(2)})`;
+}
 
 /** 화면에 새겨진 도식 라벨. 번역하면 눈금과 어긋난다 (C10 표식). */
 const HEADER_DEPTH = 'depth';
@@ -175,7 +211,7 @@ const totalOf = (rows: readonly number[]): number => {
 type Mover = { node: SVGElement; dx: number; dy: number; fade: boolean };
 type Drawer = { node: SVGElement; length: number };
 
-/** 한 걸음의 운동 전부. 시계가 하나라 `render` 가 다 선 뒤에 풀린다. */
+/** 한 걸음의 운동 전부. `tween` 하나가 이것을 통째로 쥐므로 시계가 하나다. */
 type Motion = {
   movers: Mover[];
   drawers: Drawer[];
@@ -218,7 +254,7 @@ export const depthDoublesCountStageView: CanvasView = {
     /**
      * 걸음 안의 운동 길이.
      *
-     * 걸음 벽시계 = 이 값 + `stepMs` 다. 옛 코드는 전이가 끝나기 전에 resolve 해
+     * 걸음 벽시계 = 이 값 + `stepMs` 다. 옛 코드는 운동이 끝나기 전에 resolve 해
      * 두 시간을 겹쳤지만, 장면 방식에서는 `render` 가 장면이 다 선 뒤에 풀려야
      * 하므로 (S-scene) 겹칠 수 없다. 그래서 걸음 간격의 절반 아래로 줄인다.
      */
@@ -280,69 +316,64 @@ export const depthDoublesCountStageView: CanvasView = {
 
     // ── 걸어 둔 것과 기다리는 것. destroy 가 일괄로 거둔다 (S-piece).
     const timers = new Set<ReturnType<typeof setTimeout>>();
-    const frames = new Set<number>();
-    const wakers = new Set<() => void>();
+    const waiters = new Set<() => void>();
     let destroyed = false;
 
     /**
      * 지금 화면을 세운 `render` 의 번호.
      *
-     * 걸음이 `await` 를 둘 지난다 (프레임 한 번 · 전이 기다리기 한 번). 가운데에
-     * 되짚기가 끼어들면 남은 마디가 **이미 새로 선 화면**을 덮으므로, 마디마다
-     * 자기 번호가 아직 유효한지 보고 물러난다. `isInstant` 는 빗장이 아니다 —
-     * 러너는 장면 조각에서 그것을 부르지 않는다 (S-scene).
+     * 걸음 하나가 여러 마디를 지난다. 가운데에 되짚기가 끼어들면 남은 마디가
+     * **이미 새로 선 화면**을 덮으므로, 마디마다 자기 번호가 아직 유효한지 보고
+     * 물러난다. `isInstant` 는 빗장이 아니다 — 러너는 장면 조각에서 그것을 부르지
+     * 않는다 (S-scene).
      */
     let gen = 0;
     const alive = (mine: number): boolean => mine === gen && !destroyed;
 
-    const canAnimate = typeof requestAnimationFrame === 'function';
-
-    /** 브라우저가 물려 둔 자리를 한 번 반영한 뒤에 전이를 켜야 미끄러짐이 보인다. */
-    const nextFrame = (): Promise<void> =>
-      new Promise((resolve) => {
-        let done = false;
-        const finish = (): void => {
-          if (done) return;
-          done = true;
-          wakers.delete(finish);
+    /**
+     * 보간 한 마디.
+     *
+     * CSS `transition` 을 쓰지 않는다 (S-scene MUST NOT). `resolve` 를 `waiters` 에
+     * 담아 두므로 `destroy` 가 타이머를 취소해도 기다리던 약속이 함께 풀린다 —
+     * 콜백 안에만 두면 취소된 tick 이 아예 안 불려 약속이 영영 안 풀린다 (S-piece).
+     *
+     * 프레임(`requestAnimationFrame`) 이 아니라 `setTimeout` 으로 걷는다. 프레임은
+     * 문서가 안 보이면 멈추므로 걸음이 걸린 채로 남고, 검사 환경에는 아예 없기도
+     * 하다 — 그때마다 운동을 통째로 건너뛰는 갈래를 따로 둬야 했다.
+     */
+    function tween(ms: number, mine: number, draw: (p: number) => void): Promise<void> {
+      return new Promise<void>((resolve) => {
+        if (!alive(mine)) {
           resolve();
-        };
-        wakers.add(finish);
-        if (!canAnimate) {
-          const id = setTimeout(() => {
-            timers.delete(id);
-            finish();
-          }, 0);
-          timers.add(id);
           return;
         }
-        const outer = requestAnimationFrame(() => {
-          frames.delete(outer);
-          const inner = requestAnimationFrame(() => {
-            frames.delete(inner);
-            finish();
-          });
-          frames.add(inner);
-        });
-        frames.add(outer);
-      });
-
-    const wait = (ms: number): Promise<void> =>
-      new Promise((resolve) => {
-        let done = false;
+        const started = Date.now();
         const finish = (): void => {
-          if (done) return;
-          done = true;
-          wakers.delete(finish);
+          waiters.delete(finish);
           resolve();
         };
-        wakers.add(finish);
-        const id = setTimeout(() => {
-          timers.delete(id);
-          finish();
-        }, ms);
-        timers.add(id);
+        waiters.add(finish);
+        const tick = (): void => {
+          if (!alive(mine)) {
+            finish();
+            return;
+          }
+          const p = ms <= 0 ? 1 : clamp01((Date.now() - started) / ms);
+          draw(p);
+          if (p >= 1) {
+            finish();
+            return;
+          }
+          const id = setTimeout(() => {
+            timers.delete(id);
+            tick();
+          }, FRAME_MS);
+          timers.add(id);
+        };
+        // 첫 마디를 곧바로 그린다 — 기다리면 그 사이에 끝 자리가 번쩍인다.
+        tick();
       });
+    }
 
     const clearGroup = (group: SVGGElement): void => {
       while (group.firstChild) group.removeChild(group.firstChild);
@@ -542,39 +573,46 @@ export const depthDoublesCountStageView: CanvasView = {
       };
     };
 
-    /** 아직 못 온 만큼 뒤로 물린다. */
-    const hold = (motion: Motion): void => {
+    /**
+     * 운동의 한 마디를 그린다.
+     *
+     * `p` 가 0 이면 아직 못 온 만큼이 온전히 물려 있고, 1 이면 물림이 없다. 끝
+     * 자리는 **정적 그리기가 이미 정해 두었으므로** 마지막 마디는 보간값을 쓰지
+     * 않고 인라인 값을 **지운다** — 보간이 만든 글자가 남으면 흘려 세운 화면과
+     * 곧바로 세운 화면이 갈린다.
+     *
+     * 자리 옮김과 선 긋기는 눅여서(`easeOut`), 칠은 고르게(`p` 그대로) 간다.
+     * 시계는 하나이고 거기서 갈래만 다르게 읽는다.
+     */
+    const applyMotion = (motion: Motion, p: number): void => {
+      const done = p >= 1;
+      const e = easeOut(p);
       for (const m of motion.movers) {
-        m.node.style.transition = 'none';
-        m.node.style.transform = `translate(${m.dx}px, ${m.dy}px)`;
-        if (m.fade) m.node.style.opacity = '0';
+        if (done) {
+          m.node.style.removeProperty('transform');
+          if (m.fade) m.node.style.removeProperty('opacity');
+          continue;
+        }
+        const back = 1 - e;
+        m.node.style.transform = `translate(${round2(m.dx * back)}px, ${round2(m.dy * back)}px)`;
+        if (m.fade) m.node.style.opacity = `${round3(e)}`;
       }
       for (const d of motion.drawers) {
-        d.node.style.transition = 'none';
-        d.node.style.strokeDasharray = `${d.length}`;
-        d.node.style.strokeDashoffset = `${d.length}`;
+        if (done) {
+          d.node.style.removeProperty('stroke-dasharray');
+          d.node.style.removeProperty('stroke-dashoffset');
+          continue;
+        }
+        d.node.style.strokeDasharray = `${round2(d.length)}`;
+        d.node.style.strokeDashoffset = `${round2(d.length * (1 - e))}`;
       }
       for (const rect of motion.settling) {
-        rect.style.transition = 'none';
-        rect.style.fill = colors.itemActive;
-      }
-    };
-
-    /** 놓아 준다. 끝 자리는 이미 정적 그리기가 정해 두었다. */
-    const release = (motion: Motion): void => {
-      const ease = 'cubic-bezier(0.22, 0.61, 0.36, 1)';
-      for (const m of motion.movers) {
-        m.node.style.transition = `transform ${motion.ms}ms ${ease}, opacity ${motion.ms}ms ${ease}`;
-        m.node.style.transform = 'translate(0px, 0px)';
-        if (m.fade) m.node.style.opacity = '1';
-      }
-      for (const d of motion.drawers) {
-        d.node.style.transition = `stroke-dashoffset ${motion.ms}ms ${ease}`;
-        d.node.style.strokeDashoffset = '0';
-      }
-      for (const rect of motion.settling) {
-        rect.style.transition = `fill ${motion.ms}ms linear`;
-        rect.style.fill = colors.itemSorted;
+        if (done) {
+          // 정적 그리기가 `fill` 속성으로 이미 가라앉은 칠을 세워 두었다.
+          rect.style.removeProperty('fill');
+          continue;
+        }
+        rect.style.fill = mixColor(colors.itemActive, colors.itemSorted, p);
       }
     };
 
@@ -589,23 +627,18 @@ export const depthDoublesCountStageView: CanvasView = {
 
       const drawn = drawScene(next);
       // 되짚기는 여기서 끝난다 — 타이머도 프레임도 걸지 않는다 (S-scene).
-      if (!opts.animate || destroyed || !canAnimate) return;
+      if (!opts.animate || destroyed) return;
 
       const step = next.step;
       if (step === null) return;
       const motion = motionFor(step, drawn);
       if (motion === null) return;
 
-      hold(motion);
-      await nextFrame();
+      await tween(motion.ms, mine, (p) => applyMotion(motion, p));
       if (!alive(mine)) return;
 
-      release(motion);
-      await wait(motion.ms + TAIL_MS);
-      if (!alive(mine)) return;
-
-      // 전이가 남긴 인라인 transition·transform·strokeDashoffset 이 노드째
-      // 사라진다. 되돌릴 목록을 손으로 관리하지 않는다 (S-scene).
+      // 보간이 남긴 인라인 transform·strokeDashoffset·fill 이 노드째 사라진다.
+      // 되돌릴 목록을 손으로 관리하지 않는다 (S-scene).
       drawScene(next);
     }
 
@@ -617,10 +650,9 @@ export const depthDoublesCountStageView: CanvasView = {
         gen += 1;
         for (const id of timers) clearTimeout(id);
         timers.clear();
-        for (const id of frames) cancelAnimationFrame(id);
-        frames.clear();
-        for (const wake of [...wakers]) wake();
-        wakers.clear();
+        // 기다리던 것을 깨운다 — 안 깨우면 render 의 await 가 영영 안 돌아온다.
+        for (const wake of [...waiters]) wake();
+        waiters.clear();
         rewind();
         for (const node of [
           defs,
