@@ -64,3 +64,9 @@ Desktop.ini
 # ─────────────────────────────────────
 # 개인 로컬 설정만 제외. 공유 에이전트(.claude/agents/**) 는 추적한다.
 .claude/settings.local.json
+
+# 발행 전 검증으로 만드는 tarball (`pnpm pack`). 발행은 prepack 이 새로 빌드한다.
+*.tgz
+
+# 되짚기 감사(`scripts/scene-audit.mjs`)의 산출물. OUT_DIR 을 안 주면 여기 떨어진다.
+axis2-result.json
