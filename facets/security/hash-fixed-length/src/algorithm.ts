@@ -16,11 +16,15 @@
  * 식별자 (C1): 행을 가리키는 곳이 payload 뿐이라 target 을 쓰지 않는다.
  *
  * 이벤트 (C2) — 전부 facet 로컬 (StandardEventType 미포함):
- *   - init            payload: { algorithmLabel, hashBits, rows }
+ *   - init            payload: { algorithmLabel, rows }   바탕을 값으로 넘긴다
  *   - rewind payload: {}   손으로 짚기 시작할 때 화면을 되감는다
  *   - reveal-inputs   payload: {}   길이가 제각각인 입력들을 놓는다
  *   - reveal-outputs  payload: {}   각각의 해시를 놓는다
  *   - mark-uniform    payload: {}   출력의 폭이 하나같음을 안내선으로 짚는다
+ *
+ * 출력 비트 수는 싣지 않는다. 그것이 곧 이 조각의 결론인데, 상수로 실으면 화면에
+ * 뜨는 해시 문자열과 두 출처가 되어 자료가 바뀔 때 글자가 조용히 거짓이 된다.
+ * 장면이 `hash.length` 에서 센다 (`scene.ts` 의 `outputBitsOf`).
  *
  * 메트릭 (C5): 없다. 조각은 metrics 패널을 두지 않으므로 ctx.metric 을 부르지 않는다.
  */
@@ -47,8 +51,6 @@ export type HashFixedLengthFacetData = {
   type: 'hash-fixed-length';
   /** 화면에 인쇄할 해시 함수 이름. */
   algorithmLabel: string;
-  /** 출력 비트 수. 화면이 "언제나 N비트" 로 인쇄한다. */
-  hashBits: number;
   /**
    * 보여 줄 행들. 길이 차이가 한눈에 들어오도록 짧은 것부터 화면을 넘길 만큼
    * 긴 것까지 벌려 고른다.
@@ -67,7 +69,7 @@ export async function hashFixedLength(
   ctxBase: FacetContext<HashFixedLengthFacetData>,
 ): Promise<void> {
   const ctx = ctxBase as ReactiveContext<HashFixedLengthFacetData>;
-  const { algorithmLabel, hashBits, rows, stepMs } = ctx.data;
+  const { algorithmLabel, rows, stepMs } = ctx.data;
 
   /**
    * 한 걸음을 실제로 발신한다. 자동 재생과 손으로 짚기가 같은 경로를 쓴다.
@@ -102,7 +104,7 @@ export async function hashFixedLength(
 
   await ctx.emit({
     type: 'init',
-    payload: { algorithmLabel, hashBits, rows },
+    payload: { algorithmLabel, rows },
   });
 
   // 세 걸음. 길이가 다름을 먼저 보이고, 그 다음에 같음을 보인다.

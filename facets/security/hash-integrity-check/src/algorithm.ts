@@ -18,10 +18,11 @@
  * 진행 동력은 ReactiveMechanism. 컨트롤바 없이 스스로 시작하고 (init 의
  * ensureStarted) 걸음 간격도 스스로 정한다 (ctx.sleep).
  *
- * 식별자 (C1): 행을 가리키는 곳이 payload 뿐이라 target 을 쓰지 않는다.
+ * 식별자 (C1): 가리킬 행이 없어 target 을 쓰지 않는다. 러너도 장면도 `event.target`
+ * 을 보지 않으므로 싣는 순간 죽은 값이 된다.
  *
  * 이벤트 (C2) — 전부 facet 로컬 (StandardEventType 미포함):
- *   - init          payload: { referenceHash, intact, tampered, diffIndex }
+ *   - init          payload: { algorithmLabel, referenceHash, intact, tampered }
  *   - rewind payload: {}   손으로 짚기 시작할 때 화면을 되감는다
  *   - split-paths   payload: {}   원본에서 파일과 해시가 각자의 경로로 갈라진다
  *   - deliver       payload: {}   둘 다 건너와 만나고, 대조가 맞는다
@@ -65,8 +66,14 @@ export type HashIntegrityFacetData = {
   stepMs: number;
 };
 
-/** 두 문자열이 처음으로 갈라지는 자리. 같으면 -1. */
-function firstDiffIndex(a: string, b: string): number {
+/**
+ * 두 문자열이 처음으로 갈라지는 자리. 같으면 -1.
+ *
+ * 발신에 싣지 않고 내준다 — 바탕 두 문자열만 있으면 나오는 순수 함수라 장면이
+ * 직접 부르면 같은 물음에 답이 둘이 될 자리가 없어진다 (프로토콜 4 절).
+ * 떼어 내도 이 조각이 말하려는 바는 그대로 남는다.
+ */
+export function firstDiffIndex(a: string, b: string): number {
   const n = Math.min(a.length, b.length);
   for (let i = 0; i < n; i++) {
     if (a[i] !== b[i]) return i;
@@ -121,7 +128,6 @@ export async function hashIntegrityCheck(
       referenceHash,
       intact,
       tampered,
-      diffIndex: firstDiffIndex(intact.content, tampered.content),
     },
   });
 

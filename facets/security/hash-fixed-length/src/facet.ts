@@ -17,8 +17,15 @@
  *   - 메트릭 없음.
  *   - 캔버스 폭 620 — playground 가 아니라 글의 문단 폭에 맞춘다.
  *
- * 해시는 전부 실측 SHA-256 이다. 각주가 밝히듯 3.7MB 파일도 같은 64자가 되며,
- * 빈 입력에도 해시가 있다 (e3b0c442…).
+ * 해시는 전부 실측 SHA-256 이다. 3.7MB 파일도 같은 64자가 되며, 빈 입력에도 해시가
+ * 있다 (e3b0c442…).
+ *
+ * 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든 셈으로
+ * 얻으므로 띠로 임의의 자리에 갈 수 있다 (S-scene).
+ *
+ * 출력 비트 수를 선언에 두지 않는다. "언제나 N비트" 의 N 은 이 조각의 결론이라
+ * 상수로 적어 두면 화면에 그려지는 해시 문자열과 두 출처가 된다. 장면이 `hash`
+ * 에서 센다 (`scene.ts` 의 `outputBitsOf`).
  *
  * title / description / messages 는 열 언어를 모두 채웠다.
  */
@@ -53,11 +60,10 @@ export const hashFixedLengthFacet: FacetJson = {
     pt: 'Entradas do nada a um arquivo inteiro, saídas sempre do mesmo tamanho',
   },
   algorithm: 'module:hashFixedLength',
-  projector: 'module:hashFixedLengthProjector',
+  scene: 'module:hashFixedLengthScene',
   initialData: {
     type: 'hash-fixed-length',
     algorithmLabel: 'SHA-256',
-    hashBits: 256,
     // 전부 실측 SHA-256. 길이 차이가 한눈에 들어오도록 0B 부터 화면을 넘길
     // 만큼 긴 것까지 벌려 골랐다.
     rows: [
@@ -165,9 +171,11 @@ export const hashFixedLengthFacet: FacetJson = {
     stage: { type: 'fixed-length-stage' },
     controls: {
       type: 'control-bar',
-      // ReactiveMechanism 의 reset() 은 끝에 ensureStarted() 를 부른다 — 즉
-      // reset 이 곧 다시 재생이다. 그래서 action 은 reset 이고 라벨만 다르다.
-      controls: CONTROL_SET.piece,
+      // 장면 방식이라 띠(timeline)를 단다 — 어느 걸음의 화면이든 계산으로 얻으므로
+      // 임의의 자리로 끌 수 있다 (S-piece 의 조작 표). 다시 보기의 action 은
+      // reset 인데, ReactiveMechanism 의 reset() 이 끝에 ensureStarted() 를 부르므로
+      // reset 이 곧 다시 재생이다.
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };

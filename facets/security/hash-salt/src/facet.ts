@@ -6,7 +6,7 @@
  *
  * @piece — 이 표식이 S-piece 의 적용 범위를 정한다.
  *
- * 조각의 규범: 필수 조작 없음(다시 보기 하나) / 제목 없음 / 한 주장 /
+ * 조각의 규범: 필수 조작 없음(다시 보기와 띠) / 제목 없음 / 한 주장 /
  * 메트릭 없음 / 캔버스 폭 620 / 전제를 각주로 밝힘.
  *
  * 걸음 순서가 논증이다. 소금 없이 저장하면 두 값이 같아진다는 문제를 먼저 보이고
@@ -51,7 +51,9 @@ export const hashSaltFacet: FacetJson = {
     pt: 'Um sal por conta impede que duas senhas iguais sejam guardadas iguais',
   },
   algorithm: 'module:hashSalt',
-  projector: 'module:hashSaltProjector',
+  // 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든 셈으로
+  // 얻으므로 띠로 아무 걸음에나 갈 수 있다 (S-scene).
+  scene: 'module:hashSaltScene',
   initialData: {
     type: 'hash-salt',
     algorithmLabel: 'SHA-256',
@@ -187,7 +189,7 @@ export const hashSaltFacet: FacetJson = {
     stage: { type: 'salt-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };
