@@ -799,7 +799,7 @@ const t = params.t ?? makeTranslator(params.locale);
   "이행 전에도 같은 값이면 사양 문제" 는 절반만 맞다. 값이 같아도 **그 값을 만든 것이
   걸음 수·`stepMs`·문 배치(사양)인지, projector 의 `onEvent` 가 `void` 라 stage 가
   운동을 아예 안 걸었던 것(게으름)인지**가 갈린다. 후자면 이행이 고칠 자리다 —
-  `write-back-vs-through` 의 `done` 은 `finish()` 가 동기 `void` 라 700ms 였고, 자(尺)가
+  `write-back-vs-through` 의 `done` 은 `finish()` 가 동기 `void` 라 700ms 였고, 눈금자가
   자라는 260ms 를 얹어 960ms 가 됐다. **`stepMs` 를 올리는 것이 아니라 그 걸음이 하는
   말과 같은 동사를 얹는다.**
 
