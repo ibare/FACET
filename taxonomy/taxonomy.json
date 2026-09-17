@@ -1,0 +1,842 @@
+{
+  "$comment": "분야 분류표 원본. facet 이 어느 분야 · 하위 분야에 속하는지와 그 이름(10개 언어)을 여기서만 선언한다. 생성기(pnpm catalog:gen)가 읽어 호스트 카탈로그와 개념 메타의 분야 값을 만든다. 순서가 곧 호스트 목록의 순서다.",
+  "domains": [
+    {
+      "id": "cs-fundamentals",
+      "name": {"en":"Computer Science Fundamentals","ko":"컴퓨터 과학 기초","ja":"コンピュータサイエンスの基礎","zh":"计算机科学基础","ar":"أساسيات علوم الحاسوب","es":"Fundamentos de informática","fr":"Fondamentaux de l'informatique","hi":"कंप्यूटर विज्ञान की बुनियाद","id":"Dasar-Dasar Ilmu Komputer","pt":"Fundamentos da computação"},
+      "subdomains": [
+        {
+          "id": "data-structures",
+          "name": {"en":"Data Structures","ko":"자료구조","ja":"データ構造","zh":"数据结构","ar":"هياكل البيانات","es":"Estructuras de datos","fr":"Structures de données","hi":"डेटा संरचनाएँ","id":"Struktur Data","pt":"Estruturas de dados"},
+          "facets": [
+            "facet:array",
+            "facet:linkedListSingly",
+            "facet:stack",
+            "facet:queueFifo",
+            "facet:hashTableChaining",
+            "facet:bst",
+            "facet:avlTree",
+            "facet:redBlackTree",
+            "facet:bTree",
+            "facet:trie",
+            "facet:heapBinary",
+            "facet:unionFind",
+            "facet:indexAddressCalc",
+            "facet:shiftOnInsert",
+            "facet:shiftOnRemove",
+            "facet:growAndCopy",
+            "facet:outOfBounds",
+            "facet:nodePointsNext",
+            "facet:traverseFromHead",
+            "facet:relinkInsert",
+            "facet:lostLink",
+            "facet:pushPopTop",
+            "facet:enqueueDequeueEnds",
+            "facet:circularBufferWrap",
+            "facet:dequeBothEnds",
+            "facet:hashToBucket",
+            "facet:chainingBucket",
+            "facet:openAddressingProbe",
+            "facet:loadFactorRehash",
+            "facet:parentTwoChildren",
+            "facet:traversalOrder",
+            "facet:depthDoublesCount",
+            "facet:bstCompareAndGo",
+            "facet:bstInorderSorted",
+            "facet:bstDegenerate",
+            "facet:heightBalanceCheck",
+            "facet:rotateToBalance",
+            "facet:recolorThenRotate",
+            "facet:blackHeightEqual",
+            "facet:nodeHoldsMany",
+            "facet:splitWhenFull",
+            "facet:heightStaysLow",
+            "facet:sharePrefixPath",
+            "facet:walkPerCharacter",
+            "facet:heapProperty",
+            "facet:siftUp",
+            "facet:siftDown",
+            "facet:arrayAsTree",
+            "facet:adjacencyListVsMatrix",
+            "facet:findRoot",
+            "facet:unionByRank",
+            "facet:pathCompression"
+          ]
+        },
+        {
+          "id": "probabilistic-structures",
+          "name": {"en":"Probabilistic Data Structures","ko":"확률적 자료구조","ja":"確率的データ構造","zh":"概率数据结构","ar":"هياكل البيانات الاحتمالية","es":"Estructuras de datos probabilísticas","fr":"Structures de données probabilistes","hi":"संभाव्य डेटा संरचनाएँ","id":"Struktur Data Probabilistik","pt":"Estruturas de dados probabilísticas"},
+          "facets": [
+            "facet:bloomFilter",
+            "facet:countMinSketch",
+            "facet:hyperloglog",
+            "facet:tDigest",
+            "facet:skipList",
+            "facet:severalHashesOneValue",
+            "facet:wrongInOneDirection",
+            "facet:cannotUnset",
+            "facet:trustTheSmallest",
+            "facet:leadingZerosTell",
+            "facet:averageTheBuckets",
+            "facet:crowdTheTails",
+            "facet:skipALayer",
+            "facet:coinFlipHeight",
+            "facet:spaceErrorTradeoff"
+          ]
+        },
+        {
+          "id": "algorithms",
+          "name": {"en":"Algorithms","ko":"알고리즘","ja":"アルゴリズム","zh":"算法","ar":"الخوارزميات","es":"Algoritmos","fr":"Algorithmes","hi":"एल्गोरिदम","id":"Algoritma","pt":"Algoritmos"},
+          "facets": [
+            "facet:bubbleSort",
+            "facet:selectionSort",
+            "facet:insertionSort",
+            "facet:mergeSort",
+            "facet:quickSort",
+            "facet:heapSort",
+            "facet:countingSort",
+            "facet:radixSort",
+            "facet:shellSort",
+            "facet:linearSearch",
+            "facet:binarySearch",
+            "facet:interpolationSearch",
+            "facet:dynamicProgramming",
+            "facet:greedy",
+            "facet:backtracking",
+            "facet:branchAndBound",
+            "facet:compareAndSwap",
+            "facet:sortStability",
+            "facet:inPlaceVsExtra",
+            "facet:bubbleAdjacentSwap",
+            "facet:selectMinEachPass",
+            "facet:insertIntoSortedPart",
+            "facet:splitUntilOne",
+            "facet:mergeTwoSorted",
+            "facet:partitionAroundPivot",
+            "facet:pivotChoiceMatters",
+            "facet:heapSortExtract",
+            "facet:countThenPlace",
+            "facet:digitByDigit",
+            "facet:gapShrink",
+            "facet:scanUntilFound",
+            "facet:halveTheRange",
+            "facet:requiresSorted",
+            "facet:guessByValue",
+            "facet:divideConquerCombine",
+            "facet:overlappingSubproblems",
+            "facet:memoWriteOnce",
+            "facet:bottomUpTable",
+            "facet:takeBestNow",
+            "facet:greedyCanFail",
+            "facet:tryAndUndo",
+            "facet:pruneBranch",
+            "facet:boundAndCut"
+          ]
+        },
+        {
+          "id": "graph-algorithms",
+          "name": {"en":"Graph Algorithms","ko":"그래프 알고리즘","ja":"グラフアルゴリズム","zh":"图算法","ar":"خوارزميات الرسوم البيانية","es":"Algoritmos de grafos","fr":"Algorithmes de graphes","hi":"ग्राफ़ एल्गोरिदम","id":"Algoritma Graf","pt":"Algoritmos em grafos"},
+          "facets": [
+            "facet:bfs",
+            "facet:dfs",
+            "facet:dijkstra",
+            "facet:bellmanFord",
+            "facet:floydWarshall",
+            "facet:primMst",
+            "facet:kruskalMst",
+            "facet:topologicalSort",
+            "facet:scc",
+            "facet:maxFlow",
+            "facet:oneWayEdge",
+            "facet:fewerHopsNotShorter",
+            "facet:queueVsStackOrder",
+            "facet:diveThenBacktrack",
+            "facet:markVisitedOrLoop",
+            "facet:separateComponents",
+            "facet:twoColorConflict",
+            "facet:relaxShorterPath",
+            "facet:pickNearestUnsettled",
+            "facet:negativeEdgeBreaks",
+            "facet:repeatRelaxAll",
+            "facet:oneMoreRoundDrops",
+            "facet:throughMiddleNode",
+            "facet:heuristicGuides",
+            "facet:growOneTree",
+            "facet:sortEdgesAvoidCycle",
+            "facet:indegreeZeroFirst",
+            "facet:cycleBlocksOrder",
+            "facet:mutuallyReachable",
+            "facet:bottleneckSetsFlow",
+            "facet:undoByBackEdge"
+          ]
+        },
+        {
+          "id": "string-algorithms",
+          "name": {"en":"String Algorithms","ko":"문자열 알고리즘","ja":"文字列アルゴリズム","zh":"字符串算法","ar":"خوارزميات السلاسل النصية","es":"Algoritmos de cadenas","fr":"Algorithmes sur les chaînes","hi":"स्ट्रिंग एल्गोरिदम","id":"Algoritma String","pt":"Algoritmos de strings"},
+          "facets": [
+            "facet:kmp",
+            "facet:boyerMoore",
+            "facet:rabinKarp",
+            "facet:suffixArray",
+            "facet:zAlgorithm",
+            "facet:ahoCorasick",
+            "facet:editDistance",
+            "facet:naiveShiftByOne",
+            "facet:prefixSuffixJump",
+            "facet:matchFromBack",
+            "facet:badCharSkip",
+            "facet:rollingHash",
+            "facet:allSuffixesSorted",
+            "facet:matchLengthPerSpot",
+            "facet:manyPatternsOnePass",
+            "facet:failLink",
+            "facet:editTableFill",
+            "facet:threeEditChoices"
+          ]
+        },
+        {
+          "id": "numerical-algorithms",
+          "name": {"en":"Numerical Algorithms","ko":"수치 알고리즘","ja":"数値アルゴリズム","zh":"数值算法","ar":"الخوارزميات العددية","es":"Algoritmos numéricos","fr":"Algorithmes numériques","hi":"संख्यात्मक एल्गोरिदम","id":"Algoritma Numerik","pt":"Algoritmos numéricos"},
+          "facets": [
+            "facet:euclidean",
+            "facet:fastPower",
+            "facet:sieve",
+            "facet:primality",
+            "facet:matrixMul",
+            "facet:squareAndHalve",
+            "facet:divisorPairsSqrt",
+            "facet:rowTimesColumn"
+          ]
+        },
+        {
+          "id": "complexity",
+          "name": {"en":"Computational Complexity","ko":"계산 복잡도","ja":"計算量","zh":"计算复杂度","ar":"التعقيد الحسابي","es":"Complejidad computacional","fr":"Complexité algorithmique","hi":"संगणनात्मक जटिलता","id":"Kompleksitas Komputasi","pt":"Complexidade computacional"},
+          "facets": [
+            "facet:bigO",
+            "facet:asymptotic",
+            "facet:pNp",
+            "facet:growthOutpaces",
+            "facet:constantFades",
+            "facet:curvesCross",
+            "facet:verifyVsFind",
+            "facet:reduceToKnown"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "programming-fundamentals",
+      "name": {"en":"Programming Fundamentals","ko":"프로그래밍 기초","ja":"プログラミングの基礎","zh":"编程基础","ar":"أساسيات البرمجة","es":"Fundamentos de programación","fr":"Fondamentaux de la programmation","hi":"प्रोग्रामिंग की बुनियाद","id":"Dasar-Dasar Pemrograman","pt":"Fundamentos de programação"},
+      "subdomains": [
+        {
+          "id": "control-flow",
+          "name": {"en":"Control Flow","ko":"제어 흐름","ja":"制御フロー","zh":"控制流","ar":"تدفق التحكم","es":"Flujo de control","fr":"Flot de contrôle","hi":"नियंत्रण प्रवाह","id":"Alur Kendali","pt":"Fluxo de controle"},
+          "facets": [
+            "facet:conditionalStatement"
+          ]
+        },
+        {
+          "id": "variables-types",
+          "name": {"en":"Variables and Types","ko":"변수와 타입","ja":"変数と型","zh":"变量与类型","ar":"المتغيرات والأنواع","es":"Variables y tipos","fr":"Variables et types","hi":"चर और प्रकार","id":"Variabel dan Tipe","pt":"Variáveis e tipos"},
+          "facets": []
+        },
+        {
+          "id": "functions",
+          "name": {"en":"Functions","ko":"함수","ja":"関数","zh":"函数","ar":"الدوال","es":"Funciones","fr":"Fonctions","hi":"फ़ंक्शन","id":"Fungsi","pt":"Funções"},
+          "facets": []
+        },
+        {
+          "id": "oop",
+          "name": {"en":"Object-Oriented Programming","ko":"객체 지향","ja":"オブジェクト指向","zh":"面向对象编程","ar":"البرمجة كائنية التوجه","es":"Programación orientada a objetos","fr":"Programmation orientée objet","hi":"ऑब्जेक्ट-ओरिएंटेड प्रोग्रामिंग","id":"Pemrograman Berorientasi Objek","pt":"Programação orientada a objetos"},
+          "facets": []
+        },
+        {
+          "id": "fp",
+          "name": {"en":"Functional Programming","ko":"함수형 프로그래밍","ja":"関数型プログラミング","zh":"函数式编程","ar":"البرمجة الوظيفية","es":"Programación funcional","fr":"Programmation fonctionnelle","hi":"फ़ंक्शनल प्रोग्रामिंग","id":"Pemrograman Fungsional","pt":"Programação funcional"},
+          "facets": []
+        },
+        {
+          "id": "memory-model",
+          "name": {"en":"Memory Model","ko":"메모리 모델","ja":"メモリモデル","zh":"内存模型","ar":"نموذج الذاكرة","es":"Modelo de memoria","fr":"Modèle mémoire","hi":"मेमोरी मॉडल","id":"Model Memori","pt":"Modelo de memória"},
+          "facets": []
+        }
+      ]
+    },
+    {
+      "id": "computer-architecture",
+      "name": {"en":"Computer Architecture","ko":"컴퓨터 구조","ja":"コンピュータアーキテクチャ","zh":"计算机体系结构","ar":"معمارية الحاسوب","es":"Arquitectura de computadores","fr":"Architecture des ordinateurs","hi":"कंप्यूटर आर्किटेक्चर","id":"Arsitektur Komputer","pt":"Arquitetura de computadores"},
+      "subdomains": [
+        {
+          "id": "number-representation",
+          "name": {"en":"Numbers and Bits","ko":"수와 비트 표현","ja":"数とビット表現","zh":"数与位表示","ar":"الأعداد وتمثيل البتات","es":"Números y representación en bits","fr":"Nombres et représentation binaire","hi":"संख्याएँ और बिट निरूपण","id":"Bilangan dan Representasi Bit","pt":"Números e representação em bits"},
+          "facets": [
+            "facet:twosComplement",
+            "facet:floatingPoint",
+            "facet:bitwiseOps",
+            "facet:integerOverflow",
+            "facet:positionalValue",
+            "facet:negateAndAddOne",
+            "facet:signedWraparound",
+            "facet:silentTruncation",
+            "facet:mantissaAndExponent",
+            "facet:unrepresentableFraction",
+            "facet:unevenFloatGaps",
+            "facet:bitMask",
+            "facet:bitShift",
+            "facet:byteOrder"
+          ]
+        },
+        {
+          "id": "cache-hierarchy",
+          "name": {"en":"Cache Hierarchy","ko":"캐시 계층","ja":"キャッシュ階層","zh":"缓存层次结构","ar":"تسلسل الذاكرة المخبئية","es":"Jerarquía de caché","fr":"Hiérarchie de cache","hi":"कैश पदानुक्रम","id":"Hierarki Cache","pt":"Hierarquia de cache"},
+          "facets": [
+            "facet:cacheLine",
+            "facet:directMappedCache",
+            "facet:setAssociativeCache",
+            "facet:cacheReplacement",
+            "facet:writePolicy",
+            "facet:lineFill",
+            "facet:temporalLocality",
+            "facet:spatialLocality",
+            "facet:indexAndTag",
+            "facet:conflictMiss",
+            "facet:associativityRelief",
+            "facet:latencyLadder",
+            "facet:writeBackVsThrough",
+            "facet:falseSharing"
+          ]
+        },
+        {
+          "id": "instruction-pipeline",
+          "name": {"en":"Instruction Pipeline","ko":"명령어 파이프라인","ja":"命令パイプライン","zh":"指令流水线","ar":"خط معالجة التعليمات","es":"Canalización de instrucciones","fr":"Pipeline d'instructions","hi":"निर्देश पाइपलाइन","id":"Pipeline Instruksi","pt":"Pipeline de instruções"},
+          "facets": []
+        },
+        {
+          "id": "branch-prediction",
+          "name": {"en":"Branch Prediction","ko":"분기 예측","ja":"分岐予測","zh":"分支预测","ar":"التنبؤ بالتفرع","es":"Predicción de saltos","fr":"Prédiction de branchement","hi":"ब्रांच प्रेडिक्शन","id":"Prediksi Percabangan","pt":"Predição de desvios"},
+          "facets": []
+        },
+        {
+          "id": "data-layout",
+          "name": {"en":"Data Layout and Access","ko":"데이터 배치와 접근","ja":"データ配置とアクセス","zh":"数据布局与访问","ar":"تخطيط البيانات والوصول إليها","es":"Disposición y acceso a datos","fr":"Disposition et accès aux données","hi":"डेटा विन्यास और पहुँच","id":"Tata Letak dan Akses Data","pt":"Disposição e acesso a dados"},
+          "facets": []
+        }
+      ]
+    },
+    {
+      "id": "operating-systems",
+      "name": {"en":"Operating Systems","ko":"운영체제","ja":"オペレーティングシステム","zh":"操作系统","ar":"أنظمة التشغيل","es":"Sistemas operativos","fr":"Systèmes d'exploitation","hi":"ऑपरेटिंग सिस्टम","id":"Sistem Operasi","pt":"Sistemas operacionais"},
+      "subdomains": [
+        {
+          "id": "process-thread",
+          "name": {"en":"Processes and Threads","ko":"프로세스와 스레드","ja":"プロセスとスレッド","zh":"进程与线程","ar":"العمليات والخيوط","es":"Procesos e hilos","fr":"Processus et threads","hi":"प्रोसेस और थ्रेड","id":"Proses dan Thread","pt":"Processos e threads"},
+          "facets": [
+            "facet:contextSwitching"
+          ]
+        },
+        {
+          "id": "scheduling",
+          "name": {"en":"Scheduling","ko":"스케줄링","ja":"スケジューリング","zh":"调度","ar":"الجدولة","es":"Planificación","fr":"Ordonnancement","hi":"शेड्यूलिंग","id":"Penjadwalan","pt":"Escalonamento"},
+          "facets": []
+        },
+        {
+          "id": "synchronization",
+          "name": {"en":"Synchronization","ko":"동기화","ja":"同期","zh":"同步","ar":"التزامن","es":"Sincronización","fr":"Synchronisation","hi":"सिंक्रनाइज़ेशन","id":"Sinkronisasi","pt":"Sincronização"},
+          "facets": []
+        },
+        {
+          "id": "memory-management",
+          "name": {"en":"Memory Management","ko":"메모리 관리","ja":"メモリ管理","zh":"内存管理","ar":"إدارة الذاكرة","es":"Gestión de memoria","fr":"Gestion de la mémoire","hi":"मेमोरी प्रबंधन","id":"Manajemen Memori","pt":"Gerenciamento de memória"},
+          "facets": []
+        },
+        {
+          "id": "file-system",
+          "name": {"en":"File Systems","ko":"파일 시스템","ja":"ファイルシステム","zh":"文件系统","ar":"أنظمة الملفات","es":"Sistemas de archivos","fr":"Systèmes de fichiers","hi":"फ़ाइल सिस्टम","id":"Sistem Berkas","pt":"Sistemas de arquivos"},
+          "facets": []
+        },
+        {
+          "id": "io",
+          "name": {"en":"Input and Output","ko":"입출력","ja":"入出力","zh":"输入输出","ar":"الإدخال والإخراج","es":"Entrada y salida","fr":"Entrées-sorties","hi":"इनपुट और आउटपुट","id":"Masukan dan Keluaran","pt":"Entrada e saída"},
+          "facets": []
+        }
+      ]
+    },
+    {
+      "id": "networks",
+      "name": {"en":"Computer Networks","ko":"컴퓨터 네트워크","ja":"コンピュータネットワーク","zh":"计算机网络","ar":"شبكات الحاسوب","es":"Redes de computadores","fr":"Réseaux informatiques","hi":"कंप्यूटर नेटवर्क","id":"Jaringan Komputer","pt":"Redes de computadores"},
+      "subdomains": [
+        {
+          "id": "osi-tcp",
+          "name": {"en":"OSI / TCP-IP Layers","ko":"OSI / TCP-IP 계층","ja":"OSI / TCP-IP 階層","zh":"OSI / TCP-IP 分层","ar":"طبقات OSI / TCP-IP","es":"Capas OSI / TCP-IP","fr":"Couches OSI / TCP-IP","hi":"OSI / TCP-IP परतें","id":"Lapisan OSI / TCP-IP","pt":"Camadas OSI / TCP-IP"},
+          "facets": []
+        },
+        {
+          "id": "data-link",
+          "name": {"en":"Data Link Layer","ko":"데이터 링크","ja":"データリンク層","zh":"数据链路层","ar":"طبقة ربط البيانات","es":"Capa de enlace de datos","fr":"Couche liaison de données","hi":"डेटा लिंक परत","id":"Lapisan Data Link","pt":"Camada de enlace"},
+          "facets": []
+        },
+        {
+          "id": "network-routing",
+          "name": {"en":"Network Layer","ko":"네트워크 계층","ja":"ネットワーク層","zh":"网络层","ar":"طبقة الشبكة","es":"Capa de red","fr":"Couche réseau","hi":"नेटवर्क परत","id":"Lapisan Jaringan","pt":"Camada de rede"},
+          "facets": [
+            "facet:ipRouting"
+          ]
+        },
+        {
+          "id": "transport",
+          "name": {"en":"Transport Layer","ko":"전송 계층","ja":"トランスポート層","zh":"传输层","ar":"طبقة النقل","es":"Capa de transporte","fr":"Couche transport","hi":"ट्रांसपोर्ट परत","id":"Lapisan Transport","pt":"Camada de transporte"},
+          "facets": []
+        },
+        {
+          "id": "application",
+          "name": {"en":"Application Layer","ko":"응용 계층","ja":"アプリケーション層","zh":"应用层","ar":"طبقة التطبيقات","es":"Capa de aplicación","fr":"Couche application","hi":"एप्लिकेशन परत","id":"Lapisan Aplikasi","pt":"Camada de aplicação"},
+          "facets": []
+        },
+        {
+          "id": "network-security",
+          "name": {"en":"Network Security","ko":"보안","ja":"ネットワークセキュリティ","zh":"网络安全","ar":"أمن الشبكات","es":"Seguridad de red","fr":"Sécurité réseau","hi":"नेटवर्क सुरक्षा","id":"Keamanan Jaringan","pt":"Segurança de rede"},
+          "facets": []
+        }
+      ]
+    },
+    {
+      "id": "web-runtime",
+      "name": {"en":"Web Runtime","ko":"웹 런타임","ja":"Web ランタイム","zh":"Web 运行时","ar":"بيئة تشغيل الويب","es":"Entorno de ejecución web","fr":"Environnement d’exécution web","hi":"वेब रनटाइम","id":"Runtime Web","pt":"Runtime da web"},
+      "subdomains": [
+        {
+          "id": "event-loop",
+          "name": {"en":"Event Loop","ko":"이벤트 루프","ja":"イベントループ","zh":"事件循环","ar":"حلقة الأحداث","es":"Bucle de eventos","fr":"Boucle d'événements","hi":"इवेंट लूप","id":"Event Loop","pt":"Loop de eventos"},
+          "facets": []
+        },
+        {
+          "id": "rendering-pipeline",
+          "name": {"en":"Rendering Pipeline","ko":"렌더링 파이프라인","ja":"レンダリングパイプライン","zh":"渲染流水线","ar":"خط التصيير","es":"Canalización de renderizado","fr":"Pipeline de rendu","hi":"रेंडरिंग पाइपलाइन","id":"Pipeline Rendering","pt":"Pipeline de renderização"},
+          "facets": []
+        },
+        {
+          "id": "reconciliation",
+          "name": {"en":"Reconciliation and Reactivity","ko":"재조정과 반응성","ja":"差分調整とリアクティビティ","zh":"协调与响应式","ar":"المطابقة والتفاعلية","es":"Reconciliación y reactividad","fr":"Réconciliation et réactivité","hi":"रिकंसिलिएशन और रिएक्टिविटी","id":"Rekonsiliasi dan Reaktivitas","pt":"Reconciliação e reatividade"},
+          "facets": []
+        },
+        {
+          "id": "frame-budget",
+          "name": {"en":"Frames and Animation","ko":"프레임과 애니메이션","ja":"フレームとアニメーション","zh":"帧与动画","ar":"الإطارات والرسوم المتحركة","es":"Fotogramas y animación","fr":"Images et animation","hi":"फ़्रेम और एनिमेशन","id":"Frame dan Animasi","pt":"Quadros e animação"},
+          "facets": []
+        },
+        {
+          "id": "resource-loading",
+          "name": {"en":"Loading Order","ko":"로딩 순서","ja":"読み込み順序","zh":"加载顺序","ar":"ترتيب التحميل","es":"Orden de carga","fr":"Ordre de chargement","hi":"लोडिंग क्रम","id":"Urutan Pemuatan","pt":"Ordem de carregamento"},
+          "facets": []
+        }
+      ]
+    },
+    {
+      "id": "databases",
+      "name": {"en":"Databases","ko":"데이터베이스","ja":"データベース","zh":"数据库","ar":"قواعد البيانات","es":"Bases de datos","fr":"Bases de données","hi":"डेटाबेस","id":"Basis Data","pt":"Bancos de dados"},
+      "subdomains": [
+        {
+          "id": "relational",
+          "name": {"en":"Relational Model","ko":"관계 모델","ja":"リレーショナルモデル","zh":"关系模型","ar":"النموذج العلائقي","es":"Modelo relacional","fr":"Modèle relationnel","hi":"रिलेशनल मॉडल","id":"Model Relasional","pt":"Modelo relacional"},
+          "facets": [
+            "facet:relationalTablesAndKeys"
+          ]
+        },
+        {
+          "id": "sql",
+          "name": {"en":"SQL","ko":"SQL","ja":"SQL","zh":"SQL","ar":"SQL","es":"SQL","fr":"SQL","hi":"SQL","id":"SQL","pt":"SQL"},
+          "facets": []
+        },
+        {
+          "id": "indexes",
+          "name": {"en":"Indexes","ko":"인덱스","ja":"インデックス","zh":"索引","ar":"الفهارس","es":"Índices","fr":"Index","hi":"इंडेक्स","id":"Indeks","pt":"Índices"},
+          "facets": []
+        },
+        {
+          "id": "query-processing",
+          "name": {"en":"Query Processing","ko":"쿼리 처리","ja":"クエリ処理","zh":"查询处理","ar":"معالجة الاستعلامات","es":"Procesamiento de consultas","fr":"Traitement des requêtes","hi":"क्वेरी प्रोसेसिंग","id":"Pemrosesan Kueri","pt":"Processamento de consultas"},
+          "facets": []
+        },
+        {
+          "id": "transaction",
+          "name": {"en":"Transactions","ko":"트랜잭션","ja":"トランザクション","zh":"事务","ar":"المعاملات","es":"Transacciones","fr":"Transactions","hi":"ट्रांज़ैक्शन","id":"Transaksi","pt":"Transações"},
+          "facets": []
+        },
+        {
+          "id": "distributed-db",
+          "name": {"en":"Distributed Databases","ko":"분산 DB","ja":"分散データベース","zh":"分布式数据库","ar":"قواعد البيانات الموزعة","es":"Bases de datos distribuidas","fr":"Bases de données distribuées","hi":"वितरित डेटाबेस","id":"Basis Data Terdistribusi","pt":"Bancos de dados distribuídos"},
+          "facets": []
+        },
+        {
+          "id": "nosql",
+          "name": {"en":"NoSQL","ko":"NoSQL","ja":"NoSQL","zh":"NoSQL","ar":"NoSQL","es":"NoSQL","fr":"NoSQL","hi":"NoSQL","id":"NoSQL","pt":"NoSQL"},
+          "facets": []
+        }
+      ]
+    },
+    {
+      "id": "compilers",
+      "name": {"en":"Compilers and Languages","ko":"컴파일러와 언어","ja":"コンパイラと言語","zh":"编译器与语言","ar":"المترجمات واللغات","es":"Compiladores y lenguajes","fr":"Compilateurs et langages","hi":"कंपाइलर और भाषाएँ","id":"Kompilator dan Bahasa","pt":"Compiladores e linguagens"},
+      "subdomains": [
+        {
+          "id": "lexical",
+          "name": {"en":"Lexical Analysis","ko":"어휘 분석","ja":"字句解析","zh":"词法分析","ar":"التحليل المعجمي","es":"Análisis léxico","fr":"Analyse lexicale","hi":"लेक्सिकल विश्लेषण","id":"Analisis Leksikal","pt":"Análise léxica"},
+          "facets": [
+            "facet:tokenization"
+          ]
+        },
+        {
+          "id": "parsing",
+          "name": {"en":"Parsing","ko":"구문 분석","ja":"構文解析","zh":"语法分析","ar":"التحليل النحوي","es":"Análisis sintáctico","fr":"Analyse syntaxique","hi":"पार्सिंग","id":"Parsing","pt":"Análise sintática"},
+          "facets": []
+        },
+        {
+          "id": "semantic",
+          "name": {"en":"Semantic Analysis","ko":"의미 분석","ja":"意味解析","zh":"语义分析","ar":"التحليل الدلالي","es":"Análisis semántico","fr":"Analyse sémantique","hi":"सिमेंटिक विश्लेषण","id":"Analisis Semantik","pt":"Análise semântica"},
+          "facets": []
+        },
+        {
+          "id": "ir",
+          "name": {"en":"Intermediate Representation","ko":"중간 표현","ja":"中間表現","zh":"中间表示","ar":"التمثيل الوسيط","es":"Representación intermedia","fr":"Représentation intermédiaire","hi":"मध्यवर्ती निरूपण","id":"Representasi Antara","pt":"Representação intermediária"},
+          "facets": []
+        },
+        {
+          "id": "optimization",
+          "name": {"en":"Optimization","ko":"최적화","ja":"最適化","zh":"优化","ar":"التحسين","es":"Optimización","fr":"Optimisation","hi":"ऑप्टिमाइज़ेशन","id":"Optimisasi","pt":"Otimização"},
+          "facets": []
+        },
+        {
+          "id": "codegen",
+          "name": {"en":"Code Generation","ko":"코드 생성","ja":"コード生成","zh":"代码生成","ar":"توليد الشيفرة","es":"Generación de código","fr":"Génération de code","hi":"कोड जनरेशन","id":"Pembuatan Kode","pt":"Geração de código"},
+          "facets": []
+        }
+      ]
+    },
+    {
+      "id": "dev-tooling",
+      "name": {"en":"Developer Tooling","ko":"개발 도구","ja":"開発ツール","zh":"开发工具","ar":"أدوات التطوير","es":"Herramientas de desarrollo","fr":"Outils de développement","hi":"डेवलपर टूल","id":"Perkakas Pengembang","pt":"Ferramentas de desenvolvimento"},
+      "subdomains": [
+        {
+          "id": "diff-and-merge",
+          "name": {"en":"Diff and Merge","ko":"차이와 병합","ja":"差分とマージ","zh":"差异与合并","ar":"المقارنة والدمج","es":"Diferencias y fusión","fr":"Différences et fusion","hi":"डिफ़ और मर्ज","id":"Diff dan Merge","pt":"Diferenças e mesclagem"},
+          "facets": []
+        },
+        {
+          "id": "history-graph",
+          "name": {"en":"History Graph","ko":"이력 그래프","ja":"履歴グラフ","zh":"历史图","ar":"رسم السجل","es":"Grafo de historial","fr":"Graphe d'historique","hi":"इतिहास ग्राफ़","id":"Graf Riwayat","pt":"Grafo de histórico"},
+          "facets": []
+        },
+        {
+          "id": "build-graph",
+          "name": {"en":"Builds and Dependencies","ko":"빌드와 의존","ja":"ビルドと依存関係","zh":"构建与依赖","ar":"البناء والاعتماديات","es":"Compilación y dependencias","fr":"Builds et dépendances","hi":"बिल्ड और निर्भरताएँ","id":"Build dan Dependensi","pt":"Build e dependências"},
+          "facets": []
+        },
+        {
+          "id": "package-resolution",
+          "name": {"en":"Package Resolution","ko":"패키지 해결","ja":"パッケージ解決","zh":"包解析","ar":"حل الحزم","es":"Resolución de paquetes","fr":"Résolution des paquets","hi":"पैकेज रिज़ॉल्यूशन","id":"Resolusi Paket","pt":"Resolução de pacotes"},
+          "facets": []
+        },
+        {
+          "id": "test-coverage",
+          "name": {"en":"Tests and Coverage","ko":"테스트와 커버리지","ja":"テストとカバレッジ","zh":"测试与覆盖率","ar":"الاختبارات والتغطية","es":"Pruebas y cobertura","fr":"Tests et couverture","hi":"टेस्ट और कवरेज","id":"Pengujian dan Cakupan","pt":"Testes e cobertura"},
+          "facets": []
+        }
+      ]
+    },
+    {
+      "id": "ml-foundations",
+      "name": {"en":"Machine Learning Fundamentals","ko":"머신러닝 기초","ja":"機械学習の基礎","zh":"机器学习基础","ar":"أساسيات تعلم الآلة","es":"Fundamentos de aprendizaje automático","fr":"Fondamentaux de l'apprentissage automatique","hi":"मशीन लर्निंग की बुनियाद","id":"Dasar-Dasar Pembelajaran Mesin","pt":"Fundamentos de aprendizado de máquina"},
+      "subdomains": [
+        {
+          "id": "supervised",
+          "name": {"en":"Supervised Learning","ko":"지도 학습","ja":"教師あり学習","zh":"监督学习","ar":"التعلم الموجّه","es":"Aprendizaje supervisado","fr":"Apprentissage supervisé","hi":"सुपरवाइज़्ड लर्निंग","id":"Pembelajaran Terarah","pt":"Aprendizado supervisionado"},
+          "facets": [
+            "facet:linearRegression",
+            "facet:logisticRegression",
+            "facet:knn",
+            "facet:decisionTree",
+            "facet:randomForest",
+            "facet:svm",
+            "facet:residualDistance",
+            "facet:leastSquares",
+            "facet:squashToProbability",
+            "facet:decisionBoundary",
+            "facet:voteByNeighbors",
+            "facet:kChangesBoundary",
+            "facet:splitByQuestion",
+            "facet:impurityDrops",
+            "facet:manyTreesVote",
+            "facet:baggingSample",
+            "facet:widestMargin",
+            "facet:supportVectorsOnly",
+            "facet:kernelLifts"
+          ]
+        },
+        {
+          "id": "unsupervised",
+          "name": {"en":"Unsupervised Learning","ko":"비지도 학습","ja":"教師なし学習","zh":"无监督学习","ar":"التعلم غير الموجّه","es":"Aprendizaje no supervisado","fr":"Apprentissage non supervisé","hi":"अनसुपरवाइज़्ड लर्निंग","id":"Pembelajaran Tak Terarah","pt":"Aprendizado não supervisionado"},
+          "facets": [
+            "facet:kmeans",
+            "facet:hierarchical",
+            "facet:dbscan",
+            "facet:pca",
+            "facet:tsne",
+            "facet:assignThenMove",
+            "facet:kMustBeGiven",
+            "facet:mergeNearestPair",
+            "facet:dendrogramCut",
+            "facet:denseNeighborhood",
+            "facet:noiseLeftOut",
+            "facet:directionOfMostSpread",
+            "facet:projectAndLose",
+            "facet:keepNeighborsClose",
+            "facet:globalAndLocal"
+          ]
+        },
+        {
+          "id": "neural-basics",
+          "name": {"en":"Neural Network Basics","ko":"신경망 기초","ja":"ニューラルネットワークの基礎","zh":"神经网络基础","ar":"أساسيات الشبكات العصبية","es":"Fundamentos de redes neuronales","fr":"Bases des réseaux de neurones","hi":"न्यूरल नेटवर्क की बुनियाद","id":"Dasar Jaringan Saraf","pt":"Fundamentos de redes neurais"},
+          "facets": []
+        },
+        {
+          "id": "learning-mechanism",
+          "name": {"en":"Learning Mechanisms","ko":"학습 메커니즘","ja":"学習の仕組み","zh":"学习机制","ar":"آليات التعلم","es":"Mecanismos de aprendizaje","fr":"Mécanismes d'apprentissage","hi":"सीखने की क्रियाविधि","id":"Mekanisme Pembelajaran","pt":"Mecanismos de aprendizado"},
+          "facets": []
+        },
+        {
+          "id": "regularization",
+          "name": {"en":"Regularization","ko":"정규화","ja":"正則化","zh":"正则化","ar":"التنظيم","es":"Regularización","fr":"Régularisation","hi":"रेगुलराइज़ेशन","id":"Regularisasi","pt":"Regularização"},
+          "facets": []
+        },
+        {
+          "id": "evaluation",
+          "name": {"en":"Evaluation","ko":"평가","ja":"評価","zh":"评估","ar":"التقييم","es":"Evaluación","fr":"Évaluation","hi":"मूल्यांकन","id":"Evaluasi","pt":"Avaliação"},
+          "facets": []
+        }
+      ]
+    },
+    {
+      "id": "deep-learning",
+      "name": {"en":"Deep Learning","ko":"딥러닝","ja":"ディープラーニング","zh":"深度学习","ar":"التعلم العميق","es":"Aprendizaje profundo","fr":"Apprentissage profond","hi":"डीप लर्निंग","id":"Pembelajaran Mendalam","pt":"Aprendizado profundo"},
+      "subdomains": [
+        {
+          "id": "cnn",
+          "name": {"en":"CNN","ko":"CNN","ja":"CNN","zh":"CNN","ar":"CNN","es":"CNN","fr":"CNN","hi":"CNN","id":"CNN","pt":"CNN"},
+          "facets": []
+        },
+        {
+          "id": "rnn",
+          "name": {"en":"RNN","ko":"RNN","ja":"RNN","zh":"RNN","ar":"RNN","es":"RNN","fr":"RNN","hi":"RNN","id":"RNN","pt":"RNN"},
+          "facets": []
+        },
+        {
+          "id": "transformer",
+          "name": {"en":"Attention and Transformers","ko":"어텐션과 트랜스포머","ja":"アテンションとトランスフォーマー","zh":"注意力与 Transformer","ar":"الانتباه والمحوّلات","es":"Atención y transformers","fr":"Attention et transformers","hi":"अटेंशन और ट्रांसफ़ॉर्मर","id":"Atensi dan Transformer","pt":"Atenção e transformers"},
+          "facets": []
+        },
+        {
+          "id": "generative",
+          "name": {"en":"Generative Models","ko":"생성 모델","ja":"生成モデル","zh":"生成模型","ar":"النماذج التوليدية","es":"Modelos generativos","fr":"Modèles génératifs","hi":"जनरेटिव मॉडल","id":"Model Generatif","pt":"Modelos generativos"},
+          "facets": []
+        },
+        {
+          "id": "rl",
+          "name": {"en":"Reinforcement Learning","ko":"강화 학습","ja":"強化学習","zh":"强化学习","ar":"التعلم المعزز","es":"Aprendizaje por refuerzo","fr":"Apprentissage par renforcement","hi":"रीइन्फ़ोर्समेंट लर्निंग","id":"Pembelajaran Penguatan","pt":"Aprendizado por reforço"},
+          "facets": []
+        }
+      ]
+    },
+    {
+      "id": "ai-engineering",
+      "name": {"en":"AI Engineering","ko":"AI 엔지니어링","ja":"AI エンジニアリング","zh":"AI 工程","ar":"هندسة الذكاء الاصطناعي","es":"Ingeniería de IA","fr":"Ingénierie de l'IA","hi":"AI इंजीनियरिंग","id":"Rekayasa AI","pt":"Engenharia de IA"},
+      "subdomains": [
+        {
+          "id": "text-tokenization",
+          "name": {"en":"Tokenization","ko":"토큰화","ja":"トークン化","zh":"分词","ar":"الترميز إلى رموز","es":"Tokenización","fr":"Tokenisation","hi":"टोकनाइज़ेशन","id":"Tokenisasi","pt":"Tokenização"},
+          "facets": [
+            "facet:subwordSegmentation",
+            "facet:bpeTraining",
+            "facet:vocabulary",
+            "facet:betweenLetterAndWord",
+            "facet:mergeTheFrequentPair",
+            "facet:unknownBecomesKnown",
+            "facet:spaceIsPartOfIt",
+            "facet:tokensPerLanguage",
+            "facet:boundaryShift"
+          ]
+        },
+        {
+          "id": "vector-search",
+          "name": {"en":"Embeddings and Vector Search","ko":"임베딩과 벡터 검색","ja":"埋め込みとベクトル検索","zh":"嵌入与向量检索","ar":"التضمينات والبحث المتجهي","es":"Embeddings y búsqueda vectorial","fr":"Plongements et recherche vectorielle","hi":"एम्बेडिंग और वेक्टर सर्च","id":"Embedding dan Pencarian Vektor","pt":"Embeddings e busca vetorial"},
+          "facets": [
+            "facet:vectorSimilarity",
+            "facet:exhaustiveSearch",
+            "facet:hnsw",
+            "facet:invertedFileIndex",
+            "facet:productQuantization",
+            "facet:angleNotLength",
+            "facet:compareWithAll",
+            "facet:neighborsLinkedAhead",
+            "facet:coarseThenFine",
+            "facet:probeAFewCells",
+            "facet:splitAndNumber",
+            "facet:recallSpeedTradeoff"
+          ]
+        },
+        {
+          "id": "retrieval-augmentation",
+          "name": {"en":"Retrieval Augmentation","ko":"검색 증강","ja":"検索拡張","zh":"检索增强","ar":"التوليد المعزز بالاسترجاع","es":"Aumento por recuperación","fr":"Augmentation par recherche","hi":"रिट्रीवल ऑगमेंटेशन","id":"Augmentasi Pengambilan","pt":"Aumento por recuperação"},
+          "facets": []
+        },
+        {
+          "id": "decoding",
+          "name": {"en":"Controlling Generation","ko":"생성 제어","ja":"生成の制御","zh":"生成控制","ar":"التحكم في التوليد","es":"Control de la generación","fr":"Contrôle de la génération","hi":"जनरेशन नियंत्रण","id":"Kendali Generasi","pt":"Controle da geração"},
+          "facets": []
+        },
+        {
+          "id": "inference-efficiency",
+          "name": {"en":"Inference Efficiency","ko":"추론 효율","ja":"推論効率","zh":"推理效率","ar":"كفاءة الاستدلال","es":"Eficiencia de inferencia","fr":"Efficacité de l'inférence","hi":"इन्फ़रेंस दक्षता","id":"Efisiensi Inferensi","pt":"Eficiência de inferência"},
+          "facets": []
+        }
+      ]
+    },
+    {
+      "id": "system-design",
+      "name": {"en":"System Design","ko":"시스템 설계","ja":"システム設計","zh":"系统设计","ar":"تصميم الأنظمة","es":"Diseño de sistemas","fr":"Conception de systèmes","hi":"सिस्टम डिज़ाइन","id":"Desain Sistem","pt":"Design de sistemas"},
+      "subdomains": [
+        {
+          "id": "caching",
+          "name": {"en":"Caching","ko":"캐싱","ja":"キャッシング","zh":"缓存","ar":"التخزين المؤقت","es":"Caché","fr":"Mise en cache","hi":"कैशिंग","id":"Caching","pt":"Cache"},
+          "facets": [
+            "facet:lruCache",
+            "facet:cachingCdn"
+          ]
+        },
+        {
+          "id": "messaging",
+          "name": {"en":"Message Queues","ko":"메시지 큐","ja":"メッセージキュー","zh":"消息队列","ar":"طوابير الرسائل","es":"Colas de mensajes","fr":"Files de messages","hi":"मैसेज क्यू","id":"Antrean Pesan","pt":"Filas de mensagens"},
+          "facets": [
+            "facet:messagingPubsub"
+          ]
+        },
+        {
+          "id": "load-balancing",
+          "name": {"en":"Load Balancing","ko":"로드 밸런싱","ja":"ロードバランシング","zh":"负载均衡","ar":"موازنة الأحمال","es":"Balanceo de carga","fr":"Répartition de charge","hi":"लोड बैलेंसिंग","id":"Penyeimbangan Beban","pt":"Balanceamento de carga"},
+          "facets": []
+        },
+        {
+          "id": "load-and-backpressure",
+          "name": {"en":"Load and Backpressure","ko":"부하와 배압","ja":"負荷とバックプレッシャー","zh":"负载与背压","ar":"الحمل والضغط العكسي","es":"Carga y contrapresión","fr":"Charge et contre-pression","hi":"लोड और बैकप्रेशर","id":"Beban dan Backpressure","pt":"Carga e contrapressão"},
+          "facets": []
+        },
+        {
+          "id": "distributed",
+          "name": {"en":"Distributed Systems","ko":"분산 시스템","ja":"分散システム","zh":"分布式系统","ar":"الأنظمة الموزعة","es":"Sistemas distribuidos","fr":"Systèmes distribués","hi":"वितरित सिस्टम","id":"Sistem Terdistribusi","pt":"Sistemas distribuídos"},
+          "facets": []
+        },
+        {
+          "id": "microservices",
+          "name": {"en":"Microservices","ko":"마이크로서비스","ja":"マイクロサービス","zh":"微服务","ar":"الخدمات المصغّرة","es":"Microservicios","fr":"Microservices","hi":"माइक्रोसर्विसेज़","id":"Layanan Mikro","pt":"Microsserviços"},
+          "facets": []
+        }
+      ]
+    },
+    {
+      "id": "security",
+      "name": {"en":"Security and Cryptography","ko":"보안과 암호","ja":"セキュリティと暗号","zh":"安全与密码学","ar":"الأمن والتشفير","es":"Seguridad y criptografía","fr":"Sécurité et cryptographie","hi":"सुरक्षा और क्रिप्टोग्राफ़ी","id":"Keamanan dan Kriptografi","pt":"Segurança e criptografia"},
+      "subdomains": [
+        {
+          "id": "symmetric",
+          "name": {"en":"Symmetric Cryptography","ko":"대칭 암호","ja":"共通鍵暗号","zh":"对称加密","ar":"التشفير المتماثل","es":"Criptografía simétrica","fr":"Cryptographie symétrique","hi":"सममित क्रिप्टोग्राफ़ी","id":"Kriptografi Simetris","pt":"Criptografia simétrica"},
+          "facets": []
+        },
+        {
+          "id": "asymmetric",
+          "name": {"en":"Asymmetric Cryptography","ko":"비대칭 암호","ja":"公開鍵暗号","zh":"非对称加密","ar":"التشفير غير المتماثل","es":"Criptografía asimétrica","fr":"Cryptographie asymétrique","hi":"असममित क्रिप्टोग्राफ़ी","id":"Kriptografi Asimetris","pt":"Criptografia assimétrica"},
+          "facets": [
+            "facet:asymmetricRsa"
+          ]
+        },
+        {
+          "id": "hash",
+          "name": {"en":"Hashing","ko":"해시","ja":"ハッシュ","zh":"哈希","ar":"التجزئة","es":"Hashing","fr":"Hachage","hi":"हैशिंग","id":"Hash","pt":"Hashing"},
+          "facets": [
+            "facet:hashFixedLength",
+            "facet:hashAvalanche",
+            "facet:pigeonholeCollision",
+            "facet:hashIntegrityCheck",
+            "facet:hashSalt",
+            "facet:hashChain",
+            "facet:merkleTree"
+          ]
+        },
+        {
+          "id": "signature",
+          "name": {"en":"Digital Signatures","ko":"디지털 서명","ja":"デジタル署名","zh":"数字签名","ar":"التوقيعات الرقمية","es":"Firmas digitales","fr":"Signatures numériques","hi":"डिजिटल हस्ताक्षर","id":"Tanda Tangan Digital","pt":"Assinaturas digitais"},
+          "facets": [
+            "facet:signatureKeyDirection",
+            "facet:signatureOnHash"
+          ]
+        },
+        {
+          "id": "attack-defense",
+          "name": {"en":"Attack and Defense","ko":"공격과 방어","ja":"攻撃と防御","zh":"攻击与防御","ar":"الهجوم والدفاع","es":"Ataque y defensa","fr":"Attaque et défense","hi":"हमला और बचाव","id":"Serangan dan Pertahanan","pt":"Ataque e defesa"},
+          "facets": []
+        }
+      ]
+    },
+    {
+      "id": "graphics",
+      "name": {"en":"Computer Graphics","ko":"컴퓨터 그래픽스","ja":"コンピュータグラフィックス","zh":"计算机图形学","ar":"رسومات الحاسوب","es":"Gráficos por computadora","fr":"Infographie","hi":"कंप्यूटर ग्राफ़िक्स","id":"Grafika Komputer","pt":"Computação gráfica"},
+      "subdomains": [
+        {
+          "id": "transform-2d",
+          "name": {"en":"2D Transforms","ko":"2D 변환","ja":"2D 変換","zh":"2D 变换","ar":"التحويلات ثنائية الأبعاد","es":"Transformaciones 2D","fr":"Transformations 2D","hi":"2D रूपांतरण","id":"Transformasi 2D","pt":"Transformações 2D"},
+          "facets": [
+            "facet:matrixTransform2d"
+          ]
+        },
+        {
+          "id": "rendering-3d",
+          "name": {"en":"3D Rendering","ko":"3D 렌더링","ja":"3D レンダリング","zh":"3D 渲染","ar":"التصيير ثلاثي الأبعاد","es":"Renderizado 3D","fr":"Rendu 3D","hi":"3D रेंडरिंग","id":"Rendering 3D","pt":"Renderização 3D"},
+          "facets": []
+        },
+        {
+          "id": "shading",
+          "name": {"en":"Shading","ko":"셰이딩","ja":"シェーディング","zh":"着色","ar":"التظليل","es":"Sombreado","fr":"Ombrage","hi":"शेडिंग","id":"Shading","pt":"Sombreamento"},
+          "facets": []
+        },
+        {
+          "id": "ray-tracing",
+          "name": {"en":"Ray Tracing","ko":"광선 추적","ja":"レイトレーシング","zh":"光线追踪","ar":"تتبع الأشعة","es":"Trazado de rayos","fr":"Lancer de rayons","hi":"रे ट्रेसिंग","id":"Ray Tracing","pt":"Traçado de raios"},
+          "facets": []
+        }
+      ]
+    },
+    {
+      "id": "math-foundations",
+      "name": {"en":"Math Foundations","ko":"수학 기초","ja":"数学の基礎","zh":"数学基础","ar":"أساسيات الرياضيات","es":"Fundamentos matemáticos","fr":"Fondamentaux mathématiques","hi":"गणित की बुनियाद","id":"Dasar-Dasar Matematika","pt":"Fundamentos de matemática"},
+      "subdomains": [
+        {
+          "id": "linear-algebra",
+          "name": {"en":"Linear Algebra","ko":"선형대수","ja":"線形代数","zh":"线性代数","ar":"الجبر الخطي","es":"Álgebra lineal","fr":"Algèbre linéaire","hi":"रैखिक बीजगणित","id":"Aljabar Linear","pt":"Álgebra linear"},
+          "facets": []
+        },
+        {
+          "id": "probability-stats",
+          "name": {"en":"Probability and Statistics","ko":"확률과 통계","ja":"確率と統計","zh":"概率与统计","ar":"الاحتمالات والإحصاء","es":"Probabilidad y estadística","fr":"Probabilités et statistiques","hi":"प्रायिकता और सांख्यिकी","id":"Probabilitas dan Statistika","pt":"Probabilidade e estatística"},
+          "facets": []
+        },
+        {
+          "id": "calculus",
+          "name": {"en":"Calculus","ko":"미적분","ja":"微積分","zh":"微积分","ar":"التفاضل والتكامل","es":"Cálculo","fr":"Analyse","hi":"कलन","id":"Kalkulus","pt":"Cálculo"},
+          "facets": []
+        },
+        {
+          "id": "discrete-math",
+          "name": {"en":"Discrete Mathematics","ko":"이산수학","ja":"離散数学","zh":"离散数学","ar":"الرياضيات المتقطعة","es":"Matemáticas discretas","fr":"Mathématiques discrètes","hi":"असतत गणित","id":"Matematika Diskret","pt":"Matemática discreta"},
+          "facets": []
+        }
+      ]
+    }
+  ]
+}

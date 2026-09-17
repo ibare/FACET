@@ -42,9 +42,20 @@ const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..');
 const catalogPath = join(repoRoot, 'apps/playground/src/catalog.json');
 const indexPagePath = join(repoRoot, 'apps/playground/src/pages/IndexPage.tsx');
 
+const taxonomyPath = join(repoRoot, 'taxonomy/taxonomy.json');
+
 const raw = readFileSync(catalogPath, 'utf8');
 const domains = (JSON.parse(raw) as { domains: Domain[] }).domains;
 const indexPage = readFileSync(indexPagePath, 'utf8');
+
+type Taxonomy = {
+  domains: {
+    id: string;
+    name: Record<string, string>;
+    subdomains: { id: string; name: Record<string, string>; facets: string[] }[];
+  }[];
+};
+const taxonomy = JSON.parse(readFileSync(taxonomyPath, 'utf8')) as Taxonomy;
 
 /** 모든 토픽을 도메인·서브도메인과 함께 편다. */
 const rows = domains.flatMap((d) =>
@@ -155,5 +166,35 @@ describe('계획 카탈로그', () => {
   it('규모가 줄지 않았다 — 실수로 잘려 나간 것을 잡는다', () => {
     expect(domains.length).toBeGreaterThanOrEqual(16);
     expect(rows.length).toBeGreaterThanOrEqual(1076);
+  });
+});
+
+/*
+ * 이 계획서는 분류표(`taxonomy/taxonomy.json`)를 따른다.
+ *
+ * 분야 · 하위 분야와 facet 의 소속은 한때 이 파일에만 있었다. 그런데 호스트에
+ * 발행되는 카탈로그가 그 분류를 필요로 하게 되자, 발행물의 원본을 데모 앱 폴더의
+ * 계획서에 둘 수는 없어 분류표를 따로 세웠다. 계획서는 아직 없는 토픽까지 담는
+ * 제 역할이 있어 그대로 두고, 대신 겹치는 부분이 분류표와 어긋나지 않게 묶는다.
+ */
+describe('계획 카탈로그와 분류표', () => {
+  it('분야 · 하위 분야의 id 와 순서가 분류표와 같다', () => {
+    const plan = domains.map((d) => `${d.id}: ${d.subdomains.map((s) => s.id).join(' ')}`);
+    const tax = taxonomy.domains.map((d) => `${d.id}: ${d.subdomains.map((s) => s.id).join(' ')}`);
+    expect(plan).toEqual(tax);
+  });
+
+  it('분야 · 하위 분야의 이름이 분류표의 한국어 이름과 같다', () => {
+    const plan = domains.flatMap((d) => [d.name, ...d.subdomains.map((s) => s.name)]);
+    const tax = taxonomy.domains.flatMap((d) => [d.name.ko, ...d.subdomains.map((s) => s.name.ko)]);
+    expect(plan).toEqual(tax);
+  });
+
+  it('구현된 토픽(facetId)이 분류표와 같은 하위 분야 · 같은 순서에 있다', () => {
+    const plan = domains.flatMap((d) =>
+      d.subdomains.map((s) => `${d.id}/${s.id}: ${s.topics.flatMap((t) => (t.facetId ? [t.facetId] : [])).join(' ')}`),
+    );
+    const tax = taxonomy.domains.flatMap((d) => d.subdomains.map((s) => `${d.id}/${s.id}: ${s.facets.join(' ')}`));
+    expect(plan).toEqual(tax);
   });
 });

@@ -177,4 +177,5 @@ npm scope 는 **`@ffacet`** (`ibare` 소유 org). `@facet` 은 타 계정 선점
 - `facets/cs-fundamentals/<name>/src/` — 완결형 facet (algorithm / projector / irs / facet / description / index)
 - `facets/<domain>/<name>/src/` — 도메인별 facet. `facets/security/` 에는 완결형 (`asymmetric-rsa`) 과
   조각(piece) 9종이 함께 있다. 조각은 한 주장만 말하고 멈추는 작은 facet 으로, 규범은 `rules/specifics/S-piece.md`
-- `apps/playground/` — 데모 앱
+- `taxonomy/taxonomy.json` — 분야 분류표 원본. facet 의 분야 · 하위 분야 소속과 그 이름(10개 언어). `pnpm catalog:gen` 이 읽어 호스트 카탈로그와 개념 메타의 분야를 만든다
+- `apps/playground/` — 데모 앱 (`src/catalog.json` 은 아직 없는 토픽까지 담은 계획서로, 분야는 분류표를 따른다)
