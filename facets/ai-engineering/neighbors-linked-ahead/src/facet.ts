@@ -128,5 +128,17 @@ export const neighborsLinkedAheadFacet: FacetJson = {
       id: 'Tidak ada tetangga yang lebih dekat. Langkah berhenti di sini.',
       pt: 'Nenhum vizinho está mais perto. A caminhada para aqui.',
     },
+    'label.query': {
+      en: 'query',
+      ko: '질의',
+      ja: 'クエリ',
+      zh: '查询',
+      ar: 'الاستعلام',
+      es: 'consulta',
+      fr: 'requête',
+      hi: 'क्वेरी',
+      id: 'kueri',
+      pt: 'consulta',
+    },
   },
 };

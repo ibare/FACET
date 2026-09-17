@@ -120,6 +120,7 @@ const FRAME_MS = 16;
 /** 마디 하나가 앞 마디에 겹치는 정도. 1 이면 겹침 없이 차례로 선다. */
 const STAGGER = 0.35;
 
+/** 흐름의 방향을 새긴 도형. 번역 대상이 아니다 (C10 판정 1). */
 const ARROW = '──▶';
 
 type Attrs = Record<string, string | number>;

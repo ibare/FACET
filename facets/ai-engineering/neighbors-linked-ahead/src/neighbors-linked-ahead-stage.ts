@@ -102,9 +102,6 @@ const PROBE_MS = 320;
 const STEP_MS = 560;
 const SETTLE_MS = 460;
 
-/** 도식에 새겨진 표식. 번역하면 그림과 어긋난다 (C10). */
-const QUERY_MARK = 'query';
-
 /** 캡션 한 줄에 들어가는 폭. 글자 너비를 셈해 잰다. */
 const CAPTION_BUDGET = 80;
 
@@ -434,7 +431,7 @@ export const neighborsLinkedAheadStageView: CanvasView = {
         x: qx, y: qy - 21, 'text-anchor': 'middle',
         fill: c.textMuted, 'font-family': fonts.body, 'font-size': fontSizes.xs,
       });
-      queryLabel.textContent = QUERY_MARK;
+      queryLabel.textContent = t('label.query', 'query');
       gDots.appendChild(queryLabel);
 
       // ── 점들. 채움은 걸음의 형편, 테두리는 짚음의 표식이다.

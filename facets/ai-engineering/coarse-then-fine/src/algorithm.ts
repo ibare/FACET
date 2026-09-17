@@ -210,7 +210,6 @@ export async function coarseThenFine(ctx: FacetContext<CoarseThenFineData>): Pro
       if (li === 0) {
         if (!(await beat({
           type: 'enter',
-          target: `node:${cur}`,
           payload: { node: cur },
         }))) return false;
       }
@@ -233,7 +232,6 @@ export async function coarseThenFine(ctx: FacetContext<CoarseThenFineData>): Pro
           cur = best;
           if (!(await beat({
             type: 'hop',
-            target: `node:${cur}`,
             payload: { to: cur, cands },
           }))) return false;
           continue;
@@ -244,24 +242,21 @@ export async function coarseThenFine(ctx: FacetContext<CoarseThenFineData>): Pro
         if (below) {
           if (!(await beat({
             type: 'hand-down',
-            target: `node:${cur}`,
             payload: { cands },
           }))) return false;
         } else if (!(await beat({
           type: 'stop',
-          target: `node:${cur}`,
           payload: { cands },
         }))) return false;
         break;
       }
     }
 
-    if (!(await beat({ type: 'found', target: `node:${cur}` }))) return false;
+    if (!(await beat({ type: 'found' }))) return false;
 
     const flat = flatSearch(data, entry);
     return beat({
       type: 'flat',
-      target: `node:${flat.result}`,
       payload: { path: flat.path, seen: flat.seen },
     });
   };
