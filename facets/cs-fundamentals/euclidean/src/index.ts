@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -18,7 +17,6 @@ import { euclideanProjector } from './projector.js';
 import { euclideanIRs } from './irs.js';
 import { euclideanStageView } from './euclidean-stage.js';
 import { euclideanFacet } from './facet.js';
-import { euclideanDescription } from './description.js';
 
 export {
   euclideanAlgorithm,
@@ -26,7 +24,6 @@ export {
   euclideanIRs,
   euclideanStageView,
   euclideanFacet,
-  euclideanDescription,
 };
 export { euclideanSteps } from './algorithm.js';
 export { euclideanImperativeIR } from './irs.js';
@@ -41,5 +38,4 @@ export function registerEuclidean(): void {
   for (const ir of euclideanIRs) registerIR(ir.id, ir);
   registerView('euclidean-stage', euclideanStageView);
   registerFacets([euclideanFacet]);
-  registerDescription(euclideanFacet.id, euclideanDescription);
 }

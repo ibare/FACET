@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -20,7 +19,6 @@ import { oneMoreRoundDropsIRs } from './irs.js';
 import { oneMoreRoundDropsScene } from './scene.js';
 import { oneMoreRoundDropsStageView } from './one-more-round-drops-stage.js';
 import { oneMoreRoundDropsFacet } from './facet.js';
-import { oneMoreRoundDropsDescription } from './description.js';
 
 export function registerOneMoreRoundDrops(): void {
   registerAlgorithm<OneMoreRoundDropsData>('oneMoreRoundDrops', oneMoreRoundDropsAlgorithm, {
@@ -31,7 +29,6 @@ export function registerOneMoreRoundDrops(): void {
   for (const ir of oneMoreRoundDropsIRs) registerIR(ir.id, ir);
   registerView('one-more-round-drops-stage', oneMoreRoundDropsStageView);
   registerFacets([oneMoreRoundDropsFacet]);
-  registerDescription(oneMoreRoundDropsFacet.id, oneMoreRoundDropsDescription);
 }
 
 export {
@@ -57,4 +54,3 @@ export type {
 export { oneMoreRoundDropsIRs } from './irs.js';
 export { oneMoreRoundDropsStageView } from './one-more-round-drops-stage.js';
 export { oneMoreRoundDropsFacet } from './facet.js';
-export { oneMoreRoundDropsDescription } from './description.js';

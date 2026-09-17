@@ -23,7 +23,6 @@ export type {
 } from './scene.js';
 export { leastSquaresIRs } from './irs.js';
 export { leastSquaresFacet } from './facet.js';
-export { leastSquaresDescription } from './description.js';
 export { leastSquaresStageView } from './least-squares-stage.js';
 
 import {
@@ -31,14 +30,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { leastSquares, type LeastSquaresData } from './algorithm.js';
 import { leastSquaresScene } from './scene.js';
 import { leastSquaresIRs } from './irs.js';
 import { leastSquaresFacet } from './facet.js';
-import { leastSquaresDescription } from './description.js';
 import { leastSquaresStageView } from './least-squares-stage.js';
 
 export function registerLeastSquares(): void {
@@ -49,5 +46,4 @@ export function registerLeastSquares(): void {
   for (const ir of leastSquaresIRs) registerIR(ir.id, ir);
   registerView('least-squares-stage', leastSquaresStageView);
   registerFacets([leastSquaresFacet]);
-  registerDescription(leastSquaresFacet.id, leastSquaresDescription);
 }

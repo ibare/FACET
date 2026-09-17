@@ -16,7 +16,6 @@ export { bottomUpTableScene } from './scene.js';
 export type { BottomUpCell, BottomUpStep, BottomUpTableScene } from './scene.js';
 export { bottomUpTableIRs } from './irs.js';
 export { bottomUpTableFacet } from './facet.js';
-export { bottomUpTableDescription } from './description.js';
 export { bottomUpTableStageView } from './bottom-up-table-stage.js';
 
 import {
@@ -24,19 +23,17 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { bottomUpTable, type BottomUpTableData } from './algorithm.js';
 import { bottomUpTableScene } from './scene.js';
 import { bottomUpTableIRs } from './irs.js';
 import { bottomUpTableFacet } from './facet.js';
-import { bottomUpTableDescription } from './description.js';
 import { bottomUpTableStageView } from './bottom-up-table-stage.js';
 
 /**
- * 등록 헬퍼. 순서는 S-facet 표준 (Algorithm → Scene → IR → View → Facets
- * → Description). 전용 View 는 Facets 직전에 끼운다 — facet JSON 의 block.type
+ * 등록 헬퍼. 순서는 S-facet 표준 (Algorithm → Scene → IR → View → Facets).
+ * 전용 View 는 Facets 직전에 끼운다 — facet JSON 의 block.type
  * 이 마운트 시 카탈로그를 조회하기 때문.
  */
 export function registerBottomUpTable(): void {
@@ -47,5 +44,4 @@ export function registerBottomUpTable(): void {
   for (const ir of bottomUpTableIRs) registerIR(ir.id, ir);
   registerView('bottom-up-table-stage', bottomUpTableStageView);
   registerFacets([bottomUpTableFacet]);
-  registerDescription(bottomUpTableFacet.id, bottomUpTableDescription);
 }

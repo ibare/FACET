@@ -10,7 +10,6 @@ export { findRootAlgorithm, type FindRootData } from './algorithm.js';
 export { findRootScene, type FindRootScene, type FindRootWalk } from './scene.js';
 export { findRootIRs } from './irs.js';
 export { findRootFacet } from './facet.js';
-export { findRootDescription } from './description.js';
 export { findRootStageView } from './find-root-stage.js';
 
 import {
@@ -18,14 +17,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { findRootAlgorithm, type FindRootData } from './algorithm.js';
 import { findRootScene } from './scene.js';
 import { findRootIRs } from './irs.js';
 import { findRootFacet } from './facet.js';
-import { findRootDescription } from './description.js';
 import { findRootStageView } from './find-root-stage.js';
 
 export function registerFindRoot(): void {
@@ -36,5 +33,4 @@ export function registerFindRoot(): void {
   for (const ir of findRootIRs) registerIR(ir.id, ir);
   registerView('find-root-stage', findRootStageView);
   registerFacets([findRootFacet]);
-  registerDescription(findRootFacet.id, findRootDescription);
 }

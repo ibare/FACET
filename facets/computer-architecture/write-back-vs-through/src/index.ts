@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -15,14 +14,12 @@ import {
 } from '@ffacet/core/runtime';
 
 import { writeBackVsThroughAlgorithm, type WriteBackVsThroughData } from './algorithm.js';
-import { writeBackVsThroughDescription } from './description.js';
 import { writeBackVsThroughFacet } from './facet.js';
 import { writeBackVsThroughIRs } from './irs.js';
 import { writeBackVsThroughScene } from './scene.js';
 import { writeBackVsThroughStageView } from './write-back-vs-through-stage.js';
 
 export { writeBackVsThroughAlgorithm, type WriteBackVsThroughData } from './algorithm.js';
-export { writeBackVsThroughDescription } from './description.js';
 export { writeBackVsThroughFacet } from './facet.js';
 export { writeBackVsThroughIRs } from './irs.js';
 export {
@@ -46,5 +43,4 @@ export function registerWriteBackVsThrough(): void {
   for (const ir of writeBackVsThroughIRs) registerIR(ir.id, ir);
   registerView('write-back-vs-through-stage', writeBackVsThroughStageView);
   registerFacets([writeBackVsThroughFacet]);
-  registerDescription(writeBackVsThroughFacet.id, writeBackVsThroughDescription);
 }

@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -18,7 +17,6 @@ import { rollingHashScene } from './scene.js';
 import { rollingHashIRs } from './irs.js';
 import { rollingHashStageView } from './rolling-hash-stage.js';
 import { rollingHashFacet } from './facet.js';
-import { rollingHashDescription } from './description.js';
 
 export function registerRollingHash(): void {
   // 조각은 마운트하자마자 스스로 시작하고 걸음 간격을 스스로 정해야 하는데,
@@ -30,7 +28,6 @@ export function registerRollingHash(): void {
   for (const ir of rollingHashIRs) registerIR(ir.id, ir);
   registerView('rolling-hash-stage', rollingHashStageView);
   registerFacets([rollingHashFacet]);
-  registerDescription(rollingHashFacet.id, rollingHashDescription);
 }
 
 export { rollingHashAlgorithm, hashOf, type RollingHashData } from './algorithm.js';
@@ -45,4 +42,3 @@ export type {
 export { rollingHashIRs } from './irs.js';
 export { rollingHashStageView } from './rolling-hash-stage.js';
 export { rollingHashFacet } from './facet.js';
-export { rollingHashDescription } from './description.js';

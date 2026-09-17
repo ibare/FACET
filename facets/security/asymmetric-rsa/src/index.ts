@@ -6,7 +6,7 @@
  * 액션을 대기한다. 컨트롤바는 next-p / next-q / 평문 m / replay /
  * speed-slider / toggle-reverse / reset.
  *
- * algorithm / projector / facet JSON / description / 전용 view (rsa-stage)
+ * algorithm / projector / facet JSON / 전용 view (rsa-stage)
  * 를 함께 번들하고 등록 헬퍼를 제공한다. 코드 패널은 1차 구현에서 생략.
  */
 
@@ -20,7 +20,6 @@ export {
 export { asymmetricRsaProjector } from './projector.js';
 export { asymmetricRsaIRs } from './irs.js';
 export { asymmetricRsaFacet } from './facet.js';
-export { asymmetricRsaDescription } from './description.js';
 export { rsaStageView } from './rsa-stage.js';
 
 import {
@@ -28,14 +27,12 @@ import {
   registerProjector,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { asymmetricRsa, type RsaFacetData } from './algorithm.js';
 import { asymmetricRsaProjector } from './projector.js';
 import { asymmetricRsaIRs } from './irs.js';
 import { asymmetricRsaFacet } from './facet.js';
-import { asymmetricRsaDescription } from './description.js';
 import { rsaStageView } from './rsa-stage.js';
 
 export function registerAsymmetricRsa(): void {
@@ -46,5 +43,4 @@ export function registerAsymmetricRsa(): void {
   for (const ir of asymmetricRsaIRs) registerIR(ir.id, ir);
   registerView('rsa-stage', rsaStageView);
   registerFacets([asymmetricRsaFacet]);
-  registerDescription(asymmetricRsaFacet.id, asymmetricRsaDescription);
 }

@@ -7,7 +7,7 @@
  * 논증을 진다. 재생 · 멈춤 · 한 걸음은 메커니즘이 `ctx.sleep` 의 걸음 경계에서
  * 지므로 algorithm 은 위젯 입력만 본다.
  *
- * algorithm / projector / IR / facet JSON / description / 전용 view (knn-stage)
+ * algorithm / projector / IR / facet JSON / 전용 view (knn-stage)
  * 를 함께 번들하고 등록 헬퍼를 제공한다.
  */
 
@@ -15,7 +15,6 @@ export { knn, LABEL_A, LABEL_B, type KnnData, type KnnPoint } from './algorithm.
 export { knnProjector } from './projector.js';
 export { knnClassifyIR, knnIRs } from './irs.js';
 export { knnFacet } from './facet.js';
-export { knnDescription } from './description.js';
 export { knnStageView } from './knn-stage.js';
 
 import {
@@ -24,13 +23,11 @@ import {
   registerIR,
   registerView,
   registerFacets,
-  registerDescription,
 } from '@ffacet/core/runtime';
 import { knn, type KnnData } from './algorithm.js';
 import { knnProjector } from './projector.js';
 import { knnIRs } from './irs.js';
 import { knnFacet } from './facet.js';
-import { knnDescription } from './description.js';
 import { knnStageView } from './knn-stage.js';
 
 export function registerKnn(): void {
@@ -39,5 +36,4 @@ export function registerKnn(): void {
   for (const ir of knnIRs) registerIR(ir.id, ir);
   registerView('knn-stage', knnStageView);
   registerFacets([knnFacet]);
-  registerDescription(knnFacet.id, knnDescription);
 }

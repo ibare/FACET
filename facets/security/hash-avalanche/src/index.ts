@@ -5,7 +5,7 @@
  * 받지 않는다. ReactiveMechanism 이라 컨트롤바 없이 스스로 재생하고, 걸음
  * 간격도 스스로 정한다 (ctx.sleep).
  *
- * algorithm / scene / facet JSON / description / 전용 view (avalanche-stage)
+ * algorithm / scene / facet JSON / 전용 view (avalanche-stage)
  * 를 함께 번들하고 등록 헬퍼를 제공한다. 코드 패널은 두지 않는다.
  */
 
@@ -13,7 +13,6 @@ export { hashAvalanche, type HashAvalancheFacetData } from './algorithm.js';
 export { hashAvalancheScene, type AvalancheScene } from './scene.js';
 export { hashAvalancheIRs } from './irs.js';
 export { hashAvalancheFacet } from './facet.js';
-export { hashAvalancheDescription } from './description.js';
 export { avalancheStageView } from './avalanche-stage.js';
 
 import {
@@ -21,14 +20,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { hashAvalanche, type HashAvalancheFacetData } from './algorithm.js';
 import { hashAvalancheScene } from './scene.js';
 import { hashAvalancheIRs } from './irs.js';
 import { hashAvalancheFacet } from './facet.js';
-import { hashAvalancheDescription } from './description.js';
 import { avalancheStageView } from './avalanche-stage.js';
 
 export function registerHashAvalanche(): void {
@@ -39,5 +36,4 @@ export function registerHashAvalanche(): void {
   for (const ir of hashAvalancheIRs) registerIR(ir.id, ir);
   registerView('avalanche-stage', avalancheStageView);
   registerFacets([hashAvalancheFacet]);
-  registerDescription(hashAvalancheFacet.id, hashAvalancheDescription);
 }

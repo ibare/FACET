@@ -10,7 +10,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -22,7 +21,6 @@ import { relinkInsertScene } from './scene.js';
 import { relinkInsertIRs } from './irs.js';
 import { relinkStageView } from './relink-stage.js';
 import { relinkInsertFacet } from './facet.js';
-import { relinkInsertDescription } from './description.js';
 
 export { relinkInsertAlgorithm } from './algorithm.js';
 export type { RelinkInsertData, RelinkNode } from './algorithm.js';
@@ -39,7 +37,6 @@ export { relinkInsertIRs } from './irs.js';
 export { relinkStageView } from './relink-stage.js';
 export type { RelinkStage } from './relink-stage.js';
 export { relinkInsertFacet } from './facet.js';
-export { relinkInsertDescription } from './description.js';
 
 export function registerRelinkInsert(): void {
   registerAlgorithm<RelinkInsertData>('relinkInsert', relinkInsertAlgorithm, {
@@ -50,5 +47,4 @@ export function registerRelinkInsert(): void {
   for (const ir of relinkInsertIRs) registerIR(ir.id, ir);
   registerView('relink-insert-stage', relinkStageView);
   registerFacets([relinkInsertFacet]);
-  registerDescription(relinkInsertFacet.id, relinkInsertDescription);
 }

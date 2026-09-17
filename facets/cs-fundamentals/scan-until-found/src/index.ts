@@ -17,7 +17,6 @@ export {
 } from './scene.js';
 export { scanUntilFoundIRs } from './irs.js';
 export { scanUntilFoundFacet } from './facet.js';
-export { scanUntilFoundDescription } from './description.js';
 export { scanUntilFoundStageView } from './scan-until-found-stage.js';
 
 import {
@@ -25,14 +24,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { scanUntilFound, type ScanUntilFoundData } from './algorithm.js';
 import { scanUntilFoundScene } from './scene.js';
 import { scanUntilFoundIRs } from './irs.js';
 import { scanUntilFoundFacet } from './facet.js';
-import { scanUntilFoundDescription } from './description.js';
 import { scanUntilFoundStageView } from './scan-until-found-stage.js';
 
 export function registerScanUntilFound(): void {
@@ -43,5 +40,4 @@ export function registerScanUntilFound(): void {
   for (const ir of scanUntilFoundIRs) registerIR(ir.id, ir);
   registerView('scan-until-found-stage', scanUntilFoundStageView);
   registerFacets([scanUntilFoundFacet]);
-  registerDescription(scanUntilFoundFacet.id, scanUntilFoundDescription);
 }

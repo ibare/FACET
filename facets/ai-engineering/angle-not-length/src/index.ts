@@ -4,7 +4,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -13,7 +12,6 @@ import {
 
 import { angleNotLengthAlgorithm } from './algorithm.js';
 import { angleNotLengthStageView } from './angle-not-length-stage.js';
-import { angleNotLengthDescription } from './description.js';
 import { angleNotLengthFacet } from './facet.js';
 import { angleNotLengthIRs } from './irs.js';
 import { angleNotLengthScene } from './scene.js';
@@ -26,7 +24,6 @@ export {
 } from './algorithm.js';
 export type { AngleNotLengthData, AngleNotLengthPoint } from './algorithm.js';
 export { angleNotLengthStageView } from './angle-not-length-stage.js';
-export { angleNotLengthDescription } from './description.js';
 export { angleNotLengthFacet } from './facet.js';
 export { angleNotLengthIRs } from './irs.js';
 export { angleNotLengthScene, flipOf, focusOf, lastSweptOf, lengthOf, rankIn } from './scene.js';
@@ -45,5 +42,4 @@ export function registerAngleNotLength(): void {
   for (const ir of angleNotLengthIRs) registerIR(ir.id, ir);
   registerView('angle-not-length-stage', angleNotLengthStageView);
   registerFacets([angleNotLengthFacet]);
-  registerDescription(angleNotLengthFacet.id, angleNotLengthDescription);
 }

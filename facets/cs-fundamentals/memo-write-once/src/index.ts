@@ -27,7 +27,6 @@ export {
 } from './scene.js';
 export { memoWriteOnceIRs } from './irs.js';
 export { memoWriteOnceFacet } from './facet.js';
-export { memoWriteOnceDescription } from './description.js';
 export { memoWriteOnceStageView, MEMO_WRITE_ONCE_STAGE_H } from './memo-write-once-stage.js';
 
 import {
@@ -35,19 +34,17 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { memoWriteOnce, type MemoWriteOnceData } from './algorithm.js';
 import { memoWriteOnceScene } from './scene.js';
 import { memoWriteOnceIRs } from './irs.js';
 import { memoWriteOnceFacet } from './facet.js';
-import { memoWriteOnceDescription } from './description.js';
 import { memoWriteOnceStageView } from './memo-write-once-stage.js';
 
 /**
- * 등록 헬퍼. 순서는 S-facet 표준 (Algorithm → Scene → IR → View → Facets
- * → Description). 전용 View 는 Facets 직전에 끼운다 — facet JSON 의 block.type
+ * 등록 헬퍼. 순서는 S-facet 표준 (Algorithm → Scene → IR → View → Facets).
+ * 전용 View 는 Facets 직전에 끼운다 — facet JSON 의 block.type
  * 이 마운트 시 카탈로그를 조회하기 때문.
  */
 export function registerMemoWriteOnce(): void {
@@ -58,5 +55,4 @@ export function registerMemoWriteOnce(): void {
   for (const ir of memoWriteOnceIRs) registerIR(ir.id, ir);
   registerView('memo-write-once-stage', memoWriteOnceStageView);
   registerFacets([memoWriteOnceFacet]);
-  registerDescription(memoWriteOnceFacet.id, memoWriteOnceDescription);
 }

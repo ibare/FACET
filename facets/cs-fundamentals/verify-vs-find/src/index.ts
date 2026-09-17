@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -23,7 +22,6 @@ import { verifyVsFindScene } from './scene.js';
 import { verifyVsFindIRs } from './irs.js';
 import { verifyVsFindStageView } from './verify-vs-find-stage.js';
 import { verifyVsFindFacet } from './facet.js';
-import { verifyVsFindDescription } from './description.js';
 
 export function registerVerifyVsFind(): void {
   registerAlgorithm<VerifyVsFindData>('verifyVsFind', verifyVsFind, { mechanismKind: 'reactive' });
@@ -31,14 +29,12 @@ export function registerVerifyVsFind(): void {
   for (const ir of verifyVsFindIRs) registerIR(ir.id, ir);
   registerView('verify-vs-find-stage', verifyVsFindStageView);
   registerFacets([verifyVsFindFacet]);
-  registerDescription(verifyVsFindFacet.id, verifyVsFindDescription);
 }
 
 export {
   computeVerifyVsFindResult,
   expandCandidate,
   verifyVsFind,
-  verifyVsFindDescription,
   verifyVsFindFacet,
   verifyVsFindIRs,
   verifyVsFindScene,

@@ -4,7 +4,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -15,14 +14,12 @@ import { nodeHoldsManyAlgorithm } from './algorithm.js';
 import { nodeHoldsManyScene } from './scene.js';
 import { nodeHoldsManyIRs } from './irs.js';
 import { nodeHoldsManyFacet } from './facet.js';
-import { nodeHoldsManyDescription } from './description.js';
 import { nodeHoldsManyStageView } from './node-holds-many-stage.js';
 
 export * from './algorithm.js';
 export * from './scene.js';
 export * from './irs.js';
 export * from './facet.js';
-export * from './description.js';
 export * from './node-holds-many-stage.js';
 
 export function registerNodeHoldsMany(): void {
@@ -31,5 +28,4 @@ export function registerNodeHoldsMany(): void {
   for (const ir of nodeHoldsManyIRs) registerIR(ir.id, ir);
   registerView('node-holds-many-stage', nodeHoldsManyStageView);
   registerFacets([nodeHoldsManyFacet]);
-  registerDescription(nodeHoldsManyFacet.id, nodeHoldsManyDescription);
 }

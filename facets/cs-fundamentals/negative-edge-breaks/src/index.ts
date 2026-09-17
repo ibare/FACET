@@ -9,7 +9,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -17,7 +16,6 @@ import {
 } from '@ffacet/core/runtime';
 
 import { negativeEdgeBreaksAlgorithm } from './algorithm.js';
-import { negativeEdgeBreaksDescription } from './description.js';
 import { negativeEdgeBreaksFacet } from './facet.js';
 import { negativeEdgeBreaksIRs } from './irs.js';
 import { negativeEdgeBreaksScene } from './scene.js';
@@ -25,7 +23,6 @@ import { negativeEdgeBreaksStageView } from './negative-edge-breaks-stage.js';
 
 export { negativeEdgeBreaksAlgorithm } from './algorithm.js';
 export type { NegativeEdge, NegativeEdgeBreaksData } from './algorithm.js';
-export { negativeEdgeBreaksDescription } from './description.js';
 export { negativeEdgeBreaksFacet } from './facet.js';
 export { negativeEdgeBreaksIRs } from './irs.js';
 export {
@@ -61,5 +58,4 @@ export function registerNegativeEdgeBreaks(): void {
   for (const ir of negativeEdgeBreaksIRs) registerIR(ir.id, ir);
   registerView('negative-edge-breaks-stage', negativeEdgeBreaksStageView);
   registerFacets([negativeEdgeBreaksFacet]);
-  registerDescription(negativeEdgeBreaksFacet.id, negativeEdgeBreaksDescription);
 }

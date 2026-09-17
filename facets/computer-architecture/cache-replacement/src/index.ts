@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -18,7 +17,6 @@ import { cacheReplacementProjector } from './projector.js';
 import { cacheReplacementIRs } from './irs.js';
 import { cacheReplacementStageView } from './cache-replacement-stage.js';
 import { cacheReplacementFacet } from './facet.js';
-import { cacheReplacementDescription } from './description.js';
 
 export function registerCacheReplacement(): void {
   // 손잡이(segmented-slider)를 다는 facet 이라 reactive 다. CoroutineMechanism 의
@@ -30,7 +28,6 @@ export function registerCacheReplacement(): void {
   for (const ir of cacheReplacementIRs) registerIR(ir.id, ir);
   registerView('cache-replacement-stage', cacheReplacementStageView);
   registerFacets([cacheReplacementFacet]);
-  registerDescription(cacheReplacementFacet.id, cacheReplacementDescription);
 }
 
 export {
@@ -39,7 +36,6 @@ export {
   cacheReplacementIRs,
   cacheReplacementStageView,
   cacheReplacementFacet,
-  cacheReplacementDescription,
 };
 export {
   computeCacheReplacementResult,

@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -16,7 +15,6 @@ import {
 
 import { boundaryShiftAlgorithm } from './algorithm.js';
 import { boundaryShiftStageView } from './boundary-shift-stage.js';
-import { boundaryShiftDescription } from './description.js';
 import { boundaryShiftFacet } from './facet.js';
 import { boundaryShiftIRs } from './irs.js';
 import { boundaryShiftScene } from './scene.js';
@@ -28,7 +26,6 @@ export type {
   BoundaryShiftWord,
 } from './algorithm.js';
 export { boundaryShiftStageView } from './boundary-shift-stage.js';
-export { boundaryShiftDescription } from './description.js';
 export { boundaryShiftFacet } from './facet.js';
 export { boundaryShiftIRs } from './irs.js';
 export { boundaryShiftScene, type BoundaryShiftScene } from './scene.js';
@@ -43,5 +40,4 @@ export function registerBoundaryShift(): void {
   for (const ir of boundaryShiftIRs) registerIR(ir.id, ir);
   registerView('boundary-shift-stage', boundaryShiftStageView);
   registerFacets([boundaryShiftFacet]);
-  registerDescription(boundaryShiftFacet.id, boundaryShiftDescription);
 }

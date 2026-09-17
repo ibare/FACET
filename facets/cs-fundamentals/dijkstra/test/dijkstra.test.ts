@@ -5,7 +5,6 @@ import {
   clearRegistry,
   clearViewCatalog,
   getAlgorithm,
-  getDescription,
   getIR,
   getProjector,
   getView,
@@ -15,7 +14,6 @@ import {
 } from '@ffacet/core/runtime';
 import {
   dijkstra,
-  dijkstraDescription,
   dijkstraFacet,
   dijkstraSettleIR,
   registerDijkstra,
@@ -341,12 +339,6 @@ describe('선언 정합 (C4)', () => {
     expect(panel.ir).toBe('ir:dijkstra-settle');
     expect(getIR('dijkstra-settle')).toBe(dijkstraSettleIR);
     expect(getView('dijkstra-stage')).toBeDefined();
-    expect(getDescription('facet:dijkstra')).toBe(dijkstraDescription);
-  });
-
-  it('글이 자기 facet 을 부른다', () => {
-    expect(dijkstraFacet.id).toBe('facet:dijkstra');
-    expect(dijkstraDescription).toContain('{facet:dijkstra}');
   });
 
   it('projector 가 쓰는 문안 키가 messages 에 다 있다', () => {

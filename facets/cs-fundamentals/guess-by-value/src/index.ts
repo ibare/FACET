@@ -12,7 +12,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -31,12 +30,10 @@ import { guessByValueScene } from './scene.js';
 import { guessByValueIRs } from './irs.js';
 import { guessByValueStageView } from './guess-by-value-stage.js';
 import { guessByValueFacet } from './facet.js';
-import { guessByValueDescription } from './description.js';
 
 export {
   aimShots,
   guessByValueAlgorithm,
-  guessByValueDescription,
   guessByValueFacet,
   guessByValueIRs,
   guessByValueScene,
@@ -61,5 +58,4 @@ export function registerGuessByValue(): void {
   for (const ir of guessByValueIRs) registerIR(ir.id, ir);
   registerView('guess-by-value-stage', guessByValueStageView);
   registerFacets([guessByValueFacet]);
-  registerDescription(guessByValueFacet.id, guessByValueDescription);
 }

@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -17,7 +16,6 @@ import { unevenFloatGapsAlgorithm, type UnevenFloatGapsData } from './algorithm.
 import { unevenFloatGapsScene } from './scene.js';
 import { unevenFloatGapsIRs } from './irs.js';
 import { unevenFloatGapsFacet } from './facet.js';
-import { unevenFloatGapsDescription } from './description.js';
 import { unevenFloatGapsStageView } from './uneven-float-gaps-stage.js';
 
 export {
@@ -37,7 +35,6 @@ export {
 } from './scene.js';
 export { unevenFloatGapsIRs } from './irs.js';
 export { unevenFloatGapsFacet } from './facet.js';
-export { unevenFloatGapsDescription } from './description.js';
 export { unevenFloatGapsStageView } from './uneven-float-gaps-stage.js';
 
 export function registerUnevenFloatGaps(): void {
@@ -48,5 +45,4 @@ export function registerUnevenFloatGaps(): void {
   for (const ir of unevenFloatGapsIRs) registerIR(ir.id, ir);
   registerView('uneven-float-gaps-stage', unevenFloatGapsStageView);
   registerFacets([unevenFloatGapsFacet]);
-  registerDescription(unevenFloatGapsFacet.id, unevenFloatGapsDescription);
 }

@@ -37,12 +37,10 @@ export {
 } from './scene.js';
 export { coarseThenFineIRs } from './irs.js';
 export { coarseThenFineFacet } from './facet.js';
-export { coarseThenFineDescription } from './description.js';
 export { coarseThenFineStageView } from './coarse-then-fine-stage.js';
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -52,7 +50,6 @@ import { coarseThenFine, type CoarseThenFineData } from './algorithm.js';
 import { coarseThenFineScene } from './scene.js';
 import { coarseThenFineIRs } from './irs.js';
 import { coarseThenFineFacet } from './facet.js';
-import { coarseThenFineDescription } from './description.js';
 import { coarseThenFineStageView } from './coarse-then-fine-stage.js';
 
 export function registerCoarseThenFine(): void {
@@ -67,5 +64,4 @@ export function registerCoarseThenFine(): void {
   for (const ir of coarseThenFineIRs) registerIR(ir.id, ir);
   registerView('coarse-then-fine-stage', coarseThenFineStageView);
   registerFacets([coarseThenFineFacet]);
-  registerDescription(coarseThenFineFacet.id, coarseThenFineDescription);
 }

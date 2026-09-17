@@ -31,7 +31,6 @@ const transpilers = new Map<string, Transpiler>();
 type FacetLoader = () => Promise<unknown>;
 const facetLoaders = new Map<string, FacetLoader>();
 const inflightLoads = new Map<string, Promise<void>>();
-const descriptions = new Map<string, string>();
 
 export type RegisterAlgorithmOptions<TData = unknown> = {
   /** 알고리즘 실행과 별개로 최종 결과 상태를 즉시 계산하는 순수 함수. */
@@ -162,15 +161,6 @@ export async function loadFacet(id: string): Promise<FacetJson | undefined> {
   return facets.get(id);
 }
 
-/** facet id 에 대응하는 설명 마크다운 등록 (단일 문자열, locale 분기 없음). */
-export function registerDescription(id: string, markdown: string): void {
-  descriptions.set(id, markdown);
-}
-
-export function getDescription(id: string): string | undefined {
-  return descriptions.get(id);
-}
-
 export function clearRegistry(): void {
   scenePlans.clear();
   algorithms.clear();
@@ -180,7 +170,6 @@ export function clearRegistry(): void {
   transpilers.clear();
   facetLoaders.clear();
   inflightLoads.clear();
-  descriptions.clear();
 }
 
 /** 참조 문자열 helper — `module:foo` → `foo` */

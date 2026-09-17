@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -18,7 +17,6 @@ import { editDistanceProjector } from './projector.js';
 import { editDistanceIRs, editDistanceImperativeIR } from './irs.js';
 import { editDistanceStageView } from './edit-distance-stage.js';
 import { editDistanceFacet } from './facet.js';
-import { editDistanceDescription } from './description.js';
 
 export {
   editDistanceAlgorithm,
@@ -27,7 +25,6 @@ export {
   editDistanceImperativeIR,
   editDistanceStageView,
   editDistanceFacet,
-  editDistanceDescription,
 };
 export { backtrackEdits, fillEditTable } from './algorithm.js';
 export type { EditDistanceData, EditOp, EditStep } from './algorithm.js';
@@ -41,5 +38,4 @@ export function registerEditDistance(): void {
   for (const ir of editDistanceIRs) registerIR(ir.id, ir);
   registerView('edit-distance-stage', editDistanceStageView);
   registerFacets([editDistanceFacet]);
-  registerDescription(editDistanceFacet.id, editDistanceDescription);
 }

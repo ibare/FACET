@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -19,7 +18,6 @@ import { directMappedCacheProjector } from './projector.js';
 import { directMappedCacheIRs } from './irs.js';
 import { directMappedCacheStageView } from './direct-mapped-cache-stage.js';
 import { directMappedCacheFacet } from './facet.js';
-import { directMappedCacheDescription } from './description.js';
 
 export {
   directMappedCacheAlgorithm,
@@ -33,7 +31,6 @@ export { directMappedCacheProjector } from './projector.js';
 export { directMappedCacheImperativeIR, directMappedCacheIRs } from './irs.js';
 export { directMappedCacheStageView } from './direct-mapped-cache-stage.js';
 export { directMappedCacheFacet } from './facet.js';
-export { directMappedCacheDescription } from './description.js';
 
 export function registerDirectMappedCache(): void {
   // 손잡이(segmented-slider)를 받으려면 reactive 여야 한다. coroutine 의
@@ -46,5 +43,4 @@ export function registerDirectMappedCache(): void {
   for (const ir of directMappedCacheIRs) registerIR(ir.id, ir);
   registerView('direct-mapped-cache-stage', directMappedCacheStageView);
   registerFacets([directMappedCacheFacet]);
-  registerDescription(directMappedCacheFacet.id, directMappedCacheDescription);
 }

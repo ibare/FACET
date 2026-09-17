@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -15,7 +14,6 @@ import {
 } from '@ffacet/core/runtime';
 
 import { squashToProbabilityAlgorithm, type SquashToProbabilityData } from './algorithm.js';
-import { squashToProbabilityDescription } from './description.js';
 import { squashToProbabilityFacet } from './facet.js';
 import { squashToProbabilityIRs } from './irs.js';
 import { squashToProbabilityScene } from './scene.js';
@@ -27,7 +25,6 @@ export {
   squashScoresOf,
   type SquashToProbabilityData,
 } from './algorithm.js';
-export { squashToProbabilityDescription } from './description.js';
 export { squashToProbabilityFacet } from './facet.js';
 export { squashToProbabilityIRs } from './irs.js';
 export {
@@ -50,5 +47,4 @@ export function registerSquashToProbability(): void {
   for (const ir of squashToProbabilityIRs) registerIR(ir.id, ir);
   registerView('squash-to-probability-stage', squashToProbabilityStageView);
   registerFacets([squashToProbabilityFacet]);
-  registerDescription(squashToProbabilityFacet.id, squashToProbabilityDescription);
 }

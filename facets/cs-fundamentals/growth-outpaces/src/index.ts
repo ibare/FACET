@@ -22,7 +22,6 @@ export {
 export { growthOutpacesIRs } from './irs.js';
 export { growthOutpacesStageView } from './growth-outpaces-stage.js';
 export { growthOutpacesFacet } from './facet.js';
-export { growthOutpacesDescription } from './description.js';
 
 import {
   registerAlgorithm,
@@ -30,14 +29,12 @@ import {
   registerIR,
   registerView,
   registerFacets,
-  registerDescription,
 } from '@ffacet/core/runtime';
 import { growthOutpaces, type GrowthOutpacesData } from './algorithm.js';
 import { growthOutpacesScene } from './scene.js';
 import { growthOutpacesIRs } from './irs.js';
 import { growthOutpacesStageView } from './growth-outpaces-stage.js';
 import { growthOutpacesFacet } from './facet.js';
-import { growthOutpacesDescription } from './description.js';
 
 export function registerGrowthOutpaces(): void {
   // 조각은 컨트롤바 없이 스스로 시작하고 걸음 간격도 스스로 정한다 — 둘 다
@@ -49,5 +46,4 @@ export function registerGrowthOutpaces(): void {
   for (const ir of growthOutpacesIRs) registerIR(ir.id, ir);
   registerView('growth-outpaces-stage', growthOutpacesStageView);
   registerFacets([growthOutpacesFacet]);
-  registerDescription(growthOutpacesFacet.id, growthOutpacesDescription);
 }

@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -18,7 +17,6 @@ import { countMinSketchProjector } from './projector.js';
 import { countMinSketchIRs, countMinSketchImperativeIR } from './irs.js';
 import { countMinSketchStageView } from './count-min-sketch-stage.js';
 import { countMinSketchFacet } from './facet.js';
-import { countMinSketchDescription } from './description.js';
 
 export {
   countMinSketchAlgorithm,
@@ -27,7 +25,6 @@ export {
   countMinSketchImperativeIR,
   countMinSketchStageView,
   countMinSketchFacet,
-  countMinSketchDescription,
 };
 export { countMinSketchCell } from './algorithm.js';
 export type { CountMinSketchData };
@@ -41,5 +38,4 @@ export function registerCountMinSketch(): void {
   for (const ir of countMinSketchIRs) registerIR(ir.id, ir);
   registerView('count-min-sketch-stage', countMinSketchStageView);
   registerFacets([countMinSketchFacet]);
-  registerDescription(countMinSketchFacet.id, countMinSketchDescription);
 }

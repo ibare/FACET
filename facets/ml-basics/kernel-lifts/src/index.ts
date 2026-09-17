@@ -19,7 +19,6 @@ export {
 } from './algorithm.js';
 export { kernelLiftsIRs } from './irs.js';
 export { kernelLiftsFacet } from './facet.js';
-export { kernelLiftsDescription } from './description.js';
 export {
   kernelLiftsScene,
   cutAt,
@@ -39,7 +38,6 @@ export { kernelLiftsStageView } from './kernel-lifts-stage.js';
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -49,7 +47,6 @@ import {
 import { kernelLifts, type KernelLiftsData } from './algorithm.js';
 import { kernelLiftsIRs } from './irs.js';
 import { kernelLiftsFacet } from './facet.js';
-import { kernelLiftsDescription } from './description.js';
 import { kernelLiftsScene } from './scene.js';
 import { kernelLiftsStageView } from './kernel-lifts-stage.js';
 
@@ -63,5 +60,4 @@ export function registerKernelLifts(): void {
   for (const ir of kernelLiftsIRs) registerIR(ir.id, ir);
   registerView('kernel-lifts-stage', kernelLiftsStageView);
   registerFacets([kernelLiftsFacet]);
-  registerDescription(kernelLiftsFacet.id, kernelLiftsDescription);
 }

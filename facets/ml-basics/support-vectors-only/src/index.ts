@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -14,7 +13,6 @@ import {
 } from '@ffacet/core/runtime';
 
 import { supportVectorsOnlyAlgorithm } from './algorithm.js';
-import { supportVectorsOnlyDescription } from './description.js';
 import { supportVectorsOnlyFacet } from './facet.js';
 import { supportVectorsOnlyIRs } from './irs.js';
 import { supportVectorsOnlyScene } from './scene.js';
@@ -26,7 +24,6 @@ export type {
   SupportVectorsOnlyEdit,
   SupportVectorsOnlyPoint,
 } from './algorithm.js';
-export { supportVectorsOnlyDescription } from './description.js';
 export { supportVectorsOnlyFacet } from './facet.js';
 export { supportVectorsOnlyIRs } from './irs.js';
 export { supportVectorsOnlyScene } from './scene.js';
@@ -46,5 +43,4 @@ export function registerSupportVectorsOnly(): void {
   for (const ir of supportVectorsOnlyIRs) registerIR(ir.id, ir);
   registerView('support-vectors-only-stage', supportVectorsOnlyStageView);
   registerFacets([supportVectorsOnlyFacet]);
-  registerDescription(supportVectorsOnlyFacet.id, supportVectorsOnlyDescription);
 }

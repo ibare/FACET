@@ -8,7 +8,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -16,7 +15,6 @@ import {
 } from '@ffacet/core/runtime';
 
 import { heapSortExtractAlgorithm, type HeapSortExtractData } from './algorithm.js';
-import { heapSortExtractDescription } from './description.js';
 import { heapSortExtractFacet } from './facet.js';
 import { heapSortExtractIRs } from './irs.js';
 import { heapSortExtractScene } from './scene.js';
@@ -29,7 +27,6 @@ export {
   type HeapExtractStep,
   type HeapSortExtractData,
 } from './algorithm.js';
-export { heapSortExtractDescription } from './description.js';
 export { heapSortExtractFacet } from './facet.js';
 export { heapSortExtractIRs } from './irs.js';
 export { heapSortExtractScene, type HeapSortExtractScene } from './scene.js';
@@ -45,5 +42,4 @@ export function registerHeapSortExtract(): void {
   for (const ir of heapSortExtractIRs) registerIR(ir.id, ir);
   registerView('heap-sort-extract-stage', heapSortExtractStageView);
   registerFacets([heapSortExtractFacet]);
-  registerDescription(heapSortExtractFacet.id, heapSortExtractDescription);
 }

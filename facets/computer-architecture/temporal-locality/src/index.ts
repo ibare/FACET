@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -15,7 +14,6 @@ import {
 } from '@ffacet/core/runtime';
 
 import { temporalLocalityAlgorithm, type TemporalLocalityData } from './algorithm.js';
-import { temporalLocalityDescription } from './description.js';
 import { temporalLocalityFacet } from './facet.js';
 import { temporalLocalityIRs } from './irs.js';
 import { temporalLocalityScene } from './scene.js';
@@ -29,7 +27,6 @@ export {
   type TemporalLocalityAccess,
   type TemporalLocalityStream,
 } from './algorithm.js';
-export { temporalLocalityDescription } from './description.js';
 export { temporalLocalityFacet } from './facet.js';
 export { temporalLocalityIRs } from './irs.js';
 export {
@@ -49,5 +46,4 @@ export function registerTemporalLocality(): void {
   for (const ir of temporalLocalityIRs) registerIR(ir.id, ir);
   registerView('temporal-locality-stage', temporalLocalityStageView);
   registerFacets([temporalLocalityFacet]);
-  registerDescription(temporalLocalityFacet.id, temporalLocalityDescription);
 }

@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -18,7 +17,6 @@ import { matrixMulProjector } from './projector.js';
 import { matrixMulIRs } from './irs.js';
 import { matrixMulStageView } from './matrix-mul-stage.js';
 import { matrixMulFacet } from './facet.js';
-import { matrixMulDescription } from './description.js';
 
 export {
   matrixMulAlgorithm,
@@ -38,7 +36,6 @@ export { matrixMulProjector } from './projector.js';
 export { matrixMulIRs, matrixMulImperativeIR } from './irs.js';
 export { matrixMulStageView } from './matrix-mul-stage.js';
 export { matrixMulFacet } from './facet.js';
-export { matrixMulDescription } from './description.js';
 
 export function registerMatrixMul(): void {
   // 손잡이가 있는 완제품이라 reactive 다. 세 상태 — 나아가는 중 · 멈춤 ·
@@ -50,5 +47,4 @@ export function registerMatrixMul(): void {
   for (const ir of matrixMulIRs) registerIR(ir.id, ir);
   registerView('matrix-mul-stage', matrixMulStageView);
   registerFacets([matrixMulFacet]);
-  registerDescription(matrixMulFacet.id, matrixMulDescription);
 }

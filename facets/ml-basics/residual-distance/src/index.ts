@@ -4,7 +4,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -17,13 +16,11 @@ import { residualDistanceScene } from './scene.js';
 import { residualDistanceIRs } from './irs.js';
 import { residualDistanceStageView } from './residual-distance-stage.js';
 import { residualDistanceFacet } from './facet.js';
-import { residualDistanceDescription } from './description.js';
 
 export * from './algorithm.js';
 export * from './scene.js';
 export * from './irs.js';
 export * from './facet.js';
-export * from './description.js';
 export * from './residual-distance-stage.js';
 
 export function registerResidualDistance(): void {
@@ -34,5 +31,4 @@ export function registerResidualDistance(): void {
   for (const ir of residualDistanceIRs) registerIR(ir.id, ir);
   registerView('residual-distance-stage', residualDistanceStageView);
   registerFacets([residualDistanceFacet]);
-  registerDescription(residualDistanceFacet.id, residualDistanceDescription);
 }

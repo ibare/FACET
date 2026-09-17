@@ -5,7 +5,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -17,7 +16,6 @@ import { twoColorConflictScene } from './scene.js';
 import { twoColorConflictIRs } from './irs.js';
 import { twoColorConflictStageView } from './two-color-conflict-stage.js';
 import { twoColorConflictFacet } from './facet.js';
-import { twoColorConflictDescription } from './description.js';
 
 export { twoColorConflictAlgorithm, computeTwoColorWalk } from './algorithm.js';
 export type { TwoColorConflictData, TwoColorEdge, TwoColorWalk } from './algorithm.js';
@@ -25,7 +23,6 @@ export { twoColorConflictScene, type TwoColorConflictScene } from './scene.js';
 export { twoColorConflictIRs } from './irs.js';
 export { twoColorConflictStageView } from './two-color-conflict-stage.js';
 export { twoColorConflictFacet } from './facet.js';
-export { twoColorConflictDescription } from './description.js';
 
 export function registerTwoColorConflict(): void {
   registerAlgorithm<TwoColorConflictData>('twoColorConflict', twoColorConflictAlgorithm, {
@@ -36,5 +33,4 @@ export function registerTwoColorConflict(): void {
   for (const ir of twoColorConflictIRs) registerIR(ir.id, ir);
   registerView('two-color-conflict-stage', twoColorConflictStageView);
   registerFacets([twoColorConflictFacet]);
-  registerDescription(twoColorConflictFacet.id, twoColorConflictDescription);
 }

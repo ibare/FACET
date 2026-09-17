@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -14,7 +13,6 @@ import {
 } from '@ffacet/core/runtime';
 
 import { splitByQuestionAlgorithm, type SplitByQuestionData } from './algorithm.js';
-import { splitByQuestionDescription } from './description.js';
 import { splitByQuestionFacet } from './facet.js';
 import { splitByQuestionIRs } from './irs.js';
 import { splitByQuestionScene } from './scene.js';
@@ -32,7 +30,6 @@ export type {
 } from './scene.js';
 export { splitByQuestionIRs } from './irs.js';
 export { splitByQuestionFacet } from './facet.js';
-export { splitByQuestionDescription } from './description.js';
 export { splitByQuestionStageView } from './split-by-question-stage.js';
 
 export function registerSplitByQuestion(): void {
@@ -43,5 +40,4 @@ export function registerSplitByQuestion(): void {
   for (const ir of splitByQuestionIRs) registerIR(ir.id, ir);
   registerView('split-by-question-stage', splitByQuestionStageView);
   registerFacets([splitByQuestionFacet]);
-  registerDescription(splitByQuestionFacet.id, splitByQuestionDescription);
 }

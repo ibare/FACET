@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -17,7 +16,6 @@ import { bitShiftAlgorithm, type BitShiftData } from './algorithm.js';
 import { bitShiftScene } from './scene.js';
 import { bitShiftStageView } from './bit-shift-stage.js';
 import { bitShiftFacet } from './facet.js';
-import { bitShiftDescription } from './description.js';
 import { bitShiftIRs } from './irs.js';
 
 export function registerBitShift(): void {
@@ -29,7 +27,6 @@ export function registerBitShift(): void {
   for (const ir of bitShiftIRs) registerIR(ir.id, ir);
   registerView('bit-shift-stage', bitShiftStageView);
   registerFacets([bitShiftFacet]);
-  registerDescription(bitShiftFacet.id, bitShiftDescription);
 }
 
 export {
@@ -37,7 +34,6 @@ export {
   bitShiftScene,
   bitShiftStageView,
   bitShiftFacet,
-  bitShiftDescription,
   bitShiftIRs,
 };
 export type { BitShiftData };

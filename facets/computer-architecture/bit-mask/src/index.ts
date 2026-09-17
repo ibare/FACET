@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -16,14 +15,12 @@ import {
 
 import { bitMaskAlgorithm, type BitMaskData } from './algorithm.js';
 import { bitMaskStageView } from './bit-mask-stage.js';
-import { bitMaskDescription } from './description.js';
 import { bitMaskFacet } from './facet.js';
 import { bitMaskIRs } from './irs.js';
 import { bitMaskScene } from './scene.js';
 
 export { bitMaskAlgorithm, type BitMaskData } from './algorithm.js';
 export { bitMaskStageView } from './bit-mask-stage.js';
-export { bitMaskDescription } from './description.js';
 export { bitMaskFacet } from './facet.js';
 export { bitMaskIRs } from './irs.js';
 export {
@@ -42,5 +39,4 @@ export function registerBitMask(): void {
   for (const ir of bitMaskIRs) registerIR(ir.id, ir);
   registerView('bit-mask-stage', bitMaskStageView);
   registerFacets([bitMaskFacet]);
-  registerDescription(bitMaskFacet.id, bitMaskDescription);
 }

@@ -8,7 +8,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -16,7 +15,6 @@ import {
 } from '@ffacet/core/runtime';
 
 import { noiseLeftOutAlgorithm, type NoiseLeftOutData } from './algorithm.js';
-import { noiseLeftOutDescription } from './description.js';
 import { noiseLeftOutFacet } from './facet.js';
 import { noiseLeftOutIRs } from './irs.js';
 import { noiseLeftOutStageView } from './noise-left-out-stage.js';
@@ -24,7 +22,6 @@ import { noiseLeftOutScene } from './scene.js';
 
 export { noiseLeftOutAlgorithm } from './algorithm.js';
 export type { NoiseLeftOutData, NoisePoint } from './algorithm.js';
-export { noiseLeftOutDescription } from './description.js';
 export { noiseLeftOutFacet } from './facet.js';
 export { noiseLeftOutIRs } from './irs.js';
 export { noiseLeftOutStageView } from './noise-left-out-stage.js';
@@ -45,5 +42,4 @@ export function registerNoiseLeftOut(): void {
   for (const ir of noiseLeftOutIRs) registerIR(ir.id, ir);
   registerView('noise-left-out-stage', noiseLeftOutStageView);
   registerFacets([noiseLeftOutFacet]);
-  registerDescription(noiseLeftOutFacet.id, noiseLeftOutDescription);
 }

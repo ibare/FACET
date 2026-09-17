@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -18,7 +17,6 @@ import { zAlgorithmProjector } from './projector.js';
 import { zAlgorithmIRs } from './irs.js';
 import { zAlgorithmStageView } from './z-algorithm-stage.js';
 import { zAlgorithmFacet } from './facet.js';
-import { zAlgorithmDescription } from './description.js';
 
 export {
   zAlgorithmAlgorithm,
@@ -26,7 +24,6 @@ export {
   zAlgorithmIRs,
   zAlgorithmStageView,
   zAlgorithmFacet,
-  zAlgorithmDescription,
 };
 export { zTrace, naiveZ, zHits, joinedOf } from './algorithm.js';
 export { zAlgorithmImperativeIR } from './irs.js';
@@ -41,5 +38,4 @@ export function registerZAlgorithm(): void {
   for (const ir of zAlgorithmIRs) registerIR(ir.id, ir);
   registerView('z-algorithm-stage', zAlgorithmStageView);
   registerFacets([zAlgorithmFacet]);
-  registerDescription(zAlgorithmFacet.id, zAlgorithmDescription);
 }

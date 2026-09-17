@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -18,14 +17,12 @@ import { voteByNeighborsIRs } from './irs.js';
 import { voteByNeighborsScene } from './scene.js';
 import { voteByNeighborsStageView } from './vote-by-neighbors-stage.js';
 import { voteByNeighborsFacet } from './facet.js';
-import { voteByNeighborsDescription } from './description.js';
 
 export { voteByNeighborsAlgorithm, voteCallCount } from './algorithm.js';
 export type { VoteByNeighborsData, VoteByNeighborsPoint } from './algorithm.js';
 export { voteByNeighborsIRs } from './irs.js';
 export { voteByNeighborsStageView } from './vote-by-neighbors-stage.js';
 export { voteByNeighborsFacet } from './facet.js';
-export { voteByNeighborsDescription } from './description.js';
 export {
   voteByNeighborsScene,
   type VoteByNeighborsScene,
@@ -45,5 +42,4 @@ export function registerVoteByNeighbors(): void {
   for (const ir of voteByNeighborsIRs) registerIR(ir.id, ir);
   registerView('vote-by-neighbors-stage', voteByNeighborsStageView);
   registerFacets([voteByNeighborsFacet]);
-  registerDescription(voteByNeighborsFacet.id, voteByNeighborsDescription);
 }

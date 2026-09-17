@@ -9,7 +9,6 @@ export { separateComponents, type SeparateComponentsData } from './algorithm.js'
 export { separateComponentsScene, type SeparateComponentsScene } from './scene.js';
 export { separateComponentsIRs } from './irs.js';
 export { separateComponentsFacet } from './facet.js';
-export { separateComponentsDescription } from './description.js';
 export { separateComponentsStageView } from './separate-components-stage.js';
 
 import {
@@ -17,14 +16,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { separateComponents, type SeparateComponentsData } from './algorithm.js';
 import { separateComponentsScene } from './scene.js';
 import { separateComponentsIRs } from './irs.js';
 import { separateComponentsFacet } from './facet.js';
-import { separateComponentsDescription } from './description.js';
 import { separateComponentsStageView } from './separate-components-stage.js';
 
 export function registerSeparateComponents(): void {
@@ -35,5 +32,4 @@ export function registerSeparateComponents(): void {
   for (const ir of separateComponentsIRs) registerIR(ir.id, ir);
   registerView('separate-components-stage', separateComponentsStageView);
   registerFacets([separateComponentsFacet]);
-  registerDescription(separateComponentsFacet.id, separateComponentsDescription);
 }

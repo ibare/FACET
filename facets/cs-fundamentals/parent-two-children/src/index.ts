@@ -20,7 +20,6 @@ export {
 } from './scene.js';
 export { parentTwoChildrenIRs } from './irs.js';
 export { parentTwoChildrenFacet } from './facet.js';
-export { parentTwoChildrenDescription } from './description.js';
 export { parentTwoChildrenStageView } from './parent-two-children-stage.js';
 
 import {
@@ -28,14 +27,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { parentTwoChildren, type ParentTwoChildrenData } from './algorithm.js';
 import { parentTwoChildrenScene } from './scene.js';
 import { parentTwoChildrenIRs } from './irs.js';
 import { parentTwoChildrenFacet } from './facet.js';
-import { parentTwoChildrenDescription } from './description.js';
 import { parentTwoChildrenStageView } from './parent-two-children-stage.js';
 
 export function registerParentTwoChildren(): void {
@@ -46,5 +43,4 @@ export function registerParentTwoChildren(): void {
   for (const ir of parentTwoChildrenIRs) registerIR(ir.id, ir);
   registerView('parent-two-children-stage', parentTwoChildrenStageView);
   registerFacets([parentTwoChildrenFacet]);
-  registerDescription(parentTwoChildrenFacet.id, parentTwoChildrenDescription);
 }

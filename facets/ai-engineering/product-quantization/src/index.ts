@@ -9,7 +9,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -21,7 +20,6 @@ import { productQuantizationProjector } from './projector.js';
 import { productQuantizationIRs } from './irs.js';
 import { productQuantizationStageView } from './product-quantization-stage.js';
 import { productQuantizationFacet } from './facet.js';
-import { productQuantizationDescription } from './description.js';
 
 export {
   productQuantizationAlgorithm,
@@ -29,7 +27,6 @@ export {
   productQuantizationIRs,
   productQuantizationStageView,
   productQuantizationFacet,
-  productQuantizationDescription,
 };
 export {
   computeProductQuantizationRound,
@@ -46,5 +43,4 @@ export function registerProductQuantization(): void {
   for (const ir of productQuantizationIRs) registerIR(ir.id, ir);
   registerView('product-quantization-stage', productQuantizationStageView);
   registerFacets([productQuantizationFacet]);
-  registerDescription(productQuantizationFacet.id, productQuantizationDescription);
 }

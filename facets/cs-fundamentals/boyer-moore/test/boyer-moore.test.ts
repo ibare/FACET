@@ -78,7 +78,6 @@ const SOURCES = [
   'facet.ts',
   'irs.ts',
   'index.ts',
-  'description.ts',
   'boyer-moore-stage.ts',
 ];
 

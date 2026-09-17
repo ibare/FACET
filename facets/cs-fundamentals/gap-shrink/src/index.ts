@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -19,7 +18,6 @@ import { gapShrinkScene } from './scene.js';
 import { gapShrinkIRs } from './irs.js';
 import { gapShrinkStageView } from './gap-shrink-stage.js';
 import { gapShrinkFacet } from './facet.js';
-import { gapShrinkDescription } from './description.js';
 
 export {
   gapShrinkAlgorithm,
@@ -28,7 +26,6 @@ export {
   gapShrinkIRs,
   gapShrinkStageView,
   gapShrinkFacet,
-  gapShrinkDescription,
 };
 export type { GapRunTally, GapShrinkData };
 
@@ -40,5 +37,4 @@ export function registerGapShrink(): void {
   for (const ir of gapShrinkIRs) registerIR(ir.id, ir);
   registerView('gap-shrink-stage', gapShrinkStageView);
   registerFacets([gapShrinkFacet]);
-  registerDescription(gapShrinkFacet.id, gapShrinkDescription);
 }

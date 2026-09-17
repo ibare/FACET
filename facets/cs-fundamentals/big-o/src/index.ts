@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -18,9 +17,8 @@ import { bigOProjector } from './projector.js';
 import { bigOIRs } from './irs.js';
 import { bigOStageView } from './big-o-stage.js';
 import { bigOFacet } from './facet.js';
-import { bigODescription } from './description.js';
 
-export { bigOAlgorithm, bigOProjector, bigOIRs, bigOStageView, bigOFacet, bigODescription };
+export { bigOAlgorithm, bigOProjector, bigOIRs, bigOStageView, bigOFacet };
 export { bigORung, rungIndex } from './algorithm.js';
 export { bigOImperativeIR } from './irs.js';
 export type { BigOData, BigORung } from './algorithm.js';
@@ -33,5 +31,4 @@ export function registerBigO(): void {
   for (const ir of bigOIRs) registerIR(ir.id, ir);
   registerView('big-o-stage', bigOStageView);
   registerFacets([bigOFacet]);
-  registerDescription(bigOFacet.id, bigODescription);
 }

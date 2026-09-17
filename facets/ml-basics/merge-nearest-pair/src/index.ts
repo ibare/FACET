@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -14,7 +13,6 @@ import {
 } from '@ffacet/core/runtime';
 
 import { mergeNearestPairAlgorithm, type MergeNearestPairData } from './algorithm.js';
-import { mergeNearestPairDescription } from './description.js';
 import { mergeNearestPairFacet } from './facet.js';
 import { mergeNearestPairIRs } from './irs.js';
 import { mergeNearestPairStageView } from './merge-nearest-pair-stage.js';
@@ -45,7 +43,6 @@ export type {
 } from './scene.js';
 export { mergeNearestPairIRs } from './irs.js';
 export { mergeNearestPairFacet } from './facet.js';
-export { mergeNearestPairDescription } from './description.js';
 export { mergeNearestPairStageView } from './merge-nearest-pair-stage.js';
 
 export function registerMergeNearestPair(): void {
@@ -56,5 +53,4 @@ export function registerMergeNearestPair(): void {
   for (const ir of mergeNearestPairIRs) registerIR(ir.id, ir);
   registerView('merge-nearest-pair-stage', mergeNearestPairStageView);
   registerFacets([mergeNearestPairFacet]);
-  registerDescription(mergeNearestPairFacet.id, mergeNearestPairDescription);
 }

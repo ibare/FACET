@@ -1,6 +1,5 @@
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -12,7 +11,6 @@ import { bitwiseOpsProjector } from './projector.js';
 import { bitwiseOpsIRs, bitwiseOpsImperativeIR } from './irs.js';
 import { bitwiseOpsStageView } from './bitwise-ops-stage.js';
 import { bitwiseOpsFacet } from './facet.js';
-import { bitwiseOpsDescription } from './description.js';
 
 /**
  * 등록 진입점. 호출 책임은 호스트 앱에 있다 — 이 모듈은 import 만으로 아무것도
@@ -29,7 +27,6 @@ export function registerBitwiseOps(): void {
   for (const ir of bitwiseOpsIRs) registerIR(ir.id, ir);
   registerView('bitwise-ops-stage', bitwiseOpsStageView);
   registerFacets([bitwiseOpsFacet]);
-  registerDescription(bitwiseOpsFacet.id, bitwiseOpsDescription);
 }
 
 export {
@@ -39,7 +36,6 @@ export {
   bitwiseOpsImperativeIR,
   bitwiseOpsStageView,
   bitwiseOpsFacet,
-  bitwiseOpsDescription,
 };
 export { computeBitwiseOpsResult, bitsOf, topWeight } from './algorithm.js';
 export type { BitwiseOpsData, BitwiseOpsOutcome } from './algorithm.js';

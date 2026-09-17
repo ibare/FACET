@@ -25,7 +25,6 @@ export {
 } from './scene.js';
 export { inPlaceVsExtraIRs } from './irs.js';
 export { inPlaceVsExtraFacet } from './facet.js';
-export { inPlaceVsExtraDescription } from './description.js';
 export { inPlaceVsExtraStageView } from './in-place-vs-extra-stage.js';
 
 import {
@@ -33,14 +32,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { inPlaceVsExtra, type InPlaceVsExtraData } from './algorithm.js';
 import { inPlaceVsExtraScene } from './scene.js';
 import { inPlaceVsExtraIRs } from './irs.js';
 import { inPlaceVsExtraFacet } from './facet.js';
-import { inPlaceVsExtraDescription } from './description.js';
 import { inPlaceVsExtraStageView } from './in-place-vs-extra-stage.js';
 
 export function registerInPlaceVsExtra(): void {
@@ -51,5 +48,4 @@ export function registerInPlaceVsExtra(): void {
   for (const ir of inPlaceVsExtraIRs) registerIR(ir.id, ir);
   registerView('in-place-vs-extra-stage', inPlaceVsExtraStageView);
   registerFacets([inPlaceVsExtraFacet]);
-  registerDescription(inPlaceVsExtraFacet.id, inPlaceVsExtraDescription);
 }

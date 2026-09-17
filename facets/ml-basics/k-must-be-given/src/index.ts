@@ -8,7 +8,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -16,7 +15,6 @@ import {
 } from '@ffacet/core/runtime';
 
 import { kMustBeGivenAlgorithm } from './algorithm.js';
-import { kMustBeGivenDescription } from './description.js';
 import { kMustBeGivenFacet } from './facet.js';
 import { kMustBeGivenIRs } from './irs.js';
 import { kMustBeGivenScene } from './scene.js';
@@ -35,7 +33,6 @@ export {
 } from './scene.js';
 export { kMustBeGivenIRs } from './irs.js';
 export { kMustBeGivenFacet } from './facet.js';
-export { kMustBeGivenDescription } from './description.js';
 export { kMustBeGivenStageView } from './k-must-be-given-stage.js';
 
 export function registerKMustBeGiven(): void {
@@ -44,5 +41,4 @@ export function registerKMustBeGiven(): void {
   for (const ir of kMustBeGivenIRs) registerIR(ir.id, ir);
   registerView('k-must-be-given-stage', kMustBeGivenStageView);
   registerFacets([kMustBeGivenFacet]);
-  registerDescription(kMustBeGivenFacet.id, kMustBeGivenDescription);
 }

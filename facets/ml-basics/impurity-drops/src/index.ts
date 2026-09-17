@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -14,7 +13,6 @@ import {
 } from '@ffacet/core/runtime';
 
 import { impurityDropsAlgorithm, type ImpurityDropsData } from './algorithm.js';
-import { impurityDropsDescription } from './description.js';
 import { impurityDropsFacet } from './facet.js';
 import { impurityDropsIRs } from './irs.js';
 import { impurityDropsStageView } from './impurity-drops-stage.js';
@@ -52,7 +50,6 @@ export type {
 } from './scene.js';
 export { impurityDropsIRs } from './irs.js';
 export { impurityDropsFacet } from './facet.js';
-export { impurityDropsDescription } from './description.js';
 export { impurityDropsStageView } from './impurity-drops-stage.js';
 
 export function registerImpurityDrops(): void {
@@ -63,5 +60,4 @@ export function registerImpurityDrops(): void {
   for (const ir of impurityDropsIRs) registerIR(ir.id, ir);
   registerView('impurity-drops-stage', impurityDropsStageView);
   registerFacets([impurityDropsFacet]);
-  registerDescription(impurityDropsFacet.id, impurityDropsDescription);
 }

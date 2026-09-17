@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -18,7 +17,6 @@ import { bloomFilterProjector } from './projector.js';
 import { bloomFilterIRs } from './irs.js';
 import { bloomFilterStageView } from './bloom-filter-stage.js';
 import { bloomFilterFacet } from './facet.js';
-import { bloomFilterDescription } from './description.js';
 
 export {
   bloomFilterAlgorithm,
@@ -26,7 +24,6 @@ export {
   bloomFilterIRs,
   bloomFilterStageView,
   bloomFilterFacet,
-  bloomFilterDescription,
 };
 export { bloomSlots, bloomQueryKey, BLOOM_SLOT_CHOICES, BLOOM_HASH_CHOICES } from './algorithm.js';
 export { bloomFilterImperativeIR } from './irs.js';
@@ -41,5 +38,4 @@ export function registerBloomFilter(): void {
   for (const ir of bloomFilterIRs) registerIR(ir.id, ir);
   registerView('bloom-filter-stage', bloomFilterStageView);
   registerFacets([bloomFilterFacet]);
-  registerDescription(bloomFilterFacet.id, bloomFilterDescription);
 }

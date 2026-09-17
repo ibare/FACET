@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -19,7 +18,6 @@ import { skipListProjector } from './projector.js';
 import { skipListIRs } from './irs.js';
 import { skipListStageView } from './skip-list-stage.js';
 import { skipListFacet } from './facet.js';
-import { skipListDescription } from './description.js';
 
 export type { SkipListData, SkipListShape, SkipListStep, SkipListPoint } from './algorithm.js';
 export {
@@ -34,7 +32,6 @@ export { skipListProjector } from './projector.js';
 export { skipListIRs } from './irs.js';
 export { skipListStageView } from './skip-list-stage.js';
 export { skipListFacet } from './facet.js';
-export { skipListDescription } from './description.js';
 
 export function registerSkipList(): void {
   // 손잡이를 가진 완제품이라 reactive 다 — 원소 수를 바꾸면 알고리즘이 그
@@ -44,5 +41,4 @@ export function registerSkipList(): void {
   for (const ir of skipListIRs) registerIR(ir.id, ir);
   registerView('skip-list-stage', skipListStageView);
   registerFacets([skipListFacet]);
-  registerDescription(skipListFacet.id, skipListDescription);
 }

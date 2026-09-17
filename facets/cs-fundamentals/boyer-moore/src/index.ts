@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -18,7 +17,6 @@ import { boyerMooreProjector } from './projector.js';
 import { boyerMooreIRs, boyerMooreImperativeIR } from './irs.js';
 import { boyerMooreStageView } from './boyer-moore-stage.js';
 import { boyerMooreFacet } from './facet.js';
-import { boyerMooreDescription } from './description.js';
 
 export {
   boyerMooreAlgorithm,
@@ -27,7 +25,6 @@ export {
   boyerMooreImperativeIR,
   boyerMooreStageView,
   boyerMooreFacet,
-  boyerMooreDescription,
 };
 export { buildBadCharTable, BOYER_MOORE_ALPHABET } from './algorithm.js';
 export type { BoyerMooreData };
@@ -41,5 +38,4 @@ export function registerBoyerMoore(): void {
   for (const ir of boyerMooreIRs) registerIR(ir.id, ir);
   registerView('boyer-moore-stage', boyerMooreStageView);
   registerFacets([boyerMooreFacet]);
-  registerDescription(boyerMooreFacet.id, boyerMooreDescription);
 }

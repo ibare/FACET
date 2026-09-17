@@ -10,7 +10,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -21,7 +20,6 @@ import { diveThenBacktrackAlgorithm, type DiveThenBacktrackData } from './algori
 import { diveThenBacktrackScene } from './scene.js';
 import { diveThenBacktrackIRs } from './irs.js';
 import { diveThenBacktrackFacet } from './facet.js';
-import { diveThenBacktrackDescription } from './description.js';
 import { diveThenBacktrackStageView } from './dive-then-backtrack-stage.js';
 
 export function registerDiveThenBacktrack(): void {
@@ -32,7 +30,6 @@ export function registerDiveThenBacktrack(): void {
   for (const ir of diveThenBacktrackIRs) registerIR(ir.id, ir);
   registerView('dive-then-backtrack-stage', diveThenBacktrackStageView);
   registerFacets([diveThenBacktrackFacet]);
-  registerDescription(diveThenBacktrackFacet.id, diveThenBacktrackDescription);
 }
 
 // 장면에서 파생되는 셈(`nodeStateOf` 류)은 내보내지 않는다. 그리는 쪽이 패키지
@@ -42,7 +39,6 @@ export {
   diveThenBacktrackScene,
   diveThenBacktrackIRs,
   diveThenBacktrackFacet,
-  diveThenBacktrackDescription,
   diveThenBacktrackStageView,
 };
 export type { DiveThenBacktrackData };

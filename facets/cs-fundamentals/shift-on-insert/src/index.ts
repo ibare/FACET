@@ -12,7 +12,6 @@ export { shiftOnInsert, type ShiftOnInsertData } from './algorithm.js';
 export { shiftOnInsertScene, type ShiftOnInsertScene } from './scene.js';
 export { shiftOnInsertIRs } from './irs.js';
 export { shiftOnInsertFacet } from './facet.js';
-export { shiftOnInsertDescription } from './description.js';
 export { shiftOnInsertStageView } from './shift-on-insert-stage.js';
 
 import {
@@ -21,17 +20,15 @@ import {
   registerIR,
   registerView,
   registerFacets,
-  registerDescription,
 } from '@ffacet/core/runtime';
 import { shiftOnInsert, type ShiftOnInsertData } from './algorithm.js';
 import { shiftOnInsertScene } from './scene.js';
 import { shiftOnInsertIRs } from './irs.js';
 import { shiftOnInsertFacet } from './facet.js';
-import { shiftOnInsertDescription } from './description.js';
 import { shiftOnInsertStageView } from './shift-on-insert-stage.js';
 
 /**
- * algorithm / scene / IR / view / facet / description 등록 헬퍼.
+ * algorithm / scene / IR / view / facet 등록 헬퍼.
  *
  * 순서는 S-facet 표준. 전용 view 는 Facets 직전에 끼운다 — facet JSON 의
  * block.type 이 마운트 시 view 카탈로그를 조회하기 때문.
@@ -44,5 +41,4 @@ export function registerShiftOnInsert(): void {
   for (const ir of shiftOnInsertIRs) registerIR(ir.id, ir);
   registerView('shift-on-insert-stage', shiftOnInsertStageView);
   registerFacets([shiftOnInsertFacet]);
-  registerDescription(shiftOnInsertFacet.id, shiftOnInsertDescription);
 }

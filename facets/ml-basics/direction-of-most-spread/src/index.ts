@@ -4,7 +4,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -12,7 +11,6 @@ import {
 } from '@ffacet/core/runtime';
 
 import { directionOfMostSpreadAlgorithm } from './algorithm.js';
-import { directionOfMostSpreadDescription } from './description.js';
 import { directionOfMostSpreadFacet } from './facet.js';
 import { directionOfMostSpreadIRs } from './irs.js';
 import { directionOfMostSpreadScene } from './scene.js';
@@ -45,7 +43,6 @@ export type {
 } from './scene.js';
 export { directionOfMostSpreadIRs } from './irs.js';
 export { directionOfMostSpreadFacet } from './facet.js';
-export { directionOfMostSpreadDescription } from './description.js';
 export { directionOfMostSpreadStageView } from './direction-of-most-spread-stage.js';
 
 export function registerDirectionOfMostSpread(): void {
@@ -56,5 +53,4 @@ export function registerDirectionOfMostSpread(): void {
   for (const ir of directionOfMostSpreadIRs) registerIR(ir.id, ir);
   registerView('direction-of-most-spread-stage', directionOfMostSpreadStageView);
   registerFacets([directionOfMostSpreadFacet]);
-  registerDescription(directionOfMostSpreadFacet.id, directionOfMostSpreadDescription);
 }

@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -19,7 +18,6 @@ import { hashToBucketScene } from './scene.js';
 import { hashToBucketIRs } from './irs.js';
 import { hashToBucketStageView } from './hash-to-bucket-stage.js';
 import { hashToBucketFacet } from './facet.js';
-import { hashToBucketDescription } from './description.js';
 
 export {
   hashToBucketAlgorithm,
@@ -27,7 +25,6 @@ export {
   hashToBucketIRs,
   hashToBucketStageView,
   hashToBucketFacet,
-  hashToBucketDescription,
 };
 export type { HashToBucketData };
 export type { HashToBucketScene } from './scene.js';
@@ -41,5 +38,4 @@ export function registerHashToBucket(): void {
   for (const ir of hashToBucketIRs) registerIR(ir.id, ir);
   registerView('hash-to-bucket-stage', hashToBucketStageView);
   registerFacets([hashToBucketFacet]);
-  registerDescription(hashToBucketFacet.id, hashToBucketDescription);
 }

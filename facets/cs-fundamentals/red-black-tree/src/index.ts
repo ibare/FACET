@@ -6,7 +6,6 @@ export { redBlackTree, type RedBlackTreeData } from './algorithm.js';
 export { redBlackTreeProjector } from './projector.js';
 export { redBlackTreeIRs, rbInsertFixupIR } from './irs.js';
 export { redBlackTreeFacet } from './facet.js';
-export { redBlackTreeDescription } from './description.js';
 export { redBlackTreeStageView, type RedBlackTreeStage, type StageNode } from './red-black-tree-stage.js';
 
 import {
@@ -14,14 +13,12 @@ import {
   registerProjector,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { redBlackTree, type RedBlackTreeData } from './algorithm.js';
 import { redBlackTreeProjector } from './projector.js';
 import { redBlackTreeIRs } from './irs.js';
 import { redBlackTreeFacet } from './facet.js';
-import { redBlackTreeDescription } from './description.js';
 import { redBlackTreeStageView } from './red-black-tree-stage.js';
 
 export function registerRedBlackTree(): void {
@@ -30,5 +27,4 @@ export function registerRedBlackTree(): void {
   for (const ir of redBlackTreeIRs) registerIR(ir.id, ir);
   registerView('red-black-tree-stage', redBlackTreeStageView);
   registerFacets([redBlackTreeFacet]);
-  registerDescription(redBlackTreeFacet.id, redBlackTreeDescription);
 }

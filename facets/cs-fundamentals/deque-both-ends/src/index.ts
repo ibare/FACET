@@ -12,7 +12,6 @@ export { dequeBothEnds, type DequeBothEndsData } from './algorithm.js';
 export { dequeBothEndsScene, type DequeBothEndsScene, type DequeSide } from './scene.js';
 export { dequeBothEndsIRs } from './irs.js';
 export { dequeBothEndsFacet } from './facet.js';
-export { dequeBothEndsDescription } from './description.js';
 export { dequeBothEndsStageView } from './deque-both-ends-stage.js';
 
 import {
@@ -20,14 +19,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { dequeBothEnds, type DequeBothEndsData } from './algorithm.js';
 import { dequeBothEndsScene } from './scene.js';
 import { dequeBothEndsIRs } from './irs.js';
 import { dequeBothEndsFacet } from './facet.js';
-import { dequeBothEndsDescription } from './description.js';
 import { dequeBothEndsStageView } from './deque-both-ends-stage.js';
 
 export function registerDequeBothEnds(): void {
@@ -38,5 +35,4 @@ export function registerDequeBothEnds(): void {
   for (const ir of dequeBothEndsIRs) registerIR(ir.id, ir);
   registerView('deque-both-ends-stage', dequeBothEndsStageView);
   registerFacets([dequeBothEndsFacet]);
-  registerDescription(dequeBothEndsFacet.id, dequeBothEndsDescription);
 }

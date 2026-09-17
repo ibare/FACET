@@ -5,7 +5,7 @@
  * 외에는 조작을 받지 않는다.
  *
  * 화면은 명령이 아니라 **장면**에서 만들어지므로 어느 걸음으로든 곧장 갈 수 있다
- * (S-scene). algorithm / scene / facet JSON / description / 전용 view
+ * (S-scene). algorithm / scene / facet JSON / 전용 view
  * (sign-hash-stage) 를 함께 번들하고 등록 헬퍼를 제공한다. 코드 패널은 두지 않는다.
  */
 
@@ -21,7 +21,6 @@ export {
 } from './scene.js';
 export { signatureOnHashIRs } from './irs.js';
 export { signatureOnHashFacet } from './facet.js';
-export { signatureOnHashDescription } from './description.js';
 export { signHashStageView } from './sign-hash-stage.js';
 
 import {
@@ -29,14 +28,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { signatureOnHash, type SignatureOnHashFacetData } from './algorithm.js';
 import { signatureOnHashScene } from './scene.js';
 import { signatureOnHashIRs } from './irs.js';
 import { signatureOnHashFacet } from './facet.js';
-import { signatureOnHashDescription } from './description.js';
 import { signHashStageView } from './sign-hash-stage.js';
 
 export function registerSignatureOnHash(): void {
@@ -47,5 +44,4 @@ export function registerSignatureOnHash(): void {
   for (const ir of signatureOnHashIRs) registerIR(ir.id, ir);
   registerView('sign-hash-stage', signHashStageView);
   registerFacets([signatureOnHashFacet]);
-  registerDescription(signatureOnHashFacet.id, signatureOnHashDescription);
 }

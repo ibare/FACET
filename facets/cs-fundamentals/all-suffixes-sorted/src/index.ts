@@ -9,7 +9,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -21,7 +20,6 @@ import { allSuffixesSortedScene } from './scene.js';
 import { allSuffixesSortedIRs } from './irs.js';
 import { allSuffixesSortedStageView } from './all-suffixes-sorted-stage.js';
 import { allSuffixesSortedFacet } from './facet.js';
-import { allSuffixesSortedDescription } from './description.js';
 
 export function registerAllSuffixesSorted(): void {
   registerAlgorithm<AllSuffixesSortedData>(
@@ -34,7 +32,6 @@ export function registerAllSuffixesSorted(): void {
   for (const ir of allSuffixesSortedIRs) registerIR(ir.id, ir);
   registerView('all-suffixes-sorted-stage', allSuffixesSortedStageView);
   registerFacets([allSuffixesSortedFacet]);
-  registerDescription(allSuffixesSortedFacet.id, allSuffixesSortedDescription);
 }
 
 export {
@@ -57,4 +54,3 @@ export {
 export { allSuffixesSortedIRs } from './irs.js';
 export { allSuffixesSortedStageView } from './all-suffixes-sorted-stage.js';
 export { allSuffixesSortedFacet } from './facet.js';
-export { allSuffixesSortedDescription } from './description.js';

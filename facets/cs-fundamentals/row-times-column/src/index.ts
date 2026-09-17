@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -18,7 +17,6 @@ import { rowTimesColumnScene } from './scene.js';
 import { rowTimesColumnStageView } from './row-times-column-stage.js';
 import { rowTimesColumnIRs } from './irs.js';
 import { rowTimesColumnFacet } from './facet.js';
-import { rowTimesColumnDescription } from './description.js';
 
 export {
   rowTimesColumnAlgorithm,
@@ -26,7 +24,6 @@ export {
   rowTimesColumnStageView,
   rowTimesColumnIRs,
   rowTimesColumnFacet,
-  rowTimesColumnDescription,
 };
 export type { RowTimesColumnData };
 export type { RowTimesColumnScene } from './scene.js';
@@ -37,5 +34,4 @@ export function registerRowTimesColumn(): void {
   for (const ir of rowTimesColumnIRs) registerIR(ir.id, ir);
   registerView('row-times-column-stage', rowTimesColumnStageView);
   registerFacets([rowTimesColumnFacet]);
-  registerDescription(rowTimesColumnFacet.id, rowTimesColumnDescription);
 }

@@ -8,7 +8,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -40,7 +39,6 @@ import {
 import { associativityReliefIRs } from './irs.js';
 import { associativityReliefStageView } from './associativity-relief-stage.js';
 import { associativityReliefFacet } from './facet.js';
-import { associativityReliefDescription } from './description.js';
 
 export {
   associativityReliefAlgorithm,
@@ -48,7 +46,6 @@ export {
   associativityReliefIRs,
   associativityReliefStageView,
   associativityReliefFacet,
-  associativityReliefDescription,
   cellOf,
   evictionsOf,
   missesOf,
@@ -79,5 +76,4 @@ export function registerAssociativityRelief(): void {
   for (const ir of associativityReliefIRs) registerIR(ir.id, ir);
   registerView('associativity-relief-stage', associativityReliefStageView);
   registerFacets([associativityReliefFacet]);
-  registerDescription(associativityReliefFacet.id, associativityReliefDescription);
 }

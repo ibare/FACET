@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -19,7 +18,6 @@ import { floydWarshallProjector } from './projector.js';
 import { floydWarshallIRs } from './irs.js';
 import { floydWarshallStageView } from './floyd-warshall-stage.js';
 import { floydWarshallFacet } from './facet.js';
-import { floydWarshallDescription } from './description.js';
 
 export {
   floydWarshallAlgorithm,
@@ -34,7 +32,6 @@ export { floydWarshallProjector } from './projector.js';
 export { floydWarshallIRs, floydWarshallTripleIR } from './irs.js';
 export { floydWarshallStageView } from './floyd-warshall-stage.js';
 export { floydWarshallFacet } from './facet.js';
-export { floydWarshallDescription } from './description.js';
 
 export function registerFloydWarshall(): void {
   registerAlgorithm<FloydWarshallData>('floydWarshall', floydWarshallAlgorithm);
@@ -42,5 +39,4 @@ export function registerFloydWarshall(): void {
   for (const ir of floydWarshallIRs) registerIR(ir.id, ir);
   registerView('floyd-warshall-stage', floydWarshallStageView);
   registerFacets([floydWarshallFacet]);
-  registerDescription(floydWarshallFacet.id, floydWarshallDescription);
 }

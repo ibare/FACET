@@ -13,7 +13,6 @@ export {
 export { recolorThenRotateScene, type RecolorThenRotateScene } from './scene.js';
 export { recolorThenRotateIRs } from './irs.js';
 export { recolorThenRotateFacet } from './facet.js';
-export { recolorThenRotateDescription } from './description.js';
 export { recolorThenRotateStageView } from './recolor-then-rotate-stage.js';
 
 import {
@@ -21,14 +20,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { recolorThenRotate, type RecolorThenRotateData } from './algorithm.js';
 import { recolorThenRotateScene } from './scene.js';
 import { recolorThenRotateIRs } from './irs.js';
 import { recolorThenRotateFacet } from './facet.js';
-import { recolorThenRotateDescription } from './description.js';
 import { recolorThenRotateStageView } from './recolor-then-rotate-stage.js';
 
 export function registerRecolorThenRotate(): void {
@@ -39,5 +36,4 @@ export function registerRecolorThenRotate(): void {
   for (const ir of recolorThenRotateIRs) registerIR(ir.id, ir);
   registerView('recolor-then-rotate-stage', recolorThenRotateStageView);
   registerFacets([recolorThenRotateFacet]);
-  registerDescription(recolorThenRotateFacet.id, recolorThenRotateDescription);
 }

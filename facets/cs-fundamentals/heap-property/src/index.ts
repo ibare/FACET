@@ -18,7 +18,6 @@ export {
 } from './scene.js';
 export { heapPropertyIRs } from './irs.js';
 export { heapPropertyFacet } from './facet.js';
-export { heapPropertyDescription } from './description.js';
 export { heapPropertyStageView } from './heap-property-stage.js';
 
 import {
@@ -26,14 +25,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { heapPropertyAlgorithm, type HeapPropertyData } from './algorithm.js';
 import { heapPropertyScene } from './scene.js';
 import { heapPropertyIRs } from './irs.js';
 import { heapPropertyFacet } from './facet.js';
-import { heapPropertyDescription } from './description.js';
 import { heapPropertyStageView } from './heap-property-stage.js';
 
 export function registerHeapProperty(): void {
@@ -44,5 +41,4 @@ export function registerHeapProperty(): void {
   for (const ir of heapPropertyIRs) registerIR(ir.id, ir);
   registerView('heap-property-stage', heapPropertyStageView);
   registerFacets([heapPropertyFacet]);
-  registerDescription(heapPropertyFacet.id, heapPropertyDescription);
 }

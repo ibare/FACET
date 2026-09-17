@@ -6,7 +6,6 @@
  */
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -21,7 +20,6 @@ import {
   type Projection,
   type ProjectionShot,
 } from './algorithm.js';
-import { projectAndLoseDescription } from './description.js';
 import { projectAndLoseFacet } from './facet.js';
 import { projectAndLoseIRs } from './irs.js';
 import {
@@ -37,7 +35,7 @@ import {
 } from './scene.js';
 import { projectAndLoseStageView } from './project-and-lose-stage.js';
 
-export { projectAndLoseAlgorithm, projectAndLoseDescription, projectAndLoseFacet };
+export { projectAndLoseAlgorithm, projectAndLoseFacet };
 export { projectAndLoseIRs, projectAndLoseStageView };
 export { projectAndLoseScene, projectionOf, droppedOf, waveAt, phaseOf };
 export { projectOnAxis, PROJECT_WAVE };
@@ -54,5 +52,4 @@ export function registerProjectAndLose(): void {
   for (const ir of projectAndLoseIRs) registerIR(ir.id, ir);
   registerView('project-and-lose-stage', projectAndLoseStageView);
   registerFacets([projectAndLoseFacet]);
-  registerDescription(projectAndLoseFacet.id, projectAndLoseDescription);
 }

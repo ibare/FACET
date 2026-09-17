@@ -11,12 +11,10 @@ export { traverseFromHead, type TraverseFromHeadData } from './algorithm.js';
 export { traverseFromHeadScene, type TraverseFromHeadScene } from './scene.js';
 export { traverseFromHeadIRs } from './irs.js';
 export { traverseFromHeadFacet } from './facet.js';
-export { traverseFromHeadDescription } from './description.js';
 export { traverseFromHeadStageView } from './traverse-from-head-stage.js';
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -26,7 +24,6 @@ import { traverseFromHead, type TraverseFromHeadData } from './algorithm.js';
 import { traverseFromHeadScene } from './scene.js';
 import { traverseFromHeadIRs } from './irs.js';
 import { traverseFromHeadFacet } from './facet.js';
-import { traverseFromHeadDescription } from './description.js';
 import { traverseFromHeadStageView } from './traverse-from-head-stage.js';
 
 export function registerTraverseFromHead(): void {
@@ -37,5 +34,4 @@ export function registerTraverseFromHead(): void {
   for (const ir of traverseFromHeadIRs) registerIR(ir.id, ir);
   registerView('traverse-from-head-stage', traverseFromHeadStageView);
   registerFacets([traverseFromHeadFacet]);
-  registerDescription(traverseFromHeadFacet.id, traverseFromHeadDescription);
 }

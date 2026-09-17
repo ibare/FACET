@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -18,7 +17,6 @@ import { mergeTheFrequentPairScene } from './scene.js';
 import { mergeTheFrequentPairIRs } from './irs.js';
 import { mergeTheFrequentPairStageView } from './merge-the-frequent-pair-stage.js';
 import { mergeTheFrequentPairFacet } from './facet.js';
-import { mergeTheFrequentPairDescription } from './description.js';
 
 export function registerMergeTheFrequentPair(): void {
   // 조각은 마운트 시 스스로 시작하고 걸음 간격도 스스로 정해야 한다. 둘 다
@@ -31,7 +29,6 @@ export function registerMergeTheFrequentPair(): void {
   for (const ir of mergeTheFrequentPairIRs) registerIR(ir.id, ir);
   registerView('merge-the-frequent-pair-stage', mergeTheFrequentPairStageView);
   registerFacets([mergeTheFrequentPairFacet]);
-  registerDescription(mergeTheFrequentPairFacet.id, mergeTheFrequentPairDescription);
 }
 
 export { mergeTheFrequentPairAlgorithm } from './algorithm.js';
@@ -41,4 +38,3 @@ export { mergeTheFrequentPairIRs } from './irs.js';
 export { mergeTheFrequentPairStageView } from './merge-the-frequent-pair-stage.js';
 export type { MergeTheFrequentPairStage } from './merge-the-frequent-pair-stage.js';
 export { mergeTheFrequentPairFacet } from './facet.js';
-export { mergeTheFrequentPairDescription } from './description.js';

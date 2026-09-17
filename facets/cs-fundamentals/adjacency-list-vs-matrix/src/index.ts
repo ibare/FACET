@@ -11,7 +11,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -22,7 +21,6 @@ import { adjacencyListVsMatrixAlgorithm, type AdjacencyListVsMatrixData } from '
 import { adjacencyListVsMatrixScene } from './scene.js';
 import { adjacencyListVsMatrixIRs } from './irs.js';
 import { adjacencyListVsMatrixFacet } from './facet.js';
-import { adjacencyListVsMatrixDescription } from './description.js';
 import { adjacencyListVsMatrixStageView } from './adjacency-list-vs-matrix-stage.js';
 
 export function registerAdjacencyListVsMatrix(): void {
@@ -33,7 +31,6 @@ export function registerAdjacencyListVsMatrix(): void {
   for (const ir of adjacencyListVsMatrixIRs) registerIR(ir.id, ir);
   registerView('adjacency-list-vs-matrix-stage', adjacencyListVsMatrixStageView);
   registerFacets([adjacencyListVsMatrixFacet]);
-  registerDescription(adjacencyListVsMatrixFacet.id, adjacencyListVsMatrixDescription);
 }
 
 export {
@@ -57,5 +54,4 @@ export {
 } from './scene.js';
 export { adjacencyListVsMatrixIRs } from './irs.js';
 export { adjacencyListVsMatrixFacet } from './facet.js';
-export { adjacencyListVsMatrixDescription } from './description.js';
 export { adjacencyListVsMatrixStageView } from './adjacency-list-vs-matrix-stage.js';

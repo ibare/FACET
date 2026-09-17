@@ -9,7 +9,6 @@ export { bstDegenerate, type BstDegenerateData } from './algorithm.js';
 export { bstDegenerateScene } from './scene.js';
 export { bstDegenerateIRs } from './irs.js';
 export { bstDegenerateFacet } from './facet.js';
-export { bstDegenerateDescription } from './description.js';
 export { bstDegenerateStageView } from './bst-degenerate-stage.js';
 
 import {
@@ -17,14 +16,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { bstDegenerate, type BstDegenerateData } from './algorithm.js';
 import { bstDegenerateScene } from './scene.js';
 import { bstDegenerateIRs } from './irs.js';
 import { bstDegenerateFacet } from './facet.js';
-import { bstDegenerateDescription } from './description.js';
 import { bstDegenerateStageView } from './bst-degenerate-stage.js';
 
 export function registerBstDegenerate(): void {
@@ -35,5 +32,4 @@ export function registerBstDegenerate(): void {
   for (const ir of bstDegenerateIRs) registerIR(ir.id, ir);
   registerView('bst-degenerate-stage', bstDegenerateStageView);
   registerFacets([bstDegenerateFacet]);
-  registerDescription(bstDegenerateFacet.id, bstDegenerateDescription);
 }

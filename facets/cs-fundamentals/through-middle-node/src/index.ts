@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -15,7 +14,6 @@ import {
 } from '@ffacet/core/runtime';
 
 import { throughMiddleNodeAlgorithm, type ThroughMiddleNodeData } from './algorithm.js';
-import { throughMiddleNodeDescription } from './description.js';
 import { throughMiddleNodeFacet } from './facet.js';
 import { throughMiddleNodeIRs } from './irs.js';
 import { throughMiddleNodeScene } from './scene.js';
@@ -23,7 +21,6 @@ import { throughMiddleNodeStageView } from './through-middle-node-stage.js';
 
 export { throughMiddleNodeAlgorithm } from './algorithm.js';
 export type { ThroughMiddleNodeData, ThroughMiddleNodeEdge } from './algorithm.js';
-export { throughMiddleNodeDescription } from './description.js';
 export { throughMiddleNodeFacet } from './facet.js';
 export { throughMiddleNodeIRs } from './irs.js';
 export { throughMiddleNodeScene, type ThroughMiddleNodeScene } from './scene.js';
@@ -37,5 +34,4 @@ export function registerThroughMiddleNode(): void {
   for (const ir of throughMiddleNodeIRs) registerIR(ir.id, ir);
   registerView('through-middle-node-stage', throughMiddleNodeStageView);
   registerFacets([throughMiddleNodeFacet]);
-  registerDescription(throughMiddleNodeFacet.id, throughMiddleNodeDescription);
 }

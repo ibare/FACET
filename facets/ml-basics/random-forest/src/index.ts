@@ -23,7 +23,6 @@ export {
 export { randomForestProjector } from './projector.js';
 export { randomForestVoteIR, randomForestIRs } from './irs.js';
 export { randomForestFacet } from './facet.js';
-export { randomForestDescription } from './description.js';
 export { randomForestStageView } from './random-forest-stage.js';
 
 import {
@@ -31,14 +30,12 @@ import {
   registerProjector,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { randomForest, type RandomForestData } from './algorithm.js';
 import { randomForestProjector } from './projector.js';
 import { randomForestIRs } from './irs.js';
 import { randomForestFacet } from './facet.js';
-import { randomForestDescription } from './description.js';
 import { randomForestStageView } from './random-forest-stage.js';
 
 export function registerRandomForest(): void {
@@ -49,5 +46,4 @@ export function registerRandomForest(): void {
   for (const ir of randomForestIRs) registerIR(ir.id, ir);
   registerView('random-forest-stage', randomForestStageView);
   registerFacets([randomForestFacet]);
-  registerDescription(randomForestFacet.id, randomForestDescription);
 }

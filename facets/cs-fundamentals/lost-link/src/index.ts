@@ -24,7 +24,6 @@ export {
 } from './scene.js';
 export { lostLinkIRs } from './irs.js';
 export { lostLinkFacet } from './facet.js';
-export { lostLinkDescription } from './description.js';
 export { lostLinkStageView } from './lost-link-stage.js';
 
 import {
@@ -32,14 +31,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { lostLink, type LostLinkData } from './algorithm.js';
 import { lostLinkScene } from './scene.js';
 import { lostLinkIRs } from './irs.js';
 import { lostLinkFacet } from './facet.js';
-import { lostLinkDescription } from './description.js';
 import { lostLinkStageView } from './lost-link-stage.js';
 
 export function registerLostLink(): void {
@@ -50,5 +47,4 @@ export function registerLostLink(): void {
   for (const ir of lostLinkIRs) registerIR(ir.id, ir);
   registerView('lost-link-stage', lostLinkStageView);
   registerFacets([lostLinkFacet]);
-  registerDescription(lostLinkFacet.id, lostLinkDescription);
 }

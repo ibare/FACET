@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -18,9 +17,8 @@ import { sieveProjector } from './projector.js';
 import { sieveIRs } from './irs.js';
 import { sieveStageView } from './sieve-stage.js';
 import { sieveFacet } from './facet.js';
-import { sieveDescription } from './description.js';
 
-export { sieveAlgorithm, sieveProjector, sieveIRs, sieveStageView, sieveFacet, sieveDescription };
+export { sieveAlgorithm, sieveProjector, sieveIRs, sieveStageView, sieveFacet };
 export { runSieve, SIEVE_LIMIT_CHOICES } from './algorithm.js';
 export { sieveImperativeIR } from './irs.js';
 export { SIEVE_LIMIT_TICKS, SIEVE_COLS, SIEVE_MAX_ROWS } from './sieve-stage.js';
@@ -34,5 +32,4 @@ export function registerSieve(): void {
   for (const ir of sieveIRs) registerIR(ir.id, ir);
   registerView('sieve-stage', sieveStageView);
   registerFacets([sieveFacet]);
-  registerDescription(sieveFacet.id, sieveDescription);
 }

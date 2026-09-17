@@ -6,7 +6,7 @@
  * auto-demo / reset) 을 시각 사건으로 매핑. 셀 단위 호버 인터랙션은 view
  * 가 SVG 마우스 이벤트로 직접 처리한다.
  *
- * algorithm / projector / facet JSON / description / 전용 view (tables-stage)
+ * algorithm / projector / facet JSON / 전용 view (tables-stage)
  * 를 함께 번들하고 등록 헬퍼를 제공한다. 코드 패널은 1차 구현에서 생략.
  */
 
@@ -26,7 +26,6 @@ export {
 export { relationalTablesAndKeysProjector } from './projector.js';
 export { relationalTablesAndKeysIRs } from './irs.js';
 export { relationalTablesAndKeysFacet } from './facet.js';
-export { relationalTablesAndKeysDescription } from './description.js';
 export { tablesStageView } from './tables-stage.js';
 
 import {
@@ -34,7 +33,6 @@ import {
   registerProjector,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import {
@@ -44,7 +42,6 @@ import {
 import { relationalTablesAndKeysProjector } from './projector.js';
 import { relationalTablesAndKeysIRs } from './irs.js';
 import { relationalTablesAndKeysFacet } from './facet.js';
-import { relationalTablesAndKeysDescription } from './description.js';
 import { tablesStageView } from './tables-stage.js';
 
 export function registerRelationalTablesAndKeys(): void {
@@ -60,8 +57,4 @@ export function registerRelationalTablesAndKeys(): void {
   for (const ir of relationalTablesAndKeysIRs) registerIR(ir.id, ir);
   registerView('tables-stage', tablesStageView);
   registerFacets([relationalTablesAndKeysFacet]);
-  registerDescription(
-    relationalTablesAndKeysFacet.id,
-    relationalTablesAndKeysDescription,
-  );
 }

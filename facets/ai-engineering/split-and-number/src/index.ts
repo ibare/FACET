@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -20,7 +19,6 @@ import { splitAndNumberScene } from './scene.js';
 import { splitAndNumberIRs } from './irs.js';
 import { splitAndNumberStageView } from './split-and-number-stage.js';
 import { splitAndNumberFacet } from './facet.js';
-import { splitAndNumberDescription } from './description.js';
 
 export function registerSplitAndNumber(): void {
   // mechanismKind 를 선언하는 자리는 facet.ts 가 아니라 여기다. 조각은 마운트하면
@@ -34,7 +32,6 @@ export function registerSplitAndNumber(): void {
   for (const ir of splitAndNumberIRs) registerIR(ir.id, ir);
   registerView('split-and-number-stage', splitAndNumberStageView);
   registerFacets([splitAndNumberFacet]);
-  registerDescription(splitAndNumberFacet.id, splitAndNumberDescription);
 }
 
 export {
@@ -43,6 +40,5 @@ export {
   splitAndNumberIRs,
   splitAndNumberStageView,
   splitAndNumberFacet,
-  splitAndNumberDescription,
 };
 export type { SplitAndNumberData };

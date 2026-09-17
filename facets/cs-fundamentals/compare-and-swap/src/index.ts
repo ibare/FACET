@@ -14,7 +14,6 @@ export { compareAndSwap, orderOf, type CompareAndSwapData, type PairOrder } from
 export { compareAndSwapScene, type CompareAndSwapScene } from './scene.js';
 export { compareAndSwapIRs } from './irs.js';
 export { compareAndSwapFacet } from './facet.js';
-export { compareAndSwapDescription } from './description.js';
 export { compareAndSwapStageView } from './compare-and-swap-stage.js';
 
 import {
@@ -22,14 +21,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { compareAndSwap, type CompareAndSwapData } from './algorithm.js';
 import { compareAndSwapScene } from './scene.js';
 import { compareAndSwapIRs } from './irs.js';
 import { compareAndSwapFacet } from './facet.js';
-import { compareAndSwapDescription } from './description.js';
 import { compareAndSwapStageView } from './compare-and-swap-stage.js';
 
 export function registerCompareAndSwap(): void {
@@ -40,5 +37,4 @@ export function registerCompareAndSwap(): void {
   for (const ir of compareAndSwapIRs) registerIR(ir.id, ir);
   registerView('compare-and-swap-stage', compareAndSwapStageView);
   registerFacets([compareAndSwapFacet]);
-  registerDescription(compareAndSwapFacet.id, compareAndSwapDescription);
 }

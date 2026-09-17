@@ -12,7 +12,6 @@ export {
 export { fewerHopsNotShorterScene, type FewerHopsNotShorterScene } from './scene.js';
 export { fewerHopsNotShorterIRs } from './irs.js';
 export { fewerHopsNotShorterFacet } from './facet.js';
-export { fewerHopsNotShorterDescription } from './description.js';
 export { fewerHopsNotShorterStageView } from './fewer-hops-not-shorter-stage.js';
 
 import {
@@ -20,14 +19,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { fewerHopsNotShorterAlgorithm, type FewerHopsNotShorterData } from './algorithm.js';
 import { fewerHopsNotShorterScene } from './scene.js';
 import { fewerHopsNotShorterIRs } from './irs.js';
 import { fewerHopsNotShorterFacet } from './facet.js';
-import { fewerHopsNotShorterDescription } from './description.js';
 import { fewerHopsNotShorterStageView } from './fewer-hops-not-shorter-stage.js';
 
 export function registerFewerHopsNotShorter(): void {
@@ -38,5 +35,4 @@ export function registerFewerHopsNotShorter(): void {
   for (const ir of fewerHopsNotShorterIRs) registerIR(ir.id, ir);
   registerView('fewer-hops-not-shorter-stage', fewerHopsNotShorterStageView);
   registerFacets([fewerHopsNotShorterFacet]);
-  registerDescription(fewerHopsNotShorterFacet.id, fewerHopsNotShorterDescription);
 }

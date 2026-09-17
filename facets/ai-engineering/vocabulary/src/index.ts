@@ -20,7 +20,6 @@ export {
 export { vocabularyProjector } from './projector.js';
 export { vocabularyIRs } from './irs.js';
 export { vocabularyFacet } from './facet.js';
-export { vocabularyDescription } from './description.js';
 export { vocabularyStageView } from './vocabulary-stage.js';
 
 import {
@@ -28,14 +27,12 @@ import {
   registerProjector,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { vocabulary, type VocabularyData } from './algorithm.js';
 import { vocabularyProjector } from './projector.js';
 import { vocabularyIRs } from './irs.js';
 import { vocabularyFacet } from './facet.js';
-import { vocabularyDescription } from './description.js';
 import { vocabularyStageView } from './vocabulary-stage.js';
 
 export function registerVocabulary(): void {
@@ -47,5 +44,4 @@ export function registerVocabulary(): void {
   for (const ir of vocabularyIRs) registerIR(ir.id, ir);
   registerView('vocabulary-stage', vocabularyStageView);
   registerFacets([vocabularyFacet]);
-  registerDescription(vocabularyFacet.id, vocabularyDescription);
 }

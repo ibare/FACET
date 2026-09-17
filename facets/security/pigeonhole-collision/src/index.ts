@@ -5,7 +5,7 @@
  * 하나 외에는 조작을 받지 않는다. ReactiveMechanism 이라 컨트롤바 없이 스스로
  * 재생하고 걸음 간격도 스스로 정한다 (ctx.sleep).
  *
- * algorithm / 장면 설계 / facet JSON / description / 전용 view (pigeonhole-stage)
+ * algorithm / 장면 설계 / facet JSON / 전용 view (pigeonhole-stage)
  * 를 함께 번들하고 등록 헬퍼를 제공한다. 코드 패널은 두지 않는다.
  *
  * 화면은 명령이 아니라 **장면**에서 만들어지므로 어느 걸음으로든 곧장 갈 수 있다
@@ -27,7 +27,6 @@ export {
 } from './scene.js';
 export { pigeonholeCollisionIRs } from './irs.js';
 export { pigeonholeCollisionFacet } from './facet.js';
-export { pigeonholeCollisionDescription } from './description.js';
 export { pigeonholeStageView } from './pigeonhole-stage.js';
 
 import {
@@ -35,14 +34,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { pigeonholeCollision, type PigeonholeFacetData } from './algorithm.js';
 import { pigeonholeCollisionScene } from './scene.js';
 import { pigeonholeCollisionIRs } from './irs.js';
 import { pigeonholeCollisionFacet } from './facet.js';
-import { pigeonholeCollisionDescription } from './description.js';
 import { pigeonholeStageView } from './pigeonhole-stage.js';
 
 export function registerPigeonholeCollision(): void {
@@ -53,5 +50,4 @@ export function registerPigeonholeCollision(): void {
   for (const ir of pigeonholeCollisionIRs) registerIR(ir.id, ir);
   registerView('pigeonhole-stage', pigeonholeStageView);
   registerFacets([pigeonholeCollisionFacet]);
-  registerDescription(pigeonholeCollisionFacet.id, pigeonholeCollisionDescription);
 }

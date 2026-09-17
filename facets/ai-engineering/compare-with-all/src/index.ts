@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -18,7 +17,6 @@ import type { CompareWithAllData } from './algorithm.js';
 import { compareWithAllScene } from './scene.js';
 import { compareWithAllStageView } from './compare-with-all-stage.js';
 import { compareWithAllFacet } from './facet.js';
-import { compareWithAllDescription } from './description.js';
 import { compareWithAllIRs } from './irs.js';
 
 export { compareWithAllAlgorithm } from './algorithm.js';
@@ -32,7 +30,6 @@ export type {
 } from './scene.js';
 export { compareWithAllStageView, formatCount } from './compare-with-all-stage.js';
 export { compareWithAllFacet } from './facet.js';
-export { compareWithAllDescription } from './description.js';
 export { compareWithAllIRs } from './irs.js';
 
 export function registerCompareWithAll(): void {
@@ -45,5 +42,4 @@ export function registerCompareWithAll(): void {
   for (const ir of compareWithAllIRs) registerIR(ir.id, ir);
   registerView('compare-with-all-stage', compareWithAllStageView);
   registerFacets([compareWithAllFacet]);
-  registerDescription(compareWithAllFacet.id, compareWithAllDescription);
 }

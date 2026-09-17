@@ -15,7 +15,6 @@ export {
 export { bstCompareAndGoScene, type BstCompareAndGoScene } from './scene.js';
 export { bstCompareAndGoIRs } from './irs.js';
 export { bstCompareAndGoFacet } from './facet.js';
-export { bstCompareAndGoDescription } from './description.js';
 export { bstCompareAndGoStageView } from './bst-compare-and-go-stage.js';
 
 import {
@@ -23,14 +22,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { bstCompareAndGoAlgorithm, type BstCompareAndGoData } from './algorithm.js';
 import { bstCompareAndGoScene } from './scene.js';
 import { bstCompareAndGoIRs } from './irs.js';
 import { bstCompareAndGoFacet } from './facet.js';
-import { bstCompareAndGoDescription } from './description.js';
 import { bstCompareAndGoStageView } from './bst-compare-and-go-stage.js';
 
 export function registerBstCompareAndGo(): void {
@@ -41,5 +38,4 @@ export function registerBstCompareAndGo(): void {
   for (const ir of bstCompareAndGoIRs) registerIR(ir.id, ir);
   registerView('bst-compare-and-go-stage', bstCompareAndGoStageView);
   registerFacets([bstCompareAndGoFacet]);
-  registerDescription(bstCompareAndGoFacet.id, bstCompareAndGoDescription);
 }

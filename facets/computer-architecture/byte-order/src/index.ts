@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -15,7 +14,6 @@ import {
 
 import { byteOrderAlgorithm, splitBytes, type ByteOrderData } from './algorithm.js';
 import { byteOrderStageView } from './byte-order-stage.js';
-import { byteOrderDescription } from './description.js';
 import { byteOrderFacet } from './facet.js';
 import { byteOrderIRs } from './irs.js';
 import { byteOrderScene } from './scene.js';
@@ -26,12 +24,10 @@ export function registerByteOrder(): void {
   for (const ir of byteOrderIRs) registerIR(ir.id, ir);
   registerView('byte-order-stage', byteOrderStageView);
   registerFacets([byteOrderFacet]);
-  registerDescription(byteOrderFacet.id, byteOrderDescription);
 }
 
 export {
   byteOrderAlgorithm,
-  byteOrderDescription,
   byteOrderFacet,
   byteOrderIRs,
   byteOrderScene,

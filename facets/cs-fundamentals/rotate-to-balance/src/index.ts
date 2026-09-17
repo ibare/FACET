@@ -14,7 +14,6 @@ export {
 export { rotateToBalanceScene, type RotateToBalanceScene } from './scene.js';
 export { rotateToBalanceIRs } from './irs.js';
 export { rotateToBalanceFacet } from './facet.js';
-export { rotateToBalanceDescription } from './description.js';
 export { rotateToBalanceStageView } from './rotate-to-balance-stage.js';
 
 import {
@@ -23,7 +22,6 @@ import {
   registerIR,
   registerView,
   registerFacets,
-  registerDescription,
 } from '@ffacet/core/runtime';
 
 import { rotateToBalanceAlgorithm, type RotateToBalanceData } from './algorithm.js';
@@ -31,7 +29,6 @@ import { rotateToBalanceScene } from './scene.js';
 import { rotateToBalanceIRs } from './irs.js';
 import { rotateToBalanceStageView } from './rotate-to-balance-stage.js';
 import { rotateToBalanceFacet } from './facet.js';
-import { rotateToBalanceDescription } from './description.js';
 
 export function registerRotateToBalance(): void {
   registerAlgorithm<RotateToBalanceData>('rotateToBalance', rotateToBalanceAlgorithm, {
@@ -41,5 +38,4 @@ export function registerRotateToBalance(): void {
   for (const ir of rotateToBalanceIRs) registerIR(ir.id, ir);
   registerView('rotate-to-balance-stage', rotateToBalanceStageView);
   registerFacets([rotateToBalanceFacet]);
-  registerDescription(rotateToBalanceFacet.id, rotateToBalanceDescription);
 }

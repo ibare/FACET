@@ -5,7 +5,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -17,7 +16,6 @@ import { severalHashesOneValueScene } from './scene.js';
 import { severalHashesOneValueIRs } from './irs.js';
 import { severalHashesOneValueStageView } from './several-hashes-one-value-stage.js';
 import { severalHashesOneValueFacet } from './facet.js';
-import { severalHashesOneValueDescription } from './description.js';
 
 export {
   severalHashesOneValueAlgorithm,
@@ -25,7 +23,6 @@ export {
   severalHashesOneValueIRs,
   severalHashesOneValueStageView,
   severalHashesOneValueFacet,
-  severalHashesOneValueDescription,
 };
 export { hashesOf, type KeyHashes } from './algorithm.js';
 export type {
@@ -46,5 +43,4 @@ export function registerSeveralHashesOneValue(): void {
   for (const ir of severalHashesOneValueIRs) registerIR(ir.id, ir);
   registerView('several-hashes-one-value-stage', severalHashesOneValueStageView);
   registerFacets([severalHashesOneValueFacet]);
-  registerDescription(severalHashesOneValueFacet.id, severalHashesOneValueDescription);
 }

@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -20,14 +19,12 @@ import { mantissaAndExponentScene } from './scene.js';
 import { mantissaAndExponentIRs } from './irs.js';
 import { mantissaAndExponentStageView } from './mantissa-and-exponent-stage.js';
 import { mantissaAndExponentFacet } from './facet.js';
-import { mantissaAndExponentDescription } from './description.js';
 
 export * from './algorithm.js';
 export * from './scene.js';
 export * from './irs.js';
 export * from './mantissa-and-exponent-stage.js';
 export * from './facet.js';
-export * from './description.js';
 
 export function registerMantissaAndExponent(): void {
   registerAlgorithm<MantissaAndExponentData>(
@@ -39,5 +36,4 @@ export function registerMantissaAndExponent(): void {
   for (const ir of mantissaAndExponentIRs) registerIR(ir.id, ir);
   registerView('mantissa-and-exponent-stage', mantissaAndExponentStageView);
   registerFacets([mantissaAndExponentFacet]);
-  registerDescription(mantissaAndExponentFacet.id, mantissaAndExponentDescription);
 }

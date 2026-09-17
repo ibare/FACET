@@ -9,7 +9,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -21,7 +20,6 @@ import { naiveShiftByOneScene } from './scene.js';
 import { naiveShiftByOneIRs } from './irs.js';
 import { naiveShiftByOneStageView } from './naive-shift-by-one-stage.js';
 import { naiveShiftByOneFacet } from './facet.js';
-import { naiveShiftByOneDescription } from './description.js';
 
 export function registerNaiveShiftByOne(): void {
   registerAlgorithm<NaiveShiftByOneData>('naiveShiftByOne', naiveShiftByOneAlgorithm, {
@@ -32,7 +30,6 @@ export function registerNaiveShiftByOne(): void {
   for (const ir of naiveShiftByOneIRs) registerIR(ir.id, ir);
   registerView('naive-shift-by-one-stage', naiveShiftByOneStageView);
   registerFacets([naiveShiftByOneFacet]);
-  registerDescription(naiveShiftByOneFacet.id, naiveShiftByOneDescription);
 }
 
 export { naiveShiftByOneAlgorithm } from './algorithm.js';
@@ -49,4 +46,3 @@ export {
 export { naiveShiftByOneIRs } from './irs.js';
 export { naiveShiftByOneStageView } from './naive-shift-by-one-stage.js';
 export { naiveShiftByOneFacet } from './facet.js';
-export { naiveShiftByOneDescription } from './description.js';

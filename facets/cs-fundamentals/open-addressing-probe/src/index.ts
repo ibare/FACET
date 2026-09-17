@@ -14,7 +14,6 @@ export {
 export { openAddressingProbeScene, type OpenAddressingProbeScene } from './scene.js';
 export { openAddressingProbeIRs } from './irs.js';
 export { openAddressingProbeFacet } from './facet.js';
-export { openAddressingProbeDescription } from './description.js';
 export { openAddressingProbeStageView } from './open-addressing-probe-stage.js';
 
 import {
@@ -22,14 +21,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { openAddressingProbe, type OpenAddressingProbeData } from './algorithm.js';
 import { openAddressingProbeScene } from './scene.js';
 import { openAddressingProbeIRs } from './irs.js';
 import { openAddressingProbeFacet } from './facet.js';
-import { openAddressingProbeDescription } from './description.js';
 import { openAddressingProbeStageView } from './open-addressing-probe-stage.js';
 
 export function registerOpenAddressingProbe(): void {
@@ -40,5 +37,4 @@ export function registerOpenAddressingProbe(): void {
   for (const ir of openAddressingProbeIRs) registerIR(ir.id, ir);
   registerView('open-addressing-probe-stage', openAddressingProbeStageView);
   registerFacets([openAddressingProbeFacet]);
-  registerDescription(openAddressingProbeFacet.id, openAddressingProbeDescription);
 }

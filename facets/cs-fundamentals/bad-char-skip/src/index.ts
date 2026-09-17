@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -18,7 +17,6 @@ import { badCharSkipScene } from './scene.js';
 import { badCharSkipIRs } from './irs.js';
 import { badCharSkipStageView } from './bad-char-skip-stage.js';
 import { badCharSkipFacet } from './facet.js';
-import { badCharSkipDescription } from './description.js';
 
 export { badCharSkipAlgorithm, badCharSlots, lastStandOf } from './algorithm.js';
 export type { BadCharSkipData, BadCharSlot } from './algorithm.js';
@@ -26,7 +24,6 @@ export { badCharSkipScene, type BadCharSkipScene } from './scene.js';
 export { badCharSkipIRs } from './irs.js';
 export { badCharSkipStageView } from './bad-char-skip-stage.js';
 export { badCharSkipFacet } from './facet.js';
-export { badCharSkipDescription } from './description.js';
 
 export function registerBadCharSkip(): void {
   // 조각은 스스로 시작하고 걸음 간격도 스스로 정한다 — reactive 만 그 둘을 준다 (S-piece).
@@ -37,5 +34,4 @@ export function registerBadCharSkip(): void {
   for (const ir of badCharSkipIRs) registerIR(ir.id, ir);
   registerView('bad-char-skip-stage', badCharSkipStageView);
   registerFacets([badCharSkipFacet]);
-  registerDescription(badCharSkipFacet.id, badCharSkipDescription);
 }

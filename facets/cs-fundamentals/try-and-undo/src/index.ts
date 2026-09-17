@@ -21,7 +21,6 @@ export {
 } from './scene.js';
 export { tryAndUndoIRs } from './irs.js';
 export { tryAndUndoFacet } from './facet.js';
-export { tryAndUndoDescription } from './description.js';
 export { tryAndUndoStageView } from './try-and-undo-stage.js';
 
 import {
@@ -29,14 +28,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { tryAndUndo, type TryAndUndoData } from './algorithm.js';
 import { tryAndUndoScene } from './scene.js';
 import { tryAndUndoIRs } from './irs.js';
 import { tryAndUndoFacet } from './facet.js';
-import { tryAndUndoDescription } from './description.js';
 import { tryAndUndoStageView } from './try-and-undo-stage.js';
 
 export function registerTryAndUndo(): void {
@@ -47,5 +44,4 @@ export function registerTryAndUndo(): void {
   for (const ir of tryAndUndoIRs) registerIR(ir.id, ir);
   registerView('try-and-undo-stage', tryAndUndoStageView);
   registerFacets([tryAndUndoFacet]);
-  registerDescription(tryAndUndoFacet.id, tryAndUndoDescription);
 }

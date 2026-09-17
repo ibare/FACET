@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -18,7 +17,6 @@ import { tokensPerLanguageScene } from './scene.js';
 import { tokensPerLanguageIRs } from './irs.js';
 import { tokensPerLanguageStageView } from './tokens-per-language-stage.js';
 import { tokensPerLanguageFacet } from './facet.js';
-import { tokensPerLanguageDescription } from './description.js';
 
 export function registerTokensPerLanguage(): void {
   // 조각은 스스로 시작하고 걸음 간격을 스스로 정해야 하므로 reactive 다 (S-piece).
@@ -31,7 +29,6 @@ export function registerTokensPerLanguage(): void {
   for (const ir of tokensPerLanguageIRs) registerIR(ir.id, ir);
   registerView('tokens-per-language-stage', tokensPerLanguageStageView);
   registerFacets([tokensPerLanguageFacet]);
-  registerDescription(tokensPerLanguageFacet.id, tokensPerLanguageDescription);
 }
 
 export {
@@ -40,6 +37,5 @@ export {
   tokensPerLanguageIRs,
   tokensPerLanguageStageView,
   tokensPerLanguageFacet,
-  tokensPerLanguageDescription,
 };
 export type { TokensPerLanguageData };

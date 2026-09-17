@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -18,7 +17,6 @@ import { betweenLetterAndWordScene } from './scene.js';
 import { betweenLetterAndWordIRs } from './irs.js';
 import { betweenLetterAndWordStageView } from './between-letter-and-word-stage.js';
 import { betweenLetterAndWordFacet } from './facet.js';
-import { betweenLetterAndWordDescription } from './description.js';
 
 export {
   betweenLetterAndWordAlgorithm,
@@ -26,7 +24,6 @@ export {
   betweenLetterAndWordIRs,
   betweenLetterAndWordStageView,
   betweenLetterAndWordFacet,
-  betweenLetterAndWordDescription,
 };
 export {
   computeSegmentations,
@@ -49,5 +46,4 @@ export function registerBetweenLetterAndWord(): void {
   for (const ir of betweenLetterAndWordIRs) registerIR(ir.id, ir);
   registerView('between-letter-and-word-stage', betweenLetterAndWordStageView);
   registerFacets([betweenLetterAndWordFacet]);
-  registerDescription(betweenLetterAndWordFacet.id, betweenLetterAndWordDescription);
 }

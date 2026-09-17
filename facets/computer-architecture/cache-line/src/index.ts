@@ -1,6 +1,5 @@
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -10,7 +9,6 @@ import {
 import { cacheLineAlgorithm, cacheLineRate } from './algorithm.js';
 import type { CacheLineData, CacheLineTrack } from './algorithm.js';
 import { cacheLineStageView } from './cache-line-stage.js';
-import { cacheLineDescription } from './description.js';
 import { cacheLineFacet } from './facet.js';
 import { cacheLineImperativeIR, cacheLineIRs } from './irs.js';
 import { cacheLineProjector } from './projector.js';
@@ -19,7 +17,6 @@ export {
   cacheLineAlgorithm,
   cacheLineRate,
   cacheLineStageView,
-  cacheLineDescription,
   cacheLineFacet,
   cacheLineImperativeIR,
   cacheLineIRs,
@@ -37,5 +34,4 @@ export function registerCacheLine(): void {
   for (const ir of cacheLineIRs) registerIR(ir.id, ir);
   registerView('cache-line-stage', cacheLineStageView);
   registerFacets([cacheLineFacet]);
-  registerDescription(cacheLineFacet.id, cacheLineDescription);
 }

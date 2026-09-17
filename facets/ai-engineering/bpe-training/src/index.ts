@@ -30,7 +30,6 @@ export {
 export { bpeTrainingProjector } from './projector.js';
 export { bpeTrainingIRs } from './irs.js';
 export { bpeTrainingFacet } from './facet.js';
-export { bpeTrainingDescription } from './description.js';
 export {
   bpeTrainingStageView,
   rankKey,
@@ -45,14 +44,12 @@ import {
   registerProjector,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { bpeTraining, type BpeTrainingData } from './algorithm.js';
 import { bpeTrainingProjector } from './projector.js';
 import { bpeTrainingIRs } from './irs.js';
 import { bpeTrainingFacet } from './facet.js';
-import { bpeTrainingDescription } from './description.js';
 import { bpeTrainingStageView } from './bpe-training-stage.js';
 
 export function registerBpeTraining(): void {
@@ -61,5 +58,4 @@ export function registerBpeTraining(): void {
   for (const ir of bpeTrainingIRs) registerIR(ir.id, ir);
   registerView('bpe-training-stage', bpeTrainingStageView);
   registerFacets([bpeTrainingFacet]);
-  registerDescription(bpeTrainingFacet.id, bpeTrainingDescription);
 }

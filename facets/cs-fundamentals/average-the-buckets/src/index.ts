@@ -18,7 +18,6 @@ export {
 export { averageTheBucketsScene, type AverageTheBucketsScene } from './scene.js';
 export { averageTheBucketsIRs } from './irs.js';
 export { averageTheBucketsFacet } from './facet.js';
-export { averageTheBucketsDescription } from './description.js';
 export { averageTheBucketsStageView } from './average-the-buckets-stage.js';
 
 import {
@@ -27,14 +26,12 @@ import {
   registerIR,
   registerView,
   registerFacets,
-  registerDescription,
 } from '@ffacet/core/runtime';
 
 import { averageTheBucketsAlgorithm, type AverageTheBucketsData } from './algorithm.js';
 import { averageTheBucketsScene } from './scene.js';
 import { averageTheBucketsIRs } from './irs.js';
 import { averageTheBucketsFacet } from './facet.js';
-import { averageTheBucketsDescription } from './description.js';
 import { averageTheBucketsStageView } from './average-the-buckets-stage.js';
 
 export function registerAverageTheBuckets(): void {
@@ -45,5 +42,4 @@ export function registerAverageTheBuckets(): void {
   for (const ir of averageTheBucketsIRs) registerIR(ir.id, ir);
   registerView('average-the-buckets-stage', averageTheBucketsStageView);
   registerFacets([averageTheBucketsFacet]);
-  registerDescription(averageTheBucketsFacet.id, averageTheBucketsDescription);
 }

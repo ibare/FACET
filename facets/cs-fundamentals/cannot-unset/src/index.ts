@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -18,7 +17,6 @@ import { cannotUnsetScene } from './scene.js';
 import { cannotUnsetIRs } from './irs.js';
 import { cannotUnsetStageView } from './cannot-unset-stage.js';
 import { cannotUnsetFacet } from './facet.js';
-import { cannotUnsetDescription } from './description.js';
 
 export { cannotUnsetAlgorithm } from './algorithm.js';
 export type { CannotUnsetData, CannotUnsetWord } from './algorithm.js';
@@ -31,7 +29,6 @@ export {
 export { cannotUnsetIRs } from './irs.js';
 export { cannotUnsetStageView } from './cannot-unset-stage.js';
 export { cannotUnsetFacet } from './facet.js';
-export { cannotUnsetDescription } from './description.js';
 
 export function registerCannotUnset(): void {
   registerAlgorithm<CannotUnsetData>('cannotUnset', cannotUnsetAlgorithm, {
@@ -41,5 +38,4 @@ export function registerCannotUnset(): void {
   for (const ir of cannotUnsetIRs) registerIR(ir.id, ir);
   registerView('cannot-unset-stage', cannotUnsetStageView);
   registerFacets([cannotUnsetFacet]);
-  registerDescription(cannotUnsetFacet.id, cannotUnsetDescription);
 }

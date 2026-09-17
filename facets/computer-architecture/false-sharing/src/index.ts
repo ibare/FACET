@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -15,14 +14,12 @@ import {
 } from '@ffacet/core/runtime';
 
 import { falseSharingAlgorithm, type FalseSharingData } from './algorithm.js';
-import { falseSharingDescription } from './description.js';
 import { falseSharingFacet } from './facet.js';
 import { falseSharingStageView } from './false-sharing-stage.js';
 import { falseSharingIRs } from './irs.js';
 import { falseSharingScene } from './scene.js';
 
 export { falseSharingAlgorithm, type FalseSharingData } from './algorithm.js';
-export { falseSharingDescription } from './description.js';
 export { falseSharingFacet } from './facet.js';
 export { falseSharingStageView } from './false-sharing-stage.js';
 export { falseSharingIRs } from './irs.js';
@@ -46,5 +43,4 @@ export function registerFalseSharing(): void {
   for (const ir of falseSharingIRs) registerIR(ir.id, ir);
   registerView('false-sharing-stage', falseSharingStageView);
   registerFacets([falseSharingFacet]);
-  registerDescription(falseSharingFacet.id, falseSharingDescription);
 }

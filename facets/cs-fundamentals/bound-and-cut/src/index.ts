@@ -8,7 +8,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -20,7 +19,6 @@ import { boundAndCutScene } from './scene.js';
 import { boundAndCutIRs } from './irs.js';
 import { boundAndCutStageView } from './bound-and-cut-stage.js';
 import { boundAndCutFacet } from './facet.js';
-import { boundAndCutDescription } from './description.js';
 
 export {
   boundAndCutAlgorithm,
@@ -43,7 +41,6 @@ export type { BoundAndCutScene, BoundBranch, BoundMark, BoundCaption } from './s
 export { boundAndCutIRs } from './irs.js';
 export { boundAndCutStageView } from './bound-and-cut-stage.js';
 export { boundAndCutFacet } from './facet.js';
-export { boundAndCutDescription } from './description.js';
 
 export function registerBoundAndCut(): void {
   registerAlgorithm('boundAndCut', boundAndCutAlgorithm, { mechanismKind: 'reactive' });
@@ -51,5 +48,4 @@ export function registerBoundAndCut(): void {
   for (const ir of boundAndCutIRs) registerIR(ir.id, ir);
   registerView('bound-and-cut-stage', boundAndCutStageView);
   registerFacets([boundAndCutFacet]);
-  registerDescription(boundAndCutFacet.id, boundAndCutDescription);
 }

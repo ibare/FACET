@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -19,7 +18,6 @@ import { baggingSampleIRs } from './irs.js';
 import { baggingSampleScene } from './scene.js';
 import { baggingSampleStageView } from './bagging-sample-stage.js';
 import { baggingSampleFacet } from './facet.js';
-import { baggingSampleDescription } from './description.js';
 
 export {
   baggingSampleAlgorithm,
@@ -35,7 +33,6 @@ export type {
 } from './scene.js';
 export { baggingSampleStageView } from './bagging-sample-stage.js';
 export { baggingSampleFacet } from './facet.js';
-export { baggingSampleDescription } from './description.js';
 
 export function registerBaggingSample(): void {
   registerAlgorithm<BaggingSampleData>('baggingSample', baggingSampleAlgorithm, {
@@ -45,5 +42,4 @@ export function registerBaggingSample(): void {
   for (const ir of baggingSampleIRs) registerIR(ir.id, ir);
   registerView('bagging-sample-stage', baggingSampleStageView);
   registerFacets([baggingSampleFacet]);
-  registerDescription(baggingSampleFacet.id, baggingSampleDescription);
 }

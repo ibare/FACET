@@ -26,7 +26,6 @@ export {
 } from './scene.js';
 export { loadFactorRehashIRs } from './irs.js';
 export { loadFactorRehashFacet } from './facet.js';
-export { loadFactorRehashDescription } from './description.js';
 export { loadFactorRehashStageView } from './load-factor-rehash-stage.js';
 
 import {
@@ -34,14 +33,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { loadFactorRehash, type LoadFactorRehashData } from './algorithm.js';
 import { loadFactorRehashScene } from './scene.js';
 import { loadFactorRehashIRs } from './irs.js';
 import { loadFactorRehashFacet } from './facet.js';
-import { loadFactorRehashDescription } from './description.js';
 import { loadFactorRehashStageView } from './load-factor-rehash-stage.js';
 
 export function registerLoadFactorRehash(): void {
@@ -52,5 +49,4 @@ export function registerLoadFactorRehash(): void {
   for (const ir of loadFactorRehashIRs) registerIR(ir.id, ir);
   registerView('load-factor-rehash-stage', loadFactorRehashStageView);
   registerFacets([loadFactorRehashFacet]);
-  registerDescription(loadFactorRehashFacet.id, loadFactorRehashDescription);
 }

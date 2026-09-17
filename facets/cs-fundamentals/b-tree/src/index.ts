@@ -6,7 +6,6 @@ export { bTree, type BTreeData } from './algorithm.js';
 export { bTreeProjector } from './projector.js';
 export { bTreeIRs, bTreeSearchIR } from './irs.js';
 export { bTreeFacet } from './facet.js';
-export { bTreeDescription } from './description.js';
 export { bTreeStageView, type BTreeStage, type StageNode } from './b-tree-stage.js';
 
 import {
@@ -14,14 +13,12 @@ import {
   registerProjector,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { bTree, type BTreeData } from './algorithm.js';
 import { bTreeProjector } from './projector.js';
 import { bTreeIRs } from './irs.js';
 import { bTreeFacet } from './facet.js';
-import { bTreeDescription } from './description.js';
 import { bTreeStageView } from './b-tree-stage.js';
 
 export function registerBTree(): void {
@@ -30,5 +27,4 @@ export function registerBTree(): void {
   for (const ir of bTreeIRs) registerIR(ir.id, ir);
   registerView('b-tree-stage', bTreeStageView);
   registerFacets([bTreeFacet]);
-  registerDescription(bTreeFacet.id, bTreeDescription);
 }

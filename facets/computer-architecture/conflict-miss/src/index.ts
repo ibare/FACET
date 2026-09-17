@@ -5,7 +5,7 @@
  * 뒤에는 띠를 끌어 어느 걸음으로든 곧장 갈 수 있다. ReactiveMechanism 이라
  * 컨트롤바 없이 스스로 재생하고, 걸음 간격도 스스로 정한다 (ctx.sleep).
  *
- * algorithm / 장면 설계 / facet JSON / description / 전용 view
+ * algorithm / 장면 설계 / facet JSON / 전용 view
  * (conflict-miss-stage) 를 함께 번들하고 등록 헬퍼를 제공한다. 코드 패널은
  * 두지 않는다.
  *
@@ -36,7 +36,6 @@ export {
 } from './scene.js';
 export { conflictMissIRs } from './irs.js';
 export { conflictMissFacet } from './facet.js';
-export { conflictMissDescription } from './description.js';
 export { conflictMissStageView } from './conflict-miss-stage.js';
 
 import {
@@ -44,14 +43,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { conflictMiss, type ConflictMissFacetData } from './algorithm.js';
 import { conflictMissScene } from './scene.js';
 import { conflictMissIRs } from './irs.js';
 import { conflictMissFacet } from './facet.js';
-import { conflictMissDescription } from './description.js';
 import { conflictMissStageView } from './conflict-miss-stage.js';
 
 export function registerConflictMiss(): void {
@@ -62,5 +59,4 @@ export function registerConflictMiss(): void {
   for (const ir of conflictMissIRs) registerIR(ir.id, ir);
   registerView('conflict-miss-stage', conflictMissStageView);
   registerFacets([conflictMissFacet]);
-  registerDescription(conflictMissFacet.id, conflictMissDescription);
 }

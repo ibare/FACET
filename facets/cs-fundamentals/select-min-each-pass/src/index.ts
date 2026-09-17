@@ -17,7 +17,6 @@ export {
 export { selectMinEachPassStageView } from './select-min-each-pass-stage.js';
 export { selectMinEachPassIRs } from './irs.js';
 export { selectMinEachPassFacet } from './facet.js';
-export { selectMinEachPassDescription } from './description.js';
 
 import {
   registerAlgorithm,
@@ -25,16 +24,14 @@ import {
   registerIR,
   registerView,
   registerFacets,
-  registerDescription,
 } from '@ffacet/core/runtime';
 import { selectMinEachPass, type SelectMinEachPassData } from './algorithm.js';
 import { selectMinEachPassScene } from './scene.js';
 import { selectMinEachPassStageView } from './select-min-each-pass-stage.js';
 import { selectMinEachPassIRs } from './irs.js';
 import { selectMinEachPassFacet } from './facet.js';
-import { selectMinEachPassDescription } from './description.js';
 
-/** algorithm/장면/IR/view/facet/description 등록 헬퍼. */
+/** algorithm/장면/IR/view/facet 등록 헬퍼. */
 export function registerSelectMinEachPass(): void {
   registerAlgorithm<SelectMinEachPassData>('selectMinEachPass', selectMinEachPass, {
     mechanismKind: 'reactive',
@@ -43,5 +40,4 @@ export function registerSelectMinEachPass(): void {
   for (const ir of selectMinEachPassIRs) registerIR(ir.id, ir);
   registerView('select-min-each-pass-stage', selectMinEachPassStageView);
   registerFacets([selectMinEachPassFacet]);
-  registerDescription(selectMinEachPassFacet.id, selectMinEachPassDescription);
 }

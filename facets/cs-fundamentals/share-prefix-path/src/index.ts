@@ -13,7 +13,6 @@ export {
 export { sharePrefixPathScene, type SharePrefixPathScene } from './scene.js';
 export { sharePrefixPathIRs } from './irs.js';
 export { sharePrefixPathFacet } from './facet.js';
-export { sharePrefixPathDescription } from './description.js';
 export { sharePrefixPathStageView } from './share-prefix-path-stage.js';
 
 import {
@@ -21,14 +20,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { sharePrefixPathAlgorithm, type SharePrefixPathData } from './algorithm.js';
 import { sharePrefixPathScene } from './scene.js';
 import { sharePrefixPathIRs } from './irs.js';
 import { sharePrefixPathFacet } from './facet.js';
-import { sharePrefixPathDescription } from './description.js';
 import { sharePrefixPathStageView } from './share-prefix-path-stage.js';
 
 export function registerSharePrefixPath(): void {
@@ -39,5 +36,4 @@ export function registerSharePrefixPath(): void {
   for (const ir of sharePrefixPathIRs) registerIR(ir.id, ir);
   registerView('share-prefix-path-stage', sharePrefixPathStageView);
   registerFacets([sharePrefixPathFacet]);
-  registerDescription(sharePrefixPathFacet.id, sharePrefixPathDescription);
 }

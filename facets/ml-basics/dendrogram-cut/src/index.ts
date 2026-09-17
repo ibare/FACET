@@ -4,7 +4,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -13,7 +12,6 @@ import {
 
 import { dendrogramCutAlgorithm } from './algorithm.js';
 import { dendrogramCutStageView } from './dendrogram-cut-stage.js';
-import { dendrogramCutDescription } from './description.js';
 import { dendrogramCutFacet } from './facet.js';
 import { dendrogramCutIRs } from './irs.js';
 import { dendrogramCutScene } from './scene.js';
@@ -36,7 +34,6 @@ export type {
 } from './scene.js';
 export { dendrogramCutStageView } from './dendrogram-cut-stage.js';
 export { dendrogramCutFacet } from './facet.js';
-export { dendrogramCutDescription } from './description.js';
 export { dendrogramCutIRs } from './irs.js';
 
 export function registerDendrogramCut(): void {
@@ -45,5 +42,4 @@ export function registerDendrogramCut(): void {
   for (const ir of dendrogramCutIRs) registerIR(ir.id, ir);
   registerView('dendrogram-cut-stage', dendrogramCutStageView);
   registerFacets([dendrogramCutFacet]);
-  registerDescription(dendrogramCutFacet.id, dendrogramCutDescription);
 }

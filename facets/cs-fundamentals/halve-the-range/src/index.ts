@@ -23,7 +23,6 @@ export {
 } from './scene.js';
 export { halveTheRangeIRs } from './irs.js';
 export { halveTheRangeFacet } from './facet.js';
-export { halveTheRangeDescription } from './description.js';
 export { halveTheRangeStageView } from './halve-the-range-stage.js';
 
 import {
@@ -31,14 +30,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { halveTheRange, type HalveTheRangeData } from './algorithm.js';
 import { halveTheRangeScene } from './scene.js';
 import { halveTheRangeIRs } from './irs.js';
 import { halveTheRangeFacet } from './facet.js';
-import { halveTheRangeDescription } from './description.js';
 import { halveTheRangeStageView } from './halve-the-range-stage.js';
 
 export function registerHalveTheRange(): void {
@@ -49,5 +46,4 @@ export function registerHalveTheRange(): void {
   for (const ir of halveTheRangeIRs) registerIR(ir.id, ir);
   registerView('halve-the-range-stage', halveTheRangeStageView);
   registerFacets([halveTheRangeFacet]);
-  registerDescription(halveTheRangeFacet.id, halveTheRangeDescription);
 }

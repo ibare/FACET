@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -18,14 +17,12 @@ import { matchFromBackScene } from './scene.js';
 import { matchFromBackIRs } from './irs.js';
 import { matchFromBackStageView } from './match-from-back-stage.js';
 import { matchFromBackFacet } from './facet.js';
-import { matchFromBackDescription } from './description.js';
 
 export { matchFromBackAlgorithm, type MatchFromBackData };
 export { matchFromBackScene, type MatchFromBackScene } from './scene.js';
 export { matchFromBackIRs };
 export { matchFromBackStageView };
 export { matchFromBackFacet };
-export { matchFromBackDescription };
 
 export function registerMatchFromBack(): void {
   registerAlgorithm('matchFromBack', matchFromBackAlgorithm, { mechanismKind: 'reactive' });
@@ -33,5 +30,4 @@ export function registerMatchFromBack(): void {
   for (const ir of matchFromBackIRs) registerIR(ir.id, ir);
   registerView('match-from-back-stage', matchFromBackStageView);
   registerFacets([matchFromBackFacet]);
-  registerDescription(matchFromBackFacet.id, matchFromBackDescription);
 }

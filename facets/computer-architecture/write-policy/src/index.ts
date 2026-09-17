@@ -1,6 +1,5 @@
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -12,7 +11,6 @@ import { writePolicyProjector } from './projector.js';
 import { writePolicyIRs, writePolicyImperativeIR } from './irs.js';
 import { writePolicyStageView } from './write-policy-stage.js';
 import { writePolicyFacet } from './facet.js';
-import { writePolicyDescription } from './description.js';
 
 export {
   writePolicyAlgorithm,
@@ -21,7 +19,6 @@ export {
   writePolicyImperativeIR,
   writePolicyStageView,
   writePolicyFacet,
-  writePolicyDescription,
 };
 export type { WritePolicyData };
 
@@ -38,5 +35,4 @@ export function registerWritePolicy(): void {
   for (const ir of writePolicyIRs) registerIR(ir.id, ir);
   registerView('write-policy-stage', writePolicyStageView);
   registerFacets([writePolicyFacet]);
-  registerDescription(writePolicyFacet.id, writePolicyDescription);
 }

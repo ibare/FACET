@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -18,7 +17,6 @@ import { fastPowerProjector } from './projector.js';
 import { fastPowerIRs, fastPowerImperativeIR } from './irs.js';
 import { fastPowerStageView } from './fast-power-stage.js';
 import { fastPowerFacet } from './facet.js';
-import { fastPowerDescription } from './description.js';
 
 export {
   fastPowerAlgorithm,
@@ -27,7 +25,6 @@ export {
   fastPowerImperativeIR,
   fastPowerStageView,
   fastPowerFacet,
-  fastPowerDescription,
 };
 export type { FastPowerData };
 
@@ -40,5 +37,4 @@ export function registerFastPower(): void {
   for (const ir of fastPowerIRs) registerIR(ir.id, ir);
   registerView('fast-power-stage', fastPowerStageView);
   registerFacets([fastPowerFacet]);
-  registerDescription(fastPowerFacet.id, fastPowerDescription);
 }

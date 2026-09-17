@@ -18,7 +18,6 @@ export {
 } from './scene.js';
 export { queueVsStackOrderIRs } from './irs.js';
 export { queueVsStackOrderFacet } from './facet.js';
-export { queueVsStackOrderDescription } from './description.js';
 export { queueVsStackOrderStageView } from './queue-vs-stack-order-stage.js';
 
 import {
@@ -26,14 +25,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { queueVsStackOrderAlgorithm, type QueueVsStackOrderData } from './algorithm.js';
 import { queueVsStackOrderScene } from './scene.js';
 import { queueVsStackOrderIRs } from './irs.js';
 import { queueVsStackOrderFacet } from './facet.js';
-import { queueVsStackOrderDescription } from './description.js';
 import { queueVsStackOrderStageView } from './queue-vs-stack-order-stage.js';
 
 export function registerQueueVsStackOrder(): void {
@@ -44,5 +41,4 @@ export function registerQueueVsStackOrder(): void {
   for (const ir of queueVsStackOrderIRs) registerIR(ir.id, ir);
   registerView('queue-vs-stack-order-stage', queueVsStackOrderStageView);
   registerFacets([queueVsStackOrderFacet]);
-  registerDescription(queueVsStackOrderFacet.id, queueVsStackOrderDescription);
 }

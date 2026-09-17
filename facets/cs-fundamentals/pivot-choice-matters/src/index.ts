@@ -25,7 +25,6 @@ export {
 } from './scene.js';
 export { pivotChoiceMattersIRs } from './irs.js';
 export { pivotChoiceMattersFacet } from './facet.js';
-export { pivotChoiceMattersDescription } from './description.js';
 export { pivotChoiceMattersStageView } from './pivot-choice-matters-stage.js';
 
 import {
@@ -34,17 +33,15 @@ import {
   registerIR,
   registerView,
   registerFacets,
-  registerDescription,
 } from '@ffacet/core/runtime';
 import { pivotChoiceMatters, type PivotChoiceMattersData } from './algorithm.js';
 import { pivotChoiceMattersScene } from './scene.js';
 import { pivotChoiceMattersIRs } from './irs.js';
 import { pivotChoiceMattersFacet } from './facet.js';
-import { pivotChoiceMattersDescription } from './description.js';
 import { pivotChoiceMattersStageView } from './pivot-choice-matters-stage.js';
 
 /**
- * algorithm / 장면 / IR / view / facet / description 등록 헬퍼.
+ * algorithm / 장면 / IR / view / facet 등록 헬퍼.
  *
  * 등록 순서는 S-facet 표준. 전용 View 는 Facets 직전에 끼운다 — facet JSON 의
  * block.type 이 마운트 시 카탈로그를 조회하기 때문.
@@ -57,5 +54,4 @@ export function registerPivotChoiceMatters(): void {
   for (const ir of pivotChoiceMattersIRs) registerIR(ir.id, ir);
   registerView('pivot-choice-matters-stage', pivotChoiceMattersStageView);
   registerFacets([pivotChoiceMattersFacet]);
-  registerDescription(pivotChoiceMattersFacet.id, pivotChoiceMattersDescription);
 }

@@ -15,7 +15,6 @@ export { shiftOnRemove, type ShiftOnRemoveFacetData } from './algorithm.js';
 export { shiftOnRemoveScene, type ShiftOnRemoveScene } from './scene.js';
 export { shiftOnRemoveIRs } from './irs.js';
 export { shiftOnRemoveFacet } from './facet.js';
-export { shiftOnRemoveDescription } from './description.js';
 export { shiftOnRemoveStageView } from './shift-on-remove-stage.js';
 
 import {
@@ -23,14 +22,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { shiftOnRemove, type ShiftOnRemoveFacetData } from './algorithm.js';
 import { shiftOnRemoveScene } from './scene.js';
 import { shiftOnRemoveIRs } from './irs.js';
 import { shiftOnRemoveFacet } from './facet.js';
-import { shiftOnRemoveDescription } from './description.js';
 import { shiftOnRemoveStageView } from './shift-on-remove-stage.js';
 
 export function registerShiftOnRemove(): void {
@@ -41,5 +38,4 @@ export function registerShiftOnRemove(): void {
   for (const ir of shiftOnRemoveIRs) registerIR(ir.id, ir);
   registerView('shift-on-remove-stage', shiftOnRemoveStageView);
   registerFacets([shiftOnRemoveFacet]);
-  registerDescription(shiftOnRemoveFacet.id, shiftOnRemoveDescription);
 }

@@ -26,7 +26,6 @@ import { typescriptTranspiler } from '@ffacet/transpiler-typescript';
 import {
   buildCapacityMatrix,
   maxFlowAlgorithm,
-  maxFlowDescription,
   maxFlowEdmondsKarpIR,
   maxFlowFacet,
   registerMaxFlow,
@@ -371,14 +370,6 @@ describe('등록', () => {
     expect(codePanel.ir).toBe('ir:max-flow-edmonds-karp');
     expect(maxFlowFacet.algorithm).toBe('module:maxFlow');
     expect(maxFlowFacet.projector).toBe('module:maxFlowProjector');
-  });
-
-  it('글의 facet 토큰이 제 id 와 맞고, 조각 참조를 하나 데리고 있다 (C4)', () => {
-    const tokens = maxFlowDescription.match(/\{facet:[A-Za-z]+\}/g) ?? [];
-    expect(tokens).toContain(`{${maxFlowFacet.id}}`);
-    // 되돌릴 폭이 실제로 쓰이는 장면은 이 망에 없다. 그 자리를 조각이 맡는다.
-    expect(tokens).toContain('{facet:undoByBackEdge}');
-    expect(maxFlowDescription).toContain('23 으로 똑같이 나온다');
   });
 
   it('무대 말고는 빌트인 view 를 쓰지 않는다 (원칙 6)', () => {

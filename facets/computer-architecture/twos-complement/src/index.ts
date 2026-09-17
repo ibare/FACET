@@ -4,7 +4,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -16,7 +15,6 @@ import { twosComplementProjector } from './projector.js';
 import { twosComplementImperativeIR, twosComplementIRs } from './irs.js';
 import { twosComplementStageView } from './twos-complement-stage.js';
 import { twosComplementFacet } from './facet.js';
-import { twosComplementDescription } from './description.js';
 
 export function registerTwosComplement(): void {
   registerAlgorithm<TwosComplementData>('twosComplement', twosComplementAlgorithm, {
@@ -27,7 +25,6 @@ export function registerTwosComplement(): void {
   for (const ir of twosComplementIRs) registerIR(ir.id, ir);
   registerView('twos-complement-stage', twosComplementStageView);
   registerFacets([twosComplementFacet]);
-  registerDescription(twosComplementFacet.id, twosComplementDescription);
 }
 
 export {
@@ -37,6 +34,5 @@ export {
   twosComplementIRs,
   twosComplementStageView,
   twosComplementFacet,
-  twosComplementDescription,
 };
 export type { TwosComplementData };

@@ -6,7 +6,7 @@
  * 평면 클릭으로 점 추가 / 점 드래그 / × 제거 / 항등 리셋 / 초기화) 을 6 단 동시 운동
  * (셀 → 화살표 → 격자 → 평행사변형 → |det| 게이지 → 보조 점) 으로 1:1 시각 사건 매핑.
  *
- * algorithm / projector / facet JSON / description / 전용 view (matrix-transform-stage)
+ * algorithm / projector / facet JSON / 전용 view (matrix-transform-stage)
  * 를 함께 번들하고 등록 헬퍼를 제공한다. 코드 패널은 1차 구현에서 생략.
  */
 
@@ -23,7 +23,6 @@ export {
 export { matrixTransformProjector } from './projector.js';
 export { matrixTransform2dIRs } from './irs.js';
 export { matrixTransform2dFacet } from './facet.js';
-export { matrixTransform2dDescription } from './description.js';
 export { matrixTransformStageView } from './matrix-transform-stage.js';
 
 import {
@@ -31,14 +30,12 @@ import {
   registerProjector,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { matrixTransform, type MatrixTransformData } from './algorithm.js';
 import { matrixTransformProjector } from './projector.js';
 import { matrixTransform2dIRs } from './irs.js';
 import { matrixTransform2dFacet } from './facet.js';
-import { matrixTransform2dDescription } from './description.js';
 import { matrixTransformStageView } from './matrix-transform-stage.js';
 
 export function registerMatrixTransform2d(): void {
@@ -49,5 +46,4 @@ export function registerMatrixTransform2d(): void {
   for (const ir of matrixTransform2dIRs) registerIR(ir.id, ir);
   registerView('matrix-transform-stage', matrixTransformStageView);
   registerFacets([matrixTransform2dFacet]);
-  registerDescription(matrixTransform2dFacet.id, matrixTransform2dDescription);
 }

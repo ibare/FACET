@@ -23,7 +23,6 @@ export {
 } from './scene.js';
 export { sortStabilityIRs } from './irs.js';
 export { sortStabilityFacet } from './facet.js';
-export { sortStabilityDescription } from './description.js';
 export { sortStabilityStageView } from './sort-stability-stage.js';
 
 import {
@@ -32,16 +31,14 @@ import {
   registerIR,
   registerView,
   registerFacets,
-  registerDescription,
 } from '@ffacet/core/runtime';
 import { sortStability, type SortStabilityData } from './algorithm.js';
 import { sortStabilityScene } from './scene.js';
 import { sortStabilityIRs } from './irs.js';
 import { sortStabilityStageView } from './sort-stability-stage.js';
 import { sortStabilityFacet } from './facet.js';
-import { sortStabilityDescription } from './description.js';
 
-/** algorithm/장면/IR/view/facet/description 등록 헬퍼. */
+/** algorithm/장면/IR/view/facet 등록 헬퍼. */
 export function registerSortStability(): void {
   registerAlgorithm<SortStabilityData>('sortStability', sortStability, {
     mechanismKind: 'reactive',
@@ -50,5 +47,4 @@ export function registerSortStability(): void {
   for (const ir of sortStabilityIRs) registerIR(ir.id, ir);
   registerView('sort-stability-stage', sortStabilityStageView);
   registerFacets([sortStabilityFacet]);
-  registerDescription(sortStabilityFacet.id, sortStabilityDescription);
 }

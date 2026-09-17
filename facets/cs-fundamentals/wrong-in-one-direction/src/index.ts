@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -18,7 +17,6 @@ import { wrongInOneDirectionScene } from './scene.js';
 import { wrongInOneDirectionIRs } from './irs.js';
 import { wrongInOneDirectionStageView } from './wrong-in-one-direction-stage.js';
 import { wrongInOneDirectionFacet } from './facet.js';
-import { wrongInOneDirectionDescription } from './description.js';
 
 export {
   wrongInOneDirectionAlgorithm,
@@ -26,7 +24,6 @@ export {
   wrongInOneDirectionIRs,
   wrongInOneDirectionStageView,
   wrongInOneDirectionFacet,
-  wrongInOneDirectionDescription,
 };
 export type { WrongInOneDirectionData };
 export type { WrongInOneDirectionScene } from './scene.js';
@@ -39,5 +36,4 @@ export function registerWrongInOneDirection(): void {
   for (const ir of wrongInOneDirectionIRs) registerIR(ir.id, ir);
   registerView('wrong-in-one-direction-stage', wrongInOneDirectionStageView);
   registerFacets([wrongInOneDirectionFacet]);
-  registerDescription(wrongInOneDirectionFacet.id, wrongInOneDirectionDescription);
 }

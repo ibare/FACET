@@ -9,7 +9,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -21,9 +20,8 @@ import { failLinkScene, type FailLinkScene } from './scene.js';
 import { failLinkIRs } from './irs.js';
 import { failLinkStageView } from './fail-link-stage.js';
 import { failLinkFacet } from './facet.js';
-import { failLinkDescription } from './description.js';
 
-export { failLinkAlgorithm, failLinkScene, failLinkIRs, failLinkStageView, failLinkFacet, failLinkDescription };
+export { failLinkAlgorithm, failLinkScene, failLinkIRs, failLinkStageView, failLinkFacet };
 export type { FailLinkData, FailLinkScene };
 
 export function registerFailLink(): void {
@@ -33,5 +31,4 @@ export function registerFailLink(): void {
   for (const ir of failLinkIRs) registerIR(ir.id, ir);
   registerView('fail-link-stage', failLinkStageView);
   registerFacets([failLinkFacet]);
-  registerDescription(failLinkFacet.id, failLinkDescription);
 }

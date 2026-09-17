@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -18,7 +17,6 @@ import { undoByBackEdgeScene } from './scene.js';
 import { undoByBackEdgeIRs } from './irs.js';
 import { undoByBackEdgeStageView } from './undo-by-back-edge-stage.js';
 import { undoByBackEdgeFacet } from './facet.js';
-import { undoByBackEdgeDescription } from './description.js';
 
 export function registerUndoByBackEdge(): void {
   registerAlgorithm<UndoByBackEdgeData>('undoByBackEdge', undoByBackEdgeAlgorithm, {
@@ -28,7 +26,6 @@ export function registerUndoByBackEdge(): void {
   for (const ir of undoByBackEdgeIRs) registerIR(ir.id, ir);
   registerView('undo-by-back-edge-stage', undoByBackEdgeStageView);
   registerFacets([undoByBackEdgeFacet]);
-  registerDescription(undoByBackEdgeFacet.id, undoByBackEdgeDescription);
 }
 
 export { undoByBackEdgeAlgorithm } from './algorithm.js';
@@ -37,4 +34,3 @@ export { undoByBackEdgeScene, type UndoByBackEdgeScene } from './scene.js';
 export { undoByBackEdgeIRs } from './irs.js';
 export { undoByBackEdgeStageView } from './undo-by-back-edge-stage.js';
 export { undoByBackEdgeFacet } from './facet.js';
-export { undoByBackEdgeDescription } from './description.js';

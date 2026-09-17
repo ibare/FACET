@@ -33,7 +33,6 @@ export {
 } from './scene.js';
 export { merkleTreeIRs } from './irs.js';
 export { merkleTreeFacet } from './facet.js';
-export { merkleTreeDescription } from './description.js';
 export { merkleStageView } from './merkle-stage.js';
 
 import {
@@ -41,14 +40,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { merkleTree, type MerkleTreeFacetData } from './algorithm.js';
 import { merkleTreeScene } from './scene.js';
 import { merkleTreeIRs } from './irs.js';
 import { merkleTreeFacet } from './facet.js';
-import { merkleTreeDescription } from './description.js';
 import { merkleStageView } from './merkle-stage.js';
 
 export function registerMerkleTree(): void {
@@ -59,5 +56,4 @@ export function registerMerkleTree(): void {
   for (const ir of merkleTreeIRs) registerIR(ir.id, ir);
   registerView('merkle-stage', merkleStageView);
   registerFacets([merkleTreeFacet]);
-  registerDescription(merkleTreeFacet.id, merkleTreeDescription);
 }

@@ -11,7 +11,6 @@ import {
   registerIR,
   registerView,
   registerFacets,
-  registerDescription,
 } from '@ffacet/core/runtime';
 
 import { integerOverflowAlgorithm, type IntegerOverflowData } from './algorithm.js';
@@ -19,7 +18,6 @@ import { integerOverflowProjector } from './projector.js';
 import { integerOverflowIRs, integerOverflowImperativeIR } from './irs.js';
 import { integerOverflowStageView } from './integer-overflow-stage.js';
 import { integerOverflowFacet } from './facet.js';
-import { integerOverflowDescription } from './description.js';
 
 export {
   integerOverflowAlgorithm,
@@ -28,7 +26,6 @@ export {
   integerOverflowImperativeIR,
   integerOverflowStageView,
   integerOverflowFacet,
-  integerOverflowDescription,
 };
 export type { IntegerOverflowData };
 export { limitOf, wrapSigned, makeSequence } from './algorithm.js';
@@ -44,5 +41,4 @@ export function registerIntegerOverflow(): void {
   for (const ir of integerOverflowIRs) registerIR(ir.id, ir);
   registerView('integer-overflow-stage', integerOverflowStageView);
   registerFacets([integerOverflowFacet]);
-  registerDescription(integerOverflowFacet.id, integerOverflowDescription);
 }

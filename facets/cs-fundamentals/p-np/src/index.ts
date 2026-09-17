@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -18,9 +17,8 @@ import { pNpProjector } from './projector.js';
 import { pNpIRs } from './irs.js';
 import { pNpStageView } from './p-np-stage.js';
 import { pNpFacet } from './facet.js';
-import { pNpDescription } from './description.js';
 
-export { pNpAlgorithm, pNpProjector, pNpIRs, pNpStageView, pNpFacet, pNpDescription };
+export { pNpAlgorithm, pNpProjector, pNpIRs, pNpStageView, pNpFacet };
 export { computePNpResult, P_NP_N_CHOICES, P_NP_SWEEP_STEPS } from './algorithm.js';
 export { pNpImperativeIR } from './irs.js';
 export {
@@ -44,5 +42,4 @@ export function registerPNp(): void {
   for (const ir of pNpIRs) registerIR(ir.id, ir);
   registerView('p-np-stage', pNpStageView);
   registerFacets([pNpFacet]);
-  registerDescription(pNpFacet.id, pNpDescription);
 }

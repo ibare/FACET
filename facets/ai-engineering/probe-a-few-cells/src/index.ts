@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -19,7 +18,6 @@ import { probeAFewCellsIRs } from './irs.js';
 import { probeAFewCellsScene } from './scene.js';
 import { probeAFewCellsStageView } from './probe-a-few-cells-stage.js';
 import { probeAFewCellsFacet } from './facet.js';
-import { probeAFewCellsDescription } from './description.js';
 
 export type { ProbeAFewCellsData } from './algorithm.js';
 export {
@@ -34,7 +32,6 @@ export {
   probeAFewCellsIRs,
   probeAFewCellsStageView,
   probeAFewCellsFacet,
-  probeAFewCellsDescription,
 };
 
 export function registerProbeAFewCells(): void {
@@ -49,5 +46,4 @@ export function registerProbeAFewCells(): void {
   for (const ir of probeAFewCellsIRs) registerIR(ir.id, ir);
   registerView('probe-a-few-cells-stage', probeAFewCellsStageView);
   registerFacets([probeAFewCellsFacet]);
-  registerDescription(probeAFewCellsFacet.id, probeAFewCellsDescription);
 }

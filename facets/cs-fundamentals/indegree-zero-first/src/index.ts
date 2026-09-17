@@ -21,7 +21,6 @@ export {
 } from './scene.js';
 export { indegreeZeroFirstIRs } from './irs.js';
 export { indegreeZeroFirstFacet } from './facet.js';
-export { indegreeZeroFirstDescription } from './description.js';
 export { indegreeZeroFirstStageView } from './indegree-zero-first-stage.js';
 
 import {
@@ -29,14 +28,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { indegreeZeroFirstAlgorithm, type IndegreeZeroFirstData } from './algorithm.js';
 import { indegreeZeroFirstScene } from './scene.js';
 import { indegreeZeroFirstIRs } from './irs.js';
 import { indegreeZeroFirstFacet } from './facet.js';
-import { indegreeZeroFirstDescription } from './description.js';
 import { indegreeZeroFirstStageView } from './indegree-zero-first-stage.js';
 
 export function registerIndegreeZeroFirst(): void {
@@ -47,5 +44,4 @@ export function registerIndegreeZeroFirst(): void {
   for (const ir of indegreeZeroFirstIRs) registerIR(ir.id, ir);
   registerView('indegree-zero-first-stage', indegreeZeroFirstStageView);
   registerFacets([indegreeZeroFirstFacet]);
-  registerDescription(indegreeZeroFirstFacet.id, indegreeZeroFirstDescription);
 }

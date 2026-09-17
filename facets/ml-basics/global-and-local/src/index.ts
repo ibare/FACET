@@ -15,7 +15,6 @@ export {
 } from './algorithm.js';
 export { globalAndLocalIRs } from './irs.js';
 export { globalAndLocalFacet } from './facet.js';
-export { globalAndLocalDescription } from './description.js';
 export { globalAndLocalStageView } from './global-and-local-stage.js';
 export {
   GLOBAL_AND_LOCAL_ROWS,
@@ -33,7 +32,6 @@ export {
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -43,7 +41,6 @@ import {
 import { globalAndLocalAlgorithm, type GlobalAndLocalData } from './algorithm.js';
 import { globalAndLocalIRs } from './irs.js';
 import { globalAndLocalFacet } from './facet.js';
-import { globalAndLocalDescription } from './description.js';
 import { globalAndLocalStageView } from './global-and-local-stage.js';
 import { globalAndLocalScene } from './scene.js';
 
@@ -55,5 +52,4 @@ export function registerGlobalAndLocal(): void {
   for (const ir of globalAndLocalIRs) registerIR(ir.id, ir);
   registerView('global-and-local-stage', globalAndLocalStageView);
   registerFacets([globalAndLocalFacet]);
-  registerDescription(globalAndLocalFacet.id, globalAndLocalDescription);
 }

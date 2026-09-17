@@ -19,7 +19,6 @@ export {
 } from './scene.js';
 export { growAndCopyIRs } from './irs.js';
 export { growAndCopyFacet } from './facet.js';
-export { growAndCopyDescription } from './description.js';
 export { growAndCopyStageView, type GrowAndCopyStage } from './grow-and-copy-stage.js';
 
 import {
@@ -27,14 +26,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { growAndCopy, type GrowAndCopyData } from './algorithm.js';
 import { growAndCopyScene } from './scene.js';
 import { growAndCopyIRs } from './irs.js';
 import { growAndCopyFacet } from './facet.js';
-import { growAndCopyDescription } from './description.js';
 import { growAndCopyStageView } from './grow-and-copy-stage.js';
 
 export function registerGrowAndCopy(): void {
@@ -45,5 +42,4 @@ export function registerGrowAndCopy(): void {
   for (const ir of growAndCopyIRs) registerIR(ir.id, ir);
   registerView('grow-and-copy-stage', growAndCopyStageView);
   registerFacets([growAndCopyFacet]);
-  registerDescription(growAndCopyFacet.id, growAndCopyDescription);
 }

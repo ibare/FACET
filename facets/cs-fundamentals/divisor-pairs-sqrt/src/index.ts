@@ -17,12 +17,10 @@ export {
 export { divisorPairsSqrtScene, type DivisorPairsSqrtScene } from './scene.js';
 export { divisorPairsSqrtIRs } from './irs.js';
 export { divisorPairsSqrtFacet } from './facet.js';
-export { divisorPairsSqrtDescription } from './description.js';
 export { divisorPairsSqrtStageView } from './divisor-pairs-sqrt-stage.js';
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -32,7 +30,6 @@ import { divisorPairsSqrtAlgorithm, type DivisorPairsSqrtData } from './algorith
 import { divisorPairsSqrtScene } from './scene.js';
 import { divisorPairsSqrtIRs } from './irs.js';
 import { divisorPairsSqrtFacet } from './facet.js';
-import { divisorPairsSqrtDescription } from './description.js';
 import { divisorPairsSqrtStageView } from './divisor-pairs-sqrt-stage.js';
 
 export function registerDivisorPairsSqrt(): void {
@@ -43,5 +40,4 @@ export function registerDivisorPairsSqrt(): void {
   for (const ir of divisorPairsSqrtIRs) registerIR(ir.id, ir);
   registerView('divisor-pairs-sqrt-stage', divisorPairsSqrtStageView);
   registerFacets([divisorPairsSqrtFacet]);
-  registerDescription(divisorPairsSqrtFacet.id, divisorPairsSqrtDescription);
 }

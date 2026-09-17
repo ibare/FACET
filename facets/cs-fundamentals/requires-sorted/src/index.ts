@@ -9,7 +9,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -20,7 +19,6 @@ import { requiresSortedAlgorithm, type RequiresSortedData } from './algorithm.js
 import { requiresSortedScene } from './scene.js';
 import { requiresSortedIRs } from './irs.js';
 import { requiresSortedFacet } from './facet.js';
-import { requiresSortedDescription } from './description.js';
 import { requiresSortedStageView } from './requires-sorted-stage.js';
 
 export {
@@ -28,7 +26,6 @@ export {
   requiresSortedScene,
   requiresSortedIRs,
   requiresSortedFacet,
-  requiresSortedDescription,
   requiresSortedStageView,
 };
 export type { RequiresSortedData, RequiresSortedRow } from './algorithm.js';
@@ -43,5 +40,4 @@ export function registerRequiresSorted(): void {
   for (const ir of requiresSortedIRs) registerIR(ir.id, ir);
   registerView('requires-sorted-stage', requiresSortedStageView);
   registerFacets([requiresSortedFacet]);
-  registerDescription(requiresSortedFacet.id, requiresSortedDescription);
 }

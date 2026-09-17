@@ -12,7 +12,6 @@
 export { hashSalt, type HashSaltFacetData, type SaltedUser } from './algorithm.js';
 export { hashSaltIRs } from './irs.js';
 export { hashSaltFacet } from './facet.js';
-export { hashSaltDescription } from './description.js';
 export { saltStageView } from './salt-stage.js';
 export {
   hashSaltScene,
@@ -27,13 +26,11 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { hashSalt, type HashSaltFacetData } from './algorithm.js';
 import { hashSaltIRs } from './irs.js';
 import { hashSaltFacet } from './facet.js';
-import { hashSaltDescription } from './description.js';
 import { saltStageView } from './salt-stage.js';
 import { hashSaltScene } from './scene.js';
 
@@ -45,5 +42,4 @@ export function registerHashSalt(): void {
   for (const ir of hashSaltIRs) registerIR(ir.id, ir);
   registerView('salt-stage', saltStageView);
   registerFacets([hashSaltFacet]);
-  registerDescription(hashSaltFacet.id, hashSaltDescription);
 }

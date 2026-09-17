@@ -20,7 +20,6 @@ export {
 } from './scene.js';
 export { insertIntoSortedPartIRs } from './irs.js';
 export { insertIntoSortedPartFacet } from './facet.js';
-export { insertIntoSortedPartDescription } from './description.js';
 export { insertIntoSortedPartStageView } from './insert-into-sorted-part-stage.js';
 
 import {
@@ -29,17 +28,15 @@ import {
   registerIR,
   registerView,
   registerFacets,
-  registerDescription,
 } from '@ffacet/core/runtime';
 import { insertIntoSortedPart, type InsertIntoSortedPartData } from './algorithm.js';
 import { insertIntoSortedPartScene } from './scene.js';
 import { insertIntoSortedPartIRs } from './irs.js';
 import { insertIntoSortedPartFacet } from './facet.js';
-import { insertIntoSortedPartDescription } from './description.js';
 import { insertIntoSortedPartStageView } from './insert-into-sorted-part-stage.js';
 
 /**
- * algorithm / scene / IR / view / facet / description 등록 헬퍼.
+ * algorithm / scene / IR / view / facet 등록 헬퍼.
  *
  * 순서는 S-facet 표준. 전용 view 는 Facets 직전에 끼운다 — facet JSON 의
  * block.type 이 마운트 시 view 카탈로그를 조회하기 때문.
@@ -52,5 +49,4 @@ export function registerInsertIntoSortedPart(): void {
   for (const ir of insertIntoSortedPartIRs) registerIR(ir.id, ir);
   registerView('insert-into-sorted-part-stage', insertIntoSortedPartStageView);
   registerFacets([insertIntoSortedPartFacet]);
-  registerDescription(insertIntoSortedPartFacet.id, insertIntoSortedPartDescription);
 }

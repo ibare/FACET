@@ -19,7 +19,6 @@ import { typescriptTranspiler } from '@ffacet/transpiler-typescript';
 import {
   primGrowIR,
   primMst,
-  primMstDescription,
   primMstFacet,
   primMstProjector,
   primMstStageView,
@@ -589,8 +588,6 @@ describe('선언 — facet.ts 가 규범대로 적혀 있다', () => {
     expect((primMstFacet.blocks.codePanel as { ir: string }).ir).toBe('ir:prim-grow');
     expect(primGrowIR.id).toBe('prim-grow');
     expect(primGrowIR.algorithm).toBe('primMst');
-    // description 의 토큰은 facet id 와 같아야 한다 (C4).
-    expect(primMstDescription).toContain('{facet:primMst}');
   });
 
   it('자료에는 좌표가 없다 — 구조뿐이다', () => {

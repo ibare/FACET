@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -14,7 +13,6 @@ import {
 } from '@ffacet/core/runtime';
 
 import { widestMarginAlgorithm } from './algorithm.js';
-import { widestMarginDescription } from './description.js';
 import { widestMarginFacet } from './facet.js';
 import { widestMarginIRs } from './irs.js';
 import { widestMarginScene } from './scene.js';
@@ -39,7 +37,6 @@ export type {
 } from './scene.js';
 export { widestMarginIRs } from './irs.js';
 export { widestMarginFacet } from './facet.js';
-export { widestMarginDescription } from './description.js';
 export {
   widestMarginStageView,
   formatSlope,
@@ -52,5 +49,4 @@ export function registerWidestMargin(): void {
   for (const ir of widestMarginIRs) registerIR(ir.id, ir);
   registerView('widest-margin-stage', widestMarginStageView);
   registerFacets([widestMarginFacet]);
-  registerDescription(widestMarginFacet.id, widestMarginDescription);
 }

@@ -8,7 +8,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -20,7 +19,6 @@ import { divideConquerCombineScene } from './scene.js';
 import { divideConquerCombineIRs } from './irs.js';
 import { divideConquerCombineStageView } from './divide-conquer-combine-stage.js';
 import { divideConquerCombineFacet } from './facet.js';
-import { divideConquerCombineDescription } from './description.js';
 
 export { divideConquerCombineAlgorithm, computeDivideConquerCombinePlan } from './algorithm.js';
 export type {
@@ -36,7 +34,6 @@ export type { DivideConquerCombineScene, DcFrame, DcMark, DcCaption } from './sc
 export { divideConquerCombineIRs } from './irs.js';
 export { divideConquerCombineStageView } from './divide-conquer-combine-stage.js';
 export { divideConquerCombineFacet } from './facet.js';
-export { divideConquerCombineDescription } from './description.js';
 
 export function registerDivideConquerCombine(): void {
   // reactive — 조각은 컨트롤바 없이 스스로 시작하고 걸음 간격도 스스로 정한다 (S-piece).
@@ -47,5 +44,4 @@ export function registerDivideConquerCombine(): void {
   for (const ir of divideConquerCombineIRs) registerIR(ir.id, ir);
   registerView('divide-conquer-combine-stage', divideConquerCombineStageView);
   registerFacets([divideConquerCombineFacet]);
-  registerDescription(divideConquerCombineFacet.id, divideConquerCombineDescription);
 }

@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -18,7 +17,6 @@ import { countThenPlaceScene } from './scene.js';
 import { countThenPlaceIRs } from './irs.js';
 import { countThenPlaceStageView } from './count-then-place-stage.js';
 import { countThenPlaceFacet } from './facet.js';
-import { countThenPlaceDescription } from './description.js';
 
 export type { CountThenPlaceData } from './algorithm.js';
 export type { CountThenPlaceScene } from './scene.js';
@@ -28,7 +26,6 @@ export {
   countThenPlaceIRs,
   countThenPlaceStageView,
   countThenPlaceFacet,
-  countThenPlaceDescription,
 };
 
 export function registerCountThenPlace(): void {
@@ -37,5 +34,4 @@ export function registerCountThenPlace(): void {
   for (const ir of countThenPlaceIRs) registerIR(ir.id, ir);
   registerView('count-then-place-stage', countThenPlaceStageView);
   registerFacets([countThenPlaceFacet]);
-  registerDescription(countThenPlaceFacet.id, countThenPlaceDescription);
 }

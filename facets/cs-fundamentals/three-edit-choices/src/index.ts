@@ -8,7 +8,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -20,7 +19,6 @@ import { threeEditChoicesScene } from './scene.js';
 import { threeEditChoicesIRs } from './irs.js';
 import { threeEditChoicesStageView } from './three-edit-choices-stage.js';
 import { threeEditChoicesFacet } from './facet.js';
-import { threeEditChoicesDescription } from './description.js';
 
 export function registerThreeEditChoices(): void {
   registerAlgorithm<ThreeEditChoicesData>('threeEditChoices', threeEditChoicesAlgorithm, {
@@ -31,7 +29,6 @@ export function registerThreeEditChoices(): void {
   for (const ir of threeEditChoicesIRs) registerIR(ir.id, ir);
   registerView('three-edit-choices-stage', threeEditChoicesStageView);
   registerFacets([threeEditChoicesFacet]);
-  registerDescription(threeEditChoicesFacet.id, threeEditChoicesDescription);
 }
 
 export {
@@ -41,7 +38,6 @@ export {
   threeEditChoicesIRs,
   threeEditChoicesStageView,
   threeEditChoicesFacet,
-  threeEditChoicesDescription,
 };
 export type { ThreeEditChoicesData };
 export type {

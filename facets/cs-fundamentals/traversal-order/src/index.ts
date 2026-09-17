@@ -24,7 +24,6 @@ export {
 } from './scene.js';
 export { traversalOrderIRs } from './irs.js';
 export { traversalOrderFacet } from './facet.js';
-export { traversalOrderDescription } from './description.js';
 export { traversalOrderStageView } from './traversal-order-stage.js';
 
 import {
@@ -32,14 +31,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { traversalOrder, type TraversalOrderData } from './algorithm.js';
 import { traversalOrderScene } from './scene.js';
 import { traversalOrderIRs } from './irs.js';
 import { traversalOrderFacet } from './facet.js';
-import { traversalOrderDescription } from './description.js';
 import { traversalOrderStageView } from './traversal-order-stage.js';
 
 export function registerTraversalOrder(): void {
@@ -50,5 +47,4 @@ export function registerTraversalOrder(): void {
   for (const ir of traversalOrderIRs) registerIR(ir.id, ir);
   registerView('traversal-order-stage', traversalOrderStageView);
   registerFacets([traversalOrderFacet]);
-  registerDescription(traversalOrderFacet.id, traversalOrderDescription);
 }

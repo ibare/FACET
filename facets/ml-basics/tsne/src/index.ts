@@ -23,7 +23,6 @@ export {
 export { tsneProjector } from './projector.js';
 export { tsneIRs } from './irs.js';
 export { tsneFacet } from './facet.js';
-export { tsneDescription } from './description.js';
 export { tsneStageView, type LedgerRow, type PanelState } from './tsne-stage.js';
 
 import {
@@ -31,14 +30,12 @@ import {
   registerProjector,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { tsne, type TsneData } from './algorithm.js';
 import { tsneProjector } from './projector.js';
 import { tsneIRs } from './irs.js';
 import { tsneFacet } from './facet.js';
-import { tsneDescription } from './description.js';
 import { tsneStageView } from './tsne-stage.js';
 
 export function registerTsne(): void {
@@ -47,5 +44,4 @@ export function registerTsne(): void {
   for (const ir of tsneIRs) registerIR(ir.id, ir);
   registerView('tsne-stage', tsneStageView);
   registerFacets([tsneFacet]);
-  registerDescription(tsneFacet.id, tsneDescription);
 }

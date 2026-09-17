@@ -738,11 +738,6 @@ describe('문안', () => {
     }
     expect(bad).toEqual([]);
   });
-
-  it('글이 자기 그림을 부른다', async () => {
-    const { twosComplementDescription } = await import('../src/description.js');
-    expect(twosComplementDescription).toContain(`{${twosComplementFacet.id}}`);
-  });
 });
 
 describe('화면', () => {

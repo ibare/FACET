@@ -4,7 +4,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -12,7 +11,6 @@ import {
 } from '@ffacet/core/runtime';
 
 import { mutuallyReachableAlgorithm } from './algorithm.js';
-import { mutuallyReachableDescription } from './description.js';
 import { mutuallyReachableFacet } from './facet.js';
 import { mutuallyReachableIRs } from './irs.js';
 import { mutuallyReachableStageView } from './mutually-reachable-stage.js';
@@ -20,7 +18,6 @@ import { mutuallyReachableScene } from './scene.js';
 
 export { mutuallyReachableAlgorithm } from './algorithm.js';
 export type { MutuallyReachableData, MutuallyReachableEdge } from './algorithm.js';
-export { mutuallyReachableDescription } from './description.js';
 export { mutuallyReachableFacet } from './facet.js';
 export { mutuallyReachableIRs } from './irs.js';
 export { mutuallyReachableStageView } from './mutually-reachable-stage.js';
@@ -35,5 +32,4 @@ export function registerMutuallyReachable(): void {
   for (const ir of mutuallyReachableIRs) registerIR(ir.id, ir);
   registerView('mutually-reachable-stage', mutuallyReachableStageView);
   registerFacets([mutuallyReachableFacet]);
-  registerDescription(mutuallyReachableFacet.id, mutuallyReachableDescription);
 }

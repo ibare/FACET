@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 /**
  * 조각 하나를 불러와 글과 함께 그리는 부분.
  *
@@ -13,13 +14,29 @@ import StarterKit from '@tiptap/starter-kit';
 import { FacetExtension, renderFacetMarkdown } from '@ffacet/host-tiptap';
 import { Warning } from '@phosphor-icons/react';
 import {
-  getDescription,
   hasFacetLoader,
   loadFacet,
   resolveLocale,
   type FacetJson,
 } from '@ffacet/core/runtime';
 import { usePreferences } from './preferences.js';
+
+/**
+ * 설명 글 — facet 하나에 마크다운 하나 (`descriptions/<facet id>.md`).
+ *
+ * 글은 이 데모 사이트만 쓴다. 한때 facet 패키지가 `description.ts` 로 들고
+ * core 레지스트리에 올렸는데, 호스트는 글을 읽지 않아 발행 번들만 무거워졌다.
+ * 그래서 여기 두고, 연 facet 의 글 하나만 그때 불러온다.
+ */
+const DESCRIPTIONS = import.meta.glob<string>('./descriptions/*.md', {
+  query: '?raw',
+  import: 'default',
+});
+
+function loadDescription(facetId: string): Promise<string | undefined> {
+  const load = DESCRIPTIONS[`./descriptions/${facetId.replace(/^facet:/, '')}.md`];
+  return load ? load() : Promise.resolve(undefined);
+}
 
 export type FacetDocState =
   | { kind: 'loading' }
@@ -54,14 +71,13 @@ export function useFacetDocument(facetId: string): FacetDocument {
       return;
     }
 
-    void loadFacet(facetId).then(
-      (facet) => {
+    void Promise.all([loadFacet(facetId), loadDescription(facetId)]).then(
+      ([facet, md]) => {
         if (cancelled) return;
         if (!facet) {
           setState({ kind: 'error', message: `facet 로드 실패: ${facetId}` });
           return;
         }
-        const md = getDescription(facetId);
         const body = md ?? `*(설명 없음)*\n\n{${facetId}}`;
         setState({ kind: 'ready', facet, html: renderFacetMarkdown(body) });
       },

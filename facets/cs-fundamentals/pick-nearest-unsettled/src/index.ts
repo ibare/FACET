@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -19,7 +18,6 @@ import { pickNearestUnsettledScene } from './scene.js';
 import { pickNearestUnsettledIRs } from './irs.js';
 import { pickNearestUnsettledStageView } from './pick-nearest-unsettled-stage.js';
 import { pickNearestUnsettledFacet } from './facet.js';
-import { pickNearestUnsettledDescription } from './description.js';
 
 export function registerPickNearestUnsettled(): void {
   registerAlgorithm('pickNearestUnsettled', pickNearestUnsettledAlgorithm, {
@@ -29,7 +27,6 @@ export function registerPickNearestUnsettled(): void {
   for (const ir of pickNearestUnsettledIRs) registerIR(ir.id, ir);
   registerView('pick-nearest-unsettled-stage', pickNearestUnsettledStageView);
   registerFacets([pickNearestUnsettledFacet]);
-  registerDescription(pickNearestUnsettledFacet.id, pickNearestUnsettledDescription);
 }
 
 export * from './algorithm.js';
@@ -37,4 +34,3 @@ export * from './scene.js';
 export * from './irs.js';
 export * from './pick-nearest-unsettled-stage.js';
 export * from './facet.js';
-export * from './description.js';

@@ -20,7 +20,6 @@ export {
 } from './scene.js';
 export { kChangesBoundaryIRs } from './irs.js';
 export { kChangesBoundaryFacet } from './facet.js';
-export { kChangesBoundaryDescription } from './description.js';
 export { kChangesBoundaryStageView } from './k-changes-boundary-stage.js';
 
 import {
@@ -28,14 +27,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { kChangesBoundary, type KChangesBoundaryData } from './algorithm.js';
 import { kChangesBoundaryScene } from './scene.js';
 import { kChangesBoundaryIRs } from './irs.js';
 import { kChangesBoundaryFacet } from './facet.js';
-import { kChangesBoundaryDescription } from './description.js';
 import { kChangesBoundaryStageView } from './k-changes-boundary-stage.js';
 
 export function registerKChangesBoundary(): void {
@@ -46,5 +43,4 @@ export function registerKChangesBoundary(): void {
   for (const ir of kChangesBoundaryIRs) registerIR(ir.id, ir);
   registerView('k-changes-boundary-stage', kChangesBoundaryStageView);
   registerFacets([kChangesBoundaryFacet]);
-  registerDescription(kChangesBoundaryFacet.id, kChangesBoundaryDescription);
 }

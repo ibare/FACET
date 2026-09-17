@@ -4,7 +4,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -18,7 +17,6 @@ import type { GrowOneTreeScene } from './scene.js';
 import { growOneTreeIRs } from './irs.js';
 import { growOneTreeStageView } from './grow-one-tree-stage.js';
 import { growOneTreeFacet } from './facet.js';
-import { growOneTreeDescription } from './description.js';
 
 export {
   growOneTreeAlgorithm,
@@ -26,7 +24,6 @@ export {
   growOneTreeIRs,
   growOneTreeStageView,
   growOneTreeFacet,
-  growOneTreeDescription,
 };
 export type { GrowOneTreeData, GrowOneTreeEdge, GrowOneTreeScene };
 
@@ -38,5 +35,4 @@ export function registerGrowOneTree(): void {
   for (const ir of growOneTreeIRs) registerIR(ir.id, ir);
   registerView('grow-one-tree-stage', growOneTreeStageView);
   registerFacets([growOneTreeFacet]);
-  registerDescription(growOneTreeFacet.id, growOneTreeDescription);
 }

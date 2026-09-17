@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -19,14 +18,12 @@ import { recallSpeedTradeoffIRs } from './irs.js';
 import { recallSpeedTradeoffScene } from './scene.js';
 import { recallSpeedTradeoffStageView } from './recall-speed-tradeoff-stage.js';
 import { recallSpeedTradeoffFacet } from './facet.js';
-import { recallSpeedTradeoffDescription } from './description.js';
 
 export { recallSpeedTradeoffAlgorithm } from './algorithm.js';
 export type { RecallPoint, RecallSpeedTradeoffData } from './algorithm.js';
 export { recallSpeedTradeoffIRs } from './irs.js';
 export { recallSpeedTradeoffStageView } from './recall-speed-tradeoff-stage.js';
 export { recallSpeedTradeoffFacet } from './facet.js';
-export { recallSpeedTradeoffDescription } from './description.js';
 export { recallSpeedTradeoffScene } from './scene.js';
 export type {
   RecallAnswer,
@@ -47,5 +44,4 @@ export function registerRecallSpeedTradeoff(): void {
   for (const ir of recallSpeedTradeoffIRs) registerIR(ir.id, ir);
   registerView('recall-speed-tradeoff-stage', recallSpeedTradeoffStageView);
   registerFacets([recallSpeedTradeoffFacet]);
-  registerDescription(recallSpeedTradeoffFacet.id, recallSpeedTradeoffDescription);
 }

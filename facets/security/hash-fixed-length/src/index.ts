@@ -6,7 +6,7 @@
  * 걸음 간격도 스스로 정한다 (ctx.sleep).
  *
  * 화면은 명령이 아니라 **장면**에서 만들어지므로 어느 걸음으로든 곧장 갈 수 있다
- * (S-scene). algorithm / scene / facet JSON / description / 전용 view
+ * (S-scene). algorithm / scene / facet JSON / 전용 view
  * (fixed-length-stage) 를 함께 번들하고 등록 헬퍼를 제공한다. 코드 패널은 두지 않는다.
  */
 
@@ -28,7 +28,6 @@ export {
 } from './scene.js';
 export { hashFixedLengthIRs } from './irs.js';
 export { hashFixedLengthFacet } from './facet.js';
-export { hashFixedLengthDescription } from './description.js';
 export { fixedLengthStageView } from './fixed-length-stage.js';
 
 import {
@@ -36,14 +35,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { hashFixedLength, type HashFixedLengthFacetData } from './algorithm.js';
 import { hashFixedLengthScene } from './scene.js';
 import { hashFixedLengthIRs } from './irs.js';
 import { hashFixedLengthFacet } from './facet.js';
-import { hashFixedLengthDescription } from './description.js';
 import { fixedLengthStageView } from './fixed-length-stage.js';
 
 export function registerHashFixedLength(): void {
@@ -54,5 +51,4 @@ export function registerHashFixedLength(): void {
   for (const ir of hashFixedLengthIRs) registerIR(ir.id, ir);
   registerView('fixed-length-stage', fixedLengthStageView);
   registerFacets([hashFixedLengthFacet]);
-  registerDescription(hashFixedLengthFacet.id, hashFixedLengthDescription);
 }

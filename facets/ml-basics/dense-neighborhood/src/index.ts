@@ -8,7 +8,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -17,7 +16,6 @@ import {
 
 import { denseNeighborhoodAlgorithm } from './algorithm.js';
 import { denseNeighborhoodStageView } from './dense-neighborhood-stage.js';
-import { denseNeighborhoodDescription } from './description.js';
 import { denseNeighborhoodFacet } from './facet.js';
 import { denseNeighborhoodIRs } from './irs.js';
 import { denseNeighborhoodScene } from './scene.js';
@@ -25,7 +23,6 @@ import { denseNeighborhoodScene } from './scene.js';
 export { denseNeighborhoodAlgorithm } from './algorithm.js';
 export type { DenseNeighborhoodData, DenseNeighborhoodPoint } from './algorithm.js';
 export { denseNeighborhoodStageView } from './dense-neighborhood-stage.js';
-export { denseNeighborhoodDescription } from './description.js';
 export { denseNeighborhoodFacet } from './facet.js';
 export { denseNeighborhoodIRs } from './irs.js';
 export {
@@ -47,5 +44,4 @@ export function registerDenseNeighborhood(): void {
   for (const ir of denseNeighborhoodIRs) registerIR(ir.id, ir);
   registerView('dense-neighborhood-stage', denseNeighborhoodStageView);
   registerFacets([denseNeighborhoodFacet]);
-  registerDescription(denseNeighborhoodFacet.id, denseNeighborhoodDescription);
 }

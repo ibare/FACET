@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -18,14 +17,12 @@ import { manyTreesVoteScene } from './scene.js';
 import { manyTreesVoteIRs } from './irs.js';
 import { manyTreesVoteStageView } from './many-trees-vote-stage.js';
 import { manyTreesVoteFacet } from './facet.js';
-import { manyTreesVoteDescription } from './description.js';
 
 export { manyTreesVoteAlgorithm, majorityIndex, voteCounts } from './algorithm.js';
 export type { ManyTreesVoteData } from './algorithm.js';
 export { manyTreesVoteIRs } from './irs.js';
 export { manyTreesVoteStageView } from './many-trees-vote-stage.js';
 export { manyTreesVoteFacet } from './facet.js';
-export { manyTreesVoteDescription } from './description.js';
 export {
   manyTreesVoteScene,
   readVoteBoard,
@@ -46,5 +43,4 @@ export function registerManyTreesVote(): void {
   for (const ir of manyTreesVoteIRs) registerIR(ir.id, ir);
   registerView('many-trees-vote-stage', manyTreesVoteStageView);
   registerFacets([manyTreesVoteFacet]);
-  registerDescription(manyTreesVoteFacet.id, manyTreesVoteDescription);
 }

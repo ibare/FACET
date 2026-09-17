@@ -5,7 +5,7 @@
  * 결정 문턱 입력을 계속 받는다 — 문턱은 학습이 정하는 값이 아니라 읽는 이가
  * 고르는 값이기 때문이다.
  *
- * algorithm / projector / IR / facet JSON / description / 전용 stage view 를
+ * algorithm / projector / IR / facet JSON / 전용 stage view 를
  * 함께 묶고 등록 헬퍼를 낸다. 등록 호출 책임은 호스트 앱에 있다.
  */
 
@@ -20,7 +20,6 @@ export {
   logisticRegressionTrainStepIR,
 } from './irs.js';
 export { logisticRegressionFacet } from './facet.js';
-export { logisticRegressionDescription } from './description.js';
 export {
   logisticRegressionStageView,
   type LogisticStageFrame,
@@ -33,13 +32,11 @@ import {
   registerIR,
   registerView,
   registerFacets,
-  registerDescription,
 } from '@ffacet/core/runtime';
 import { logisticRegression, type LogisticRegressionData } from './algorithm.js';
 import { logisticRegressionProjector } from './projector.js';
 import { logisticRegressionIRs } from './irs.js';
 import { logisticRegressionFacet } from './facet.js';
-import { logisticRegressionDescription } from './description.js';
 import { logisticRegressionStageView } from './logistic-regression-stage.js';
 
 export function registerLogisticRegression(): void {
@@ -50,5 +47,4 @@ export function registerLogisticRegression(): void {
   for (const ir of logisticRegressionIRs) registerIR(ir.id, ir);
   registerView('logistic-regression-stage', logisticRegressionStageView);
   registerFacets([logisticRegressionFacet]);
-  registerDescription(logisticRegressionFacet.id, logisticRegressionDescription);
 }

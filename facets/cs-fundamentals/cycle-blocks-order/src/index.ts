@@ -22,7 +22,6 @@ export {
 export { cycleBlocksOrderIRs } from './irs.js';
 export { cycleBlocksOrderStageView } from './cycle-blocks-order-stage.js';
 export { cycleBlocksOrderFacet } from './facet.js';
-export { cycleBlocksOrderDescription } from './description.js';
 
 import {
   registerAlgorithm,
@@ -30,16 +29,14 @@ import {
   registerIR,
   registerView,
   registerFacets,
-  registerDescription,
 } from '@ffacet/core/runtime';
 import { cycleBlocksOrder, type CycleBlocksOrderData } from './algorithm.js';
 import { cycleBlocksOrderScene } from './scene.js';
 import { cycleBlocksOrderIRs } from './irs.js';
 import { cycleBlocksOrderStageView } from './cycle-blocks-order-stage.js';
 import { cycleBlocksOrderFacet } from './facet.js';
-import { cycleBlocksOrderDescription } from './description.js';
 
-/** algorithm / 장면 / IR / view / facet / description 등록 헬퍼. */
+/** algorithm / 장면 / IR / view / facet 등록 헬퍼. */
 export function registerCycleBlocksOrder(): void {
   registerAlgorithm<CycleBlocksOrderData>('cycleBlocksOrder', cycleBlocksOrder, {
     mechanismKind: 'reactive',
@@ -48,5 +45,4 @@ export function registerCycleBlocksOrder(): void {
   for (const ir of cycleBlocksOrderIRs) registerIR(ir.id, ir);
   registerView('cycle-blocks-order-stage', cycleBlocksOrderStageView);
   registerFacets([cycleBlocksOrderFacet]);
-  registerDescription(cycleBlocksOrderFacet.id, cycleBlocksOrderDescription);
 }

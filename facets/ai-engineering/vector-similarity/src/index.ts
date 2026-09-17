@@ -10,7 +10,6 @@ import {
   registerIR,
   registerView,
   registerFacets,
-  registerDescription,
 } from '@ffacet/core/runtime';
 
 import { vectorSimilarityAlgorithm } from './algorithm.js';
@@ -18,7 +17,6 @@ import { vectorSimilarityProjector } from './projector.js';
 import { vectorSimilarityIRs } from './irs.js';
 import { vectorSimilarityStageView } from './vector-similarity-stage.js';
 import { vectorSimilarityFacet } from './facet.js';
-import { vectorSimilarityDescription } from './description.js';
 
 export function registerVectorSimilarity(): void {
   // 손잡이가 붙은 완제품은 reactive 다. `CoroutineMechanism.supportedControls` 에
@@ -29,7 +27,6 @@ export function registerVectorSimilarity(): void {
   for (const ir of vectorSimilarityIRs) registerIR(ir.id, ir);
   registerView('vector-similarity-stage', vectorSimilarityStageView);
   registerFacets([vectorSimilarityFacet]);
-  registerDescription(vectorSimilarityFacet.id, vectorSimilarityDescription);
 }
 
 export { vectorSimilarityAlgorithm, VECTOR_SIMILARITY_MEASURES, measureValue, rankOrder } from './algorithm.js';
@@ -38,4 +35,3 @@ export { vectorSimilarityProjector } from './projector.js';
 export { vectorSimilarityIRs } from './irs.js';
 export { vectorSimilarityStageView } from './vector-similarity-stage.js';
 export { vectorSimilarityFacet } from './facet.js';
-export { vectorSimilarityDescription } from './description.js';

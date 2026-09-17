@@ -18,7 +18,6 @@ export {
 } from './scene.js';
 export { greedyCanFailIRs } from './irs.js';
 export { greedyCanFailFacet } from './facet.js';
-export { greedyCanFailDescription } from './description.js';
 export { greedyCanFailStageView } from './greedy-can-fail-stage.js';
 
 import {
@@ -26,14 +25,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { greedyCanFail, type GreedyCanFailData } from './algorithm.js';
 import { greedyCanFailScene } from './scene.js';
 import { greedyCanFailIRs } from './irs.js';
 import { greedyCanFailFacet } from './facet.js';
-import { greedyCanFailDescription } from './description.js';
 import { greedyCanFailStageView } from './greedy-can-fail-stage.js';
 
 export function registerGreedyCanFail(): void {
@@ -44,5 +41,4 @@ export function registerGreedyCanFail(): void {
   for (const ir of greedyCanFailIRs) registerIR(ir.id, ir);
   registerView('greedy-can-fail-stage', greedyCanFailStageView);
   registerFacets([greedyCanFailFacet]);
-  registerDescription(greedyCanFailFacet.id, greedyCanFailDescription);
 }

@@ -9,7 +9,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -21,7 +20,6 @@ import { matchLengthPerSpotScene } from './scene.js';
 import { matchLengthPerSpotIRs } from './irs.js';
 import { matchLengthPerSpotStageView } from './match-length-per-spot-stage.js';
 import { matchLengthPerSpotFacet } from './facet.js';
-import { matchLengthPerSpotDescription } from './description.js';
 
 export {
   matchLengthPerSpotAlgorithm,
@@ -29,7 +27,6 @@ export {
   matchLengthPerSpotIRs,
   matchLengthPerSpotStageView,
   matchLengthPerSpotFacet,
-  matchLengthPerSpotDescription,
 };
 export type { MatchLengthPerSpotData };
 export type {
@@ -51,5 +48,4 @@ export function registerMatchLengthPerSpot(): void {
   for (const ir of matchLengthPerSpotIRs) registerIR(ir.id, ir);
   registerView('match-length-per-spot-stage', matchLengthPerSpotStageView);
   registerFacets([matchLengthPerSpotFacet]);
-  registerDescription(matchLengthPerSpotFacet.id, matchLengthPerSpotDescription);
 }

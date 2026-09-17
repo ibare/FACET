@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -18,7 +17,6 @@ import { kruskalMstProjector } from './projector.js';
 import { kruskalMstIRs, kruskalUnionIR } from './irs.js';
 import { kruskalMstStageView } from './kruskal-mst-stage.js';
 import { kruskalMstFacet } from './facet.js';
-import { kruskalMstDescription } from './description.js';
 
 export {
   kruskalMstAlgorithm,
@@ -27,7 +25,6 @@ export {
   kruskalUnionIR,
   kruskalMstStageView,
   kruskalMstFacet,
-  kruskalMstDescription,
 };
 export type { KruskalEdge, KruskalMstData };
 
@@ -37,5 +34,4 @@ export function registerKruskalMst(): void {
   for (const ir of kruskalMstIRs) registerIR(ir.id, ir);
   registerView('kruskal-mst-stage', kruskalMstStageView);
   registerFacets([kruskalMstFacet]);
-  registerDescription(kruskalMstFacet.id, kruskalMstDescription);
 }

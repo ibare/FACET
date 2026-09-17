@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -18,7 +17,6 @@ import { splitUntilOneScene } from './scene.js';
 import { splitUntilOneIRs } from './irs.js';
 import { splitUntilOneStageView } from './split-until-one-stage.js';
 import { splitUntilOneFacet } from './facet.js';
-import { splitUntilOneDescription } from './description.js';
 
 export { splitUntilOneAlgorithm, computeSplitUntilOnePlan } from './algorithm.js';
 export type {
@@ -36,7 +34,6 @@ export {
 export { splitUntilOneIRs } from './irs.js';
 export { splitUntilOneStageView } from './split-until-one-stage.js';
 export { splitUntilOneFacet } from './facet.js';
-export { splitUntilOneDescription } from './description.js';
 
 export function registerSplitUntilOne(): void {
   // reactive — 조각은 컨트롤바 없이 스스로 시작하고 걸음 간격도 스스로 정한다 (S-piece).
@@ -45,5 +42,4 @@ export function registerSplitUntilOne(): void {
   for (const ir of splitUntilOneIRs) registerIR(ir.id, ir);
   registerView('split-until-one-stage', splitUntilOneStageView);
   registerFacets([splitUntilOneFacet]);
-  registerDescription(splitUntilOneFacet.id, splitUntilOneDescription);
 }

@@ -35,7 +35,6 @@ export type {
 } from './scene.js';
 export { unrepresentableFractionIRs } from './irs.js';
 export { unrepresentableFractionFacet } from './facet.js';
-export { unrepresentableFractionDescription } from './description.js';
 export { unrepresentableFractionStageView } from './unrepresentable-fraction-stage.js';
 
 import {
@@ -43,19 +42,17 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { unrepresentableFraction, type UnrepresentableFractionData } from './algorithm.js';
 import { unrepresentableFractionScene } from './scene.js';
 import { unrepresentableFractionIRs } from './irs.js';
 import { unrepresentableFractionFacet } from './facet.js';
-import { unrepresentableFractionDescription } from './description.js';
 import { unrepresentableFractionStageView } from './unrepresentable-fraction-stage.js';
 
 /**
- * 등록 헬퍼. 순서는 S-facet 표준 (Algorithm → Scene → IR → View → Facets
- * → Description). 전용 View 는 Facets 직전에 끼운다 — facet JSON 의 block.type
+ * 등록 헬퍼. 순서는 S-facet 표준 (Algorithm → Scene → IR → View → Facets).
+ * 전용 View 는 Facets 직전에 끼운다 — facet JSON 의 block.type
  * 이 마운트 시 카탈로그를 조회하기 때문.
  */
 export function registerUnrepresentableFraction(): void {
@@ -66,5 +63,4 @@ export function registerUnrepresentableFraction(): void {
   for (const ir of unrepresentableFractionIRs) registerIR(ir.id, ir);
   registerView('unrepresentable-fraction-stage', unrepresentableFractionStageView);
   registerFacets([unrepresentableFractionFacet]);
-  registerDescription(unrepresentableFractionFacet.id, unrepresentableFractionDescription);
 }

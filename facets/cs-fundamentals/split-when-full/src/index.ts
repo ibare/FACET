@@ -19,7 +19,6 @@ export {
 export { splitWhenFullScene, type SplitWhenFullScene } from './scene.js';
 export { splitWhenFullIRs } from './irs.js';
 export { splitWhenFullFacet } from './facet.js';
-export { splitWhenFullDescription } from './description.js';
 export { splitWhenFullStageView } from './split-when-full-stage.js';
 
 import {
@@ -27,14 +26,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { splitWhenFull, type SplitWhenFullData } from './algorithm.js';
 import { splitWhenFullScene } from './scene.js';
 import { splitWhenFullIRs } from './irs.js';
 import { splitWhenFullFacet } from './facet.js';
-import { splitWhenFullDescription } from './description.js';
 import { splitWhenFullStageView } from './split-when-full-stage.js';
 
 export function registerSplitWhenFull(): void {
@@ -45,5 +42,4 @@ export function registerSplitWhenFull(): void {
   for (const ir of splitWhenFullIRs) registerIR(ir.id, ir);
   registerView('split-when-full-stage', splitWhenFullStageView);
   registerFacets([splitWhenFullFacet]);
-  registerDescription(splitWhenFullFacet.id, splitWhenFullDescription);
 }

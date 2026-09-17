@@ -9,7 +9,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -21,14 +20,12 @@ import { invertedFileIndexProjector } from './projector.js';
 import { invertedFileIndexIRs } from './irs.js';
 import { invertedFileIndexStageView } from './inverted-file-index-stage.js';
 import { invertedFileIndexFacet } from './facet.js';
-import { invertedFileIndexDescription } from './description.js';
 
 export { invertedFileIndexAlgorithm, type InvertedFileIndexData } from './algorithm.js';
 export { invertedFileIndexProjector } from './projector.js';
 export { invertedFileIndexIRs } from './irs.js';
 export { invertedFileIndexStageView } from './inverted-file-index-stage.js';
 export { invertedFileIndexFacet } from './facet.js';
-export { invertedFileIndexDescription } from './description.js';
 
 export function registerInvertedFileIndex(): void {
   registerAlgorithm<InvertedFileIndexData>('invertedFileIndex', invertedFileIndexAlgorithm, {
@@ -38,5 +35,4 @@ export function registerInvertedFileIndex(): void {
   for (const ir of invertedFileIndexIRs) registerIR(ir.id, ir);
   registerView('inverted-file-index-stage', invertedFileIndexStageView);
   registerFacets([invertedFileIndexFacet]);
-  registerDescription(invertedFileIndexFacet.id, invertedFileIndexDescription);
 }

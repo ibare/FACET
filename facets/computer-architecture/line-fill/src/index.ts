@@ -11,7 +11,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -23,9 +22,8 @@ import { lineFillScene } from './scene.js';
 import { lineFillIRs } from './irs.js';
 import { lineFillStageView } from './line-fill-stage.js';
 import { lineFillFacet } from './facet.js';
-import { lineFillDescription } from './description.js';
 
-export { lineFillAlgorithm, lineOf, perLineOf, lineFillIRs, lineFillStageView, lineFillFacet, lineFillDescription };
+export { lineFillAlgorithm, lineOf, perLineOf, lineFillIRs, lineFillStageView, lineFillFacet };
 export { lineFillScene } from './scene.js';
 export {
   captionOf,
@@ -48,5 +46,4 @@ export function registerLineFill(): void {
   for (const ir of lineFillIRs) registerIR(ir.id, ir);
   registerView('line-fill-stage', lineFillStageView);
   registerFacets([lineFillFacet]);
-  registerDescription(lineFillFacet.id, lineFillDescription);
 }

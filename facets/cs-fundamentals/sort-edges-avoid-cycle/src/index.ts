@@ -9,7 +9,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -17,7 +16,6 @@ import {
 } from '@ffacet/core/runtime';
 
 import { sortEdgesAvoidCycleAlgorithm, type SortEdgesAvoidCycleData } from './algorithm.js';
-import { sortEdgesAvoidCycleDescription } from './description.js';
 import { sortEdgesAvoidCycleFacet } from './facet.js';
 import { sortEdgesAvoidCycleIRs } from './irs.js';
 import { sortEdgesAvoidCycleScene } from './scene.js';
@@ -25,7 +23,6 @@ import { sortEdgesAvoidCycleStageView } from './sort-edges-avoid-cycle-stage.js'
 
 export {
   sortEdgesAvoidCycleAlgorithm,
-  sortEdgesAvoidCycleDescription,
   sortEdgesAvoidCycleFacet,
   sortEdgesAvoidCycleIRs,
   sortEdgesAvoidCycleScene,
@@ -45,5 +42,4 @@ export function registerSortEdgesAvoidCycle(): void {
   for (const ir of sortEdgesAvoidCycleIRs) registerIR(ir.id, ir);
   registerView('sort-edges-avoid-cycle-stage', sortEdgesAvoidCycleStageView);
   registerFacets([sortEdgesAvoidCycleFacet]);
-  registerDescription(sortEdgesAvoidCycleFacet.id, sortEdgesAvoidCycleDescription);
 }

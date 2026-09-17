@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -14,7 +13,6 @@ import {
 } from '@ffacet/core/runtime';
 
 import { trustTheSmallestAlgorithm, type TrustTheSmallestData } from './algorithm.js';
-import { trustTheSmallestDescription } from './description.js';
 import { trustTheSmallestFacet } from './facet.js';
 import { trustTheSmallestIRs } from './irs.js';
 import { trustTheSmallestScene } from './scene.js';
@@ -30,7 +28,6 @@ export function registerTrustTheSmallest(): void {
   for (const ir of trustTheSmallestIRs) registerIR(ir.id, ir);
   registerView('trust-the-smallest-stage', trustTheSmallestStageView);
   registerFacets([trustTheSmallestFacet]);
-  registerDescription(trustTheSmallestFacet.id, trustTheSmallestDescription);
 }
 
 export { trustTheSmallestAlgorithm, trustTheSmallestCellsOf } from './algorithm.js';
@@ -46,5 +43,4 @@ export type {
 } from './scene.js';
 export { trustTheSmallestIRs } from './irs.js';
 export { trustTheSmallestFacet } from './facet.js';
-export { trustTheSmallestDescription } from './description.js';
 export { trustTheSmallestStageView } from './trust-the-smallest-stage.js';

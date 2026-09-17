@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -18,7 +17,6 @@ import { tDigestProjector } from './projector.js';
 import { tDigestIRs } from './irs.js';
 import { tDigestStageView } from './t-digest-stage.js';
 import { tDigestFacet } from './facet.js';
-import { tDigestDescription } from './description.js';
 
 export {
   tDigestAlgorithm,
@@ -34,7 +32,6 @@ export { tDigestProjector } from './projector.js';
 export { tDigestIRs } from './irs.js';
 export { tDigestStageView } from './t-digest-stage.js';
 export { tDigestFacet } from './facet.js';
-export { tDigestDescription } from './description.js';
 
 export function registerTDigest(): void {
   // 손잡이가 있는 완제품이라 reactive 다. 세 상태 — 나아가는 중 · 멈춤 ·
@@ -46,5 +43,4 @@ export function registerTDigest(): void {
   for (const ir of tDigestIRs) registerIR(ir.id, ir);
   registerView('t-digest-stage', tDigestStageView);
   registerFacets([tDigestFacet]);
-  registerDescription(tDigestFacet.id, tDigestDescription);
 }

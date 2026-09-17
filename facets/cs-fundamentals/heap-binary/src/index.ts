@@ -9,7 +9,6 @@ export { heapBinary, type HeapBinaryData } from './algorithm.js';
 export { heapBinaryProjector } from './projector.js';
 export { heapBinaryIRs, heapSiftIR } from './irs.js';
 export { heapBinaryFacet } from './facet.js';
-export { heapBinaryDescription } from './description.js';
 export { heapBinaryStageView, type HeapBinaryStage } from './heap-binary-stage.js';
 
 import {
@@ -17,14 +16,12 @@ import {
   registerProjector,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { heapBinary, type HeapBinaryData } from './algorithm.js';
 import { heapBinaryProjector } from './projector.js';
 import { heapBinaryIRs } from './irs.js';
 import { heapBinaryFacet } from './facet.js';
-import { heapBinaryDescription } from './description.js';
 import { heapBinaryStageView } from './heap-binary-stage.js';
 
 export function registerHeapBinary(): void {
@@ -35,5 +32,4 @@ export function registerHeapBinary(): void {
   for (const ir of heapBinaryIRs) registerIR(ir.id, ir);
   registerView('heap-binary-stage', heapBinaryStageView);
   registerFacets([heapBinaryFacet]);
-  registerDescription(heapBinaryFacet.id, heapBinaryDescription);
 }

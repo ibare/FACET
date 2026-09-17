@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -15,7 +14,6 @@ import {
 } from '@ffacet/core/runtime';
 
 import { latencyLadderAlgorithm, type LatencyLadderData } from './algorithm.js';
-import { latencyLadderDescription } from './description.js';
 import { latencyLadderFacet } from './facet.js';
 import { latencyLadderIRs } from './irs.js';
 import { latencyLadderStageView } from './latency-ladder-stage.js';
@@ -30,7 +28,6 @@ export {
   type LatencyLevel,
   type LatencyRung,
 } from './algorithm.js';
-export { latencyLadderDescription } from './description.js';
 export { latencyLadderFacet } from './facet.js';
 export { latencyLadderIRs } from './irs.js';
 export { latencyLadderStageView } from './latency-ladder-stage.js';
@@ -52,5 +49,4 @@ export function registerLatencyLadder(): void {
   for (const ir of latencyLadderIRs) registerIR(ir.id, ir);
   registerView('latency-ladder-stage', latencyLadderStageView);
   registerFacets([latencyLadderFacet]);
-  registerDescription(latencyLadderFacet.id, latencyLadderDescription);
 }

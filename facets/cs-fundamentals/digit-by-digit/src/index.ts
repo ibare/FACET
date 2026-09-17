@@ -21,7 +21,6 @@ export type {
 } from './scene.js';
 export { digitByDigitIRs } from './irs.js';
 export { digitByDigitFacet } from './facet.js';
-export { digitByDigitDescription } from './description.js';
 export { digitByDigitStageView } from './digit-by-digit-stage.js';
 
 import {
@@ -30,16 +29,14 @@ import {
   registerIR,
   registerView,
   registerFacets,
-  registerDescription,
 } from '@ffacet/core/runtime';
 import { digitByDigit, type DigitByDigitData } from './algorithm.js';
 import { digitByDigitScene } from './scene.js';
 import { digitByDigitIRs } from './irs.js';
 import { digitByDigitStageView } from './digit-by-digit-stage.js';
 import { digitByDigitFacet } from './facet.js';
-import { digitByDigitDescription } from './description.js';
 
-/** algorithm/scene/IR/view/facet/description 등록 헬퍼. */
+/** algorithm/scene/IR/view/facet 등록 헬퍼. */
 export function registerDigitByDigit(): void {
   registerAlgorithm<DigitByDigitData>('digitByDigit', digitByDigit, {
     mechanismKind: 'reactive',
@@ -48,5 +45,4 @@ export function registerDigitByDigit(): void {
   for (const ir of digitByDigitIRs) registerIR(ir.id, ir);
   registerView('digit-by-digit-stage', digitByDigitStageView);
   registerFacets([digitByDigitFacet]);
-  registerDescription(digitByDigitFacet.id, digitByDigitDescription);
 }

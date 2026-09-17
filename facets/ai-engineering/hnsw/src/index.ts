@@ -14,7 +14,6 @@ import {
   registerIR,
   registerView,
   registerFacets,
-  registerDescription,
 } from '@ffacet/core/runtime';
 
 import { hnswAlgorithm, computeHnswRound, type HnswData } from './algorithm.js';
@@ -22,7 +21,6 @@ import { hnswProjector } from './projector.js';
 import { hnswStageView } from './hnsw-stage.js';
 import { hnswIRs } from './irs.js';
 import { hnswFacet } from './facet.js';
-import { hnswDescription } from './description.js';
 
 export function registerHnsw(): void {
   registerAlgorithm<HnswData>('hnsw', hnswAlgorithm, { mechanismKind: 'reactive' });
@@ -30,7 +28,6 @@ export function registerHnsw(): void {
   for (const ir of hnswIRs) registerIR(ir.id, ir);
   registerView('hnsw-stage', hnswStageView);
   registerFacets([hnswFacet]);
-  registerDescription(hnswFacet.id, hnswDescription);
 }
 
 export {
@@ -40,7 +37,6 @@ export {
   hnswStageView,
   hnswIRs,
   hnswFacet,
-  hnswDescription,
 };
 export type { HnswData } from './algorithm.js';
 export type { HnswPoint, HnswRound, HnswStep, HnswWalk, HnswWalkerFrame } from './algorithm.js';

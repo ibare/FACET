@@ -10,7 +10,6 @@ export { kmeans, type KmeansData, type KmeansReaderAnswer } from './algorithm.js
 export { kmeansProjector } from './projector.js';
 export { kmeansStepIR, kmeansIRs } from './irs.js';
 export { kmeansFacet } from './facet.js';
-export { kmeansDescription } from './description.js';
 export { kmeansStageView } from './kmeans-stage.js';
 
 import {
@@ -19,13 +18,11 @@ import {
   registerIR,
   registerView,
   registerFacets,
-  registerDescription,
 } from '@ffacet/core/runtime';
 import { kmeans, type KmeansData } from './algorithm.js';
 import { kmeansProjector } from './projector.js';
 import { kmeansIRs } from './irs.js';
 import { kmeansFacet } from './facet.js';
-import { kmeansDescription } from './description.js';
 import { kmeansStageView } from './kmeans-stage.js';
 
 export function registerKmeans(): void {
@@ -34,5 +31,4 @@ export function registerKmeans(): void {
   for (const ir of kmeansIRs) registerIR(ir.id, ir);
   registerView('kmeans-stage', kmeansStageView);
   registerFacets([kmeansFacet]);
-  registerDescription(kmeansFacet.id, kmeansDescription);
 }

@@ -1,6 +1,5 @@
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -12,7 +11,6 @@ import { spaceIsPartOfItScene } from './scene.js';
 import { spaceIsPartOfItIRs } from './irs.js';
 import { spaceIsPartOfItStageView } from './space-is-part-of-it-stage.js';
 import { spaceIsPartOfItFacet } from './facet.js';
-import { spaceIsPartOfItDescription } from './description.js';
 
 /**
  * 등록 진입점. 호출 책임은 호스트 앱에 있다 — 이 파일은 사이드 이펙트로 스스로
@@ -28,7 +26,6 @@ export function registerSpaceIsPartOfIt(): void {
   for (const ir of spaceIsPartOfItIRs) registerIR(ir.id, ir);
   registerView('space-is-part-of-it-stage', spaceIsPartOfItStageView);
   registerFacets([spaceIsPartOfItFacet]);
-  registerDescription(spaceIsPartOfItFacet.id, spaceIsPartOfItDescription);
 }
 
 export {
@@ -37,6 +34,5 @@ export {
   spaceIsPartOfItIRs,
   spaceIsPartOfItStageView,
   spaceIsPartOfItFacet,
-  spaceIsPartOfItDescription,
 };
 export type { SpaceIsPartOfItData };

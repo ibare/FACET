@@ -9,7 +9,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -21,7 +20,6 @@ import { partitionAroundPivotScene } from './scene.js';
 import { partitionAroundPivotIRs } from './irs.js';
 import { partitionAroundPivotStageView } from './partition-around-pivot-stage.js';
 import { partitionAroundPivotFacet } from './facet.js';
-import { partitionAroundPivotDescription } from './description.js';
 
 export function registerPartitionAroundPivot(): void {
   registerAlgorithm<PartitionAroundPivotData>(
@@ -33,7 +31,6 @@ export function registerPartitionAroundPivot(): void {
   for (const ir of partitionAroundPivotIRs) registerIR(ir.id, ir);
   registerView('partition-around-pivot-stage', partitionAroundPivotStageView);
   registerFacets([partitionAroundPivotFacet]);
-  registerDescription(partitionAroundPivotFacet.id, partitionAroundPivotDescription);
 }
 
 export { partitionAroundPivotAlgorithm } from './algorithm.js';
@@ -43,4 +40,3 @@ export type { PartitionAroundPivotScene } from './scene.js';
 export { partitionAroundPivotIRs } from './irs.js';
 export { partitionAroundPivotStageView } from './partition-around-pivot-stage.js';
 export { partitionAroundPivotFacet } from './facet.js';
-export { partitionAroundPivotDescription } from './description.js';

@@ -12,7 +12,6 @@
 export { signatureKeyDirection, type SignatureKeyDirectionFacetData } from './algorithm.js';
 export { signatureKeyDirectionIRs } from './irs.js';
 export { signatureKeyDirectionFacet } from './facet.js';
-export { signatureKeyDirectionDescription } from './description.js';
 export { keyDirectionStageView } from './key-direction-stage.js';
 export {
   signatureKeyDirectionScene,
@@ -27,13 +26,11 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { signatureKeyDirection, type SignatureKeyDirectionFacetData } from './algorithm.js';
 import { signatureKeyDirectionIRs } from './irs.js';
 import { signatureKeyDirectionFacet } from './facet.js';
-import { signatureKeyDirectionDescription } from './description.js';
 import { keyDirectionStageView } from './key-direction-stage.js';
 import { signatureKeyDirectionScene } from './scene.js';
 
@@ -47,5 +44,4 @@ export function registerSignatureKeyDirection(): void {
   for (const ir of signatureKeyDirectionIRs) registerIR(ir.id, ir);
   registerView('key-direction-stage', keyDirectionStageView);
   registerFacets([signatureKeyDirectionFacet]);
-  registerDescription(signatureKeyDirectionFacet.id, signatureKeyDirectionDescription);
 }

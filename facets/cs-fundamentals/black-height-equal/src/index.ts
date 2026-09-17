@@ -15,7 +15,6 @@ export {
 export { blackHeightEqualScene, type BlackHeightEqualScene } from './scene.js';
 export { blackHeightEqualIRs } from './irs.js';
 export { blackHeightEqualFacet } from './facet.js';
-export { blackHeightEqualDescription } from './description.js';
 export { blackHeightEqualStageView } from './black-height-equal-stage.js';
 
 import {
@@ -23,14 +22,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { blackHeightEqual, type BlackHeightEqualData } from './algorithm.js';
 import { blackHeightEqualScene } from './scene.js';
 import { blackHeightEqualIRs } from './irs.js';
 import { blackHeightEqualFacet } from './facet.js';
-import { blackHeightEqualDescription } from './description.js';
 import { blackHeightEqualStageView } from './black-height-equal-stage.js';
 
 export function registerBlackHeightEqual(): void {
@@ -41,5 +38,4 @@ export function registerBlackHeightEqual(): void {
   for (const ir of blackHeightEqualIRs) registerIR(ir.id, ir);
   registerView('black-height-equal-stage', blackHeightEqualStageView);
   registerFacets([blackHeightEqualFacet]);
-  registerDescription(blackHeightEqualFacet.id, blackHeightEqualDescription);
 }

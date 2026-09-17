@@ -14,7 +14,6 @@ export {
 export { chainingBucketScene, type ChainingBucketScene } from './scene.js';
 export { chainingBucketIRs } from './irs.js';
 export { chainingBucketFacet } from './facet.js';
-export { chainingBucketDescription } from './description.js';
 export { chainingBucketStageView } from './chaining-bucket-stage.js';
 
 import {
@@ -22,14 +21,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { chainingBucket, type ChainingBucketData } from './algorithm.js';
 import { chainingBucketScene } from './scene.js';
 import { chainingBucketIRs } from './irs.js';
 import { chainingBucketFacet } from './facet.js';
-import { chainingBucketDescription } from './description.js';
 import { chainingBucketStageView } from './chaining-bucket-stage.js';
 
 export function registerChainingBucket(): void {
@@ -40,5 +37,4 @@ export function registerChainingBucket(): void {
   for (const ir of chainingBucketIRs) registerIR(ir.id, ir);
   registerView('chaining-bucket-stage', chainingBucketStageView);
   registerFacets([chainingBucketFacet]);
-  registerDescription(chainingBucketFacet.id, chainingBucketDescription);
 }

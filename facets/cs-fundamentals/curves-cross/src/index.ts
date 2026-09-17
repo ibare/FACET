@@ -22,7 +22,6 @@ export {
 } from './scene.js';
 export { curvesCrossIRs } from './irs.js';
 export { curvesCrossFacet } from './facet.js';
-export { curvesCrossDescription } from './description.js';
 export { curvesCrossStageView } from './curves-cross-stage.js';
 
 import {
@@ -30,14 +29,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { curvesCrossAlgorithm, type CurvesCrossData } from './algorithm.js';
 import { curvesCrossScene } from './scene.js';
 import { curvesCrossIRs } from './irs.js';
 import { curvesCrossFacet } from './facet.js';
-import { curvesCrossDescription } from './description.js';
 import { curvesCrossStageView } from './curves-cross-stage.js';
 
 export function registerCurvesCross(): void {
@@ -48,5 +45,4 @@ export function registerCurvesCross(): void {
   for (const ir of curvesCrossIRs) registerIR(ir.id, ir);
   registerView('curves-cross-stage', curvesCrossStageView);
   registerFacets([curvesCrossFacet]);
-  registerDescription(curvesCrossFacet.id, curvesCrossDescription);
 }

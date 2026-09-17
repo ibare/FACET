@@ -10,7 +10,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -19,7 +18,6 @@ import {
 
 import { keepNeighborsCloseAlgorithm } from './algorithm.js';
 import type { KeepNeighborsCloseData } from './algorithm.js';
-import { keepNeighborsCloseDescription } from './description.js';
 import { keepNeighborsCloseFacet } from './facet.js';
 import { keepNeighborsCloseIRs } from './irs.js';
 import { keepNeighborsCloseStageView } from './keep-neighbors-close-stage.js';
@@ -27,7 +25,6 @@ import { keepNeighborsCloseScene } from './scene.js';
 
 export { keepNeighborsCloseAlgorithm, keepNeighborsCloseGaps } from './algorithm.js';
 export type { KeepNeighborsCloseData, KeepNeighborsClosePoint } from './algorithm.js';
-export { keepNeighborsCloseDescription } from './description.js';
 export { keepNeighborsCloseFacet } from './facet.js';
 export { keepNeighborsCloseIRs } from './irs.js';
 export { keepNeighborsCloseStageView } from './keep-neighbors-close-stage.js';
@@ -47,5 +44,4 @@ export function registerKeepNeighborsClose(): void {
   for (const ir of keepNeighborsCloseIRs) registerIR(ir.id, ir);
   registerView('keep-neighbors-close-stage', keepNeighborsCloseStageView);
   registerFacets([keepNeighborsCloseFacet]);
-  registerDescription(keepNeighborsCloseFacet.id, keepNeighborsCloseDescription);
 }

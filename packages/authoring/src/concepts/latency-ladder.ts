@@ -14,7 +14,7 @@
  * ── 수치의 성격
  *
  * 사이클 수는 특정 기계의 실측이 아니라 **문헌 대표값**이고, 나노초는 한 사이클을
- * 0.3ns(3.3GHz 언저리)로 잡아 환산한 것이다. 그 전제는 `description.ts` 에 있다.
+ * 0.3ns(3.3GHz 언저리)로 잡아 환산한 것이다. 그 전제는 데모 설명 글(`apps/playground/src/descriptions/latencyLadder.md`)에 있다.
  * writer 가 이 수를 어느 CPU 의 사양처럼 인용하면 안 되므로 avoidWhen 첫 줄에
  * 못박아 둔다 — 화면만 보아서는 도출되지 않는 정보라 그 필드의 몫이다.
  */

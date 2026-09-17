@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -19,7 +18,6 @@ import { bottleneckSetsFlowScene } from './scene.js';
 import { bottleneckSetsFlowIRs } from './irs.js';
 import { bottleneckSetsFlowStageView } from './bottleneck-sets-flow-stage.js';
 import { bottleneckSetsFlowFacet } from './facet.js';
-import { bottleneckSetsFlowDescription } from './description.js';
 
 export function registerBottleneckSetsFlow(): void {
   registerAlgorithm<BottleneckSetsFlowData>('bottleneckSetsFlow', bottleneckSetsFlowAlgorithm, {
@@ -29,7 +27,6 @@ export function registerBottleneckSetsFlow(): void {
   for (const ir of bottleneckSetsFlowIRs) registerIR(ir.id, ir);
   registerView('bottleneck-sets-flow-stage', bottleneckSetsFlowStageView);
   registerFacets([bottleneckSetsFlowFacet]);
-  registerDescription(bottleneckSetsFlowFacet.id, bottleneckSetsFlowDescription);
 }
 
 export {
@@ -38,7 +35,6 @@ export {
   bottleneckSetsFlowIRs,
   bottleneckSetsFlowStageView,
   bottleneckSetsFlowFacet,
-  bottleneckSetsFlowDescription,
 };
 export type { BottleneckSetsFlowData, FlowPipe };
 export type { BottleneckSetsFlowScene } from './scene.js';

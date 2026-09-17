@@ -11,7 +11,6 @@ export { outOfBounds, type OutOfBoundsData } from './algorithm.js';
 export { outOfBoundsScene, type OutOfBoundsScene } from './scene.js';
 export { outOfBoundsIRs } from './irs.js';
 export { outOfBoundsFacet } from './facet.js';
-export { outOfBoundsDescription } from './description.js';
 export { outOfBoundsStageView } from './out-of-bounds-stage.js';
 
 import {
@@ -19,14 +18,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { outOfBounds, type OutOfBoundsData } from './algorithm.js';
 import { outOfBoundsScene } from './scene.js';
 import { outOfBoundsIRs } from './irs.js';
 import { outOfBoundsFacet } from './facet.js';
-import { outOfBoundsDescription } from './description.js';
 import { outOfBoundsStageView } from './out-of-bounds-stage.js';
 
 export function registerOutOfBounds(): void {
@@ -37,5 +34,4 @@ export function registerOutOfBounds(): void {
   for (const ir of outOfBoundsIRs) registerIR(ir.id, ir);
   registerView('out-of-bounds-stage', outOfBoundsStageView);
   registerFacets([outOfBoundsFacet]);
-  registerDescription(outOfBoundsFacet.id, outOfBoundsDescription);
 }

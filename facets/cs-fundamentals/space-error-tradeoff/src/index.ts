@@ -20,7 +20,6 @@ export {
 } from './scene.js';
 export { spaceErrorTradeoffIRs } from './irs.js';
 export { spaceErrorTradeoffFacet } from './facet.js';
-export { spaceErrorTradeoffDescription } from './description.js';
 export { spaceErrorTradeoffStageView } from './space-error-tradeoff-stage.js';
 
 import {
@@ -28,14 +27,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { spaceErrorTradeoffAlgorithm, type SpaceErrorTradeoffData } from './algorithm.js';
 import { spaceErrorTradeoffScene } from './scene.js';
 import { spaceErrorTradeoffIRs } from './irs.js';
 import { spaceErrorTradeoffFacet } from './facet.js';
-import { spaceErrorTradeoffDescription } from './description.js';
 import { spaceErrorTradeoffStageView } from './space-error-tradeoff-stage.js';
 
 export function registerSpaceErrorTradeoff(): void {
@@ -46,5 +43,4 @@ export function registerSpaceErrorTradeoff(): void {
   for (const ir of spaceErrorTradeoffIRs) registerIR(ir.id, ir);
   registerView('space-error-tradeoff-stage', spaceErrorTradeoffStageView);
   registerFacets([spaceErrorTradeoffFacet]);
-  registerDescription(spaceErrorTradeoffFacet.id, spaceErrorTradeoffDescription);
 }

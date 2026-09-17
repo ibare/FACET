@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -18,7 +17,6 @@ import { suffixArrayProjector } from './projector.js';
 import { suffixArrayIRs } from './irs.js';
 import { suffixArrayStageView } from './suffix-array-stage.js';
 import { suffixArrayFacet } from './facet.js';
-import { suffixArrayDescription } from './description.js';
 
 export {
   suffixArrayAlgorithm,
@@ -46,7 +44,6 @@ export { suffixArrayProjector } from './projector.js';
 export { suffixArrayIRs, suffixArrayImperativeIR } from './irs.js';
 export { suffixArrayStageView } from './suffix-array-stage.js';
 export { suffixArrayFacet } from './facet.js';
-export { suffixArrayDescription } from './description.js';
 
 export function registerSuffixArray(): void {
   // 손잡이가 있는 완제품이라 reactive 다. 세 상태 — 나아가는 중 · 멈춤 ·
@@ -58,5 +55,4 @@ export function registerSuffixArray(): void {
   for (const ir of suffixArrayIRs) registerIR(ir.id, ir);
   registerView('suffix-array-stage', suffixArrayStageView);
   registerFacets([suffixArrayFacet]);
-  registerDescription(suffixArrayFacet.id, suffixArrayDescription);
 }

@@ -10,7 +10,6 @@ export { siftUpAlgorithm, type SiftUpData } from './algorithm.js';
 export { siftUpScene, type SiftUpScene } from './scene.js';
 export { siftUpIRs } from './irs.js';
 export { siftUpFacet } from './facet.js';
-export { siftUpDescription } from './description.js';
 export { siftUpStageView } from './sift-up-stage.js';
 
 import {
@@ -18,14 +17,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { siftUpAlgorithm, type SiftUpData } from './algorithm.js';
 import { siftUpScene } from './scene.js';
 import { siftUpIRs } from './irs.js';
 import { siftUpFacet } from './facet.js';
-import { siftUpDescription } from './description.js';
 import { siftUpStageView } from './sift-up-stage.js';
 
 export function registerSiftUp(): void {
@@ -36,5 +33,4 @@ export function registerSiftUp(): void {
   for (const ir of siftUpIRs) registerIR(ir.id, ir);
   registerView('sift-up-stage', siftUpStageView);
   registerFacets([siftUpFacet]);
-  registerDescription(siftUpFacet.id, siftUpDescription);
 }

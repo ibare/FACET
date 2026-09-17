@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -18,7 +17,6 @@ import { asymptoticProjector } from './projector.js';
 import { asymptoticIRs } from './irs.js';
 import { asymptoticStageView } from './asymptotic-stage.js';
 import { asymptoticFacet } from './facet.js';
-import { asymptoticDescription } from './description.js';
 
 export {
   asymptoticAlgorithm,
@@ -40,7 +38,6 @@ export {
   type AsymptoticTiling,
 } from './asymptotic-stage.js';
 export { asymptoticFacet } from './facet.js';
-export { asymptoticDescription } from './description.js';
 
 export function registerAsymptotic(): void {
   registerAlgorithm<AsymptoticData>('asymptotic', asymptoticAlgorithm, {
@@ -51,5 +48,4 @@ export function registerAsymptotic(): void {
   for (const ir of asymptoticIRs) registerIR(ir.id, ir);
   registerView('asymptotic-stage', asymptoticStageView);
   registerFacets([asymptoticFacet]);
-  registerDescription(asymptoticFacet.id, asymptoticDescription);
 }

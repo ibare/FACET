@@ -7,7 +7,7 @@
  * 완결형 facet 하나와 aspect facet 셋 (node / link / traverse) 을 함께 등록한다.
  * 넷은 같은 algorithm / projector / stage view 를 공유하고 선언만 다르다.
  *
- * algorithm / projector / facet JSON / description / 전용 view (linked-list-stage)
+ * algorithm / projector / facet JSON / 전용 view (linked-list-stage)
  * 를 함께 번들하고 등록 헬퍼를 제공한다. 코드 패널은 1차 구현에서 생략.
  */
 
@@ -20,7 +20,6 @@ export {
 export { linkedListProjector } from './projector.js';
 export { linkedListIRs } from './irs.js';
 export { linkedListFacet } from './facet.js';
-export { linkedListDescription } from './description.js';
 export { linkedListStageView } from './linked-list-stage.js';
 
 import {
@@ -28,14 +27,12 @@ import {
   registerProjector,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { linkedList, type LinkedListFacetData } from './algorithm.js';
 import { linkedListProjector } from './projector.js';
 import { linkedListIRs } from './irs.js';
 import { linkedListFacet } from './facet.js';
-import { linkedListDescription } from './description.js';
 import { linkedListStageView } from './linked-list-stage.js';
 
 export function registerLinkedList(): void {
@@ -46,5 +43,4 @@ export function registerLinkedList(): void {
   for (const ir of linkedListIRs) registerIR(ir.id, ir);
   registerView('linked-list-stage', linkedListStageView);
   registerFacets([linkedListFacet]);
-  registerDescription(linkedListFacet.id, linkedListDescription);
 }

@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -18,9 +17,8 @@ import { kmpProjector } from './projector.js';
 import { kmpIRs } from './irs.js';
 import { kmpStageView } from './kmp-stage.js';
 import { kmpFacet } from './facet.js';
-import { kmpDescription } from './description.js';
 
-export { kmpAlgorithm, kmpProjector, kmpIRs, kmpStageView, kmpFacet, kmpDescription };
+export { kmpAlgorithm, kmpProjector, kmpIRs, kmpStageView, kmpFacet };
 export {
   computeKmpRun,
   kmpFailure,
@@ -41,5 +39,4 @@ export function registerKmp(): void {
   for (const ir of kmpIRs) registerIR(ir.id, ir);
   registerView('kmp-stage', kmpStageView);
   registerFacets([kmpFacet]);
-  registerDescription(kmpFacet.id, kmpDescription);
 }

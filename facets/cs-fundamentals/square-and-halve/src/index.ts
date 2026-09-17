@@ -31,7 +31,6 @@ export {
 } from './scene.js';
 export { squareAndHalveIRs } from './irs.js';
 export { squareAndHalveFacet } from './facet.js';
-export { squareAndHalveDescription } from './description.js';
 export { squareAndHalveStageView } from './square-and-halve-stage.js';
 
 import {
@@ -39,14 +38,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { squareAndHalve, type SquareAndHalveData } from './algorithm.js';
 import { squareAndHalveScene } from './scene.js';
 import { squareAndHalveIRs } from './irs.js';
 import { squareAndHalveFacet } from './facet.js';
-import { squareAndHalveDescription } from './description.js';
 import { squareAndHalveStageView } from './square-and-halve-stage.js';
 
 export function registerSquareAndHalve(): void {
@@ -57,5 +54,4 @@ export function registerSquareAndHalve(): void {
   for (const ir of squareAndHalveIRs) registerIR(ir.id, ir);
   registerView('square-and-halve-stage', squareAndHalveStageView);
   registerFacets([squareAndHalveFacet]);
-  registerDescription(squareAndHalveFacet.id, squareAndHalveDescription);
 }

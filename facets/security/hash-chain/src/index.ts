@@ -12,7 +12,6 @@
 export { hashChain, type HashChainFacetData, type ChainBlock } from './algorithm.js';
 export { hashChainIRs } from './irs.js';
 export { hashChainFacet } from './facet.js';
-export { hashChainDescription } from './description.js';
 export { chainStageView } from './chain-stage.js';
 export {
   hashChainScene,
@@ -30,13 +29,11 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { hashChain, type HashChainFacetData } from './algorithm.js';
 import { hashChainIRs } from './irs.js';
 import { hashChainFacet } from './facet.js';
-import { hashChainDescription } from './description.js';
 import { chainStageView } from './chain-stage.js';
 import { hashChainScene } from './scene.js';
 
@@ -48,5 +45,4 @@ export function registerHashChain(): void {
   for (const ir of hashChainIRs) registerIR(ir.id, ir);
   registerView('chain-stage', chainStageView);
   registerFacets([hashChainFacet]);
-  registerDescription(hashChainFacet.id, hashChainDescription);
 }

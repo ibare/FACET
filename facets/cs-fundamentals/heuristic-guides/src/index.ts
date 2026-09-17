@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -19,7 +18,6 @@ import { heuristicGuidesScene } from './scene.js';
 import { heuristicGuidesIRs } from './irs.js';
 import { heuristicGuidesStageView } from './heuristic-guides-stage.js';
 import { heuristicGuidesFacet } from './facet.js';
-import { heuristicGuidesDescription } from './description.js';
 
 export {
   heuristicGuidesAlgorithm,
@@ -37,7 +35,6 @@ export {
 export { heuristicGuidesIRs } from './irs.js';
 export { heuristicGuidesStageView } from './heuristic-guides-stage.js';
 export { heuristicGuidesFacet } from './facet.js';
-export { heuristicGuidesDescription } from './description.js';
 
 export function registerHeuristicGuides(): void {
   registerAlgorithm<HeuristicGuidesData>(
@@ -49,5 +46,4 @@ export function registerHeuristicGuides(): void {
   for (const ir of heuristicGuidesIRs) registerIR(ir.id, ir);
   registerView('heuristic-guides-stage', heuristicGuidesStageView);
   registerFacets([heuristicGuidesFacet]);
-  registerDescription(heuristicGuidesFacet.id, heuristicGuidesDescription);
 }

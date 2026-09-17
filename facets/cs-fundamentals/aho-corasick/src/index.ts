@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -18,7 +17,6 @@ import { ahoCorasickProjector } from './projector.js';
 import { ahoCorasickIRs } from './irs.js';
 import { ahoCorasickStageView } from './aho-corasick-stage.js';
 import { ahoCorasickFacet } from './facet.js';
-import { ahoCorasickDescription } from './description.js';
 
 export {
   ahoCorasickAlgorithm,
@@ -26,7 +24,6 @@ export {
   ahoCorasickIRs,
   ahoCorasickStageView,
   ahoCorasickFacet,
-  ahoCorasickDescription,
 };
 export {
   ahoAlphabet,
@@ -47,5 +44,4 @@ export function registerAhoCorasick(): void {
   for (const ir of ahoCorasickIRs) registerIR(ir.id, ir);
   registerView('aho-corasick-stage', ahoCorasickStageView);
   registerFacets([ahoCorasickFacet]);
-  registerDescription(ahoCorasickFacet.id, ahoCorasickDescription);
 }

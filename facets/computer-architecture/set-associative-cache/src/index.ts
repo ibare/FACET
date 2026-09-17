@@ -1,6 +1,5 @@
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -12,7 +11,6 @@ import { setAssociativeCacheProjector } from './projector.js';
 import { setAssociativeCacheIRs } from './irs.js';
 import { setAssociativeCacheStageView } from './set-associative-cache-stage.js';
 import { setAssociativeCacheFacet } from './facet.js';
-import { setAssociativeCacheDescription } from './description.js';
 
 export {
   setAssociativeCacheAlgorithm,
@@ -28,7 +26,6 @@ export {
 } from './irs.js';
 export { setAssociativeCacheStageView } from './set-associative-cache-stage.js';
 export { setAssociativeCacheFacet } from './facet.js';
-export { setAssociativeCacheDescription } from './description.js';
 
 /**
  * 이 facet 을 레지스트리에 올린다. 호출 책임은 호스트 앱에 있다.
@@ -49,5 +46,4 @@ export function registerSetAssociativeCache(): void {
   for (const ir of setAssociativeCacheIRs) registerIR(ir.id, ir);
   registerView('set-associative-cache-stage', setAssociativeCacheStageView);
   registerFacets([setAssociativeCacheFacet]);
-  registerDescription(setAssociativeCacheFacet.id, setAssociativeCacheDescription);
 }

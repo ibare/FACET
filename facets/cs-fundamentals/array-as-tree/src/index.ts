@@ -18,7 +18,6 @@ export {
 } from './scene.js';
 export { arrayAsTreeIRs } from './irs.js';
 export { arrayAsTreeFacet } from './facet.js';
-export { arrayAsTreeDescription } from './description.js';
 export { arrayAsTreeStageView } from './array-as-tree-stage.js';
 
 import {
@@ -26,14 +25,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { arrayAsTreeAlgorithm, type ArrayAsTreeData } from './algorithm.js';
 import { arrayAsTreeScene } from './scene.js';
 import { arrayAsTreeIRs } from './irs.js';
 import { arrayAsTreeFacet } from './facet.js';
-import { arrayAsTreeDescription } from './description.js';
 import { arrayAsTreeStageView } from './array-as-tree-stage.js';
 
 export function registerArrayAsTree(): void {
@@ -44,5 +41,4 @@ export function registerArrayAsTree(): void {
   for (const ir of arrayAsTreeIRs) registerIR(ir.id, ir);
   registerView('array-as-tree-stage', arrayAsTreeStageView);
   registerFacets([arrayAsTreeFacet]);
-  registerDescription(arrayAsTreeFacet.id, arrayAsTreeDescription);
 }

@@ -8,7 +8,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -16,14 +15,12 @@ import {
 } from '@ffacet/core/runtime';
 
 import { siftDownAlgorithm, type SiftDownData } from './algorithm.js';
-import { siftDownDescription } from './description.js';
 import { siftDownFacet } from './facet.js';
 import { siftDownIRs } from './irs.js';
 import { siftDownScene } from './scene.js';
 import { siftDownStageView } from './sift-down-stage.js';
 
 export { siftDownAlgorithm, type SiftDownData } from './algorithm.js';
-export { siftDownDescription } from './description.js';
 export { siftDownFacet } from './facet.js';
 export { siftDownIRs } from './irs.js';
 export { siftDownScene, type SiftDownScene } from './scene.js';
@@ -35,5 +32,4 @@ export function registerSiftDown(): void {
   for (const ir of siftDownIRs) registerIR(ir.id, ir);
   registerView('sift-down-stage', siftDownStageView);
   registerFacets([siftDownFacet]);
-  registerDescription(siftDownFacet.id, siftDownDescription);
 }

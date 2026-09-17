@@ -11,7 +11,6 @@ export { mergeSort, type MergeSortData } from './algorithm.js';
 export { mergeSortProjector } from './projector.js';
 export { mergeSortRecursiveIR, mergeSortIRs } from './irs.js';
 export { mergeSortFacet } from './facet.js';
-export { mergeSortDescription } from './description.js';
 export { mergeSortStageView, type MergeSortStage } from './merge-sort-stage.js';
 
 import {
@@ -20,21 +19,18 @@ import {
   registerIR,
   registerView,
   registerFacets,
-  registerDescription,
 } from '@ffacet/core/runtime';
 import { mergeSort, type MergeSortData } from './algorithm.js';
 import { mergeSortProjector } from './projector.js';
 import { mergeSortIRs } from './irs.js';
 import { mergeSortFacet } from './facet.js';
-import { mergeSortDescription } from './description.js';
 import { mergeSortStageView } from './merge-sort-stage.js';
 
-/** algorithm / projector / IR / view / facet / description 등록 헬퍼. */
+/** algorithm / projector / IR / view / facet 등록 헬퍼. */
 export function registerMergeSort(): void {
   registerAlgorithm<MergeSortData>('mergeSort', mergeSort);
   registerProjector('mergeSortProjector', mergeSortProjector);
   for (const ir of mergeSortIRs) registerIR(ir.id, ir);
   registerView('merge-sort-stage', mergeSortStageView);
   registerFacets([mergeSortFacet]);
-  registerDescription(mergeSortFacet.id, mergeSortDescription);
 }

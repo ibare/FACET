@@ -25,7 +25,6 @@ import { sccProjector } from '../src/projector.js';
 import { sccTarjanIR } from '../src/irs.js';
 import { sccFacet } from '../src/facet.js';
 import { sccStageView } from '../src/scc-stage.js';
-import { sccDescription } from '../src/description.js';
 
 const adjacencyOf = (): number[][] => {
   const data = sccFacet.initialData as { adjacency?: number[][] };
@@ -424,17 +423,5 @@ describe('scc — stage', () => {
 
     stage.destroy();
     container.remove();
-  });
-});
-
-describe('글이 지키는 것', () => {
-  /**
-   * 이 facet 의 근거는 "이 그래프에서는 두 실수가 같은 답을 낸다" 는 사실이다.
-   * 그 문장이 글에서 조용히 사라지면 코드 패널을 다는 까닭도 함께 사라진다.
-   */
-  it('두 실수가 같은 답을 낸다는 대목이 글에 남아 있다', () => {
-    expect(sccDescription).toContain('답이 맞아 버려서 살아남는 실수');
-    expect(sccDescription).toContain('onstack');
-    expect(sccDescription).toContain('답이 맞는 것과 코드가 맞는 것은 다르다');
   });
 });

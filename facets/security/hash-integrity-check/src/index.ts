@@ -17,7 +17,6 @@ export {
 } from './algorithm.js';
 export { hashIntegrityCheckIRs } from './irs.js';
 export { hashIntegrityCheckFacet } from './facet.js';
-export { hashIntegrityCheckDescription } from './description.js';
 export { integrityStageView } from './integrity-stage.js';
 export {
   hashIntegrityCheckScene,
@@ -34,13 +33,11 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { hashIntegrityCheck, type HashIntegrityFacetData } from './algorithm.js';
 import { hashIntegrityCheckIRs } from './irs.js';
 import { hashIntegrityCheckFacet } from './facet.js';
-import { hashIntegrityCheckDescription } from './description.js';
 import { integrityStageView } from './integrity-stage.js';
 import { hashIntegrityCheckScene } from './scene.js';
 
@@ -52,5 +49,4 @@ export function registerHashIntegrityCheck(): void {
   for (const ir of hashIntegrityCheckIRs) registerIR(ir.id, ir);
   registerView('integrity-stage', integrityStageView);
   registerFacets([hashIntegrityCheckFacet]);
-  registerDescription(hashIntegrityCheckFacet.id, hashIntegrityCheckDescription);
 }

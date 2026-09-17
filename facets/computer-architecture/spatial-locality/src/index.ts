@@ -5,7 +5,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -18,7 +17,6 @@ import { spatialLocalityScene } from './scene.js';
 import { spatialLocalityIRs } from './irs.js';
 import { spatialLocalityStageView } from './spatial-locality-stage.js';
 import { spatialLocalityFacet } from './facet.js';
-import { spatialLocalityDescription } from './description.js';
 
 export {
   spatialLocalityAlgorithm,
@@ -34,7 +32,6 @@ export type { SpatialLocalityScene, SpatialStep, TouchOutcome } from './scene.js
 export { spatialLocalityIRs } from './irs.js';
 export { spatialLocalityStageView } from './spatial-locality-stage.js';
 export { spatialLocalityFacet } from './facet.js';
-export { spatialLocalityDescription } from './description.js';
 
 export function registerSpatialLocality(): void {
   // 등록 이름은 algorithm 과 장면 설계가 갈려야 한다 — 같으면 `module:` 참조만
@@ -46,5 +43,4 @@ export function registerSpatialLocality(): void {
   for (const ir of spatialLocalityIRs) registerIR(ir.id, ir);
   registerView('spatial-locality-stage', spatialLocalityStageView);
   registerFacets([spatialLocalityFacet]);
-  registerDescription(spatialLocalityFacet.id, spatialLocalityDescription);
 }

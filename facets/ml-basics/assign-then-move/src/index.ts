@@ -10,7 +10,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -20,7 +19,6 @@ import {
 import { assignThenMoveAlgorithm } from './algorithm.js';
 import type { AssignThenMoveData } from './algorithm.js';
 import { assignThenMoveStageView } from './assign-then-move-stage.js';
-import { assignThenMoveDescription } from './description.js';
 import { assignThenMoveFacet } from './facet.js';
 import { assignThenMoveIRs } from './irs.js';
 import { assignThenMoveScene } from './scene.js';
@@ -28,7 +26,6 @@ import { assignThenMoveScene } from './scene.js';
 export { ASSIGN_SETTLE_EPS, assignThenMoveAlgorithm } from './algorithm.js';
 export type { AssignThenMoveData, AssignThenMovePoint } from './algorithm.js';
 export { assignThenMoveStageView } from './assign-then-move-stage.js';
-export { assignThenMoveDescription } from './description.js';
 export { assignThenMoveFacet } from './facet.js';
 export { assignThenMoveIRs } from './irs.js';
 export { assignThenMoveScene } from './scene.js';
@@ -47,5 +44,4 @@ export function registerAssignThenMove(): void {
   for (const ir of assignThenMoveIRs) registerIR(ir.id, ir);
   registerView('assign-then-move-stage', assignThenMoveStageView);
   registerFacets([assignThenMoveFacet]);
-  registerDescription(assignThenMoveFacet.id, assignThenMoveDescription);
 }

@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -18,11 +17,10 @@ import { indexAddressCalcScene } from './scene.js';
 import { indexAddressCalcIRs } from './irs.js';
 import { addressCalcStageView } from './address-calc-stage.js';
 import { indexAddressCalcFacet } from './facet.js';
-import { indexAddressCalcDescription } from './description.js';
 
 export { indexAddressCalc, indexAddressCalcScene, indexAddressCalcIRs };
 export type { IndexAddressCalcScene } from './scene.js';
-export { addressCalcStageView, indexAddressCalcFacet, indexAddressCalcDescription };
+export { addressCalcStageView, indexAddressCalcFacet };
 export type { IndexAddressCalcData };
 
 export function registerIndexAddressCalc(): void {
@@ -33,5 +31,4 @@ export function registerIndexAddressCalc(): void {
   for (const ir of indexAddressCalcIRs) registerIR(ir.id, ir);
   registerView('address-calc-stage', addressCalcStageView);
   registerFacets([indexAddressCalcFacet]);
-  registerDescription(indexAddressCalcFacet.id, indexAddressCalcDescription);
 }

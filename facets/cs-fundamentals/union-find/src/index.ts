@@ -6,7 +6,6 @@ export { unionFind, type UnionFindData } from './algorithm.js';
 export { unionFindProjector } from './projector.js';
 export { unionFindIRs } from './irs.js';
 export { unionFindFacet } from './facet.js';
-export { unionFindDescription } from './description.js';
 export { unionFindStageView, type UnionFindStage } from './union-find-stage.js';
 
 import {
@@ -14,14 +13,12 @@ import {
   registerProjector,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { unionFind, type UnionFindData } from './algorithm.js';
 import { unionFindProjector } from './projector.js';
 import { unionFindIRs } from './irs.js';
 import { unionFindFacet } from './facet.js';
-import { unionFindDescription } from './description.js';
 import { unionFindStageView } from './union-find-stage.js';
 
 export function registerUnionFind(): void {
@@ -32,5 +29,4 @@ export function registerUnionFind(): void {
   for (const ir of unionFindIRs) registerIR(ir.id, ir);
   registerView('union-find-stage', unionFindStageView);
   registerFacets([unionFindFacet]);
-  registerDescription(unionFindFacet.id, unionFindDescription);
 }

@@ -10,7 +10,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -22,7 +21,6 @@ import { negateAndAddOneScene, type NegateAndAddOneScene } from './scene.js';
 import { negateAndAddOneIRs } from './irs.js';
 import { negateAndAddOneStageView } from './negate-and-add-one-stage.js';
 import { negateAndAddOneFacet } from './facet.js';
-import { negateAndAddOneDescription } from './description.js';
 
 export function registerNegateAndAddOne(): void {
   registerAlgorithm('negateAndAddOne', negateAndAddOneAlgorithm, { mechanismKind: 'reactive' });
@@ -30,7 +28,6 @@ export function registerNegateAndAddOne(): void {
   for (const ir of negateAndAddOneIRs) registerIR(ir.id, ir);
   registerView('negate-and-add-one-stage', negateAndAddOneStageView);
   registerFacets([negateAndAddOneFacet]);
-  registerDescription(negateAndAddOneFacet.id, negateAndAddOneDescription);
 }
 
 export {
@@ -39,6 +36,5 @@ export {
   negateAndAddOneIRs,
   negateAndAddOneStageView,
   negateAndAddOneFacet,
-  negateAndAddOneDescription,
 };
 export type { NegateAndAddOneData, NegateAndAddOneScene };

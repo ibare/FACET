@@ -30,7 +30,6 @@ export {
 export { subwordSegmentationProjector } from './projector.js';
 export { subwordSegmentationIRs } from './irs.js';
 export { subwordSegmentationFacet } from './facet.js';
-export { subwordSegmentationDescription } from './description.js';
 export {
   subwordSegmentationStageView,
   readSubwordScene,
@@ -40,7 +39,6 @@ export {
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -50,7 +48,6 @@ import { subwordSegmentation, type SubwordSegmentationData } from './algorithm.j
 import { subwordSegmentationProjector } from './projector.js';
 import { subwordSegmentationIRs } from './irs.js';
 import { subwordSegmentationFacet } from './facet.js';
-import { subwordSegmentationDescription } from './description.js';
 import { subwordSegmentationStageView } from './subword-segmentation-stage.js';
 
 export function registerSubwordSegmentation(): void {
@@ -61,5 +58,4 @@ export function registerSubwordSegmentation(): void {
   for (const ir of subwordSegmentationIRs) registerIR(ir.id, ir);
   registerView('subword-segmentation-stage', subwordSegmentationStageView);
   registerFacets([subwordSegmentationFacet]);
-  registerDescription(subwordSegmentationFacet.id, subwordSegmentationDescription);
 }

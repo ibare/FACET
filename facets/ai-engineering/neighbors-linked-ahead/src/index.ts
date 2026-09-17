@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -20,14 +19,12 @@ import { neighborsLinkedAheadIRs } from './irs.js';
 import { neighborsLinkedAheadScene } from './scene.js';
 import { neighborsLinkedAheadStageView } from './neighbors-linked-ahead-stage.js';
 import { neighborsLinkedAheadFacet } from './facet.js';
-import { neighborsLinkedAheadDescription } from './description.js';
 
 export { neighborsLinkedAheadAlgorithm, nearestNeighbors, undirectedLinks } from './algorithm.js';
 export type { NeighborsLinkedAheadData, NeighborsPoint } from './algorithm.js';
 export { neighborsLinkedAheadIRs } from './irs.js';
 export { neighborsLinkedAheadStageView } from './neighbors-linked-ahead-stage.js';
 export { neighborsLinkedAheadFacet } from './facet.js';
-export { neighborsLinkedAheadDescription } from './description.js';
 export { graphOf, neighborsLinkedAheadScene, phaseOf, probeNow, standing, strayMarks } from './scene.js';
 export type {
   NeighborsGraph,
@@ -46,5 +43,4 @@ export function registerNeighborsLinkedAhead(): void {
   for (const ir of neighborsLinkedAheadIRs) registerIR(ir.id, ir);
   registerView('neighbors-linked-ahead-stage', neighborsLinkedAheadStageView);
   registerFacets([neighborsLinkedAheadFacet]);
-  registerDescription(neighborsLinkedAheadFacet.id, neighborsLinkedAheadDescription);
 }

@@ -20,7 +20,6 @@ export {
 } from './scene.js';
 export { heightStaysLowIRs } from './irs.js';
 export { heightStaysLowFacet } from './facet.js';
-export { heightStaysLowDescription } from './description.js';
 export { heightStaysLowStageView } from './height-stays-low-stage.js';
 
 import {
@@ -28,14 +27,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { heightStaysLow, type HeightStaysLowData } from './algorithm.js';
 import { heightStaysLowScene } from './scene.js';
 import { heightStaysLowIRs } from './irs.js';
 import { heightStaysLowFacet } from './facet.js';
-import { heightStaysLowDescription } from './description.js';
 import { heightStaysLowStageView } from './height-stays-low-stage.js';
 
 export function registerHeightStaysLow(): void {
@@ -46,5 +43,4 @@ export function registerHeightStaysLow(): void {
   for (const ir of heightStaysLowIRs) registerIR(ir.id, ir);
   registerView('height-stays-low-stage', heightStaysLowStageView);
   registerFacets([heightStaysLowFacet]);
-  registerDescription(heightStaysLowFacet.id, heightStaysLowDescription);
 }

@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -19,7 +18,6 @@ import { primalityProjector } from './projector.js';
 import { primalityIRs } from './irs.js';
 import { primalityStageView } from './primality-stage.js';
 import { primalityFacet } from './facet.js';
-import { primalityDescription } from './description.js';
 
 export type { PrimalityData, PrimalityFacts } from './algorithm.js';
 export { primalityAlgorithm, examine, PRIMALITY_NS } from './algorithm.js';
@@ -27,7 +25,6 @@ export { primalityProjector } from './projector.js';
 export { primalityImperativeIR, primalityIRs } from './irs.js';
 export { primalityStageView } from './primality-stage.js';
 export { primalityFacet } from './facet.js';
-export { primalityDescription } from './description.js';
 
 export function registerPrimality(): void {
   // 손잡이를 가진 완제품이라 reactive 다 — 수를 바꾸면 알고리즘이 그 입력을
@@ -39,5 +36,4 @@ export function registerPrimality(): void {
   for (const ir of primalityIRs) registerIR(ir.id, ir);
   registerView('primality-stage', primalityStageView);
   registerFacets([primalityFacet]);
-  registerDescription(primalityFacet.id, primalityDescription);
 }

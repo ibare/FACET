@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -19,7 +18,6 @@ import { floatingPointProjector } from './projector.js';
 import { floatingPointIRs } from './irs.js';
 import { floatingPointStageView } from './floating-point-stage.js';
 import { floatingPointFacet } from './facet.js';
-import { floatingPointDescription } from './description.js';
 
 export {
   floatingPointAlgorithm,
@@ -32,7 +30,6 @@ export { floatingPointProjector } from './projector.js';
 export { floatingPointImperativeIR, floatingPointIRs } from './irs.js';
 export { floatingPointStageView } from './floating-point-stage.js';
 export { floatingPointFacet } from './facet.js';
-export { floatingPointDescription } from './description.js';
 
 export function registerFloatingPoint(): void {
   // 손잡이가 알고리즘의 인자를 바꾸므로 reactive 다 — coroutine 은
@@ -44,5 +41,4 @@ export function registerFloatingPoint(): void {
   for (const ir of floatingPointIRs) registerIR(ir.id, ir);
   registerView('floating-point-stage', floatingPointStageView);
   registerFacets([floatingPointFacet]);
-  registerDescription(floatingPointFacet.id, floatingPointDescription);
 }

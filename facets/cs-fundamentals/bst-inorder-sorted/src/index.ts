@@ -14,7 +14,6 @@ export {
 export { bstInorderSortedScene, type BstInorderSortedScene } from './scene.js';
 export { bstInorderSortedIRs } from './irs.js';
 export { bstInorderSortedFacet } from './facet.js';
-export { bstInorderSortedDescription } from './description.js';
 export { bstInorderSortedStageView } from './bst-inorder-sorted-stage.js';
 
 import {
@@ -22,14 +21,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { bstInorderSortedAlgorithm, type BstInorderSortedData } from './algorithm.js';
 import { bstInorderSortedScene } from './scene.js';
 import { bstInorderSortedIRs } from './irs.js';
 import { bstInorderSortedFacet } from './facet.js';
-import { bstInorderSortedDescription } from './description.js';
 import { bstInorderSortedStageView } from './bst-inorder-sorted-stage.js';
 
 export function registerBstInorderSorted(): void {
@@ -40,5 +37,4 @@ export function registerBstInorderSorted(): void {
   for (const ir of bstInorderSortedIRs) registerIR(ir.id, ir);
   registerView('bst-inorder-sorted-stage', bstInorderSortedStageView);
   registerFacets([bstInorderSortedFacet]);
-  registerDescription(bstInorderSortedFacet.id, bstInorderSortedDescription);
 }

@@ -10,7 +10,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -22,7 +21,6 @@ import { prefixSuffixJumpScene } from './scene.js';
 import { prefixSuffixJumpIRs } from './irs.js';
 import { prefixSuffixJumpStageView } from './prefix-suffix-jump-stage.js';
 import { prefixSuffixJumpFacet } from './facet.js';
-import { prefixSuffixJumpDescription } from './description.js';
 
 export {
   prefixSuffixJumpAlgorithm,
@@ -30,7 +28,6 @@ export {
   prefixSuffixJumpIRs,
   prefixSuffixJumpStageView,
   prefixSuffixJumpFacet,
-  prefixSuffixJumpDescription,
 };
 export type { PrefixSuffixJumpData };
 export type {
@@ -49,5 +46,4 @@ export function registerPrefixSuffixJump(): void {
   for (const ir of prefixSuffixJumpIRs) registerIR(ir.id, ir);
   registerView('prefix-suffix-jump-stage', prefixSuffixJumpStageView);
   registerFacets([prefixSuffixJumpFacet]);
-  registerDescription(prefixSuffixJumpFacet.id, prefixSuffixJumpDescription);
 }

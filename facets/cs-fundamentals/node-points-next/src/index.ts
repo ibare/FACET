@@ -6,7 +6,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -14,7 +13,6 @@ import {
 } from '@ffacet/core/runtime';
 
 import { nodePointsNextAlgorithm } from './algorithm.js';
-import { nodePointsNextDescription } from './description.js';
 import { nodePointsNextFacet } from './facet.js';
 import { nodePointsNextIRs } from './irs.js';
 import { nodePointsNextScene } from './scene.js';
@@ -33,7 +31,6 @@ export type {
 } from './scene.js';
 export { nodePointsNextIRs } from './irs.js';
 export { nodePointsNextFacet } from './facet.js';
-export { nodePointsNextDescription } from './description.js';
 export { nodePointsNextStageView } from './node-points-next-stage.js';
 
 export function registerNodePointsNext(): void {
@@ -45,5 +42,4 @@ export function registerNodePointsNext(): void {
   for (const ir of nodePointsNextIRs) registerIR(ir.id, ir);
   registerView('node-points-next-stage', nodePointsNextStageView);
   registerFacets([nodePointsNextFacet]);
-  registerDescription(nodePointsNextFacet.id, nodePointsNextDescription);
 }

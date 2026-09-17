@@ -10,7 +10,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerScenePlan,
@@ -21,7 +20,6 @@ import { pathCompressionAlgorithm } from './algorithm.js';
 import { pathCompressionScene } from './scene.js';
 import { pathCompressionIRs } from './irs.js';
 import { pathCompressionFacet } from './facet.js';
-import { pathCompressionDescription } from './description.js';
 import { pathCompressionStageView } from './path-compression-stage.js';
 
 export { pathCompressionAlgorithm } from './algorithm.js';
@@ -34,7 +32,6 @@ export type {
 } from './scene.js';
 export { pathCompressionIRs } from './irs.js';
 export { pathCompressionFacet } from './facet.js';
-export { pathCompressionDescription } from './description.js';
 export { pathCompressionStageView } from './path-compression-stage.js';
 export type { PathCompressionStage } from './path-compression-stage.js';
 
@@ -44,5 +41,4 @@ export function registerPathCompression(): void {
   for (const ir of pathCompressionIRs) registerIR(ir.id, ir);
   registerView('path-compression-stage', pathCompressionStageView);
   registerFacets([pathCompressionFacet]);
-  registerDescription(pathCompressionFacet.id, pathCompressionDescription);
 }

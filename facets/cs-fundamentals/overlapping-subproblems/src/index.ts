@@ -27,7 +27,6 @@ export {
 } from './scene.js';
 export { overlappingSubproblemsIRs } from './irs.js';
 export { overlappingSubproblemsFacet } from './facet.js';
-export { overlappingSubproblemsDescription } from './description.js';
 export { overlappingSubproblemsStageView } from './overlapping-subproblems-stage.js';
 
 import {
@@ -35,19 +34,17 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { overlappingSubproblems, type OverlappingSubproblemsData } from './algorithm.js';
 import { overlappingSubproblemsScene } from './scene.js';
 import { overlappingSubproblemsIRs } from './irs.js';
 import { overlappingSubproblemsFacet } from './facet.js';
-import { overlappingSubproblemsDescription } from './description.js';
 import { overlappingSubproblemsStageView } from './overlapping-subproblems-stage.js';
 
 /**
- * 등록 헬퍼. 순서는 S-facet 표준 (Algorithm → Scene → IR → View → Facets
- * → Description). 전용 View 는 Facets 직전에 끼운다 — facet JSON 의 block.type
+ * 등록 헬퍼. 순서는 S-facet 표준 (Algorithm → Scene → IR → View → Facets).
+ * 전용 View 는 Facets 직전에 끼운다 — facet JSON 의 block.type
  * 이 마운트 시 카탈로그를 조회하기 때문.
  */
 export function registerOverlappingSubproblems(): void {
@@ -58,5 +55,4 @@ export function registerOverlappingSubproblems(): void {
   for (const ir of overlappingSubproblemsIRs) registerIR(ir.id, ir);
   registerView('overlapping-subproblems-stage', overlappingSubproblemsStageView);
   registerFacets([overlappingSubproblemsFacet]);
-  registerDescription(overlappingSubproblemsFacet.id, overlappingSubproblemsDescription);
 }

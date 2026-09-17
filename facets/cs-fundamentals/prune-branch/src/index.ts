@@ -20,7 +20,6 @@ export {
 } from './scene.js';
 export { pruneBranchIRs } from './irs.js';
 export { pruneBranchFacet } from './facet.js';
-export { pruneBranchDescription } from './description.js';
 export { pruneBranchStageView } from './prune-branch-stage.js';
 
 import {
@@ -28,14 +27,12 @@ import {
   registerScenePlan,
   registerIR,
   registerFacets,
-  registerDescription,
   registerView,
 } from '@ffacet/core/runtime';
 import { pruneBranch, type PruneBranchData } from './algorithm.js';
 import { pruneBranchScene } from './scene.js';
 import { pruneBranchIRs } from './irs.js';
 import { pruneBranchFacet } from './facet.js';
-import { pruneBranchDescription } from './description.js';
 import { pruneBranchStageView } from './prune-branch-stage.js';
 
 export function registerPruneBranch(): void {
@@ -46,5 +43,4 @@ export function registerPruneBranch(): void {
   for (const ir of pruneBranchIRs) registerIR(ir.id, ir);
   registerView('prune-branch-stage', pruneBranchStageView);
   registerFacets([pruneBranchFacet]);
-  registerDescription(pruneBranchFacet.id, pruneBranchDescription);
 }

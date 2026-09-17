@@ -7,7 +7,6 @@
 
 import {
   registerAlgorithm,
-  registerDescription,
   registerFacets,
   registerIR,
   registerProjector,
@@ -19,7 +18,6 @@ import { rabinKarpProjector } from './projector.js';
 import { rabinKarpIRs } from './irs.js';
 import { rabinKarpStageView } from './rabin-karp-stage.js';
 import { rabinKarpFacet } from './facet.js';
-import { rabinKarpDescription } from './description.js';
 
 export type {
   RabinKarpData,
@@ -43,7 +41,6 @@ export { rabinKarpProjector } from './projector.js';
 export { rabinKarpIRs, rabinKarpImperativeIR } from './irs.js';
 export { rabinKarpStageView, readRabinKarpScene } from './rabin-karp-stage.js';
 export { rabinKarpFacet } from './facet.js';
-export { rabinKarpDescription } from './description.js';
 
 export function registerRabinKarp(): void {
   // 손잡이를 가진 완제품이라 reactive 다 — 패턴 길이를 바꾸면 알고리즘이 그
@@ -55,5 +52,4 @@ export function registerRabinKarp(): void {
   for (const ir of rabinKarpIRs) registerIR(ir.id, ir);
   registerView('rabin-karp-stage', rabinKarpStageView);
   registerFacets([rabinKarpFacet]);
-  registerDescription(rabinKarpFacet.id, rabinKarpDescription);
 }
