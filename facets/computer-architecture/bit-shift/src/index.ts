@@ -9,12 +9,12 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { bitShiftAlgorithm, type BitShiftData } from './algorithm.js';
-import { bitShiftProjector } from './projector.js';
+import { bitShiftScene } from './scene.js';
 import { bitShiftStageView } from './bit-shift-stage.js';
 import { bitShiftFacet } from './facet.js';
 import { bitShiftDescription } from './description.js';
@@ -25,7 +25,7 @@ export function registerBitShift(): void {
     // 조각은 mount 시 스스로 시작하고 걸음 간격을 스스로 정한다 (S-piece).
     mechanismKind: 'reactive',
   });
-  registerProjector('bitShiftProjector', bitShiftProjector);
+  registerScenePlan('bitShiftScene', bitShiftScene);
   for (const ir of bitShiftIRs) registerIR(ir.id, ir);
   registerView('bit-shift-stage', bitShiftStageView);
   registerFacets([bitShiftFacet]);
@@ -34,11 +34,11 @@ export function registerBitShift(): void {
 
 export {
   bitShiftAlgorithm,
-  bitShiftProjector,
+  bitShiftScene,
   bitShiftStageView,
   bitShiftFacet,
   bitShiftDescription,
   bitShiftIRs,
 };
 export type { BitShiftData };
-export type { BitShiftStageFrame } from './bit-shift-stage.js';
+export type { BitShiftCaption, BitShiftDir, BitShiftScene, BitShiftStep } from './scene.js';

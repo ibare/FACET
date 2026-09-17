@@ -10,20 +10,20 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { mantissaAndExponentAlgorithm } from './algorithm.js';
 import type { MantissaAndExponentData } from './algorithm.js';
-import { mantissaAndExponentProjector } from './projector.js';
+import { mantissaAndExponentScene } from './scene.js';
 import { mantissaAndExponentIRs } from './irs.js';
 import { mantissaAndExponentStageView } from './mantissa-and-exponent-stage.js';
 import { mantissaAndExponentFacet } from './facet.js';
 import { mantissaAndExponentDescription } from './description.js';
 
 export * from './algorithm.js';
-export * from './projector.js';
+export * from './scene.js';
 export * from './irs.js';
 export * from './mantissa-and-exponent-stage.js';
 export * from './facet.js';
@@ -35,7 +35,7 @@ export function registerMantissaAndExponent(): void {
     mantissaAndExponentAlgorithm,
     { mechanismKind: 'reactive' },
   );
-  registerProjector('mantissaAndExponentProjector', mantissaAndExponentProjector);
+  registerScenePlan('mantissaAndExponentScene', mantissaAndExponentScene);
   for (const ir of mantissaAndExponentIRs) registerIR(ir.id, ir);
   registerView('mantissa-and-exponent-stage', mantissaAndExponentStageView);
   registerFacets([mantissaAndExponentFacet]);

@@ -9,14 +9,17 @@
  * 않고 덮개 한 장이 통째로 내려앉는 것으로 낸다.
  *
  * ── 이벤트 목록 + payload 스키마 (다섯 다 이 facet 고유 확장) ───────────────
- *   mask-shown    { maskBits: number[]; mask: number }  덮개가 값 위로 들어와 뜬다
- *   mask-applied  { value: number }                     덮개가 내려앉는다. value = 원값 & 마스크
- *   mask-lifted   { value: number }                     덮개를 걷는다. value = 원래 값
- *   rewind        payload 없음                           되감기 — 화면을 처음 상태로
- *   done          payload 없음                           할 말을 마쳤다
+ *   mask-shown    { mask: number }   덮개가 값 위로 들어와 뜬다
+ *   mask-applied  { value: number }  덮개가 내려앉는다. value = 원값 & 마스크
+ *   mask-lifted   payload 없음        덮개를 걷는다 — 읽히는 것은 다시 원래 값이다
+ *   rewind        payload 없음        되감기 — 화면을 처음 상태로
+ *   done          payload 없음        할 말을 마쳤다
  *
- *   `maskBits` 는 MSB 우선 (`bitCount` 자리). 값의 10진·16진 표기는 그림이
- *   제 자리에서 셈한다 — 알고리즘은 수만 보낸다 (C10).
+ *   싣는 것은 둘뿐이다. **구멍 자리는 싣지 않는다** — `mask` 를 자리 수만큼 편
+ *   것이라 장면이 셈한다. **걷고 난 값도 싣지 않는다** — 그것은 바탕이다.
+ *   `mask-applied` 의 `value` 만 남긴다. `원값 & 마스크` 도 순수 함수지만 그
+ *   AND 가 이 조각의 알고리즘 그 자체라, 내주면 여기 남는 것이 걸음 순서뿐이다.
+ *   값의 10진·16진 표기는 그림이 제 자리에서 셈한다 (C10).
  *   silent 이벤트는 없다. 다섯 다 화면이 바뀐다.
  *
  * 메트릭은 없다 (조각, S-piece).
@@ -36,13 +39,6 @@ export type BitMaskData = {
   stepMs: number;
 };
 
-/** 값을 MSB 우선 비트 배열로 편다. */
-function toBits(value: number, bitCount: number): number[] {
-  const out: number[] = [];
-  for (let i = bitCount - 1; i >= 0; i -= 1) out.push((value >> i) & 1);
-  return out;
-}
-
 /**
  * 걸음 사이의 문. 열리면 true, 취소되었으면 false.
  *
@@ -52,21 +48,18 @@ function toBits(value: number, bitCount: number): number[] {
 type Gate = () => Promise<boolean>;
 
 async function runScene(ctx: ReactiveContext<BitMaskData>, gate: Gate): Promise<boolean> {
-  const { value, bitCount, masks } = ctx.data;
+  const { value, masks } = ctx.data;
 
   for (const [i, mask] of masks.entries()) {
     // 둘째 마스크부터는 앞 덮개를 먼저 걷는다. 걷고 나면 원래 값 그대로라는 것이
     // 이 조각이 지나가며 하는 말이다 — AND 는 원본을 지우지 않는다.
     if (i > 0) {
       if (!(await gate())) return false;
-      await ctx.emit({ type: 'mask-lifted', payload: { value } });
+      await ctx.emit({ type: 'mask-lifted' });
     }
 
     if (!(await gate())) return false;
-    await ctx.emit({
-      type: 'mask-shown',
-      payload: { maskBits: toBits(mask, bitCount), mask },
-    });
+    await ctx.emit({ type: 'mask-shown', payload: { mask } });
 
     if (!(await gate())) return false;
     await ctx.emit({ type: 'mask-applied', payload: { value: value & mask } });

@@ -6,6 +6,10 @@
  *
  * 걸음 간격만 선언에 둔다. 읽을 시간을 주는 것은 저작 결정이고, 좌표는 그림의
  * 몫이다 (S-piece). 분수는 정수 둘로 둔다 — 되풀이를 정수 비교로 잡기 위함이다.
+ *
+ * 화면은 장면(Scene) 방식이라 `projector` 대신 `scene` 을 선언한다. 어느 걸음의
+ * 화면이든 셈으로 얻으므로 컨트롤은 `CONTROL_SET.pieceScrub` — 한 걸음씩 미는
+ * 단추 대신 끌어 볼 수 있는 띠다 (S-piece 의 화면 방식 표).
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -37,7 +41,7 @@ export const unrepresentableFractionFacet: FacetJson = {
     pt: 'Na base 2, 0,1 não se divide de forma exata. Multiplicar por 2 extrai um dígito de cada vez e o mesmo padrão de quatro volta para sempre.',
   },
   algorithm: 'module:unrepresentableFraction',
-  projector: 'module:unrepresentableFractionProjector',
+  scene: 'module:unrepresentableFractionScene',
   initialData: {
     type: 'unrepresentable-fraction',
     numerator: 1,
@@ -46,7 +50,7 @@ export const unrepresentableFractionFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'unrepresentable-fraction-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.seed': {

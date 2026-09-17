@@ -9,19 +9,32 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
 import { unevenFloatGapsAlgorithm, type UnevenFloatGapsData } from './algorithm.js';
-import { unevenFloatGapsProjector } from './projector.js';
+import { unevenFloatGapsScene } from './scene.js';
 import { unevenFloatGapsIRs } from './irs.js';
 import { unevenFloatGapsFacet } from './facet.js';
 import { unevenFloatGapsDescription } from './description.js';
 import { unevenFloatGapsStageView } from './uneven-float-gaps-stage.js';
 
-export { unevenFloatGapsAlgorithm, type UnevenFloatGapsData } from './algorithm.js';
-export { unevenFloatGapsProjector } from './projector.js';
+export {
+  unevenFloatGapsAlgorithm,
+  sampleLadder,
+  nextFloat32,
+  gapAt,
+  gapExponentAt,
+  valuesPerSpan,
+  type UnevenFloatGapsData,
+} from './algorithm.js';
+export {
+  unevenFloatGapsScene,
+  type UnevenFloatGapsScene,
+  type UnevenFloatGapsStep,
+  type UnevenFloatGapsCaption,
+} from './scene.js';
 export { unevenFloatGapsIRs } from './irs.js';
 export { unevenFloatGapsFacet } from './facet.js';
 export { unevenFloatGapsDescription } from './description.js';
@@ -31,7 +44,7 @@ export function registerUnevenFloatGaps(): void {
   registerAlgorithm<UnevenFloatGapsData>('unevenFloatGaps', unevenFloatGapsAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('unevenFloatGapsProjector', unevenFloatGapsProjector);
+  registerScenePlan('unevenFloatGapsScene', unevenFloatGapsScene);
   for (const ir of unevenFloatGapsIRs) registerIR(ir.id, ir);
   registerView('uneven-float-gaps-stage', unevenFloatGapsStageView);
   registerFacets([unevenFloatGapsFacet]);

@@ -10,7 +10,7 @@ import {
   registerDescription,
   registerFacets,
   registerIR,
-  registerProjector,
+  registerScenePlan,
   registerView,
 } from '@ffacet/core/runtime';
 
@@ -19,20 +19,26 @@ import { bitMaskStageView } from './bit-mask-stage.js';
 import { bitMaskDescription } from './description.js';
 import { bitMaskFacet } from './facet.js';
 import { bitMaskIRs } from './irs.js';
-import { bitMaskProjector } from './projector.js';
+import { bitMaskScene } from './scene.js';
 
 export { bitMaskAlgorithm, type BitMaskData } from './algorithm.js';
 export { bitMaskStageView } from './bit-mask-stage.js';
 export { bitMaskDescription } from './description.js';
 export { bitMaskFacet } from './facet.js';
 export { bitMaskIRs } from './irs.js';
-export { bitMaskProjector } from './projector.js';
+export {
+  bitMaskScene,
+  type BitMaskCaption,
+  type BitMaskCover,
+  type BitMaskScene,
+  type BitMaskStep,
+} from './scene.js';
 
 export function registerBitMask(): void {
   registerAlgorithm<BitMaskData>('bitMask', bitMaskAlgorithm, {
     mechanismKind: 'reactive',
   });
-  registerProjector('bitMaskProjector', bitMaskProjector);
+  registerScenePlan('bitMaskScene', bitMaskScene);
   for (const ir of bitMaskIRs) registerIR(ir.id, ir);
   registerView('bit-mask-stage', bitMaskStageView);
   registerFacets([bitMaskFacet]);
