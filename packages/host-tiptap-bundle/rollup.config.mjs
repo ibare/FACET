@@ -43,7 +43,7 @@ const external = [/^@ffacet\/core(\/.*)?$/, /^@tiptap\/core/, /^@tiptap\/pm(\/.*
 function manualChunks(id) {
   const facet = id.match(/facets\/[^/]+\/([^/]+)\/src\//);
   if (facet) return `facet-${facet[1]}`;
-  const catalog = id.match(/\/packages\/bootstrap\/src\/catalog\/([a-z]+)\.generated\.ts$/);
+  const catalog = id.match(/\/packages\/bootstrap\/src\/catalog\/([A-Za-z-]+)\.generated\.ts$/);
   if (catalog && catalog[1] !== 'loaders') return `catalog-${catalog[1]}`;
   if (
     id.includes('/packages/ir-interpreter/') ||

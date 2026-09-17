@@ -3,8 +3,9 @@
  *
  * 이 파일은 codegen 산출물이 아니라 **손으로 쓰는 계획서**다. 그래서 다른 어떤
  * 검사도 보지 않는다. `packages/bootstrap/test/catalog.test.ts` 는 구현된 facet 에서
- * 생성되는 `facet-catalog.generated.ts` 를 보고, 여기는 아직 구현되지 않은 것까지
- * 포함한 계획 전체를 본다.
+ * 생성되는 언어별 카탈로그(`catalog/<locale>.generated.ts`)를 보고, 여기는 아직
+ * 구현되지 않은 것까지 포함한 계획 전체를 본다. 분류가 겹치는 부분은 맨 아래
+ * 묶음이 분류표(`taxonomy/taxonomy.json`)와 맞댄다.
  *
  * 2026-09-10 확장에서 항목 245 개를 한 번에 넣다가 id 충돌 둘을 냈다 —
  * `traversal-order` 와 `halve-the-range` 가 이미 cs-fundamentals 의 조각 이름이었다.
