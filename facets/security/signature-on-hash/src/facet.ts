@@ -12,9 +12,13 @@
  * 출처는 디지털 서명이지만 해시를 재료로 쓴다 — 조각의 출처와 소속이 갈리는
  * 첫 사례다. 소속으로 치면 해시 글에도 서명 글에도 등장할 수 있다.
  *
- * 각주가 밝히는 전제: 작은 두 막대는 실제 비율이면 보이지 않아 최소 폭을 주었다.
- * 그리고 RSA 는 애초에 키보다 큰 것을 직접 서명할 수 없다 — 크기 문제는 비용만이
- * 아니라 가능 여부의 문제이기도 하다.
+ * 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든 셈으로
+ * 얻으므로 띠로 임의의 자리에 갈 수 있다 (S-scene).
+ *
+ * 전제는 글이 밝힌다 (S-piece: 화면에 각주를 두지 않는다). `description.ts` 가 둘을
+ * 적는다 — 가장 작은 마디는 실제 비율이면 보이지 않아 최소 폭으로 띄웠다는 것, 그리고
+ * RSA 는 애초에 키보다 큰 것을 직접 서명할 수 없어 크기 문제가 비용만이 아니라 가능
+ * 여부의 문제이기도 하다는 것.
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
@@ -47,7 +51,7 @@ export const signatureOnHashFacet: FacetJson = {
     pt: 'A assinatura fica em 64 bytes por maior que seja o documento',
   },
   algorithm: 'module:signatureOnHash',
-  projector: 'module:signatureOnHashProjector',
+  scene: 'module:signatureOnHashScene',
   initialData: {
     type: 'signature-on-hash',
     hashLabel: 'SHA-256',
@@ -55,7 +59,8 @@ export const signatureOnHashFacet: FacetJson = {
     documentBytes: 3700000,
     digestBytes: 32,
     signatureBytes: 64,
-    // 접힘 운동(FOLD_MS)이 한 걸음 안에서 끝나야 한다.
+    // 걸음 사이의 쉼. 접힘 운동은 그 위에 더해진다 — `render` 의 약속이 장면이 다
+    // 선 뒤에 풀리므로 다음 걸음이 운동을 앞지르지 않는다 (S-piece 의 걸음 벽시계).
     stepMs: 1100,
   },
   shuffleOnReset: false,
@@ -72,41 +77,45 @@ export const signatureOnHashFacet: FacetJson = {
       id: 'Dokumennya bisa sebesar apa pun.',
       pt: 'O documento pode ter qualquer tamanho.',
     },
+    // 바이트 수를 글자로 못박지 않는다 — 자료가 바뀌면 캡션이 조용히 거짓이 된다.
+    // 장면이 `digestBytes` 에서 실어 준다 (함정 33).
     'caption.hashed': {
-      en: 'Hashing folds it into 32 bytes.',
-      ko: '해시가 그것을 32바이트로 접는다.',
-      ja: 'ハッシュがそれを 32 バイトに畳む。',
-      zh: '哈希把它折成 32 字节。',
-      ar: 'تطوي التجزئة ذلك في 32 بايت.',
-      es: 'El hash lo pliega en 32 bytes.',
-      fr: 'Le hachage le replie en 32 octets.',
-      hi: 'हैशिंग उसे 32 बाइट में मोड़ देती है।',
-      id: 'Hashing melipatnya menjadi 32 byte.',
-      pt: 'O hash o dobra em 32 bytes.',
+      en: 'Hashing folds it into {bytes} bytes.',
+      ko: '해시가 그것을 {bytes}바이트로 접는다.',
+      ja: 'ハッシュがそれを {bytes} バイトに畳む。',
+      zh: '哈希把它折成 {bytes} 字节。',
+      ar: 'تطوي التجزئة ذلك في {bytes} بايت.',
+      es: 'El hash lo pliega en {bytes} bytes.',
+      fr: 'Le hachage le replie en {bytes} octets.',
+      hi: 'हैशिंग उसे {bytes} बाइट में मोड़ देती है।',
+      id: 'Hashing melipatnya menjadi {bytes} byte.',
+      pt: 'O hash o dobra em {bytes} bytes.',
     },
     'caption.signed': {
-      en: 'The private key signs those 32 bytes.',
-      ko: '개인키는 그 32바이트에 서명한다.',
-      ja: '秘密鍵はその 32 バイトに署名する。',
-      zh: '私钥对这 32 字节签名。',
-      ar: 'يوقّع المفتاح الخاص على تلك الـ32 بايت.',
-      es: 'La clave privada firma esos 32 bytes.',
-      fr: 'La clé privée signe ces 32 octets.',
-      hi: 'निजी कुंजी उन्हीं 32 बाइट पर हस्ताक्षर करती है।',
-      id: 'Kunci privat menandatangani 32 byte itu.',
-      pt: 'A chave privada assina esses 32 bytes.',
+      en: 'The private key signs those {bytes} bytes.',
+      ko: '개인키는 그 {bytes}바이트에 서명한다.',
+      ja: '秘密鍵はその {bytes} バイトに署名する。',
+      zh: '私钥对这 {bytes} 字节签名。',
+      ar: 'يوقّع المفتاح الخاص على تلك الـ{bytes} بايت.',
+      es: 'La clave privada firma esos {bytes} bytes.',
+      fr: 'La clé privée signe ces {bytes} octets.',
+      hi: 'निजी कुंजी उन्हीं {bytes} बाइट पर हस्ताक्षर करती है।',
+      id: 'Kunci privat menandatangani {bytes} byte itu.',
+      pt: 'A chave privada assina esses {bytes} bytes.',
     },
+    // 조각의 결론이라 수를 글자로 적어 두지 않는다. 막대의 폭을 정하는 바로 그
+    // 바이트 수에서 장면이 센다 (`scene.ts` 의 `timesLargerOf`, 함정 34).
     'caption.compare': {
-      en: 'The signature stays this size no matter how large the document grows.',
-      ko: '문서가 아무리 커져도 서명은 이 크기에 머문다.',
-      ja: '文書がどれほど大きくなっても署名はこの大きさのままだ。',
-      zh: '不论文档变得多大，签名都保持这个大小。',
-      ar: 'يبقى التوقيع بهذا الحجم مهما كبر المستند.',
-      es: 'La firma mantiene este tamaño por mucho que crezca el documento.',
-      fr: 'La signature garde cette taille, quelle que soit la croissance du document.',
-      hi: 'दस्तावेज़ चाहे कितना भी बढ़े, हस्ताक्षर इसी आकार का रहता है।',
-      id: 'Tanda tangan tetap sebesar ini sebesar apa pun dokumennya tumbuh.',
-      pt: 'A assinatura mantém este tamanho por mais que o documento cresça.',
+      en: 'The signature stays {bytes} bytes while the document beside it is {times} times larger.',
+      ko: '옆의 문서가 {times}배 큰데도 서명은 {bytes}바이트에 머문다.',
+      ja: '隣の文書が {times} 倍大きくても署名は {bytes} バイトのままだ。',
+      zh: '旁边的文档大 {times} 倍，签名仍是 {bytes} 字节。',
+      ar: 'يبقى التوقيع {bytes} بايت بينما المستند المجاور أكبر بـ{times} مرة.',
+      es: 'La firma se queda en {bytes} bytes aunque el documento a su lado sea {times} veces mayor.',
+      fr: 'La signature reste de {bytes} octets alors que le document à côté est {times} fois plus grand.',
+      hi: 'बगल का दस्तावेज़ {times} गुना बड़ा है, फिर भी हस्ताक्षर {bytes} बाइट ही रहता है।',
+      id: 'Tanda tangan tetap {bytes} byte padahal dokumen di sebelahnya {times} kali lebih besar.',
+      pt: 'A assinatura fica em {bytes} bytes embora o documento ao lado seja {times} vezes maior.',
     },
     'label.document': {
       en: 'document',
@@ -149,7 +158,9 @@ export const signatureOnHashFacet: FacetJson = {
     stage: { type: 'sign-hash-stage' },
     controls: {
       type: 'control-bar',
-      controls: CONTROL_SET.piece,
+      // 장면 방식이라 띠(timeline)를 단다 — 어느 걸음의 화면이든 계산으로 얻으므로
+      // 임의의 자리로 끌 수 있다 (S-piece 의 조작 표).
+      controls: CONTROL_SET.pieceScrub,
     },
   },
 };
