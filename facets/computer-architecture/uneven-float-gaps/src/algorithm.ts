@@ -108,7 +108,15 @@ export async function unevenFloatGapsAlgorithm(
     }
     // 첫 지점은 눈금의 기준이 되고, 그 뒤는 앞 눈금과 견주어진다. 어느 지점인지는
     // 발신이 온 차례가 말하므로 싣지 않는다 (프로토콜 4 절).
-    await ctx.emit({ type: i === 0 ? 'anchor' : 'widen' });
+    //
+    // payload 를 걷어내고 나면 두 갈래의 본문이 같아져 삼항으로 합치고 싶어지는데,
+    // 그러면 `type` 이 리터럴이 아니게 되어 C2 MUST NOT 을 어긴다. 어휘를 grep 으로
+    // 찾을 수 없게 되는 것이 그 규칙의 까닭이다. 두 줄로 편다.
+    if (i === 0) {
+      await ctx.emit({ type: 'anchor' });
+      return;
+    }
+    await ctx.emit({ type: 'widen' });
   }
 
   /**
