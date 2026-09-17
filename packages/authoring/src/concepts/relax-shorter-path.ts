@@ -57,9 +57,9 @@ export const relaxShorterPathConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays one pass on its own and stops on the closing statement about direction.',
-        'Two buttons: replay, and a step button. The first press of the step button rewinds and shows the first move in the same press, and each press after that advances one moment.',
+        'Under it sit a Replay button, which plays the pass again from the start, and a playback strip that can be dragged or clicked once the first run has finished, moving the drawing to any moment of the pass.',
         'The four vertices, six edges and the height of the scale are fixed, so the article can name the drop from 7 to 5 and the rejected 11 and count on them being there.',
-        'Stepping is how the reader stops on the rejected candidate, which otherwise passes as quickly as a successful one.',
+        'Dragging the strip back to the rejected candidate is how the reader holds it on screen; during the run it passes as quickly as a successful one.',
       ],
     },
 

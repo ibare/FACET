@@ -39,7 +39,8 @@ export const hashIntegrityCheckConcept: FacetConceptSource = {
 
     screen: {
       affordances: [
-        'The screen plays four steps on its own and stops. Two buttons: Replay, and Step for walking the four moments one at a time. Neither is needed for the screen to finish what it has to say.',
+        'The screen plays four steps on its own and stops. Neither control is needed for it to finish what it has to say.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip\'s handle back to the moment the file is edited mid-route shows the lower route standing still while it happens, and dragging forward brings the two digests to disagree.',
         'The two payloads differ by one digit (Pay 100 / Pay 900), which makes the intent of the alteration legible without explanation.',
       'A footnote states what breaks the whole thing: if both came down the same route, the hash could have been swapped too.',
       ],

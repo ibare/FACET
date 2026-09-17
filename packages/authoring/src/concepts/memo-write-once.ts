@@ -48,7 +48,7 @@ export const memoWriteOnceConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The whole expansion plays on mount and stops with the table full and the empty space under the read nodes still showing.',
-        'Two buttons: Replay, and a step control for taking the recursion one call at a time — the way to stop exactly on the step where a read replaces a subtree.',
+        'Under it sit a Replay button and a playback strip. Once the table is full, dragging the handle back is the way to stop exactly on the step where a read replaces a subtree.',
         'The term is fixed at f(5), so an article can name the nine nodes, the six writes and the three reads and expect them to match.',
       ],
     },

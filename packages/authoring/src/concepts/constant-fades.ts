@@ -55,7 +55,7 @@ export const constantFadesConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen runs the whole argument on its own — probe, post, two moves of the post, the spacing between them, then the erasure — and stops with the constants gone.',
-        'Two buttons: Replay, and a step control for taking one step at a time, which is how a reader can stop just after the post has moved and read the new meeting point off the line.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, dragging the strip back to just after a move of the post is how a reader can read the new meeting point off the line.',
         'The constant is fixed at 100 and the factor at 10, so an article can name n = 10, n = 100 and n = 1000 as the three meeting points the reader will see.',
       ],
     },

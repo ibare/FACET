@@ -50,7 +50,7 @@ export const adjacencyListVsMatrixConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen fills both containers and plays both questions on its own, then stops. Nothing has to be clicked for it to reach the point where the cheaper side has swapped.',
-        'Two buttons: Replay, and Step. Pressing Step after the run returns both containers to their starting state and then walks the same moments one at a time, which is how a single cursor stop can be looked at.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, the strip can be dragged back to any single cursor stop and held there, which is how the lone table touch can be set against the walk through a whole list row.',
         'The graph is the same five vertices and five edges on every run, so the numbers the badges report are the same ones every reader sees.',
       ],
     },

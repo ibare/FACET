@@ -48,7 +48,7 @@ export const loadFactorRehashConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'Nine moments play through unattended — one insertion, the growth, six recomputations — and the screen stops on the tally.',
-        'Two buttons: Replay, and Step. Step returns the table to five keys in eight buckets and moves one moment per press, which is how each division can be read off before the next key is lifted.',
+        'Under it sit a Replay button and a playback strip. Once the tally is up, dragging the handle to the start returns the table to five keys in eight buckets, and moving forward one moment at a time with the arrow keys lets each division be read off before the next key is lifted.',
         'The keys, their hash values, the threshold and both bucket counts are fixed, and every bucket shown is the result of dividing rather than a value written in, so the arithmetic on screen can be repeated by hand.',
       ],
     },

@@ -48,7 +48,7 @@ export const digitByDigitConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen runs every round on its own and stops with the sorted row on top and the full ledger below it.',
-        'Two buttons: Replay, and a step control that repeats the rounds one move at a time, which is how the moment of dropping into the bins can be held next to the moment of lifting back out.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, moving the strip handle back and forth between the drop into the bins and the lift back out holds those two moments next to each other.',
         'The four values are fixed and small enough that a reader can check any round by eye.',
       ],
     },

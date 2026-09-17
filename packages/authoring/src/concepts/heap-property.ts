@@ -48,7 +48,7 @@ export const heapPropertyConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole walk on its own and stops; nothing has to be clicked for it to make its point.',
-        'Two buttons: Replay, and a step control for taking the pairs one at a time. Stepping is what lets a reader dwell on a single sibling pair.',
+        'Below the drawing are a Replay button and a playback strip. Once the walk has finished, dragging the handle back to a pair and leaving it there is what lets a reader dwell on a single sibling pair.',
         'The seven values are fixed, so the same pairs come up every time and the article can quote them by value.',
       ],
     },

@@ -53,7 +53,7 @@ export const widestMarginConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole comparison on its own and stops with the winning band and its contact points on screen.',
-        'Two buttons: Replay, and a step control that takes one candidate at a time, which is how a reader can stop on a single band and see where it caught.',
+        'A Replay button runs the comparison again. Once it has finished, a playback strip can be dragged to any candidate, which is how a reader can stop on a single band and see where it caught.',
         'The points and the candidate slopes are fixed, so an article can name a particular candidate and the thickness it reached.',
       ],
     },

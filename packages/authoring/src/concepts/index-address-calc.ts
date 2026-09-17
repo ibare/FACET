@@ -51,7 +51,7 @@ export const indexAddressCalcConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays itself through both indices and stops, having made its point without a click.',
-        'Two buttons: Replay, and one that walks the eight moments forward one at a time from the beginning.',
+        'Under it sit a Replay button and a playback strip. Once both indices have played, dragging the handle back to where index 5 enters the rail shows it passing the same two gates the first index passed.',
         'The numbers are declared rather than measured — a base of 0x1000 and four-byte elements — and the addresses on screen follow from them exactly.',
       ],
     },

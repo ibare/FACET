@@ -47,7 +47,7 @@ export const bstCompareAndGoConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen runs the whole search on its own and stops on the match, so it delivers its point with nothing clicked.',
-        'Two buttons remain afterwards: one replays the search from the start, the other walks it one comparison at a time for a reader who wants to stop on a single fade.',
+        'A Replay button runs the search again from the start, and once it has finished a playback strip can be dragged back to any single comparison for a reader who wants to stop on one fade.',
         'The tree and the key being sought are fixed — seven values from 50 down to the leaves, looking for 40. There is no field for supplying a different key.',
       ],
     },

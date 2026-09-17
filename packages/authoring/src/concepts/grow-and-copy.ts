@@ -52,7 +52,7 @@ export const growAndCopyConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'One resize plays out end to end on its own and stops with the new block in place.',
-        'Two buttons — Replay, and one that advances the moments singly, which is the way to sit on the four copies rather than let them blur into one event.',
+        'Under it sit a Replay button and a playback strip. Once the resize has finished, moving the strip handle through the copies one moment at a time is the way to sit on the four copies rather than let them blur into one event.',
         'The addresses are declared for the picture, but the byte figures follow from them: four-byte elements, four slots becoming eight, thirty-two bytes at the new address.',
       ],
     },

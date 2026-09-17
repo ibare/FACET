@@ -57,7 +57,7 @@ export const impurityDropsConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The measurement plays through on its own, one layer at a time, and stops with every bar at zero.',
-        'Two buttons: Replay, and a step control that rewinds and advances one step at a time — the useful place to pause is between the split and the band being drawn.',
+        'Under it sit a Replay button and a playback strip. Once every bar is at zero, the handle can be dragged back to any moment — the useful place to hold it is between the split and the band being drawn.',
         'The twelve points and the cut positions are fixed and chosen to reach zero in two layers, so the article can quote the values the screen prints.',
       ],
     },

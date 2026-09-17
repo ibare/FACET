@@ -65,7 +65,7 @@ export const probeAFewCellsConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The whole sequence plays by itself from the query landing to the closing count, and then the screen waits.',
-        'Two buttons: Replay, and a step control that rewinds to the beginning and advances one moment per press, which is how a reader can hold the moment between a lid moving and the members under it being reached.',
+        'Under it sit a Replay button and a playback strip. Once the sequence has finished, dragging the strip back is how a reader can hold the moment between a lid moving and the members under it being reached.',
         'The points, the four representatives, the query at the meeting point of the regions, and the decision to open two of four are all fixed, so the article can name the distances and the counts as they stand.',
       ],
     },

@@ -57,7 +57,7 @@ export const spaceErrorTradeoffConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'It plays through all three table sizes by itself and stops on the closing line, so the whole comparison arrives without anything being pressed.',
-        'Two buttons: Replay, and Step. Step returns to an empty board and advances one moment per press, which is how a single widening can be held still while the bars drop.',
+        'Under it sit a Replay button, which clears the board and plays the three sizes again, and a playback strip that can be dragged once they have finished; moving its handle onto a single widening holds it still while the bars drop.',
         'The sizes shown, the keys and how often each arrives are fixed, and every count and every reading is computed from them rather than written in, so the numbers can be quoted in the text as they appear.',
         'Nothing here is set by the reader, so a comparison beyond the three sizes shown is not available.',
       ],

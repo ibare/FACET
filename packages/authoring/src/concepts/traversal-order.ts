@@ -46,7 +46,7 @@ export const traversalOrderConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'All three passes run without being asked and finish with the three rows complete and comparable.',
-        'A replay button starts the three passes over; a step button moves one touch at a time, which is the way to catch a node being passed over twice before it is finally counted.',
+        'A replay button starts the three passes over; after they finish, a playback strip lets the reader drag back through the touches, which is the way to catch a node being passed over twice before it is finally counted.',
         'The tree is a fixed seven values with no controls for editing it, so the article can name individual nodes and they will be there.',
       ],
     },

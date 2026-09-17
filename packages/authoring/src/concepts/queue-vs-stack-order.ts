@@ -56,7 +56,7 @@ export const queueVsStackOrderConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen runs both lanes in lockstep on its own and stops with two finished rows of visiting order.',
-        'Two buttons: Replay, and one step at a time, which is how to stop on the beat where the two orders part.',
+        'Under it sit a Replay button and a playback strip. Once both lanes have finished, dragging the strip back is how to stop on the beat where the two orders part.',
         'The six-vertex graph, the start vertex and the ascending neighbour rule are all fixed, so the two orders an article quotes are the ones the reader gets.',
       ],
     },

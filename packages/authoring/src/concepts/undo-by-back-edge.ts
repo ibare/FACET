@@ -53,7 +53,7 @@ export const undoByBackEdgeConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole argument by itself on mount — the stuck state first, then the reversal — and stops at the end.',
-        'Two buttons: Replay, and a step control that walks the same sequence one move at a time, which is how a reader can hold on the moment the earlier amount is pushed out.',
+        'Beneath it are a Replay button and a playback strip. Once the run has ended, the moment worth dragging back to is the one where the earlier amount is pushed out.',
         'The five pipes and their capacities are fixed, so an article can name four and six and rely on the reader seeing both numbers appear in that order.',
       ],
     },

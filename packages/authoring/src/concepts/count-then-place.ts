@@ -56,9 +56,9 @@ export const countThenPlaceConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the three phases on its own — tally, harden, place — and stops on the finished row.',
-        'Two buttons: replay, and a step button. The first press of the step button rewinds and shows the first move in the same press, and each press after that advances one moment.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, the strip handle can be dragged, or the strip clicked, to any moment, backward or forward, and the arrow keys move it one moment at a time.',
         'The six values and the three kinds are fixed, so the article can name the columns and the slot numbers they harden into.',
-        'Stepping is how a reader checks the claim frame by frame, since the argument is about what never appears rather than about what does.',
+        'Moving along the strip is how a reader checks the claim frame by frame, since the argument is about what never appears rather than about what does.',
       ],
     },
 

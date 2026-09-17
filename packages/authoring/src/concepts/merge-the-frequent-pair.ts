@@ -62,9 +62,9 @@ export const mergeTheFrequentPairConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole run by itself and stops after the last merge with the closing count on display.',
-        'Two buttons: Replay, and a step control that rewinds to the split letters and walks the same run one beat at a time, where each merge is two beats — the tallies appearing, then the gap closing.',
+        'Under it sit a Replay button and a playback strip. After the run finishes, dragging the strip back toward its start returns to the split letters, and moving forward through it passes each merge as two beats — the tallies appearing, then the gap closing.',
         'The four words and their multipliers are fixed, so an article can name them and quote any tally on the screen.',
-        'The beat worth stopping on is the one where the tallies are up but nothing has closed yet, because that is where the comparison that decides the merge is visible.',
+        'The beat worth returning to on the strip is the one where the tallies are up but nothing has closed yet, because that is where the comparison that decides the merge is visible.',
       ],
     },
 

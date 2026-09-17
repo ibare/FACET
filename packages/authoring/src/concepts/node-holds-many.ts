@@ -47,8 +47,8 @@ export const nodeHoldsManyConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the walk on its own and stops: two keys read at the top, a step down through a gap, two more keys read below, and the match.',
-        'Two buttons: Replay, and Step for taking the same walk one moment at a time. The value being looked for is fixed at 50 and printed above the tree.',
-        'Stepping is worth it at the moment the second key of the top box is read — that single comparison is where the direction is settled, and it passes quickly on its own.',
+        'Under it sit a Replay button and a playback strip for moving back and forth through the walk once it has finished. The value being looked for is fixed at 50 and printed above the tree.',
+        'The moment worth returning to on the strip is when the second key of the top box is read — that single comparison is where the direction is settled, and it passes quickly on its own.',
       ],
     },
 

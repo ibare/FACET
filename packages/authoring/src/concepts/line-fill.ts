@@ -60,7 +60,7 @@ export const lineFillConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the three requests and the closing tally on its own and then stops.',
-        'Two buttons: Replay, and a step control for taking the same sequence one move at a time, which is how a reader can hold the moment between a cell being named and the line arriving.',
+        'Under it sit a Replay button and a playback strip. Once the tally is up, dragging the handle back is how a reader can hold the moment between a cell being named and the line arriving.',
         'The three requested indices and the proportion of four elements to a line are fixed, so an article can name a specific request and quote the byte range that comes with it.',
       ],
     },

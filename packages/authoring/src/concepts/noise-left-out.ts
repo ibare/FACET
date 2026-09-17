@@ -58,7 +58,7 @@ export const noiseLeftOutConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays both runs on its own and stops with the two outcomes standing together.',
-        'Two buttons: Replay, and a step control that rewinds and walks the same steps one at a time, which is how a reader can stop on a single far claim and read its distance.',
+        'Under it sit a Replay button and a playback strip. Once both runs have finished, dragging the strip back into the second run is how a reader can stop on a single far claim and read its distance.',
         'The points, the radius, the threshold and the two starting centres are fixed, so an article can name the left-out points and the distance the last claim was made from.',
       ],
     },

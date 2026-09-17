@@ -49,7 +49,7 @@ export const openAddressingProbeConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'Four insertions play through on their own, followed by the note about the displaced key, and then the screen stops.',
-        'Two buttons: Replay, and Step. Step clears the table and advances one moment per press, which is what makes the order of insertion legible — a different order produces different seats.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip back to the empty table and forward again makes the order of insertion legible — a different order produces different seats.',
         'The keys and their hash values are fixed; the bucket for each one is derived from the hash rather than written down, so the walk on screen is the walk the arithmetic forces.',
       ],
     },

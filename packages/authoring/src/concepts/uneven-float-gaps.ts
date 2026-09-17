@@ -62,7 +62,7 @@ export const unevenFloatGapsConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the walk outward on its own — the opening gap, the four widenings, the count that fills a span — and stops on the closing line.',
-        'Two buttons: Replay, and a step control that rewinds to the first gap and advances one stop per press, which is how a reader can hold still on the comb and count the teeth.',
+        'A Replay button returns to the first gap and walks outward again. After the walk, a playback strip can be dragged to any stop, which is how a reader can hold still on the comb and count the teeth.',
         'The five stopping points are fixed and every distance is measured from the format itself rather than computed for display, so an article can quote a value and the neighbour that follows it.',
       ],
     },

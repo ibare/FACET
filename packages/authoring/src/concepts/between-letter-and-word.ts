@@ -56,12 +56,12 @@ export const betweenLetterAndWordConcept: FacetConceptSource = {
       'The middle row lands much nearer the top row than the bottom one — nine against six and twenty-eight — so the in-between unit is visibly closer to words than to letters rather than halfway between them.',
       'On the closing step, coloured ticks rise through the middle row only where a cut falls inside a word; cuts that coincide with a word edge get no tick, which is what marks the cutting as having moved inward.',
       'Common short words stay whole while longer ones part into a stem and an ending, so the middle row is not uniformly sized — some of its parts are whole words and some are word fragments.',
-      'After it has played through once, a press rewinds and takes the first step in the same motion, so the row never sits emptied and waiting.',
+      'Once it has played through, dragging the playback strip under it returns the rows to any earlier cut and forward again.',
     ],
 
     screen: {
       affordances: [
-        'Two buttons only: replay, and a step control for taking the three cuts one at a time, which is how a reader can stop on the middle row before the third row spoils the comparison.',
+        'A Replay button and a playback strip, which becomes usable once the run has finished. Dragging the strip back to the middle row is how a reader can stop there before the third row spoils the comparison.',
         'The screen plays the three cuts and the closing comparison by itself and then waits.',
         'The sentence is fixed, so an article can name the words that stay whole and the ones that part, and quote the three counts.',
       ],

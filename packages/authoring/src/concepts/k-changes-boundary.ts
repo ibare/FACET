@@ -58,7 +58,7 @@ export const kChangesBoundaryConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays through all four sizes on its own and stops with the last verdict on the card.',
-        'Two buttons: Replay, and a step control that rewinds and walks the widenings one at a time, which is how a reader can hold the moment the card is rewritten.',
+        'Under it sit a Replay button and a playback strip. Once all four sizes have played, dragging the handle back across the widenings is how a reader can hold the moment the card is rewritten.',
         'The ten points, the query position and the four sizes are fixed, so an article can name the nearest point and the two that overturn it.',
       ],
     },

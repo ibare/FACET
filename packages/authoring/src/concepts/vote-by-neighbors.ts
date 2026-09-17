@@ -56,7 +56,7 @@ export const voteByNeighborsConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole vote on its own and stops with both boxes filled and the verdict stated.',
-        'Two buttons: Replay, and a step control that rewinds and calls the neighbours one at a time, which is how a reader can stop between two votes and read the running count.',
+        'Under it sit a Replay button and a playback strip. Once the vote has finished, dragging the strip back between two neighbours stops the count there so it can be read.',
         'The nine points, the query position and the number consulted are fixed, so an article can name which neighbour votes third and which ones stay silent.',
       ],
     },

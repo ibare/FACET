@@ -50,7 +50,7 @@ export const outOfBoundsConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'It runs on its own: a safe access first, the same arithmetic pushed one cell further, then the check being installed.',
-        'Two buttons — Replay, and one that steps the eight moments forward from the start.',
+        'Under it sit a Replay button and a playback strip; once the run has finished, the strip moves the drawing to any moment, so the safe access and the one-cell-further read can be set against each other.',
         'Which value sits next to the array is a stated assumption of the picture, which is itself the point: what an out-of-range read finds is whatever happens to be there.',
       ],
     },

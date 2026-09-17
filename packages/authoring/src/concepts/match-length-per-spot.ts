@@ -75,7 +75,7 @@ export const matchLengthPerSpotConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen works through all ten positions on its own and stops on the closing caption with the band left standing over the last stretch.',
-        'Two buttons: Replay, and a step control that rewinds and re-walks the same run one move at a time, which is the way to stop on a single flight of a number out of a mirror box.',
+        'Under it sit a Replay button and a playback strip. Once the closing caption is up, dragging the handle back is the way to stop on a single flight of a number out of a mirror box.',
         'The string is fixed at aabaabaabx, so an article can name the answers that appear — ten, one, zero, six, one, zero, three, one, zero, zero — and the one position where a borrowed answer runs out and comparing resumes.',
       ],
     },

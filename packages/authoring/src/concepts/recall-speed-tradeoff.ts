@@ -63,7 +63,7 @@ export const recallSpeedTradeoffConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The sequence plays by itself from the true answer being laid out to the closing line, and then the screen waits.',
-        'Two buttons: Replay, and a step control that rewinds and walks the same stages one press at a time, which is how a reader can stop on the crossing and see which item left and which one took the seat.',
+        'Under it sit a Replay button and a playback strip. Once the sequence has finished, moving the strip\'s handle to the crossing is how a reader can stop on it and see which item left and which one took the seat.',
         'The data, the query and the five that truly belong in the answer are fixed, so the article can name a departing item by its coordinates and quote the three percentages.',
       ],
     },

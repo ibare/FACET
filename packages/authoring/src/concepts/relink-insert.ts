@@ -48,7 +48,7 @@ export const relinkInsertConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen performs the insertion by itself and stops. It does not need a click to say what it has to say.',
-        'Two buttons: Replay, and Step for taking the beats one at a time. The moment worth stepping through is the arrow hanging loose between being unhooked and being set down — at full speed it reads as a single motion.',
+        'Under it sit a Replay button and a playback strip that can be dragged once the insertion has finished. The moment worth returning to on the strip is the arrow hanging loose between being unhooked and being set down — during the run it reads as a single motion.',
         'One insertion, fixed in the declared data. There is no field for choosing a different value or position.',
       ],
     },

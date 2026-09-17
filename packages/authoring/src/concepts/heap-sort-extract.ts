@@ -49,7 +49,7 @@ export const heapSortExtractConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen empties the heap on its own and stops with the whole row in ascending order and the boundary bar at the far left.',
-        'Two buttons: Replay, and a step control that repeats the run one motion at a time, which is how the lift and the landing can be separated and looked at.',
+        'Under it sit a Replay button and a playback strip. Once the row is sorted, moving the handle back through the run one moment at a time is how the lift and the landing can be separated and looked at.',
         'The five values are fixed and already form a max heap, so the article can name the order in which they come out.',
       ],
     },

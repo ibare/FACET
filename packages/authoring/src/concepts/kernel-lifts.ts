@@ -55,7 +55,7 @@ export const kernelLiftsConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the six failed cuts, the lift and the final line on its own, then stops.',
-        'Two buttons: Replay, and a step control for taking the moments one at a time, which is how a reader can stop on a single failed cut and read what stayed on each side.',
+        'Under it sit a Replay button and a playback strip. Once the final line is drawn, dragging the handle back to one of the failed cuts lets a reader stop there and read what stayed on each side.',
         'The points and the way they are lifted are fixed — nothing here is chosen by the reader, and the same seven positions run every time.',
       ],
     },

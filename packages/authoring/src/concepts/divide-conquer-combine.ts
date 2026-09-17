@@ -60,7 +60,7 @@ export const divideConquerCombineConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The round trip plays once by itself and stops with the order marks left on screen.',
-        'Two buttons: Replay, and a step control that rewinds and then advances one cut or one combine at a time, which is the way to stop at the bottom and see that nothing has an answer yet.',
+        'Under it sit a Replay button and a playback strip. Once the round trip has finished, dragging the strip handle back to the moment before the bottom row settles is the way to stop at the bottom and see that nothing has an answer yet.',
         'The four values never change, so the tree is the same shape every time and the article can refer to the numbered cuts and combines directly.',
       ],
     },

@@ -59,7 +59,7 @@ export const neighborsLinkedAheadConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The walk plays once by itself on arrival and stops with the ring standing on the point it settled at.',
-        'Two buttons: Replay, and a step control. The first press clears the walk back to the bare set of links and each further press takes one more beat, which is how a reader can sit on the look where two links tie.',
+        'Under it sit a Replay button and a playback strip. Once the walk has finished, dragging the strip to its start returns to the bare set of links, and moving the handle to the look where two links tie lets a reader sit on it.',
         'The twelve positions, the five links per point, the starting place and the target are all fixed, and every point is named on screen, so an article can quote the route by name.',
       ],
     },

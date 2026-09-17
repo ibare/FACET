@@ -49,7 +49,7 @@ export const oneWayEdgeConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen walks the graph twice on its own — once without arrows, once with them — and stops with the stranded vertex sitting outside the ring.',
-        'Two buttons: Replay, and a step control that repeats the whole sequence one move at a time, which is how the lanes can be watched dropping away one line at a time.',
+        'Under it sit a Replay button and a playback strip. Once both walks have finished, dragging the strip through the second walk is how the lanes can be watched dropping away one line at a time.',
         'The graph is fixed at five vertices and five lines, and exactly one vertex ends up stranded, so the article can name it.',
       ],
     },

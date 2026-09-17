@@ -53,7 +53,7 @@ export const directionOfMostSpreadConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen turns the axis, finds the peak and stops there on its own.',
-        'Two buttons: Replay, and one step at a time, which is how to hold on a single angle and read the two spreads against their sum.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle to any angle holds the axis there, so the two spreads can be read against their sum.',
         'The twelve points are fixed, so the peak angle and the share an article quotes stay the same for every reader.',
       ],
     },

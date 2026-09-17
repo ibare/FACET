@@ -50,7 +50,7 @@ export const inPlaceVsExtraConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'Both lanes play to the end on their own and stop with the two gauges at their final widths.',
-        'Two buttons: Replay, and one that takes the rounds one at a time, which is how the two lanes can be compared at the same round.',
+        'Under it sit a Replay button and a playback strip that moves both lanes together, so once the run has finished, dragging the handle back to any round compares the two lanes at that same round.',
         'The four values are fixed and shared by both lanes, so the widths are the only thing that differs between them.',
       ],
     },

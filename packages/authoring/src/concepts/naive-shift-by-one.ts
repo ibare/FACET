@@ -53,7 +53,7 @@ export const naiveShiftByOneConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays every starting position on its own and stops on the closing caption with the found mark still in place.',
-        'Two buttons: Replay, and a step control that rewinds and walks the same sweep one comparison at a time, which is the way to stop on the collapse of the bar.',
+        'Under it sit a Replay button and a playback strip. After the sweep finishes, dragging the strip back to the first starting position and nudging forward with the arrow keys is the way to stop on the collapse of the bar.',
         'The text and the pattern are fixed, so an article can name the four characters matched at the first position and the position where the pattern is finally found.',
       ],
     },

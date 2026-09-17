@@ -54,7 +54,7 @@ export const compareAndSwapConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'Three pairs play through on their own and the screen stops on the summary.',
-        'Two buttons: Replay, and a step control that rewinds and advances one judgment or one movement at a time, which is how a reader can stop between the verdict and its consequence.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, dragging the strip back and forth across a pair is how a reader can stop between the verdict and its consequence.',
         'The three pairs are fixed and deliberately chosen — out of order, already ordered, and equal — so the article can refer to each case by name.',
       ],
     },

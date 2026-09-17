@@ -68,7 +68,7 @@ export const writeBackVsThroughConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays all seven writes, the leftover lines and the closing tally on its own and then stops.',
-        'Two buttons: Replay, and a step control that rewinds to the start and advances one write per press, which is how a reader can hold still on the moment the dots are swept into a single box.',
+        'Beneath it are a Replay button and a playback strip. After the run, dragging the handle to the write where the dots are swept into a single box holds that moment still.',
         'The sequence of seven writes, the two slots and the 16 B line are fixed, so an article can name the line written three times and quote the two totals it leads to.',
       ],
     },

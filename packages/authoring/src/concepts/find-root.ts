@@ -46,7 +46,7 @@ export const findRootConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the three climbs and the two comparisons on its own and then stops, so it makes its point without needing a click.',
-        'Two buttons: Replay, and Step for taking the moments one at a time. The first Step after the automatic run rewinds and starts the walk again from the first slot.',
+        'Under it sit a Replay button and a playback strip. Once the automatic run has finished, dragging the strip handle, or clicking the strip, moves to any moment of the climbs, and dragging it to the start returns to the first slot.',
         'The pointers are fixed for this screen — the reader chooses nothing about which slot points where, and the same three climbs run every time.',
       ],
     },

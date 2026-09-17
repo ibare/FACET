@@ -49,7 +49,7 @@ export const throughMiddleNodeConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The sweep plays through by itself and stops with the ledger filled in.',
-        'Two buttons: Replay, and one that advances a question at a time, which is the way to stop on a question whose answer is no.',
+        'A Replay button runs the sweep again. When it has finished, a playback strip can be dragged back to any question, which is the way to stop on one whose answer is no.',
         'The graph is fixed at four vertices and six one-way roads, and one vertex has no road in while another has none out, so a large share of the questions is dead on arrival by construction.',
       ],
     },

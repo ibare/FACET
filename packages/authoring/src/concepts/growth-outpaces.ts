@@ -53,7 +53,7 @@ export const growthOutpacesConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen climbs the whole ladder of input sizes on its own and stops with the bar collapsed onto a single term.',
-        'Two buttons: Replay, and a step control for taking one rung at a time, which is how a reader can stop on the rung where the three terms come out equal.',
+        'Under it sit a Replay button and a playback strip. Once the climb has finished, dragging the strip handle back lets a reader stop on the rung where the three terms come out equal.',
         'The coefficients and the six sizes are fixed — 1, 5, 10, 50, 100 and 1000 — so an article can quote the percentages and the reader will meet the same ones.',
       ],
     },

@@ -56,7 +56,7 @@ export const requiresSortedConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen runs both rows on its own and stops with the two verdicts standing side by side.',
-        'Two buttons: Replay, and a step control that rewinds and walks the same probes one at a time, which is how a reader can stop on the step where the two rows part.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle back and forth over the probes is how a reader can stop on the step where the two rows part.',
         'Both rows and the value being looked for are fixed, so an article can name the seat the value occupies in each row and the step where the answers diverge.',
       ],
     },

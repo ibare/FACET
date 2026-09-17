@@ -54,7 +54,7 @@ export const kMustBeGivenConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays all three runs on its own and ends with the three outlines left overlaid on the same points.',
-        'Two buttons: Replay, and a step control that rewinds and walks the same three runs one step at a time, which is the way to stop on a single split before the next one is drawn.',
+        'Under it sit a Replay button and a playback strip that spans all three runs. Once they have played, dragging the handle back is the way to stop on a single split before the next one is drawn.',
         'The points and the three values of k are fixed, so an article can name the sizes each split produces and the two drops in the scatter panel.',
       ],
     },

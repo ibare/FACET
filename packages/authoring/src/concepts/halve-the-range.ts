@@ -55,7 +55,7 @@ export const halveTheRangeConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole narrowing on its own and stops with a single candidate left.',
-        'Two buttons: Replay, and a step control that rewinds and walks the same comparisons one at a time, which is how a reader can pause on the chip as it leaves.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle back to a comparison lets a reader hold on the chip as it leaves.',
         'The seven values and the value being looked for are fixed, so an article can name the counts seven, three and one and the two comparisons that produce them.',
       ],
     },

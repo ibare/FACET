@@ -53,7 +53,7 @@ export const keepNeighborsCloseConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole unrolling by itself and stops on the closing line.',
-        'Two buttons: Replay, and a step control for taking the same sequence one move at a time, which is how a reader can hold the moment the cut is made before the straightening starts.',
+        'Under it sit a Replay button and a playback strip. Once the unrolling has finished, dragging the handle back is how a reader can hold the moment the cut is made before the straightening starts.',
         'The ten points and the cut location are fixed, so an article can name the pair that tears and the reader will find it at the ends of the line.',
       ],
     },

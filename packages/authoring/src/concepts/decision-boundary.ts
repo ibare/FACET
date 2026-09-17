@@ -57,7 +57,7 @@ export const decisionBoundaryConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole sequence by itself on mount and stops with the line drawn.',
-        'Two buttons: Replay, and a step control that walks the same sequence one move at a time, which is how a reader can stop on the empty stretch of the ruler before the plane gets swept.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle back lets a reader stop on the empty stretch of the ruler before the plane gets swept.',
         'The weights, the bias, the eight points and the grid resolution are all fixed, so an article can point at the pale seam or at the equation and know they are on screen.',
       ],
     },

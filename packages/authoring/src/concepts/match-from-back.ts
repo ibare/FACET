@@ -60,7 +60,7 @@ export const matchFromBackConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen runs the whole sweep by itself and stops on the closing tally, with the unread characters left dropped out of the text row.',
-        'Two buttons: Replay, and a step control that rewinds and walks the same run one move at a time, which is the way to stop on a single leftward step of the marker.',
+        'Under it sit a Replay button and a playback strip. Once the closing tally is up, dragging the handle back and moving it with the arrow keys is the way to stop on a single leftward step of the marker.',
         'The text and the pattern are fixed, so an article can name the position where the pattern is found and the two counts in the closing caption.',
       ],
     },

@@ -57,7 +57,7 @@ export const denseNeighborhoodConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole spreading on its own and stops once every point belongs somewhere.',
-        'Two buttons: Replay, and a step control that rewinds and walks the same waves one at a time, which is how a reader can stay on a single jump and read the distance it used.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle back to any wave lets a reader stay on a single jump and read the distance it used.',
         'The points, the radius and the threshold are fixed, so an article can name the ring, the clump inside it, and the two distances the argument rests on.',
       ],
     },

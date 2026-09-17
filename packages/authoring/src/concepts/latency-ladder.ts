@@ -59,7 +59,7 @@ export const latencyLadderConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen runs the search from the nearest floor down to main memory and closes with the span on its own, then stops.',
-        'Two buttons: Replay, and a step control for taking the descent one floor at a time, which is how a reader can sit on the last fall and feel its length.',
+        'Under it sit a Replay button and a playback strip. Once the span is shown, dragging the handle back to just before main memory is how a reader can return to the last fall and feel its length.',
         'The four floors and their cycle counts are fixed, so an article can quote a specific rung and its multiplier.',
       ],
     },

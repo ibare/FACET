@@ -56,7 +56,7 @@ export const coinFlipHeightConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The run plays once by itself — twelve towers, then the levels lining up and being measured, then the guide lines — and stops there.',
-        'Two buttons: Replay, and a step control. The first press rewinds and raises the first tower; each further press takes one more value, which is how a reader can stop on a tower while its coins are still readable.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, dragging the strip back to the towers is how a reader can stop on one while its coins are still readable.',
         'The throws are fixed data rather than drawn live, so the counts are always 12, 6 and 3 and an article can name them. For the same reason a reader pressing Replay sees the same draw again.',
       ],
     },

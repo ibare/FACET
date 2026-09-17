@@ -55,13 +55,13 @@ export const spatialLocalityConcept: FacetConceptSource = {
       'Each cell carries its byte address beneath it and its line name below that, so the boundary is recomputable rather than asserted: address 12 divides into line 0 and address 16 into line 1, which is exactly where the second descent happens.',
       'Cells finish in different colours according to how they were reached, so the final still image is itself the tally — the ones that rode along against the two that went down.',
       'The closing caption puts the three counts in one line: eight touched, six rode along, two went down.',
-      'Captions during the run name the index, its address and its line, so a reader stepping through can do the division at each cell.',
+      'Captions during the run name the index, its address and its line, so a reader moving along the playback strip can do the division at each cell.',
     ],
 
     screen: {
       affordances: [
         'The screen walks all eight accesses and the closing tally on its own and then stops.',
-        'Two buttons: Replay, and a step control for taking the walk one move at a time, which is how a reader can stop on the boundary between a[3] and a[4] where the division changes.',
+        'Under it sit a Replay button and a playback strip. Once the walk has finished, dragging the strip handle back is how a reader can stop on the boundary between a[3] and a[4] where the division changes.',
         'The eight indices and the proportion of four elements to a line are fixed, so an article can name the crossing and quote the addresses on either side of it.',
       ],
     },

@@ -57,7 +57,7 @@ export const bottleneckSetsFlowConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole sequence by itself on mount and then stops on the closing state.',
-        'Two buttons: Replay, and a step control that walks the same sequence one move at a time, which is the way to pause between the room being measured and the amount being sent.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, dragging the strip back is the way to hold between the room being measured and the amount being sent.',
         'The network is fixed at four nodes and five pipes, so an article can name the three amounts and the arrival total and count on them being there.',
       ],
     },

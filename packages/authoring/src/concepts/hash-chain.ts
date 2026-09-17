@@ -39,7 +39,8 @@ export const hashChainConcept: FacetConceptSource = {
 
     screen: {
       affordances: [
-        'The screen plays four steps on its own and stops. Two buttons: Replay, and Step for walking the four moments one at a time. Neither is needed for the screen to finish what it has to say.',
+        'The screen plays four steps on its own and stops. Neither control is needed for it to finish what it has to say.',
+          'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle back to the moment before the old entry is edited, then forward again, shows the break passing down the chain.',
         'The entries are ledger lines (deposit 50, withdraw 20), so the motive for editing an old one needs no explanation.',
         'A footnote admits that recomputing every following entry restores the chain, and says what still catches it.',
       ],

@@ -48,7 +48,7 @@ export const parentTwoChildrenConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen grows the whole tree on its own and stops with the rejected move already undone.',
-        'Two buttons: Replay, and a step control for taking one split at a time, which is the way to stay on the node that gets only one child.',
+        'Under it sit a Replay button and a playback strip. Once the tree has grown, dragging the strip back to the split that gives a node only one child is the way to stay on it.',
         'The tree shape is fixed, so the article can refer to the node with a single child by name.',
       ],
     },

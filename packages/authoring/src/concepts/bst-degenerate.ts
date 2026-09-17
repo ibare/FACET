@@ -47,7 +47,7 @@ export const bstDegenerateConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The whole demonstration — both trees growing, both searches, the closing comparison — plays through unprompted and ends on the result.',
-        'A replay button runs it again and a step button walks it one move at a time, which is how a reader catches the moment the sorted input turns yet another right turn into extra depth.',
+        'A Replay button runs it again, and once it has finished a playback strip can be dragged to any moment, which is how a reader catches the moment the sorted input turns yet another right turn into extra depth.',
         'The two insertion orders are fixed and printed above their trees, so the article can quote them directly.',
       ],
     },

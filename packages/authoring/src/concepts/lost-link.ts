@@ -49,7 +49,7 @@ export const lostLinkConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays both attempts on its own and stops. The failure and the repair are one continuous run, not two things to trigger.',
-        'Two buttons: Replay, and Step for taking one beat at a time. The beat worth stopping on is the one where two arrows point at the same box, because that overlap is the entire reason the second order is safe.',
+        'Under it sit a Replay button and a playback strip. Once both attempts have played, the moment worth dragging back to is the one where two arrows point at the same box, because that overlap is the entire reason the second order is safe.',
         'One insertion at a fixed position, declared in the data. There is nothing to type in and no other order to try.',
       ],
     },

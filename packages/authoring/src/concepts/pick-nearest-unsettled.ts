@@ -56,9 +56,9 @@ export const pickNearestUnsettledConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole sequence on its own and stops with every vertex hardened.',
-        'Two buttons: replay, and a step button. The first press of the step button rewinds to the bare graph and shows the first move in the same press, and from there each press advances one moment.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip to its start returns to the bare graph, and any moment after it can be reached directly.',
         'The five vertices and six weights are fixed, so the article can name the order in which they harden.',
-        'Stepping is the way to pause on a spread and read one rebound against one absorption in the same frame.',
+        'Moving the strip\'s handle to a spread is the way to hold it and read one rebound against one absorption in the same frame.',
       ],
     },
 

@@ -51,7 +51,7 @@ export const baggingSampleConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays all three bags on its own, eight draws each, and stops on the closing caption.',
-        'Two buttons: Replay, and a step control for taking one draw at a time, which is how a reader can pause on a tile being drawn for the second time.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, dragging the strip back to a single draw is how a reader can hold on a tile being drawn for the second time.',
         'The pool and the three draw orders are fixed, so an article can name the number that comes out twice in the first bag and the numbers that never come out at all.',
       ],
     },

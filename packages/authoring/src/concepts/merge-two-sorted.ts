@@ -41,7 +41,7 @@ export const mergeTwoSortedConcept: FacetConceptSource = {
       'Two rows of three lie side by side on top and an empty result row waits below, already as wide as the finished sequence, so the reader can see how much is still to come.',
       'A ring marks the front of each row and slides one cell along when that row wins, which makes the next front a movement rather than a colour change.',
       'Cells are not copied: the winning cell leaves its row, drops straight down, then slides to its seat, and a dashed outline stays where it was.',
-      'Cells behind the two fronts are drawn faint, so even a paused frame shows that only two cells are ever being weighed.',
+      'Cells behind the two fronts are drawn faint, so even a single frame held still shows that only two cells are ever being weighed.',
       'Once one row is empty the remaining cells come down with nothing lit against them, and the caption says there is no longer anything to compare.',
       'A value that has landed in the result row never moves again — no seat is revisited and no pair down there is ever weighed.',
       'The closing caption gives the count: six values placed with five comparisons.',
@@ -50,7 +50,7 @@ export const mergeTwoSortedConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The whole combination plays through by itself and stops with the top rows empty and the result row full.',
-        'Two buttons: Replay, and one that advances a single step, which is how one comparison can be held on screen and read.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip\'s handle to any point holds that comparison on screen, and the arrow keys move back or forward by one moment.',
         'The rows are fixed at three values each and hold no repeats, so the article can name which value comes down at each step.',
       ],
     },

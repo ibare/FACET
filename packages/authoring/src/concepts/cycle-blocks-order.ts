@@ -64,7 +64,7 @@ export const cycleBlocksOrderConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays on its own from the first count through the stall and the backward trace, then stops with three slots still empty.',
-        'Two buttons: Replay, and a step control for taking the trace one hop at a time, which is how a reader follows the wait from one vertex to the next.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle back into the trace, or pressing the arrow keys on it, follows the wait one hop at a time from one vertex to the next.',
         'The graph is fixed at five vertices and five arrows, two of which point at each other, so an article can name the pair that deadlocks and the vertex stranded behind them.',
         'When more than one vertex is takeable the run picks alphabetically, and since the halting point is the same either way the choice carries no meaning.',
       ],

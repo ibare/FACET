@@ -50,7 +50,7 @@ export const growOneTreeConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The tree grows by itself from vertex A after mount and stops once every vertex has joined, leaving the final lane arrangement on the board.',
-        'Two buttons: Replay, and a step control — the way to hold the moment where the lightest edge visible on the board is not the one being taken.',
+        'Under it sit a Replay button and a playback strip. Once the tree has finished growing, dragging the strip handle back holds the moment where the lightest edge visible on the board is not the one being taken.',
         'The graph and the starting vertex are fixed, so an article can name the step where 4 wins over 2 and expect the reader to find it.',
       ],
     },

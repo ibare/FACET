@@ -58,7 +58,7 @@ export const divisorPairsSqrtConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen walks up to the root on its own and stops with the region beyond it covered over.',
-        'Two buttons: Replay, and a step control that rewinds and then takes the same probes one at a time, which is how a reader can stop on a single flight and see where the partner came from.',
+        'Under it sit a Replay button and a playback strip. Once the walk has finished, dragging the strip handle back to any probe lets a reader stop on a single flight and see where the partner came from.',
         'The number is fixed at thirty-six, and because it is a square the folding place lands on a position rather than between two, which is what lets the pair that meets itself appear at all.',
       ],
     },

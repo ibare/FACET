@@ -49,7 +49,7 @@ export const splitUntilOneConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole descent on its own and stops with every box holding one dot.',
-        'Two buttons: Replay, and one that takes the cuts a level at a time so a single tear can be held still.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip back to any cut holds a single tear still, with the level above it still intact.',
         'The four values are fixed, so the levels come out even — one group, then two, then four — and no group ever ends up a cell larger than its sibling.',
       ],
     },

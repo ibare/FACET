@@ -61,7 +61,7 @@ export const dendrogramCutConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole sweep on its own — up through every resting place, then into each wide stretch — and stops there.',
-        'Two buttons: Replay, and a step control that moves the line one resting place at a time, which is how a reader can stop just below and just above a crossbar and compare the counts.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, moving the strip handle back and forth across a crossbar puts the line just below and just above it, so the two counts can be compared.',
         'The eight leaves and their merge heights are fixed, so an article can quote a height and the number of groups it yields.',
       ],
     },

@@ -50,7 +50,7 @@ export const boundAndCutConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The board measures branch after branch on its own and stops on the final count, with every column and every cut still on screen.',
-        'Two buttons: Replay, and a step control — the way to stop on a branch after its bar has been measured but before the cut lands.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, the strip is the way to stop on a branch after its bar has been measured but before the cut lands.',
         'Three items and a capacity of 5 are fixed, so an article can name the ceilings 24.0 and 23.0 and the 27 they fail against.',
       ],
     },

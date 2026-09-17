@@ -47,7 +47,7 @@ export const traverseFromHeadConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen runs its six beats by itself and then stops, so it makes its point without being clicked.',
-        'Two buttons: Replay, and Step for taking one beat at a time. Stepping is what makes the failed jump readable — at full speed the ray goes out and comes back quickly enough to be mistaken for a successful move.',
+        'Under it sit a Replay button and a playback strip that can be dragged once the run has ended. Returning to the failed jump on the strip is what makes it readable — during the run the ray goes out and comes back quickly enough to be mistaken for a successful move.',
         'The counter and the trail are left standing at the end, so the finished screen still shows how many links were crossed.',
       ],
     },

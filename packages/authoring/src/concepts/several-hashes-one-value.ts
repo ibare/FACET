@@ -55,7 +55,7 @@ export const severalHashesOneValueConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'Three insertions play through unattended and the screen stops on the tally of lit cells.',
-        'Two buttons: Replay, and a step control that rewinds to an empty array and advances one moment per press, which is how the branches of one value can be watched leaving separately.',
+        'Under it sit a Replay button, which empties the array and plays the insertions again, and a playback strip that can be dragged once they have finished; moving its handle through one insertion is how the branches of one value can be watched leaving separately.',
         'The array is sixteen cells and the three values are fixed, with every position computed from the two base hashes rather than written in, so the arithmetic can be repeated by hand.',
       ],
     },

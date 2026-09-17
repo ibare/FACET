@@ -47,7 +47,7 @@ export const separateComponentsConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen runs every search on its own, holding noticeably longer at the end of each one than between ordinary steps.',
-        'Two buttons: Replay, and a step control that re-walks the whole sweep one move at a time, which is how the pause on the unlit vertices can be held indefinitely.',
+        'Under it sit a Replay button and a playback strip. Once the sweep has finished, dragging the strip handle back to the end of a search is how the pause on the unlit vertices can be held indefinitely.',
         'The graph is fixed at eight vertices and six edges, and the vertex order fixes where each new search begins, so the article can name the starting vertex of each group.',
       ],
     },

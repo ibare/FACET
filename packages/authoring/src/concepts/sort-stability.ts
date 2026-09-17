@@ -57,7 +57,7 @@ export const sortStabilityConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The comparison builds itself in five steps and stops on the crossed threads, leaving the finished picture on screen.',
-        'Two buttons: Replay, and a step control that rewinds and then advances one step at a time — useful for pausing on the moment the name tags are hidden.',
+        'Under it sit a Replay button and a playback strip. Once the comparison has built, dragging the strip handle back is useful for holding the moment the name tags are hidden.',
         'The four items are fixed, with two pairs of equal values, so the article can name the items by their tags when describing which pair crossed.',
       ],
     },

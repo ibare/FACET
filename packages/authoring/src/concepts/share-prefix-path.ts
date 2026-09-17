@@ -48,7 +48,7 @@ export const sharePrefixPathConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The four insertions play through on their own and the screen stops on the closing count, so it finishes its argument without being clicked.',
-        'Two buttons: replay, and a step button for taking the insertion one moment at a time. The first press of the step button rewinds to the bare root and shows the first move in the same press.',
+        'Under it sit a Replay button, which returns to the bare root and plays the four insertions again, and a playback strip that can be dragged or clicked once they have finished, moving the tree to any moment of the insertions.',
         'Every number on screen comes from actually inserting the four words in that order, so the saving is a result rather than a stated figure.',
       ],
     },

@@ -54,7 +54,7 @@ export const pruneBranchConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole descent on its own and stops with the tree half grown and the skipped region still blank.',
-        'Two buttons: Replay, and a step control that rewinds and walks the same descent one spot at a time, which is how a reader can stop on the moment a lid spreads.',
+        'Under it sit a Replay button and a playback strip. Once the descent has finished, dragging the strip back is how a reader can stop on the moment a lid spreads.',
         'The numbers and the target are fixed, so an article can name the value that closes the first branch and the pair that adds up to the target.',
       ],
     },

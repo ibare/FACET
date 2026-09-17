@@ -58,7 +58,7 @@ export const circularBufferWrapConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen runs four operations by itself, about 0.7s apart, and finishes on the sentence about the slot count.',
-        'Two buttons: Replay, and Step. The first press returns to the opening arrangement and each further press plays one operation.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, dragging the strip holds the buffer before or after any one operation, which is how the move from the last slot to the first can be watched again.',
         'The opening arrangement is already past one turn: values sit in slots 3 and 4 while the writing index points at slot 0. That crossed-looking start is the state to explain, not a mistake to correct.',
         'The two indices are labelled head and tail on screen, and the arithmetic is printed in the same modulo form. Prose that calls them read and write positions should tie those names to these two markers.',
       ],

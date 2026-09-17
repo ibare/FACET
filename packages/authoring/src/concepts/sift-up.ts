@@ -46,7 +46,7 @@ export const siftUpConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole insertion on its own and stops at the settling slot.',
-        'Two buttons: Replay, and a step control that walks the same moments one at a time, which is the way to hold on the comparison that ends the climb.',
+        'Under it sit a Replay button and a playback strip. Once the insertion has finished, dragging the strip handle back a little is the way to hold on the comparison that ends the climb.',
         'The starting heap and the inserted value are fixed, so the article can name them and count the swaps.',
       ],
     },

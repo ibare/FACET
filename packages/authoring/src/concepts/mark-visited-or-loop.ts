@@ -51,7 +51,7 @@ export const markVisitedOrLoopConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays both runs in sequence on its own and stops with the second one finished.',
-        'Two buttons: Replay, and one step at a time, which is how to hold still on the moment C offers A and the marked run turns it down.',
+        'Under it sit a Replay button and a playback strip. Once the second run has finished, dragging the handle back is how to hold still on the moment C offers A and the marked run turns it down.',
         'The four places and the neighbour order are fixed and never shuffled, because the whole argument depends on C offering A before D.',
       ],
     },

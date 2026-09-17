@@ -49,7 +49,7 @@ export const rotateToBalanceConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'Four steps play on their own and then stop — measure, turn, measure again, conclude.',
-        'Two buttons: Replay, and a step button. The first press puts the tree back to its pre-turn arrangement and shows the first step; each further press takes the next one, and after the last it starts over.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle back past the turn returns the tree to its leaning arrangement, and dragging forward turns it again.',
         'One fixed six-node tree with one leaning root, so the same left turn happens the same way every time and the numbers in the captions are always the same numbers.',
       ],
     },

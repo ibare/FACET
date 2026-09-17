@@ -61,7 +61,7 @@ export const indegreeZeroFirstConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole cascade on its own and stops with all five vertices in the bottom row.',
-        'Two buttons: Replay, and a step control that advances one event at a time — which is how a reader can hold still on a badge going from two to one and see that nothing moved.',
+        'Under it sit a Replay button and a playback strip. Once the cascade has finished, dragging the handle back and moving it one event at a time with the arrow keys is how a reader can hold still on a badge going from two to one and see that nothing moved.',
         'The graph is fixed at five vertices and five arrows, so an article can name a vertex and the badge value it waits on.',
         'Ties are broken alphabetically, so the same run repeats identically and the article can quote the order it produces.',
       ],

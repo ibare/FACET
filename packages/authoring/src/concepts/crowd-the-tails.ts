@@ -57,8 +57,8 @@ export const crowdTheTailsConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole sequence on its own — even cut, slide, filling pair by pair, and the marks — and stops once each bucket holds a single mark.',
-        'Two buttons: Replay, and a step control for walking the same sequence one moment at a time, which is how a reader can sit on the slide and watch a boundary move.',
-        'Stepping once more after the end rewinds to the bare line of points and begins again from the even cut.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle back into the slide lets a reader sit on it and watch a boundary move, forward and back.',
+        'Dragging the handle to the start of the strip returns to the bare line of points before the even cut; Replay clears the drawing and plays the whole sequence again.',
         'The sixty points and the six buckets are fixed, so the boundaries at 7, 25, 50, 75 and 93 percent and the counts of four, eleven and fifteen can be named in the text and relied on.',
       ],
     },

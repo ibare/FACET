@@ -56,7 +56,7 @@ export const globalAndLocalConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen walks the whole comparison on its own — laying out both rows, joining them, then measuring inside a group, between groups, and finally the ratio — and stops on the verdict.',
-        'Two buttons: Replay, and a step control for taking the same sequence one measurement at a time, which is how a reader can stop on the gap figures before the ratio is drawn.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle back from the verdict lets a reader stop on the gap figures before the ratio is drawn.',
         'The three groups and their coordinates are fixed, so an article can name a specific group and the reader will find it in the same position on both rulers.',
       ],
     },

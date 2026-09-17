@@ -53,7 +53,7 @@ export const mutuallyReachableConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen works through the pairs on its own and ends with the vertices rearranged into their groups.',
-        'Two buttons: Replay, and a step control for taking one probe at a time, which is how a reader can stop after the outward trip and before the return trip is attempted.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip to any probe lets a reader stop after the outward trip and before the return trip is attempted.',
         'The graph is fixed at five vertices and six edges, so an article can name the pair that turns out one-way and the single edge left spanning the gap at the end.',
       ],
     },

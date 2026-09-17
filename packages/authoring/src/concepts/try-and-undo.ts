@@ -52,7 +52,7 @@ export const tryAndUndoConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole search on its own and stops with the four pieces standing.',
-        'Two buttons: Replay, and a step control that rewinds to the empty board and then walks the same search one move at a time, which is the way to stop on the moment a piece is lifted.',
+        'A Replay button clears the board and runs the search again. Once it has finished, a playback strip can be dragged to any move, which is the way to stop on the moment a piece is lifted.',
         'The board size and the search order are fixed, so an article can name which first column fails and how far the search descends before it comes all the way back.',
       ],
     },

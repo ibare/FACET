@@ -51,7 +51,7 @@ export const insertIntoSortedPartConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'One placement plays through by itself and stops with the four values in order.',
-        'Two buttons: Replay, and one that advances a step at a time, which is how the hole can be held part-way through its walk.',
+        'Under it sit a Replay button and a playback strip. Once the placement has finished, dragging the handle back into the middle of the run holds the hole part-way through its walk.',
         'The three ordered values and the arriving one are fixed, and the arriving value belongs in the middle, so the walk stops before the left end on every run.',
       ],
     },

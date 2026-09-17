@@ -76,7 +76,7 @@ export const signedWraparoundConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole walk on its own and stops with the ring closed and both ends emphasised.',
-        'Two buttons: Replay, and a step control that rewinds to the start and then advances one move per press, which is how a reader can hold still on the move that crosses the end.',
+        'Under it sit a Replay button and a playback strip. Once the walk has finished, dragging the strip handle back to the move that crosses the end holds it still, and dragging across it in either direction shows it looks like any other move.',
         'The width is fixed at eight bits and the walk always starts three below the largest value, so an article can quote the exact values and bit patterns on screen.',
       ],
     },

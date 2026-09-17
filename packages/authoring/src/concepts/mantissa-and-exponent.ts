@@ -63,7 +63,7 @@ export const mantissaAndExponentConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole decomposition on its own and stops on the assembled expression.',
-        'Two buttons: Replay, and a step control that rewinds to the intact row and advances one moment per press, which is how a reader can hold still on the bias being subtracted or on the dashed cell arriving.',
+        'Under it sit a Replay button and a playback strip. Once the expression is assembled, dragging the handle back toward the intact row is how a reader can hold still on the bias being subtracted or on the dashed cell arriving.',
         'The value and the division of the bits are fixed at one number and a 1 / 8 / 23 split, so an article can name the exponent field, the constant taken from it, and the fraction by their actual values.',
       ],
     },

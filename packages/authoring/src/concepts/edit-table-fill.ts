@@ -56,7 +56,7 @@ export const editTableFillConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The grid fills itself after mount and stops on the answer cell, with the tinted free cells and the finished numbers left standing.',
-        'Two buttons: Replay, and a step control that empties the grid and re-runs it one anti-diagonal at a time — the way to hold on a step while the chips are still in the air and the three outlined neighbours are visible.',
+        'Under it sit a Replay button and a playback strip. Once the grid has filled, dragging the strip handle back to an anti-diagonal holds that step while the chips are still in the air and the three outlined neighbours are visible.',
         'The two words are fixed at kitten and sitting, so an article can name them, name the answer, and point at the letters the reader will find on the two axes.',
       ],
     },

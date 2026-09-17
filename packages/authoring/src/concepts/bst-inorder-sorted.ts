@@ -47,7 +47,7 @@ export const bstInorderSortedConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The walk plays through all nine values by itself and stops on the finished row.',
-        'Afterwards a replay button starts the walk over, and a step button advances one moment at a time so a reader can stop exactly where a value leaves its node.',
+        'Afterwards a Replay button starts the walk over, and a playback strip can be dragged back to any moment so a reader can stop exactly where a value leaves its node.',
         'The tree is fixed — nine values arranged so that the root is neither first nor last out. Nothing on screen takes a new value.',
       ],
     },

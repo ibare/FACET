@@ -49,7 +49,7 @@ export const bottomUpTableConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The row fills itself after mount and stops with all the arrows and the window still in place.',
-        'Two buttons: Replay, and a step control that refills the row one cell at a time from empty — the way to stop while a pair of values is still travelling along the arcs.',
+        'A Replay button and a playback strip sit underneath. Once the row is full, dragging the strip back to any cell holds a pair of values while it is still travelling along the arcs, and dragging to the start empties the row again.',
         'The row is fixed at six cells, so an article can name the eight arrows, the four additions and the two cells the window lands on.',
       ],
     },

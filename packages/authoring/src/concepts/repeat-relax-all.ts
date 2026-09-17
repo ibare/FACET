@@ -50,7 +50,7 @@ export const repeatRelaxAllConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays four rounds over four edges by itself and stops on the closing tally.',
-        'Two buttons: Replay, and a step control for advancing one scan at a time, which is how a reader can sit on a scan that does nothing and read why.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle back to a scan that does nothing lets a reader sit on it and read why.',
         'The chain, the weights and the sweep order are fixed, so an article can name which single scan in each round is the one that lands.',
       ],
     },

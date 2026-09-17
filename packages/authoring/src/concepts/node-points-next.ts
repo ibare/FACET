@@ -48,7 +48,7 @@ export const nodePointsNextConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole sequence on its own and stops. Nothing has to be clicked for it to finish what it is saying.',
-        'Two buttons: Replay, and Step for walking the same sequence one beat at a time. Step is worth offering because the gap between the address order on the axis and the order the values arrive in is easy to miss at speed.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the handle slowly back through the sequence is worth offering, because the gap between the address order on the axis and the order the values arrive in is easy to miss the first time.',
         'The addresses and the byte gaps are consistent with the declared node size, so a reader who checks the arithmetic on screen will find it holds.',
       ],
     },

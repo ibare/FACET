@@ -38,7 +38,8 @@ export const hashSaltConcept: FacetConceptSource = {
 
     screen: {
       affordances: [
-        'The screen plays four steps on its own and stops. Two buttons: Replay, and Step for walking the four moments one at a time. Neither is needed for the screen to finish what it has to say.',
+        'The screen plays four steps on its own and stops. Neither control is needed for it to finish what it has to say.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip\'s handle back to the moment before the salt column appears puts the two identical stored values side by side again, and dragging forward watches them split.',
         'A footnote states that the salt is stored in the clear, which is the point most readers get wrong.',
       ],
     },

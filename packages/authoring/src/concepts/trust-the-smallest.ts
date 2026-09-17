@@ -59,7 +59,7 @@ export const trustTheSmallestConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'It adds all five keys and then asks about all five on its own, and stops on the closing line without anything being pressed.',
-        'Two buttons: Replay, and Step. Step empties the table and walks the same sequence one press at a time, which is how the descent of the answer can be held next to the true mark.',
+        'Below it are a Replay button, which empties the table and runs again, and a playback strip. After the run, dragging the strip to any query holds the descent of the answer next to the true mark.',
         'The table size and the arriving keys are fixed, and the cells a key takes are computed from the key itself, so the overlap that inflates one of the readings is a real one rather than an arrangement.',
       ],
     },

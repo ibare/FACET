@@ -77,7 +77,7 @@ export const bitShiftConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays both directions on its own and stops on the step where the bit is lost.',
-        'Two buttons: Replay, and a step control that rewinds and then walks the same slides one press at a time, which is how a reader can stop on the moment the tile leaves the rail.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, dragging the strip to any slide holds both expressions at that value, and returning to the moment the tile leaves the rail is where the lost bit can be looked at.',
         'The values are fixed — 3 shifted left five times and 200 shifted right four — so an article can quote any intermediate number and both forms of the expression at that step.',
       ],
     },

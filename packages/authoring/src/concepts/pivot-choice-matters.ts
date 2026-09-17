@@ -57,7 +57,7 @@ export const pivotChoiceMattersConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays both lanes on its own and stops with the two beams left in place for comparison.',
-        'Two buttons: Replay, and a step control that rewinds and walks both lanes one movement at a time, which is how a reader can stop on the moment the second beam commits to one side.',
+        'Under it sit a Replay button and a playback strip. Once both lanes have finished, dragging the strip back is how a reader can stop on the moment the second beam commits to one side.',
         'The values and the two reference positions are fixed, so an article can name the middle value and the first value and what each leaves behind.',
       ],
     },

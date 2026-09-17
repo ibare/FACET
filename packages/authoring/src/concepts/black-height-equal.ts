@@ -50,7 +50,7 @@ export const blackHeightEqualConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen walks all four routes on its own and stops, so it finishes its argument without asking for a click.',
-        'Two buttons: Replay, and Step. The first press of Step returns the ring to the top and shows the first step again; each press after that moves one step, and a press past the last one starts over.',
+        'A Replay button and a playback strip sit underneath. Once the walk has finished, dragging the strip back puts the ring on any seat of any route, with the running total in the caption as it stood at that seat.',
         'The arrangement is given rather than typed in, so the four routes are always the same four and the counts can be checked by hand against the picture.',
       ],
     },

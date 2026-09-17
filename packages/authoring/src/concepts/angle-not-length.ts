@@ -59,7 +59,7 @@ export const angleNotLengthConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole comparison on its own and stops with both sets of badges standing and the reversed candidate still pulsing.',
-        'Two buttons: Replay, and a step control that rewinds and walks the same beats one at a time, which is how a reader can hold the screen at the moment the length rulers are still at full strength.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, dragging the strip back to the moment the length rulers are still at full strength holds the screen there, and dragging forward lets the other reading overtake them again.',
         'The query and the three candidates are fixed at whole-number coordinates, so an article can name the arrow that is longest and quote the two readings that disagree about it.',
       ],
     },

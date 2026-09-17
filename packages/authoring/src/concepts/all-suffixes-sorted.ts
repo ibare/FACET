@@ -63,7 +63,7 @@ export const allSuffixesSortedConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen cuts, aligns and orders all six tails on its own and stops with the band standing over the finished block.',
-        'Two buttons: Replay, and a step control that rewinds to the bare string and walks the same run one move at a time, which is the way to stop on a single tail crossing to its seat.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, dragging the strip back into the sorting holds a single tail as it crosses to its seat, and dragging to the very start returns the bare string.',
         'The string is fixed at banana, so an article can name the six tails, the order they land in, and the positions the chips read once they have all arrived.',
       ],
     },

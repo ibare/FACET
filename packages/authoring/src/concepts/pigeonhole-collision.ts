@@ -43,7 +43,7 @@ export const pigeonholeCollisionConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays four steps on its own and stops, so it says what it has to say without asking for a click.',
-        'Two buttons: Replay, and Step for walking the four moments one at a time. Neither is needed for the screen to finish what it has to say. Watching the places fill up is what makes the last step inevitable rather than surprising, so it is worth seeing again.',
+        'Under it sit a Replay button and a playback strip. Neither is needed for the screen to finish what it has to say. Watching the places fill up is what makes the last step inevitable rather than surprising, so dragging the strip back through the filling is worth doing.',
         'The place numbers come from real SHA-256 values (the last nibble), so the arrangement is not invented for the picture.',
       ],
     },

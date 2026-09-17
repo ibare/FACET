@@ -60,7 +60,7 @@ export const compareWithAllConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole sequence on its own and stops on the step that runs off the top.',
-        'Two buttons: Replay, and a step control that rewinds and walks the same sequence one beat at a time, which is how a reader can sit on the beat where the scale first retreats.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, dragging the strip back is how a reader can sit on the beat where the scale first retreats.',
         'The five pairs of quantities are fixed and every total is computed from them, so an article can quote any of the five and the reader will meet it.',
       ],
     },

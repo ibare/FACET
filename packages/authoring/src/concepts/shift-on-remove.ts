@@ -50,7 +50,7 @@ export const shiftOnRemoveConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The removal plays through unprompted and comes to rest on the shortened range.',
-        'Two buttons — Replay, and one that takes the pulls a single step at a time so the travelling gap can be watched rather than inferred.',
+        'Under it sit a Replay button and a playback strip; once the removal has finished, dragging the strip handle back across the pulls lets the travelling gap be watched rather than inferred.',
         'The array is five values with the deletion at index 1, chosen so there are three pulls to watch rather than one.',
       ],
     },

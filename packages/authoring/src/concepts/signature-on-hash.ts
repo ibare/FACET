@@ -39,7 +39,8 @@ export const signatureOnHashConcept: FacetConceptSource = {
 
     screen: {
       affordances: [
-        'The screen plays four steps on its own and stops. Two buttons: Replay, and Step for walking the four moments one at a time. Neither is needed for the screen to finish what it has to say.',
+        'The screen plays four steps on its own and stops. Neither control is needed for it to finish what it has to say.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle back returns to the full-width document bar before it folds, and dragging forward watches it shrink to the digest and then the signature again.',
         'The bars are drawn to scale apart from the stated minimum, so the proportion carries the argument.',
       ],
     },

@@ -51,7 +51,7 @@ export const manyTreesVoteConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays through the five questions on its own and finishes on the tally.',
-        'Two buttons: Replay, and a step control for taking one question at a time, which is how a reader can stop on a question and count the two sides before the majority is taken.',
+        'Under it sit a Replay button and a playback strip. Once the tally is up, dragging the handle back to a question lets a reader stop there and count the two sides before the majority is taken.',
         'The board of answers is fixed rather than learned, so an article can quote any single answer, any individual score and the final comparison exactly.',
       ],
     },

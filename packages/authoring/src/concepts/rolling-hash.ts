@@ -66,7 +66,7 @@ export const rollingHashConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole sweep unattended and stops on the closing stroke, with all eight values left standing under the rail to be compared afterwards.',
-        'Two buttons: Replay, and a step control that rewinds to a bare rail and advances one moment per press, which is how a reader can stop between the chip leaving and the chip landing.',
+        'Under it sit a Replay button, which clears the rail and plays the sweep again, and a playback strip that can be dragged once the sweep has finished; moving its handle onto a single advance is how a reader can stop between the chip leaving and the chip landing.',
         'The text and the pattern are fixed (abracadabra, cada) and every number is computed by the run from a fixed base and modulus rather than written in, so the values named in prose stay true and small enough to read off the wheel.',
       ],
     },

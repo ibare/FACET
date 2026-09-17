@@ -47,8 +47,8 @@ export const splitWhenFullConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'It runs its four moments unprompted and holds the final arrangement — arriving, overflowing, rising, dividing.',
-        'Two buttons: Replay, and Step to take the four moments singly. The first press of Step returns the tree to its state before the key arrived, then shows the first moment.',
-        'The key that rises and the key that arrived are different keys, and stepping is what makes that easy to point at — the newcomer stays down in the right-hand box.',
+        'Below it are a Replay button and a playback strip that can be dragged once the run has finished; moving its handle to the start puts the tree back as it was before the key arrived, and from there each moment can be taken on its own.',
+        'The key that rises and the key that arrived are different keys, and holding the strip on the rising moment is what makes that easy to point at — the newcomer stays down in the right-hand box.',
       ],
     },
 

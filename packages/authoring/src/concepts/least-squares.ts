@@ -60,7 +60,7 @@ export const leastSquaresConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the argument by itself on mount — three lanes cancelling, the change of measure, three lanes piling up — and stops on the verdict.',
-        'Two buttons: Replay, and a step control that walks the same sequence one move at a time, which is how a reader can stay on the frame where all three signed totals are zero.',
+        'Under it sit a Replay button and a playback strip. Once the verdict is up, dragging the handle back is how a reader can stay on the frame where all three signed totals are zero.',
         'The four points and the three lines are fixed, so an article can name 26, 11 and 6 and rely on the reader reading them off the towers.',
       ],
     },

@@ -57,7 +57,7 @@ export const enqueueDequeueEndsConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole flow by itself, about 0.6s per beat, and comes to rest on the two rows being compared.',
-        'Two buttons: Replay, and Step. The first press of Step returns the run to the waiting values and each further press advances one operation.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle to its start returns to the waiting values, and moving it along brings the run to any operation, in either direction.',
         'The words on the doors are IN and OUT, and they stay in those two letters at every locale. Prose that speaks of a front and a rear is pointing at these two posts.',
         'Three values, 3 then 7 then 1, are all that enters, so the order under discussion is short enough to be read off the screen rather than tracked.',
       ],

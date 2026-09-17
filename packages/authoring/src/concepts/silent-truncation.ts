@@ -76,7 +76,7 @@ export const silentTruncationConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen pours all three values on its own and stops with the last result standing under the container.',
-        'Two buttons: Replay, and a step control that rewinds to the start and then advances one move per press, which is how a reader can hold still between the descent and the fall.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle back into a pour is how a reader can hold still between the descent and the fall.',
         'The three values, the sixteen-bit source and the eight-bit container are fixed, so an article can quote each pair of numbers and the bits that fell.',
       ],
     },

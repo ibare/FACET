@@ -48,7 +48,7 @@ export const depthDoublesCountConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen builds all ten levels on its own and stops with the total standing beside the brace.',
-        'Two buttons: Replay, and a step control for adding one level at a time, which is how a reader can watch the count double against a level number that only rises by one.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, walking the strip handle forward from the start, level by level, shows the count doubling against a level number that only rises by one.',
         'The depth is fixed at nine, so the closing numbers the article quotes are the ones the reader will see.',
       ],
     },

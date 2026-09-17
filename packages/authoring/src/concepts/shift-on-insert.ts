@@ -50,7 +50,7 @@ export const shiftOnInsertConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The whole insertion plays through by itself and stops with the array settled.',
-        'Two buttons — Replay, and one that advances the moves one at a time so a single slide can be held still and read.',
+        'Under it sit a Replay button and a playback strip; once the insertion has finished, dragging the strip handle to a single slide holds it still to be read.',
         'The array is five values in six slots, so there is one spare slot to shift into and the insertion never has to ask for more room.',
       ],
     },

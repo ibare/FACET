@@ -60,7 +60,7 @@ export const coarseThenFineConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The run plays once by itself — down through the three sheets, then the single-sheet comparison — and stops with both results on screen.',
-        'Two buttons: Replay, and a step control. The first press clears back to the bare sheets and each further press takes one more beat, which is how a reader can hold the picture at the instant the position drops between sheets.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, dragging the strip back is how a reader can hold the picture at the instant the position drops between sheets, and dragging to the start clears back to the bare sheets.',
         'The sixteen positions, which of them appear on each sheet, how many links each sheet gives a point, the starting place and the target are all fixed. The sheets are named on screen and the ring names the point it stands on, so an article can quote the route.',
       ],
     },

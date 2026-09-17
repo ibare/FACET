@@ -56,7 +56,7 @@ export const partitionAroundPivotConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole split on its own and stops with both rooms filled.',
-        'Two buttons: Replay, and a step control that rewinds and walks the same crossings one at a time, which is how a reader can sit on a single comparison.',
+        'Under it sit a Replay button and a playback strip. Once the split has finished, moving the strip\'s handle to a crossing is how a reader can sit on a single comparison.',
         'The five values and the reference are fixed, so an article can name which value goes to which side.',
       ],
     },

@@ -52,7 +52,7 @@ export const verifyVsFindConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen runs both rows to the end on its own and stops with the two frames standing side by side, one around 64 tiles and one around a single tile.',
-        'Two buttons: Replay, and a step control that advances one block of eight candidates at a time, which is how a reader can stop just after an answer has been found and watch the sweep continue anyway.',
+        'Beneath it are a Replay button and a playback strip. After the run, dragging the handle to just after an answer has been found and then forward again shows the sweep continuing anyway.',
         'The six numbers and the target are fixed, so an article can name the candidate that gets handed over and the three combinations that reach 50.',
       ],
     },

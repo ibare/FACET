@@ -47,7 +47,7 @@ export const twoColorConflictConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen paints the whole ring on its own and stops with the failing edge marked.',
-        'Two buttons: Replay, and a step control that repaints from the start one move at a time, which is how a reader can stop on the last edge before the two colours meet.',
+        'Under it sit a Replay button and a playback strip. After the painting finishes, dragging the handle back one move from the end stops on the last edge before the two colours meet.',
         'The ring is fixed at five vertices, and the starting vertex and the first colour are fixed too, so the article can state that the outcome does not depend on either.',
       ],
     },

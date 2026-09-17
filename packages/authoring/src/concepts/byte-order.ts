@@ -75,7 +75,7 @@ export const byteOrderConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole sequence on its own and stops with all four rows standing and both readouts in place.',
-        'Two buttons: Replay, and a step control that rewinds and then retakes the same moments one press at a time, which is how a reader can hold on the crossing paths before the bytes land.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, dragging the strip back is how a reader can hold on the crossing paths before the bytes land.',
         'The value is fixed at 0x12345678 in four bytes, so an article can name any individual byte, the address it occupies in each row, and both readouts exactly.',
       ],
     },

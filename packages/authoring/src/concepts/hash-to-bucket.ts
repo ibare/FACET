@@ -50,7 +50,7 @@ export const hashToBucketConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'It runs four keys through four moments each on its own and then stops, so the reader gets the whole argument without pressing anything.',
-        'Two buttons: Replay, and Step. Step rewinds to an empty band and walks the same sequence one moment at a time, which is how the arithmetic can be read at the reader\'s own pace.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the handle back to the empty band and moving forward a moment at a time with the arrow keys is how the arithmetic can be read at the reader\'s own pace.',
         'The keys are fixed (kiwi, fig, apple, banana) and every number on screen is computed rather than written in, so the values can be quoted in the text exactly as they appear.',
       ],
     },

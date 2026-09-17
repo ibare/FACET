@@ -66,7 +66,7 @@ export const mergeNearestPairConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays all seven joins on its own and stops with the heights gathered on the ruler.',
-        'Two buttons: Replay, and a step control for taking one join at a time, which is how a reader can stop on the threads before the shortest one is picked.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip back to the start of any join holds the threads on screen before the shortest one thickens and is picked.',
         'The eight points are fixed, so an article can name a pair and the height at which it joins.',
       ],
     },

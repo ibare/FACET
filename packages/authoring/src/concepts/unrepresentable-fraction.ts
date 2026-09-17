@@ -60,7 +60,7 @@ export const unrepresentableFractionConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole expansion on its own — the first digits, the loop closing, the laps, the cut and the rounding — and stops with the stored digits lit.',
-        'Two buttons: Replay, and a step control that rewinds to the bare tape and advances one moment per press, which is how a reader can stop on the remainder that comes back.',
+        'A Replay button clears the tape and runs the expansion again. When it has finished, a playback strip can be dragged to any moment, which is how a reader can stop on the remainder that comes back.',
         'The fraction is fixed at one tenth and every digit is produced by arithmetic on integers rather than placed by hand, so an article can name the repeating group and the digit that rounds up.',
       ],
     },

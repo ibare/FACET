@@ -54,7 +54,7 @@ export const projectAndLoseConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole drop once on its own and stops with the spots on the line.',
-        'Two buttons: Replay, and one step at a time, which is how to hold the screen at the moment the red traces exist and before they are erased.',
+        'Under it sit a Replay button and a playback strip. Once the drop has finished, dragging the strip back holds the screen at the moment the red traces exist and before they are erased.',
         'The twelve points and the angle of the axis are fixed, so the two distances and the two percentages an article quotes are what the reader will read.',
       ],
     },

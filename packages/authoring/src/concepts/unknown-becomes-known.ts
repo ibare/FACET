@@ -60,7 +60,7 @@ export const unknownBecomesKnownConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole sequence once on its own and stops with the words that came through standing across the top.',
-        'Two buttons: Replay, and a step control whose first press rewinds and then walks the same sequence one beat at a time, which is how a reader can hold the moment between the sweep that matches nothing and the split that follows.',
+        'Under it sit a Replay button and a playback strip. Once the run is over, dragging the handle to the sweep that matches nothing holds the moment before the split that follows.',
         'The pieces on the shelf and the four words are fixed, so an article can name the word that fails whole and the two parts it arrives as.',
       ],
     },

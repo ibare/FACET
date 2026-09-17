@@ -48,7 +48,7 @@ export const chainingBucketConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'Ten moments play by themselves — five insertions and then one search — and the screen stops when the search succeeds.',
-        'Two buttons: Replay, and Step. Step empties the board and re-runs the same ten moments one press at a time, which is how the order of the insertions can be tied to the shape of the chain.',
+        'A Replay button and a playback strip sit underneath. Once the search has finished, dragging the strip back through the insertions is how the order they arrived in can be tied to the shape of the chain.',
         'The keys, their hash values and the bucket count are fixed, and the buckets come from those hashes rather than from arrangement, so the collision on screen is a real one.',
       ],
     },

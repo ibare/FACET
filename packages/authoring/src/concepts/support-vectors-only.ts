@@ -53,7 +53,7 @@ export const supportVectorsOnlyConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen runs all three edits on its own and stops with the three columns standing side by side.',
-        'Two buttons: Replay, and a step control for taking one edit at a time, which is how a reader can stop between an edit and the solve that follows it.',
+        'A Replay button starts the edits over, and after the run a playback strip lets the reader drag to any moment, which is how to stop between an edit and the solve that follows it.',
         'The points, the edits and the order they happen in are fixed, so an article can name the point that is moved and the amount the band loses.',
       ],
     },

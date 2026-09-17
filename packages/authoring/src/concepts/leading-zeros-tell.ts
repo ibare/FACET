@@ -54,7 +54,7 @@ export const leadingZerosTellConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays all eight keys on its own and stops with the notch and its pill still standing.',
-        'Two buttons: Replay, and a step control that rewinds to an empty ladder and walks the same keys one at a time, which is how a reader can hold still on a key that does not move the notch.',
+        'Under it sit a Replay button and a playback strip. Once all eight keys have played, dragging the handle back to a key that does not move the notch lets a reader hold still on it.',
         'The keys are fixed (kiwi, elder, cherry, banana, apple, mango, fig, date) and their bit strings are the real murmur3 32-bit values for those names, so any row can be quoted exactly as it appears.',
         'The keys are ordered so the runs of zeros grow, which is why the notch climbs in visible steps rather than settling on the first key.',
       ],

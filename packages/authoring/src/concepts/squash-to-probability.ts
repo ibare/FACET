@@ -57,7 +57,7 @@ export const squashToProbabilityConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole mapping by itself on mount, from the centre outward, and stops with both tails pressed in.',
-        'Two buttons: Replay, and a step control that walks the same landings one at a time, which is how the reader can compare the two numbers on one step before the next one covers it.',
+        'Beneath it are a Replay button and a playback strip. Once the run is over, dragging the handle back to a single landing shows the two numbers for that step before the next one covers them.',
         'The nine scores are fixed at -8 to 8, so an article can name 0.9997 or the step from 0 to 1 and rely on the reader finding it.',
       ],
     },

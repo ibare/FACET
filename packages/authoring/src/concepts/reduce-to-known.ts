@@ -53,7 +53,7 @@ export const reduceToKnownConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen carries the whole problem across on its own and stops on the finished timetable of three slots.',
-        'Two buttons: Replay, and a step control for moving one subject at a time, which is how a reader can stop at the moment a bracket becomes an edge between two nodes.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle back is how a reader can stop at the moment a bracket becomes an edge between two nodes.',
         'The five subjects and the six overlapping pairs are fixed, so an article can name which subjects end up sharing a slot and the reader will find them there.',
       ],
     },

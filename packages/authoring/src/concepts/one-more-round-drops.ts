@@ -50,7 +50,7 @@ export const oneMoreRoundDropsConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays six rounds by itself and halts, though the halt is a framing decision rather than an end to the falling.',
-        'Two buttons: Replay, and a step control for taking one round at a time, which is how a reader can stop exactly on the round that breaks the dashed line.',
+        'Under it sit a Replay button and a playback strip. Once the rounds have finished, dragging the strip back lets a reader stop exactly on the round that breaks the dashed line.',
         'The graph, the weights and the number of rounds shown are fixed, so an article can name the loop, quote its total of minus two, and point at the round where the floor gives way.',
       ],
     },

@@ -72,7 +72,7 @@ export const associativityReliefConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the first arrangement, the change of dividers, the second arrangement and the closing count on its own, then stops.',
-        'Two buttons: Replay, and a step control that rewinds to the beginning and advances one move per press, which is how a reader can hold still on the moment an occupant drops out and compare it with the moment one sits down beside another.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, the strip can hold still on the moment an occupant drops out, and dragging forward to the moment one sits down beside another puts the two arrangements a short drag apart.',
         'The four slots, the two arrangements and the six alternating accesses are fixed, so an article can name either address and quote the two miss counts.',
       ],
     },

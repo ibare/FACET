@@ -72,7 +72,7 @@ export const bitMaskConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays both maskings on its own and stops with the closing statement on the caption line.',
-        'Two buttons: Replay, and a step control that rewinds and then retakes the same moments one press at a time, which is how a reader can hold still on the cover in mid-air before it lands.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, dragging the strip back to either masking holds the cover in mid-air before it lands.',
         'The value is fixed at 10101011 and the two masks at 0x0F and 0xF0, so an article can quote the readouts — 171, then 11, then 171 again, then 160 — by name.',
       ],
     },

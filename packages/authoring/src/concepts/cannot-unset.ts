@@ -56,7 +56,7 @@ export const cannotUnsetConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'Seven moments play by themselves — the three standing, one round of questions, the selection, the clearing, the collapse, and the second round — and the screen stops on the closing line.',
-        'Two buttons: Replay, and a step control that returns the floor to its opening bits and advances one moment per press, which is how the cleared positions can be compared against the feet still resting on them.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, dragging the strip between the clearing and the second round is how the cleared positions can be compared against the feet still resting on them.',
         'The array is sixteen positions, the three values and the one to be removed are fixed, and every foot is placed from arithmetic on the value rather than by hand, so the shared positions are genuinely shared.',
       ],
     },

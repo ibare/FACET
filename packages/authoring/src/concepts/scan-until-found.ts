@@ -52,7 +52,7 @@ export const scanUntilFoundConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays both passes on its own and stops with the two trails and the bracket left in place.',
-        'Two buttons: Replay, and a step control that rewinds and walks the same two passes one cell at a time, which is the way to stop on the cell where the first pass ends.',
+        'Under it sit a Replay button and a playback strip. Once both passes have finished, dragging the strip handle back is the way to stop on the cell where the first pass ends.',
         'The row and the two values looked for are fixed, so an article can name the value that is in the row and the one that is not.',
       ],
     },

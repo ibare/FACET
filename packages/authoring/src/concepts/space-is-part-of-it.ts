@@ -64,7 +64,7 @@ export const spaceIsPartOfItConcept: FacetConceptSource = {
 
     screen: {
       affordances: [
-        'Two buttons only: replay, and a step control for taking the run one move at a time, which is how a reader can hold the moment the marker is still standing in the gap before it has attached to anything.',
+        'Two controls: a Replay button and a playback strip. Once the run has finished, dragging the strip handle back is how a reader can hold the moment the marker is still standing in the gap before it has attached to anything.',
         'The screen plays the whole run by itself and then waits with both shelves filled.',
         'The sentences and the shelves are fixed, so an article can name the word that appears in both positions, the word that cannot stand alone, and the two pieces it falls into.',
       ],

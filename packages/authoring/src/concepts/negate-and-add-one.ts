@@ -68,7 +68,7 @@ export const negateAndAddOneConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen runs the whole negation and its check on its own and stops with the finished pattern and its signed reading.',
-        'Two buttons: Replay, and a step control that rewinds and retakes the same five moments one press at a time, which is how a reader can stop on the carry.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip back into the check is how a reader can stop on the carry.',
         'The starting value is fixed at +45 in eight positions, so an article can quote the three patterns and both readings by name.',
       ],
     },

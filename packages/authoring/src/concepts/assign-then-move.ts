@@ -52,7 +52,7 @@ export const assignThenMoveConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole alternation on its own and stops on the round where nothing moves.',
-        'Two buttons: Replay, and a step control that rewinds and walks the same rounds one gesture at a time, which is how a reader can sit between an attachment and the move it causes.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, the strip lets a reader sit between an attachment and the move it causes, and drag back and forth across that pair within any round.',
         'The points and the starting centres are fixed, so an article can name the three clumps and the spot in the middle where the centres begin.',
       ],
     },

@@ -54,7 +54,7 @@ export const splitByQuestionConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The argument plays through once by itself: every failing position first, then the rotation, then the position that works.',
-        'Two buttons: Replay, and a step control that rewinds and then moves one cut position at a time, so the reader can stop on any of the failing positions and read its chips.',
+        'Under it sit a Replay button and a playback strip. Once the argument has played through, dragging the strip handle back lets the reader stop on any of the failing positions and read its chips.',
         'The ten points are fixed and laid out in two horizontal bands, so the article can state exactly which feature separates them.',
       ],
     },

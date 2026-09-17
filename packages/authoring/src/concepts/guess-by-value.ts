@@ -56,9 +56,9 @@ export const guessByValueConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays both lanes on its own and stops on the closing count.',
-        'Two buttons: replay, and a step button. The first press of the step button rewinds and shows the first move in the same press, and each press after that advances one moment.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, the strip handle can be dragged, or the strip clicked, to any moment, backward or forward.',
         'The ten values step by ten and the target is 90, so the article can name the three middle probes and the single aimed one.',
-        'Stepping is how the reader holds the moment the slide stops and before the line falls, which is where the whole idea sits.',
+        'Dragging the handle back is how the reader holds the moment the slide stops and before the line falls, which is where the whole idea sits.',
       ],
     },
 

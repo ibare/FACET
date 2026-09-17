@@ -56,9 +56,9 @@ export const negativeEdgeBreaksConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole failure on its own and stops on the two numbers standing side by side.',
-        'Two buttons: replay, and a step button. The first press of the step button rewinds and shows the first move in the same press, and each press after that advances one moment.',
+        'Under it sit a Replay button and a playback strip. The strip becomes usable once the run has finished; dragging or clicking it moves the drawing to any moment, backward or forward.',
         'The four weights are fixed, including the negative one, so the article can name the −2 edge and the final 4 against 3.',
-        'Stepping is how the reader lingers on the refusal, which is one moment in an otherwise ordinary-looking run.',
+        'Dragging back to the refusal is how the reader lingers on it, since it is one moment in an otherwise ordinary-looking run.',
       ],
     },
 

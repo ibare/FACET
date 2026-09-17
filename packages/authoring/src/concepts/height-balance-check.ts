@@ -52,7 +52,7 @@ export const heightBalanceCheckConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen counts all six places on its own and then stops, so it finishes its statement without a click.',
-        'Two buttons: Replay, and a step button that walks one place at a time. The first press clears the written numbers back to the bare tree and shows the first place again, then each further press adds the next; after the last one it starts over.',
+        'Under it sit a Replay button and a playback strip. Once the count has finished, dragging the handle to the start returns the numbers to the bare tree, and moving it forward writes them in place by place; clicking the strip jumps straight to any place.',
         'The tree is fixed at six values, so every replay measures exactly the same shape and reaches the same two numbers at the root and at the node below it.',
       ],
     },

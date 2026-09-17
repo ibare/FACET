@@ -54,7 +54,7 @@ export const selectMinEachPassConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays one whole pass on its own and stops just after the single exchange.',
-        'Two buttons: Replay, and a step control that rewinds and walks the same comparisons one at a time, which is how a reader can sit between a comparison and the marker hop it causes.',
+        'Under it sit a Replay button and a playback strip. Once the pass has finished, moving the strip one moment at a time with its handle or the arrow keys is how a reader can sit between a comparison and the marker hop it causes.',
         'The four values are fixed, so an article can name the value the marker ends on and the one position it hopped from.',
       ],
     },

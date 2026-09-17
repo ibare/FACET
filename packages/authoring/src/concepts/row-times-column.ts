@@ -60,7 +60,7 @@ export const rowTimesColumnConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen works through all twelve pairs on its own and stops with every entry sealed.',
-        'Two buttons: Replay, and a step control that rewinds and then walks the same pairs one at a time, which is how a reader can hold one pair on screen before the two numbers fuse into their product.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle back to any entry is how a reader can hold one pair on screen before the two numbers fuse into their product.',
         'Both matrices are fixed, so an article can name any of the four results and can point at the three and the two by two as different numbers doing different jobs.',
       ],
     },

@@ -52,7 +52,7 @@ export const gapShrinkConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays both rounds and then reveals the comparison row on its own, stopping with the two ledger rows side by side.',
-        'Two buttons: Replay, and a step control for taking one comparison at a time, which is how a reader can stop on a wide pair before it trades.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle back into the first round lets a reader stop on a wide pair before it trades.',
         'The six values and the two strides are fixed, so an article can name the value that crosses the row and the totals it ends with.',
       ],
     },

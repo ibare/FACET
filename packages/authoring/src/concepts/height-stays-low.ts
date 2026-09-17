@@ -47,7 +47,7 @@ export const heightStaysLowConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'It counts down both ladders on its own and stops on the comparison. The target, one million leaves, is stated above the ladders from the start.',
-        'Two buttons: Replay, and Step to descend one level at a time. Stepping is the only way to sit on the early rows, where 2, 4, 8 still looks like progress.',
+        'Under it sit a Replay button and a playback strip. Once the count has finished, dragging the handle back toward the start is the way to sit on the early rows, where 2, 4, 8 still looks like progress.',
         'The numbers are computed rather than quoted — the ladders are as long as the multiplication makes them, 21 rungs and 4.',
       ],
     },

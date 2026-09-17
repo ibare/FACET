@@ -61,7 +61,7 @@ export const badCharSkipConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen runs the whole search by itself and stops with the block resting on the position where the pattern was found.',
-        'Two buttons: Replay, and a step control that rewinds and walks the same run one move at a time, which is the way to stop on the letter in flight to the table or on the arc while it is being drawn.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, dragging the strip back to any move holds the letter in flight to the table or the arc while it is being drawn.',
         'The text and the pattern are fixed, so an article can name the entries of the table, each of the four moves, and the position of the match.',
       ],
     },

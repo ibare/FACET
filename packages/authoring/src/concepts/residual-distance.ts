@@ -59,7 +59,7 @@ export const residualDistanceConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays itself once on mount, from the first point to the last, and stops.',
-        'Two buttons: Replay, and a step control that walks the same measurements one at a time, which is how a reader can hold the frame where the circle and the vertical bar are both present.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle back to a measurement is how a reader can hold the frame where the circle and the vertical bar are both present.',
         'The line and the five points are fixed, so an article can name the point that sits below the line and rely on the reader finding it.',
       ],
     },

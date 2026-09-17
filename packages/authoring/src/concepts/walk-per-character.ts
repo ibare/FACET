@@ -49,7 +49,7 @@ export const walkPerCharacterConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The three searches play through on their own and the screen stops on the last verdict, so it says what it has to say without a click.',
-        'Two buttons: replay, and a step button for taking the walk one moment at a time. The first press of the step button rewinds to the first search and shows its opening move in the same press.',
+        'Below it are a replay button and a playback strip. After the last verdict, the strip can be dragged back into any of the three searches to hold the walk on a single character.',
         'The stored words and the three queries are fixed, chosen so that the three endings all occur and none of them has to be described in words the screen does not show.',
       ],
     },

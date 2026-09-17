@@ -73,7 +73,7 @@ export const indexAndTagConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the five addresses and the closing pulse on its own and then stops.',
-        'Two buttons: Replay, and a step control for taking the same sequence one move at a time, which is how a reader can hold the moment between the strip breaking and the pieces arriving.',
+        'Under it sit a Replay button and a playback strip. Once the closing pulse has played, dragging the handle back is how a reader can hold the moment between the address breaking apart and the pieces arriving.',
         'The cache of four lines, the sixteen bytes to a line and the five addresses are fixed, so an article can name an address and quote the row and the byte it resolves to.',
       ],
     },

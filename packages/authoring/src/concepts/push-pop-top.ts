@@ -56,7 +56,7 @@ export const pushPopTopConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays itself from an empty container to the closing arcs and stops there. Nothing has to be pressed for it to finish its argument.',
-        'Two buttons: Replay, and Step for walking the same beats one at a time. The blocked reach and the departure that frees it are the two moments the run lingers on, and they are the ones worth stepping through.',
+        'Under it sit a Replay button and a playback strip. The blocked reach and the departure that frees it are the two moments the run lingers on, and once the run has finished they are the ones worth dragging the strip back to.',
         'The three values are fixed at 3, 7 and 1, and each keeps its own colour from the moment it appears in the left row until it lands in the right one, so one value can be followed across the whole run.',
         'A caption under the container names each moment as it happens, ending on the sentence that states the order reversal.',
       ],

@@ -55,7 +55,7 @@ export const dequeBothEndsConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen performs its four operations by itself, about 0.66s apart, and ends on all four openings shown working at the same time.',
-        'Two buttons: Replay, and Step. The first press of Step restores the opening arrangement and each further press performs one operation.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle to its start restores the opening arrangement, and moving it along replays the operations up to any chosen one, in either direction.',
         'The mouths are labelled front and back, and the chips read IN and OUT; these four words stay in that form at every locale, so prose calling them head and tail should tie those names to these labels.',
         'Two values begin seated in the middle, one more arrives at each end and then leaves again from the end it arrived at, so the value that goes in at one mouth can be watched coming back out of that same mouth.',
       ],

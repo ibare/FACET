@@ -46,7 +46,7 @@ export const siftDownConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays one whole removal on its own and stops with the removed value still parked at the edge.',
-        'Two buttons: Replay, and a step control for taking the descent one move at a time, which is how a reader can pause on the comparison between the two children.',
+        'Under it sit a Replay button and a playback strip. Once the removal has finished, dragging the strip handle back into the descent is how a reader can hold the comparison between the two children.',
         'The starting heap is fixed, so the article can name the value that comes out and the path the promoted value takes.',
       ],
     },

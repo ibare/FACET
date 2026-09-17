@@ -55,7 +55,7 @@ export const prefixSuffixJumpConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole thing on its own — the table being built entry by entry, then the search that uses it — and stops on the position where the pattern was found.',
-        'Two buttons: Replay, and a step control that rewinds and walks the same run one move at a time, which is the way to stop on a single sliding of the copy or on the line coming down from the table.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip to a single sliding of the copy, or to the line coming down from the table, holds that moment on screen.',
         'The pattern and the text are fixed, so an article can name the entries of the table and the one jump the search makes.',
       ],
     },

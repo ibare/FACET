@@ -48,7 +48,7 @@ export const overlappingSubproblemsConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The tree expands on its own after mount and stops on the summary, with the shelf left standing so the piles can be compared afterwards.',
-        'Two buttons: Replay, and a step control that re-walks the expansion one call at a time — the way to watch a repeat count tick from 1 to 2 on a term that was already solved.',
+        'Under it sit a Replay button and a playback strip. Once the expansion has finished, dragging the strip back through it one call at a time is the way to watch a repeat count tick from 1 to 2 on a term that was already solved.',
         'The term is fixed at f(5), close to the largest tree that fits in one view, so the counts named in prose stay true.',
       ],
     },

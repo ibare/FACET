@@ -58,7 +58,7 @@ export const squareAndHalveConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen folds the row all the way down on its own and stops with the product standing and the landed cells bobbing once.',
-        'Two buttons: Replay, and a step control that rewinds and then walks the same folds one at a time, which is how a reader can sit on the moment the count is tested for being odd.',
+        'A Replay button runs the folds again from the full row. After the run, a playback strip can be dragged to any fold, which is how a reader can sit on the moment the count is tested for being odd.',
         'The base and the exponent are fixed at three and thirteen, so an article can name 1594323, the six against twelve, and the digits 1101.',
       ],
     },

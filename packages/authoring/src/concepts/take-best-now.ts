@@ -54,7 +54,7 @@ export const takeBestNowConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole run by itself and stops on the closing count.',
-        'Two buttons: Replay, and a step control that walks the same run one pick at a time, which is how a reader can hold on a single decision and read the remaining amount beside it.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip back to any pick holds that single decision with the remaining amount beside it.',
         'The denominations and the amount are fixed, so an article can name the coins that come down in order.',
       ],
     },

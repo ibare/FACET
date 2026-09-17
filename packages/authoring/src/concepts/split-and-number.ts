@@ -63,7 +63,7 @@ export const splitAndNumberConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen codes all five rows on its own and stops with the two brackets drawn.',
-        'Two buttons: Replay, and a step control that rewinds and walks the same rows one beat at a time, which is how a reader can hold the screen at the moment all four spokes are still drawn.',
+        'Under it sit a Replay button and a playback strip. Once the rows are coded, dragging the strip handle back into a row is how a reader can hold the screen at the moment all four spokes are still drawn.',
         'The five vectors and the two tables of four entries are fixed, so an article can name the row whose halves disagree and the row whose back half lands exactly.',
       ],
     },

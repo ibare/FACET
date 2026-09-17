@@ -52,7 +52,7 @@ export const sortEdgesAvoidCycleConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the ordering, all six verdicts and the closing count on its own, then stops.',
-        'Two buttons: Replay, and a step control for taking one moment at a time, which is how a reader can hold on the lit-up path before the loop closes.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle back to a rejected link is how a reader can hold on the lit-up path before the loop closes.',
         'The graph is fixed and the weights are all different, so an article can name the link that gets dropped without worrying about ties.',
       ],
     },

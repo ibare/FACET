@@ -53,7 +53,7 @@ export const curvesCrossConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen weighs all eight sizes on its own, marks the flip and stops with the bracket drawn under the short-run range.',
-        'Two buttons: Replay, and a step control for weighing one size at a time, which is how a reader can stop on the level beam and read 64 on both pans.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle back to the level beam lets a reader stop there and read 64 on both pans, then move to the sizes on either side of it.',
         'The two cost formulas and the eight sizes are fixed, so an article can quote any weighing — 16 against 24, or 36 against 43, or 64 against 64 — and the reader will find it on the pans.',
       ],
     },

@@ -68,7 +68,7 @@ export const positionalValueConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole decomposition on its own and stops on the last frame with all four rows standing.',
-        'Two buttons: Replay, and a step control that rewinds and then walks the same seven moments one press at a time, which is how a reader can hold still on the regrouping.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, moving the strip\'s handle to the regrouping is how a reader can hold still on it.',
         'The number is fixed at 45 in eight places, so an article can quote the exact places that are on, the sum, and both readings.',
       ],
     },

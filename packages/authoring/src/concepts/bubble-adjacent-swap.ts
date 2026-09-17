@@ -53,7 +53,7 @@ export const bubbleAdjacentSwapConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The sweep plays once on its own from a fixed five-value row and stops at the end.',
-        'Two buttons: Replay, and a step control that rewinds and then walks the same sweep one comparison at a time.',
+        'A Replay button and a playback strip sit underneath. Once the sweep has finished, dragging the strip holds the row at any single comparison, with the lead marker where that comparison left it.',
         'The starting arrangement never changes, so the article can name the value that travels and count the comparisons it takes.',
       ],
     },

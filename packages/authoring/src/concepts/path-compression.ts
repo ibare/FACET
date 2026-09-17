@@ -47,7 +47,7 @@ export const pathCompressionConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the climb, the rewiring, the four re-queries and the total on its own and then stops.',
-        'Two buttons: Replay, and Step for taking the moments one at a time. The first Step after the automatic run returns the pointers to the original chain and starts over.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip back before the rewiring returns the pointers to the original chain, and dragging forward re-points them.',
         'The chain and the slot to ask about are fixed; the reader chooses neither, so the before-and-after numbers are the same on every viewing.',
       ],
     },

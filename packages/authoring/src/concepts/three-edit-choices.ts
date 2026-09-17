@@ -59,7 +59,7 @@ export const threeEditChoicesConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen walks the three cells on its own and stops after the last decided cell rises and settles back.',
-        'Two buttons: Replay, and a step control that takes each cell in four moments — opening it, letting the three offers arrive, weighing them, and moving the winner in. Stepping is the way to hold while the three chips stand at their heights and nothing has been chosen yet.',
+        'Under it sit a Replay button and a playback strip. Each cell passes through four moments — opening it, letting the three offers arrive, weighing them, and moving the winner in — and once the run has finished, dragging the strip to the weighing moment holds the three chips at their heights before anything has been chosen.',
         'The words and the three cells are fixed, so an article can name a cell by its coordinate and the reader will find that same coordinate written on the cell.',
       ],
     },

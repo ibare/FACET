@@ -47,7 +47,7 @@ export const unionByRankConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen runs the four merges on its own and stops on a caption saying the merges are done.',
-        'Two buttons: Replay, and Step for taking the merge moments one at a time. The first Step after the automatic run returns everything to five separate nodes and starts again.',
+        'Below it are a Replay button, which returns everything to five separate nodes and runs the merges again, and a playback strip. After the run, dragging the strip to any merge moment shows the forest as it stood then.',
         'The pairs to merge are fixed and run in the same order every time; the reader chooses neither the order nor which root wins.',
       ],
     },

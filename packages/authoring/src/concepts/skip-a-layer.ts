@@ -55,7 +55,7 @@ export const skipALayerConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The walk plays once on its own and stops with both routes on screen — the short one through the levels and the long dashed one along the bottom.',
-        'Two buttons: Replay, and a step control. The first press rewinds and shows the first beat; each further press takes one more, which is how a reader can hold the traveller on 70 while it is still red.',
+        'Under it sit a Replay button and a playback strip. Once the walk has finished, dragging the strip handle back to the overshoot is how a reader can hold the traveller on 70 while it is still red.',
         'Twelve values, their heights, and the target 57 are all fixed, so an article can name 31, 44 and 70 as the values leapt over and passed, and four against ten as the counts.',
       ],
     },

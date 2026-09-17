@@ -60,7 +60,7 @@ export const manyPatternsOnePassConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole thing on its own — the four rows laid out, the fold into one tree, then the single crossing of the text — and stops on the closing count.',
-        'Two buttons: Replay, and a step control that rewinds and walks the same run one move at a time, which is the way to stop on the moment two tags leave one place together.',
+        'Under it sit a Replay button and a playback strip. Once the closing count is up, dragging the handle back is the way to stop on the moment two tags leave one place together.',
         'The four patterns and the six-character text are fixed, so an article can name them and quote the counts the run produces rather than describing them in general terms.',
       ],
     },

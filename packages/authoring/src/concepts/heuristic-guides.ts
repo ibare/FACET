@@ -63,7 +63,7 @@ export const heuristicGuidesConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays both searches to completion on its own and stops with both routes drawn.',
-        'Two buttons: Replay, and a step control that advances both grids one expansion at a time, which is how a reader can hold at the moment the two bars separate.',
+        'Under it sit a Replay button and a playback strip that moves both grids together. Once both routes are drawn, dragging the handle back is how a reader can hold at the moment the two bars separate.',
         'The grid is fixed at seven by five with the start on the left edge and the target on the right, and no cell is blocked, so an article can quote the opened counts each side ends with.',
       ],
     },

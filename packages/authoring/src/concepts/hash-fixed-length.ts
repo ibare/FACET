@@ -42,7 +42,7 @@ export const hashFixedLengthConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays three steps on its own and stops, so it says what it has to say without asking for a click.',
-        'Two buttons: Replay, and Step for walking the four moments one at a time. Neither is needed for the screen to finish what it has to say.',
+        'Under it sit a Replay button and a playback strip. Neither is needed for the screen to finish what it has to say; once the run has finished, dragging the strip handle back to before the digest boxes appear and forward again sets inputs of very different lengths against boxes of one width.',
         'All four digests are real SHA-256 values, so the hex shown can be quoted or verified.',
       ],
     },

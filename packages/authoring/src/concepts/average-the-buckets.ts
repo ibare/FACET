@@ -53,7 +53,7 @@ export const averageTheBucketsConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole sequence on its own — stream, pour, read, split, settle, gather — and stops on the gathered answer.',
-        'Two buttons: Replay, and a step control that rewinds and walks the same six moments one at a time, which is how a reader can stop between the split and the readings it produces.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, dragging the strip back to the split holds the screen between the split and the readings it produces.',
         'The keys and their run lengths are fixed and taken from real murmur3 32-bit hashes of host-001 through host-016, so the numbers 128, 32, 8, 2 and 16.2 can be quoted exactly as they appear.',
         'The ruler is logarithmic, which is what lets the runaway reading and the gathered one share it without either leaving the screen.',
       ],

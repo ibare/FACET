@@ -62,7 +62,7 @@ export const boundaryShiftConcept: FacetConceptSource = {
 
     screen: {
       affordances: [
-        'Two buttons only: replay, and a step control for taking the run one move at a time, which is how a reader can hold the frame after the letter has changed but before the boundary has given way.',
+        'A Replay button and a playback strip, which becomes usable once the run has finished. Dragging the strip back is how a reader can hold the frame after the letter has changed but before the boundary has given way.',
         'The screen plays both lanes through by itself and then waits on the closing statement.',
         'The word pairs are fixed, so an article can quote both words, the position that differs, and the parts the broken one falls into.',
       ],

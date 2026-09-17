@@ -47,7 +47,7 @@ export const arrayAsTreeConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen walks the whole route on its own and stops with every cell and node outlined together.',
-        'Two buttons: Replay, and a step control for taking one jump at a time, which is how a reader can read the arithmetic in a caption before the cursor moves again.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, the strip can be dragged to any single jump and left there, which is how a reader can read the arithmetic in a caption before the cursor moves again.',
         'The seven values are fixed, so the index numbers the article quotes are the ones the reader will see.',
       ],
     },

@@ -59,7 +59,7 @@ export const tokensPerLanguageConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays through on its own — inventory, then the five sentences, then one cut per row — and stops with the dashed line drawn.',
-        'Two buttons: Replay, and a step control whose first press rewinds and then walks the same sequence a row at a time, which is how a reader can stop on a single row and compare it with the one above.',
+        'Beneath it are a Replay button and a playback strip. Once the run is over, dragging the handle to a single row holds its cut still so it can be compared with the one above.',
         'The sentences and the words the inventory was learned from are fixed, so an article can quote any count or multiple and name the language it belongs to.',
       ],
     },

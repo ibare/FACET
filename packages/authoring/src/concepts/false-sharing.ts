@@ -67,7 +67,7 @@ export const falseSharingConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays both arrangements and the closing comparison on its own and then stops.',
-        'Two buttons: Replay, and a step control that rewinds to the start and advances one round per press, which is how a reader can hold still on the slab changing hands and read the counter as it rises.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, moving the strip handle through the rounds of the first arrangement lets a reader hold still on the slab changing hands and read the counter as it rises.',
         'The two arrangements, the eight writes, the 16 B line and the 4 B element are fixed, so an article can name a specific pair of indices, quote their addresses, and rely on the seven and the zero.',
       ],
     },

@@ -62,7 +62,7 @@ export const failLinkConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole thing on its own — the tree growing, the four links being drawn, the scan, then the counter-case — and stops after naming what the slide rescued.',
-        'Two buttons: Replay, and a step control that rewinds and walks the same run one move at a time, which is how a reader can hold still on the sideways slide itself, or on any single link as it is being laid down.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle back lets a reader hold still on the sideways slide itself, or on any single link as it is being laid down.',
         'The patterns and the text are fixed and chosen so that exactly one dead end occurs and exactly one pattern depends on how it is handled, which is what lets the ending be a single named word rather than a tally.',
       ],
     },

@@ -50,7 +50,7 @@ export const diveThenBacktrackConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the whole walk once on its own and then stops.',
-        'Two buttons: Replay, and one step at a time, which is what lets a reader hold still on a retreat and see it as a move rather than a transition.',
+        'Under it sit a Replay button and a playback strip. Once the walk has finished, dragging the strip handle back onto a retreat lets a reader hold still on it and see it as a move rather than a transition.',
         'The tree is fixed at six vertices named A to F, and neighbours are taken in alphabetical order, so the path A, B, D, E, C, F is the same for every reader.',
       ],
     },

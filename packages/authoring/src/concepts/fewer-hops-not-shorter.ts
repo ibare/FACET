@@ -49,7 +49,7 @@ export const fewerHopsNotShorterConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen measures both routes on its own and stops on the reversal, with both lanes left on screen at their weighted lengths.',
-        'Two buttons: Replay, and a step control that walks the same argument from the start one move at a time, which is how a reader can hold on the moment a single edge stretches.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, dragging the strip handle back lets a reader hold on the moment a single edge stretches.',
         'The graph is fixed at six vertices and six edges with one two-edge route and one four-edge route, so the article can quote both totals.',
       ],
     },

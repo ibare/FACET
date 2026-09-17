@@ -65,7 +65,7 @@ export const temporalLocalityConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays both sequences and the closing comparison on its own and then stops.',
-        'Two buttons: Replay, and a step control for taking the reads one at a time, which is how a reader can pause on the moment a block is pushed out just before it would have been wanted again.',
+        'Below it are a Replay button and a playback strip. After the run, the moment worth returning to on the strip is the one where a block is pushed out just before it would have been wanted again.',
         'The two sequences and the two-slot cache are fixed, so an article can name the spot that is read six times, or follow one address around the scattered loop and back.',
       ],
     },

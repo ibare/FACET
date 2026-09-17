@@ -76,7 +76,7 @@ export const conflictMissConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the six lookups and the closing count on its own and then stops.',
-        'Two buttons: Replay, and a step control for taking the lookups one at a time, which is how a reader can stop on the moment a block is pushed out with three columns standing unused beside it.',
+        'A Replay button and a playback strip sit underneath. Once the run has finished, dragging the strip to any lookup is how a reader can stop on the moment a block is pushed out with three columns standing unused beside it.',
         'The four columns, the two addresses and the six lookups are fixed, so an article can name either address and quote the column it is forced into.',
       ],
     },

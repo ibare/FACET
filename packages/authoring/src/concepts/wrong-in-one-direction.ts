@@ -56,7 +56,7 @@ export const wrongInOneDirectionConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'Four queries play through unattended and the screen stops with both bins filled and labelled.',
-        'Two buttons: Replay, and a step control that empties the bins and walks the same four queries one moment per press, which is how the corridor can be held at a gate to read which cell it is consulting.',
+        'A Replay button empties the bins and runs the four queries again. Once they have finished, a playback strip can be dragged to any moment, which is how the corridor can be held at a gate to read which cell it is consulting.',
         'The array arrives already filled and the four queried words are fixed, with every gate number computed from the word rather than written in, so the one wrong answer is a genuine coincidence rather than a staged one.',
       ],
     },

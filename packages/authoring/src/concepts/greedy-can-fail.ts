@@ -52,7 +52,7 @@ export const greedyCanFailConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen runs both rows to the end on its own and stops on the verdict.',
-        'Two buttons: Replay, and a step control for walking the same run one round at a time — the first round is the one worth stopping on, since that is where the two rows part.',
+        'Under it sit a Replay button and a playback strip. Once the run has finished, the moment worth returning to on the strip is the first round, since that is where the two rows part.',
         'The denominations and the target are fixed, so an article can name the amount left after the first pick and the reader will find it on the right-hand column.',
       ],
     },

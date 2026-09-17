@@ -49,8 +49,8 @@ export const recolorThenRotateConcept: FacetConceptSource = {
     screen: {
       affordances: [
         'The screen plays the five insertions on its own and stops, so it makes its point without waiting for a click.',
-        'Two buttons: Replay, and Step. The first press of Step empties the tree and shows the first moment again; each press after that advances one moment, and a press past the last one rewinds and starts over.',
-        'The order of those five keys is what produces one of each case, so stepping the run is what turns two rules into one visible decision.',
+        'Under it sit a Replay button, which empties the tree and plays the five insertions again, and a playback strip that becomes draggable once the first run has finished; dragging its handle or clicking a point on it moves the tree to that moment, backward or forward.',
+        'The order of those five keys is what produces one of each case, so moving back and forth along the strip between the insertions is what turns two rules into one visible decision.',
       ],
     },
 
