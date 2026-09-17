@@ -10,35 +10,30 @@
  *   group:<name>   무리 (A · B · C)
  *   point:<id>     자리 하나
  *
- * ── 수는 전부 여기서 좌표로 셈한다. 선언에는 좌표와 펴는 법만 있다.
+ * ── 여기가 셈하는 것은 **두 자의 자리뿐이다.**
  *   위 자   12 점의 첫 주성분 좌표. 축은 공분산 2x2 의 큰 고윳값 쪽 고유벡터.
  *   아래 자 무리마다 제 무리의 주축으로 차례를 정하고, 그 차례대로 `clusterSpan`
  *           폭에 고르게 앉힌다. 무리 가운데는 `clusterSpan + clusterGap` 간격.
- *   비교는 언제나 **몫**으로 한다 — 두 자의 단위가 서로 다르므로 거리를 그대로
- *   견주면 뜻이 없다. 양 끝 무리의 가운데 사이를 1 로 놓고 그 안의 몫을 잰다.
+ *
+ *   앵커·몫·사이·비는 싣지 않는다. 전부 그 자리들에서 곧바로 나오는 값이라
+ *   장면이 셈한다 (`scene.ts`) — 실어 보내면 화면의 자와 글자의 수가 다른 출처가
+ *   된다. 비교를 언제나 **몫**으로 하는 까닭(두 자의 단위가 서로 다르다)도 거기
+ *   적혀 있다.
  *
  * ── 발신 이벤트 (전부 facet 고유. silent 는 없다)
  *
- *   rulers        { rows: RulerExtent[] }
- *                 두 자의 값 범위와 앵커(첫·마지막 무리 가운데). 아직 자리는 없다.
- *   spread-global { points: PlacedPoint[]; centroids: PlacedCentroid[] }
- *                 위 자에 12 자리가 펴진다.
- *   spread-local  { points: PlacedPoint[]; centroids: PlacedCentroid[] }
- *                 아래 자에 같은 12 자리가 펴진다.
- *   tie           { shifts: GroupShift[] }
- *                 같은 자리끼리 잇는다. shift 는 아래 - 위 (앵커 사이를 1 로 본 몫).
- *   inside        { globalShare: number; localShare: number }
- *                 무리 하나가 차지하는 몫의 평균.
- *   measure-gap   { from: string; to: string; originShare: number;
- *                   globalShare: number; localShare: number }
- *                 이웃한 두 무리 사이. 원래 2차원 거리의 몫까지 함께 싣는다.
- *   ratio         { originRatio: number; globalRatio: number; localRatio: number }
- *                 마지막 사이 / 첫 사이.
- *   verdict       {}
- *                 아래 자에서 무리 사이 거리를 읽으면 안 된다는 판정.
- *   done          {}
- *   rewind        {}
- *                 되감기. 화면을 비우고 처음부터 다시 밟는다.
+ *   rulers        { global: Flattening; local: Flattening }
+ *                 두 자의 자리. **이 조각의 알고리즘이 내놓는 것**이라 여기서만
+ *                 싣는다. 아직 화면에는 앵커만 내려온다.
+ *   spread-global 위 자에 12 자리가 펴진다.
+ *   spread-local  아래 자에 같은 12 자리가 펴진다.
+ *   tie           같은 자리끼리 잇는다.
+ *   inside        무리 하나가 차지하는 몫을 본다.
+ *   measure-gap   이웃한 두 무리 사이를 잰다. 올 때마다 한 쌍씩 나아간다.
+ *   ratio         마지막 사이 / 첫 사이.
+ *   verdict       아래 자에서 무리 사이 거리를 읽으면 안 된다는 판정.
+ *   done          닫는 말.
+ *   rewind        되감기. 화면을 비우고 처음부터 다시 밟는다.
  */
 
 import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
@@ -58,39 +53,14 @@ export type GlobalAndLocalData = {
   stepMs: number;
 };
 
-type RulerExtent = {
-  row: 'global' | 'local';
-  lo: number;
-  hi: number;
-  anchorLo: number;
-  anchorHi: number;
-};
-
 type PlacedPoint = { id: string; group: string; value: number };
 type PlacedCentroid = { group: string; value: number };
-type GroupShift = { group: string; global: number; local: number; shift: number };
-type GapMeasure = {
-  from: string;
-  to: string;
-  originShare: number;
-  globalShare: number;
-  localShare: number;
-};
 
-type Scene = {
-  rows: RulerExtent[];
-  globalPoints: PlacedPoint[];
-  globalCentroids: PlacedCentroid[];
-  localPoints: PlacedPoint[];
-  localCentroids: PlacedCentroid[];
-  shifts: GroupShift[];
-  insideGlobalShare: number;
-  insideLocalShare: number;
-  gaps: GapMeasure[];
-  originRatio: number;
-  globalRatio: number;
-  localRatio: number;
-};
+/** 한 자의 자리 전부. */
+type Flattening = { points: PlacedPoint[]; centroids: PlacedCentroid[] };
+
+/** 두 자의 자리. 이 조각이 내놓는 것의 전부다. */
+type Spread = { global: Flattening; local: Flattening };
 
 type Axis = { mx: number; my: number; ux: number; uy: number };
 
@@ -158,12 +128,8 @@ function mean(values: readonly number[]): number {
   return sum / values.length;
 }
 
-function span(values: readonly number[]): number {
-  return Math.max(...values) - Math.min(...values);
-}
-
-/** 두 자의 자리와 몫을 좌표에서 통째로 셈한다. ctx 를 받지 않는 순수 함수다 (C8). */
-function computeScene(data: GlobalAndLocalData): Scene {
+/** 두 자의 자리를 좌표에서 통째로 셈한다. ctx 를 받지 않는 순수 함수다 (C8). */
+function computeSpread(data: GlobalAndLocalData): Spread {
   const groups = data.groups;
   if (groups.length < 2) {
     throw new Error(`전역과 지역 조각: 무리가 둘 이상이어야 한다 — 받은 무리 수 ${groups.length}`);
@@ -211,96 +177,26 @@ function computeScene(data: GlobalAndLocalData): Scene {
     localCentroids.push({ group: g.name, value: centre });
   });
 
-  // ── 앵커: 첫 무리와 마지막 무리의 가운데. 두 자에서 이 둘을 같은 자리에 맞춘다.
-  const gAnchorLo = globalCentroids[0]!.value;
-  const gAnchorHi = globalCentroids[globalCentroids.length - 1]!.value;
-  const lAnchorLo = localCentroids[0]!.value;
-  const lAnchorHi = localCentroids[localCentroids.length - 1]!.value;
-  const gAnchorSpan = gAnchorHi - gAnchorLo;
-  const lAnchorSpan = lAnchorHi - lAnchorLo;
-  if (Math.abs(gAnchorSpan) < 1e-9 || Math.abs(lAnchorSpan) < 1e-9) {
+  // ── 앵커가 설 수 있는가. 두 자에서 첫 무리와 마지막 무리의 가운데를 같은 자리에
+  //    맞추므로, 그 둘이 겹치면 자를 세울 길이 없다.
+  const gSpan = globalCentroids[globalCentroids.length - 1]!.value - globalCentroids[0]!.value;
+  const lSpan = localCentroids[localCentroids.length - 1]!.value - localCentroids[0]!.value;
+  if (Math.abs(gSpan) < 1e-9 || Math.abs(lSpan) < 1e-9) {
     throw new Error('전역과 지역 조각: 첫 무리와 마지막 무리의 가운데가 겹쳐 앵커를 세울 수 없다');
   }
 
-  const rows: RulerExtent[] = [
-    {
-      row: 'global',
-      lo: Math.min(...globalPoints.map((p) => p.value)),
-      hi: Math.max(...globalPoints.map((p) => p.value)),
-      anchorLo: gAnchorLo,
-      anchorHi: gAnchorHi,
-    },
-    {
-      row: 'local',
-      lo: Math.min(...localPoints.map((p) => p.value)),
-      hi: Math.max(...localPoints.map((p) => p.value)),
-      anchorLo: lAnchorLo,
-      anchorHi: lAnchorHi,
-    },
-  ];
-
-  const shifts: GroupShift[] = groups.map((g, gi) => {
-    const uG = (globalCentroids[gi]!.value - gAnchorLo) / gAnchorSpan;
-    const uL = (localCentroids[gi]!.value - lAnchorLo) / lAnchorSpan;
-    return { group: g.name, global: uG, local: uL, shift: uL - uG };
-  });
-
-  // ── 무리 하나가 차지하는 몫.
-  const insideGlobalShare =
-    mean(groups.map((g) => span(g.points.map(globalOf)))) / gAnchorSpan;
-  const insideLocalShare =
-    mean(
-      groups.map((g) => {
-        const vals = localPoints.filter((p) => p.group === g.name).map((p) => p.value);
-        return span(vals);
-      }),
-    ) / lAnchorSpan;
-
-  // ── 원래 2차원에서의 무리 가운데.
-  const origin = groups.map((g) => ({
-    x: mean(g.points.map((p) => p.x)),
-    y: mean(g.points.map((p) => p.y)),
-  }));
-  const originSpan = Math.hypot(
-    origin[origin.length - 1]!.x - origin[0]!.x,
-    origin[origin.length - 1]!.y - origin[0]!.y,
-  );
-
-  const gaps: GapMeasure[] = [];
-  for (let i = 0; i + 1 < groups.length; i += 1) {
-    const a = origin[i]!;
-    const b = origin[i + 1]!;
-    gaps.push({
-      from: groups[i]!.name,
-      to: groups[i + 1]!.name,
-      originShare: Math.hypot(b.x - a.x, b.y - a.y) / originSpan,
-      globalShare: (globalCentroids[i + 1]!.value - globalCentroids[i]!.value) / gAnchorSpan,
-      localShare: (localCentroids[i + 1]!.value - localCentroids[i]!.value) / lAnchorSpan,
-    });
-  }
-
-  const head = gaps[0]!;
-  const tail = gaps[gaps.length - 1]!;
   return {
-    rows,
-    globalPoints,
-    globalCentroids,
-    localPoints,
-    localCentroids,
-    shifts,
-    insideGlobalShare,
-    insideLocalShare,
-    gaps,
-    originRatio: tail.originShare / head.originShare,
-    globalRatio: tail.globalShare / head.globalShare,
-    localRatio: tail.localShare / head.localShare,
+    global: { points: globalPoints, centroids: globalCentroids },
+    local: { points: localPoints, centroids: localCentroids },
   };
 }
 
 export async function globalAndLocalAlgorithm(ctx: FacetContext<GlobalAndLocalData>): Promise<void> {
   const rc = ctx as ReactiveContext<GlobalAndLocalData>;
   const stepMs = ctx.data.stepMs;
-  const scene = computeScene(ctx.data);
+  const spread = computeSpread(ctx.data);
+  /** 이웃한 무리의 쌍 수. 사이를 재는 걸음이 그만큼 선다. */
+  const pairs = ctx.data.groups.length - 1;
 
   /** 자동 재생이 한 번 끝나면 그 뒤로는 한 걸음씩 짚는다. */
   let manual = false;
@@ -323,55 +219,33 @@ export async function globalAndLocalAlgorithm(ctx: FacetContext<GlobalAndLocalDa
    * 이유로 첫 걸음이 곧바로 보인다.
    */
   const pass = async (): Promise<boolean> => {
-    await ctx.emit({ type: 'rulers', payload: { rows: scene.rows } });
-
-    if (!(await gate())) return false;
     await ctx.emit({
-      type: 'spread-global',
-      payload: { points: scene.globalPoints, centroids: scene.globalCentroids },
+      type: 'rulers',
+      payload: { global: spread.global, local: spread.local },
     });
 
     if (!(await gate())) return false;
-    await ctx.emit({
-      type: 'spread-local',
-      payload: { points: scene.localPoints, centroids: scene.localCentroids },
-    });
+    await ctx.emit({ type: 'spread-global' });
 
     if (!(await gate())) return false;
-    await ctx.emit({ type: 'tie', payload: { shifts: scene.shifts } });
+    await ctx.emit({ type: 'spread-local' });
 
     if (!(await gate())) return false;
-    await ctx.emit({
-      type: 'inside',
-      payload: { globalShare: scene.insideGlobalShare, localShare: scene.insideLocalShare },
-    });
+    await ctx.emit({ type: 'tie' });
 
-    for (const gap of scene.gaps) {
+    if (!(await gate())) return false;
+    await ctx.emit({ type: 'inside' });
+
+    for (let pair = 0; pair < pairs; pair += 1) {
       if (!(await gate())) return false;
-      await ctx.emit({
-        type: 'measure-gap',
-        payload: {
-          from: gap.from,
-          to: gap.to,
-          originShare: gap.originShare,
-          globalShare: gap.globalShare,
-          localShare: gap.localShare,
-        },
-      });
+      await ctx.emit({ type: 'measure-gap' });
     }
 
     if (!(await gate())) return false;
-    await ctx.emit({
-      type: 'ratio',
-      payload: {
-        originRatio: scene.originRatio,
-        globalRatio: scene.globalRatio,
-        localRatio: scene.localRatio,
-      },
-    });
+    await ctx.emit({ type: 'ratio' });
 
     if (!(await gate())) return false;
-    await ctx.emit({ type: 'verdict', payload: {} });
+    await ctx.emit({ type: 'verdict' });
 
     return true;
   };
@@ -381,7 +255,7 @@ export async function globalAndLocalAlgorithm(ctx: FacetContext<GlobalAndLocalDa
       if (ctx.cancelled) return;
       if (!(await pass())) return;
       if (!(await gate())) return;
-      await ctx.emit({ type: 'done', payload: {} });
+      await ctx.emit({ type: 'done' });
 
       manual = true;
       for (;;) {
@@ -390,7 +264,7 @@ export async function globalAndLocalAlgorithm(ctx: FacetContext<GlobalAndLocalDa
         if (ctx.cancelled) return;
         if (input.type === 'advance') break;
       }
-      await ctx.emit({ type: 'rewind', payload: {} });
+      await ctx.emit({ type: 'rewind' });
     }
   } catch (err) {
     // reset/destroy 가 waitForInput 을 reject 한 것은 정상 종료 경로다 (C6).

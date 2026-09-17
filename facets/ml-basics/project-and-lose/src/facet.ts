@@ -4,6 +4,9 @@
  * 이미 찾아 놓은 축 하나에 점을 수직으로 내려 찍는다. 떨어진 자리가 남는 것이고
  * 떨어진 거리가 잃는 것이다. 축을 **찾는** 일은 이웃 조각이 말한다 — 여기서는
  * 축을 주어진 것으로 두고, 내려 찍는 순간에 무엇이 사라지는지만 본다.
+ *
+ * 화면을 명령이 아니라 **장면**으로 만들므로 (`scene:`) 어느 걸음의 화면이든 셈으로
+ * 얻는다 — 그래서 재생 위치를 끌어 보는 띠를 단다 (S-scene).
  */
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 
@@ -34,7 +37,7 @@ export const projectAndLoseFacet: FacetJson = {
     pt: 'O que desaparece quando se tira uma dimensão.',
   },
   algorithm: 'module:projectAndLose',
-  projector: 'module:projectAndLoseProjector',
+  scene: 'module:projectAndLoseScene',
   initialData: {
     type: 'project-and-lose',
     /** 점 열둘. [x, y]. */
@@ -61,7 +64,7 @@ export const projectAndLoseFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'project-and-lose-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.axisGiven': {

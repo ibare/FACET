@@ -5,8 +5,8 @@
  * 보이는가.** 가운데를 지나는 축 하나가 돌고, 점을 그 축에 내려 찍은 자국의
  * 퍼짐이 오르내리다가, 가장 넓어지는 자리에서 멈춘다.
  *
- * 화면에 뜨는 수는 하나도 여기 적혀 있지 않다. 가운데도 퍼짐도 합도 몫도
- * algorithm 이 아래 좌표에서 직접 셈해 걸음마다 보낸다 (S-piece).
+ * 화면에 뜨는 수는 하나도 여기 적혀 있지 않다. 퍼짐은 algorithm 이 아래 좌표에서
+ * 직접 재고, 가운데와 합과 몫은 장면이 그 점과 측정값에서 셈한다 (S-piece).
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -38,7 +38,9 @@ export const directionOfMostSpreadFacet: FacetJson = {
     pt: 'Gire um eixo através da nuvem e pare onde as projeções se espalham mais.',
   },
   algorithm: 'module:directionOfMostSpread',
-  projector: 'module:directionOfMostSpreadProjector',
+  // 화면을 명령이 아니라 **장면**으로 만든다 (`scene:`) — 어느 걸음의 화면이든
+  // 셈으로 얻으므로 띠로 임의의 자리에 갈 수 있다 (S-scene).
+  scene: 'module:directionOfMostSpreadScene',
   initialData: {
     type: 'direction-of-most-spread',
     points: [
@@ -59,7 +61,7 @@ export const directionOfMostSpreadFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'direction-of-most-spread-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.center': {
