@@ -9,23 +9,29 @@
  *
  * ── 이벤트 (전부 이 facet 고유. silent 는 하나도 없다 — 여섯 다 화면이 바뀐다)
  *
- *   show-value  { bits: number[]; unsigned: number }
+ * 걸음은 **자리표**와 **판정**만 싣는다. 화면에 뜨는 수(부호 없이 읽은 값 · 2의
+ * 보수로 읽은 값)는 싣지 않는다 — 자리표에서 나오는 값이라 장면이 `unsignedOf` ·
+ * `signedOf` 를 불러 센다. 실어 보내면 같은 물음에 답이 둘이 되고, 다음 사람이
+ * 집어 쓸 문이 열린 채로 남는다.
+ *
+ *   show-value  { bits: number[] }
  *       자리표를 세운다. `bits` 는 MSB → LSB 순.
  *
- *   flip-all    { bits: number[]; unsigned: number }
- *       모든 자리가 한꺼번에 반대가 된다. `bits` 는 뒤집은 뒤의 것이고,
- *       `unsigned` 는 그것을 부호 없이 읽은 값이다 (아직 음수가 아니다).
+ *   flip-all    { bits: number[] }
+ *       모든 자리가 반대가 된다. `bits` 는 뒤집은 뒤의 것이다.
  *
- *   add-one     { bits: number[]; unsigned: number; carrySteps: number; carryOut: boolean }
+ *   add-one     { bits: number[]; carrySteps: number; carryOut: boolean }
  *       1 을 더한다. `carrySteps` 는 자리올림이 훑고 지나간 칸 수,
- *       `carryOut` 은 그것이 폭 밖으로 나갔는지.
+ *       `carryOut` 은 그것이 폭 밖으로 나갔는지 — 둘 다 이 덧셈이 내리는 판정이라
+ *       자리표만 보아서는 나오지 않는다.
  *
- *   verify      { addend: number[]; sum: number[]; carrySteps: number; carryOut: boolean }
- *       원래 수(`addend`)를 도로 더해 본다. `sum` 은 폭 안에 남는 자리들이고,
- *       `carrySteps` · `carryOut` 은 위와 같은 뜻이다.
+ *   verify      { sum: number[]; carrySteps: number; carryOut: boolean }
+ *       원래 수를 도로 더해 본다. `sum` 은 폭 안에 남는 자리들이고 `carrySteps` ·
+ *       `carryOut` 은 위와 같은 뜻이다. 더한 원래 수는 싣지 않는다 — 장면이 이미
+ *       `show-value` 로 쥐고 있다.
  *
- *   done        { signed: number }
- *       합이 0 이라는 것이 곧 음수라는 뜻. `signed` 는 자리표를 2의 보수로 읽은 값.
+ *   done        (payload 없음)
+ *       합이 0 이라는 것이 곧 음수라는 뜻. 그 값은 장면이 자리표에서 읽는다.
  *
  *   rewind      (payload 없음)
  *       처음으로 되돌린다. `advance` 를 받아 다시 짚어 갈 때 맨 앞에 나간다.
@@ -65,12 +71,19 @@ function flipBits(bits: number[]): number[] {
   return bits.map((b) => (b === 0 ? 1 : 0));
 }
 
-function unsignedOf(bits: number[]): number {
+/**
+ * 자리표를 부호 없이 읽는다.
+ *
+ * 읽는 약속은 조각의 알고리즘이 아니라 자리표를 해석하는 규칙이다 — 이 함수만 떼어
+ * 내도 "뒤집고 하나 더한다" 는 그대로 남는다. 그래서 값을 실어 보내지 않고 함수를
+ * 내준다. `scene.ts` 가 이것을 부른다 (원칙 1 의 허용 방향).
+ */
+export function unsignedOf(bits: number[]): number {
   return bits.reduce((acc, b) => acc * 2 + b, 0);
 }
 
-/** 맨 앞자리가 1 이면 그만큼을 빼고 읽는다 — 그것이 2의 보수다. */
-function signedOf(bits: number[]): number {
+/** 맨 앞자리가 1 이면 그만큼을 빼고 읽는다 — 그것이 2의 보수다. 위와 같은 까닭으로 내준다. */
+export function signedOf(bits: number[]): number {
   const u = unsignedOf(bits);
   return bits[0] === 1 ? u - 2 ** bits.length : u;
 }
@@ -139,23 +152,16 @@ export async function negateAndAddOneAlgorithm(ctx: FacetContext<NegateAndAddOne
     };
 
     if (!(await gate())) return;
-    await rc.emit({
-      type: 'show-value',
-      payload: { bits: origin, unsigned: unsignedOf(origin) },
-    });
+    await rc.emit({ type: 'show-value', payload: { bits: origin } });
 
     if (!(await gate())) return;
-    await rc.emit({
-      type: 'flip-all',
-      payload: { bits: flipped, unsigned: unsignedOf(flipped) },
-    });
+    await rc.emit({ type: 'flip-all', payload: { bits: flipped } });
 
     if (!(await gate())) return;
     await rc.emit({
       type: 'add-one',
       payload: {
         bits: added.bits,
-        unsigned: unsignedOf(added.bits),
         carrySteps: added.carrySteps,
         carryOut: added.carryOut,
       },
@@ -165,7 +171,6 @@ export async function negateAndAddOneAlgorithm(ctx: FacetContext<NegateAndAddOne
     await rc.emit({
       type: 'verify',
       payload: {
-        addend: origin,
         sum: check.bits,
         carrySteps: check.carrySteps,
         carryOut: check.carryOut,
@@ -173,7 +178,7 @@ export async function negateAndAddOneAlgorithm(ctx: FacetContext<NegateAndAddOne
     });
 
     if (!(await gate())) return;
-    await rc.emit({ type: 'done', payload: { signed: signedOf(added.bits) } });
+    await rc.emit({ type: 'done' });
   }
 
   await run(false);

@@ -1,28 +1,34 @@
 /**
  * silentTruncation — 그릇보다 큰 수를 담으면 윗자리가 그릇 밖으로 떨어져 나간다.
  *
- * 1차 데이터는 값 셋과 그릇의 비트 폭뿐이다. 2진 표기 · 남는 값 · 떨어져 나간
- * 값은 전부 여기서 셈한다. 화면에 뜨는 수를 손으로 적어 두면 데이터를 바꿀 때
- * 그것이 따라오지 못한다 (S-piece).
+ * 1차 데이터는 값 셋과 그릇의 비트 폭뿐이다. **그리고 발신이 싣는 것은 값 하나뿐**
+ * 이다 — 2진 표기도, 그릇에 남는 값도, 떨어져 나간 값도 여기서 셈하지 않는다.
+ *
+ * 그 셋은 화면이 비트열을 그릇 테두리로 갈라 그리는 바로 그 구조에서 나온다
+ * (`scene.ts` 의 `bitsOf` · `keptOf` · `lostOf`). 여기서 `value % 2 ** width` 로
+ * 또 셈해 실어 보내면 **같은 물음에 답이 둘**이 되고, 화면에 나란히 뜨는 세 수가
+ * 언젠가 갈린다 (S-piece · Scene 이행 프로토콜 4 절).
+ *
+ * 그래서 이 함수에 남은 것은 **박자**뿐이다 — 값을 하나씩 내밀고, 담고, 잘린다.
  *
  * ── 발신 이벤트 (facet 고유 확장 · C2)
  *
- *   value-offered  { value: number; bits: string; from: number }
- *       16비트로 센 값 하나가 도착했다. bits 는 from 자리로 채운 2진 표기.
- *       silent 아님.
+ *   value-offered  { value: number }
+ *       값 하나가 도착했다. 어느 값을 이번에 담아 보는가는 구조가 셀 수 없는,
+ *       걸음이 내리는 판정이라 이것만 싣는다. silent 아님.
  *
- *   poured         { width: number; over: number; lost: number }
- *       width 비트 그릇에 담았다. over 는 테두리 밖에 걸린 자리 수,
- *       lost 는 그 자리들이 지니고 있던 값. silent 아님.
+ *   poured         {}
+ *       그릇에 담았다. 아래 자리는 바닥에 닿고 윗자리는 테두리 밖에 걸린다.
+ *       걸린 자리 수도 그 값도 장면이 센다. silent 아님.
  *
- *   truncated      { kept: number; lost: number }
- *       테두리 밖 자리가 떨어져 나갔다. kept 는 그릇에 남은 값. silent 아님.
+ *   truncated      {}
+ *       테두리 밖 자리가 떨어져 나갔다. silent 아님.
  *
  *   rewind         {}
  *       되감아 처음으로 돌아간다 (advance 로 다시 짚을 때). silent 아님.
  *
- *   done           { results: number[] }
- *       값마다 그릇에 남은 것. silent 아님.
+ *   done           {}
+ *       값을 다 담았다. 남은 값들은 장면이 걸어온 자취에서 센다. silent 아님.
  *
  * 메트릭은 없다 — 조각은 셀 것이 없다 (S-piece).
  */
@@ -41,16 +47,9 @@ export type SilentTruncationData = {
   stepMs: number;
 };
 
-/** n 을 w 자리 2진 표기로. 앞자리는 0 으로 채운다. */
-function toBits(n: number, w: number): string {
-  return n.toString(2).padStart(w, '0');
-}
-
 export async function silentTruncation(base: FacetContext<SilentTruncationData>): Promise<void> {
   const ctx = base as ReactiveContext<SilentTruncationData>;
-  const { values, width, from, stepMs } = ctx.data;
-  const capacity = 2 ** width;
-  const over = from - width;
+  const { values, stepMs } = ctx.data;
 
   /*
    * 문(gate)은 걸음 **사이**의 것이다. 첫 걸음 앞에는 기다릴 앞걸음이 없으므로
@@ -82,30 +81,19 @@ export async function silentTruncation(base: FacetContext<SilentTruncationData>)
 
   /** 값을 하나씩 그릇에 담아 본다. 걸음 사이를 여는 것은 gate 다. */
   async function pourEach(gate: () => Promise<boolean>): Promise<void> {
-    const results: number[] = [];
-
     for (const value of values) {
-      // 남는 것은 넘친 만큼이 아니라 capacity 를 뺀 값이다.
-      const kept = value % capacity;
-      const lost = value - kept;
+      if (!(await gate())) return;
+      await ctx.emit({ type: 'value-offered', payload: { value } });
 
       if (!(await gate())) return;
-      await ctx.emit({
-        type: 'value-offered',
-        payload: { value, bits: toBits(value, from), from },
-      });
+      await ctx.emit({ type: 'poured' });
 
       if (!(await gate())) return;
-      await ctx.emit({ type: 'poured', payload: { width, over, lost } });
-
-      if (!(await gate())) return;
-      await ctx.emit({ type: 'truncated', payload: { kept, lost } });
-
-      results.push(kept);
+      await ctx.emit({ type: 'truncated' });
     }
 
     if (!(await gate())) return;
-    await ctx.emit({ type: 'done', payload: { results } });
+    await ctx.emit({ type: 'done' });
   }
 
   await pourEach(auto);

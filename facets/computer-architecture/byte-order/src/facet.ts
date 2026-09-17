@@ -3,6 +3,11 @@
  *
  * @piece 답하는 물음: 같은 네 바이트가 메모리에 정반대 차례로 놓인다면, 그 차례를
  * 모르고 읽은 쪽은 무엇을 얻는가.
+ *
+ * 화면에 뜨는 세 수(305,419,896 둘과 2,018,915,346)는 전부 **그려진 줄을 읽은 것**
+ * 이다. `scene.ts` 의 `valueOf` 하나가 줄을 꺼내 `readOrderOf` 가 정한 차례대로
+ * 이어 붙인다 — 훑는 테가 지나는 차례도, 윗자리 표식이 서는 칸도 같은 함수에서
+ * 나온다. 발신은 어느 국면인지만 말하고 수를 싣지 않는다.
  */
 
 import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
@@ -34,17 +39,18 @@ export const byteOrderFacet: FacetJson = {
     pt: 'O mesmo valor colocado na memória em ordens opostas, e no que ele se torna quando lido com a ordem errada.',
   },
   algorithm: 'module:byteOrder',
-  projector: 'module:byteOrderProjector',
+  scene: 'module:byteOrderScene',
   initialData: {
     type: 'byte-order',
-    // 1차 데이터는 이 둘뿐이다. 바이트 쪼개기 · 두 배치 · 읽은 값은 algorithm 이 센다.
+    // 1차 데이터는 이 둘뿐이다. 바이트 쪼개기 · 두 배치 · 세 읽기는 장면이 이 둘에서
+    // 낸다 — 걸음은 수를 싣지 않는다 (`scene.ts` 의 `valueOf`).
     value: 0x12345678,
     byteCount: 4,
     stepMs: 700,
   },
   blocks: {
     stage: { type: 'byte-order-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
   messages: {
     'caption.value': {

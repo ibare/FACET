@@ -11,18 +11,20 @@
  *
  * ── 이벤트 목록 + payload 스키마 (C2)
  *
- * | type        | payload                                      | silent |
- * |-------------|----------------------------------------------|--------|
- * | `advance`   | `{ from, to, fromBits, toBits, atMax: false }` | 아니오 |
- * | `reach-max` | `{ from, to, fromBits, toBits, atMax: true }`  | 아니오 |
- * | `wrap`      | `{ from, to, fromBits, toBits, atMax: false }` | 아니오 |
- * | `done`      | `{ min, max }`                                 | 아니오 |
- * | `rewind`    | 없음                                            | 아니오 |
+ * | type        | payload  | silent |
+ * |-------------|----------|--------|
+ * | `advance`   | `{ to }` | 아니오 |
+ * | `reach-max` | `{ to }` | 아니오 |
+ * | `wrap`      | `{ to }` | 아니오 |
+ * | `done`      | 없음      | 아니오 |
+ * | `rewind`    | 없음      | 아니오 |
  *
- *   from / to           부호 있는 해석의 값
- *   fromBits / toBits   그 값의 2의 보수 비트열 (길이 = bitWidth)
- *   atMax               to 가 이 폭이 담는 가장 큰 수인가
- *   min / max           이 폭이 담는 양 끝 값
+ *   to   1 을 더해 닿은 값 (부호 있는 해석)
+ *
+ * **닿은 값 하나만 싣는다.** 떠난 값은 장면이 걸어 온 자취의 마지막이고,
+ * 비트열과 양 끝 값은 아래 `toBits` · `signedMin` · `signedMax` 가 값에서
+ * 셈한다 — 장면이 같은 함수를 부르므로 화면과 알고리즘이 갈릴 자리가 없다
+ * (`tasks/scene-migration-protocol.md` 4 절).
  *
  * 메트릭 없음 — 조각은 셀 것이 없다 (S-piece).
  */
@@ -68,22 +70,6 @@ export function toBits(value: number, bitWidth: number): string {
   return out;
 }
 
-function stepPayload(from: number, to: number, bitWidth: number, atMax: boolean): {
-  from: number;
-  to: number;
-  fromBits: string;
-  toBits: string;
-  atMax: boolean;
-} {
-  return {
-    from,
-    to,
-    fromBits: toBits(from, bitWidth),
-    toBits: toBits(to, bitWidth),
-    atMax,
-  };
-}
-
 export const signedWraparound = async (
   ctx: FacetContext<SignedWraparoundData>,
 ): Promise<void> => {
@@ -125,23 +111,23 @@ export const signedWraparound = async (
       const next = value + 1;
       if (!(await gate())) return;
       if (next === max) {
-        await rc.emit({ type: 'reach-max', payload: stepPayload(value, next, bitWidth, true) });
+        await rc.emit({ type: 'reach-max', payload: { to: next } });
       } else {
-        await rc.emit({ type: 'advance', payload: stepPayload(value, next, bitWidth, false) });
+        await rc.emit({ type: 'advance', payload: { to: next } });
       }
       value = next;
     }
 
     // 오른쪽 끝을 지난다 — 자리올림이 부호 자리까지 번져 가장 작은 수가 된다.
     if (!(await gate())) return;
-    await rc.emit({ type: 'wrap', payload: stepPayload(max, min, bitWidth, false) });
+    await rc.emit({ type: 'wrap', payload: { to: min } });
 
     // 왼쪽 끝에서 다시 오른쪽으로. 고리라는 것이 여기서 확인된다.
     if (!(await gate())) return;
-    await rc.emit({ type: 'advance', payload: stepPayload(min, min + 1, bitWidth, false) });
+    await rc.emit({ type: 'advance', payload: { to: min + 1 } });
 
     if (!(await gate())) return;
-    await rc.emit({ type: 'done', payload: { min, max } });
+    await rc.emit({ type: 'done' });
   };
 
   await play(false);

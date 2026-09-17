@@ -7,6 +7,10 @@
  * 선언에 두는 것은 구조와 읽을 시간뿐이다 — 비트 폭 · 시작값 · 걸음 간격.
  * 양 끝 값도 비트열도 algorithm 이 셈하고, 자리는 stage 가 캔버스에서 역산한다
  * (S-piece).
+ *
+ * 화면은 걸음마다 오는 이벤트를 **장면(Scene)** 으로 이어 붙여 만든다. 어느
+ * 걸음의 화면이든 셈으로 얻으므로 띠(timeline)를 단다 — 장면 방식과 띠는 한
+ * 몸이다 (S-scene · S-piece).
  */
 
 import type { FacetJson } from '@ffacet/core/runtime';
@@ -39,7 +43,7 @@ export const signedWraparoundFacet: FacetJson = {
     pt: 'Na aritmética com sinal de 8 bits, o maior valor é seguido pelo menor — o intervalo é um anel, não uma reta',
   },
   algorithm: 'module:signedWraparound',
-  projector: 'module:signedWraparoundProjector',
+  scene: 'module:signedWraparoundScene',
   initialData: {
     type: 'signed-wraparound',
     bitWidth: 8,
@@ -134,6 +138,6 @@ export const signedWraparoundFacet: FacetJson = {
   },
   blocks: {
     stage: { type: 'signed-wraparound-stage' },
-    controls: { type: 'control-bar', controls: CONTROL_SET.piece },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
   },
 };
