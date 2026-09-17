@@ -19,7 +19,6 @@
  *
  * 이벤트 (C2) — 전부 facet 로컬 (StandardEventType 미포함):
  *   - init              payload: { algorithmLabel, password, users, unsaltedHash }
- *   - rewind payload: {}   손으로 짚기 시작할 때 화면을 되감는다
  *   - reveal-users      payload: {}   두 사람과 그들이 고른 같은 비밀번호
  *   - hash-unsalted     payload: {}   그냥 해싱하면 저장된 값도 같아진다
  *   - add-salt          payload: {}   각자 다른 소금이 앞에 붙는다
@@ -40,8 +39,6 @@ export type SaltedUser = {
   hash: string;
 };
 
-/** 손으로 짚어 보는 입력. control-bar 의 advance 버튼이 보낸다. */
-export type SaltInput = { type: 'advance' } | { type: string };
 
 /** 자동 재생과 손으로 짚기가 공유하는 걸음 수. */
 const STEP_COUNT = 4;
@@ -115,22 +112,4 @@ export async function hashSalt(
     await playStep(i);
   }
 
-  // 손으로 짚어 보는 루프. 끝까지 간 뒤 다시 누르면 처음으로 되감는다.
-  let cursor = STEP_COUNT;
-  for (;;) {
-    if (ctx.cancelled) return;
-    let ev: SaltInput;
-    try {
-      ev = await ctx.waitForInput<SaltInput>();
-    } catch {
-      return;
-    }
-    if (ev.type !== 'advance') continue;
-    if (cursor >= STEP_COUNT) {
-      await ctx.emit({ type: 'rewind' });
-      cursor = 0;
-    }
-    await playStep(cursor);
-    cursor += 1;
-  }
 }
