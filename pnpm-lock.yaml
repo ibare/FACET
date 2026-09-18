@@ -286,6 +286,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/computer-architecture/backward-taken:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/computer-architecture/bit-mask:
     dependencies:
       '@ffacet/core':
@@ -368,7 +374,25 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/computer-architecture/fetch-ahead:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/field-order-size:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/computer-architecture/floating-point:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/four-state-hysteresis:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -408,6 +432,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/transpiler-typescript
 
+  facets/computer-architecture/lanes-in-step:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/computer-architecture/latency-ladder:
     dependencies:
       '@ffacet/core':
@@ -426,13 +456,37 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/computer-architecture/misprediction-penalty:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/computer-architecture/negate-and-add-one:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/computer-architecture/one-bit-double-fault:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/computer-architecture/operand-forwarding:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/padding-gap:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/pattern-from-history:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -457,6 +511,12 @@ importers:
         version: link:../../../packages/core
 
   facets/computer-architecture/ready-first:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/row-vs-column-walk:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -514,6 +574,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/computer-architecture/stride-and-miss:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/computer-architecture/temporal-locality:
     dependencies:
       '@ffacet/core':
@@ -555,6 +621,12 @@ importers:
         version: link:../../../packages/transpiler-typescript
 
   facets/computer-architecture/uneven-float-gaps:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/unpredictable-branch:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -3044,6 +3116,9 @@ importers:
       '@ffacet/algorithm-backtracking':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/backtracking
+      '@ffacet/algorithm-backward-taken':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/backward-taken
       '@ffacet/algorithm-bad-char-skip':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bad-char-skip
@@ -3260,9 +3335,15 @@ importers:
       '@ffacet/algorithm-fast-power':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/fast-power
+      '@ffacet/algorithm-fetch-ahead':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/fetch-ahead
       '@ffacet/algorithm-fewer-hops-not-shorter':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/fewer-hops-not-shorter
+      '@ffacet/algorithm-field-order-size':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/field-order-size
       '@ffacet/algorithm-find-root':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/find-root
@@ -3272,6 +3353,9 @@ importers:
       '@ffacet/algorithm-floyd-warshall':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/floyd-warshall
+      '@ffacet/algorithm-four-state-hysteresis':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/four-state-hysteresis
       '@ffacet/algorithm-gap-shrink':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/gap-shrink
@@ -3407,6 +3491,9 @@ importers:
       '@ffacet/algorithm-kruskal-mst':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/kruskal-mst
+      '@ffacet/algorithm-lanes-in-step':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/lanes-in-step
       '@ffacet/algorithm-latency-ladder':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/latency-ladder
@@ -3488,6 +3575,9 @@ importers:
       '@ffacet/algorithm-messaging-pubsub':
         specifier: workspace:*
         version: link:../../facets/system-design/messaging-pubsub
+      '@ffacet/algorithm-misprediction-penalty':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/misprediction-penalty
       '@ffacet/algorithm-mutually-reachable':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/mutually-reachable
@@ -3512,6 +3602,9 @@ importers:
       '@ffacet/algorithm-noise-left-out':
         specifier: workspace:*
         version: link:../../facets/ml-basics/noise-left-out
+      '@ffacet/algorithm-one-bit-double-fault':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/one-bit-double-fault
       '@ffacet/algorithm-one-more-round-drops':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/one-more-round-drops
@@ -3533,6 +3626,9 @@ importers:
       '@ffacet/algorithm-p-np':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/p-np
+      '@ffacet/algorithm-padding-gap':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/padding-gap
       '@ffacet/algorithm-parent-two-children':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/parent-two-children
@@ -3542,6 +3638,9 @@ importers:
       '@ffacet/algorithm-path-compression':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/path-compression
+      '@ffacet/algorithm-pattern-from-history':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/pattern-from-history
       '@ffacet/algorithm-pca':
         specifier: workspace:*
         version: link:../../facets/ml-basics/pca
@@ -3647,6 +3746,9 @@ importers:
       '@ffacet/algorithm-row-times-column':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/row-times-column
+      '@ffacet/algorithm-row-vs-column-walk':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/row-vs-column-walk
       '@ffacet/algorithm-scan-until-found':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/scan-until-found
@@ -3746,6 +3848,9 @@ importers:
       '@ffacet/algorithm-stage-overlap':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/stage-overlap
+      '@ffacet/algorithm-stride-and-miss':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/stride-and-miss
       '@ffacet/algorithm-subword-segmentation':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/subword-segmentation
@@ -3824,6 +3929,9 @@ importers:
       '@ffacet/algorithm-unknown-becomes-known':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/unknown-becomes-known
+      '@ffacet/algorithm-unpredictable-branch':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/unpredictable-branch
       '@ffacet/algorithm-unrepresentable-fraction':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/unrepresentable-fraction

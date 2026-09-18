@@ -2055,42 +2055,48 @@
               "name": "틀린 값",
               "desc": "한 번 틀리면 여러 박자를 버린다",
               "kind": "piece",
-              "origin": "static-prediction"
+              "origin": "static-prediction",
+              "facetId": "facet:mispredictionPenalty"
             },
             {
               "id": "backward-taken",
               "name": "뒤로 뛰면 반복",
               "desc": "뒤로 가는 분기는 대개 참이다",
               "kind": "piece",
-              "origin": "static-prediction"
+              "origin": "static-prediction",
+              "facetId": "facet:backwardTaken"
             },
             {
               "id": "one-bit-double-fault",
               "name": "1비트의 두 번 실수",
               "desc": "한 번 어긋나면 연달아 틀린다",
               "kind": "piece",
-              "origin": "saturating-counter"
+              "origin": "saturating-counter",
+              "facetId": "facet:oneBitDoubleFault"
             },
             {
               "id": "four-state-hysteresis",
               "name": "네 칸을 오간다",
               "desc": "한 번 틀렸다고 바로 바꾸지 않는다",
               "kind": "piece",
-              "origin": "saturating-counter"
+              "origin": "saturating-counter",
+              "facetId": "facet:fourStateHysteresis"
             },
             {
               "id": "pattern-from-history",
               "name": "지난 몇 번이 다음을 가리킨다",
               "desc": "되풀이되는 무늬를 표가 기억한다",
               "kind": "piece",
-              "origin": "branch-history-table"
+              "origin": "branch-history-table",
+              "facetId": "facet:patternFromHistory"
             },
             {
               "id": "unpredictable-branch",
               "name": "맞힐 수 없는 분기",
               "desc": "무작위 앞에서는 절반만 맞는다",
               "kind": "piece",
-              "origin": "branch-history-table"
+              "origin": "branch-history-table",
+              "facetId": "facet:unpredictableBranch"
             }
           ]
         },
@@ -2119,42 +2125,48 @@
               "name": "정렬과 패딩",
               "desc": "빈틈을 넣어 자리를 맞춘다",
               "kind": "piece",
-              "origin": "struct-alignment"
+              "origin": "struct-alignment",
+              "facetId": "facet:paddingGap"
             },
             {
               "id": "field-order-size",
               "name": "순서가 크기를 바꾼다",
               "desc": "같은 필드인데 늘어놓는 차례로 커진다",
               "kind": "piece",
-              "origin": "struct-alignment"
+              "origin": "struct-alignment",
+              "facetId": "facet:fieldOrderSize"
             },
             {
               "id": "row-vs-column-walk",
               "name": "행 우선과 열 우선",
               "desc": "같은 합인데 걸음의 값이 다르다",
               "kind": "piece",
-              "origin": "array-traversal-order"
+              "origin": "array-traversal-order",
+              "facetId": "facet:rowVsColumnWalk"
             },
             {
               "id": "stride-and-miss",
               "name": "건너뛰는 간격",
               "desc": "멀리 뛸수록 줄을 버린다",
               "kind": "piece",
-              "origin": "array-traversal-order"
+              "origin": "array-traversal-order",
+              "facetId": "facet:strideAndMiss"
             },
             {
               "id": "fetch-ahead",
               "name": "앞질러 가져오기",
               "desc": "쓸 것을 미리 부른다",
               "kind": "piece",
-              "origin": "prefetching"
+              "origin": "prefetching",
+              "facetId": "facet:fetchAhead"
             },
             {
               "id": "lanes-in-step",
               "name": "차선을 나란히",
               "desc": "한 명령이 여럿을 함께 민다",
               "kind": "piece",
-              "origin": "simd"
+              "origin": "simd",
+              "facetId": "facet:lanesInStep"
             }
           ]
         }

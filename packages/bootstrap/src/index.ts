@@ -983,4 +983,40 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:readyFirst', () =>
     import('@ffacet/algorithm-ready-first').then((m) => m.registerReadyFirst()),
   );
+  registerFacetLoader('facet:mispredictionPenalty', () =>
+    import('@ffacet/algorithm-misprediction-penalty').then((m) => m.registerMispredictionPenalty()),
+  );
+  registerFacetLoader('facet:backwardTaken', () =>
+    import('@ffacet/algorithm-backward-taken').then((m) => m.registerBackwardTaken()),
+  );
+  registerFacetLoader('facet:oneBitDoubleFault', () =>
+    import('@ffacet/algorithm-one-bit-double-fault').then((m) => m.registerOneBitDoubleFault()),
+  );
+  registerFacetLoader('facet:fourStateHysteresis', () =>
+    import('@ffacet/algorithm-four-state-hysteresis').then((m) => m.registerFourStateHysteresis()),
+  );
+  registerFacetLoader('facet:patternFromHistory', () =>
+    import('@ffacet/algorithm-pattern-from-history').then((m) => m.registerPatternFromHistory()),
+  );
+  registerFacetLoader('facet:unpredictableBranch', () =>
+    import('@ffacet/algorithm-unpredictable-branch').then((m) => m.registerUnpredictableBranch()),
+  );
+  registerFacetLoader('facet:paddingGap', () =>
+    import('@ffacet/algorithm-padding-gap').then((m) => m.registerPaddingGap()),
+  );
+  registerFacetLoader('facet:fieldOrderSize', () =>
+    import('@ffacet/algorithm-field-order-size').then((m) => m.registerFieldOrderSize()),
+  );
+  registerFacetLoader('facet:rowVsColumnWalk', () =>
+    import('@ffacet/algorithm-row-vs-column-walk').then((m) => m.registerRowVsColumnWalk()),
+  );
+  registerFacetLoader('facet:strideAndMiss', () =>
+    import('@ffacet/algorithm-stride-and-miss').then((m) => m.registerStrideAndMiss()),
+  );
+  registerFacetLoader('facet:fetchAhead', () =>
+    import('@ffacet/algorithm-fetch-ahead').then((m) => m.registerFetchAhead()),
+  );
+  registerFacetLoader('facet:lanesInStep', () =>
+    import('@ffacet/algorithm-lanes-in-step').then((m) => m.registerLanesInStep()),
+  );
 }
