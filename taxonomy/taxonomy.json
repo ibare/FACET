@@ -309,7 +309,16 @@
         {
           "id": "instruction-pipeline",
           "name": {"en":"Instruction Pipeline","ko":"명령어 파이프라인","ja":"命令パイプライン","zh":"指令流水线","ar":"خط معالجة التعليمات","es":"Canalización de instrucciones","fr":"Pipeline d'instructions","hi":"निर्देश पाइपलाइन","id":"Pipeline Instruksi","pt":"Pipeline de instruções"},
-          "facets": []
+          "facets": [
+            "facet:stageOverlap",
+            "facet:throughputNotLatency",
+            "facet:readBeforeWrite",
+            "facet:operandForwarding",
+            "facet:pipelineBubble",
+            "facet:branchFlush",
+            "facet:dualIssue",
+            "facet:readyFirst"
+          ]
         },
         {
           "id": "branch-prediction",

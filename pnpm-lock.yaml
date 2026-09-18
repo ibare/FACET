@@ -308,6 +308,12 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/ir-interpreter
 
+  facets/computer-architecture/branch-flush:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/computer-architecture/byte-order:
     dependencies:
       '@ffacet/core':
@@ -349,6 +355,12 @@ importers:
       '@ffacet/ir-interpreter':
         specifier: workspace:*
         version: link:../../../packages/ir-interpreter
+
+  facets/computer-architecture/dual-issue:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
 
   facets/computer-architecture/false-sharing:
     dependencies:
@@ -420,7 +432,31 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/computer-architecture/operand-forwarding:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/pipeline-bubble:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/computer-architecture/positional-value:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/read-before-write:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/ready-first:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -472,7 +508,19 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/computer-architecture/stage-overlap:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/computer-architecture/temporal-locality:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/computer-architecture/throughput-not-latency:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -3053,6 +3101,9 @@ importers:
       '@ffacet/algorithm-branch-and-bound':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/branch-and-bound
+      '@ffacet/algorithm-branch-flush':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/branch-flush
       '@ffacet/algorithm-bst':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bst
@@ -3179,6 +3230,9 @@ importers:
       '@ffacet/algorithm-divisor-pairs-sqrt':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/divisor-pairs-sqrt
+      '@ffacet/algorithm-dual-issue':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/dual-issue
       '@ffacet/algorithm-dynamic-programming':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/dynamic-programming
@@ -3467,6 +3521,9 @@ importers:
       '@ffacet/algorithm-open-addressing-probe':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/open-addressing-probe
+      '@ffacet/algorithm-operand-forwarding':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/operand-forwarding
       '@ffacet/algorithm-out-of-bounds':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/out-of-bounds
@@ -3494,6 +3551,9 @@ importers:
       '@ffacet/algorithm-pigeonhole-collision':
         specifier: workspace:*
         version: link:../../facets/security/pigeonhole-collision
+      '@ffacet/algorithm-pipeline-bubble':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/pipeline-bubble
       '@ffacet/algorithm-pivot-choice-matters':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/pivot-choice-matters
@@ -3542,6 +3602,12 @@ importers:
       '@ffacet/algorithm-random-forest':
         specifier: workspace:*
         version: link:../../facets/ml-basics/random-forest
+      '@ffacet/algorithm-read-before-write':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/read-before-write
+      '@ffacet/algorithm-ready-first':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/ready-first
       '@ffacet/algorithm-recall-speed-tradeoff':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/recall-speed-tradeoff
@@ -3677,6 +3743,9 @@ importers:
       '@ffacet/algorithm-stack':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/stack
+      '@ffacet/algorithm-stage-overlap':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/stage-overlap
       '@ffacet/algorithm-subword-segmentation':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/subword-segmentation
@@ -3704,6 +3773,9 @@ importers:
       '@ffacet/algorithm-through-middle-node':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/through-middle-node
+      '@ffacet/algorithm-throughput-not-latency':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/throughput-not-latency
       '@ffacet/algorithm-tokenization':
         specifier: workspace:*
         version: link:../../facets/compilers/tokenization

@@ -959,4 +959,28 @@ export function bootstrapFacet(): void {
     import('@ffacet/algorithm-vector-similarity').then((m) => m.registerVectorSimilarity()),
   );
 
+  registerFacetLoader('facet:stageOverlap', () =>
+    import('@ffacet/algorithm-stage-overlap').then((m) => m.registerStageOverlap()),
+  );
+  registerFacetLoader('facet:throughputNotLatency', () =>
+    import('@ffacet/algorithm-throughput-not-latency').then((m) => m.registerThroughputNotLatency()),
+  );
+  registerFacetLoader('facet:readBeforeWrite', () =>
+    import('@ffacet/algorithm-read-before-write').then((m) => m.registerReadBeforeWrite()),
+  );
+  registerFacetLoader('facet:operandForwarding', () =>
+    import('@ffacet/algorithm-operand-forwarding').then((m) => m.registerOperandForwarding()),
+  );
+  registerFacetLoader('facet:pipelineBubble', () =>
+    import('@ffacet/algorithm-pipeline-bubble').then((m) => m.registerPipelineBubble()),
+  );
+  registerFacetLoader('facet:branchFlush', () =>
+    import('@ffacet/algorithm-branch-flush').then((m) => m.registerBranchFlush()),
+  );
+  registerFacetLoader('facet:dualIssue', () =>
+    import('@ffacet/algorithm-dual-issue').then((m) => m.registerDualIssue()),
+  );
+  registerFacetLoader('facet:readyFirst', () =>
+    import('@ffacet/algorithm-ready-first').then((m) => m.registerReadyFirst()),
+  );
 }

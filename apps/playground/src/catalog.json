@@ -1973,56 +1973,64 @@
               "name": "단계 겹치기",
               "desc": "앞이 끝나기 전에 다음을 집어넣는다",
               "kind": "piece",
-              "origin": "five-stage-pipeline"
+              "origin": "five-stage-pipeline",
+              "facetId": "facet:stageOverlap"
             },
             {
               "id": "throughput-not-latency",
               "name": "처리량과 지연",
               "desc": "하나는 안 빨라지고 여럿이 빨라진다",
               "kind": "piece",
-              "origin": "five-stage-pipeline"
+              "origin": "five-stage-pipeline",
+              "facetId": "facet:throughputNotLatency"
             },
             {
               "id": "read-before-write",
               "name": "아직 안 나온 값",
               "desc": "앞의 결과를 기다려야 한다",
               "kind": "piece",
-              "origin": "data-hazard"
+              "origin": "data-hazard",
+              "facetId": "facet:readBeforeWrite"
             },
             {
               "id": "operand-forwarding",
               "name": "포워딩",
               "desc": "쓰기 전에 옆으로 건넨다",
               "kind": "piece",
-              "origin": "data-hazard"
+              "origin": "data-hazard",
+              "facetId": "facet:operandForwarding"
             },
             {
               "id": "pipeline-bubble",
               "name": "거품",
               "desc": "빈 칸이 뒤따라 흐른다",
               "kind": "piece",
-              "origin": "data-hazard"
+              "origin": "data-hazard",
+              "facetId": "facet:pipelineBubble"
             },
             {
               "id": "branch-flush",
               "name": "잘못 넣은 것 버리기",
               "desc": "갈래를 틀리면 채운 것을 비운다",
               "kind": "piece",
-              "origin": "control-hazard"
+              "origin": "control-hazard",
+              "facetId": "facet:branchFlush"
             },
             {
               "id": "dual-issue",
               "name": "한 박자에 둘",
               "desc": "서로 안 걸리는 것은 함께 낸다",
               "kind": "piece",
-              "origin": "out-of-order-execution"
+              "origin": "out-of-order-execution",
+              "facetId": "facet:dualIssue"
             },
             {
               "id": "ready-first",
               "name": "준비된 것부터",
               "desc": "순서를 바꿔 실행하고 순서대로 끝낸다",
               "kind": "piece",
-              "origin": "out-of-order-execution"
+              "origin": "out-of-order-execution",
+              "facetId": "facet:readyFirst"
             }
           ]
         },
