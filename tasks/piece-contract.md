@@ -51,6 +51,7 @@ core 의 타입(`packages/core/src/**`)은 열어도 된다. 다만 아래 "쓰�
 - 장면 등록 이름 `<camel>Scene` = `scene: 'module:<camel>Scene'`
 - view id **`<name>-stage`** (디렉터리 이름 + `-stage`). 전역 레지스트리라 짧은 이름은 부딪힌다
 - facet 의 stage 블록 `type` 은 view id 와 같다
+- **`register` 로 시작하는 이름은 `register<Pascal>` 하나만 내보낸다.** 전수 검사가 모듈의 `register*` export 를 전부 등록 함수로 부른다 — `registerNames` 같은 헬퍼를 내보내면 인자 없이 불려 터진다 (2026-09-18 파이프라인 배치)
 
 ## 쓰는 API
 
