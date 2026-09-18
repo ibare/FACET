@@ -1019,4 +1019,37 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:lanesInStep', () =>
     import('@ffacet/algorithm-lanes-in-step').then((m) => m.registerLanesInStep()),
   );
+  registerFacetLoader('facet:fiveStagePipeline', () =>
+    import('@ffacet/algorithm-five-stage-pipeline').then((m) => m.registerFiveStagePipeline()),
+  );
+  registerFacetLoader('facet:dataHazard', () =>
+    import('@ffacet/algorithm-data-hazard').then((m) => m.registerDataHazard()),
+  );
+  registerFacetLoader('facet:controlHazard', () =>
+    import('@ffacet/algorithm-control-hazard').then((m) => m.registerControlHazard()),
+  );
+  registerFacetLoader('facet:outOfOrderExecution', () =>
+    import('@ffacet/algorithm-out-of-order-execution').then((m) => m.registerOutOfOrderExecution()),
+  );
+  registerFacetLoader('facet:staticPrediction', () =>
+    import('@ffacet/algorithm-static-prediction').then((m) => m.registerStaticPrediction()),
+  );
+  registerFacetLoader('facet:saturatingCounter', () =>
+    import('@ffacet/algorithm-saturating-counter').then((m) => m.registerSaturatingCounter()),
+  );
+  registerFacetLoader('facet:branchHistoryTable', () =>
+    import('@ffacet/algorithm-branch-history-table').then((m) => m.registerBranchHistoryTable()),
+  );
+  registerFacetLoader('facet:structAlignment', () =>
+    import('@ffacet/algorithm-struct-alignment').then((m) => m.registerStructAlignment()),
+  );
+  registerFacetLoader('facet:arrayTraversalOrder', () =>
+    import('@ffacet/algorithm-array-traversal-order').then((m) => m.registerArrayTraversalOrder()),
+  );
+  registerFacetLoader('facet:prefetching', () =>
+    import('@ffacet/algorithm-prefetching').then((m) => m.registerPrefetching()),
+  );
+  registerFacetLoader('facet:simd', () =>
+    import('@ffacet/algorithm-simd').then((m) => m.registerSimd()),
+  );
 }

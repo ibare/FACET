@@ -310,6 +310,10 @@
           "id": "instruction-pipeline",
           "name": {"en":"Instruction Pipeline","ko":"명령어 파이프라인","ja":"命令パイプライン","zh":"指令流水线","ar":"خط معالجة التعليمات","es":"Canalización de instrucciones","fr":"Pipeline d'instructions","hi":"निर्देश पाइपलाइन","id":"Pipeline Instruksi","pt":"Pipeline de instruções"},
           "facets": [
+            "facet:fiveStagePipeline",
+            "facet:dataHazard",
+            "facet:controlHazard",
+            "facet:outOfOrderExecution",
             "facet:stageOverlap",
             "facet:throughputNotLatency",
             "facet:readBeforeWrite",
@@ -324,6 +328,9 @@
           "id": "branch-prediction",
           "name": {"en":"Branch Prediction","ko":"분기 예측","ja":"分岐予測","zh":"分支预测","ar":"التنبؤ بالتفرع","es":"Predicción de saltos","fr":"Prédiction de branchement","hi":"ब्रांच प्रेडिक्शन","id":"Prediksi Percabangan","pt":"Predição de desvios"},
           "facets": [
+            "facet:staticPrediction",
+            "facet:saturatingCounter",
+            "facet:branchHistoryTable",
             "facet:mispredictionPenalty",
             "facet:backwardTaken",
             "facet:oneBitDoubleFault",
@@ -336,6 +343,10 @@
           "id": "data-layout",
           "name": {"en":"Data Layout and Access","ko":"데이터 배치와 접근","ja":"データ配置とアクセス","zh":"数据布局与访问","ar":"تخطيط البيانات والوصول إليها","es":"Disposición y acceso a datos","fr":"Disposition et accès aux données","hi":"डेटा विन्यास और पहुँच","id":"Tata Letak dan Akses Data","pt":"Disposição e acesso a dados"},
           "facets": [
+            "facet:structAlignment",
+            "facet:arrayTraversalOrder",
+            "facet:prefetching",
+            "facet:simd",
             "facet:paddingGap",
             "facet:fieldOrderSize",
             "facet:rowVsColumnWalk",

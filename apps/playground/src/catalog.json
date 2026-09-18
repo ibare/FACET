@@ -1954,19 +1954,23 @@
           "topics": [
             {
               "id": "five-stage-pipeline",
-              "name": "5단계 파이프라인"
+              "name": "5단계 파이프라인",
+              "facetId": "facet:fiveStagePipeline"
             },
             {
               "id": "data-hazard",
-              "name": "데이터 해저드"
+              "name": "데이터 해저드",
+              "facetId": "facet:dataHazard"
             },
             {
               "id": "control-hazard",
-              "name": "제어 해저드"
+              "name": "제어 해저드",
+              "facetId": "facet:controlHazard"
             },
             {
               "id": "out-of-order-execution",
-              "name": "비순차 실행"
+              "name": "비순차 실행",
+              "facetId": "facet:outOfOrderExecution"
             },
             {
               "id": "stage-overlap",
@@ -2040,15 +2044,18 @@
           "topics": [
             {
               "id": "static-prediction",
-              "name": "정적 예측"
+              "name": "정적 예측",
+              "facetId": "facet:staticPrediction"
             },
             {
               "id": "saturating-counter",
-              "name": "2비트 포화 카운터"
+              "name": "2비트 포화 카운터",
+              "facetId": "facet:saturatingCounter"
             },
             {
               "id": "branch-history-table",
-              "name": "분기 이력 표"
+              "name": "분기 이력 표",
+              "facetId": "facet:branchHistoryTable"
             },
             {
               "id": "misprediction-penalty",
@@ -2106,19 +2113,23 @@
           "topics": [
             {
               "id": "struct-alignment",
-              "name": "구조체 정렬"
+              "name": "구조체 정렬",
+              "facetId": "facet:structAlignment"
             },
             {
               "id": "array-traversal-order",
-              "name": "배열 순회 순서"
+              "name": "배열 순회 순서",
+              "facetId": "facet:arrayTraversalOrder"
             },
             {
               "id": "prefetching",
-              "name": "프리페치"
+              "name": "프리페치",
+              "facetId": "facet:prefetching"
             },
             {
               "id": "simd",
-              "name": "SIMD"
+              "name": "SIMD",
+              "facetId": "facet:simd"
             },
             {
               "id": "padding-gap",

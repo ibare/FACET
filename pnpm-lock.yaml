@@ -280,6 +280,16 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/computer-architecture/array-traversal-order:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/computer-architecture/associativity-relief:
     dependencies:
       '@ffacet/core':
@@ -320,6 +330,16 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/computer-architecture/branch-history-table:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/computer-architecture/byte-order:
     dependencies:
       '@ffacet/core':
@@ -351,6 +371,26 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/computer-architecture/control-hazard:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/computer-architecture/data-hazard:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/computer-architecture/direct-mapped-cache:
     dependencies:
@@ -385,6 +425,16 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/computer-architecture/five-stage-pipeline:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/computer-architecture/floating-point:
     dependencies:
@@ -480,6 +530,16 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/computer-architecture/out-of-order-execution:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/computer-architecture/padding-gap:
     dependencies:
       '@ffacet/core':
@@ -504,6 +564,16 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/computer-architecture/prefetching:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/computer-architecture/read-before-write:
     dependencies:
       '@ffacet/core':
@@ -521,6 +591,16 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/computer-architecture/saturating-counter:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/computer-architecture/set-associative-cache:
     dependencies:
@@ -562,6 +642,16 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/computer-architecture/simd:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/computer-architecture/spatial-locality:
     dependencies:
       '@ffacet/core':
@@ -574,11 +664,31 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/computer-architecture/static-prediction:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/computer-architecture/stride-and-miss:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/computer-architecture/struct-alignment:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/computer-architecture/temporal-locality:
     dependencies:
@@ -3092,6 +3202,9 @@ importers:
       '@ffacet/algorithm-array-as-tree':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/array-as-tree
+      '@ffacet/algorithm-array-traversal-order':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/array-traversal-order
       '@ffacet/algorithm-assign-then-move':
         specifier: workspace:*
         version: link:../../facets/ml-basics/assign-then-move
@@ -3179,6 +3292,9 @@ importers:
       '@ffacet/algorithm-branch-flush':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/branch-flush
+      '@ffacet/algorithm-branch-history-table':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/branch-history-table
       '@ffacet/algorithm-bst':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bst
@@ -3242,6 +3358,9 @@ importers:
       '@ffacet/algorithm-context-switching':
         specifier: workspace:*
         version: link:../../facets/os/context-switching
+      '@ffacet/algorithm-control-hazard':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/control-hazard
       '@ffacet/algorithm-count-min-sketch':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/count-min-sketch
@@ -3260,6 +3379,9 @@ importers:
       '@ffacet/algorithm-cycle-blocks-order':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/cycle-blocks-order
+      '@ffacet/algorithm-data-hazard':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/data-hazard
       '@ffacet/algorithm-dbscan':
         specifier: workspace:*
         version: link:../../facets/ml-basics/dbscan
@@ -3347,6 +3469,9 @@ importers:
       '@ffacet/algorithm-find-root':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/find-root
+      '@ffacet/algorithm-five-stage-pipeline':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/five-stage-pipeline
       '@ffacet/algorithm-floating-point':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/floating-point
@@ -3620,6 +3745,9 @@ importers:
       '@ffacet/algorithm-out-of-bounds':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/out-of-bounds
+      '@ffacet/algorithm-out-of-order-execution':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/out-of-order-execution
       '@ffacet/algorithm-overlapping-subproblems':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/overlapping-subproblems
@@ -3659,6 +3787,9 @@ importers:
       '@ffacet/algorithm-positional-value':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/positional-value
+      '@ffacet/algorithm-prefetching':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/prefetching
       '@ffacet/algorithm-prefix-suffix-jump':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/prefix-suffix-jump
@@ -3749,6 +3880,9 @@ importers:
       '@ffacet/algorithm-row-vs-column-walk':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/row-vs-column-walk
+      '@ffacet/algorithm-saturating-counter':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/saturating-counter
       '@ffacet/algorithm-scan-until-found':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/scan-until-found
@@ -3803,6 +3937,9 @@ importers:
       '@ffacet/algorithm-silent-truncation':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/silent-truncation
+      '@ffacet/algorithm-simd':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/simd
       '@ffacet/algorithm-skip-a-layer':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/skip-a-layer
@@ -3848,9 +3985,15 @@ importers:
       '@ffacet/algorithm-stage-overlap':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/stage-overlap
+      '@ffacet/algorithm-static-prediction':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/static-prediction
       '@ffacet/algorithm-stride-and-miss':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/stride-and-miss
+      '@ffacet/algorithm-struct-alignment':
+        specifier: workspace:*
+        version: link:../../facets/computer-architecture/struct-alignment
       '@ffacet/algorithm-subword-segmentation':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/subword-segmentation
