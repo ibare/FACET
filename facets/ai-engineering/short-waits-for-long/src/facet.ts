@@ -1,0 +1,128 @@
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
+
+/**
+ * @piece
+ * 질문: 길이가 다른 요청을 한 묶음으로 돌리면 먼저 끝난 요청은 어떻게 되는가.
+ *
+ * 네 요청이 걸음 1 에 함께 시작하고, 걸음마다 넷이 함께 한 칸씩 자란다. 먼저 끝난 요청의
+ * 줄에도 걸음마다 빈칸이 하나씩 붙어, 가장 긴 요청이 끝날 때까지 아무도 묶음을 떠나지 않는다.
+ * 답은 예로 정한 값이다.
+ */
+export const shortWaitsForLongFacet: FacetJson = {
+  id: 'facet:shortWaitsForLong',
+  title: {
+    en: 'The short ones wait for the long one',
+    ko: '짧은 요청이 긴 요청을 기다린다',
+    ja: '短いリクエストは長いものを待つ',
+    zh: '短请求等待长请求',
+    ar: 'الطلب القصير ينتظر الطويل',
+    es: 'Las cortas esperan a la larga',
+    fr: 'Les courtes attendent la longue',
+    hi: 'छोटे अनुरोध लंबे का इंतज़ार करते हैं',
+    id: 'Yang pendek menunggu yang panjang',
+    pt: 'As curtas esperam pela longa',
+  },
+  description: {
+    en: 'When requests of different lengths run as one batch, what happens to the ones that finish first?',
+    ko: '길이가 다른 요청을 한 묶음으로 돌리면 먼저 끝난 요청은 어떻게 되는가?',
+    ja: '長さの違うリクエストを一つのバッチで回すと、先に終わったリクエストはどうなるのか?',
+    zh: '把长度不同的请求放进同一批运行时,先结束的请求会怎样?',
+    ar: 'عندما تُشغَّل طلبات مختلفة الطول دفعةً واحدة، ماذا يحدث لتلك التي تنتهي أولًا؟',
+    es: 'Si peticiones de distinta longitud corren en un mismo lote, ¿qué pasa con las que terminan antes?',
+    fr: 'Quand des requêtes de longueurs différentes tournent dans un même lot, que deviennent celles qui finissent en premier ?',
+    hi: 'अलग-अलग लंबाई के अनुरोध एक ही बैच में चलें, तो पहले ख़त्म होने वालों का क्या होता है?',
+    id: 'Jika permintaan dengan panjang berbeda dijalankan dalam satu batch, apa yang terjadi pada yang selesai lebih dulu?',
+    pt: 'Quando pedidos de tamanhos diferentes rodam num só lote, o que acontece com os que terminam primeiro?',
+  },
+  algorithm: 'module:shortWaitsForLong',
+  scene: 'module:shortWaitsForLongScene',
+  initialData: {
+    type: 'short-waits-for-long',
+    stepMs: 800,
+    requests: [
+      { id: 'A', answer: 'yes it is' },
+      { id: 'B', answer: 'the train leaves at nine from platform two' },
+      { id: 'C', answer: 'not today' },
+      { id: 'D', answer: 'it rained all day yesterday' },
+    ],
+  },
+  shuffleOnReset: false,
+  messages: {
+    'label.step': {
+      en: 'step',
+      ko: '걸음',
+      ja: 'ステップ',
+      zh: '步',
+      ar: 'خطوة',
+      es: 'paso',
+      fr: 'pas',
+      hi: 'चरण',
+      id: 'langkah',
+      pt: 'passo',
+    },
+    'label.blank': {
+      en: 'blank',
+      ko: '빈칸',
+      ja: '空き',
+      zh: '空位',
+      ar: 'فراغ',
+      es: 'hueco',
+      fr: 'vide',
+      hi: 'खाली',
+      id: 'kosong',
+      pt: 'vazio',
+    },
+    'label.waited': {
+      en: 'waited {n}',
+      ko: '기다림 {n}',
+      ja: '待ち {n}',
+      zh: '等待 {n}',
+      ar: 'انتظار {n}',
+      es: 'esperó {n}',
+      fr: 'attente {n}',
+      hi: 'प्रतीक्षा {n}',
+      id: 'menunggu {n}',
+      pt: 'esperou {n}',
+    },
+    'caption.start': {
+      en: '{n} requests start together in one batch.',
+      ko: '요청 {n}, 한 묶음으로 함께 시작한다.',
+      ja: 'リクエスト {n} 件が一つのバッチで一緒に始まる。',
+      zh: '{n} 个请求在同一批里一起开始。',
+      ar: '{n} طلبات تبدأ معًا في دفعة واحدة.',
+      es: '{n} peticiones empiezan juntas en un lote.',
+      fr: '{n} requêtes démarrent ensemble dans un lot.',
+      hi: '{n} अनुरोध एक बैच में साथ शुरू होते हैं।',
+      id: '{n} permintaan mulai bersama dalam satu batch.',
+      pt: '{n} pedidos começam juntos num lote.',
+    },
+    'caption.step': {
+      en: 'Step {t}: {tokens} tokens and {blanks} blanks.',
+      ko: '걸음 {t}: 토큰 {tokens}, 빈칸 {blanks}.',
+      ja: 'ステップ {t}: トークン {tokens}、空き {blanks}。',
+      zh: '第 {t} 步:词元 {tokens},空位 {blanks}。',
+      ar: 'الخطوة {t}: {tokens} رموز و{blanks} فراغات.',
+      es: 'Paso {t}: {tokens} tokens y {blanks} huecos.',
+      fr: 'Pas {t} : {tokens} jetons et {blanks} vides.',
+      hi: 'चरण {t}: {tokens} टोकन और {blanks} खाली।',
+      id: 'Langkah {t}: {tokens} token dan {blanks} kosong.',
+      pt: 'Passo {t}: {tokens} tokens e {blanks} vazios.',
+    },
+    'caption.end': {
+      en: 'The batch ends at step {t}: {blank} of {total} cells are blanks ({pct}%).',
+      ko: '묶음 끝 — 걸음 {t}. 칸 {total} 가운데 빈칸 {blank} ({pct}%).',
+      ja: 'バッチはステップ {t} で終わる。{total} マスのうち空き {blank} ({pct}%)。',
+      zh: '批次在第 {t} 步结束:{total} 格中空位 {blank} ({pct}%)。',
+      ar: 'تنتهي الدفعة في الخطوة {t}: {blank} من {total} خانة فراغات ({pct}%).',
+      es: 'El lote acaba en el paso {t}: {blank} de {total} celdas son huecos ({pct}%).',
+      fr: 'Le lot finit au pas {t} : {blank} cases sur {total} sont vides ({pct} %).',
+      hi: 'बैच चरण {t} पर ख़त्म: {total} खानों में {blank} खाली ({pct}%)।',
+      id: 'Batch selesai di langkah {t}: {blank} dari {total} sel kosong ({pct}%).',
+      pt: 'O lote termina no passo {t}: {blank} de {total} células são vazias ({pct}%).',
+    },
+  },
+  blocks: {
+    stage: { type: 'short-waits-for-long-stage' },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
+  },
+};
