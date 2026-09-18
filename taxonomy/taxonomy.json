@@ -720,6 +720,10 @@
           "id": "retrieval-augmentation",
           "name": {"en":"Retrieval Augmentation","ko":"검색 증강","ja":"検索拡張","zh":"检索增强","ar":"التوليد المعزز بالاسترجاع","es":"Aumento por recuperación","fr":"Augmentation par recherche","hi":"रिट्रीवल ऑगमेंटेशन","id":"Augmentasi Pengambilan","pt":"Aumento por recuperação"},
           "facets": [
+            "facet:chunking",
+            "facet:hybridSearch",
+            "facet:reranking",
+            "facet:contextAssembly",
             "facet:whereToCut",
             "facet:overlapTheSeam",
             "facet:sameWordVsSameMeaning",
@@ -733,6 +737,10 @@
           "id": "decoding",
           "name": {"en":"Controlling Generation","ko":"생성 제어","ja":"生成の制御","zh":"生成控制","ar":"التحكم في التوليد","es":"Control de la generación","fr":"Contrôle de la génération","hi":"जनरेशन नियंत्रण","id":"Kendali Generasi","pt":"Controle da geração"},
           "facets": [
+            "facet:greedyDecoding",
+            "facet:temperatureSampling",
+            "facet:topKTopP",
+            "facet:beamSearch",
             "facet:alwaysTheHighest",
             "facet:flattenOrSharpen",
             "facet:cutTheTail",
@@ -746,6 +754,9 @@
           "id": "inference-efficiency",
           "name": {"en":"Inference Efficiency","ko":"추론 효율","ja":"推論効率","zh":"推理效率","ar":"كفاءة الاستدلال","es":"Eficiencia de inferencia","fr":"Efficacité de l'inférence","hi":"इन्फ़रेंस दक्षता","id":"Efisiensi Inferensi","pt":"Eficiência de inferência"},
           "facets": [
+            "facet:kvCache",
+            "facet:batchingAndPadding",
+            "facet:speculativeDecoding",
             "facet:dontRecountThePast",
             "facet:cacheKeepsGrowing",
             "facet:shortWaitsForLong",

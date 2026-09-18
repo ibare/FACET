@@ -1112,4 +1112,37 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:draftThenVerify', () =>
     import('@ffacet/algorithm-draft-then-verify').then((m) => m.registerDraftThenVerify()),
   );
+  registerFacetLoader('facet:chunking', () =>
+    import('@ffacet/algorithm-chunking').then((m) => m.registerChunking()),
+  );
+  registerFacetLoader('facet:hybridSearch', () =>
+    import('@ffacet/algorithm-hybrid-search').then((m) => m.registerHybridSearch()),
+  );
+  registerFacetLoader('facet:reranking', () =>
+    import('@ffacet/algorithm-reranking').then((m) => m.registerReranking()),
+  );
+  registerFacetLoader('facet:contextAssembly', () =>
+    import('@ffacet/algorithm-context-assembly').then((m) => m.registerContextAssembly()),
+  );
+  registerFacetLoader('facet:greedyDecoding', () =>
+    import('@ffacet/algorithm-greedy-decoding').then((m) => m.registerGreedyDecoding()),
+  );
+  registerFacetLoader('facet:temperatureSampling', () =>
+    import('@ffacet/algorithm-temperature-sampling').then((m) => m.registerTemperatureSampling()),
+  );
+  registerFacetLoader('facet:topKTopP', () =>
+    import('@ffacet/algorithm-top-k-top-p').then((m) => m.registerTopKTopP()),
+  );
+  registerFacetLoader('facet:beamSearch', () =>
+    import('@ffacet/algorithm-beam-search').then((m) => m.registerBeamSearch()),
+  );
+  registerFacetLoader('facet:kvCache', () =>
+    import('@ffacet/algorithm-kv-cache').then((m) => m.registerKvCache()),
+  );
+  registerFacetLoader('facet:batchingAndPadding', () =>
+    import('@ffacet/algorithm-batching-and-padding').then((m) => m.registerBatchingAndPadding()),
+  );
+  registerFacetLoader('facet:speculativeDecoding', () =>
+    import('@ffacet/algorithm-speculative-decoding').then((m) => m.registerSpeculativeDecoding()),
+  );
 }

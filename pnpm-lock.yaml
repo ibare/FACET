@@ -160,6 +160,26 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ai-engineering/batching-and-padding:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/ai-engineering/beam-search:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/ai-engineering/between-letter-and-word:
     dependencies:
       '@ffacet/core':
@@ -196,6 +216,16 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ai-engineering/chunking:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/ai-engineering/coarse-then-fine:
     dependencies:
       '@ffacet/core':
@@ -207,6 +237,16 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/ai-engineering/context-assembly:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/ai-engineering/cut-the-tail:
     dependencies:
@@ -262,17 +302,47 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ai-engineering/greedy-decoding:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/ai-engineering/hnsw:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ai-engineering/hybrid-search:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/ai-engineering/inverted-file-index:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/ai-engineering/kv-cache:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/ai-engineering/look-closely-at-few:
     dependencies:
@@ -334,6 +404,16 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ai-engineering/reranking:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/ai-engineering/same-word-vs-same-meaning:
     dependencies:
       '@ffacet/core':
@@ -352,6 +432,16 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ai-engineering/speculative-decoding:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/ai-engineering/split-and-number:
     dependencies:
       '@ffacet/core':
@@ -364,11 +454,31 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ai-engineering/temperature-sampling:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/ai-engineering/tokens-per-language:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/ai-engineering/top-k-top-p:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/ai-engineering/unknown-becomes-known:
     dependencies:
@@ -3361,6 +3471,12 @@ importers:
       '@ffacet/algorithm-bagging-sample':
         specifier: workspace:*
         version: link:../../facets/ml-basics/bagging-sample
+      '@ffacet/algorithm-batching-and-padding':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/batching-and-padding
+      '@ffacet/algorithm-beam-search':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/beam-search
       '@ffacet/algorithm-bellman-ford':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bellman-ford
@@ -3463,6 +3579,9 @@ importers:
       '@ffacet/algorithm-chaining-bucket':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/chaining-bucket
+      '@ffacet/algorithm-chunking':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/chunking
       '@ffacet/algorithm-circular-buffer-wrap':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/circular-buffer-wrap
@@ -3487,6 +3606,9 @@ importers:
       '@ffacet/algorithm-constant-fades':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/constant-fades
+      '@ffacet/algorithm-context-assembly':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/context-assembly
       '@ffacet/algorithm-context-switching':
         specifier: workspace:*
         version: link:../../facets/os/context-switching
@@ -3649,6 +3771,9 @@ importers:
       '@ffacet/algorithm-greedy-can-fail':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/greedy-can-fail
+      '@ffacet/algorithm-greedy-decoding':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/greedy-decoding
       '@ffacet/algorithm-grow-and-copy':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/grow-and-copy
@@ -3712,6 +3837,9 @@ importers:
       '@ffacet/algorithm-hnsw':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/hnsw
+      '@ffacet/algorithm-hybrid-search':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/hybrid-search
       '@ffacet/algorithm-hyperloglog':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/hyperloglog
@@ -3772,6 +3900,9 @@ importers:
       '@ffacet/algorithm-kruskal-mst':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/kruskal-mst
+      '@ffacet/algorithm-kv-cache':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/kv-cache
       '@ffacet/algorithm-lanes-in-step':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/lanes-in-step
@@ -4036,6 +4167,9 @@ importers:
       '@ffacet/algorithm-requires-sorted':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/requires-sorted
+      '@ffacet/algorithm-reranking':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/reranking
       '@ffacet/algorithm-residual-distance':
         specifier: workspace:*
         version: link:../../facets/ml-basics/residual-distance
@@ -4138,6 +4272,9 @@ importers:
       '@ffacet/algorithm-spatial-locality':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/spatial-locality
+      '@ffacet/algorithm-speculative-decoding':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/speculative-decoding
       '@ffacet/algorithm-split-and-number':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/split-and-number
@@ -4189,6 +4326,9 @@ importers:
       '@ffacet/algorithm-take-best-now':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/take-best-now
+      '@ffacet/algorithm-temperature-sampling':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/temperature-sampling
       '@ffacet/algorithm-temporal-locality':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/temporal-locality
@@ -4207,6 +4347,9 @@ importers:
       '@ffacet/algorithm-tokens-per-language':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/tokens-per-language
+      '@ffacet/algorithm-top-k-top-p':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/top-k-top-p
       '@ffacet/algorithm-topological-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/topological-sort

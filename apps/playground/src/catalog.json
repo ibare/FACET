@@ -5785,19 +5785,23 @@
           "topics": [
             {
               "id": "chunking",
-              "name": "청킹"
+              "name": "청킹",
+              "facetId": "facet:chunking"
             },
             {
               "id": "hybrid-search",
-              "name": "하이브리드 검색"
+              "name": "하이브리드 검색",
+              "facetId": "facet:hybridSearch"
             },
             {
               "id": "reranking",
-              "name": "재순위"
+              "name": "재순위",
+              "facetId": "facet:reranking"
             },
             {
               "id": "context-assembly",
-              "name": "맥락 조립"
+              "name": "맥락 조립",
+              "facetId": "facet:contextAssembly"
             },
             {
               "id": "where-to-cut",
@@ -5863,19 +5867,23 @@
           "topics": [
             {
               "id": "greedy-decoding",
-              "name": "탐욕 디코딩"
+              "name": "탐욕 디코딩",
+              "facetId": "facet:greedyDecoding"
             },
             {
               "id": "temperature-sampling",
-              "name": "온도와 표본 추출"
+              "name": "온도와 표본 추출",
+              "facetId": "facet:temperatureSampling"
             },
             {
               "id": "top-k-top-p",
-              "name": "top-k / top-p"
+              "name": "top-k / top-p",
+              "facetId": "facet:topKTopP"
             },
             {
               "id": "beam-search",
-              "name": "빔 서치"
+              "name": "빔 서치",
+              "facetId": "facet:beamSearch"
             },
             {
               "id": "always-the-highest",
@@ -5941,15 +5949,18 @@
           "topics": [
             {
               "id": "kv-cache",
-              "name": "KV 캐시"
+              "name": "KV 캐시",
+              "facetId": "facet:kvCache"
             },
             {
               "id": "batching-and-padding",
-              "name": "배치와 패딩"
+              "name": "배치와 패딩",
+              "facetId": "facet:batchingAndPadding"
             },
             {
               "id": "speculative-decoding",
-              "name": "사색적 디코딩"
+              "name": "사색적 디코딩",
+              "facetId": "facet:speculativeDecoding"
             },
             {
               "id": "dont-recount-the-past",
