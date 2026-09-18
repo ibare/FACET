@@ -32,6 +32,7 @@ import { asymmetricRsaConcept } from './asymmetric-rsa.js';
 import { asymptoticConcept } from './asymptotic.js';
 import { averageTheBucketsConcept } from './average-the-buckets.js';
 import { avlTreeConcept } from './avl-tree.js';
+import { backwardTakenConcept } from './backward-taken.js';
 import { bTreeConcept } from './b-tree.js';
 import { backtrackingConcept } from './backtracking.js';
 import { badCharSkipConcept } from './bad-char-skip.js';
@@ -53,6 +54,11 @@ import { boundaryShiftConcept } from './boundary-shift.js';
 import { boyerMooreConcept } from './boyer-moore.js';
 import { bpeTrainingConcept } from './bpe-training.js';
 import { branchAndBoundConcept } from './branch-and-bound.js';
+import { branchFlushConcept } from './branch-flush.js';
+import { branchHistoryTableConcept } from './branch-history-table.js';
+import { patternFromHistoryConcept } from './pattern-from-history.js';
+import { unpredictableBranchConcept } from './unpredictable-branch.js';
+import { controlHazardConcept } from './control-hazard.js';
 import { bstConcept } from './bst.js';
 import { bstCompareAndGoConcept } from './bst-compare-and-go.js';
 import { bstDegenerateConcept } from './bst-degenerate.js';
@@ -81,6 +87,7 @@ import { crowdTheTailsConcept } from './crowd-the-tails.js';
 import { curvesCrossConcept } from './curves-cross.js';
 import { cycleBlocksOrderConcept } from './cycle-blocks-order.js';
 import { dbscanConcept } from './dbscan.js';
+import { dataHazardConcept } from './data-hazard.js';
 import { decisionBoundaryConcept } from './decision-boundary.js';
 import { decisionTreeConcept } from './decision-tree.js';
 import { dendrogramCutConcept } from './dendrogram-cut.js';
@@ -94,6 +101,7 @@ import { directMappedCacheConcept } from './direct-mapped-cache.js';
 import { directionOfMostSpreadConcept } from './direction-of-most-spread.js';
 import { diveThenBacktrackConcept } from './dive-then-backtrack.js';
 import { divideConquerCombineConcept } from './divide-conquer-combine.js';
+import { dualIssueConcept } from './dual-issue.js';
 import { divisorPairsSqrtConcept } from './divisor-pairs-sqrt.js';
 import { dynamicProgrammingConcept } from './dynamic-programming.js';
 import { editDistanceConcept } from './edit-distance.js';
@@ -104,10 +112,14 @@ import { exhaustiveSearchConcept } from './exhaustive-search.js';
 import { failLinkConcept } from './fail-link.js';
 import { falseSharingConcept } from './false-sharing.js';
 import { fastPowerConcept } from './fast-power.js';
+import { fetchAheadConcept } from './fetch-ahead.js';
 import { fewerHopsNotShorterConcept } from './fewer-hops-not-shorter.js';
+import { fieldOrderSizeConcept } from './field-order-size.js';
 import { findRootConcept } from './find-root.js';
+import { fiveStagePipelineConcept } from './five-stage-pipeline.js';
 import { floatingPointConcept } from './floating-point.js';
 import { floydWarshallConcept } from './floyd-warshall.js';
+import { fourStateHysteresisConcept } from './four-state-hysteresis.js';
 import { gapShrinkConcept } from './gap-shrink.js';
 import { globalAndLocalConcept } from './global-and-local.js';
 import { greedyConcept } from './greedy.js';
@@ -153,6 +165,7 @@ import { kmeansConcept } from './kmeans.js';
 import { kmpConcept } from './kmp.js';
 import { knnConcept } from './knn.js';
 import { kruskalMstConcept } from './kruskal-mst.js';
+import { lanesInStepConcept } from './lanes-in-step.js';
 import { latencyLadderConcept } from './latency-ladder.js';
 import { leadingZerosTellConcept } from './leading-zeros-tell.js';
 import { leastSquaresConcept } from './least-squares.js';
@@ -180,6 +193,7 @@ import { mergeTheFrequentPairConcept } from './merge-the-frequent-pair.js';
 import { mergeTwoSortedConcept } from './merge-two-sorted.js';
 import { merkleTreeConcept } from './merkle-tree.js';
 import { messagingPubsubConcept } from './messaging-pubsub.js';
+import { mispredictionPenaltyConcept } from './misprediction-penalty.js';
 import { mutuallyReachableConcept } from './mutually-reachable.js';
 import { naiveShiftByOneConcept } from './naive-shift-by-one.js';
 import { negateAndAddOneConcept } from './negate-and-add-one.js';
@@ -188,20 +202,26 @@ import { neighborsLinkedAheadConcept } from './neighbors-linked-ahead.js';
 import { nodeHoldsManyConcept } from './node-holds-many.js';
 import { nodePointsNextConcept } from './node-points-next.js';
 import { noiseLeftOutConcept } from './noise-left-out.js';
+import { oneBitDoubleFaultConcept } from './one-bit-double-fault.js';
 import { oneMoreRoundDropsConcept } from './one-more-round-drops.js';
 import { oneWayEdgeConcept } from './one-way-edge.js';
 import { openAddressingProbeConcept } from './open-addressing-probe.js';
+import { operandForwardingConcept } from './operand-forwarding.js';
 import { outOfBoundsConcept } from './out-of-bounds.js';
+import { outOfOrderExecutionConcept } from './out-of-order-execution.js';
 import { overlappingSubproblemsConcept } from './overlapping-subproblems.js';
 import { pNpConcept } from './p-np.js';
 import { parentTwoChildrenConcept } from './parent-two-children.js';
 import { partitionAroundPivotConcept } from './partition-around-pivot.js';
 import { pathCompressionConcept } from './path-compression.js';
+import { paddingGapConcept } from './padding-gap.js';
 import { pcaConcept } from './pca.js';
 import { pickNearestUnsettledConcept } from './pick-nearest-unsettled.js';
 import { pigeonholeCollisionConcept } from './pigeonhole-collision.js';
+import { pipelineBubbleConcept } from './pipeline-bubble.js';
 import { pivotChoiceMattersConcept } from './pivot-choice-matters.js';
 import { positionalValueConcept } from './positional-value.js';
+import { prefetchingConcept } from './prefetching.js';
 import { prefixSuffixJumpConcept } from './prefix-suffix-jump.js';
 import { primMstConcept } from './prim-mst.js';
 import { primalityConcept } from './primality.js';
@@ -214,8 +234,10 @@ import { queueFifoConcept } from './queue.js';
 import { queueVsStackOrderConcept } from './queue-vs-stack-order.js';
 import { quickSortConcept } from './quick-sort.js';
 import { rabinKarpConcept } from './rabin-karp.js';
+import { readyFirstConcept } from './ready-first.js';
 import { radixSortConcept } from './radix-sort.js';
 import { randomForestConcept } from './random-forest.js';
+import { readBeforeWriteConcept } from './read-before-write.js';
 import { recallSpeedTradeoffConcept } from './recall-speed-tradeoff.js';
 import { recolorThenRotateConcept } from './recolor-then-rotate.js';
 import { redBlackTreeConcept } from './red-black-tree.js';
@@ -229,6 +251,7 @@ import { residualDistanceConcept } from './residual-distance.js';
 import { rollingHashConcept } from './rolling-hash.js';
 import { rotateToBalanceConcept } from './rotate-to-balance.js';
 import { rowTimesColumnConcept } from './row-times-column.js';
+import { saturatingCounterConcept } from './saturating-counter.js';
 import { scanUntilFoundConcept } from './scan-until-found.js';
 import { sccConcept } from './scc.js';
 import { selectMinEachPassConcept } from './select-min-each-pass.js';
@@ -243,6 +266,7 @@ import { shiftOnRemoveConcept } from './shift-on-remove.js';
 import { sieveConcept } from './sieve.js';
 import { siftDownConcept } from './sift-down.js';
 import { siftUpConcept } from './sift-up.js';
+import { simdConcept } from './simd.js';
 import { signatureKeyDirectionConcept } from './signature-key-direction.js';
 import { signatureOnHashConcept } from './signature-on-hash.js';
 import { signedWraparoundConcept } from './signed-wraparound.js';
@@ -261,6 +285,9 @@ import { splitWhenFullConcept } from './split-when-full.js';
 import { squareAndHalveConcept } from './square-and-halve.js';
 import { squashToProbabilityConcept } from './squash-to-probability.js';
 import { stackConcept } from './stack.js';
+import { stageOverlapConcept } from './stage-overlap.js';
+import { staticPredictionConcept } from './static-prediction.js';
+import { structAlignmentConcept } from './struct-alignment.js';
 import { subwordSegmentationConcept } from './subword-segmentation.js';
 import { suffixArrayConcept } from './suffix-array.js';
 import { supportVectorsOnlyConcept } from './support-vectors-only.js';
@@ -270,6 +297,7 @@ import { takeBestNowConcept } from './take-best-now.js';
 import { temporalLocalityConcept } from './temporal-locality.js';
 import { threeEditChoicesConcept } from './three-edit-choices.js';
 import { throughMiddleNodeConcept } from './through-middle-node.js';
+import { throughputNotLatencyConcept } from './throughput-not-latency.js';
 import { tokenizationConcept } from './tokenization.js';
 import { tokensPerLanguageConcept } from './tokens-per-language.js';
 import { topologicalSortConcept } from './topological-sort.js';
@@ -297,6 +325,9 @@ import { writeBackVsThroughConcept } from './write-back-vs-through.js';
 import { writePolicyConcept } from './write-policy.js';
 import { wrongInOneDirectionConcept } from './wrong-in-one-direction.js';
 import { zAlgorithmConcept } from './z-algorithm.js';
+import { arrayTraversalOrderConcept } from './array-traversal-order.js';
+import { rowVsColumnWalkConcept } from './row-vs-column-walk.js';
+import { strideAndMissConcept } from './stride-and-miss.js';
 
 export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   adjacencyListVsMatrixConcept,
@@ -312,6 +343,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   averageTheBucketsConcept,
   avlTreeConcept,
   backtrackingConcept,
+  backwardTakenConcept,
   badCharSkipConcept,
   baggingSampleConcept,
   bellmanFordConcept,
@@ -331,6 +363,11 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   boyerMooreConcept,
   bpeTrainingConcept,
   branchAndBoundConcept,
+  branchFlushConcept,
+  branchHistoryTableConcept,
+  patternFromHistoryConcept,
+  unpredictableBranchConcept,
+  controlHazardConcept,
   bstCompareAndGoConcept,
   bstConcept,
   bstDegenerateConcept,
@@ -360,6 +397,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   curvesCrossConcept,
   cycleBlocksOrderConcept,
   dbscanConcept,
+  dataHazardConcept,
   decisionBoundaryConcept,
   decisionTreeConcept,
   dendrogramCutConcept,
@@ -373,6 +411,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   directMappedCacheConcept,
   diveThenBacktrackConcept,
   divideConquerCombineConcept,
+  dualIssueConcept,
   divisorPairsSqrtConcept,
   dynamicProgrammingConcept,
   editDistanceConcept,
@@ -383,10 +422,13 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   failLinkConcept,
   falseSharingConcept,
   fastPowerConcept,
+  fetchAheadConcept,
   fewerHopsNotShorterConcept,
   findRootConcept,
+  fiveStagePipelineConcept,
   floatingPointConcept,
   floydWarshallConcept,
+  fourStateHysteresisConcept,
   gapShrinkConcept,
   globalAndLocalConcept,
   greedyCanFailConcept,
@@ -432,6 +474,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   kMustBeGivenConcept,
   knnConcept,
   kruskalMstConcept,
+  lanesInStepConcept,
   latencyLadderConcept,
   leadingZerosTellConcept,
   leastSquaresConcept,
@@ -459,6 +502,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   mergeTwoSortedConcept,
   merkleTreeConcept,
   messagingPubsubConcept,
+  mispredictionPenaltyConcept,
   mutuallyReachableConcept,
   naiveShiftByOneConcept,
   negateAndAddOneConcept,
@@ -467,10 +511,13 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   nodeHoldsManyConcept,
   nodePointsNextConcept,
   noiseLeftOutConcept,
+  oneBitDoubleFaultConcept,
   oneMoreRoundDropsConcept,
   oneWayEdgeConcept,
   openAddressingProbeConcept,
+  operandForwardingConcept,
   outOfBoundsConcept,
+  outOfOrderExecutionConcept,
   overlappingSubproblemsConcept,
   parentTwoChildrenConcept,
   partitionAroundPivotConcept,
@@ -478,9 +525,11 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   pcaConcept,
   pickNearestUnsettledConcept,
   pigeonholeCollisionConcept,
+  pipelineBubbleConcept,
   pivotChoiceMattersConcept,
   pNpConcept,
   positionalValueConcept,
+  prefetchingConcept,
   prefixSuffixJumpConcept,
   primalityConcept,
   primMstConcept,
@@ -493,8 +542,10 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   queueVsStackOrderConcept,
   quickSortConcept,
   rabinKarpConcept,
+  readyFirstConcept,
   radixSortConcept,
   randomForestConcept,
+  readBeforeWriteConcept,
   recallSpeedTradeoffConcept,
   recolorThenRotateConcept,
   redBlackTreeConcept,
@@ -508,6 +559,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   rollingHashConcept,
   rotateToBalanceConcept,
   rowTimesColumnConcept,
+  saturatingCounterConcept,
   scanUntilFoundConcept,
   sccConcept,
   selectionSortConcept,
@@ -522,6 +574,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   sieveConcept,
   siftDownConcept,
   siftUpConcept,
+  simdConcept,
   signatureKeyDirectionConcept,
   signatureOnHashConcept,
   signedWraparoundConcept,
@@ -533,6 +586,8 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   spaceErrorTradeoffConcept,
   spaceIsPartOfItConcept,
   spatialLocalityConcept,
+  paddingGapConcept,
+  fieldOrderSizeConcept,
   splitAndNumberConcept,
   splitByQuestionConcept,
   splitUntilOneConcept,
@@ -540,6 +595,9 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   squareAndHalveConcept,
   squashToProbabilityConcept,
   stackConcept,
+  structAlignmentConcept,
+  stageOverlapConcept,
+  staticPredictionConcept,
   subwordSegmentationConcept,
   suffixArrayConcept,
   supportVectorsOnlyConcept,
@@ -549,6 +607,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   temporalLocalityConcept,
   threeEditChoicesConcept,
   throughMiddleNodeConcept,
+  throughputNotLatencyConcept,
   tokenizationConcept,
   tokensPerLanguageConcept,
   topologicalSortConcept,
@@ -576,4 +635,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   writePolicyConcept,
   wrongInOneDirectionConcept,
   zAlgorithmConcept,
+  arrayTraversalOrderConcept,
+  rowVsColumnWalkConcept,
+  strideAndMissConcept,
 ];
