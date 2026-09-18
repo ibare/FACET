@@ -1052,4 +1052,64 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:simd', () =>
     import('@ffacet/algorithm-simd').then((m) => m.registerSimd()),
   );
+  registerFacetLoader('facet:whereToCut', () =>
+    import('@ffacet/algorithm-where-to-cut').then((m) => m.registerWhereToCut()),
+  );
+  registerFacetLoader('facet:overlapTheSeam', () =>
+    import('@ffacet/algorithm-overlap-the-seam').then((m) => m.registerOverlapTheSeam()),
+  );
+  registerFacetLoader('facet:sameWordVsSameMeaning', () =>
+    import('@ffacet/algorithm-same-word-vs-same-meaning').then((m) => m.registerSameWordVsSameMeaning()),
+  );
+  registerFacetLoader('facet:fuseTwoRankings', () =>
+    import('@ffacet/algorithm-fuse-two-rankings').then((m) => m.registerFuseTwoRankings()),
+  );
+  registerFacetLoader('facet:lookCloselyAtFew', () =>
+    import('@ffacet/algorithm-look-closely-at-few').then((m) => m.registerLookCloselyAtFew()),
+  );
+  registerFacetLoader('facet:budgetRunsOut', () =>
+    import('@ffacet/algorithm-budget-runs-out').then((m) => m.registerBudgetRunsOut()),
+  );
+  registerFacetLoader('facet:lostInTheMiddle', () =>
+    import('@ffacet/algorithm-lost-in-the-middle').then((m) => m.registerLostInTheMiddle()),
+  );
+  registerFacetLoader('facet:alwaysTheHighest', () =>
+    import('@ffacet/algorithm-always-the-highest').then((m) => m.registerAlwaysTheHighest()),
+  );
+  registerFacetLoader('facet:flattenOrSharpen', () =>
+    import('@ffacet/algorithm-flatten-or-sharpen').then((m) => m.registerFlattenOrSharpen()),
+  );
+  registerFacetLoader('facet:penalizeRepeats', () =>
+    import('@ffacet/algorithm-penalize-repeats').then((m) => m.registerPenalizeRepeats()),
+  );
+  registerFacetLoader('facet:cutTheTail', () =>
+    import('@ffacet/algorithm-cut-the-tail').then((m) => m.registerCutTheTail()),
+  );
+  registerFacetLoader('facet:fillToAShare', () =>
+    import('@ffacet/algorithm-fill-to-a-share').then((m) => m.registerFillToAShare()),
+  );
+  registerFacetLoader('facet:carrySeveralLines', () =>
+    import('@ffacet/algorithm-carry-several-lines').then((m) => m.registerCarrySeveralLines()),
+  );
+  registerFacetLoader('facet:eraseTheImpossible', () =>
+    import('@ffacet/algorithm-erase-the-impossible').then((m) => m.registerEraseTheImpossible()),
+  );
+  registerFacetLoader('facet:dontRecountThePast', () =>
+    import('@ffacet/algorithm-dont-recount-the-past').then((m) => m.registerDontRecountThePast()),
+  );
+  registerFacetLoader('facet:cacheKeepsGrowing', () =>
+    import('@ffacet/algorithm-cache-keeps-growing').then((m) => m.registerCacheKeepsGrowing()),
+  );
+  registerFacetLoader('facet:firstTokenVsRest', () =>
+    import('@ffacet/algorithm-first-token-vs-rest').then((m) => m.registerFirstTokenVsRest()),
+  );
+  registerFacetLoader('facet:shortWaitsForLong', () =>
+    import('@ffacet/algorithm-short-waits-for-long').then((m) => m.registerShortWaitsForLong()),
+  );
+  registerFacetLoader('facet:refillTheEmptySlot', () =>
+    import('@ffacet/algorithm-refill-the-empty-slot').then((m) => m.registerRefillTheEmptySlot()),
+  );
+  registerFacetLoader('facet:draftThenVerify', () =>
+    import('@ffacet/algorithm-draft-then-verify').then((m) => m.registerDraftThenVerify()),
+  );
 }

@@ -148,6 +148,12 @@ importers:
         specifier: ^5.4.11
         version: 5.4.21(@types/node@22.19.17)(lightningcss@1.32.0)
 
+  facets/ai-engineering/always-the-highest:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ai-engineering/angle-not-length:
     dependencies:
       '@ffacet/core':
@@ -172,6 +178,24 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ai-engineering/budget-runs-out:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/cache-keeps-growing:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/carry-several-lines:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ai-engineering/coarse-then-fine:
     dependencies:
       '@ffacet/core':
@@ -184,7 +208,55 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ai-engineering/cut-the-tail:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/dont-recount-the-past:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/draft-then-verify:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/erase-the-impossible:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ai-engineering/exhaustive-search:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/fill-to-a-share:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/first-token-vs-rest:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/flatten-or-sharpen:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/fuse-two-rankings:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -202,6 +274,18 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ai-engineering/look-closely-at-few:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/lost-in-the-middle:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ai-engineering/merge-the-frequent-pair:
     dependencies:
       '@ffacet/core':
@@ -209,6 +293,18 @@ importers:
         version: link:../../../packages/core
 
   facets/ai-engineering/neighbors-linked-ahead:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/overlap-the-seam:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/penalize-repeats:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -227,6 +323,24 @@ importers:
         version: link:../../../packages/core
 
   facets/ai-engineering/recall-speed-tradeoff:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/refill-the-empty-slot:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/same-word-vs-same-meaning:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/short-waits-for-long:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -269,6 +383,12 @@ importers:
         version: link:../../../packages/core
 
   facets/ai-engineering/vocabulary:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ai-engineering/where-to-cut:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -3193,6 +3313,9 @@ importers:
       '@ffacet/algorithm-all-suffixes-sorted':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/all-suffixes-sorted
+      '@ffacet/algorithm-always-the-highest':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/always-the-highest
       '@ffacet/algorithm-angle-not-length':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/angle-not-length
@@ -3313,9 +3436,15 @@ importers:
       '@ffacet/algorithm-bubble-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bubble-sort
+      '@ffacet/algorithm-budget-runs-out':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/budget-runs-out
       '@ffacet/algorithm-byte-order':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/byte-order
+      '@ffacet/algorithm-cache-keeps-growing':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/cache-keeps-growing
       '@ffacet/algorithm-cache-line':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/cache-line
@@ -3328,6 +3457,9 @@ importers:
       '@ffacet/algorithm-cannot-unset':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/cannot-unset
+      '@ffacet/algorithm-carry-several-lines':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/carry-several-lines
       '@ffacet/algorithm-chaining-bucket':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/chaining-bucket
@@ -3376,6 +3508,9 @@ importers:
       '@ffacet/algorithm-curves-cross':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/curves-cross
+      '@ffacet/algorithm-cut-the-tail':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/cut-the-tail
       '@ffacet/algorithm-cycle-blocks-order':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/cycle-blocks-order
@@ -3427,6 +3562,12 @@ importers:
       '@ffacet/algorithm-divisor-pairs-sqrt':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/divisor-pairs-sqrt
+      '@ffacet/algorithm-dont-recount-the-past':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/dont-recount-the-past
+      '@ffacet/algorithm-draft-then-verify':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/draft-then-verify
       '@ffacet/algorithm-dual-issue':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/dual-issue
@@ -3442,6 +3583,9 @@ importers:
       '@ffacet/algorithm-enqueue-dequeue-ends':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/enqueue-dequeue-ends
+      '@ffacet/algorithm-erase-the-impossible':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/erase-the-impossible
       '@ffacet/algorithm-euclidean':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/euclidean
@@ -3466,12 +3610,21 @@ importers:
       '@ffacet/algorithm-field-order-size':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/field-order-size
+      '@ffacet/algorithm-fill-to-a-share':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/fill-to-a-share
       '@ffacet/algorithm-find-root':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/find-root
+      '@ffacet/algorithm-first-token-vs-rest':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/first-token-vs-rest
       '@ffacet/algorithm-five-stage-pipeline':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/five-stage-pipeline
+      '@ffacet/algorithm-flatten-or-sharpen':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/flatten-or-sharpen
       '@ffacet/algorithm-floating-point':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/floating-point
@@ -3481,6 +3634,9 @@ importers:
       '@ffacet/algorithm-four-state-hysteresis':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/four-state-hysteresis
+      '@ffacet/algorithm-fuse-two-rankings':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/fuse-two-rankings
       '@ffacet/algorithm-gap-shrink':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/gap-shrink
@@ -3646,6 +3802,12 @@ importers:
       '@ffacet/algorithm-logistic-regression':
         specifier: workspace:*
         version: link:../../facets/ml-basics/logistic-regression
+      '@ffacet/algorithm-look-closely-at-few':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/look-closely-at-few
+      '@ffacet/algorithm-lost-in-the-middle':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/lost-in-the-middle
       '@ffacet/algorithm-lost-link':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/lost-link
@@ -3748,6 +3910,9 @@ importers:
       '@ffacet/algorithm-out-of-order-execution':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/out-of-order-execution
+      '@ffacet/algorithm-overlap-the-seam':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/overlap-the-seam
       '@ffacet/algorithm-overlapping-subproblems':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/overlapping-subproblems
@@ -3772,6 +3937,9 @@ importers:
       '@ffacet/algorithm-pca':
         specifier: workspace:*
         version: link:../../facets/ml-basics/pca
+      '@ffacet/algorithm-penalize-repeats':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/penalize-repeats
       '@ffacet/algorithm-pick-nearest-unsettled':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/pick-nearest-unsettled
@@ -3850,6 +4018,9 @@ importers:
       '@ffacet/algorithm-reduce-to-known':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/reduce-to-known
+      '@ffacet/algorithm-refill-the-empty-slot':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/refill-the-empty-slot
       '@ffacet/algorithm-relational-tables-and-keys':
         specifier: workspace:*
         version: link:../../facets/database/relational-tables-and-keys
@@ -3880,6 +4051,9 @@ importers:
       '@ffacet/algorithm-row-vs-column-walk':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/row-vs-column-walk
+      '@ffacet/algorithm-same-word-vs-same-meaning':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/same-word-vs-same-meaning
       '@ffacet/algorithm-saturating-counter':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/saturating-counter
@@ -3916,6 +4090,9 @@ importers:
       '@ffacet/algorithm-shift-on-remove':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/shift-on-remove
+      '@ffacet/algorithm-short-waits-for-long':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/short-waits-for-long
       '@ffacet/algorithm-sieve':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/sieve
@@ -4093,6 +4270,9 @@ importers:
       '@ffacet/algorithm-walk-per-character':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/walk-per-character
+      '@ffacet/algorithm-where-to-cut':
+        specifier: workspace:*
+        version: link:../../facets/ai-engineering/where-to-cut
       '@ffacet/algorithm-widest-margin':
         specifier: workspace:*
         version: link:../../facets/ml-basics/widest-margin

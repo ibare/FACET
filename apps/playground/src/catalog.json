@@ -5804,49 +5804,56 @@
               "name": "어디서 자를 것인가",
               "desc": "문단 가운데를 자르면 뜻이 끊긴다",
               "kind": "piece",
-              "origin": "chunking"
+              "origin": "chunking",
+              "facetId": "facet:whereToCut"
             },
             {
               "id": "overlap-the-seam",
               "name": "겹쳐 자르기",
               "desc": "경계에 걸친 것을 양쪽에 남긴다",
               "kind": "piece",
-              "origin": "chunking"
+              "origin": "chunking",
+              "facetId": "facet:overlapTheSeam"
             },
             {
               "id": "same-word-vs-same-meaning",
               "name": "글자와 뜻",
               "desc": "한쪽은 낱말을 맞추고 한쪽은 뜻을 맞춘다",
               "kind": "piece",
-              "origin": "hybrid-search"
+              "origin": "hybrid-search",
+              "facetId": "facet:sameWordVsSameMeaning"
             },
             {
               "id": "fuse-two-rankings",
               "name": "두 등수를 합친다",
               "desc": "각자의 순위를 모아 다시 매긴다",
               "kind": "piece",
-              "origin": "hybrid-search"
+              "origin": "hybrid-search",
+              "facetId": "facet:fuseTwoRankings"
             },
             {
               "id": "look-closely-at-few",
               "name": "몇 개만 다시 본다",
               "desc": "추린 것만 꼼꼼히 견주어 순서를 바꾼다",
               "kind": "piece",
-              "origin": "reranking"
+              "origin": "reranking",
+              "facetId": "facet:lookCloselyAtFew"
             },
             {
               "id": "budget-runs-out",
               "name": "넣을 자리가 모자란다",
               "desc": "고른 것을 다 담을 수는 없다",
               "kind": "piece",
-              "origin": "context-assembly"
+              "origin": "context-assembly",
+              "facetId": "facet:budgetRunsOut"
             },
             {
               "id": "lost-in-the-middle",
               "name": "가운데를 흘린다",
               "desc": "앞뒤는 보고 사이의 것은 놓친다",
               "kind": "piece",
-              "origin": "context-assembly"
+              "origin": "context-assembly",
+              "facetId": "facet:lostInTheMiddle"
             }
           ]
         },
@@ -5875,49 +5882,56 @@
               "name": "언제나 1등만",
               "desc": "가장 높은 것만 고르면 같은 말이 나온다",
               "kind": "piece",
-              "origin": "greedy-decoding"
+              "origin": "greedy-decoding",
+              "facetId": "facet:alwaysTheHighest"
             },
             {
               "id": "flatten-or-sharpen",
               "name": "평평하게 뾰족하게",
               "desc": "온도가 고를 확률의 모양을 바꾼다",
               "kind": "piece",
-              "origin": "temperature-sampling"
+              "origin": "temperature-sampling",
+              "facetId": "facet:flattenOrSharpen"
             },
             {
               "id": "cut-the-tail",
               "name": "꼬리 자르기",
               "desc": "아래를 버리고 남은 것에서 뽑는다",
               "kind": "piece",
-              "origin": "top-k-top-p"
+              "origin": "top-k-top-p",
+              "facetId": "facet:cutTheTail"
             },
             {
               "id": "fill-to-a-share",
               "name": "몇 개가 아니라 얼마나",
               "desc": "차오를 때까지만 후보로 남긴다",
               "kind": "piece",
-              "origin": "top-k-top-p"
+              "origin": "top-k-top-p",
+              "facetId": "facet:fillToAShare"
             },
             {
               "id": "carry-several-lines",
               "name": "여러 줄기를 함께",
               "desc": "후보 몇 개를 나란히 끌고 간다",
               "kind": "piece",
-              "origin": "beam-search"
+              "origin": "beam-search",
+              "facetId": "facet:carrySeveralLines"
             },
             {
               "id": "penalize-repeats",
               "name": "되풀이에 값을 매긴다",
               "desc": "이미 쓴 말의 값을 깎는다",
               "kind": "piece",
-              "origin": "temperature-sampling"
+              "origin": "temperature-sampling",
+              "facetId": "facet:penalizeRepeats"
             },
             {
               "id": "erase-the-impossible",
               "name": "올 수 없는 것 지우기",
               "desc": "문법에 안 맞는 후보를 미리 없앤다",
               "kind": "piece",
-              "origin": "beam-search"
+              "origin": "beam-search",
+              "facetId": "facet:eraseTheImpossible"
             }
           ]
         },
@@ -5942,42 +5956,48 @@
               "name": "지난 것을 다시 세지 않는다",
               "desc": "앞은 그대로니 새것만 셈한다",
               "kind": "piece",
-              "origin": "kv-cache"
+              "origin": "kv-cache",
+              "facetId": "facet:dontRecountThePast"
             },
             {
               "id": "cache-keeps-growing",
               "name": "캐시가 자란다",
               "desc": "길어질수록 자리를 더 먹는다",
               "kind": "piece",
-              "origin": "kv-cache"
+              "origin": "kv-cache",
+              "facetId": "facet:cacheKeepsGrowing"
             },
             {
               "id": "short-waits-for-long",
               "name": "짧은 것이 기다린다",
               "desc": "길이를 맞추려 넣은 빈칸이 값을 치른다",
               "kind": "piece",
-              "origin": "batching-and-padding"
+              "origin": "batching-and-padding",
+              "facetId": "facet:shortWaitsForLong"
             },
             {
               "id": "refill-the-empty-slot",
               "name": "빈자리를 바로 채운다",
               "desc": "끝난 자리에 다음 것을 밀어 넣는다",
               "kind": "piece",
-              "origin": "batching-and-padding"
+              "origin": "batching-and-padding",
+              "facetId": "facet:refillTheEmptySlot"
             },
             {
               "id": "draft-then-verify",
               "name": "먼저 찍고 확인하기",
               "desc": "작은 것이 앞서가고 큰 것이 검사한다",
               "kind": "piece",
-              "origin": "speculative-decoding"
+              "origin": "speculative-decoding",
+              "facetId": "facet:draftThenVerify"
             },
             {
               "id": "first-token-vs-rest",
               "name": "첫 글자와 그 뒤",
               "desc": "처음 한 번과 이어지는 걸음의 값이 다르다",
               "kind": "piece",
-              "origin": "kv-cache"
+              "origin": "kv-cache",
+              "facetId": "facet:firstTokenVsRest"
             }
           ]
         }

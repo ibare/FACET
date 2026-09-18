@@ -719,17 +719,40 @@
         {
           "id": "retrieval-augmentation",
           "name": {"en":"Retrieval Augmentation","ko":"검색 증강","ja":"検索拡張","zh":"检索增强","ar":"التوليد المعزز بالاسترجاع","es":"Aumento por recuperación","fr":"Augmentation par recherche","hi":"रिट्रीवल ऑगमेंटेशन","id":"Augmentasi Pengambilan","pt":"Aumento por recuperação"},
-          "facets": []
+          "facets": [
+            "facet:whereToCut",
+            "facet:overlapTheSeam",
+            "facet:sameWordVsSameMeaning",
+            "facet:fuseTwoRankings",
+            "facet:lookCloselyAtFew",
+            "facet:budgetRunsOut",
+            "facet:lostInTheMiddle"
+          ]
         },
         {
           "id": "decoding",
           "name": {"en":"Controlling Generation","ko":"생성 제어","ja":"生成の制御","zh":"生成控制","ar":"التحكم في التوليد","es":"Control de la generación","fr":"Contrôle de la génération","hi":"जनरेशन नियंत्रण","id":"Kendali Generasi","pt":"Controle da geração"},
-          "facets": []
+          "facets": [
+            "facet:alwaysTheHighest",
+            "facet:flattenOrSharpen",
+            "facet:cutTheTail",
+            "facet:fillToAShare",
+            "facet:carrySeveralLines",
+            "facet:penalizeRepeats",
+            "facet:eraseTheImpossible"
+          ]
         },
         {
           "id": "inference-efficiency",
           "name": {"en":"Inference Efficiency","ko":"추론 효율","ja":"推論効率","zh":"推理效率","ar":"كفاءة الاستدلال","es":"Eficiencia de inferencia","fr":"Efficacité de l'inférence","hi":"इन्फ़रेंस दक्षता","id":"Efisiensi Inferensi","pt":"Eficiência de inferência"},
-          "facets": []
+          "facets": [
+            "facet:dontRecountThePast",
+            "facet:cacheKeepsGrowing",
+            "facet:shortWaitsForLong",
+            "facet:refillTheEmptySlot",
+            "facet:draftThenVerify",
+            "facet:firstTokenVsRest"
+          ]
         }
       ]
     },
