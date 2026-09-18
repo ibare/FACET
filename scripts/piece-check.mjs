@@ -206,6 +206,10 @@ function staticCheck(dir) {
 
   // ── 장면
   const sceneCode = codeOnly(scene);
+  // payload 를 이름 붙은 타입으로 통째로 믿지 않는다 (C9) — `as { a?: unknown }` 뒤 typeof 가드는 된다.
+  if (/payload\s+as\s+(?!\{|Record<|unknown\b)[A-Z]\w*/.test(sceneCode)) {
+    err('C9', 'scene.ts 가 event.payload 를 이름 붙은 타입으로 단언한다 — typeof 가드로 좁힌다');
+  }
   if (/\bdocument\.|\bsetTimeout\(|\bMath\.random\(|\brequestAnimationFrame\(/.test(sceneCode)) {
     err('S-scene', 'scene.ts 가 DOM · 타이머 · 무작위를 쓴다 — reduce 는 순수해야 한다');
   }
@@ -226,6 +230,14 @@ function staticCheck(dir) {
   }
   if (!/\bgen\b/.test(stageCode) && /await/.test(stageCode)) warn('S-scene', '세대 빗장(gen/alive)이 안 보인다 — 바탕이 바뀔 때만 짓고 속성만 덮어쓰는 요소를 await 뒤에 만지면 필요하다');
   if (/makeTranslator\(/.test(stageCode) && !/params\.t\s*\?\?\s*makeTranslator/.test(stage)) err('C10', 'stage 가 makeTranslator 를 직접 부른다 — params.t ?? makeTranslator(params.locale) 만 허용');
+  // 문안 호출은 키도 en 원본도 호출부 리터럴이어야 한다 — 추출기와 en-original 검사가 리터럴만 읽는다.
+  // 래퍼(`head(x, key, en)` 안의 `t(key, en)`)와 템플릿 키(`t(\`stage.${id}\`)`)가 여기 걸린다.
+  for (const m of stageNoComment.matchAll(/(^|[^\w.])(t|tr)\(\s*([^)]{0,200})/g)) {
+    const args = m[3];
+    if (/^(['"])(?:\\.|(?!\1)[^\\])*\1\s*,\s*(['"]|`(?![^`]*\$\{))/.test(args)) continue;
+    err('C10', `문안 호출의 키나 en 원본이 리터럴이 아니다: ${m[2]}(${args.slice(0, 40)}`);
+    break;
+  }
 
   // ── facet 영역 공통
   for (const [f, s] of [['algorithm.ts', algorithm], ['scene.ts', scene], ['facet.ts', facet], ['index.ts', index], [stages[0] ?? 'stage', stage]]) {
