@@ -84,7 +84,8 @@ function clone<T>(v: T): T {
   return JSON.parse(JSON.stringify(v)) as T;
 }
 
-async function subjectOf(name: string): Promise<Subject> {
+/** 장면 조각이 아니면(완제품) null — 이 검사의 대상이 아니다. */
+async function subjectOf(name: string): Promise<Subject | null> {
   const row = FACET_MODULES.find(([path]) => path.includes(`/${name}/src/`));
   if (!row) throw new Error(`facet 모듈을 찾지 못했다: ${name}`);
   clearRegistry();
@@ -96,7 +97,7 @@ async function subjectOf(name: string): Promise<Subject> {
     .map((id) => getFacetById(id))
     .find((f): f is FacetJson => f !== undefined);
   if (!facet) throw new Error(`등록된 facet 이 없다: ${name}`);
-  if (typeof facet.scene !== 'string') throw new Error(`장면 조각이 아니다 (scene 선언 없음): ${facet.id}`);
+  if (typeof facet.scene !== 'string') return null;
   const plan = getScenePlan(stripPrefix(facet.scene, 'module'));
   if (!plan) throw new Error(`장면 설계 미등록: ${facet.scene}`);
   const run = getAlgorithm(stripPrefix(facet.algorithm, 'module'));
@@ -215,6 +216,7 @@ describe.skipIf(names.length === 0)('장면 조각 자체 검증', () => {
   for (const name of names) {
     it(`${name} — 바탕 · 순수 · 축 1 · 지연 · 축 2`, async () => {
       const s = await subjectOf(name);
+      if (!s) return;
       const data = clone(s.facet.initialData);
 
       // 러너처럼 한 객체를 장면·알고리즘이 함께 쓴다. 첫 장면은 알고리즘보다 먼저 선다.
@@ -271,6 +273,7 @@ describe.skipIf(names.length === 0)('장면 조각 자체 검증', () => {
 
     it(`${name} — 축 3 (흘리는 도중 destroy)`, async () => {
       const s = await subjectOf(name);
+      if (!s) return;
       const data = clone(s.facet.initialData);
       const first = s.plan.initial(data);
       const events = await collectEvents(s, data);

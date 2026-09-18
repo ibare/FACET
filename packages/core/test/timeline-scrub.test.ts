@@ -9,7 +9,7 @@
 // @vitest-environment happy-dom
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { runFacet, clearRegistry } from '../src/runtime/index.js';
-import { FACET_MODULES } from './facet-modules.js';
+import { FACET_MODULES, FACET_ONLY } from './facet-modules.js';
 import { getFacetById } from '../src/runtime/registry.js';
 import type { FacetRunHandle } from '../src/runtime/runner.js';
 
@@ -41,7 +41,8 @@ async function untilSeekable(track: () => Element | null, capMs = 30_000): Promi
   return false;
 }
 
-describe('스크럽 띠', () => {
+// `FACET_ONLY` 로 좁혀 돌릴 때 이 검사가 쓰는 조각이 빠지면 건너뛴다 — 좁힌 실행의 대상이 아니다.
+describe.skipIf(FACET_ONLY !== null && !FACET_ONLY.includes('hash-avalanche'))('스크럽 띠', () => {
   let container: HTMLElement;
   let handle: FacetRunHandle | null = null;
 
