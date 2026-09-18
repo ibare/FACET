@@ -22,7 +22,7 @@ import { describe, expect, it } from 'vitest';
 import { mountView } from '../src/runtime/layout-builder.js';
 import type { View } from '../src/views/types.js';
 
-import { STAGE_MODULES as MODULES } from './facet-modules.js';
+import { STAGE_MODULES as MODULES, atLeast } from './facet-modules.js';
 
 function canvasViewsOf(mod: Record<string, unknown>): View[] {
   const out: View[] = [];
@@ -59,6 +59,6 @@ describe('CanvasView 캔버스 부착', () => {
     expect(detached).toEqual([]);
     // 문턱이 실제 수(122)의 3분의 1이던 때가 있었다. glob 이 한 도메인만 남게
     // 좁아져도 통과해 버리므로, 현재 수 가까이 두어야 뜻이 있다.
-    expect(checked).toBeGreaterThan(100);
+    expect(checked).toBeGreaterThan(atLeast(100));
   }, 60_000);
 });

@@ -24,7 +24,7 @@ import { getProjector, registerProjector } from '../src/runtime/registry.js';
 import type { FacetJson } from '../src/types/facet-json.js';
 import type { FacetRunHandle } from '../src/runtime/runner.js';
 
-import { FACET_MODULES as MODULES } from './facet-modules.js';
+import { FACET_MODULES as MODULES, atLeast } from './facet-modules.js';
 
 /** 한 번에 띄우는 수. 순차로 돌리면 facet 하나마다 1초가 넘게 든다. */
 const BATCH = 10;
@@ -133,7 +133,7 @@ describe('재생 도중 destroy', () => {
       console.error = original;
     }
 
-    expect(checked).toBeGreaterThan(100);
+    expect(checked).toBeGreaterThan(atLeast(100));
     expect(hung).toEqual([]);
   }, 180_000);
 });

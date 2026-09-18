@@ -22,7 +22,7 @@ import { describe, expect, it } from 'vitest';
 import { clearRegistry, getAlgorithm, getProjector, getScenePlan } from '../src/runtime/registry.js';
 import type { FacetJson } from '../src/types/facet-json.js';
 
-import { FACET_MODULES as MODULES } from './facet-modules.js';
+import { FACET_MODULES as MODULES, atLeast } from './facet-modules.js';
 function facetsOf(mod: Record<string, unknown>): FacetJson[] {
   const out: FacetJson[] = [];
   for (const v of Object.values(mod)) {
@@ -77,7 +77,7 @@ describe('등록 이름 규약', () => {
     // (96). 규약은 projector 와 scene 에 똑같이 걸리므로 — 레지스트리가
     // 셋을 별도 Map 으로 들고 있어 `module:` 참조가 어느 쪽인지 이름으로만
     // 갈린다 — 둘 다 세어 하한을 지킨다.
-    expect(checked).toBeGreaterThan(250);
+    expect(checked).toBeGreaterThan(atLeast(250));
     expect({ collided, missing }).toEqual({ collided: [], missing: [] });
   }, 60_000);
 });

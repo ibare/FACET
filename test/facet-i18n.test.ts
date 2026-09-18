@@ -22,11 +22,16 @@
 import { describe, expect, it } from 'vitest';
 import { collect, missingCount, LOCALES } from '../scripts/i18n-audit.mts';
 
-const rows = collect();
+/**
+ * `FACET_ONLY=<디렉터리 이름,...>` 이면 그 facet 만 본다 (`scripts/piece-check.mjs`).
+ * 배치 도중에는 형제 조각이 반쯤 만들어진 상태라 전수로 보면 남의 조각 때문에 멎는다.
+ */
+const only = (process.env.FACET_ONLY ?? '').split(',').map((s) => s.trim()).filter((s) => s.length > 0);
+const rows = collect().filter((r) => only.length === 0 || only.some((n) => r.path.endsWith(`/${n}`)));
 
 describe('facet 문안', () => {
   it('전수를 세었다 — 목록이 비면 아래 검사가 모두 헛통과한다', () => {
-    expect(rows.length).toBeGreaterThanOrEqual(179);
+    expect(rows.length).toBeGreaterThanOrEqual(only.length > 0 ? 1 : 179);
   });
 
   /*

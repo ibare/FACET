@@ -24,7 +24,7 @@ import { describe, expect, it } from 'vitest';
 import { getFacetById, getProjector } from '../src/runtime/registry.js';
 import type { ProjectorViews } from '../src/runtime/projector.js';
 
-import { FACET_MODULES as MODULES } from './facet-modules.js';
+import { FACET_MODULES as MODULES, atLeast } from './facet-modules.js';
 
 /** projector 가 부르는 아무 메서드나 삼키는 스텁. 무엇을 부르는지는 관심 밖이다. */
 function stubView(): ProjectorViews[string] {
@@ -89,7 +89,7 @@ describe('코드 패널 phase 배선', () => {
 
     // 코드 패널을 단 facet 은 스물셋이다. 열 아래로 떨어지면 거르는 조건이나
     // glob 이 깨진 것이지 패널이 줄어든 것이 아니다.
-    expect(checked).toBeGreaterThan(15);
+    expect(checked).toBeGreaterThan(atLeast(15));
     expect({ missing, mismatched }).toEqual({ missing: [], mismatched: [] });
   }, 60_000);
 });

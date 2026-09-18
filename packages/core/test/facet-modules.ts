@@ -35,9 +35,37 @@ declare global {
 
 export type FacetModuleRow = [path: string, load: () => Promise<Record<string, unknown>>];
 
+/**
+ * 좁혀 돌릴 facet 디렉터리 이름들 — `FACET_ONLY=sift-up,sift-down`.
+ *
+ * 조각 에이전트가 자기 조각 하나만 검사하려고 둔다 (`scripts/piece-check.mjs`).
+ * 전수를 돌리면 3 분이 들고, 배치 도중에는 형제 조각이 반쯤 만들어진 상태라
+ * 남의 조각 때문에 멎는다. 비어 있으면 전수다 — 평소의 `pnpm test` 는 이것을 모른다.
+ */
+export const FACET_ONLY: readonly string[] | null = (() => {
+  const raw = typeof process === 'undefined' ? undefined : process.env.FACET_ONLY;
+  const names = (raw ?? '').split(',').map((s) => s.trim()).filter((s) => s.length > 0);
+  return names.length > 0 ? names : null;
+})();
+
+/**
+ * 전수 하한. 좁혀 돌리면 하한이 뜻을 잃으므로 0 으로 내린다.
+ *
+ * 하한은 "목록이 비어 헛통과하지 않는가" 를 재는 것이라, 좁혀 돌릴 때도
+ * `toBeGreaterThan(atLeast(n))` 이 적어도 하나는 실제로 쟀는지를 본다.
+ */
+export function atLeast(n: number): number {
+  return FACET_ONLY ? 0 : n;
+}
+
+function picked(path: string): boolean {
+  return FACET_ONLY === null || FACET_ONLY.some((name) => path.includes(`/${name}/src/`));
+}
+
 function rows(g: Record<string, () => Promise<Record<string, unknown>>>): FacetModuleRow[] {
   return Object.keys(g)
     .sort()
+    .filter(picked)
     .map((key): FacetModuleRow => [key.replace(/^(\.\.\/)+/, ''), g[key]!]);
 }
 
@@ -60,13 +88,13 @@ export const STAGE_MODULES: FacetModuleRow[] = rows(
  * 그래서 소스에서 표식을 세어 둔다. 두 수가 어긋나면 컨트롤이 규범을 벗어난
  * 조각이 있다는 뜻이다.
  */
-export const PIECE_MARKED_COUNT: number = Object.values(
+export const PIECE_MARKED_COUNT: number = Object.entries(
   import.meta.glob('../../../facets/*/*/src/facet.ts', {
     query: '?raw',
     import: 'default',
     eager: true,
   }),
-).filter((src) => src.includes('@piece')).length;
+).filter(([path, src]) => picked(path) && src.includes('@piece')).length;
 
 /**
  * facet 패키지의 소스 전문. 경로 → 내용.
@@ -81,5 +109,7 @@ export const FACET_SOURCES: Record<string, string> = Object.fromEntries(
       import: 'default',
       eager: true,
     }),
-  ).map(([key, src]) => [key.replace(/^(\.\.\/)+/, ''), src]),
+  )
+    .filter(([key]) => picked(key))
+    .map(([key, src]) => [key.replace(/^(\.\.\/)+/, ''), src]),
 );

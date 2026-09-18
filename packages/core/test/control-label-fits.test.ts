@@ -26,7 +26,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import type { FacetJson } from '../src/types/facet-json.js';
-import { FACET_MODULES } from './facet-modules.js';
+import { FACET_MODULES, atLeast } from './facet-modules.js';
 
 /**
  * 라벨 길이의 상한.
@@ -99,7 +99,7 @@ describe('컨트롤바의 라벨', () => {
 
     // 검사가 조용히 빈껍데기가 되지 않게 하는 하한. 손잡이를 가진 완제품이
     // 여럿 있고 저마다 locale 여덟을 채운다.
-    expect(checked).toBeGreaterThan(40);
+    expect(checked).toBeGreaterThan(atLeast(40));
     expect(tooLong).toEqual([]);
   }, 60_000);
 });

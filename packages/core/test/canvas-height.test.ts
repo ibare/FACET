@@ -18,7 +18,7 @@ import { runFacet, clearRegistry } from '../src/runtime/index.js';
 import type { FacetJson } from '../src/types/facet-json.js';
 import type { FacetRunHandle } from '../src/runtime/runner.js';
 
-import { FACET_MODULES as MODULES } from './facet-modules.js';
+import { FACET_MODULES as MODULES, atLeast } from './facet-modules.js';
 
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -67,6 +67,6 @@ describe('facet 세로 고정', () => {
     for (const h of handles) h.destroy();
     expect(changed).toEqual([]);
     // 위와 같은 이유로 현재 수(126) 가까이 둔다.
-    expect(mounted.length).toBeGreaterThan(100);
+    expect(mounted.length).toBeGreaterThan(atLeast(100));
   }, 60000);
 });

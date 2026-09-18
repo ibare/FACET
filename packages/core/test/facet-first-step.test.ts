@@ -19,7 +19,7 @@ import { runFacet, clearRegistry } from '../src/runtime/index.js';
 import type { FacetJson } from '../src/types/facet-json.js';
 import type { FacetRunHandle } from '../src/runtime/runner.js';
 
-import { FACET_MODULES as MODULES } from './facet-modules.js';
+import { FACET_MODULES as MODULES, atLeast } from './facet-modules.js';
 
 function delay(ms: number): Promise<void> {
   return new Promise((r) => setTimeout(r, ms));
@@ -83,7 +83,7 @@ describe('facet 첫 걸음', () => {
     // 이 검사에만 하한이 없었다. glob 이 0행을 돌려주면 아래 두 배열이 비어
     // 조용히 통과한다 — 손목록을 걷어낸 이유가 "목록의 성실함에 기대는 전수는
     // 전수가 아니다" 인데, 담보 없이 glob 의 성실함에 기대는 것도 같다.
-    expect(mounted.length).toBeGreaterThan(100);
+    expect(mounted.length).toBeGreaterThan(atLeast(100));
     expect(errors).toEqual([]);
     expect(blank).toEqual([]);
   }, 30_000);

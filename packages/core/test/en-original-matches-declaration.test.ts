@@ -28,7 +28,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import type { FacetJson } from '../src/types/facet-json.js';
-import { FACET_MODULES, FACET_SOURCES } from './facet-modules.js';
+import { FACET_MODULES, FACET_SOURCES, atLeast } from './facet-modules.js';
 
 /** `tr('key', 'en original'` — 두 인자가 다 리터럴인 호출만 읽는다. */
 const CALL = /\b(?:tr|t)\(\s*'((?:[^'\\]|\\.)*)'\s*,\s*'((?:[^'\\]|\\.)*)'/g;
@@ -95,7 +95,7 @@ describe('화면 문안의 두 자리', () => {
 
     // 검사가 조용히 빈껍데기가 되지 않게 하는 하한. 래퍼로 감싼 facet 이 생기면
     // 이 수가 줄고, 그때 통과가 아니라 실패로 드러난다.
-    expect(compared).toBeGreaterThan(900);
+    expect(compared).toBeGreaterThan(atLeast(900));
     expect(drifted).toEqual([]);
   }, 60_000);
 });
