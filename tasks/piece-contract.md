@@ -38,7 +38,7 @@ core 의 타입(`packages/core/src/**`)은 열어도 된다. 다만 아래 "쓰�
 | `src/algorithm.ts` | `<camel>` (알고리즘 함수) · `<Pascal>FacetData` (자료 타입) | C2 · C8 · S-piece |
 | `src/scene.ts` | `<camel>Scene: ScenePlan<…>` · 장면 타입 | S-scene |
 | `src/<name>-stage.ts` | `<camel>StageView: CanvasView` | S-view · S-scene · S-piece |
-| `src/irs.ts` | `<camel>IRs: IR[] = []` (조각은 코드 패널이 없다) | S-facet |
+| `src/irs.ts` | `<camel>IRs: IR[] = []` (조각은 코드 패널이 없다. `FacetJson` 에는 `irs` 필드가 없다 — facet.ts 에 적지 않는다) | S-facet |
 | `src/facet.ts` | `<camel>Facet: FacetJson` | S-facet · S-piece · C10 |
 | `src/index.ts` | 위 전부 re-export + `register<Pascal>()` | S-facet |
 | `apps/playground/src/descriptions/<camel>.md` | 데모 설명 글. 자기 토큰 `{facet:<camel>}` 을 반드시 담는다 | S-facet · C4 |
@@ -136,6 +136,7 @@ getColors, makeTranslator, fonts, fontSizes, PIECE_CANVAS_W, categorical
 - `initial` 은 넘겨받은 자료를 **참조로 쥐지 않는다** — 값을 베끼거나 빈 장면을 돌려주고 `init` 이벤트가 채운다
 - `reduce` 는 **새 객체를 돌려준다.** 앞 장면을 고치면 되짚을 때 과거가 바뀐다
 - `reduce` 는 순수하다 — DOM · 타이머 · 무작위 없음
+- `event.payload` 를 이름 붙은 타입으로 통째 단언하지 않는다 (`payload as StepPayload` ✗) — `typeof` 가드로 필드를 좁힌다 (C9. `piece-check` 가 잡는다. 2026-09-18 AI 배치에서 넷이 걸렸다)
 - 장면에 **좌표 · 문안 · DOM** 을 담지 않는다. 문안 대신 `{ kind: 'pick'; a: number }` 처럼 종류와 인자
 - 장면에는 **바탕**(init 이 한 번 정하는 것)과 **자취**(걸음이 쌓는 것)와 **이번 걸음**(`step`)을 가른다 (`관례`)
 - 지나간 것에서 출발하는 운동이 필요하면 `step` 에 계기값(`from` · `was` · `before`)을 실어 장면이 말하게 한다 (`관례` — S-scene 의 "prev 는 고르는 데만" 을 지키는 길)
@@ -168,6 +169,7 @@ getColors, makeTranslator, fonts, fontSizes, PIECE_CANVAS_W, categorical
 - `isInstant` · `onScrubStart` 를 빗장으로 믿기 — 장면 조각에서 러너가 부르지 않는다
 - 운동을 `opacity` 전환으로만 — 동사가 이동·변형이면 실제로 움직인다 (S-piece MUST NOT)
 - 개념을 설명하는 상시 캡션 — 캡션은 지금 일어나는 일만 말한다 (S-piece)
+- 전제 · 출처 각주 — "예로 정한 값" · "낱말 하나를 토큰 하나로 친다" · 논문 인용 같은 줄을 화면에 늘 두지 않는다. 전제는 설명 글이 밝힌다 (S-piece MUST. 2026-09-18 AI 배치에서 사양이 "밝혀라" 고 하자 넷이 각주로 올렸다)
 
 **거두기** — `destroy()` 는 기다리던 Promise 를 **푼다** (S-piece MUST)
 
