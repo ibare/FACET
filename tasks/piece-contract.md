@@ -98,6 +98,7 @@ getColors, makeTranslator, fonts, fontSizes, PIECE_CANVAS_W, categorical
 - `initialData` — 첫 필드 `type: '<name>'`, 그리고 **`stepMs`** (걸음 뒤 머무는 ms)
 - `shuffleOnReset: false`
 - `messages` — stage 가 그리는 문안 전부. 키는 짧게 (`'caption.merge'`, `'label.top'`) (C10). 열 언어 (S-piece PREFER, facet-i18n 테스트가 막는다)
+  - 모양은 **키가 바깥, 언어가 안쪽** — `{ 'caption.x': { en: '…', ko: '…', … } }`. 거꾸로(`{ en: { 'caption.x': … } }`) 써도 tsc 는 통과하고 검사가 키 전부를 "선언 없음" 으로 잡는다 (2026-09-18)
 - `blocks: { stage: { type: '<name>-stage' }, controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub } }`
 
 **없어야 하는 것** — `metrics` · `header` · `layout` · `canvas` · `aspects` · 좌표(S-piece)
@@ -149,7 +150,7 @@ getColors, makeTranslator, fonts, fontSizes, PIECE_CANVAS_W, categorical
 - 비울 때는 `params.canvas.textContent = ''` — **container 를 비우면 캔버스가 떨어져 나간다**
 - 색은 `getColors(params.theme)`, 글꼴은 `fonts`/`fontSizes`. hex·rgb 리터럴 0 건
 - 문안은 `const t = params.t ?? makeTranslator(params.locale)` 로 만들고 `t('caption.x', 'en 원본', vars)` — **en 원본은 호출부에 리터럴**, facet.ts 의 en 과 글자까지 같게 (en-original 테스트)
-- `mount` 가 `initialData` 를 좁힌다. 좁히개는 stage 가 가진다
+- `mount` 가 `initialData` 를 좁힌다. 좁히개는 stage 가 가진다. **`initialData` 가 없어도 던지지 않는다** — `canvas-attach` 전수 검사가 `config: {}` 만 주고 마운트한다. 던지면 잰 수 0 으로 실패한다. 빈 캔버스를 두는 렌더러를 돌려주거나, 값을 장면(`init` 이벤트)에서 읽는다 (2026-09-18, 둘이 따로 걸렸다)
 
 **render**
 
