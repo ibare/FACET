@@ -8,9 +8,9 @@
  * 걸음 (줄 걸음)
  *   - 걸음 0 = 시작(`init`). 아무 줄도 밟지 않았다
  *   - 밟은 줄 하나 = 한 걸음. 조건 셈은 머리줄 걸음 안에서 일어난다
- *   - `def` · `else` 줄은 밟지 않는다. `try` 는 들어갈 때, `except` 는 잡을 때 밟는다
+ *   - `function` · `else` 줄은 밟지 않는다. `try` 는 들어갈 때, `catch` 는 잡을 때 밟는다
  *   - 부르기가 든 줄: 부르는 걸음 하나(`call`) + 돌아와 마무리하는 걸음 하나
- *   - `raise` 줄 한 걸음(`throw`). 예외가 틀을 떠나 부른 줄에 닿을 때마다 한 걸음(`arrive`)
+ *   - `throw` 줄 한 걸음(`throw`). 예외가 틀을 떠나 부른 줄에 닿을 때마다 한 걸음(`arrive`)
  *
  * 이벤트 (전부 silent 아님 — 하나가 한 걸음. 줄 번호 `line` 은 0 부터 센 줄 자리)
  *   init    { lines: { indent: number; text: string; k: string; name: string | null;
@@ -18,17 +18,17 @@
  *           걸음 0. 줄 구조를 장면이 베낄 수 있는 모양으로 넘긴다
  *   enter   { line }                                   try 몸으로 들어간다
  *   call    { line; fn: string; args: Value[] }        부르는 걸음 — 피호출 틀이 선다
- *   test    { line; value: boolean }                   if · elif · while 조건을 셈했다
+ *   test    { line; value: boolean }                   if · else if · while 조건을 셈했다
  *   assign  { line; to: string; value: Value }         값을 이름에 묶었다
- *   print   { line; out: string }                      출력 목록에 한 줄
+ *   show    { line; out: string }                      출력 목록에 한 줄 (`show 값`)
  *   line    { line }                                   그 밖의 줄 (값 없는 식 한 줄)
  *   return  { line; value: Value }                     함수가 값을 들고 돌아간다 — 틀이 걷힌다
- *   throw   { line; error: string; skipped: number[] } raise — 예외가 선다
+ *   throw   { line; error: string; skipped: number[] } throw 줄 — 예외가 선다
  *   arrive  { line; error: string; left: string; skipped: number[]; caught: boolean }
  *           예외가 `left` 틀을 떠나 부른 줄 `line` 에 닿았다. `skipped` = 떠난 틀에서 밟지
- *           않게 된 남은 줄. `caught` = 닿은 자리가 이름이 맞는 except 를 가진 try 몸 안인가
+ *           않게 된 남은 줄. `caught` = 닿은 자리가 이름이 맞는 catch 를 가진 try 몸 안인가
  *   catch   { line; error: string; skipped: number[] }
- *           except 줄이 잡았다. `skipped` = try 몸에서 밟지 않게 된 남은 줄
+ *           catch 줄이 잡았다. `skipped` = try 몸에서 밟지 않게 된 남은 줄
  *
  *   Value = number | string | null
  *
@@ -48,17 +48,18 @@ export type Expr =
   | { call: string; args: Expr[] };
 
 export type Stmt =
-  | { k: 'assign'; to: string; value: Expr }
+  | { k: 'assign'; to: string; value: Expr; declare?: boolean }
   | { k: 'expr'; value: Expr }
+  | { k: 'show'; value: Expr }
   | { k: 'if'; cond: Expr }
-  | { k: 'elif'; cond: Expr }
+  | { k: 'elseIf'; cond: Expr }
   | { k: 'while'; cond: Expr }
   | { k: 'else' }
-  | { k: 'def'; name: string; params: string[] }
+  | { k: 'function'; name: string; params: string[] }
   | { k: 'return'; value?: Expr }
-  | { k: 'raise'; error: string }
+  | { k: 'throw'; error: string }
   | { k: 'try' }
-  | { k: 'except'; error: string };
+  | { k: 'catch'; error: string };
 
 export type CodeLine = { indent: number; text: string; stmt: Stmt };
 
@@ -89,21 +90,21 @@ function callsIn(e: Expr, out: string[]): string[] {
     callsIn(e.l, out);
     callsIn(e.r, out);
   } else if ('call' in e) {
-    if (e.call !== 'print') out.push(e.call);
+    out.push(e.call);
     for (const a of e.args) callsIn(a, out);
   }
   return out;
 }
 
 function stmtCalls(st: Stmt): string[] {
-  if (st.k === 'assign' || st.k === 'expr') return callsIn(st.value, []);
-  if (st.k === 'if' || st.k === 'elif' || st.k === 'while') return callsIn(st.cond, []);
+  if (st.k === 'assign' || st.k === 'expr' || st.k === 'show') return callsIn(st.value, []);
+  if (st.k === 'if' || st.k === 'elseIf' || st.k === 'while') return callsIn(st.cond, []);
   if (st.k === 'return' && st.value !== undefined) return callsIn(st.value, []);
   return [];
 }
 
 function show(v: Value): string {
-  return v === null ? 'None' : String(v);
+  return v === null ? 'null' : String(v);
 }
 
 export async function exceptionPropagate(
@@ -123,7 +124,7 @@ export async function exceptionPropagate(
 
   const defs = new Map<string, number>();
   lines.forEach((l, i) => {
-    if (l.stmt.k === 'def') defs.set(l.stmt.name, i);
+    if (l.stmt.k === 'function') defs.set(l.stmt.name, i);
   });
 
   /** 머리줄 i 의 몸 — 한 칸 깊은 형제 줄들. */
@@ -146,7 +147,7 @@ export async function exceptionPropagate(
   function rest(from: number, to: number): number[] {
     const out: number[] = [];
     for (let j = from + 1; j <= to; j += 1) {
-      if (lines[j].stmt.k !== 'def') out.push(j);
+      if (lines[j].stmt.k !== 'function') out.push(j);
     }
     return out;
   }
@@ -195,7 +196,6 @@ export async function exceptionPropagate(
       if (ctx.cancelled) throw new Halt();
       args.push(await evaluate(a, line));
     }
-    if (e.call === 'print') return null;
     return invoke(e.call, args, line);
   }
 
@@ -203,7 +203,7 @@ export async function exceptionPropagate(
     const di = defs.get(name);
     if (di === undefined) return null;
     const st = lines[di].stmt;
-    const params = st.k === 'def' ? st.params : [];
+    const params = st.k === 'function' ? st.params : [];
     await gate();
     await ctx.emit({ type: 'call', payload: { line, fn: name, args } });
     const vars = new Map<string, Value>();
@@ -232,24 +232,13 @@ export async function exceptionPropagate(
     }
   }
 
-  /** print 의 출력 한 줄 — 인자를 빈칸으로 잇는다. */
-  async function printed(e: Expr, line: number): Promise<string | null> {
-    if (!('call' in e) || e.call !== 'print') return null;
-    const parts: string[] = [];
-    for (const a of e.args) {
-      if (ctx.cancelled) throw new Halt();
-      parts.push(show(await evaluate(a, line)));
-    }
-    return parts.join(' ');
-  }
-
   async function run(idxs: number[]): Promise<void> {
     let k = 0;
     while (k < idxs.length) {
       if (ctx.cancelled) throw new Halt();
       const i = idxs[k];
       const st = lines[i].stmt;
-      if (st.k === 'def' || st.k === 'else' || st.k === 'elif' || st.k === 'except') {
+      if (st.k === 'function' || st.k === 'else' || st.k === 'elseIf' || st.k === 'catch') {
         k += 1;
         continue;
       }
@@ -259,7 +248,7 @@ export async function exceptionPropagate(
         while (m < idxs.length) {
           if (ctx.cancelled) throw new Halt();
           const nk = lines[idxs[m]].stmt.k;
-          if (nk !== 'elif' && nk !== 'else') break;
+          if (nk !== 'elseIf' && nk !== 'else') break;
           chain.push(idxs[m]);
           m += 1;
         }
@@ -270,7 +259,7 @@ export async function exceptionPropagate(
             await run(body(c));
             break;
           }
-          if (cs.k !== 'if' && cs.k !== 'elif') break;
+          if (cs.k !== 'if' && cs.k !== 'elseIf') break;
           const value = (await evaluate(cs.cond, c)) !== 0;
           await gate();
           await ctx.emit({ type: 'test', payload: { line: c, value } });
@@ -302,13 +291,13 @@ export async function exceptionPropagate(
         while (m < idxs.length) {
           if (ctx.cancelled) throw new Halt();
           const hs = lines[idxs[m]].stmt;
-          if (hs.k !== 'except') break;
+          if (hs.k !== 'catch') break;
           handlers.push(idxs[m]);
           m += 1;
         }
         const names = handlers.map((h) => {
           const hs = lines[h].stmt;
-          return hs.k === 'except' ? hs.error : '';
+          return hs.k === 'catch' ? hs.error : '';
         });
         const frame = cur();
         frame.handlers.push(names);
@@ -320,7 +309,7 @@ export async function exceptionPropagate(
           if (!(x instanceof Thrown)) throw x;
           const h = handlers.find((j) => {
             const hs = lines[j].stmt;
-            return hs.k === 'except' && hs.error === x.name;
+            return hs.k === 'catch' && hs.error === x.name;
           });
           if (h === undefined) throw x;
           const skipped = rest(x.at, blockEnd(i));
@@ -336,22 +325,20 @@ export async function exceptionPropagate(
         cur().vars.set(st.to, value);
         await gate();
         await ctx.emit({ type: 'assign', payload: { line: i, to: st.to, value } });
+      } else if (st.k === 'show') {
+        const out = show(await evaluate(st.value, i));
+        await gate();
+        await ctx.emit({ type: 'show', payload: { line: i, out } });
       } else if (st.k === 'expr') {
-        const out = await printed(st.value, i);
-        if (out !== null) {
-          await gate();
-          await ctx.emit({ type: 'print', payload: { line: i, out } });
-        } else {
-          await evaluate(st.value, i);
-          await gate();
-          await ctx.emit({ type: 'line', payload: { line: i } });
-        }
+        await evaluate(st.value, i);
+        await gate();
+        await ctx.emit({ type: 'line', payload: { line: i } });
       } else if (st.k === 'return') {
         const value = st.value === undefined ? null : await evaluate(st.value, i);
         await gate();
         await ctx.emit({ type: 'return', payload: { line: i, value } });
         throw new Returned(value);
-      } else if (st.k === 'raise') {
+      } else if (st.k === 'throw') {
         await gate();
         await ctx.emit({ type: 'throw', payload: { line: i, error: st.error, skipped: [] } });
         throw new Thrown(st.error, i);
@@ -368,8 +355,8 @@ export async function exceptionPropagate(
         indent: l.indent,
         text: l.text,
         k: l.stmt.k,
-        name: l.stmt.k === 'def' ? l.stmt.name : null,
-        params: l.stmt.k === 'def' ? [...l.stmt.params] : [],
+        name: l.stmt.k === 'function' ? l.stmt.name : null,
+        params: l.stmt.k === 'function' ? [...l.stmt.params] : [],
         calls: stmtCalls(l.stmt),
       })),
     },

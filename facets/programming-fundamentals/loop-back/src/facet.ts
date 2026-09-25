@@ -2,16 +2,16 @@ import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
 import type { LoopBackFacetData, LoopBackLine } from './algorithm';
 
 const lines: LoopBackLine[] = [
-  { indent: 0, text: 'total = 0', stmt: { k: 'assign', to: 'total', value: { num: 0 } } },
-  { indent: 0, text: 'i = 1', stmt: { k: 'assign', to: 'i', value: { num: 1 } } },
-  { indent: 0, text: 'while i <= 3:', stmt: { k: 'while', cond: { op: '<=', l: { var: 'i' }, r: { num: 3 } } } },
+  { indent: 0, text: 'let total = 0', stmt: { k: 'assign', to: 'total', value: { num: 0 }, declare: true } },
+  { indent: 0, text: 'let i = 1', stmt: { k: 'assign', to: 'i', value: { num: 1 }, declare: true } },
+  { indent: 0, text: 'while i <= 3', stmt: { k: 'while', cond: { op: '<=', l: { var: 'i' }, r: { num: 3 } } } },
   {
     indent: 1,
     text: 'total = total + i',
     stmt: { k: 'assign', to: 'total', value: { op: '+', l: { var: 'total' }, r: { var: 'i' } } },
   },
   { indent: 1, text: 'i = i + 1', stmt: { k: 'assign', to: 'i', value: { op: '+', l: { var: 'i' }, r: { num: 1 } } } },
-  { indent: 0, text: 'print(total)', stmt: { k: 'expr', value: { call: 'print', args: [{ var: 'total' }] } } },
+  { indent: 0, text: 'show total', stmt: { k: 'show', value: { var: 'total' } } },
 ];
 
 const initialData: LoopBackFacetData = { type: 'loop-back', stepMs: 900, lines };
@@ -147,8 +147,8 @@ export const loopBackFacet: FacetJson = {
       id: 'Kondisi salah — alur keluar dari perulangan.',
       pt: 'A condição é falsa — o fluxo sai do laço.',
     },
-    'detail.print': {
-      en: 'Printed: {out}',
+    'detail.show': {
+      en: 'Shown: {out}',
       ko: '출력: {out}',
       ja: '出力: {out}',
       zh: '输出：{out}',

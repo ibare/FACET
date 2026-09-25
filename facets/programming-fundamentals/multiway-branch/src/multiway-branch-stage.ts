@@ -274,20 +274,17 @@ export const multiwayBranchStageView: CanvasView = {
         const cond =
           tt.l !== undefined && tt.op !== undefined && tt.r !== undefined
             ? `${fmt(tt.l)} ${tt.op} ${fmt(tt.r)}`
-            : line.text.replace(/^(if|elif)\s+/, '').replace(/:$/, '');
+            : line.text.replace(/^(if|else if)\s+/, '');
         first = tt.result
           ? t('caption.true', '{cond} is true — leave through this branch.', { cond })
           : t('caption.false', '{cond} is false — drop to the next.', { cond });
       } else if (step.assigned) {
         const vars = { name: step.assigned.name, value: fmt(step.assigned.value) };
-        first =
-          line.indent > 0
-            ? t('caption.body', 'Inside the branch: {name} = {value}', vars)
-            : t('caption.assign', 'Set {name} = {value}', vars);
-      } else if (step.printed !== undefined) {
-        first = t('caption.print', 'Printed: {out}', { out: step.printed });
-      } else {
-        first = t('caption.run', 'Ran: {code}', { code: line.text });
+        if (step.assigned.declared) first = t('caption.declare', 'Declare {name} = {value}', vars);
+        else if (line.indent > 0) first = t('caption.body', 'Inside the branch: {name} = {value}', vars);
+        else first = t('caption.assign', 'Set {name} = {value}', vars);
+      } else if (step.shown !== undefined) {
+        first = t('caption.show', 'Shown: {out}', { out: step.shown });
       }
       let second = '';
       const c = L ? leftChain(L.chains, step.from, step.line) : undefined;
@@ -395,7 +392,7 @@ export const multiwayBranchStageView: CanvasView = {
         const isTop = line.indent === 0;
         const x = isTop ? L.headX : L.bodyX + (line.indent - 1) * 14;
         const w = isTop ? L.headW : L.bodyW - (line.indent - 1) * 14;
-        const isCond = line.kind === 'if' || line.kind === 'elif';
+        const isCond = line.kind === 'if' || line.kind === 'elseIf';
         const bodyRan = !isTop && visited.has(i);
         el(
           'rect',
@@ -475,8 +472,8 @@ export const multiwayBranchStageView: CanvasView = {
         }
 
         // 출력
-        const printedHere = scene.visits.filter((v) => v.line === i && v.printed !== undefined);
-        if (printedHere.length > 0) {
+        const shownHere = scene.visits.filter((v) => v.line === i && v.shown !== undefined);
+        if (shownHere.length > 0) {
           const g = el('g', {}, boxes);
           el(
             'rect',
@@ -497,7 +494,7 @@ export const multiwayBranchStageView: CanvasView = {
             'font-size': fontSizes.xs,
             fill: colors.textMuted,
           });
-          label(g, L.bodyX + L.bodyW - 12, y + 6, printedHere.map((v) => v.printed ?? '').join(' '), {
+          label(g, L.bodyX + L.bodyW - 12, y + 6, shownHere.map((v) => v.shown ?? '').join(' '), {
             'font-family': fonts.mono,
             'font-size': fontSizes.lg,
             'font-weight': 600,

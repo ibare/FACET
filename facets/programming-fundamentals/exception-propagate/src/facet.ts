@@ -4,8 +4,8 @@ import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
  * @piece
  * 질문: 함수 깊은 곳에서 예외를 던지면 그것은 어디서 멈추는가?
  *
- * check 가 던진 ValueError 가 자기 틀을 떠나 부른 자리(load 의 줄 6)로 오르고, load 에는
- * try 가 없어 그 틀도 떠나 맨 바깥의 줄 9 로 오른다. 그 자리가 try 몸 안이라 except 로
+ * check 가 던진 BadValue 가 자기 틀을 떠나 부른 자리(load 의 줄 6)로 오르고, load 에는
+ * try 가 없어 그 틀도 떠나 맨 바깥의 줄 9 로 오른다. 그 자리가 try 몸 안이라 catch 로
  * 떨어진다. 지나온 틀의 남은 줄(4 · 7 · 10)은 밟히지 않는다.
  */
 export const exceptionPropagateFacet: FacetJson = {
@@ -23,7 +23,7 @@ export const exceptionPropagateFacet: FacetJson = {
     pt: 'Uma exceção sobe até os pontos de chamada',
   },
   description: {
-    en: 'An error raised deep inside a function leaves its frame, skips every frame with no try, and stops at the first call site inside a try.',
+    en: 'An error thrown deep inside a function leaves its frame, skips every frame with no try, and stops at the first call site inside a try.',
     ko: '함수 깊은 곳에서 던진 오류는 자기 틀을 떠나 try 가 없는 틀을 모두 건너뛰고, try 몸 안의 첫 부른 자리에서 멈춘다.',
     ja: '関数の奥で投げられたエラーは自分のフレームを離れ、try のないフレームをすべて飛び越え、try の中にある最初の呼び出し元で止まる。',
     zh: '在函数深处抛出的错误离开自己的栈帧，跳过所有没有 try 的栈帧，停在第一个位于 try 内的调用处。',
@@ -40,47 +40,40 @@ export const exceptionPropagateFacet: FacetJson = {
     type: 'exception-propagate',
     stepMs: 1200,
     lines: [
-      { indent: 0, text: 'def check(v):', stmt: { k: 'def', name: 'check', params: ['v'] } },
+      { indent: 0, text: 'function check(v)', stmt: { k: 'function', name: 'check', params: ['v'] } },
       {
         indent: 1,
-        text: 'if v < 0:',
+        text: 'if v < 0',
         stmt: { k: 'if', cond: { op: '<', l: { var: 'v' }, r: { num: 0 } } },
       },
-      { indent: 2, text: 'raise ValueError', stmt: { k: 'raise', error: 'ValueError' } },
+      { indent: 2, text: 'throw BadValue', stmt: { k: 'throw', error: 'BadValue' } },
       { indent: 1, text: 'return v', stmt: { k: 'return', value: { var: 'v' } } },
-      { indent: 0, text: 'def load(v):', stmt: { k: 'def', name: 'load', params: ['v'] } },
+      { indent: 0, text: 'function load(v)', stmt: { k: 'function', name: 'load', params: ['v'] } },
       {
         indent: 1,
-        text: 'x = check(v)',
-        stmt: { k: 'assign', to: 'x', value: { call: 'check', args: [{ var: 'v' }] } },
+        text: 'let x = check(v)',
+        stmt: {
+          k: 'assign',
+          to: 'x',
+          declare: true,
+          value: { call: 'check', args: [{ var: 'v' }] },
+        },
       },
       {
         indent: 1,
         text: 'return x * 2',
         stmt: { k: 'return', value: { op: '*', l: { var: 'x' }, r: { num: 2 } } },
       },
-      { indent: 0, text: 'try:', stmt: { k: 'try' } },
+      { indent: 0, text: 'try', stmt: { k: 'try' } },
       {
         indent: 1,
-        text: 'y = load(-3)',
-        stmt: { k: 'assign', to: 'y', value: { call: 'load', args: [{ num: -3 }] } },
+        text: 'let y = load(-3)',
+        stmt: { k: 'assign', to: 'y', declare: true, value: { call: 'load', args: [{ num: -3 }] } },
       },
-      {
-        indent: 1,
-        text: 'print(y)',
-        stmt: { k: 'expr', value: { call: 'print', args: [{ var: 'y' }] } },
-      },
-      { indent: 0, text: 'except ValueError:', stmt: { k: 'except', error: 'ValueError' } },
-      {
-        indent: 1,
-        text: 'print("bad value")',
-        stmt: { k: 'expr', value: { call: 'print', args: [{ str: 'bad value' }] } },
-      },
-      {
-        indent: 0,
-        text: 'print("done")',
-        stmt: { k: 'expr', value: { call: 'print', args: [{ str: 'done' }] } },
-      },
+      { indent: 1, text: 'show y', stmt: { k: 'show', value: { var: 'y' } } },
+      { indent: 0, text: 'catch BadValue', stmt: { k: 'catch', error: 'BadValue' } },
+      { indent: 1, text: 'show "bad value"', stmt: { k: 'show', value: { str: 'bad value' } } },
+      { indent: 0, text: 'show "done"', stmt: { k: 'show', value: { str: 'done' } } },
     ],
   },
   shuffleOnReset: false,
@@ -145,17 +138,17 @@ export const exceptionPropagateFacet: FacetJson = {
       id: 'Baris {line}: {name} = {value}.',
       pt: 'Linha {line}: {name} = {value}.',
     },
-    'caption.print': {
-      en: 'Line {line} prints: {out}',
+    'caption.show': {
+      en: 'Line {line} shows: {out}',
       ko: '줄 {line} — 출력: {out}',
-      ja: '{line} 行目 — 出力: {out}',
-      zh: '第 {line} 行 — 输出：{out}',
-      ar: 'السطر {line} يطبع: {out}',
-      es: 'La línea {line} imprime: {out}',
+      ja: '{line} 行目 — 表示: {out}',
+      zh: '第 {line} 行 — 显示：{out}',
+      ar: 'السطر {line} يعرض: {out}',
+      es: 'La línea {line} muestra: {out}',
       fr: 'La ligne {line} affiche : {out}',
-      hi: 'पंक्ति {line} छापती है: {out}',
-      id: 'Baris {line} mencetak: {out}',
-      pt: 'A linha {line} imprime: {out}',
+      hi: 'पंक्ति {line} दिखाती है: {out}',
+      id: 'Baris {line} menampilkan: {out}',
+      pt: 'A linha {line} mostra: {out}',
     },
     'caption.line': {
       en: 'Line {line}.',
@@ -182,13 +175,13 @@ export const exceptionPropagateFacet: FacetJson = {
       pt: 'Linha {line}: {fn} retorna e seu quadro é retirado.',
     },
     'caption.throw': {
-      en: 'Line {line} raises {error} inside {fn}.',
+      en: 'Line {line} throws {error} inside {fn}.',
       ko: '줄 {line} — {fn} 안에서 {error} 던짐.',
       ja: '{line} 行目 — {fn} の中で {error} を投げる。',
       zh: '第 {line} 行在 {fn} 内抛出 {error}。',
       ar: 'السطر {line} يرمي {error} داخل {fn}.',
       es: 'La línea {line} lanza {error} dentro de {fn}.',
-      fr: 'La ligne {line} lève {error} dans {fn}.',
+      fr: 'La ligne {line} lance {error} dans {fn}.',
       hi: 'पंक्ति {line} {fn} के भीतर {error} फेंकती है।',
       id: 'Baris {line} melempar {error} di dalam {fn}.',
       pt: 'A linha {line} lança {error} dentro de {fn}.',
@@ -230,16 +223,16 @@ export const exceptionPropagateFacet: FacetJson = {
       pt: 'Este ponto de chamada está dentro do try.',
     },
     'caption.catch': {
-      en: 'Line {line}: except {error} catches it.',
-      ko: '줄 {line} — except {error} 에서 잡힌다.',
-      ja: '{line} 行目 — except {error} で捕まる。',
-      zh: '第 {line} 行 — 被 except {error} 捕获。',
-      ar: 'السطر {line}: يلتقطه except {error}.',
-      es: 'Línea {line}: except {error} lo atrapa.',
-      fr: 'Ligne {line} : except {error} l’attrape.',
-      hi: 'पंक्ति {line}: except {error} इसे पकड़ता है।',
-      id: 'Baris {line}: except {error} menangkapnya.',
-      pt: 'Linha {line}: except {error} a captura.',
+      en: 'Line {line}: catch {error} catches it.',
+      ko: '줄 {line} — catch {error} 에서 잡힌다.',
+      ja: '{line} 行目 — catch {error} で捕まる。',
+      zh: '第 {line} 行 — 被 catch {error} 捕获。',
+      ar: 'السطر {line}: يلتقطه catch {error}.',
+      es: 'Línea {line}: catch {error} lo atrapa.',
+      fr: 'Ligne {line} : catch {error} l’attrape.',
+      hi: 'पंक्ति {line}: catch {error} इसे पकड़ता है।',
+      id: 'Baris {line}: catch {error} menangkapnya.',
+      pt: 'Linha {line}: catch {error} a captura.',
     },
     'caption.passed': {
       en: 'Frames skipped without catching: {n}.',

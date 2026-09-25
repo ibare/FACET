@@ -32,7 +32,9 @@ const R_MAX = 16;
 const ROW_MAX = 58;
 const LINE_H = 22;
 const CODE_FS = parseInt(fontSizes.sm, 10); // 코드 줄 글자 크기 — 폭 셈이 그리는 글꼴과 같은 토큰을 본다
-const MONO_W = 0.6; // 고정폭 글자 한 칸 / 글자 크기
+const MONO_W = 0.6;
+/** 바깥 줄 끝에 붙는 글자 칸 (`→ ` 와 값 또는 오류 이름). */
+const NOTE_CHARS = 15; // 고정폭 글자 한 칸 / 글자 크기
 
 type Geo = {
   pad: number;
@@ -62,7 +64,10 @@ function geometry(base: BaseCaseBase): Geo {
   const widest = Math.max(0, ...base.lines.map((l) => (l.indent * 4 + l.text.length) * cw));
   const span = Math.max(1, base.hi - base.lo);
   const px1 = W - pad - 44;
-  let px0 = codeX + widest + 32;
+  // 바깥 줄 끝에는 돌아온 값 · 오류 이름이 붙는다 — 그 칸까지 비워 두고 판을 시작한다
+  const topLen = Math.max(0, ...base.lines.filter((l) => l.indent === 0).map((l) => l.text.length));
+  const note = codeX + topLen * cw + 8 + NOTE_CHARS * parseInt(fontSizes.xs, 10) * MONO_W + 12;
+  let px0 = Math.max(codeX + widest + 32, note);
   let unit = (px1 - px0) / span;
   const r = Math.min(R_MAX, unit * 0.42);
   px0 += r;
@@ -112,7 +117,7 @@ const ease = (k: number): number => (k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2
 function valueText(v: Shown): string {
   if (typeof v === 'string') return `"${v}"`;
   if (typeof v === 'number') return String(v);
-  return 'None';
+  return 'null';
 }
 
 /** 글자 폭 어림 — 한글·한자권 글자는 한 칸, 나머지는 반 칸 남짓. 캡션을 두 줄로 나눌 때만 쓴다. */
@@ -218,7 +223,7 @@ export const baseCaseStageView: CanvasView = {
       const failed = scene.failed;
 
       // 코드 — 바닥 조건 줄에 바닥 금과 같은 색 띠, 지금 부르고 있는 바깥 줄에 표
-      const testLine = base.lines.findIndex((l) => l.text === `if ${base.test}:`) + 1;
+      const testLine = base.lines.findIndex((l) => l.text === `if ${base.test}`) + 1;
       const liveOrigin = scene.stack[0]?.origin ?? null;
       base.lines.forEach((l, i) => {
         const y = lineY(g, i + 1);

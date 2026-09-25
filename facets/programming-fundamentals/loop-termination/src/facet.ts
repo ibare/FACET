@@ -14,15 +14,15 @@ const data: LoopTerminationFacetData = {
   stepMs: 1100,
   whileCap: 5,
   lines: [
-    { indent: 0, text: 'i = 0', stmt: { k: 'assign', to: 'i', value: n(0) } },
-    { indent: 0, text: 'total = 0', stmt: { k: 'assign', to: 'total', value: n(0) } },
-    { indent: 0, text: 'while i < 3:', stmt: { k: 'while', cond: { op: '<', l: v('i'), r: n(3) } } },
+    { indent: 0, text: 'let i = 0', stmt: { k: 'assign', to: 'i', value: n(0), declare: true } },
+    { indent: 0, text: 'let total = 0', stmt: { k: 'assign', to: 'total', value: n(0), declare: true } },
+    { indent: 0, text: 'while i < 3', stmt: { k: 'while', cond: { op: '<', l: v('i'), r: n(3) } } },
     {
       indent: 1,
       text: 'total = total + 1',
       stmt: { k: 'assign', to: 'total', value: { op: '+', l: v('total'), r: n(1) } },
     },
-    { indent: 0, text: 'print(total)', stmt: { k: 'expr', value: { call: 'print', args: [v('total')] } } },
+    { indent: 0, text: 'show total', stmt: { k: 'show', value: v('total') } },
   ],
 };
 
@@ -81,7 +81,7 @@ export const loopTerminationFacet: FacetJson = {
       id: 'Baris {line}: {name} sekarang bernilai {value}.',
       pt: 'Linha {line}: {name} agora vale {value}.',
     },
-    'caption.expr': {
+    'caption.show': {
       en: 'Line {line} runs.',
       ko: '{line}번 줄을 밟는다.',
       ja: '{line} 行目を実行する。',

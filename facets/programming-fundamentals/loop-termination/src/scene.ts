@@ -33,7 +33,7 @@ export type LtStep =
   | { kind: 'start' }
   | { kind: 'assign'; line: number; from: number | null; name: string }
   | { kind: 'cond'; line: number; from: number | null; count: number }
-  | { kind: 'expr'; line: number; from: number | null };
+  | { kind: 'show'; line: number; from: number | null };
 
 export type LoopTerminationScene = {
   base: LtBase | null;
@@ -138,14 +138,14 @@ export const loopTerminationScene: ScenePlan<LoopTerminationScene> = {
       };
     }
 
-    if (event.type === 'expr') {
+    if (event.type === 'show') {
       return {
         ...scene,
         vars: scene.vars.map(([n, v]): [string, LtValue | null] => [n, v]),
         checks: scene.checks.slice(),
         visited: visit(scene.visited, line),
         at: line,
-        step: { kind: 'expr', line, from },
+        step: { kind: 'show', line, from },
       };
     }
     return scene;

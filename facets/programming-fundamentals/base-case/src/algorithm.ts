@@ -13,7 +13,7 @@
  *             — 틀에 들어가 바닥 조건을 셈하기까지. `line` 은 부른 줄(1 부터), `test` 는 조건의 참거짓
  *   return    { depth: number; line: number; value: string | number | null; into: string | null }
  *             — 깊이 `depth` 의 틀이 값을 돌려주고 걷힌다. 바깥으로 돌아가 대입되면 `into` 가 변수 이름
- *   overflow  { n: number; depth: number; line: number; error: 'RecursionError' }
+ *   overflow  { n: number; depth: number; line: number; error: 'StackOverflow' }
  *             — 틀이 이미 `maxFrames` 개일 때의 부르기. 틀을 세우지 않고 넘친다. 잡히지 않아 프로그램이 멈춘다
  *
  * 넘침 뒤 틀들이 걷히는 것은 걸음으로 세지 않는다 (발신하지 않는다).
@@ -31,7 +31,7 @@ export type Stmt =
   | { k: 'def'; name: string; params: string[] }
   | { k: 'if'; cond: Expr }
   | { k: 'return'; value?: Expr }
-  | { k: 'assign'; to: string; value: Expr }
+  | { k: 'assign'; to: string; value: Expr; declare?: boolean } // declare: 이 줄이 이름을 처음 만든다 (`let`)
   | { k: 'expr'; value: Expr };
 
 export type CodeLine = { indent: number; text: string; stmt: Stmt };
@@ -128,7 +128,7 @@ function trace(lines: CodeLine[], maxFrames: number): Trace[] {
     const n = typeof args[0] === 'number' ? args[0] : 0;
     if (frames.length >= maxFrames) {
       out.push({ kind: 'overflow', n, depth: frames.length, line: line + 1 });
-      throw new Thrown('RecursionError');
+      throw new Thrown('StackOverflow');
     }
     const fv = new Map<string, Val>();
     params.forEach((p, i) => fv.set(p, args[i] ?? null));
@@ -233,7 +233,7 @@ export async function baseCase(ctxIn: FacetContext<BaseCaseFacetData>): Promise<
     } else {
       await ctx.emit({
         type: 'overflow',
-        payload: { n: e.n, depth: e.depth, line: e.line, error: 'RecursionError' },
+        payload: { n: e.n, depth: e.depth, line: e.line, error: 'StackOverflow' },
       });
     }
   }

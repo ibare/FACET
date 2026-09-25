@@ -39,10 +39,29 @@ export const branchTakeOnePathFacet: FacetJson = {
     type: 'branch-take-one-path',
     stepMs: 1600,
     lines: [
-      { indent: 0, text: 'temp = 31', stmt: { k: 'assign', to: 'temp', value: { num: 31 } } },
       {
         indent: 0,
-        text: 'if temp > 25:',
+        text: 'let temp = 31',
+        stmt: { k: 'assign', to: 'temp', value: { num: 31 }, declare: true },
+      },
+      {
+        indent: 0,
+        text: 'let wear = ""',
+        stmt: { k: 'assign', to: 'wear', value: { str: '' }, declare: true },
+      },
+      {
+        indent: 0,
+        text: 'let fan = "off"',
+        stmt: { k: 'assign', to: 'fan', value: { str: 'off' }, declare: true },
+      },
+      {
+        indent: 0,
+        text: 'let heater = "off"',
+        stmt: { k: 'assign', to: 'heater', value: { str: 'off' }, declare: true },
+      },
+      {
+        indent: 0,
+        text: 'if temp > 25',
         stmt: { k: 'if', cond: { op: '>', l: { var: 'temp' }, r: { num: 25 } } },
       },
       {
@@ -51,18 +70,14 @@ export const branchTakeOnePathFacet: FacetJson = {
         stmt: { k: 'assign', to: 'wear', value: { str: 'shorts' } },
       },
       { indent: 1, text: 'fan = "on"', stmt: { k: 'assign', to: 'fan', value: { str: 'on' } } },
-      { indent: 0, text: 'else:', stmt: { k: 'else' } },
+      { indent: 0, text: 'else', stmt: { k: 'else' } },
       { indent: 1, text: 'wear = "coat"', stmt: { k: 'assign', to: 'wear', value: { str: 'coat' } } },
       {
         indent: 1,
         text: 'heater = "on"',
         stmt: { k: 'assign', to: 'heater', value: { str: 'on' } },
       },
-      {
-        indent: 0,
-        text: 'print(wear)',
-        stmt: { k: 'expr', value: { call: 'print', args: [{ var: 'wear' }] } },
-      },
+      { indent: 0, text: 'show wear', stmt: { k: 'show', value: { var: 'wear' } } },
     ],
   },
   shuffleOnReset: false,
@@ -116,7 +131,7 @@ export const branchTakeOnePathFacet: FacetJson = {
       pt: '{name} agora vale {value}.',
     },
     'caption.rejoin': {
-      en: 'The two branches meet again here. Printed: {out}',
+      en: 'The two branches meet again here. Shown: {out}',
       ko: '두 갈래가 여기서 다시 하나로 이어진다. 출력: {out}',
       ja: '二つの枝はここで再び一つになる。出力: {out}',
       zh: '两条分支在这里重新汇合。输出: {out}',
@@ -127,8 +142,8 @@ export const branchTakeOnePathFacet: FacetJson = {
       id: 'Kedua cabang bertemu lagi di sini. Keluaran: {out}',
       pt: 'Os dois ramos voltam a se unir aqui. Saída: {out}',
     },
-    'caption.print': {
-      en: 'Printed: {out}',
+    'caption.show': {
+      en: 'Shown: {out}',
       ko: '출력: {out}',
       ja: '出力: {out}',
       zh: '输出: {out}',
@@ -211,17 +226,17 @@ export const branchTakeOnePathFacet: FacetJson = {
       id: 'variabel',
       pt: 'variáveis',
     },
-    'label.never': {
-      en: 'never created: {names}',
-      ko: '끝까지 생기지 않음: {names}',
-      ja: '最後まで作られなかった: {names}',
-      zh: '始终未创建: {names}',
-      ar: 'لم يُنشأ قط: {names}',
-      es: 'nunca creada: {names}',
-      fr: 'jamais créée : {names}',
-      hi: 'कभी नहीं बना: {names}',
-      id: 'tak pernah dibuat: {names}',
-      pt: 'nunca criada: {names}',
+    'label.unchanged': {
+      en: 'still its first value',
+      ko: '처음 값 그대로',
+      ja: '最初の値のまま',
+      zh: '仍是最初的值',
+      ar: 'ما زال على قيمته الأولى',
+      es: 'sigue con su primer valor',
+      fr: 'toujours sa première valeur',
+      hi: 'अब भी पहला मान',
+      id: 'masih nilai awalnya',
+      pt: 'ainda com o primeiro valor',
     },
     'label.output': {
       en: 'output',

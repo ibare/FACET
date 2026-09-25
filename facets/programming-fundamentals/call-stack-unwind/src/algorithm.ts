@@ -1,8 +1,11 @@
 /**
  * call-stack-unwind — 재귀 호출은 어떤 차례로 끝나며, 돌려준 값은 어디로 가는가.
  *
+ * 코드 글자는 조각 코드 표기(`function` · `let` · 콜론 없음)다. 구조 kind 이름(`def` · `elif`)은
+ * 화면에 뜨지 않는 내부 식별자다.
+ *
  * 1차 데이터는 줄 목록이다. 줄마다 화면 글자(`text`)와 그 줄이 하는 일의 구조(`stmt`)가 있다.
- * 아래 `traceCalls` 가 그 구조를 실제로 밟아(파이썬 의미) 틀이 서고 걷히는 사건을 남기고,
+ * 아래 `traceCalls` 가 그 구조를 실제로 밟아(조각 코드 표기의 뜻 — `tasks/pseudo-notation.md`) 틀이 서고 걷히는 사건을 남기고,
  * 알고리즘은 그 사건을 **호출 걸음**으로 발신한다.
  *
  * 걸음 규약 (호출 걸음):
@@ -40,7 +43,8 @@ export type Expr =
   | { call: string; args: Expr[] };
 
 export type Stmt =
-  | { k: 'assign'; to: string; value: Expr }
+  /** declare — 처음 만드는 줄 (`let x = …`). 해석은 대입과 같다 */
+  | { k: 'assign'; to: string; value: Expr; declare?: boolean }
   | { k: 'expr'; value: Expr }
   | { k: 'if'; cond: Expr }
   | { k: 'elif'; cond: Expr }
@@ -111,7 +115,7 @@ function applyOp(op: BinOp, a: Value, b: Value): Value {
 }
 
 /**
- * 줄 구조를 파이썬 의미로 밟아 틀이 서고 걷히는 사건을 남긴다. 순수 함수다.
+ * 줄 구조를 조각 코드 표기의 뜻으로 밟아 틀이 서고 걷히는 사건을 남긴다. 순수 함수다.
  */
 export function traceCalls(lines: readonly CodeLine[]): CallTrace {
   const funcs = new Map<string, number>();

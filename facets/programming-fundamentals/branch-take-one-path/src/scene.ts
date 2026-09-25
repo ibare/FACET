@@ -11,7 +11,8 @@ import type { BinOp, Expr, Line, Stmt, Value } from './algorithm.js';
 
 export type { Expr, Line, Stmt, Value };
 
-export type VarCell = { name: string; value: Value };
+/** 변수 칸 — `first` 는 선언이 넣은 처음 값. */
+export type VarCell = { name: string; value: Value; first: Value };
 
 export type CondMark = { line: number; cond: boolean; operands: [Value, Value] | null };
 
@@ -25,7 +26,7 @@ export type StepInfo =
       created: boolean;
     }
   | { kind: 'cond'; line: number; from: number | null; cond: boolean }
-  | { kind: 'print'; line: number; from: number | null; out: string; rejoin: boolean }
+  | { kind: 'show'; line: number; from: number | null; out: string; rejoin: boolean }
   | { kind: 'line'; line: number; from: number | null };
 
 export type BranchScene = {
@@ -59,15 +60,6 @@ function readExpr(x: unknown): Expr | null {
     const r = readExpr(x.r);
     return op && l && r ? { op, l, r } : null;
   }
-  if (typeof x.call === 'string' && Array.isArray(x.args)) {
-    const args: Expr[] = [];
-    for (const a of x.args) {
-      const e = readExpr(a);
-      if (!e) return null;
-      args.push(e);
-    }
-    return { call: x.call, args };
-  }
   return null;
 }
 
@@ -76,11 +68,14 @@ function readStmt(x: unknown): Stmt | null {
   switch (x.k) {
     case 'assign': {
       const value = readExpr(x.value);
-      return typeof x.to === 'string' && value ? { k: 'assign', to: x.to, value } : null;
+      if (typeof x.to !== 'string' || !value) return null;
+      return x.declare === true
+        ? { k: 'assign', to: x.to, value, declare: true }
+        : { k: 'assign', to: x.to, value };
     }
-    case 'expr': {
+    case 'show': {
       const value = readExpr(x.value);
-      return value ? { k: 'expr', value } : null;
+      return value ? { k: 'show', value } : null;
     }
     case 'if':
     case 'elif': {
@@ -146,8 +141,8 @@ function reduceStep(scene: BranchScene, p: Record<string, unknown>): BranchScene
     const value = p.value;
     const has = scene.vars.some((v) => v.name === name);
     const vars = has
-      ? scene.vars.map((v) => (v.name === name ? { name, value } : { ...v }))
-      : [...scene.vars.map((v) => ({ ...v })), { name, value }];
+      ? scene.vars.map((v) => (v.name === name ? { ...v, value } : { ...v }))
+      : [...scene.vars.map((v) => ({ ...v })), { name, value, first: value }];
     return { ...base, vars, step: { kind: 'assign', line, from, name, value, created: !has } };
   }
   if (typeof p.out === 'string') {
@@ -156,7 +151,7 @@ function reduceStep(scene: BranchScene, p: Record<string, unknown>): BranchScene
     return {
       ...base,
       output: [...scene.output, p.out],
-      step: { kind: 'print', line, from, out: p.out, rejoin },
+      step: { kind: 'show', line, from, out: p.out, rejoin },
     };
   }
   return { ...base, step: { kind: 'line', line, from } };

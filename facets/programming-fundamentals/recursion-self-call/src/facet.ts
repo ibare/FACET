@@ -40,9 +40,9 @@ export const recursionSelfCallFacet: FacetJson = {
     type: 'recursion-self-call',
     stepMs: 1100,
     lines: [
-      { indent: 0, text: 'def countdown(n):', stmt: { k: 'def', name: 'countdown', params: ['n'] } },
-      { indent: 1, text: 'if n > 0:', stmt: { k: 'if', cond: { op: '>', l: { var: 'n' }, r: { num: 0 } } } },
-      { indent: 2, text: 'print(n)', stmt: { k: 'expr', value: { call: 'print', args: [{ var: 'n' }] } } },
+      { indent: 0, text: 'function countdown(n)', stmt: { k: 'function', name: 'countdown', params: ['n'] } },
+      { indent: 1, text: 'if n > 0', stmt: { k: 'if', cond: { op: '>', l: { var: 'n' }, r: { num: 0 } } } },
+      { indent: 2, text: 'show n', stmt: { k: 'show', value: { var: 'n' } } },
       {
         indent: 2,
         text: 'countdown(n - 1)',
@@ -117,17 +117,17 @@ export const recursionSelfCallFacet: FacetJson = {
       id: 'Masuk lagi ke baris pertama {fn} yang sama, membawa {binding} — kedalaman {depth}.',
       pt: 'Volta a entrar na primeira linha de {fn} com {binding} — profundidade {depth}.',
     },
-    'caption.print': {
-      en: 'print adds {value} to the output.',
+    'caption.show': {
+      en: 'show adds {value} to the output.',
       ko: '출력에 한 줄 더했다: {value}.',
       ja: '出力に一行加えた: {value}。',
       zh: '输出中加了一行：{value}。',
-      ar: 'أضاف print إلى المخرجات: {value}.',
-      es: 'print añade {value} a la salida.',
-      fr: 'print ajoute {value} à la sortie.',
-      hi: 'print ने आउटपुट में जोड़ा: {value}।',
-      id: 'print menambahkan {value} ke keluaran.',
-      pt: 'print acrescenta {value} à saída.',
+      ar: 'أضاف show إلى المخرجات: {value}.',
+      es: 'show añade {value} a la salida.',
+      fr: 'show ajoute {value} à la sortie.',
+      hi: 'show ने आउटपुट में जोड़ा: {value}।',
+      id: 'show menambahkan {value} ke keluaran.',
+      pt: 'show acrescenta {value} à saída.',
     },
     'caption.paused': {
       en: 'Earlier bodies paused on their call line: {paused}.',

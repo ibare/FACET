@@ -265,8 +265,8 @@ export const recursionSelfCallStageView: CanvasView = {
           main = step.again
             ? t('caption.reenter', 'Enters the first line of the same {fn} again, with {binding} — depth {depth}.', vars)
             : t('caption.enter', 'Enters the first line of {fn} with {binding} — depth {depth}.', vars);
-        } else if (step.kind === 'line' && step.printed) {
-          main = t('caption.print', 'print adds {value} to the output.', { value: scene.output[scene.output.length - 1] ?? '' });
+        } else if (step.kind === 'line' && step.showed) {
+          main = t('caption.show', 'show adds {value} to the output.', { value: scene.output[scene.output.length - 1] ?? '' });
         }
         const cond = f?.cond;
         if (cond && cond.line === step.line) {
@@ -394,7 +394,7 @@ export const recursionSelfCallStageView: CanvasView = {
       label(M, oy, t('label.output', 'Output'), { 'font-family': fonts.body, 'font-size': fontSizes.sm, fill: c.textMuted }, root);
       scene.output.forEach((o, i) => {
         const oc = chip(outX(scene.output, i), oy - g.r * 0.42, textWidth(o.length) + 14, g.r * 0.84, o, c.border, c.text, root);
-        if (i === scene.output.length - 1 && step.kind === 'line' && step.printed) h.outChip = oc;
+        if (i === scene.output.length - 1 && step.kind === 'line' && step.showed) h.outChip = oc;
       });
       return h;
     }
@@ -488,9 +488,10 @@ export const recursionSelfCallStageView: CanvasView = {
         const fromDy = step.from !== null ? rowY(g, step.depth, step.from) - rowY(g, step.depth, step.line) : 0;
         let outFrom: Pt | null = null;
         let outTo: Pt | null = null;
-        if (step.printed && h.outChip) {
+        if (step.showed && h.outChip) {
           const row = scene.rows[step.line];
-          const open = row ? row.text.indexOf('(') + 1 : 0;
+          // 줄에서 값이 적힌 자리 — `show n` 의 n
+          const open = row ? row.text.indexOf(' ') + 1 : 0;
           outFrom = { x: textX(g, scene.rows, step.depth, step.line) + textWidth(open), y: rowY(g, step.depth, step.line) };
           outTo = { x: outX(scene.output, scene.output.length - 1), y: H - M - OUT_H / 2 };
         }

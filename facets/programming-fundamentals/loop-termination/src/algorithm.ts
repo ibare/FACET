@@ -3,7 +3,8 @@
  *
  * 자료는 줄 목록이다. 줄마다 화면 글자(`text`)와 그 줄이 하는 일의 구조(`stmt`)가 있고,
  * 이 알고리즘이 구조를 해석해 밟는 차례 · 변수 값 · 조건의 답을 셈한다. 해석하는 문은
- * `assign` · `expr`(부르기 한 줄, `print` 만) · `while` 셋이다.
+ * `assign`(`declare` 가 참이면 `let` 으로 처음 만드는 줄) · `show`(값 하나를 보인다) · `while` 셋이다.
+ * `let` 으로 만든 이름은 그 몸 안에서만 산다 — 몸을 한 번 밟을 때마다 새 칸이 선다.
  *
  * 걸음은 줄 걸음이다 — 밟은 줄 하나가 한 걸음, 조건 셈은 머리줄의 걸음 안에서 일어난다.
  * 재생은 while 조건을 `whileCap` 번 셈한 걸음에서 멈춘다. 상한은 화면의 사정이다.
@@ -18,7 +19,8 @@
  *              lines: { indent: number; text: string }[];
  *              loop: number;        // 첫 while 줄의 자리 (0 부터). 없으면 -1
  *              reads: string[];     // 그 조건이 읽는 변수 (나오는 차례)
- *              writes: string[];    // 그 몸의 assign 이 쓰는 변수 (나오는 차례)
+ *              writes: string[];    // 그 몸이 바깥 이름에 넣는 변수 (나오는 차례).
+ *                                   // 몸 안의 `let` 은 몸 안에만 사는 새 이름이라 쓰기로 치지 않는다
  *              overlap: string[];   // reads ∩ writes
  *              names: string[];     // 프로그램이 값을 넣는 변수 전부 (나오는 차례)
  *              cap: number;         // whileCap
@@ -32,7 +34,7 @@
  *              shown: string;              // 조건 식에 지금 값을 넣은 코드 글자 (예: `0 < 3`)
  *              halt: boolean;              // 이 셈에서 재생이 멈추는가
  *            }
- * - `expr`   부르기 한 줄을 밟았다.
+ * - `show`   값을 보이는 줄을 밟았다.
  *            payload: { line: number }
  *
  * 줄 자리(`line`)는 0 부터 센다. 화면의 줄 번호는 stage 가 1 을 더해 쓴다.
@@ -49,8 +51,8 @@ export type LtExpr =
   | { call: string; args: LtExpr[] };
 
 export type LtStmt =
-  | { k: 'assign'; to: string; value: LtExpr }
-  | { k: 'expr'; value: LtExpr }
+  | { k: 'assign'; to: string; value: LtExpr; declare?: boolean }
+  | { k: 'show'; value: LtExpr }
   | { k: 'while'; cond: LtExpr };
 
 export type LtLine = { indent: number; text: string; stmt: LtStmt };
@@ -88,13 +90,23 @@ function readsOf(e: LtExpr, out: string[] = []): string[] {
   return out;
 }
 
-/** 몸이 쓰는 변수 — 몸 안(더 깊은 줄 포함)의 assign 대상. */
+/**
+ * 몸이 쓰는 변수 — 몸 안(더 깊은 줄 포함)에서 몸 바깥의 이름에 값을 넣는 대상.
+ * 몸 안에서 `let` 으로 만든 이름은 몸 안에서만 살므로, 그 이름에 넣는 것은 바깥 이름을
+ * 바꾸지 않는다 (선언이 있는 줄부터 그 이름은 몸 안의 것이다).
+ */
 function writesOf(lines: LtLine[], i: number): string[] {
   const out: string[] = [];
+  const inner: string[] = [];
   const ind = lines[i].indent;
   for (let j = i + 1; j < lines.length && lines[j].indent > ind; j += 1) {
     const st = lines[j].stmt;
-    if (st.k === 'assign' && !out.includes(st.to)) out.push(st.to);
+    if (st.k !== 'assign') continue;
+    if (st.declare) {
+      if (!inner.includes(st.to)) inner.push(st.to);
+    } else if (!inner.includes(st.to) && !out.includes(st.to)) {
+      out.push(st.to);
+    }
   }
   return out;
 }
@@ -111,7 +123,7 @@ function showWith(e: LtExpr, env: Map<string, Value>): string {
 function show(v: Value | undefined): string {
   if (v === undefined) return '?';
   if (typeof v === 'string') return `"${v}"`;
-  if (typeof v === 'boolean') return v ? 'True' : 'False';
+  if (typeof v === 'boolean') return v ? 'true' : 'false';
   return String(v);
 }
 
@@ -144,15 +156,42 @@ export async function loopTermination(
   const ctx = context as ReactiveContext<LoopTerminationFacetData>;
   const { lines, stepMs, whileCap } = ctx.data;
 
-  const env = new Map<string, Value>();
+  /** 이름 칸의 층 — 맨 앞이 바깥. 몸을 밟을 때마다 새 층이 선다. */
+  const scopes: Map<string, Value>[] = [new Map()];
   let whileCount = 0;
+
+  function lookup(name: string): Value | undefined {
+    for (let k = scopes.length - 1; k >= 0; k -= 1) {
+      if (scopes[k].has(name)) return scopes[k].get(name);
+    }
+    return undefined;
+  }
+
+  function store(name: string, value: Value, declare: boolean): void {
+    if (!declare) {
+      for (let k = scopes.length - 1; k >= 0; k -= 1) {
+        if (scopes[k].has(name)) {
+          scopes[k].set(name, value);
+          return;
+        }
+      }
+    }
+    scopes[scopes.length - 1].set(name, value);
+  }
+
+  /** 지금 보이는 이름과 값 — 안쪽 층이 바깥을 가린다. */
+  function visible(): Map<string, Value> {
+    const out = new Map<string, Value>();
+    for (const s of scopes) for (const [k, v] of s) out.set(k, v);
+    return out;
+  }
 
   function evalExpr(e: LtExpr): Value {
     if ('num' in e) return e.num;
     if ('str' in e) return e.str;
-    if ('var' in e) return env.get(e.var) ?? 0;
+    if ('var' in e) return lookup(e.var) ?? 0;
     if ('op' in e) return apply(e.op, evalExpr(e.l), evalExpr(e.r));
-    // 부르기 — 이 조각의 프로그램에는 틀을 세우지 않는 print 만 있다
+    // 부르기 — 이 조각의 프로그램에는 없다. 인자만 셈한다
     for (const a of e.args) evalExpr(a);
     return 0;
   }
@@ -169,21 +208,21 @@ export async function loopTermination(
       const st = lines[i].stmt;
       if (st.k === 'assign') {
         const value = evalExpr(st.value);
-        env.set(st.to, value);
+        store(st.to, value, st.declare === true);
         if (!(await pause())) return false;
         await ctx.emit({
           type: 'assign',
           payload: { line: i, name: st.to, value: typeof value === 'boolean' ? show(value) : value },
         });
-      } else if (st.k === 'expr') {
+      } else if (st.k === 'show') {
         evalExpr(st.value);
         if (!(await pause())) return false;
-        await ctx.emit({ type: 'expr', payload: { line: i } });
+        await ctx.emit({ type: 'show', payload: { line: i } });
       } else {
         const body = bodyOf(lines, i);
         for (;;) {
           if (ctx.cancelled) return false;
-          const shown = showWith(st.cond, env);
+          const shown = showWith(st.cond, visible());
           const answer = Boolean(evalExpr(st.cond));
           whileCount += 1;
           const halt = whileCount >= whileCap;
@@ -194,7 +233,10 @@ export async function loopTermination(
           });
           if (halt) return false;
           if (!answer) break;
-          if (!(await run(body))) return false;
+          scopes.push(new Map());
+          const ok = await run(body);
+          scopes.pop();
+          if (!ok) return false;
         }
       }
     }

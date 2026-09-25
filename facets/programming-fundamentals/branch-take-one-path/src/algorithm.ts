@@ -8,8 +8,14 @@
  * 걸음 규약 (줄 걸음):
  *   - 걸음 0 = 시작 (`init`). 아무 줄도 밟지 않았다
  *   - 밟은 줄 하나 = 한 걸음 (`step`). 조건은 그 머리줄의 걸음 안에서 셈한다
- *   - `else:` 줄은 밟지 않는다 — 갈래가 골라지면 흐름은 곧장 몸의 첫 줄로 간다
- *   - `elif` 줄은 셈했을 때만 밟는다
+ *   - `else` 줄은 밟지 않는다 — 갈래가 골라지면 흐름은 곧장 몸의 첫 줄로 간다
+ *   - `else if` 줄은 셈했을 때만 밟는다
+ *   - `let` 선언 줄도 한 걸음이다
+ *
+ * 변수 (조각 코드 표기 — `tasks/pseudo-notation.md`):
+ *   - `let x = 값` 이 이름을 만들고 처음 값을 넣는다. 그 뒤 `x = 값` 은 값만 바꾼다
+ *   - `let` 으로 만든 이름은 그 몸 안에서만 산다. 이 조각의 자료는 맨 바깥에서만 선언하므로
+ *     몸 안의 `let` 은 해석하지 않고 던진다 (스코프가 끝나는 것은 이 조각의 주장이 아니다)
  *
  * 이벤트 (전부 silent 아님 — 하나가 한 걸음):
  *   - `init`  payload `{ lines: Line[] }`
@@ -17,9 +23,9 @@
  *   - `step`  payload `{ line: number; cond?: boolean; operands?: [Value, Value];
  *                        value?: Value; out?: string }`
  *             `line` — 밟은 줄의 0 기반 차례
- *             `cond` · `operands` — 머리줄(if · elif)에서 셈한 조건과 그 두 피연산자 값
- *             `value` — 대입 줄이 넣은 값
- *             `out` — print 가 출력한 한 줄
+ *             `cond` · `operands` — 머리줄(if · else if)에서 셈한 조건과 그 두 피연산자 값
+ *             `value` — 선언 · 대입 줄이 넣은 값
+ *             `out` — show 가 내보낸 한 줄
  */
 import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
 
@@ -31,12 +37,11 @@ export type Expr =
   | { num: number }
   | { str: string }
   | { var: string }
-  | { op: BinOp; l: Expr; r: Expr }
-  | { call: string; args: Expr[] };
+  | { op: BinOp; l: Expr; r: Expr };
 
 export type Stmt =
-  | { k: 'assign'; to: string; value: Expr }
-  | { k: 'expr'; value: Expr }
+  | { k: 'assign'; to: string; value: Expr; declare?: boolean }
+  | { k: 'show'; value: Expr }
   | { k: 'if'; cond: Expr }
   | { k: 'elif'; cond: Expr }
   | { k: 'else' };
@@ -113,13 +118,10 @@ export async function branchTakeOnePath(
   }
 
   function show(v: Value): string {
-    if (v === null) return 'None';
-    if (typeof v === 'boolean') return v ? 'True' : 'False';
+    if (v === null) return 'null';
+    if (typeof v === 'boolean') return v ? 'true' : 'false';
     return String(v);
   }
-
-  // print 는 틀을 세우지 않는 내장 — 출력 목록에 한 줄을 더할 뿐이다
-  const output: string[] = [];
 
   function evaluate(e: Expr): Value {
     if ('num' in e) return e.num;
@@ -129,13 +131,7 @@ export async function branchTakeOnePath(
       if (v === undefined) throw new Error(`branchTakeOnePath: 없는 변수 ${e.var}`);
       return v;
     }
-    if ('op' in e) return applyOp(e.op, evaluate(e.l), evaluate(e.r));
-    const args = e.args.map(evaluate);
-    if (e.call === 'print') {
-      output.push(args.map(show).join(' '));
-      return null;
-    }
-    throw new Error(`branchTakeOnePath: 모르는 부르기 ${e.call}`);
+    return applyOp(e.op, evaluate(e.l), evaluate(e.r));
   }
 
   // 조건의 두 피연산자 — 식이 연산이면 그 두 값, 아니면 없음
@@ -169,7 +165,7 @@ export async function branchTakeOnePath(
             break;
           }
           if (hs.k !== 'if' && hs.k !== 'elif') break;
-          // 첫 머리줄은 이미 문을 지났다. 뒤따르는 elif 는 제 문을 지난다
+          // 첫 머리줄은 이미 문을 지났다. 뒤따르는 else if 는 제 문을 지난다
           if (c > 0 && !(await pause())) return false;
           const cond = evaluate(hs.cond) === true;
           const operands = operandsOf(hs.cond);
@@ -186,17 +182,19 @@ export async function branchTakeOnePath(
         continue;
       }
       if (st.k === 'assign') {
+        const declared = vars.has(st.to);
+        if (st.declare && (declared || lines[i]!.indent > 0)) {
+          throw new Error(`branchTakeOnePath: 해석하지 않는 선언 ${st.to}`);
+        }
+        if (!st.declare && !declared) {
+          throw new Error(`branchTakeOnePath: 선언 없는 이름 ${st.to}`);
+        }
         const value = evaluate(st.value);
         vars.set(st.to, value);
         await ctx.emit({ type: 'step', payload: { line: i, value } });
-      } else if (st.k === 'expr') {
-        const before = output.length;
-        evaluate(st.value);
-        const out = output.length > before ? output[output.length - 1] : undefined;
-        await ctx.emit({
-          type: 'step',
-          payload: out === undefined ? { line: i } : { line: i, out },
-        });
+      } else if (st.k === 'show') {
+        const out = show(evaluate(st.value));
+        await ctx.emit({ type: 'step', payload: { line: i, out } });
       }
       k += 1;
     }

@@ -206,7 +206,7 @@ export const loopBackStageView: CanvasView = {
           ? t('detail.true', 'The condition is true — into the body.')
           : t('detail.false', 'The condition is false — the flow leaves the loop.');
       } else {
-        detail = t('detail.print', 'Printed: {out}', { out: st.out });
+        detail = t('detail.show', 'Shown: {out}', { out: st.out });
       }
       return { head, detail };
     }
@@ -385,8 +385,8 @@ export const loopBackStageView: CanvasView = {
         height: r1(outH),
         rx: 4,
         fill: c.bgSubtle,
-        stroke: st?.act === 'print' ? c.accent : c.border,
-        'stroke-width': st?.act === 'print' ? 2 : 1,
+        stroke: st?.act === 'show' ? c.accent : c.border,
+        'stroke-width': st?.act === 'show' ? 2 : 1,
       }, svg);
       scene.output.forEach((o, j) => {
         text(o, px + 10, outTop + 8 + 20 + j * 18, { 'font-family': fonts.mono, 'font-size': fontSizes.md, fill: c.text }, svg);

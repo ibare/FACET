@@ -1,10 +1,11 @@
 /**
- * multiway-branch — if / elif / else 사슬을 줄 걸음으로 밟는다.
+ * multiway-branch — if / else if / else 사슬을 줄 걸음으로 밟는다.
  *
  * 1차 데이터는 줄 목록이다. 줄마다 들여쓰기 · 화면 글자 · 문 구조를 둔다. 이 알고리즘이
  * 문 구조를 해석해 밟는 차례와 조건의 참거짓을 셈한다 — 걸음표를 손으로 적지 않는다.
- * 사슬은 위에서부터 조건을 셈해 처음 참인 갈래 하나만 몸을 밟는다. 참을 만난 뒤의 `elif`
- * 는 셈하지도 밟지도 않는다. `else:` 줄은 밟지 않는다 (흐름이 곧장 몸의 첫 줄로 간다).
+ * 사슬은 위에서부터 조건을 셈해 처음 참인 갈래 하나만 몸을 밟는다. 참을 만난 뒤의 `else if`
+ * 는 셈하지도 밟지도 않는다. `else` 줄은 밟지 않는다 (흐름이 곧장 몸의 첫 줄로 간다).
+ * `let` 은 변수를 처음 만든다. 선언 없이 넣으려 하면 자료가 잘못된 것이다.
  *
  * 이벤트 (둘 다 걸음이다. silent 없음)
  *
@@ -14,9 +15,10 @@
  *     payload: {
  *       line: number;                     // 0 부터 센 줄 차례
  *       test?: { result: boolean; l?: Value; op?: Op; r?: Value };
- *                                         // if / elif 를 셈한 결과. 비교식이면 양쪽 값
- *       assigned?: { name: string; value: Value };   // 대입한 변수와 값
- *       printed?: string;                 // print 가 낸 한 줄
+ *                                         // if / else if 를 셈한 결과. 비교식이면 양쪽 값
+ *       assigned?: { name: string; value: Value; declared: boolean };
+ *                                         // 넣은 변수와 값. declared 면 let 으로 처음 만들었다
+ *       shown?: string;                   // show 가 낸 한 줄
  *     }
  */
 import type { FacetContext, ReactiveContext } from '@ffacet/core/runtime';
@@ -28,14 +30,13 @@ export type Expr =
   | { num: number }
   | { str: string }
   | { var: string }
-  | { op: Op; l: Expr; r: Expr }
-  | { call: string; args: Expr[] };
+  | { op: Op; l: Expr; r: Expr };
 
 export type Stmt =
-  | { k: 'assign'; to: string; value: Expr }
-  | { k: 'expr'; value: Expr }
+  | { k: 'assign'; to: string; value: Expr; declare?: boolean }
+  | { k: 'show'; value: Expr }
   | { k: 'if'; cond: Expr }
-  | { k: 'elif'; cond: Expr }
+  | { k: 'elseIf'; cond: Expr }
   | { k: 'else' };
 
 export type StmtKind = Stmt['k'];
@@ -54,8 +55,8 @@ export type Test = { result: boolean; l?: Value; op?: Op; r?: Value };
 type Step = {
   line: number;
   test?: Test;
-  assigned?: { name: string; value: Value };
-  printed?: string;
+  assigned?: { name: string; value: Value; declared: boolean };
+  shown?: string;
 };
 
 /** 해석이 밟을 수 있는 걸음의 상한 — 잘못된 자료가 끝없이 돌지 않게 */
@@ -80,41 +81,32 @@ function trace(lines: readonly CodeLine[]): Step[] {
   const env = new Map<string, Value>();
   const out: Step[] = [];
 
-  function evaluate(e: Expr, printed: string[]): Value | boolean | null {
+  function evaluate(e: Expr): Value | boolean {
     if ('num' in e) return e.num;
     if ('str' in e) return e.str;
     if ('var' in e) {
       const v = env.get(e.var);
-      if (v === undefined) throw new Error(`multiway-branch: 정의되지 않은 변수 ${e.var}`);
+      if (v === undefined) throw new Error(`multiway-branch: 선언되지 않은 변수 ${e.var}`);
       return v;
     }
-    if ('op' in e) {
-      const a = evaluate(e.l, printed);
-      const b = evaluate(e.r, printed);
-      if (typeof a === 'boolean' || typeof b === 'boolean' || a === null || b === null) {
-        throw new Error('multiway-branch: 비교식의 양쪽은 수나 글자여야 한다');
-      }
-      return binary(e.op, a, b);
+    const a = evaluate(e.l);
+    const b = evaluate(e.r);
+    if (typeof a === 'boolean' || typeof b === 'boolean') {
+      throw new Error('multiway-branch: 식의 양쪽은 수나 글자여야 한다');
     }
-    if (e.call === 'print') {
-      const parts: string[] = [];
-      for (const a of e.args) parts.push(String(evaluate(a, printed)));
-      printed.push(parts.join(' '));
-      return null;
-    }
-    throw new Error(`multiway-branch: 부를 수 없는 이름 ${e.call}`);
+    return binary(e.op, a, b);
   }
 
   function test(cond: Expr): Test {
     if ('op' in cond) {
-      const l = evaluate(cond.l, []);
-      const r = evaluate(cond.r, []);
-      if (typeof l === 'boolean' || typeof r === 'boolean' || l === null || r === null) {
+      const l = evaluate(cond.l);
+      const r = evaluate(cond.r);
+      if (typeof l === 'boolean' || typeof r === 'boolean') {
         throw new Error('multiway-branch: 조건의 양쪽은 수나 글자여야 한다');
       }
       return { result: Boolean(binary(cond.op, l, r)), l, op: cond.op, r };
     }
-    return { result: Boolean(evaluate(cond, [])) };
+    return { result: Boolean(evaluate(cond)) };
   }
 
   /** 머리줄 i 의 몸 — 바로 아래 들여쓰기가 더 깊은 줄들 가운데 한 칸 깊은 것 */
@@ -138,23 +130,26 @@ function trace(lines: readonly CodeLine[]): Step[] {
       const i = idxs[k];
       const st = lines[i].stmt;
       if (st.k === 'assign') {
-        const v = evaluate(st.value, []);
-        if (typeof v === 'boolean' || v === null) throw new Error('multiway-branch: 대입할 값이 없다');
+        const v = evaluate(st.value);
+        if (typeof v === 'boolean') throw new Error('multiway-branch: 넣을 값은 수나 글자여야 한다');
+        const declared = st.declare === true;
+        if (!declared && !env.has(st.to)) {
+          throw new Error(`multiway-branch: 선언 없이 넣는 변수 ${st.to} (L${i + 1})`);
+        }
         env.set(st.to, v);
-        push({ line: i, assigned: { name: st.to, value: v } });
+        push({ line: i, assigned: { name: st.to, value: v, declared } });
         k += 1;
-      } else if (st.k === 'expr') {
-        const printed: string[] = [];
-        evaluate(st.value, printed);
-        push(printed.length > 0 ? { line: i, printed: printed.join('\n') } : { line: i });
+      } else if (st.k === 'show') {
+        const v = evaluate(st.value);
+        push({ line: i, shown: String(v) });
         k += 1;
       } else if (st.k === 'if') {
-        // 사슬: if 뒤로 이어지는 같은 들여쓰기의 elif · else
+        // 사슬: if 뒤로 이어지는 같은 들여쓰기의 else if · else
         const chain = [i];
         let j = k + 1;
         while (j < idxs.length) {
           const kk = lines[idxs[j]].stmt.k;
-          if (kk !== 'elif' && kk !== 'else') break;
+          if (kk !== 'elseIf' && kk !== 'else') break;
           chain.push(idxs[j]);
           j += 1;
         }
@@ -164,7 +159,7 @@ function trace(lines: readonly CodeLine[]): Step[] {
             run(body(head));
             break;
           }
-          if (hs.k !== 'if' && hs.k !== 'elif') break;
+          if (hs.k !== 'if' && hs.k !== 'elseIf') break;
           const t = test(hs.cond);
           push({ line: head, test: t });
           if (t.result) {

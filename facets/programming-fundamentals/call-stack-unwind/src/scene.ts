@@ -92,7 +92,10 @@ function toStmt(v: unknown): Stmt | null {
   switch (o.k) {
     case 'assign': {
       const value = toExpr(o.value);
-      return typeof o.to === 'string' && value !== null ? { k: 'assign', to: o.to, value } : null;
+      if (typeof o.to !== 'string' || value === null) return null;
+      return o.declare === true
+        ? { k: 'assign', to: o.to, value, declare: true }
+        : { k: 'assign', to: o.to, value };
     }
     case 'expr': {
       const value = toExpr(o.value);

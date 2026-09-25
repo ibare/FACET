@@ -66,11 +66,11 @@ function r1(v: number): number {
   return x === 0 ? 0 : x;
 }
 
-/** 파이썬이 찍는 모양으로 값을 글자로 */
+/** 조각 코드 표기로 값을 글자로 (`true` · `false` · `null`) */
 function showValue(v: Value): string {
-  if (v === null) return 'None';
-  if (v === true) return 'True';
-  if (v === false) return 'False';
+  if (v === null) return 'null';
+  if (v === true) return 'true';
+  if (v === false) return 'false';
   if (typeof v === 'string') return '"' + v + '"';
   return String(v);
 }
@@ -102,7 +102,7 @@ function lineSegs(line: CodeLine, vars: ReadonlyMap<string, Value>): Seg[] {
     out.push({ kind: 'text', s: st.value === undefined ? 'return' : 'return ' });
     if (st.value !== undefined) exprSegs(st.value, vars, out);
   } else if (st.k === 'assign') {
-    out.push({ kind: 'text', s: st.to + ' = ' });
+    out.push({ kind: 'text', s: (st.declare === true ? 'let ' : '') + st.to + ' = ' });
     exprSegs(st.value, vars, out);
   } else if (st.k === 'expr') {
     exprSegs(st.value, vars, out);

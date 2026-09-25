@@ -36,7 +36,7 @@ export type SceneStep =
   | { kind: 'call'; line: number; from: number | null; fn: string }
   | { kind: 'test'; line: number; from: number | null; value: boolean }
   | { kind: 'assign'; line: number; from: number | null; to: string; value: SceneValue }
-  | { kind: 'print'; line: number; from: number | null; out: string }
+  | { kind: 'show'; line: number; from: number | null; out: string }
   | { kind: 'line'; line: number; from: number | null }
   | { kind: 'return'; line: number; from: number | null }
   | { kind: 'throw'; line: number; from: number | null; error: string }
@@ -52,7 +52,7 @@ export type SceneStep =
 
 export type SceneException = {
   error: string;
-  /** 예외가 선 줄부터 닿은 줄들, 잡은 except 줄까지 */
+  /** 예외가 선 줄부터 닿은 줄들, 잡은 catch 줄까지 */
   path: number[];
   caught: boolean;
 };
@@ -82,7 +82,7 @@ export function blocksOf(lines: readonly SceneLine[]): SceneBlock[] {
   let defIndent = -1;
   lines.forEach((l) => {
     if (fn !== null && l.indent <= defIndent) fn = null;
-    if (l.k === 'def' && l.name !== null) {
+    if (l.k === 'function' && l.name !== null) {
       fn = l.name;
       defIndent = l.indent;
     }
@@ -217,13 +217,13 @@ export const exceptionPropagateScene: ScenePlan<ExceptionPropagateScene> = {
           visited: visit(scene.visited, line),
           step: { kind: 'assign', line, from, to: str(p.to), value: value(p.value) },
         };
-      case 'print': {
+      case 'show': {
         const out = str(p.out);
         return {
           ...base,
           visited: visit(scene.visited, line),
           out: [...scene.out, out],
-          step: { kind: 'print', line, from, out },
+          step: { kind: 'show', line, from, out },
         };
       }
       case 'line':

@@ -8,7 +8,7 @@
  * 걸음 규약 (줄 걸음)
  *   - 걸음 0 은 시작 (`init`). 아무 줄도 밟지 않았다
  *   - 밟은 줄 하나 = 한 걸음. 조건 셈은 그 머리줄의 걸음 안에서 일어난다
- *   - `def` · `else` 줄은 밟지 않는다
+ *   - `function` · `else` 줄은 밟지 않는다
  *   - 부르기가 든 줄을 밟는 걸음이 곧 부르는 걸음(`call`)이다. 다음 걸음이 피호출 몸의 첫 줄이다
  *   - 재생은 **처음으로 조건이 거짓인 걸음**에서 멈춘다 — 가장 깊은 호출의 바닥 검사다.
  *     되돌아 나가는 길은 이 조각이 그리지 않는다. 그 전에 함수가 돌아오는 자료면 던진다
@@ -35,8 +35,9 @@ export type Expr =
   | { call: string; args: Expr[] };
 
 export type Stmt =
-  | { k: 'def'; name: string; params: string[] }
-  | { k: 'if' | 'elif' | 'while'; cond: Expr }
+  | { k: 'function'; name: string; params: string[] }
+  | { k: 'if' | 'elseIf' | 'while'; cond: Expr }
+  | { k: 'show'; value: Expr }
   | { k: 'else' }
   | { k: 'expr'; value: Expr }
   | { k: 'assign'; to: string; value: Expr }
@@ -85,12 +86,12 @@ export function walkProgram(lines: CodeLine[], stop: () => boolean): Walk[] {
   const walks: Walk[] = [];
   const defs = new Map<string, number>();
   lines.forEach((ln, i) => {
-    if (ln.stmt.k === 'def') defs.set(ln.stmt.name, i);
+    if (ln.stmt.k === 'function') defs.set(ln.stmt.name, i);
   });
   const globals = new Map<string, Val>();
   const frames: { fn: string; vars: Map<string, Val> }[] = [];
   const scope = (): Map<string, Val> => frames[frames.length - 1]?.vars ?? globals;
-  let printed: string | undefined;
+  let shown: string | undefined;
 
   const body = (head: number): number[] => {
     const base = lines[head]!.indent;
@@ -129,10 +130,6 @@ export function walkProgram(lines: CodeLine[], stop: () => boolean): Walk[] {
       if (typeof v === 'boolean') throw new Error(`L${at + 1}: 참거짓을 인자로 넘기지 않는다`);
       return v;
     });
-    if (e.call === 'print') {
-      printed = args.map(String).join(' ');
-      return '';
-    }
     return invoke(e.call, args, at);
   };
 
@@ -140,7 +137,7 @@ export function walkProgram(lines: CodeLine[], stop: () => boolean): Walk[] {
     const head = defs.get(name);
     if (head === undefined) throw new Error(`L${at + 1}: 정의되지 않은 함수 ${name}`);
     const def = lines[head]!.stmt;
-    if (def.k !== 'def') throw new Error('def 가 아니다');
+    if (def.k !== 'function') throw new Error('function 줄이 아니다');
     const self = frames[frames.length - 1]?.fn === name;
     walks.push({ kind: 'call', line: at, depth: frames.length, fn: name, args, self });
     const vars = new Map<string, Val>();
@@ -166,8 +163,8 @@ export function walkProgram(lines: CodeLine[], stop: () => boolean): Walk[] {
   const stepLine = (at: number, cond?: CondMark): void => {
     const w: Walk = { kind: 'line', line: at, depth: frames.length };
     if (cond) w.cond = cond;
-    if (printed !== undefined) w.out = printed;
-    printed = undefined;
+    if (shown !== undefined) w.out = shown;
+    shown = undefined;
     walks.push(w);
     if (cond && !cond.value) throw new Cut();
   };
@@ -177,14 +174,14 @@ export function walkProgram(lines: CodeLine[], stop: () => boolean): Walk[] {
       if (stop()) throw new Cut();
       const at = idxs[k]!;
       const st = lines[at]!.stmt;
-      if (st.k === 'def') continue;
+      if (st.k === 'function') continue;
       if (st.k === 'if') {
         let m = k + 1;
         const chain = [at];
         while (m < idxs.length) {
           if (stop()) throw new Cut();
           const kk = lines[idxs[m]!]!.stmt.k;
-          if (kk !== 'elif' && kk !== 'else') break;
+          if (kk !== 'elseIf' && kk !== 'else') break;
           chain.push(idxs[m]!);
           m += 1;
         }
@@ -195,7 +192,7 @@ export function walkProgram(lines: CodeLine[], stop: () => boolean): Walk[] {
             run(body(c));
             break;
           }
-          if (cs.k !== 'if' && cs.k !== 'elif') break;
+          if (cs.k !== 'if' && cs.k !== 'elseIf') break;
           const mark = condMark(cs.cond, c);
           stepLine(c, mark);
           if (mark.value) {
@@ -223,6 +220,13 @@ export function walkProgram(lines: CodeLine[], stop: () => boolean): Walk[] {
         stepLine(at);
         continue;
       }
+      if (st.k === 'show') {
+        const v = evalExpr(st.value, at);
+        if (typeof v === 'boolean') throw new Error(`L${at + 1}: 참거짓은 이 조각의 출력에 없다`);
+        shown = String(v);
+        stepLine(at);
+        continue;
+      }
       if (st.k === 'expr') {
         evalExpr(st.value, at);
         stepLine(at);
@@ -245,7 +249,7 @@ function programRows(lines: CodeLine[]): { indent: number; text: string; role: '
   return lines.map((ln) => ({
     indent: ln.indent,
     text: ln.text,
-    role: ln.stmt.k === 'def' ? 'def' : ln.indent === 0 ? 'top' : 'body',
+    role: ln.stmt.k === 'function' ? 'def' : ln.indent === 0 ? 'top' : 'body',
   }));
 }
 
@@ -258,8 +262,8 @@ export async function recursionSelfCall(
   if (ctx.cancelled) return;
   const firstCall = walks.find((w) => w.kind === 'call');
   const fn = firstCall && firstCall.kind === 'call' ? firstCall.fn : '';
-  const def = lines.find((l) => l.stmt.k === 'def' && l.stmt.name === fn)?.stmt;
-  const params = def && def.k === 'def' ? def.params : [];
+  const def = lines.find((l) => l.stmt.k === 'function' && l.stmt.name === fn)?.stmt;
+  const params = def && def.k === 'function' ? def.params : [];
   const maxDepth = walks.reduce((m, w) => Math.max(m, w.kind === 'call' ? w.depth + 1 : w.depth), 0);
 
   async function pause(): Promise<boolean> {

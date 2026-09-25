@@ -10,7 +10,7 @@
  */
 import type { ScenePlan, FacetRuntimeEvent } from '@ffacet/core/runtime';
 
-export type LineKind = 'assign' | 'expr' | 'if' | 'elif' | 'else';
+export type LineKind = 'assign' | 'show' | 'if' | 'elseIf' | 'else';
 export type SceneValue = number | string;
 
 export type SceneLine = { indent: number; text: string; kind: LineKind };
@@ -20,8 +20,8 @@ export type SceneTest = { result: boolean; l?: SceneValue; op?: string; r?: Scen
 export type Visit = {
   line: number;
   test?: SceneTest;
-  assigned?: { name: string; value: SceneValue };
-  printed?: string;
+  assigned?: { name: string; value: SceneValue; declared: boolean };
+  shown?: string;
 };
 
 export type MultiwayBranchStep =
@@ -45,7 +45,7 @@ export function bodyOf(lines: readonly SceneLine[], i: number): number[] {
   return out;
 }
 
-/** 맨 바깥의 if / elif / else 사슬들 */
+/** 맨 바깥의 if / else if / else 사슬들 */
 export function chainsOf(lines: readonly SceneLine[]): Chain[] {
   const chains: Chain[] = [];
   let cur: Chain | null = null;
@@ -55,7 +55,7 @@ export function chainsOf(lines: readonly SceneLine[]): Chain[] {
     if (l.kind === 'if') {
       cur = { heads: [i], bodies: [bodyOf(lines, i)], end: i };
       chains.push(cur);
-    } else if ((l.kind === 'elif' || l.kind === 'else') && cur) {
+    } else if ((l.kind === 'elseIf' || l.kind === 'else') && cur) {
       cur.heads.push(i);
       cur.bodies.push(bodyOf(lines, i));
     } else {
@@ -68,7 +68,7 @@ export function chainsOf(lines: readonly SceneLine[]): Chain[] {
   return chains;
 }
 
-const KINDS: readonly LineKind[] = ['assign', 'expr', 'if', 'elif', 'else'];
+const KINDS: readonly LineKind[] = ['assign', 'show', 'if', 'elseIf', 'else'];
 
 function isSceneValue(v: unknown): v is SceneValue {
   return typeof v === 'number' || typeof v === 'string';
@@ -114,10 +114,13 @@ function readVisit(p: object): Visit | null {
   if (typeof assigned === 'object' && assigned !== null) {
     const name: unknown = Reflect.get(assigned, 'name');
     const value: unknown = Reflect.get(assigned, 'value');
-    if (typeof name === 'string' && isSceneValue(value)) visit.assigned = { name, value };
+    const declared: unknown = Reflect.get(assigned, 'declared');
+    if (typeof name === 'string' && isSceneValue(value)) {
+      visit.assigned = { name, value, declared: declared === true };
+    }
   }
-  const printed: unknown = Reflect.get(p, 'printed');
-  if (typeof printed === 'string') visit.printed = printed;
+  const shown: unknown = Reflect.get(p, 'shown');
+  if (typeof shown === 'string') visit.shown = shown;
   return visit;
 }
 
@@ -139,7 +142,7 @@ export const multiwayBranchScene: ScenePlan<MultiwayBranchScene> = {
       return {
         lines: scene.lines,
         visits: [...scene.visits, visit],
-        output: visit.printed !== undefined ? [...scene.output, visit.printed] : scene.output,
+        output: visit.shown !== undefined ? [...scene.output, visit.shown] : scene.output,
         step: { kind: 'line', from: last ? last.line : null, ...visit },
       };
     }

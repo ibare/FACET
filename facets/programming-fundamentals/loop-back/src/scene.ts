@@ -14,7 +14,7 @@ export type LoopBackSceneLine = { indent: number; text: string; cond: boolean; a
 export type LoopBackStep =
   | { act: 'assign'; line: number; from: number | null; name: string; value: number }
   | { act: 'cond'; line: number; from: number | null; cond: boolean }
-  | { act: 'print'; line: number; from: number | null; out: string };
+  | { act: 'show'; line: number; from: number | null; out: string };
 
 export type LoopBackScene = {
   lines: LoopBackSceneLine[];
@@ -92,7 +92,7 @@ export const loopBackScene: ScenePlan<LoopBackScene> = {
         step: { act, line, from, cond },
       };
     }
-    if (act === 'print') {
+    if (act === 'show') {
       const { out } = p as { out?: unknown };
       if (typeof out !== 'string') return scene;
       return {

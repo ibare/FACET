@@ -6,7 +6,7 @@
  *
  * 동사는 "틀을 건너뛰며 거슬러 오른다" 다. 던져진 예외(붉은 알약)는 자기 줄에서 떠나 그 틀을
  * 세운 고리를 거꾸로 타고 **위층의 부른 줄로 올라간다.** 떠난 틀은 점선 테두리만 남고 남은 줄에
- * 줄이 그어진다. 닿은 자리가 try 몸 안이면 알약은 except 줄로 떨어져 잡힌다.
+ * 줄이 그어진다. 닿은 자리가 try 몸 안이면 알약은 catch 줄로 떨어져 잡힌다.
  */
 import {
   fonts,
@@ -77,7 +77,7 @@ function r1(v: number): number {
 }
 
 function show(v: SceneValue): string {
-  return v === null ? 'None' : String(v);
+  return v === null ? 'null' : String(v);
 }
 
 function layout(scene: ExceptionPropagateScene): Geometry {
@@ -295,8 +295,8 @@ export const exceptionPropagateStageView: CanvasView = {
             weight: 600,
           });
         } else if (frame !== null) {
-          const def = lines[block.lines[0]];
-          const binds = def.params.map((name, i) =>
+          const head = lines[block.lines[0]];
+          const binds = head.params.map((name, i) =>
             t('label.bind', '{name} = {value}', {
               name,
               value: show(i < frame.args.length ? frame.args[i] : null),
@@ -515,8 +515,8 @@ export const exceptionPropagateStageView: CanvasView = {
             }),
             '',
           ];
-        case 'print':
-          return [t('caption.print', 'Line {line} prints: {out}', { line, out: step.out }), ''];
+        case 'show':
+          return [t('caption.show', 'Line {line} shows: {out}', { line, out: step.out }), ''];
         case 'line':
           return [t('caption.line', 'Line {line}.', { line }), ''];
         case 'return':
@@ -529,7 +529,7 @@ export const exceptionPropagateStageView: CanvasView = {
           ];
         case 'throw':
           return [
-            t('caption.throw', 'Line {line} raises {error} inside {fn}.', {
+            t('caption.throw', 'Line {line} throws {error} inside {fn}.', {
               line,
               error: step.error,
               fn: fnLabel(owner),
@@ -552,7 +552,7 @@ export const exceptionPropagateStageView: CanvasView = {
           ];
         case 'catch':
           return [
-            t('caption.catch', 'Line {line}: except {error} catches it.', {
+            t('caption.catch', 'Line {line}: catch {error} catches it.', {
               line,
               error: step.error,
             }),
@@ -610,7 +610,7 @@ export const exceptionPropagateStageView: CanvasView = {
       const g = h.g;
 
       if ((step.kind === 'arrive' || step.kind === 'catch') && h.pill !== null) {
-        // 예외가 고리를 거꾸로 타고 위층의 부른 줄로 오른다 (catch 는 except 줄로 떨어진다)
+        // 예외가 고리를 거꾸로 타고 위층의 부른 줄로 오른다 (잡는 걸음에서는 catch 줄로 떨어진다)
         const pill = h.pill;
         const pts = h.lastLegPts;
         const len = lengthOf(pts);
@@ -650,7 +650,7 @@ export const exceptionPropagateStageView: CanvasView = {
       const bar = h.bar;
       const link = step.kind === 'call' ? h.links.get(step.fn) ?? null : null;
       const linkLen = link === null ? 0 : lengthOf(parsePts(link.getAttribute('points') ?? ''));
-      const out = step.kind === 'print' ? h.lastOut : null;
+      const out = step.kind === 'show' ? h.lastOut : null;
       const fromY = step.from === null ? undefined : g.rowY.get(step.from);
       const toY = g.rowY.get(step.line) ?? 0;
       const fromBlock = step.from === null ? null : g.blockOf.get(step.from) ?? null;

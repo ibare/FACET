@@ -31,7 +31,7 @@ export type Step =
   | { kind: 'start' }
   | { kind: 'call'; depth: number; line: number; from: number | null; self: boolean }
   | { kind: 'enter'; depth: number; line: number; again: boolean }
-  | { kind: 'line'; depth: number; line: number; from: number | null; printed: boolean };
+  | { kind: 'line'; depth: number; line: number; from: number | null; showed: boolean };
 
 export type RecursionSelfCallScene = {
   rows: Row[];
@@ -140,14 +140,14 @@ export const recursionSelfCallScene: ScenePlan<RecursionSelfCallScene> = {
           ? { line, l: c.l, op: c.op, r: c.r, value: c.value }
           : null;
       const out = typeof p.out === 'string' ? p.out : null;
-      const printed = out !== null;
+      const showed = out !== null;
       const output = out !== null ? [...scene.output, out] : [...scene.output];
       const frames = copyFrames(scene.frames);
       let topVisited = [...scene.topVisited];
       let step: Step;
       if (depth === 0) {
         topVisited = withLine(topVisited, line);
-        step = { kind: 'line', depth, line, from: fromOf(scene, depth), printed };
+        step = { kind: 'line', depth, line, from: fromOf(scene, depth), showed };
       } else {
         const f = frames[depth - 1];
         if (!f) return scene;
@@ -155,7 +155,7 @@ export const recursionSelfCallScene: ScenePlan<RecursionSelfCallScene> = {
         frames[depth - 1] = { ...f, visited: withLine(f.visited, line), cond: cond ?? f.cond };
         step = entering
           ? { kind: 'enter', depth, line, again: frames.slice(0, depth - 1).some((g) => g.fn === f.fn) }
-          : { kind: 'line', depth, line, from: fromOf(scene, depth), printed };
+          : { kind: 'line', depth, line, from: fromOf(scene, depth), showed };
       }
       return { ...scene, frames, topVisited, output, cursor: { depth, line }, step };
     }

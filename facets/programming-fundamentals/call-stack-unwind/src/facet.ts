@@ -41,10 +41,10 @@ export const callStackUnwindFacet: FacetJson = {
     type: 'call-stack-unwind',
     stepMs: 1500,
     lines: [
-      { indent: 0, text: 'def fact(n):', stmt: { k: 'def', name: 'fact', params: ['n'] } },
+      { indent: 0, text: 'function fact(n)', stmt: { k: 'def', name: 'fact', params: ['n'] } },
       {
         indent: 1,
-        text: 'if n == 1:',
+        text: 'if n == 1',
         stmt: { k: 'if', cond: { op: '==', l: { var: 'n' }, r: { num: 1 } } },
       },
       { indent: 2, text: 'return 1', stmt: { k: 'return', value: { num: 1 } } },
@@ -62,8 +62,8 @@ export const callStackUnwindFacet: FacetJson = {
       },
       {
         indent: 0,
-        text: 'x = fact(4)',
-        stmt: { k: 'assign', to: 'x', value: { call: 'fact', args: [{ num: 4 }] } },
+        text: 'let x = fact(4)',
+        stmt: { k: 'assign', declare: true, to: 'x', value: { call: 'fact', args: [{ num: 4 }] } },
       },
     ],
   },

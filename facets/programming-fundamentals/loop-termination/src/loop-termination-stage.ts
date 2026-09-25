@@ -193,7 +193,7 @@ export const loopTerminationStageView: CanvasView = {
           value: showValue(v),
         });
       }
-      if (st.kind === 'expr') return t('caption.expr', 'Line {line} runs.', { line: st.line + 1 });
+      if (st.kind === 'show') return t('caption.show', 'Line {line} runs.', { line: st.line + 1 });
       const check = scene.checks.find((c) => c.count === st.count);
       const shown = check?.shown ?? '';
       if (scene.halted && check?.answer && base.overlap.length === 0) {
@@ -540,7 +540,7 @@ export const loopTerminationStageView: CanvasView = {
           hd.marker.setAttribute('transform', `translate(${rd(x)} ${rd(y)})`);
         };
 
-        if (st.kind === 'expr') {
+        if (st.kind === 'show') {
           moveMarker(0);
           await tween(mine, MOVE_MS, moveMarker);
         } else if (st.kind === 'assign') {

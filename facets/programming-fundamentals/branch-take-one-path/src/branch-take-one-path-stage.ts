@@ -29,11 +29,11 @@ const FRAME_MS = 16;
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 const CAPTION_Y = 28;
-const CODE_TOP = 66;
+const CODE_TOP = 62;
 const CODE_BOTTOM = H - 112;
 const VARS_Y = H - 64;
 const OUT_Y = H - 28;
-const CARD_H = 30;
+const CARD_H_MAX = 30;
 const RAIL_GAP = 14;
 const CHAR_W = 8.4; // 고정폭 14px 한 글자 폭 (근사)
 const SMALL_CHAR_W = 7.8; // 고정폭 13px
@@ -57,6 +57,7 @@ type Layout = {
   fork: Fork | null;
   elseY: number;
   cardW: number;
+  cardH: number;
   centerX: Record<Col, number>;
   railX: Record<Col, number>;
   entry: Pt;
@@ -114,12 +115,12 @@ function layoutOf(lines: readonly Line[]): Layout {
     if (!first) u += 1;
     first = false;
     // 갈래 몸의 마지막 줄에서 한 칸 반쯤 아래 — 모이는 길이 설 자리
-    if (fork && i === fork.after) u += 1.2 + Math.max(1, fork.yes.length, fork.no.length);
+    if (fork && i === fork.after) u += 1.1 + Math.max(1, fork.yes.length, fork.no.length);
     col.set(i, 'trunk');
     units.set(i, u);
     if (fork && i === fork.head) {
-      const start = u + 1.8;
-      elseU = start - 0.8;
+      const start = u + 1.6;
+      elseU = start - 0.7;
       fork.yes.forEach((j, n) => {
         col.set(j, 'yes');
         units.set(j, start + n);
@@ -151,9 +152,11 @@ function layoutOf(lines: readonly Line[]): Layout {
     fork,
     elseY: fix(CODE_TOP + elseU * gap),
     cardW,
+    // 줄이 많아 간격이 좁아지면 카드도 낮춘다 — 세로는 늘리지 않는다
+    cardH: fix(Math.min(CARD_H_MAX, gap - 5)),
     centerX,
     railX,
-    entry: { x: railX.trunk, y: fix(firstY - 26) },
+    entry: { x: railX.trunk, y: fix(firstY - 20) },
   };
 }
 
@@ -236,8 +239,8 @@ function pathD(pts: readonly Pt[]): string {
 }
 
 function showValue(v: Value): string {
-  if (v === null) return 'None';
-  if (typeof v === 'boolean') return v ? 'True' : 'False';
+  if (v === null) return 'null';
+  if (typeof v === 'boolean') return v ? 'true' : 'false';
   if (typeof v === 'string') return `"${v}"`;
   return String(v);
 }
@@ -313,10 +316,10 @@ function draw(
           name: step.name,
           value: showValue(step.value),
         });
-  } else if (step.kind === 'print') {
+  } else if (step.kind === 'show') {
     caption = step.rejoin
-      ? t('caption.rejoin', 'The two branches meet again here. Printed: {out}', { out: step.out })
-      : t('caption.print', 'Printed: {out}', { out: step.out });
+      ? t('caption.rejoin', 'The two branches meet again here. Shown: {out}', { out: step.out })
+      : t('caption.show', 'Shown: {out}', { out: step.out });
   } else {
     caption = t('caption.line', 'This line runs.');
   }
@@ -460,9 +463,9 @@ function draw(
     const curOn = isCur && p >= 0.85;
     el(cardLayer, 'rect', {
       x: fix(lay.centerX[c] - lay.cardW / 2),
-      y: fix(y - CARD_H / 2),
+      y: fix(y - lay.cardH / 2),
       width: fix(lay.cardW),
-      height: CARD_H,
+      height: lay.cardH,
       rx: 6,
       fill: isStepped && (!isCur || curOn) ? colors.bgSubtle : colors.bg,
       stroke: curOn ? colors.itemActive : isStepped && !isCur ? colors.primary : colors.border,
@@ -523,7 +526,7 @@ function draw(
         'text',
         {
           x: fix(lay.centerX[leftCol]),
-          y: fix(lastY + CARD_H / 2 + 18),
+          y: fix(lastY + lay.cardH / 2 + 18),
           'text-anchor': 'middle',
           'font-family': fonts.body,
           'font-size': fontSizes.sm,
@@ -549,6 +552,20 @@ function draw(
     },
     t('label.vars', 'variables'),
   );
+  // 프로그램이 끝났을 때 — 가지 않은 갈래에서만 값을 바꾸는 이름 가운데 처음 값 그대로인 것
+  const kept = new Set<string>();
+  if (scene.done && fork && leftCol !== null) {
+    const leftBody = new Set(leftCol === 'yes' ? fork.yes : fork.no);
+    const onlyThere = new Set<string>();
+    const elsewhere = new Set<string>();
+    lines.forEach((l, i) => {
+      if (l.stmt.k !== 'assign' || l.stmt.declare) return;
+      (leftBody.has(i) ? onlyThere : elsewhere).add(l.stmt.to);
+    });
+    for (const v of scene.vars) {
+      if (onlyThere.has(v.name) && !elsewhere.has(v.name) && v.value === v.first) kept.add(v.name);
+    }
+  }
   let sx = slotX0;
   const flowing = step && step.kind === 'assign' && p < 1 ? step : null;
   for (const v of scene.vars) {
@@ -571,7 +588,24 @@ function draw(
       fill: colors.bgSubtle,
       stroke: step?.kind === 'assign' && step.name === v.name ? colors.itemActive : colors.border,
       'stroke-width': 1.5,
+      // 가지 않은 갈래가 바꾸려던 이름 — 그 갈래의 점선을 이어받는다
+      ...(kept.has(v.name) ? { 'stroke-dasharray': '4 4' } : {}),
     });
+    if (kept.has(v.name)) {
+      el(
+        g,
+        'text',
+        {
+          x: fix(w / 2),
+          y: -20,
+          'text-anchor': 'middle',
+          'font-family': fonts.body,
+          'font-size': fontSizes.sm,
+          fill: colors.textMuted,
+        },
+        t('label.unchanged', 'still its first value'),
+      );
+    }
     el(
       g,
       'text',
@@ -580,31 +614,6 @@ function draw(
     );
     sx = fix(sx + w + 10);
   }
-  // 프로그램이 끝났을 때 — 코드에는 대입이 있으나 끝내 생기지 않은 이름
-  if (scene.done) {
-    const have = new Set(scene.vars.map((v) => v.name));
-    const never: string[] = [];
-    for (const l of lines) {
-      if (l.stmt.k === 'assign' && !have.has(l.stmt.to) && !never.includes(l.stmt.to)) {
-        never.push(l.stmt.to);
-      }
-    }
-    if (never.length > 0) {
-      el(
-        svg,
-        'text',
-        {
-          x: fix(sx + 6),
-          y: fix(VARS_Y + 5),
-          'font-family': fonts.body,
-          'font-size': fontSizes.sm,
-          fill: colors.textMuted,
-        },
-        t('label.never', 'never created: {names}', { names: never.join(', ') }),
-      );
-    }
-  }
-
   // ── 출력 ──
   el(
     svg,
@@ -618,15 +627,15 @@ function draw(
     },
     t('label.output', 'output'),
   );
-  const printing = step && step.kind === 'print' && p < 1 ? step : null;
+  const showing = step && step.kind === 'show' && p < 1 ? step : null;
   let ox = slotX0;
   scene.output.forEach((o, k) => {
     const last = k === scene.output.length - 1;
     let x = ox;
     let y = OUT_Y;
-    if (printing && last) {
-      x = lerp(textX(printing.line), ox, p);
-      y = lerp(lay.y.get(printing.line) ?? CODE_TOP, OUT_Y, p);
+    if (showing && last) {
+      x = lerp(textX(showing.line), ox, p);
+      y = lerp(lay.y.get(showing.line) ?? CODE_TOP, OUT_Y, p);
     }
     el(
       svg,
