@@ -3316,7 +3316,241 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/network/arp-cache:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/ask-who-has:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/back-off-on-loss:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/bits-as-signal:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/cache-ttl:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/certificate-chain:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/collision-and-backoff:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/control-and-data-channel:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/count-to-infinity:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/delegate-down-the-tree:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/echo-and-reply:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/forwarding-table:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/frame-boundary:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/hop-by-hop:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/hop-count-metric:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/network/ip-routing:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/layer-wraps-payload:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/link-state-flood:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/longest-prefix-match:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/mac-is-local:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/nat-mapping-table:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/path-vector-policy:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/peer-layer-talk:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/port-demultiplex:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/receiver-window:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/request-response:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/rewrite-address-port:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/rule-match-order:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/sawtooth:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/send-and-forget:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/sequence-number:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/shared-secret-in-public:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/shortest-path-tree:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/slow-start:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/stateless-needs-token:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/store-and-forward:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/three-way-sync:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/token-bearer:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/ttl-expired-reports:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/network/upgrade-then-keep-open:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -4232,6 +4466,9 @@ importers:
       '@ffacet/algorithm-angle-not-length':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/angle-not-length
+      '@ffacet/algorithm-arp-cache':
+        specifier: workspace:*
+        version: link:../../facets/network/arp-cache
       '@ffacet/algorithm-array':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/array
@@ -4241,6 +4478,9 @@ importers:
       '@ffacet/algorithm-array-traversal-order':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/array-traversal-order
+      '@ffacet/algorithm-ask-who-has':
+        specifier: workspace:*
+        version: link:../../facets/network/ask-who-has
       '@ffacet/algorithm-assign-then-move':
         specifier: workspace:*
         version: link:../../facets/ml-basics/assign-then-move
@@ -4262,6 +4502,9 @@ importers:
       '@ffacet/algorithm-b-tree':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/b-tree
+      '@ffacet/algorithm-back-off-on-loss':
+        specifier: workspace:*
+        version: link:../../facets/network/back-off-on-loss
       '@ffacet/algorithm-backtracking':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/backtracking
@@ -4307,6 +4550,9 @@ importers:
       '@ffacet/algorithm-bit-shift':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/bit-shift
+      '@ffacet/algorithm-bits-as-signal':
+        specifier: workspace:*
+        version: link:../../facets/network/bits-as-signal
       '@ffacet/algorithm-bitwise-ops':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/bitwise-ops
@@ -4385,6 +4631,9 @@ importers:
       '@ffacet/algorithm-cache-replacement':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/cache-replacement
+      '@ffacet/algorithm-cache-ttl':
+        specifier: workspace:*
+        version: link:../../facets/network/cache-ttl
       '@ffacet/algorithm-caching-cdn':
         specifier: workspace:*
         version: link:../../facets/system-design/caching-cdn
@@ -4397,6 +4646,9 @@ importers:
       '@ffacet/algorithm-carry-several-lines':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/carry-several-lines
+      '@ffacet/algorithm-certificate-chain':
+        specifier: workspace:*
+        version: link:../../facets/network/certificate-chain
       '@ffacet/algorithm-chain-of-blocks':
         specifier: workspace:*
         version: link:../../facets/os/chain-of-blocks
@@ -4418,6 +4670,9 @@ importers:
       '@ffacet/algorithm-coin-flip-height':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/coin-flip-height
+      '@ffacet/algorithm-collision-and-backoff':
+        specifier: workspace:*
+        version: link:../../facets/network/collision-and-backoff
       '@ffacet/algorithm-compare-and-swap':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/compare-and-swap
@@ -4439,6 +4694,9 @@ importers:
       '@ffacet/algorithm-context-switching':
         specifier: workspace:*
         version: link:../../facets/os/context-switching
+      '@ffacet/algorithm-control-and-data-channel':
+        specifier: workspace:*
+        version: link:../../facets/network/control-and-data-channel
       '@ffacet/algorithm-control-hazard':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/control-hazard
@@ -4454,6 +4712,9 @@ importers:
       '@ffacet/algorithm-count-then-place':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/count-then-place
+      '@ffacet/algorithm-count-to-infinity':
+        specifier: workspace:*
+        version: link:../../facets/network/count-to-infinity
       '@ffacet/algorithm-counting-permits':
         specifier: workspace:*
         version: link:../../facets/os/counting-permits
@@ -4496,6 +4757,9 @@ importers:
       '@ffacet/algorithm-decision-tree':
         specifier: workspace:*
         version: link:../../facets/ml-basics/decision-tree
+      '@ffacet/algorithm-delegate-down-the-tree':
+        specifier: workspace:*
+        version: link:../../facets/network/delegate-down-the-tree
       '@ffacet/algorithm-demote-on-overuse':
         specifier: workspace:*
         version: link:../../facets/os/demote-on-overuse
@@ -4556,6 +4820,9 @@ importers:
       '@ffacet/algorithm-dynamic-programming':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/dynamic-programming
+      '@ffacet/algorithm-echo-and-reply':
+        specifier: workspace:*
+        version: link:../../facets/network/echo-and-reply
       '@ffacet/algorithm-edit-distance':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/edit-distance
@@ -4643,9 +4910,15 @@ importers:
       '@ffacet/algorithm-floyd-warshall':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/floyd-warshall
+      '@ffacet/algorithm-forwarding-table':
+        specifier: workspace:*
+        version: link:../../facets/network/forwarding-table
       '@ffacet/algorithm-four-state-hysteresis':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/four-state-hysteresis
+      '@ffacet/algorithm-frame-boundary':
+        specifier: workspace:*
+        version: link:../../facets/network/frame-boundary
       '@ffacet/algorithm-function-as-value':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/function-as-value
@@ -4739,6 +5012,12 @@ importers:
       '@ffacet/algorithm-hold-and-wait':
         specifier: workspace:*
         version: link:../../facets/os/hold-and-wait
+      '@ffacet/algorithm-hop-by-hop':
+        specifier: workspace:*
+        version: link:../../facets/network/hop-by-hop
+      '@ffacet/algorithm-hop-count-metric':
+        specifier: workspace:*
+        version: link:../../facets/network/hop-count-metric
       '@ffacet/algorithm-hybrid-search':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/hybrid-search
@@ -4838,6 +5117,9 @@ importers:
       '@ffacet/algorithm-latency-ladder':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/latency-ladder
+      '@ffacet/algorithm-layer-wraps-payload':
+        specifier: workspace:*
+        version: link:../../facets/network/layer-wraps-payload
       '@ffacet/algorithm-leading-zeros-tell':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/leading-zeros-tell
@@ -4853,6 +5135,9 @@ importers:
       '@ffacet/algorithm-linear-search':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/linear-search
+      '@ffacet/algorithm-link-state-flood':
+        specifier: workspace:*
+        version: link:../../facets/network/link-state-flood
       '@ffacet/algorithm-linked-list-singly':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/linked-list-singly
@@ -4868,6 +5153,9 @@ importers:
       '@ffacet/algorithm-logistic-regression':
         specifier: workspace:*
         version: link:../../facets/ml-basics/logistic-regression
+      '@ffacet/algorithm-longest-prefix-match':
+        specifier: workspace:*
+        version: link:../../facets/network/longest-prefix-match
       '@ffacet/algorithm-look-closely-at-few':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/look-closely-at-few
@@ -4892,6 +5180,9 @@ importers:
       '@ffacet/algorithm-lru-cache':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/lru-cache
+      '@ffacet/algorithm-mac-is-local':
+        specifier: workspace:*
+        version: link:../../facets/network/mac-is-local
       '@ffacet/algorithm-mantissa-and-exponent':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/mantissa-and-exponent
@@ -4976,6 +5267,9 @@ importers:
       '@ffacet/algorithm-narrowing-loss':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/narrowing-loss
+      '@ffacet/algorithm-nat-mapping-table':
+        specifier: workspace:*
+        version: link:../../facets/network/nat-mapping-table
       '@ffacet/algorithm-negate-and-add-one':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/negate-and-add-one
@@ -5063,6 +5357,9 @@ importers:
       '@ffacet/algorithm-path-resolution':
         specifier: workspace:*
         version: link:../../facets/os/path-resolution
+      '@ffacet/algorithm-path-vector-policy':
+        specifier: workspace:*
+        version: link:../../facets/network/path-vector-policy
       '@ffacet/algorithm-pattern-from-history':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/pattern-from-history
@@ -5072,6 +5369,9 @@ importers:
       '@ffacet/algorithm-pcb-holds-state':
         specifier: workspace:*
         version: link:../../facets/os/pcb-holds-state
+      '@ffacet/algorithm-peer-layer-talk':
+        specifier: workspace:*
+        version: link:../../facets/network/peer-layer-talk
       '@ffacet/algorithm-penalize-repeats':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/penalize-repeats
@@ -5096,6 +5396,9 @@ importers:
       '@ffacet/algorithm-polymorphism':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/polymorphism
+      '@ffacet/algorithm-port-demultiplex':
+        specifier: workspace:*
+        version: link:../../facets/network/port-demultiplex
       '@ffacet/algorithm-positional-value':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/positional-value
@@ -5177,6 +5480,9 @@ importers:
       '@ffacet/algorithm-recall-speed-tradeoff':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/recall-speed-tradeoff
+      '@ffacet/algorithm-receiver-window':
+        specifier: workspace:*
+        version: link:../../facets/network/receiver-window
       '@ffacet/algorithm-recency-reorder':
         specifier: workspace:*
         version: link:../../facets/os/recency-reorder
@@ -5222,6 +5528,9 @@ importers:
       '@ffacet/algorithm-replay-after-crash':
         specifier: workspace:*
         version: link:../../facets/os/replay-after-crash
+      '@ffacet/algorithm-request-response':
+        specifier: workspace:*
+        version: link:../../facets/network/request-response
       '@ffacet/algorithm-requires-sorted':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/requires-sorted
@@ -5234,6 +5543,9 @@ importers:
       '@ffacet/algorithm-return-to-caller':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/return-to-caller
+      '@ffacet/algorithm-rewrite-address-port':
+        specifier: workspace:*
+        version: link:../../facets/network/rewrite-address-port
       '@ffacet/algorithm-rolling-hash':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/rolling-hash
@@ -5249,6 +5561,9 @@ importers:
       '@ffacet/algorithm-row-vs-column-walk':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/row-vs-column-walk
+      '@ffacet/algorithm-rule-match-order':
+        specifier: workspace:*
+        version: link:../../facets/network/rule-match-order
       '@ffacet/algorithm-same-word-vs-same-meaning':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/same-word-vs-same-meaning
@@ -5258,6 +5573,9 @@ importers:
       '@ffacet/algorithm-save-and-restore':
         specifier: workspace:*
         version: link:../../facets/os/save-and-restore
+      '@ffacet/algorithm-sawtooth':
+        specifier: workspace:*
+        version: link:../../facets/network/sawtooth
       '@ffacet/algorithm-scan-until-found':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/scan-until-found
@@ -5285,9 +5603,15 @@ importers:
       '@ffacet/algorithm-selection-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/selection-sort
+      '@ffacet/algorithm-send-and-forget':
+        specifier: workspace:*
+        version: link:../../facets/network/send-and-forget
       '@ffacet/algorithm-separate-components':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/separate-components
+      '@ffacet/algorithm-sequence-number':
+        specifier: workspace:*
+        version: link:../../facets/network/sequence-number
       '@ffacet/algorithm-set-associative-cache':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/set-associative-cache
@@ -5300,6 +5624,9 @@ importers:
       '@ffacet/algorithm-share-prefix-path':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/share-prefix-path
+      '@ffacet/algorithm-shared-secret-in-public':
+        specifier: workspace:*
+        version: link:../../facets/network/shared-secret-in-public
       '@ffacet/algorithm-shell-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/shell-sort
@@ -5315,6 +5642,9 @@ importers:
       '@ffacet/algorithm-shortest-first':
         specifier: workspace:*
         version: link:../../facets/os/shortest-first
+      '@ffacet/algorithm-shortest-path-tree':
+        specifier: workspace:*
+        version: link:../../facets/network/shortest-path-tree
       '@ffacet/algorithm-sieve':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/sieve
@@ -5345,6 +5675,9 @@ importers:
       '@ffacet/algorithm-skip-list':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/skip-list
+      '@ffacet/algorithm-slow-start':
+        specifier: workspace:*
+        version: link:../../facets/network/slow-start
       '@ffacet/algorithm-sort-edges-avoid-cycle':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/sort-edges-avoid-cycle
@@ -5396,9 +5729,15 @@ importers:
       '@ffacet/algorithm-state-transitions':
         specifier: workspace:*
         version: link:../../facets/os/state-transitions
+      '@ffacet/algorithm-stateless-needs-token':
+        specifier: workspace:*
+        version: link:../../facets/network/stateless-needs-token
       '@ffacet/algorithm-static-prediction':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/static-prediction
+      '@ffacet/algorithm-store-and-forward':
+        specifier: workspace:*
+        version: link:../../facets/network/store-and-forward
       '@ffacet/algorithm-stride-and-miss':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/stride-and-miss
@@ -5441,6 +5780,9 @@ importers:
       '@ffacet/algorithm-three-edit-choices':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/three-edit-choices
+      '@ffacet/algorithm-three-way-sync':
+        specifier: workspace:*
+        version: link:../../facets/network/three-way-sync
       '@ffacet/algorithm-through-middle-node':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/through-middle-node
@@ -5453,6 +5795,9 @@ importers:
       '@ffacet/algorithm-tlb-caches-translation':
         specifier: workspace:*
         version: link:../../facets/os/tlb-caches-translation
+      '@ffacet/algorithm-token-bearer':
+        specifier: workspace:*
+        version: link:../../facets/network/token-bearer
       '@ffacet/algorithm-tokenization':
         specifier: workspace:*
         version: link:../../facets/compilers/tokenization
@@ -5489,6 +5834,9 @@ importers:
       '@ffacet/algorithm-tsne':
         specifier: workspace:*
         version: link:../../facets/ml-basics/tsne
+      '@ffacet/algorithm-ttl-expired-reports':
+        specifier: workspace:*
+        version: link:../../facets/network/ttl-expired-reports
       '@ffacet/algorithm-turnaround-vs-wait':
         specifier: workspace:*
         version: link:../../facets/os/turnaround-vs-wait
@@ -5519,6 +5867,9 @@ importers:
       '@ffacet/algorithm-unrepresentable-fraction':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/unrepresentable-fraction
+      '@ffacet/algorithm-upgrade-then-keep-open':
+        specifier: workspace:*
+        version: link:../../facets/network/upgrade-then-keep-open
       '@ffacet/algorithm-value-in-place':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/value-in-place

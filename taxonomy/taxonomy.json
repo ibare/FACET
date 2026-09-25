@@ -529,34 +529,78 @@
         {
           "id": "osi-tcp",
           "name": {"en":"OSI / TCP-IP Layers","ko":"OSI / TCP-IP 계층","ja":"OSI / TCP-IP 階層","zh":"OSI / TCP-IP 分层","ar":"طبقات OSI / TCP-IP","es":"Capas OSI / TCP-IP","fr":"Couches OSI / TCP-IP","hi":"OSI / TCP-IP परतें","id":"Lapisan OSI / TCP-IP","pt":"Camadas OSI / TCP-IP"},
-          "facets": []
+          "facets": [
+            "facet:layerWrapsPayload",
+            "facet:peerLayerTalk",
+            "facet:bitsAsSignal",
+            "facet:frameBoundary",
+            "facet:hopByHop",
+            "facet:portDemultiplex"
+          ]
         },
         {
           "id": "data-link",
           "name": {"en":"Data Link Layer","ko":"데이터 링크","ja":"データリンク層","zh":"数据链路层","ar":"طبقة ربط البيانات","es":"Capa de enlace de datos","fr":"Couche liaison de données","hi":"डेटा लिंक परत","id":"Lapisan Data Link","pt":"Camada de enlace"},
-          "facets": []
+          "facets": [
+            "facet:collisionAndBackoff",
+            "facet:macIsLocal",
+            "facet:askWhoHas",
+            "facet:arpCache"
+          ]
         },
         {
           "id": "network-routing",
           "name": {"en":"Network Layer","ko":"네트워크 계층","ja":"ネットワーク層","zh":"网络层","ar":"طبقة الشبكة","es":"Capa de red","fr":"Couche réseau","hi":"नेटवर्क परत","id":"Lapisan Jaringan","pt":"Camada de rede"},
           "facets": [
-            "facet:ipRouting"
+            "facet:ipRouting",
+            "facet:longestPrefixMatch",
+            "facet:forwardingTable",
+            "facet:hopCountMetric",
+            "facet:countToInfinity",
+            "facet:linkStateFlood",
+            "facet:shortestPathTree",
+            "facet:pathVectorPolicy",
+            "facet:rewriteAddressPort",
+            "facet:natMappingTable",
+            "facet:echoAndReply",
+            "facet:ttlExpiredReports"
           ]
         },
         {
           "id": "transport",
           "name": {"en":"Transport Layer","ko":"전송 계층","ja":"トランスポート層","zh":"传输层","ar":"طبقة النقل","es":"Capa de transporte","fr":"Couche transport","hi":"ट्रांसपोर्ट परत","id":"Lapisan Transport","pt":"Camada de transporte"},
-          "facets": []
+          "facets": [
+            "facet:threeWaySync",
+            "facet:sequenceNumber",
+            "facet:receiverWindow",
+            "facet:slowStart",
+            "facet:backOffOnLoss",
+            "facet:sawtooth",
+            "facet:sendAndForget"
+          ]
         },
         {
           "id": "application",
           "name": {"en":"Application Layer","ko":"응용 계층","ja":"アプリケーション層","zh":"应用层","ar":"طبقة التطبيقات","es":"Capa de aplicación","fr":"Couche application","hi":"एप्लिकेशन परत","id":"Lapisan Aplikasi","pt":"Camada de aplicação"},
-          "facets": []
+          "facets": [
+            "facet:requestResponse",
+            "facet:statelessNeedsToken",
+            "facet:delegateDownTheTree",
+            "facet:cacheTtl",
+            "facet:storeAndForward",
+            "facet:controlAndDataChannel",
+            "facet:upgradeThenKeepOpen"
+          ]
         },
         {
           "id": "network-security",
           "name": {"en":"Network Security","ko":"보안","ja":"ネットワークセキュリティ","zh":"网络安全","ar":"أمن الشبكات","es":"Seguridad de red","fr":"Sécurité réseau","hi":"नेटवर्क सुरक्षा","id":"Keamanan Jaringan","pt":"Segurança de rede"},
-          "facets": []
+          "facets": [
+            "facet:sharedSecretInPublic",
+            "facet:certificateChain",
+            "facet:tokenBearer",
+            "facet:ruleMatchOrder"
+          ]
         }
       ]
     },

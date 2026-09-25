@@ -1496,4 +1496,121 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:ioTransferModes', () =>
     import('@ffacet/algorithm-io-transfer-modes').then((m) => m.registerIoTransferModes()),
   );
+  registerFacetLoader('facet:layerWrapsPayload', () =>
+    import('@ffacet/algorithm-layer-wraps-payload').then((m) => m.registerLayerWrapsPayload()),
+  );
+  registerFacetLoader('facet:peerLayerTalk', () =>
+    import('@ffacet/algorithm-peer-layer-talk').then((m) => m.registerPeerLayerTalk()),
+  );
+  registerFacetLoader('facet:bitsAsSignal', () =>
+    import('@ffacet/algorithm-bits-as-signal').then((m) => m.registerBitsAsSignal()),
+  );
+  registerFacetLoader('facet:frameBoundary', () =>
+    import('@ffacet/algorithm-frame-boundary').then((m) => m.registerFrameBoundary()),
+  );
+  registerFacetLoader('facet:hopByHop', () =>
+    import('@ffacet/algorithm-hop-by-hop').then((m) => m.registerHopByHop()),
+  );
+  registerFacetLoader('facet:portDemultiplex', () =>
+    import('@ffacet/algorithm-port-demultiplex').then((m) => m.registerPortDemultiplex()),
+  );
+  registerFacetLoader('facet:collisionAndBackoff', () =>
+    import('@ffacet/algorithm-collision-and-backoff').then((m) => m.registerCollisionAndBackoff()),
+  );
+  registerFacetLoader('facet:macIsLocal', () =>
+    import('@ffacet/algorithm-mac-is-local').then((m) => m.registerMacIsLocal()),
+  );
+  registerFacetLoader('facet:askWhoHas', () =>
+    import('@ffacet/algorithm-ask-who-has').then((m) => m.registerAskWhoHas()),
+  );
+  registerFacetLoader('facet:arpCache', () =>
+    import('@ffacet/algorithm-arp-cache').then((m) => m.registerArpCache()),
+  );
+  registerFacetLoader('facet:threeWaySync', () =>
+    import('@ffacet/algorithm-three-way-sync').then((m) => m.registerThreeWaySync()),
+  );
+  registerFacetLoader('facet:sequenceNumber', () =>
+    import('@ffacet/algorithm-sequence-number').then((m) => m.registerSequenceNumber()),
+  );
+  registerFacetLoader('facet:receiverWindow', () =>
+    import('@ffacet/algorithm-receiver-window').then((m) => m.registerReceiverWindow()),
+  );
+  registerFacetLoader('facet:slowStart', () =>
+    import('@ffacet/algorithm-slow-start').then((m) => m.registerSlowStart()),
+  );
+  registerFacetLoader('facet:backOffOnLoss', () =>
+    import('@ffacet/algorithm-back-off-on-loss').then((m) => m.registerBackOffOnLoss()),
+  );
+  registerFacetLoader('facet:sawtooth', () =>
+    import('@ffacet/algorithm-sawtooth').then((m) => m.registerSawtooth()),
+  );
+  registerFacetLoader('facet:sendAndForget', () =>
+    import('@ffacet/algorithm-send-and-forget').then((m) => m.registerSendAndForget()),
+  );
+  registerFacetLoader('facet:sharedSecretInPublic', () =>
+    import('@ffacet/algorithm-shared-secret-in-public').then((m) => m.registerSharedSecretInPublic()),
+  );
+  registerFacetLoader('facet:certificateChain', () =>
+    import('@ffacet/algorithm-certificate-chain').then((m) => m.registerCertificateChain()),
+  );
+  registerFacetLoader('facet:tokenBearer', () =>
+    import('@ffacet/algorithm-token-bearer').then((m) => m.registerTokenBearer()),
+  );
+  registerFacetLoader('facet:ruleMatchOrder', () =>
+    import('@ffacet/algorithm-rule-match-order').then((m) => m.registerRuleMatchOrder()),
+  );
+  registerFacetLoader('facet:requestResponse', () =>
+    import('@ffacet/algorithm-request-response').then((m) => m.registerRequestResponse()),
+  );
+  registerFacetLoader('facet:statelessNeedsToken', () =>
+    import('@ffacet/algorithm-stateless-needs-token').then((m) => m.registerStatelessNeedsToken()),
+  );
+  registerFacetLoader('facet:delegateDownTheTree', () =>
+    import('@ffacet/algorithm-delegate-down-the-tree').then((m) => m.registerDelegateDownTheTree()),
+  );
+  registerFacetLoader('facet:cacheTtl', () =>
+    import('@ffacet/algorithm-cache-ttl').then((m) => m.registerCacheTtl()),
+  );
+  registerFacetLoader('facet:storeAndForward', () =>
+    import('@ffacet/algorithm-store-and-forward').then((m) => m.registerStoreAndForward()),
+  );
+  registerFacetLoader('facet:controlAndDataChannel', () =>
+    import('@ffacet/algorithm-control-and-data-channel').then((m) => m.registerControlAndDataChannel()),
+  );
+  registerFacetLoader('facet:upgradeThenKeepOpen', () =>
+    import('@ffacet/algorithm-upgrade-then-keep-open').then((m) => m.registerUpgradeThenKeepOpen()),
+  );
+  registerFacetLoader('facet:longestPrefixMatch', () =>
+    import('@ffacet/algorithm-longest-prefix-match').then((m) => m.registerLongestPrefixMatch()),
+  );
+  registerFacetLoader('facet:forwardingTable', () =>
+    import('@ffacet/algorithm-forwarding-table').then((m) => m.registerForwardingTable()),
+  );
+  registerFacetLoader('facet:hopCountMetric', () =>
+    import('@ffacet/algorithm-hop-count-metric').then((m) => m.registerHopCountMetric()),
+  );
+  registerFacetLoader('facet:countToInfinity', () =>
+    import('@ffacet/algorithm-count-to-infinity').then((m) => m.registerCountToInfinity()),
+  );
+  registerFacetLoader('facet:linkStateFlood', () =>
+    import('@ffacet/algorithm-link-state-flood').then((m) => m.registerLinkStateFlood()),
+  );
+  registerFacetLoader('facet:shortestPathTree', () =>
+    import('@ffacet/algorithm-shortest-path-tree').then((m) => m.registerShortestPathTree()),
+  );
+  registerFacetLoader('facet:pathVectorPolicy', () =>
+    import('@ffacet/algorithm-path-vector-policy').then((m) => m.registerPathVectorPolicy()),
+  );
+  registerFacetLoader('facet:rewriteAddressPort', () =>
+    import('@ffacet/algorithm-rewrite-address-port').then((m) => m.registerRewriteAddressPort()),
+  );
+  registerFacetLoader('facet:natMappingTable', () =>
+    import('@ffacet/algorithm-nat-mapping-table').then((m) => m.registerNatMappingTable()),
+  );
+  registerFacetLoader('facet:echoAndReply', () =>
+    import('@ffacet/algorithm-echo-and-reply').then((m) => m.registerEchoAndReply()),
+  );
+  registerFacetLoader('facet:ttlExpiredReports', () =>
+    import('@ffacet/algorithm-ttl-expired-reports').then((m) => m.registerTtlExpiredReports()),
+  );
 }

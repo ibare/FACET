@@ -2740,42 +2740,48 @@
               "name": "캡슐화",
               "desc": "아래로 내려가며 봉투를 씌운다",
               "kind": "piece",
-              "origin": "network-layer"
+              "origin": "network-layer",
+              "facetId": "facet:layerWrapsPayload"
             },
             {
               "id": "peer-layer-talk",
               "name": "피어 계층",
               "desc": "같은 층끼리 말이 통한다",
               "kind": "piece",
-              "origin": "network-layer"
+              "origin": "network-layer",
+              "facetId": "facet:peerLayerTalk"
             },
             {
               "id": "bits-as-signal",
               "name": "신호 부호화",
               "desc": "0과 1을 신호로 바꾼다",
               "kind": "piece",
-              "origin": "physical-layer"
+              "origin": "physical-layer",
+              "facetId": "facet:bitsAsSignal"
             },
             {
               "id": "frame-boundary",
               "name": "프레임 구분",
               "desc": "어디서 시작해 어디서 끝나는가",
               "kind": "piece",
-              "origin": "datalink-layer"
+              "origin": "datalink-layer",
+              "facetId": "facet:frameBoundary"
             },
             {
               "id": "hop-by-hop",
               "name": "홉 단위 전달",
               "desc": "한 번에 한 걸음씩 넘긴다",
               "kind": "piece",
-              "origin": "network-layer"
+              "origin": "network-layer",
+              "facetId": "facet:hopByHop"
             },
             {
               "id": "port-demultiplex",
               "name": "포트 역다중화",
               "desc": "같은 주소 안에서 문을 나눈다",
               "kind": "piece",
-              "origin": "transport-layer"
+              "origin": "transport-layer",
+              "facetId": "facet:portDemultiplex"
             }
           ]
         },
@@ -2800,28 +2806,32 @@
               "name": "CSMA/CD",
               "desc": "부딪히면 물러났다 다시",
               "kind": "piece",
-              "origin": "ethernet"
+              "origin": "ethernet",
+              "facetId": "facet:collisionAndBackoff"
             },
             {
               "id": "mac-is-local",
               "name": "MAC 주소",
               "desc": "같은 망 안에서만 쓰는 이름",
               "kind": "piece",
-              "origin": "mac"
+              "origin": "mac",
+              "facetId": "facet:macIsLocal"
             },
             {
               "id": "ask-who-has",
               "name": "ARP 요청",
               "desc": "누구 것이냐고 모두에게 묻는다",
               "kind": "piece",
-              "origin": "arp"
+              "origin": "arp",
+              "facetId": "facet:askWhoHas"
             },
             {
               "id": "arp-cache",
               "name": "ARP 캐시",
               "desc": "한 번 알면 적어 둔다",
               "kind": "piece",
-              "origin": "arp"
+              "origin": "arp",
+              "facetId": "facet:arpCache"
             }
           ]
         },
@@ -2859,77 +2869,88 @@
               "name": "최장 접두 일치",
               "desc": "가장 길게 맞는 줄을 고른다",
               "kind": "piece",
-              "origin": "ip-routing"
+              "origin": "ip-routing",
+              "facetId": "facet:longestPrefixMatch"
             },
             {
               "id": "forwarding-table",
               "name": "포워딩 테이블",
               "desc": "어디로 넘길지 적힌 표",
               "kind": "piece",
-              "origin": "ip-routing"
+              "origin": "ip-routing",
+              "facetId": "facet:forwardingTable"
             },
             {
               "id": "hop-count-metric",
               "name": "홉 카운트",
               "desc": "몇 걸음인지로 고른다",
               "kind": "piece",
-              "origin": "rip"
+              "origin": "rip",
+              "facetId": "facet:hopCountMetric"
             },
             {
               "id": "count-to-infinity",
               "name": "무한 계수 문제",
               "desc": "끊긴 줄 알기까지 오래 걸린다",
               "kind": "piece",
-              "origin": "rip"
+              "origin": "rip",
+              "facetId": "facet:countToInfinity"
             },
             {
               "id": "link-state-flood",
               "name": "링크 상태 플러딩",
               "desc": "내 이웃을 모두에게 알린다",
               "kind": "piece",
-              "origin": "ospf"
+              "origin": "ospf",
+              "facetId": "facet:linkStateFlood"
             },
             {
               "id": "shortest-path-tree",
               "name": "최단 경로 트리",
               "desc": "각자 최단 나무를 그린다",
               "kind": "piece",
-              "origin": "ospf"
+              "origin": "ospf",
+              "facetId": "facet:shortestPathTree"
             },
             {
               "id": "path-vector-policy",
               "name": "경로 벡터",
               "desc": "길 전체를 보고 정책으로 고른다",
               "kind": "piece",
-              "origin": "bgp"
+              "origin": "bgp",
+              "facetId": "facet:pathVectorPolicy"
             },
             {
               "id": "rewrite-address-port",
               "name": "NAT 변환",
               "desc": "나가면서 주소를 갈아 끼운다",
               "kind": "piece",
-              "origin": "nat"
+              "origin": "nat",
+              "facetId": "facet:rewriteAddressPort"
             },
             {
               "id": "nat-mapping-table",
               "name": "NAT 매핑 테이블",
               "desc": "누구 것인지 적어 두고 되돌린다",
               "kind": "piece",
-              "origin": "nat"
+              "origin": "nat",
+              "facetId": "facet:natMappingTable"
             },
             {
               "id": "echo-and-reply",
               "name": "ICMP 에코",
               "desc": "찔러 보고 답을 듣는다",
               "kind": "piece",
-              "origin": "icmp"
+              "origin": "icmp",
+              "facetId": "facet:echoAndReply"
             },
             {
               "id": "ttl-expired-reports",
               "name": "TTL 만료",
               "desc": "수명이 다하면 알려 준다",
               "kind": "piece",
-              "origin": "icmp"
+              "origin": "icmp",
+              "facetId": "facet:ttlExpiredReports"
             }
           ]
         },
@@ -2958,49 +2979,56 @@
               "name": "3-way 핸드셰이크",
               "desc": "세 번 주고받아 문을 연다",
               "kind": "piece",
-              "origin": "tcp-handshake"
+              "origin": "tcp-handshake",
+              "facetId": "facet:threeWaySync"
             },
             {
               "id": "sequence-number",
               "name": "시퀀스 번호",
               "desc": "어디까지 받았는지 번호로 센다",
               "kind": "piece",
-              "origin": "tcp-handshake"
+              "origin": "tcp-handshake",
+              "facetId": "facet:sequenceNumber"
             },
             {
               "id": "receiver-window",
               "name": "수신 윈도",
               "desc": "받는 쪽이 감당할 만큼만",
               "kind": "piece",
-              "origin": "flow-control"
+              "origin": "flow-control",
+              "facetId": "facet:receiverWindow"
             },
             {
               "id": "slow-start",
               "name": "슬로 스타트",
               "desc": "조금씩 늘려 본다",
               "kind": "piece",
-              "origin": "congestion-control"
+              "origin": "congestion-control",
+              "facetId": "facet:slowStart"
             },
             {
               "id": "back-off-on-loss",
               "name": "혼잡 회피",
               "desc": "잃으면 줄인다",
               "kind": "piece",
-              "origin": "congestion-control"
+              "origin": "congestion-control",
+              "facetId": "facet:backOffOnLoss"
             },
             {
               "id": "sawtooth",
               "name": "톱니 패턴",
               "desc": "톱니 모양으로 오르내린다",
               "kind": "piece",
-              "origin": "congestion-control"
+              "origin": "congestion-control",
+              "facetId": "facet:sawtooth"
             },
             {
               "id": "send-and-forget",
               "name": "UDP",
               "desc": "보내고 확인하지 않는다",
               "kind": "piece",
-              "origin": "udp"
+              "origin": "udp",
+              "facetId": "facet:sendAndForget"
             }
           ]
         },
@@ -3033,49 +3061,56 @@
               "name": "요청-응답",
               "desc": "묻고 답한다",
               "kind": "piece",
-              "origin": "http"
+              "origin": "http",
+              "facetId": "facet:requestResponse"
             },
             {
               "id": "stateless-needs-token",
               "name": "무상태와 토큰",
               "desc": "기억하지 않아 표를 들려 보낸다",
               "kind": "piece",
-              "origin": "http"
+              "origin": "http",
+              "facetId": "facet:statelessNeedsToken"
             },
             {
               "id": "delegate-down-the-tree",
               "name": "DNS 위임",
               "desc": "위에서 아래로 물어 내려간다",
               "kind": "piece",
-              "origin": "dns"
+              "origin": "dns",
+              "facetId": "facet:delegateDownTheTree"
             },
             {
               "id": "cache-ttl",
               "name": "TTL 캐시",
               "desc": "답을 정해진 동안 들고 있는다",
               "kind": "piece",
-              "origin": "dns"
+              "origin": "dns",
+              "facetId": "facet:cacheTtl"
             },
             {
               "id": "store-and-forward",
               "name": "저장 후 전달",
               "desc": "받아 두었다 다음으로 넘긴다",
               "kind": "piece",
-              "origin": "smtp"
+              "origin": "smtp",
+              "facetId": "facet:storeAndForward"
             },
             {
               "id": "control-and-data-channel",
               "name": "제어 채널과 데이터 채널",
               "desc": "명령 길과 짐 길이 따로",
               "kind": "piece",
-              "origin": "ftp"
+              "origin": "ftp",
+              "facetId": "facet:controlAndDataChannel"
             },
             {
               "id": "upgrade-then-keep-open",
               "name": "프로토콜 업그레이드",
               "desc": "한 번 열고 계속 쓴다",
               "kind": "piece",
-              "origin": "websocket"
+              "origin": "websocket",
+              "facetId": "facet:upgradeThenKeepOpen"
             }
           ]
         },
@@ -3100,28 +3135,32 @@
               "name": "디피-헬먼 키 교환",
               "desc": "비밀 없이 비밀을 맞춘다",
               "kind": "piece",
-              "origin": "tls-handshake"
+              "origin": "tls-handshake",
+              "facetId": "facet:sharedSecretInPublic"
             },
             {
               "id": "certificate-chain",
               "name": "인증서 체인",
               "desc": "누가 보증했는지 거슬러 오른다",
               "kind": "piece",
-              "origin": "tls-handshake"
+              "origin": "tls-handshake",
+              "facetId": "facet:certificateChain"
             },
             {
               "id": "token-bearer",
               "name": "베어러 토큰",
               "desc": "표를 든 사람이 통과한다",
               "kind": "piece",
-              "origin": "auth"
+              "origin": "auth",
+              "facetId": "facet:tokenBearer"
             },
             {
               "id": "rule-match-order",
               "name": "규칙 우선순위",
               "desc": "규칙을 위에서부터 맞춰 본다",
               "kind": "piece",
-              "origin": "firewall"
+              "origin": "firewall",
+              "facetId": "facet:ruleMatchOrder"
             }
           ]
         }
