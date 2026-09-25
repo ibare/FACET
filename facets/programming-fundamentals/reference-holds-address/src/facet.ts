@@ -1,0 +1,142 @@
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
+
+/**
+ * @piece
+ * 질문: 목록을 넣은 변수의 자리에는 무엇이 들었는가?
+ *
+ * 대입할 때마다 새 목록이 자리 밖 새 곳에 놓이고, scores 자리 안에는 그 주소 하나만
+ * 갈아 꽂힌다. 앞 목록은 제자리에 그대로 남는다.
+ */
+export const referenceHoldsAddressFacet: FacetJson = {
+  id: 'facet:referenceHoldsAddress',
+  title: {
+    en: 'A reference holds an address',
+    ko: '참조는 주소를 쥔다',
+    ja: '参照はアドレスを持つ',
+    zh: '引用保存的是地址',
+    ar: 'المرجع يحمل عنوانًا',
+    es: 'Una referencia guarda una dirección',
+    fr: 'Une référence contient une adresse',
+    hi: 'संदर्भ एक पता रखता है',
+    id: 'Referensi menyimpan alamat',
+    pt: 'Uma referência guarda um endereço',
+  },
+  description: {
+    en: 'Each list is placed outside the slot; the slot of scores only ever holds one address, swapped on every assignment.',
+    ko: '목록은 자리 밖에 놓이고, scores 자리에는 대입할 때마다 갈아 끼워지는 주소 하나만 든다.',
+    ja: 'リストはスロットの外に置かれ、scores のスロットには代入のたびに差し替わるアドレスが一つだけ入る。',
+    zh: '列表放在槽位之外；scores 的槽位里只有一个地址，每次赋值时被换掉。',
+    ar: 'كل قائمة توضع خارج الخانة؛ وخانة scores لا تحمل إلا عنوانًا واحدًا يُستبدل عند كل إسناد.',
+    es: 'Cada lista se coloca fuera de la casilla; la casilla de scores solo guarda una dirección, que se cambia en cada asignación.',
+    fr: 'Chaque liste est posée hors de la case ; la case de scores ne contient qu’une adresse, remplacée à chaque affectation.',
+    hi: 'हर सूची खाने के बाहर रखी जाती है; scores के खाने में बस एक पता रहता है, जो हर असाइनमेंट पर बदल जाता है।',
+    id: 'Setiap daftar diletakkan di luar slot; slot scores hanya berisi satu alamat yang diganti pada setiap penugasan.',
+    pt: 'Cada lista é colocada fora da casa; a casa de scores só guarda um endereço, trocado a cada atribuição.',
+  },
+  algorithm: 'module:referenceHoldsAddress',
+  scene: 'module:referenceHoldsAddressScene',
+  initialData: {
+    type: 'reference-holds-address',
+    stepMs: 2400,
+    lines: [
+      {
+        indent: 0,
+        text: 'let scores = [90, 75, 60]',
+        stmt: { k: 'assign', to: 'scores', value: { list: [{ num: 90 }, { num: 75 }, { num: 60 }] }, declare: true },
+      },
+      {
+        indent: 0,
+        text: 'scores = [100]',
+        stmt: { k: 'assign', to: 'scores', value: { list: [{ num: 100 }] } },
+      },
+      {
+        indent: 0,
+        text: 'scores = [80, 70, 50, 40, 20]',
+        stmt: {
+          k: 'assign',
+          to: 'scores',
+          value: { list: [{ num: 80 }, { num: 70 }, { num: 50 }, { num: 40 }, { num: 20 }] },
+        },
+      },
+    ],
+  },
+  shuffleOnReset: false,
+  messages: {
+    'caption.start': {
+      en: 'Nothing has run yet.',
+      ko: '아직 아무 줄도 실행하지 않았다.',
+      ja: 'まだどの行も実行していない。',
+      zh: '还没有执行任何一行。',
+      ar: 'لم يُنفَّذ أي سطر بعد.',
+      es: 'Todavía no se ha ejecutado nada.',
+      fr: 'Rien n’a encore été exécuté.',
+      hi: 'अभी तक कुछ भी नहीं चला है।',
+      id: 'Belum ada yang dijalankan.',
+      pt: 'Nada foi executado ainda.',
+    },
+    'caption.placed': {
+      en: 'A new list of {count} items is placed at {list}, outside the slot.',
+      ko: '원소 {count}개짜리 새 목록이 자리 밖 {list} 에 놓인다.',
+      ja: '要素 {count} 個の新しいリストがスロットの外、{list} に置かれる。',
+      zh: '一个含 {count} 个元素的新列表放在槽位之外的 {list}。',
+      ar: 'توضع قائمة جديدة من {count} عناصر في {list}، خارج الخانة.',
+      es: 'Una lista nueva de {count} elementos se coloca en {list}, fuera de la casilla.',
+      fr: 'Une nouvelle liste de {count} éléments est posée en {list}, hors de la case.',
+      hi: '{count} तत्वों वाली नई सूची खाने के बाहर {list} पर रखी जाती है।',
+      id: 'Daftar baru berisi {count} item diletakkan di {list}, di luar slot.',
+      pt: 'Uma lista nova de {count} itens é colocada em {list}, fora da casa.',
+    },
+    'caption.declared': {
+      en: 'The new slot of {name} holds only the address {list}.',
+      ko: '새로 잡은 {name} 자리에 드는 것은 주소 {list} 하나.',
+      ja: '新しく確保した {name} のスロットに入るのはアドレス {list} だけ。',
+      zh: '新开的 {name} 槽位里只放了地址 {list}。',
+      ar: 'خانة {name} الجديدة لا تحمل إلا العنوان {list}.',
+      es: 'La casilla nueva de {name} solo guarda la dirección {list}.',
+      fr: 'La nouvelle case de {name} ne contient que l’adresse {list}.',
+      hi: '{name} के नए खाने में बस पता {list} रहता है।',
+      id: 'Slot baru {name} hanya berisi alamat {list}.',
+      pt: 'A casa nova de {name} só guarda o endereço {list}.',
+    },
+    'caption.swapped': {
+      en: 'Slot of {name}: {was} → {list}. The list at {was} stays as it was.',
+      ko: '{name} 자리 안의 주소만 바뀐다: {was} → {list}. {was} 의 목록은 그대로다.',
+      ja: '{name} のスロットはアドレスだけが変わる: {was} → {list}。{was} のリストはそのまま。',
+      zh: '{name} 槽位里只换了地址：{was} → {list}。{was} 处的列表原样不动。',
+      ar: 'خانة {name}: {was} ← {list}. القائمة في {was} تبقى كما هي.',
+      es: 'Casilla de {name}: {was} → {list}. La lista en {was} queda igual.',
+      fr: 'Case de {name} : {was} → {list}. La liste en {was} reste telle quelle.',
+      hi: '{name} का खाना: {was} → {list}। {was} वाली सूची जैसी थी वैसी ही रहती है।',
+      id: 'Slot {name}: {was} → {list}. Daftar di {was} tetap seperti semula.',
+      pt: 'Casa de {name}: {was} → {list}. A lista em {was} fica como estava.',
+    },
+    'label.slot': {
+      en: 'slot {addr}',
+      ko: '자리 {addr}',
+      ja: 'スロット {addr}',
+      zh: '槽位 {addr}',
+      ar: 'الخانة {addr}',
+      es: 'casilla {addr}',
+      fr: 'case {addr}',
+      hi: 'खाना {addr}',
+      id: 'slot {addr}',
+      pt: 'casa {addr}',
+    },
+    'label.outside': {
+      en: 'outside the slot',
+      ko: '자리 밖',
+      ja: 'スロットの外',
+      zh: '槽位之外',
+      ar: 'خارج الخانة',
+      es: 'fuera de la casilla',
+      fr: 'hors de la case',
+      hi: 'खाने के बाहर',
+      id: 'di luar slot',
+      pt: 'fora da casa',
+    },
+  },
+  blocks: {
+    stage: { type: 'reference-holds-address-stage' },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
+  },
+};
