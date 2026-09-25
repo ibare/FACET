@@ -2155,7 +2155,8 @@
           "topics": [
             {
               "id": "process-state",
-              "name": "프로세스 상태"
+              "name": "프로세스 상태",
+              "facetId": "facet:processState"
             },
             {
               "id": "context-switch",
@@ -2163,43 +2164,44 @@
               "facetId": "facet:contextSwitching"
             },
             {
-              "id": "pcb",
-              "name": "PCB"
-            },
-            {
               "id": "state-transitions",
               "name": "프로세스 상태 전이",
               "desc": "준비·실행·대기를 오간다",
               "kind": "piece",
-              "origin": "process-state"
+              "origin": "process-state",
+              "facetId": "facet:stateTransitions"
             },
             {
               "id": "blocked-waits-event",
               "name": "대기와 깨우기",
               "desc": "기다리던 것이 오면 깨어난다",
               "kind": "piece",
-              "origin": "process-state"
+              "origin": "process-state",
+              "facetId": "facet:blockedWaitsEvent"
             },
             {
               "id": "save-and-restore",
               "name": "문맥 저장과 복원",
               "desc": "하던 자리를 적어 두고 남의 자리를 꺼낸다",
               "kind": "piece",
-              "origin": "context-switch"
+              "origin": "context-switch",
+              "facetId": "facet:saveAndRestore"
             },
             {
               "id": "switch-costs",
               "name": "문맥 전환 비용",
               "desc": "바꿀 때마다 값을 치른다",
               "kind": "piece",
-              "origin": "context-switch"
+              "origin": "context-switch",
+              "facetId": "facet:switchCosts"
             },
             {
               "id": "pcb-holds-state",
               "name": "PCB",
               "desc": "프로세스마다 적어 두는 표",
               "kind": "piece",
-              "origin": "pcb"
+              "origin": "process-state",
+              "facetId": "facet:pcbHoldsState"
             }
           ]
         },
@@ -2209,111 +2211,119 @@
           "topics": [
             {
               "id": "fcfs",
-              "name": "FCFS"
-            },
-            {
-              "id": "sjf",
-              "name": "SJF"
+              "name": "CPU 스케줄 정책",
+              "facetId": "facet:schedulingPolicy"
             },
             {
               "id": "round-robin",
-              "name": "Round Robin"
+              "name": "Round Robin",
+              "facetId": "facet:roundRobinQuantum"
             },
             {
               "id": "priority",
-              "name": "Priority"
-            },
-            {
-              "id": "mlfq",
-              "name": "MLFQ"
+              "name": "Priority",
+              "facetId": "facet:priorityAging"
             },
             {
               "id": "cfs",
-              "name": "CFS"
+              "name": "CFS",
+              "facetId": "facet:weightedFairShare"
             },
             {
               "id": "ready-queue-pick",
               "name": "준비 큐",
               "desc": "기다리는 줄에서 하나를 고른다",
               "kind": "piece",
-              "origin": "fcfs"
+              "origin": "fcfs",
+              "facetId": "facet:readyQueuePick"
             },
             {
               "id": "turnaround-vs-wait",
               "name": "반환 시간과 대기 시간",
               "desc": "끝나기까지와 기다린 시간",
               "kind": "piece",
-              "origin": "fcfs"
+              "origin": "fcfs",
+              "facetId": "facet:turnaroundVsWait"
             },
             {
               "id": "first-come-first-run",
               "name": "FCFS",
               "desc": "온 순서대로 보낸다",
               "kind": "piece",
-              "origin": "fcfs"
+              "origin": "fcfs",
+              "facetId": "facet:firstComeFirstRun"
             },
             {
               "id": "convoy-effect",
               "name": "호위 효과",
               "desc": "앞의 큰 것이 뒤를 다 막는다",
               "kind": "piece",
-              "origin": "fcfs"
+              "origin": "fcfs",
+              "facetId": "facet:convoyEffect"
             },
             {
               "id": "shortest-first",
               "name": "SJF",
               "desc": "짧은 것부터 보내면 평균이 준다",
               "kind": "piece",
-              "origin": "sjf"
+              "origin": "fcfs",
+              "facetId": "facet:shortestFirst"
             },
             {
               "id": "starvation-of-long",
               "name": "기아",
               "desc": "긴 것은 계속 밀린다",
               "kind": "piece",
-              "origin": "sjf"
+              "origin": "fcfs",
+              "facetId": "facet:starvationOfLong"
             },
             {
               "id": "time-slice-rotate",
               "name": "라운드 로빈",
               "desc": "정해진 몫만 쓰고 뒤로 간다",
               "kind": "piece",
-              "origin": "round-robin"
+              "origin": "round-robin",
+              "facetId": "facet:timeSliceRotate"
             },
             {
               "id": "quantum-size-tradeoff",
               "name": "타임 퀀텀",
               "desc": "몫이 작으면 자주 바뀐다",
               "kind": "piece",
-              "origin": "round-robin"
+              "origin": "round-robin",
+              "facetId": "facet:quantumSizeTradeoff"
             },
             {
               "id": "priority-preempt",
               "name": "우선순위 선점",
               "desc": "높은 것이 오면 자리를 뺏는다",
               "kind": "piece",
-              "origin": "priority"
+              "origin": "priority",
+              "facetId": "facet:priorityPreempt"
             },
             {
               "id": "aging",
               "name": "에이징",
               "desc": "오래 기다리면 순위가 오른다",
               "kind": "piece",
-              "origin": "priority"
+              "origin": "priority",
+              "facetId": "facet:aging"
             },
             {
               "id": "demote-on-overuse",
               "name": "큐 강등",
               "desc": "오래 쓰면 아래 줄로 내린다",
               "kind": "piece",
-              "origin": "mlfq"
+              "origin": "fcfs",
+              "facetId": "facet:demoteOnOveruse"
             },
             {
               "id": "virtual-runtime",
               "name": "가상 실행 시간",
               "desc": "덜 쓴 쪽에 먼저 준다",
               "kind": "piece",
-              "origin": "cfs"
+              "origin": "cfs",
+              "facetId": "facet:virtualRuntime"
             }
           ]
         },
@@ -2323,107 +2333,114 @@
           "topics": [
             {
               "id": "mutex",
-              "name": "뮤텍스"
-            },
-            {
-              "id": "semaphore",
-              "name": "세마포어"
-            },
-            {
-              "id": "monitor",
-              "name": "모니터"
+              "name": "뮤텍스",
+              "facetId": "facet:mutex"
             },
             {
               "id": "deadlock",
-              "name": "데드락"
+              "name": "데드락",
+              "facetId": "facet:deadlock"
             },
             {
               "id": "producer-consumer",
-              "name": "생산자-소비자"
+              "name": "생산자-소비자",
+              "facetId": "facet:producerConsumer"
             },
             {
               "id": "interleaving",
               "name": "인터리빙",
               "desc": "두 줄이 섞여 실행된다",
               "kind": "piece",
-              "origin": "mutex"
+              "origin": "mutex",
+              "facetId": "facet:interleaving"
             },
             {
               "id": "non-atomic-increment",
               "name": "비원자적 연산",
               "desc": "하나처럼 보이는 것이 셋이다",
               "kind": "piece",
-              "origin": "mutex"
+              "origin": "mutex",
+              "facetId": "facet:nonAtomicIncrement"
             },
             {
               "id": "lost-update",
               "name": "갱신 손실",
               "desc": "한쪽 결과가 덮여 사라진다",
               "kind": "piece",
-              "origin": "mutex"
+              "origin": "mutex",
+              "facetId": "facet:lostUpdate"
             },
             {
               "id": "critical-section",
               "name": "임계 구역",
               "desc": "한 번에 하나만 드는 구간",
               "kind": "piece",
-              "origin": "mutex"
+              "origin": "mutex",
+              "facetId": "facet:criticalSection"
             },
             {
               "id": "lock-excludes",
               "name": "상호 배제",
               "desc": "잡으면 막고 놓으면 들인다",
               "kind": "piece",
-              "origin": "mutex"
+              "origin": "mutex",
+              "facetId": "facet:lockExcludes"
             },
             {
               "id": "counting-permits",
               "name": "세마포어",
               "desc": "표를 세어 그만큼만 들인다",
               "kind": "piece",
-              "origin": "semaphore"
+              "origin": "producer-consumer",
+              "facetId": "facet:countingPermits"
             },
             {
               "id": "wait-and-signal",
               "name": "조건 변수",
               "desc": "조건이 아니면 내려놓고 잔다",
               "kind": "piece",
-              "origin": "monitor"
+              "origin": "producer-consumer",
+              "facetId": "facet:waitAndSignal"
             },
             {
               "id": "hold-and-wait",
               "name": "점유 대기",
               "desc": "쥔 채로 다른 것을 기다린다",
               "kind": "piece",
-              "origin": "deadlock"
+              "origin": "deadlock",
+              "facetId": "facet:holdAndWait"
             },
             {
               "id": "no-preemption",
               "name": "비선점",
               "desc": "한 번 잡으면 뺏을 수 없다",
               "kind": "piece",
-              "origin": "deadlock"
+              "origin": "deadlock",
+              "facetId": "facet:noPreemption"
             },
             {
               "id": "wait-cycle",
               "name": "순환 대기",
               "desc": "기다림이 고리를 이룬다",
               "kind": "piece",
-              "origin": "deadlock"
+              "origin": "deadlock",
+              "facetId": "facet:waitCycle"
             },
             {
               "id": "lock-ordering",
               "name": "잠금 순서",
               "desc": "순서를 정하면 고리가 안 생긴다",
               "kind": "piece",
-              "origin": "deadlock"
+              "origin": "deadlock",
+              "facetId": "facet:lockOrdering"
             },
             {
               "id": "bounded-buffer",
               "name": "유한 버퍼",
               "desc": "차면 못 넣고 비면 못 꺼낸다",
               "kind": "piece",
-              "origin": "producer-consumer"
+              "origin": "producer-consumer",
+              "facetId": "facet:boundedBuffer"
             }
           ]
         },
@@ -2433,118 +2450,127 @@
           "topics": [
             {
               "id": "paging",
-              "name": "페이징"
+              "name": "페이징",
+              "facetId": "facet:paging"
             },
             {
               "id": "segmentation",
-              "name": "세그멘테이션"
+              "name": "세그멘테이션",
+              "facetId": "facet:segmentation"
             },
             {
               "id": "virtual-memory",
-              "name": "가상 메모리"
+              "name": "가상 메모리",
+              "facetId": "facet:virtualMemory"
             },
             {
               "id": "lru",
-              "name": "LRU 페이지 교체"
-            },
-            {
-              "id": "fifo-page",
-              "name": "FIFO 페이지 교체"
-            },
-            {
-              "id": "clock-algorithm",
-              "name": "Clock 알고리즘"
+              "name": "페이지 교체",
+              "facetId": "facet:pageReplacement"
             },
             {
               "id": "page-table-lookup",
               "name": "페이지 테이블",
               "desc": "가상 번호를 실제 자리로 옮긴다",
               "kind": "piece",
-              "origin": "paging"
+              "origin": "paging",
+              "facetId": "facet:pageTableLookup"
             },
             {
               "id": "fixed-size-frames",
               "name": "프레임",
               "desc": "같은 크기 칸으로 자른다",
               "kind": "piece",
-              "origin": "paging"
+              "origin": "paging",
+              "facetId": "facet:fixedSizeFrames"
             },
             {
               "id": "tlb-caches-translation",
               "name": "TLB",
               "desc": "자주 쓰는 번역을 곁에 둔다",
               "kind": "piece",
-              "origin": "paging"
+              "origin": "paging",
+              "facetId": "facet:tlbCachesTranslation"
             },
             {
               "id": "variable-size-segments",
               "name": "세그먼트",
               "desc": "뜻에 따라 다른 크기로 자른다",
               "kind": "piece",
-              "origin": "segmentation"
+              "origin": "segmentation",
+              "facetId": "facet:variableSizeSegments"
             },
             {
               "id": "external-fragmentation",
               "name": "외부 단편화",
               "desc": "틈이 흩어져 못 쓴다",
               "kind": "piece",
-              "origin": "segmentation"
+              "origin": "segmentation",
+              "facetId": "facet:externalFragmentation"
             },
             {
               "id": "page-fault",
               "name": "페이지 폴트",
               "desc": "없으면 그때 가서 가져온다",
               "kind": "piece",
-              "origin": "virtual-memory"
+              "origin": "virtual-memory",
+              "facetId": "facet:pageFault"
             },
             {
               "id": "swap-in-out",
               "name": "스와핑",
               "desc": "자리가 모자라면 디스크로 밀어낸다",
               "kind": "piece",
-              "origin": "virtual-memory"
+              "origin": "virtual-memory",
+              "facetId": "facet:swapInOut"
             },
             {
               "id": "thrashing",
               "name": "스래싱",
               "desc": "가져오자마자 다시 밀려난다",
               "kind": "piece",
-              "origin": "virtual-memory"
+              "origin": "virtual-memory",
+              "facetId": "facet:thrashing"
             },
             {
               "id": "evict-least-recent",
               "name": "LRU",
               "desc": "가장 오래 안 쓴 것을 버린다",
               "kind": "piece",
-              "origin": "lru"
+              "origin": "lru",
+              "facetId": "facet:evictLeastRecent"
             },
             {
               "id": "recency-reorder",
               "name": "최근 사용 갱신",
               "desc": "쓸 때마다 앞으로 당긴다",
               "kind": "piece",
-              "origin": "lru"
+              "origin": "lru",
+              "facetId": "facet:recencyReorder"
             },
             {
               "id": "evict-oldest",
               "name": "FIFO 교체",
               "desc": "먼저 들어온 것을 먼저 버린다",
               "kind": "piece",
-              "origin": "fifo-page"
+              "origin": "lru",
+              "facetId": "facet:evictOldest"
             },
             {
               "id": "belady-anomaly",
               "name": "벨레이디의 역설",
               "desc": "자리를 늘렸는데 더 나빠진다",
               "kind": "piece",
-              "origin": "fifo-page"
+              "origin": "lru",
+              "facetId": "facet:beladyAnomaly"
             },
             {
               "id": "second-chance",
               "name": "2차 기회",
               "desc": "한 번은 봐주고 표시를 지운다",
               "kind": "piece",
-              "origin": "clock-algorithm"
+              "origin": "lru",
+              "facetId": "facet:secondChance"
             }
           ]
         },
@@ -2554,68 +2580,69 @@
           "topics": [
             {
               "id": "inode",
-              "name": "inode"
-            },
-            {
-              "id": "fat",
-              "name": "FAT"
+              "name": "파일 블록 배치",
+              "facetId": "facet:fileBlockPlacement"
             },
             {
               "id": "journaling",
-              "name": "저널링"
-            },
-            {
-              "id": "directory-structure",
-              "name": "디렉토리 구조"
+              "name": "저널링",
+              "facetId": "facet:journaling"
             },
             {
               "id": "inode-points-blocks",
               "name": "inode",
               "desc": "표 하나가 흩어진 조각을 가리킨다",
               "kind": "piece",
-              "origin": "inode"
+              "origin": "inode",
+              "facetId": "facet:inodePointsBlocks"
             },
             {
               "id": "indirect-block",
               "name": "간접 블록",
               "desc": "가리킬 것이 많으면 한 단계 더",
               "kind": "piece",
-              "origin": "inode"
+              "origin": "inode",
+              "facetId": "facet:indirectBlock"
             },
             {
               "id": "chain-of-blocks",
               "name": "FAT 체인",
               "desc": "다음 조각 번호를 표에 적어 잇는다",
               "kind": "piece",
-              "origin": "fat"
+              "origin": "inode",
+              "facetId": "facet:chainOfBlocks"
             },
             {
               "id": "write-intent-first",
               "name": "저널 선기록",
               "desc": "하려는 일을 먼저 적는다",
               "kind": "piece",
-              "origin": "journaling"
+              "origin": "journaling",
+              "facetId": "facet:writeIntentFirst"
             },
             {
               "id": "replay-after-crash",
               "name": "저널 재생",
               "desc": "끊긴 자리부터 다시 밟는다",
               "kind": "piece",
-              "origin": "journaling"
+              "origin": "journaling",
+              "facetId": "facet:replayAfterCrash"
             },
             {
               "id": "path-resolution",
               "name": "경로 해석",
               "desc": "이름을 따라 내려가 찾는다",
               "kind": "piece",
-              "origin": "directory-structure"
+              "origin": "inode",
+              "facetId": "facet:pathResolution"
             },
             {
               "id": "hard-vs-soft-link",
               "name": "하드 링크와 심볼릭 링크",
               "desc": "실체에 이름 둘, 이름을 가리키는 이름",
               "kind": "piece",
-              "origin": "directory-structure"
+              "origin": "inode",
+              "facetId": "facet:hardVsSoftLink"
             }
           ]
         },
@@ -2624,51 +2651,54 @@
           "name": "입출력",
           "topics": [
             {
-              "id": "dma",
-              "name": "DMA"
-            },
-            {
               "id": "interrupt",
-              "name": "인터럽트"
+              "name": "입출력 방식",
+              "facetId": "facet:ioTransferModes"
             },
             {
               "id": "disk-scheduling",
-              "name": "디스크 스케줄링"
+              "name": "디스크 스케줄링",
+              "facetId": "facet:diskScheduling"
             },
             {
               "id": "transfer-without-cpu",
               "name": "DMA",
               "desc": "주고받는 동안 다른 일을 한다",
               "kind": "piece",
-              "origin": "dma"
+              "origin": "interrupt",
+              "facetId": "facet:transferWithoutCpu"
             },
             {
               "id": "interrupt-preempts",
               "name": "인터럽트",
               "desc": "하던 일을 멈추고 손님을 받는다",
               "kind": "piece",
-              "origin": "interrupt"
+              "origin": "interrupt",
+              "facetId": "facet:interruptPreempts"
             },
             {
               "id": "polling-vs-interrupt",
               "name": "폴링과 인터럽트",
               "desc": "계속 묻는가, 부를 때까지 기다리는가",
               "kind": "piece",
-              "origin": "interrupt"
+              "origin": "interrupt",
+              "facetId": "facet:pollingVsInterrupt"
             },
             {
               "id": "seek-distance-costs",
               "name": "탐색 시간",
               "desc": "팔이 움직인 만큼 걸린다",
               "kind": "piece",
-              "origin": "disk-scheduling"
+              "origin": "disk-scheduling",
+              "facetId": "facet:seekDistanceCosts"
             },
             {
               "id": "elevator-sweep",
               "name": "엘리베이터 알고리즘",
               "desc": "한 방향으로 훑고 돌아온다",
               "kind": "piece",
-              "origin": "disk-scheduling"
+              "origin": "disk-scheduling",
+              "facetId": "facet:elevatorSweep"
             }
           ]
         }

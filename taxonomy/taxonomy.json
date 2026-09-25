@@ -417,33 +417,108 @@
           "id": "process-thread",
           "name": {"en":"Processes and Threads","ko":"프로세스와 스레드","ja":"プロセスとスレッド","zh":"进程与线程","ar":"العمليات والخيوط","es":"Procesos e hilos","fr":"Processus et threads","hi":"प्रोसेस और थ्रेड","id":"Proses dan Thread","pt":"Processos e threads"},
           "facets": [
-            "facet:contextSwitching"
+            "facet:processState",
+            "facet:contextSwitching",
+            "facet:stateTransitions",
+            "facet:blockedWaitsEvent",
+            "facet:saveAndRestore",
+            "facet:switchCosts",
+            "facet:pcbHoldsState"
           ]
         },
         {
           "id": "scheduling",
           "name": {"en":"Scheduling","ko":"스케줄링","ja":"スケジューリング","zh":"调度","ar":"الجدولة","es":"Planificación","fr":"Ordonnancement","hi":"शेड्यूलिंग","id":"Penjadwalan","pt":"Escalonamento"},
-          "facets": []
+          "facets": [
+            "facet:schedulingPolicy",
+            "facet:roundRobinQuantum",
+            "facet:priorityAging",
+            "facet:weightedFairShare",
+            "facet:readyQueuePick",
+            "facet:turnaroundVsWait",
+            "facet:firstComeFirstRun",
+            "facet:convoyEffect",
+            "facet:shortestFirst",
+            "facet:starvationOfLong",
+            "facet:timeSliceRotate",
+            "facet:quantumSizeTradeoff",
+            "facet:priorityPreempt",
+            "facet:aging",
+            "facet:demoteOnOveruse",
+            "facet:virtualRuntime"
+          ]
         },
         {
           "id": "synchronization",
           "name": {"en":"Synchronization","ko":"동기화","ja":"同期","zh":"同步","ar":"التزامن","es":"Sincronización","fr":"Synchronisation","hi":"सिंक्रनाइज़ेशन","id":"Sinkronisasi","pt":"Sincronização"},
-          "facets": []
+          "facets": [
+            "facet:mutex",
+            "facet:deadlock",
+            "facet:producerConsumer",
+            "facet:interleaving",
+            "facet:nonAtomicIncrement",
+            "facet:lostUpdate",
+            "facet:criticalSection",
+            "facet:lockExcludes",
+            "facet:countingPermits",
+            "facet:waitAndSignal",
+            "facet:holdAndWait",
+            "facet:noPreemption",
+            "facet:waitCycle",
+            "facet:lockOrdering",
+            "facet:boundedBuffer"
+          ]
         },
         {
           "id": "memory-management",
           "name": {"en":"Memory Management","ko":"메모리 관리","ja":"メモリ管理","zh":"内存管理","ar":"إدارة الذاكرة","es":"Gestión de memoria","fr":"Gestion de la mémoire","hi":"मेमोरी प्रबंधन","id":"Manajemen Memori","pt":"Gerenciamento de memória"},
-          "facets": []
+          "facets": [
+            "facet:paging",
+            "facet:segmentation",
+            "facet:virtualMemory",
+            "facet:pageReplacement",
+            "facet:pageTableLookup",
+            "facet:fixedSizeFrames",
+            "facet:tlbCachesTranslation",
+            "facet:variableSizeSegments",
+            "facet:externalFragmentation",
+            "facet:pageFault",
+            "facet:swapInOut",
+            "facet:thrashing",
+            "facet:evictLeastRecent",
+            "facet:recencyReorder",
+            "facet:evictOldest",
+            "facet:beladyAnomaly",
+            "facet:secondChance"
+          ]
         },
         {
           "id": "file-system",
           "name": {"en":"File Systems","ko":"파일 시스템","ja":"ファイルシステム","zh":"文件系统","ar":"أنظمة الملفات","es":"Sistemas de archivos","fr":"Systèmes de fichiers","hi":"फ़ाइल सिस्टम","id":"Sistem Berkas","pt":"Sistemas de arquivos"},
-          "facets": []
+          "facets": [
+            "facet:fileBlockPlacement",
+            "facet:journaling",
+            "facet:inodePointsBlocks",
+            "facet:indirectBlock",
+            "facet:chainOfBlocks",
+            "facet:writeIntentFirst",
+            "facet:replayAfterCrash",
+            "facet:pathResolution",
+            "facet:hardVsSoftLink"
+          ]
         },
         {
           "id": "io",
           "name": {"en":"Input and Output","ko":"입출력","ja":"入出力","zh":"输入输出","ar":"الإدخال والإخراج","es":"Entrada y salida","fr":"Entrées-sorties","hi":"इनपुट और आउटपुट","id":"Masukan dan Keluaran","pt":"Entrada e saída"},
-          "facets": []
+          "facets": [
+            "facet:ioTransferModes",
+            "facet:diskScheduling",
+            "facet:transferWithoutCpu",
+            "facet:interruptPreempts",
+            "facet:pollingVsInterrupt",
+            "facet:seekDistanceCosts",
+            "facet:elevatorSweep"
+          ]
         }
       ]
     },

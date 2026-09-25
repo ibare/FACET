@@ -3322,7 +3322,491 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/os/aging:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/belady-anomaly:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/blocked-waits-event:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/bounded-buffer:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/chain-of-blocks:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/os/context-switching:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/convoy-effect:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/counting-permits:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/critical-section:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/deadlock:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/os/demote-on-overuse:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/disk-scheduling:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/os/elevator-sweep:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/evict-least-recent:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/evict-oldest:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/external-fragmentation:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/file-block-placement:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/os/first-come-first-run:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/fixed-size-frames:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/hard-vs-soft-link:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/hold-and-wait:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/indirect-block:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/inode-points-blocks:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/interleaving:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/interrupt-preempts:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/io-transfer-modes:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/os/journaling:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/os/lock-excludes:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/lock-ordering:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/lost-update:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/mutex:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/os/no-preemption:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/non-atomic-increment:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/page-fault:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/page-replacement:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/os/page-table-lookup:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/paging:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/os/path-resolution:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/pcb-holds-state:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/polling-vs-interrupt:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/priority-aging:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/os/priority-preempt:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/process-state:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/os/producer-consumer:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/os/quantum-size-tradeoff:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/ready-queue-pick:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/recency-reorder:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/replay-after-crash:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/round-robin-quantum:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/os/save-and-restore:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/scheduling-policy:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/os/second-chance:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/seek-distance-costs:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/segmentation:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/os/shortest-first:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/starvation-of-long:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/state-transitions:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/swap-in-out:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/switch-costs:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/thrashing:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/time-slice-rotate:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/tlb-caches-translation:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/transfer-without-cpu:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/turnaround-vs-wait:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/variable-size-segments:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/virtual-memory:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/os/virtual-runtime:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/wait-and-signal:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/wait-cycle:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/os/weighted-fair-share:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/os/write-intent-first:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -3727,6 +4211,9 @@ importers:
       '@ffacet/algorithm-adjacency-list-vs-matrix':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/adjacency-list-vs-matrix
+      '@ffacet/algorithm-aging':
+        specifier: workspace:*
+        version: link:../../facets/os/aging
       '@ffacet/algorithm-aho-corasick':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/aho-corasick
@@ -3796,6 +4283,9 @@ importers:
       '@ffacet/algorithm-beam-search':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/beam-search
+      '@ffacet/algorithm-belady-anomaly':
+        specifier: workspace:*
+        version: link:../../facets/os/belady-anomaly
       '@ffacet/algorithm-bellman-ford':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bellman-ford
@@ -3823,6 +4313,9 @@ importers:
       '@ffacet/algorithm-black-height-equal':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/black-height-equal
+      '@ffacet/algorithm-blocked-waits-event':
+        specifier: workspace:*
+        version: link:../../facets/os/blocked-waits-event
       '@ffacet/algorithm-bloom-filter':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bloom-filter
@@ -3838,6 +4331,9 @@ importers:
       '@ffacet/algorithm-boundary-shift':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/boundary-shift
+      '@ffacet/algorithm-bounded-buffer':
+        specifier: workspace:*
+        version: link:../../facets/os/bounded-buffer
       '@ffacet/algorithm-boyer-moore':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/boyer-moore
@@ -3901,6 +4397,9 @@ importers:
       '@ffacet/algorithm-carry-several-lines':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/carry-several-lines
+      '@ffacet/algorithm-chain-of-blocks':
+        specifier: workspace:*
+        version: link:../../facets/os/chain-of-blocks
       '@ffacet/algorithm-chaining-bucket':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/chaining-bucket
@@ -3943,6 +4442,9 @@ importers:
       '@ffacet/algorithm-control-hazard':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/control-hazard
+      '@ffacet/algorithm-convoy-effect':
+        specifier: workspace:*
+        version: link:../../facets/os/convoy-effect
       '@ffacet/algorithm-copy-vs-share':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/copy-vs-share
@@ -3952,9 +4454,15 @@ importers:
       '@ffacet/algorithm-count-then-place':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/count-then-place
+      '@ffacet/algorithm-counting-permits':
+        specifier: workspace:*
+        version: link:../../facets/os/counting-permits
       '@ffacet/algorithm-counting-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/counting-sort
+      '@ffacet/algorithm-critical-section':
+        specifier: workspace:*
+        version: link:../../facets/os/critical-section
       '@ffacet/algorithm-crowd-the-tails':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/crowd-the-tails
@@ -3979,12 +4487,18 @@ importers:
       '@ffacet/algorithm-dbscan':
         specifier: workspace:*
         version: link:../../facets/ml-basics/dbscan
+      '@ffacet/algorithm-deadlock':
+        specifier: workspace:*
+        version: link:../../facets/os/deadlock
       '@ffacet/algorithm-decision-boundary':
         specifier: workspace:*
         version: link:../../facets/ml-basics/decision-boundary
       '@ffacet/algorithm-decision-tree':
         specifier: workspace:*
         version: link:../../facets/ml-basics/decision-tree
+      '@ffacet/algorithm-demote-on-overuse':
+        specifier: workspace:*
+        version: link:../../facets/os/demote-on-overuse
       '@ffacet/algorithm-dendrogram-cut':
         specifier: workspace:*
         version: link:../../facets/ml-basics/dendrogram-cut
@@ -4012,6 +4526,9 @@ importers:
       '@ffacet/algorithm-direction-of-most-spread':
         specifier: workspace:*
         version: link:../../facets/ml-basics/direction-of-most-spread
+      '@ffacet/algorithm-disk-scheduling':
+        specifier: workspace:*
+        version: link:../../facets/os/disk-scheduling
       '@ffacet/algorithm-dive-then-backtrack':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/dive-then-backtrack
@@ -4045,6 +4562,9 @@ importers:
       '@ffacet/algorithm-edit-table-fill':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/edit-table-fill
+      '@ffacet/algorithm-elevator-sweep':
+        specifier: workspace:*
+        version: link:../../facets/os/elevator-sweep
       '@ffacet/algorithm-encapsulation-boundary':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/encapsulation-boundary
@@ -4057,12 +4577,21 @@ importers:
       '@ffacet/algorithm-euclidean':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/euclidean
+      '@ffacet/algorithm-evict-least-recent':
+        specifier: workspace:*
+        version: link:../../facets/os/evict-least-recent
+      '@ffacet/algorithm-evict-oldest':
+        specifier: workspace:*
+        version: link:../../facets/os/evict-oldest
       '@ffacet/algorithm-exception-propagate':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/exception-propagate
       '@ffacet/algorithm-exhaustive-search':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/exhaustive-search
+      '@ffacet/algorithm-external-fragmentation':
+        specifier: workspace:*
+        version: link:../../facets/os/external-fragmentation
       '@ffacet/algorithm-fail-link':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/fail-link
@@ -4081,6 +4610,9 @@ importers:
       '@ffacet/algorithm-field-order-size':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/field-order-size
+      '@ffacet/algorithm-file-block-placement':
+        specifier: workspace:*
+        version: link:../../facets/os/file-block-placement
       '@ffacet/algorithm-fill-to-a-share':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/fill-to-a-share
@@ -4090,12 +4622,18 @@ importers:
       '@ffacet/algorithm-find-root':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/find-root
+      '@ffacet/algorithm-first-come-first-run':
+        specifier: workspace:*
+        version: link:../../facets/os/first-come-first-run
       '@ffacet/algorithm-first-token-vs-rest':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/first-token-vs-rest
       '@ffacet/algorithm-five-stage-pipeline':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/five-stage-pipeline
+      '@ffacet/algorithm-fixed-size-frames':
+        specifier: workspace:*
+        version: link:../../facets/os/fixed-size-frames
       '@ffacet/algorithm-flatten-or-sharpen':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/flatten-or-sharpen
@@ -4147,6 +4685,9 @@ importers:
       '@ffacet/algorithm-halve-the-range':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/halve-the-range
+      '@ffacet/algorithm-hard-vs-soft-link':
+        specifier: workspace:*
+        version: link:../../facets/os/hard-vs-soft-link
       '@ffacet/algorithm-hash-avalanche':
         specifier: workspace:*
         version: link:../../facets/security/hash-avalanche
@@ -4195,6 +4736,9 @@ importers:
       '@ffacet/algorithm-hnsw':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/hnsw
+      '@ffacet/algorithm-hold-and-wait':
+        specifier: workspace:*
+        version: link:../../facets/os/hold-and-wait
       '@ffacet/algorithm-hybrid-search':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/hybrid-search
@@ -4219,6 +4763,12 @@ importers:
       '@ffacet/algorithm-index-and-tag':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/index-and-tag
+      '@ffacet/algorithm-indirect-block':
+        specifier: workspace:*
+        version: link:../../facets/os/indirect-block
+      '@ffacet/algorithm-inode-points-blocks':
+        specifier: workspace:*
+        version: link:../../facets/os/inode-points-blocks
       '@ffacet/algorithm-insert-into-sorted-part':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/insert-into-sorted-part
@@ -4234,15 +4784,27 @@ importers:
       '@ffacet/algorithm-interface-slot':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/interface-slot
+      '@ffacet/algorithm-interleaving':
+        specifier: workspace:*
+        version: link:../../facets/os/interleaving
       '@ffacet/algorithm-interpolation-search':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/interpolation-search
+      '@ffacet/algorithm-interrupt-preempts':
+        specifier: workspace:*
+        version: link:../../facets/os/interrupt-preempts
       '@ffacet/algorithm-inverted-file-index':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/inverted-file-index
+      '@ffacet/algorithm-io-transfer-modes':
+        specifier: workspace:*
+        version: link:../../facets/os/io-transfer-modes
       '@ffacet/algorithm-ip-routing':
         specifier: workspace:*
         version: link:../../facets/network/ip-routing
+      '@ffacet/algorithm-journaling':
+        specifier: workspace:*
+        version: link:../../facets/os/journaling
       '@ffacet/algorithm-k-changes-boundary':
         specifier: workspace:*
         version: link:../../facets/ml-basics/k-changes-boundary
@@ -4297,6 +4859,12 @@ importers:
       '@ffacet/algorithm-load-factor-rehash':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/load-factor-rehash
+      '@ffacet/algorithm-lock-excludes':
+        specifier: workspace:*
+        version: link:../../facets/os/lock-excludes
+      '@ffacet/algorithm-lock-ordering':
+        specifier: workspace:*
+        version: link:../../facets/os/lock-ordering
       '@ffacet/algorithm-logistic-regression':
         specifier: workspace:*
         version: link:../../facets/ml-basics/logistic-regression
@@ -4318,6 +4886,9 @@ importers:
       '@ffacet/algorithm-lost-link':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/lost-link
+      '@ffacet/algorithm-lost-update':
+        specifier: workspace:*
+        version: link:../../facets/os/lost-update
       '@ffacet/algorithm-lru-cache':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/lru-cache
@@ -4393,6 +4964,9 @@ importers:
       '@ffacet/algorithm-multiway-branch':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/multiway-branch
+      '@ffacet/algorithm-mutex':
+        specifier: workspace:*
+        version: link:../../facets/os/mutex
       '@ffacet/algorithm-mutually-reachable':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/mutually-reachable
@@ -4411,6 +4985,9 @@ importers:
       '@ffacet/algorithm-neighbors-linked-ahead':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/neighbors-linked-ahead
+      '@ffacet/algorithm-no-preemption':
+        specifier: workspace:*
+        version: link:../../facets/os/no-preemption
       '@ffacet/algorithm-no-side-effect':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/no-side-effect
@@ -4423,6 +5000,9 @@ importers:
       '@ffacet/algorithm-noise-left-out':
         specifier: workspace:*
         version: link:../../facets/ml-basics/noise-left-out
+      '@ffacet/algorithm-non-atomic-increment':
+        specifier: workspace:*
+        version: link:../../facets/os/non-atomic-increment
       '@ffacet/algorithm-one-bit-double-fault':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/one-bit-double-fault
@@ -4456,6 +5036,18 @@ importers:
       '@ffacet/algorithm-padding-gap':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/padding-gap
+      '@ffacet/algorithm-page-fault':
+        specifier: workspace:*
+        version: link:../../facets/os/page-fault
+      '@ffacet/algorithm-page-replacement':
+        specifier: workspace:*
+        version: link:../../facets/os/page-replacement
+      '@ffacet/algorithm-page-table-lookup':
+        specifier: workspace:*
+        version: link:../../facets/os/page-table-lookup
+      '@ffacet/algorithm-paging':
+        specifier: workspace:*
+        version: link:../../facets/os/paging
       '@ffacet/algorithm-parent-two-children':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/parent-two-children
@@ -4468,12 +5060,18 @@ importers:
       '@ffacet/algorithm-path-compression':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/path-compression
+      '@ffacet/algorithm-path-resolution':
+        specifier: workspace:*
+        version: link:../../facets/os/path-resolution
       '@ffacet/algorithm-pattern-from-history':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/pattern-from-history
       '@ffacet/algorithm-pca':
         specifier: workspace:*
         version: link:../../facets/ml-basics/pca
+      '@ffacet/algorithm-pcb-holds-state':
+        specifier: workspace:*
+        version: link:../../facets/os/pcb-holds-state
       '@ffacet/algorithm-penalize-repeats':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/penalize-repeats
@@ -4492,6 +5090,9 @@ importers:
       '@ffacet/algorithm-pointer-dereference':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/pointer-dereference
+      '@ffacet/algorithm-polling-vs-interrupt':
+        specifier: workspace:*
+        version: link:../../facets/os/polling-vs-interrupt
       '@ffacet/algorithm-polymorphism':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/polymorphism
@@ -4510,9 +5111,21 @@ importers:
       '@ffacet/algorithm-primality':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/primality
+      '@ffacet/algorithm-priority-aging':
+        specifier: workspace:*
+        version: link:../../facets/os/priority-aging
+      '@ffacet/algorithm-priority-preempt':
+        specifier: workspace:*
+        version: link:../../facets/os/priority-preempt
       '@ffacet/algorithm-probe-a-few-cells':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/probe-a-few-cells
+      '@ffacet/algorithm-process-state':
+        specifier: workspace:*
+        version: link:../../facets/os/process-state
+      '@ffacet/algorithm-producer-consumer':
+        specifier: workspace:*
+        version: link:../../facets/os/producer-consumer
       '@ffacet/algorithm-product-quantization':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/product-quantization
@@ -4531,6 +5144,9 @@ importers:
       '@ffacet/algorithm-push-pop-top':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/push-pop-top
+      '@ffacet/algorithm-quantum-size-tradeoff':
+        specifier: workspace:*
+        version: link:../../facets/os/quantum-size-tradeoff
       '@ffacet/algorithm-queue-fifo':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/queue-fifo
@@ -4555,9 +5171,15 @@ importers:
       '@ffacet/algorithm-ready-first':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/ready-first
+      '@ffacet/algorithm-ready-queue-pick':
+        specifier: workspace:*
+        version: link:../../facets/os/ready-queue-pick
       '@ffacet/algorithm-recall-speed-tradeoff':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/recall-speed-tradeoff
+      '@ffacet/algorithm-recency-reorder':
+        specifier: workspace:*
+        version: link:../../facets/os/recency-reorder
       '@ffacet/algorithm-recolor-then-rotate':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/recolor-then-rotate
@@ -4597,6 +5219,9 @@ importers:
       '@ffacet/algorithm-repeat-relax-all':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/repeat-relax-all
+      '@ffacet/algorithm-replay-after-crash':
+        specifier: workspace:*
+        version: link:../../facets/os/replay-after-crash
       '@ffacet/algorithm-requires-sorted':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/requires-sorted
@@ -4615,6 +5240,9 @@ importers:
       '@ffacet/algorithm-rotate-to-balance':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/rotate-to-balance
+      '@ffacet/algorithm-round-robin-quantum':
+        specifier: workspace:*
+        version: link:../../facets/os/round-robin-quantum
       '@ffacet/algorithm-row-times-column':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/row-times-column
@@ -4627,15 +5255,30 @@ importers:
       '@ffacet/algorithm-saturating-counter':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/saturating-counter
+      '@ffacet/algorithm-save-and-restore':
+        specifier: workspace:*
+        version: link:../../facets/os/save-and-restore
       '@ffacet/algorithm-scan-until-found':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/scan-until-found
       '@ffacet/algorithm-scc':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/scc
+      '@ffacet/algorithm-scheduling-policy':
+        specifier: workspace:*
+        version: link:../../facets/os/scheduling-policy
       '@ffacet/algorithm-scope-exit':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/scope-exit
+      '@ffacet/algorithm-second-chance':
+        specifier: workspace:*
+        version: link:../../facets/os/second-chance
+      '@ffacet/algorithm-seek-distance-costs':
+        specifier: workspace:*
+        version: link:../../facets/os/seek-distance-costs
+      '@ffacet/algorithm-segmentation':
+        specifier: workspace:*
+        version: link:../../facets/os/segmentation
       '@ffacet/algorithm-select-min-each-pass':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/select-min-each-pass
@@ -4669,6 +5312,9 @@ importers:
       '@ffacet/algorithm-short-waits-for-long':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/short-waits-for-long
+      '@ffacet/algorithm-shortest-first':
+        specifier: workspace:*
+        version: link:../../facets/os/shortest-first
       '@ffacet/algorithm-sieve':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/sieve
@@ -4744,6 +5390,12 @@ importers:
       '@ffacet/algorithm-stage-overlap':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/stage-overlap
+      '@ffacet/algorithm-starvation-of-long':
+        specifier: workspace:*
+        version: link:../../facets/os/starvation-of-long
+      '@ffacet/algorithm-state-transitions':
+        specifier: workspace:*
+        version: link:../../facets/os/state-transitions
       '@ffacet/algorithm-static-prediction':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/static-prediction
@@ -4765,6 +5417,12 @@ importers:
       '@ffacet/algorithm-svm':
         specifier: workspace:*
         version: link:../../facets/ml-basics/svm
+      '@ffacet/algorithm-swap-in-out':
+        specifier: workspace:*
+        version: link:../../facets/os/swap-in-out
+      '@ffacet/algorithm-switch-costs':
+        specifier: workspace:*
+        version: link:../../facets/os/switch-costs
       '@ffacet/algorithm-t-digest':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/t-digest
@@ -4777,6 +5435,9 @@ importers:
       '@ffacet/algorithm-temporal-locality':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/temporal-locality
+      '@ffacet/algorithm-thrashing':
+        specifier: workspace:*
+        version: link:../../facets/os/thrashing
       '@ffacet/algorithm-three-edit-choices':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/three-edit-choices
@@ -4786,6 +5447,12 @@ importers:
       '@ffacet/algorithm-throughput-not-latency':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/throughput-not-latency
+      '@ffacet/algorithm-time-slice-rotate':
+        specifier: workspace:*
+        version: link:../../facets/os/time-slice-rotate
+      '@ffacet/algorithm-tlb-caches-translation':
+        specifier: workspace:*
+        version: link:../../facets/os/tlb-caches-translation
       '@ffacet/algorithm-tokenization':
         specifier: workspace:*
         version: link:../../facets/compilers/tokenization
@@ -4801,6 +5468,9 @@ importers:
       '@ffacet/algorithm-tracing-vs-refcount':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/tracing-vs-refcount
+      '@ffacet/algorithm-transfer-without-cpu':
+        specifier: workspace:*
+        version: link:../../facets/os/transfer-without-cpu
       '@ffacet/algorithm-traversal-order':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/traversal-order
@@ -4819,6 +5489,9 @@ importers:
       '@ffacet/algorithm-tsne':
         specifier: workspace:*
         version: link:../../facets/ml-basics/tsne
+      '@ffacet/algorithm-turnaround-vs-wait':
+        specifier: workspace:*
+        version: link:../../facets/os/turnaround-vs-wait
       '@ffacet/algorithm-two-color-conflict':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/two-color-conflict
@@ -4849,21 +5522,39 @@ importers:
       '@ffacet/algorithm-value-in-place':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/value-in-place
+      '@ffacet/algorithm-variable-size-segments':
+        specifier: workspace:*
+        version: link:../../facets/os/variable-size-segments
       '@ffacet/algorithm-vector-similarity':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/vector-similarity
       '@ffacet/algorithm-verify-vs-find':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/verify-vs-find
+      '@ffacet/algorithm-virtual-memory':
+        specifier: workspace:*
+        version: link:../../facets/os/virtual-memory
+      '@ffacet/algorithm-virtual-runtime':
+        specifier: workspace:*
+        version: link:../../facets/os/virtual-runtime
       '@ffacet/algorithm-vocabulary':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/vocabulary
       '@ffacet/algorithm-vote-by-neighbors':
         specifier: workspace:*
         version: link:../../facets/ml-basics/vote-by-neighbors
+      '@ffacet/algorithm-wait-and-signal':
+        specifier: workspace:*
+        version: link:../../facets/os/wait-and-signal
+      '@ffacet/algorithm-wait-cycle':
+        specifier: workspace:*
+        version: link:../../facets/os/wait-cycle
       '@ffacet/algorithm-walk-per-character':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/walk-per-character
+      '@ffacet/algorithm-weighted-fair-share':
+        specifier: workspace:*
+        version: link:../../facets/os/weighted-fair-share
       '@ffacet/algorithm-where-to-cut':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/where-to-cut
@@ -4873,6 +5564,9 @@ importers:
       '@ffacet/algorithm-write-back-vs-through':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/write-back-vs-through
+      '@ffacet/algorithm-write-intent-first':
+        specifier: workspace:*
+        version: link:../../facets/os/write-intent-first
       '@ffacet/algorithm-write-policy':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/write-policy

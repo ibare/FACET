@@ -168,10 +168,14 @@ describe('계획 카탈로그', () => {
    * (분기 · 예외 처리 · 타입 변환 · 스코프 · 클로저 · 커링 · 추상화 · 캡슐화 · 모나드 기초)과
    * 완제품 일곱 안에 합친 열셋. 합친 토픽의 조각은 `origin` 을 완제품 토픽으로 옮겼다.
    * 사용자가 정했다 (`tasks/programming-fundamentals-whole-batch.md`). 1076 → 1054.
+   *
+   * 같은 날 운영체제 완제품 판정에서 열을 지웠다 — 완제품 안에 합친 일곱(SJF · MLFQ · 세마포어 ·
+   * FIFO 페이지 교체 · Clock · FAT · DMA)과 버린 셋(PCB · 모니터 · 디렉토리 구조). 조각 origin 은
+   * host 토픽으로 옮겼다. 사용자가 정했다 (`tasks/os-whole-batch.md`). 1054 → 1044.
    */
   it('규모가 줄지 않았다 — 실수로 잘려 나간 것을 잡는다', () => {
     expect(domains.length).toBeGreaterThanOrEqual(16);
-    expect(rows.length).toBeGreaterThanOrEqual(1054);
+    expect(rows.length).toBeGreaterThanOrEqual(1044);
   });
 });
 
