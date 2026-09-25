@@ -359,6 +359,14 @@ import { overlapTheSeamConcept } from './overlap-the-seam.js';
 import { batchingAndPaddingConcept } from './batching-and-padding.js';
 import { shortWaitsForLongConcept } from './short-waits-for-long.js';
 import { refillTheEmptySlotConcept } from './refill-the-empty-slot.js';
+import { branchTakeOnePathConcept } from './branch-take-one-path.js';
+import { multiwayBranchConcept } from './multiway-branch.js';
+import { loopBackConcept } from './loop-back.js';
+import { loopTerminationConcept } from './loop-termination.js';
+import { recursionSelfCallConcept } from './recursion-self-call.js';
+import { callStackUnwindConcept } from './call-stack-unwind.js';
+import { baseCaseConcept } from './base-case.js';
+import { exceptionPropagateConcept } from './exception-propagate.js';
 
 export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   adjacencyListVsMatrixConcept,
@@ -700,4 +708,12 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   hybridSearchConcept,
   sameWordVsSameMeaningConcept,
   fuseTwoRankingsConcept,
+  branchTakeOnePathConcept,
+  multiwayBranchConcept,
+  loopBackConcept,
+  loopTerminationConcept,
+  recursionSelfCallConcept,
+  callStackUnwindConcept,
+  baseCaseConcept,
+  exceptionPropagateConcept,
 ];

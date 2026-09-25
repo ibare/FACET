@@ -66,6 +66,10 @@ export const conditionalStatementConcept: FacetConceptSource = {
         concept: 'tokenization',
         note: 'Both show a decision resolving in one beat, but a conditional decides which path runs while tokenization decides where one thing ends and the next begins.',
       },
+      {
+        concept: 'branchTakeOnePath',
+        note: 'The conditional is the whole construct, with its ordered chain and an outcome that moves with the input; the narrower claim is only that the side not chosen executes nothing, so what it would have assigned never exists.',
+      },
     ],
   },
 };
