@@ -136,7 +136,9 @@ export function checkDrawing(file, src, { err, warn }) {
   }
   // 글꼴 크기도 fontSizes 로 (S-view). 기존 facet 에 수 리터럴이 여럿 있어 경고로 둔다 — 새 facet 은 0 건을 목표로.
   // 글자 폭 셈용으로 따로 쥔 크기 상수(`const CODE_PX = 12`)도 같다 — 2026-09-25 배치에서 조각 셋이 이 꼴로 걸렸다.
-  if (/['"]font-size['"]\s*[:,]\s*(['"`]?\d)|fontSize\s*[:=]\s*['"`]?\d|const\s+[A-Z_]*(?:FS|FONT\w*|_PX|FONT_SIZE)\s*=\s*\d/.test(plain)) {
+  // 이름은 글자를 뜻하는 낱말로 좁힌다. 같은 날 운영체제 배치에서 `HOP_RISE_PER_PX` · `DIP_PX`(기울기 · 깊이)와
+  // `MAX_REFS`(이름 안의 FS 두 글자)가 오탐으로 걸렸다 — FS 는 이름의 첫 낱말이거나 `_` 뒤에 올 때만 본다.
+  if (/['"]font-size['"]\s*[:,]\s*(['"`]?\d)|fontSize\s*[:=]\s*['"`]?\d|const\s+(?:[A-Z_]*_)?(?:FS|FONT\w*|(?:CODE|TEXT|LABEL|CHAR|GLYPH|CAPTION|MONO)\w*_PX)\s*=\s*\d/.test(plain)) {
     warn('S-view', `${file} 에 글꼴 크기 리터럴이 있다 — fontSizes.* (design-tokens) 를 쓴다 (2026-09-25 감사)`);
   }
   if (/container\.(textContent|innerHTML)\s*=/.test(code)) {
