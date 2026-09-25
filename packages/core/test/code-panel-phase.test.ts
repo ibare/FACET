@@ -89,7 +89,8 @@ describe('코드 패널 phase 배선', () => {
 
     // 코드 패널을 단 facet 은 스물셋이다. 열 아래로 떨어지면 거르는 조건이나
     // glob 이 깨진 것이지 패널이 줄어든 것이 아니다.
-    expect(checked).toBeGreaterThan(atLeast(15));
+    // 좁혀 돌릴 때(FACET_ONLY)는 코드 패널이 없는 완제품도 있어 0 을 허용한다
+    expect(checked).toBeGreaterThanOrEqual(atLeast(16));
     expect({ missing, mismatched }).toEqual({ missing: [], mismatched: [] });
   }, 60_000);
 });

@@ -228,8 +228,19 @@ const all: Frame[] = [];
 const container = document.createElement('div');
 document.body.appendChild(container);
 const svgOf = (): string => container.querySelector('svg')?.outerHTML ?? '';
+function hiddenInTree(n: Element): boolean {
+  for (let e: Element | null = n; e && e !== container; e = e.parentElement) {
+    const vis = e.getAttribute('visibility') ?? (e as HTMLElement).style?.visibility;
+    const disp = e.getAttribute('display') ?? (e as HTMLElement).style?.display;
+    const op = e.getAttribute('opacity') ?? (e as HTMLElement).style?.opacity;
+    if (vis === 'hidden' || disp === 'none' || op === '0') return true;
+  }
+  return false;
+}
 const textOf = (): string =>
   Array.from(container.querySelectorAll('text'))
+    // 숨긴 글자는 화면에 없다 — 자기나 조상이 visibility=hidden · display=none · opacity 0 이면 뺀다
+    .filter((n) => !hiddenInTree(n))
     .map((n) => (n.textContent ?? '').trim())
     .filter((s) => s.length > 0)
     .join(' · ');
