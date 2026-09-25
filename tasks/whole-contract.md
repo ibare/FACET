@@ -199,7 +199,7 @@ coroutine 으로 두면 러너가 **마운트 시점에 throw** 하고, 통과�
 - 문안 — 자리 표시자 뒤에 **받침 따라 바뀌는 조사**를 붙이지 않는다 (`'{word} 를'` 이 `box 를` 로 뜬다). 문장을 바꿔
   조사가 필요 없게 한다. 값 삽입은 `{name}` + vars. 결론을 캡션 글자에 상수로 박지 않는다
 - payload 는 `typeof` 가드로 읽는다. `payload as <이름 붙은 타입>` · `p.items as Item[]` 로 믿지 않는다 (C9)
-- 색은 `getColors(theme)`, 글꼴은 `fonts`/`fontSizes`. hex · rgba · 글꼴 이름 리터럴 0 건 (S-facet · S-view)
+- 색은 `getColors(theme)`, 글꼴은 `fonts`/`fontSizes`. hex · rgba · 글꼴 이름 리터럴 0 건 (S-facet · S-view). 글자 폭 셈용 크기도 `parseFloat(fontSizes.sm)` 처럼 토큰에서 (`const CODE_PX = 12` 금지)
 - **마운트 뒤 세로를 바꾸지 않는다** — 사다리의 가장 큰 값이 들어갈 자리를 처음부터 잡는다 (canvas-height)
 - 러너가 붙여 준 캔버스를 떼지 않는다 — `container.textContent = ''` 금지 (canvas-attach)
 - `initialData` 가 없어도 마운트에서 던지지 않는다 — 전수 검사가 `config: {}` 만 주고 마운트한다

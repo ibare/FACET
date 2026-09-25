@@ -73,7 +73,7 @@ getColors, makeTranslator, fonts, fontSizes, PIECE_CANVAS_W, categorical
 
 - `ScenePlan<S>` = `{ initial(initialData: unknown): S; reduce(scene: S, event: FacetRuntimeEvent): S }`
 - `SceneRenderer<S>` = `{ render(next: S, prev: S | null, opts: { animate: boolean }): void | Promise<void>; destroy(): void }`
-- `CanvasView` = `{ canvas: { height: H }; mount(container, params: ViewMountParams & { canvas: SVGSVGElement }): ViewInstance & SceneRenderer<S> }`
+- `CanvasView` = `{ canvas: { height: H }; mount(container, params: ViewMountParams & { canvas: SVGSVGElement }): ViewInstance }` — **제네릭이 아니다.** 돌려주는 인스턴스가 `render`/`destroy` 를 열어 `SceneRenderer<S>` 로서 일한다 (선언은 `const xStageView: CanvasView = …`)
 - `ReactiveContext` 는 `FacetContext` 에 `sleep(ms): Promise<boolean>` 을 더한 것. 알고리즘은 `FacetContext<Data>` 로 받아 `as ReactiveContext<Data>` 로 좁힌다.
 - `params`: `canvas`(러너가 만든 SVG) · `t`(문안 조회기) · `theme` · `locale` · `initialData`
 - 팔레트 이름: `bg bgSubtle border text textMuted textInverse primary primaryHover accent danger success itemDefault itemComparing itemSwapping itemSorted itemPivot itemActive stateInk`
@@ -124,7 +124,7 @@ getColors, makeTranslator, fonts, fontSizes, PIECE_CANVAS_W, categorical
   // 부르는 쪽: if (!(await pause())) return;
   ```
 - **모든 루프는 바디 첫 문장에서 취소를 본다** — `if (!(await pause())) return;` 이거나 `if (ctx.cancelled) return;`. 문이 첫 문장이면 그것이 진입 검사다 (C8). `piece-check` 는 기다림(`await`)이 있는 루프만 기계로 잰다
-- **마운트 직후 첫 걸음 앞에서 `stepMs` 만큼 빈 화면을 두지 않는다** — 첫 emit 을 문 밖에 두거나 첫 문만 그냥 통과시킨다. 결과는 같아야 한다 (S-piece 의 문 조항을 따른 `관례` — 그 조항은 `advance` 조각의 것이다)
+- **마운트 직후 첫 걸음 앞에서 `stepMs` 만큼 _빈_ 화면을 두지 않는다** — 첫 emit 을 문 밖에 두거나 첫 문만 그냥 통과시킨다. 결과는 같아야 한다 (S-piece 의 문 조항을 따른 `관례` — 그 조항은 `advance` 조각의 것이다). **걸음 0 이 이미 읽을 것이 있는 화면**(프로그램 전체 · 바탕 구조)이면 첫 발신 앞에 `stepMs` 를 두어 읽을 틈을 준다 — "첫 걸음도 800ms 이상" 과 같은 뜻이다 (2026-09-25 제어 흐름 배치에서 셋이 같은 판단을 했다)
 - **자동 재생을 마치면 그냥 돌아온다.** 손짚기 루프(`waitForInput` → `rewind`)를 두지 않는다 — `pieceScrub` 에는 `advance` 가 없어 도달하지 않는 죽은 코드다. 러너가 알고리즘 종료를 보고 띠를 연다 (`관례` — 이행 프로토콜 7 절. S-piece 는 "이행 뒤 일괄로 걷어낸다" 고만 한다)
 - 화면 문안을 payload 로 보내지 않는다 — 무엇을 말할지(종류와 인자)만 싣는다 (C10)
 - `ctx.metric` 을 부르지 않는다 (S-piece)
@@ -149,7 +149,7 @@ getColors, makeTranslator, fonts, fontSizes, PIECE_CANVAS_W, categorical
 - **세로는 마운트 뒤 바뀌지 않는다.** 내용이 커지면 간격을 줄여 담는다 (canvas-height 테스트)
 - **그 폭을 채운다** — 크기는 캔버스에서 역산하고 상수로는 상한만 둔다 (S-piece)
 - 비울 때는 `params.canvas.textContent = ''` — **container 를 비우면 캔버스가 떨어져 나간다**
-- 색은 `getColors(params.theme)`, 글꼴은 `fonts`/`fontSizes`. hex·rgb 리터럴 0 건
+- 색은 `getColors(params.theme)`, 글꼴은 `fonts`/`fontSizes`. hex·rgb 리터럴 0 건. **글자 폭을 셈하려고 쥐는 크기도 토큰에서** — `const CODE_PX = 12` 가 아니라 `parseFloat(fontSizes.sm)`. 따로 쥐면 토큰이 바뀔 때 셈과 글자가 어긋난다 (2026-09-25 배치에서 넷이 이 꼴로 걸렸다. `piece-check` 가 경고한다)
 - 문안은 `const t = params.t ?? makeTranslator(params.locale)` 로 만들고 `t('caption.x', 'en 원본', vars)` — **en 원본은 호출부에 리터럴**, facet.ts 의 en 과 글자까지 같게 (en-original 테스트)
 - `mount` 가 `initialData` 를 좁힌다. 좁히개는 stage 가 가진다. **`initialData` 가 없어도 던지지 않는다** — `canvas-attach` 전수 검사가 `config: {}` 만 주고 마운트한다. 던지면 잰 수 0 으로 실패한다. 빈 캔버스를 두는 렌더러를 돌려주거나, 값을 장면(`init` 이벤트)에서 읽는다 (2026-09-18, 둘이 따로 걸렸다)
 
