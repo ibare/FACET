@@ -207,12 +207,24 @@ getColors, makeTranslator, fonts, fontSizes, PIECE_CANVAS_W, categorical
 ## 끝내기 전에
 
 ```sh
-node scripts/piece-check.mjs facets/<domain>/<name>
+node scripts/piece-check.mjs facets/<domain>/<name> --static   # 쓰는 도중엔 이것 (1 초)
+node scripts/piece-check.mjs facets/<domain>/<name>            # 마치기 전에 (17 초 안팎)
 ```
 
 정적 검사 · tsc · 좁힌 전수 검사 · **장면 자체 검증**(바탕 · 순수 · 흘림과 곧바로의 일치 ·
-지연 발화 · 뛰어다니기 · 흘리는 도중 destroy)을 한 번에 돈다. 17 초 안팎. **오류 0 이 될
-때까지 고친다.** 경고는 읽고 판단한다.
+지연 발화 · 뛰어다니기 · 흘리는 도중 destroy)을 한 번에 돈다. **오류 0 이 될 때까지 고친다.**
+경고는 읽고 판단한다. 전체 검사는 조각 하나에 평균 다섯 번 돌았다(2026-09-18) — 정적 오류는
+`--static` 으로 먼저 걷어 내고 전체는 마칠 때 돌린다.
+
+**화면을 볼 때**는 렌더 스크립트를 새로 짜지 않는다:
+
+```sh
+npx tsx scripts/facet-shot.mts facets/<domain>/<name> --locale ko
+```
+
+되짚기와 같은 길(`animate:false`)로 걸음마다 화면을 떠 **글자 요약**을 찍고 모음 PNG 한 장을
+만든다 (2 초 안팎). **글자 요약으로 판단이 서면 PNG 를 열지 않는다** — 캡션의 수는 글자로 본다.
+형태(동사가 그림이 되었는가)를 봐야 할 때만 PNG 한 장을 연다. `--theme dark` 로 다크도 본다.
 
 자체 검증을 **임시 파일로 새로 짜지 않는다** — 위 명령에 들어 있다. 조각 고유의 주장(완주
 화면에 무엇이 남아야 하는가)을 재고 싶으면 스크래치패드에 `<name>-claim.test.ts` 로 두고

@@ -48,6 +48,7 @@ rules/
 | `tasks/piece-batch-protocol.md` | 조각을 여러 개 만들 때 — 격리 배치 · 사양 서식 · 관성 계측 |
 | `tasks/piece-contract.md` | `piece-builder` 가 먼저 읽는 계약 한 장 — 산출물 · 이름 · API · 함정 · `piece-check` |
 | `tasks/whole-batch-protocol.md` | **완제품을 만들지 말지 정하는 잣대 셋** · 조작 실측 · 완제품 배치 |
+| `tasks/whole-contract.md` | `whole-builder` 가 먼저 읽는 계약 한 장 — 산출물 · 이름 · API · IR 한계 · 함정 · `whole-check` |
 | `tasks/concept-meta-batch-protocol.md` | 개념 메타를 여러 개 만들 때 — 완제품+조각 묶음 |
 | `tasks/catalog-scope.md` | 카탈로그에 항목을 넣을지 말지 |
 | `tasks/scene-migration-protocol.md` | **진행 중** — 조각 181 을 장면(Scene) 방식으로 옮기는 절차 |
