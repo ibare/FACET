@@ -78,6 +78,8 @@ getAlgorithmMechanismKind('<camel>')
 
 - `FacetContext<D>` = `{ data: D; emit(e): Promise<void>; metric(name, delta: number | 'inc'): void; readonly cancelled: boolean }`
 - `ReactiveContext<D>` = 위 + `waitForInput<T>(): Promise<T>` · `sleep(ms): Promise<boolean>` · `pollInput<T>(): T | null`.
+  `T` 에는 **`T extends ReactiveInputEvent`**(`{ type: string; payload?: unknown }`) 제약이 있다 — 임의 모양을 넣으면 tsc 가 막는다.
+  제네릭 없이 받고 payload 를 `typeof` 로 좁힌다 (2026-09-25 프로그래밍 기초 완제품 셋이 따로 걸렸다)
   알고리즘은 `FacetContext<D>` 로 받아 `as ReactiveContext<D>` 로 좁힌다
 - 입력: `{ type: <손잡이 action>, payload: { value, segmentIndex, ...<손잡이 name 별 지금 값 (문자열)> } }`
 - `ProjectorFactory` = `(views: Record<string, ViewInstance>, runtime?: { getSpeed(): number; t: Translate }) => { onInit?(data); onEvent(e): void | Promise<void>; onReset?(); onDestroy?() }`.
@@ -158,6 +160,9 @@ coroutine 으로 두면 러너가 **마운트 시점에 throw** 하고, 통과�
 - `ctx.emit` 은 **늘 `await`**, `type` 은 **리터럴** (C2 · C8)
 - 루프 바디 첫 문장에서 취소를 본다 — `if (ctx.cancelled) return …;` 또는 `if (!(await pause())) return …;` (C8)
 - `ctx.sleep` 은 `Promise<boolean>` — **그 값을 버리면 취소가 먹지 않는다** (C8. `whole-check` 가 잡는다)
+- 헬퍼 이름을 `t` · `tr` 로 두지 않는다 — C10 · i18n 검사가 번역 호출로 읽는다
+- 셈하는 코드는 모르는 모양 · 셈할 수 없는 상태를 `?? 0` · `continue` 로 지나치지 않고 던진다 (C6). projector · stage 도 받은 값이 비면 0 을 지어내지 말고 던진다
+- 테스트 파일이 stage 를 마운트하면 머리에 `// @vitest-environment happy-dom` (둘이 따로 `document is not defined` 에 걸렸다)
 - `waitForInput` 루프는 **앞뒤로** `ctx.cancelled` 를 본다. 우리 것이 아닌 입력은 `continue` 로 흘리고, payload 의
   `value` 는 `typeof === 'number'` 와 **사다리 소속**을 확인하고 받는다 (C8 · C9)
 - 최상위 `try` 를 두면 `catch (err) { if (!ctx.cancelled) throw err; }` 가 정본. `catch { return; }` 금지 (C8)
