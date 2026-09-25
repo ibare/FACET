@@ -233,6 +233,7 @@
           "name": {"en":"Control Flow","ko":"제어 흐름","ja":"制御フロー","zh":"控制流","ar":"تدفق التحكم","es":"Flujo de control","fr":"Flot de contrôle","hi":"नियंत्रण प्रवाह","id":"Alur Kendali","pt":"Fluxo de controle"},
           "facets": [
             "facet:conditionalStatement",
+            "facet:loopVsRecursion",
             "facet:branchTakeOnePath",
             "facet:multiwayBranch",
             "facet:loopBack",
@@ -260,6 +261,7 @@
           "id": "functions",
           "name": {"en":"Functions","ko":"함수","ja":"関数","zh":"函数","ar":"الدوال","es":"Funciones","fr":"Fonctions","hi":"फ़ंक्शन","id":"Fungsi","pt":"Funções"},
           "facets": [
+            "facet:copyVsShare",
             "facet:passByValueVsReference",
             "facet:returnToCaller",
             "facet:closureCaptures",
@@ -271,6 +273,7 @@
           "id": "oop",
           "name": {"en":"Object-Oriented Programming","ko":"객체 지향","ja":"オブジェクト指向","zh":"面向对象编程","ar":"البرمجة كائنية التوجه","es":"Programación orientada a objetos","fr":"Programmation orientée objet","hi":"ऑब्जेक्ट-ओरिएंटेड प्रोग्रामिंग","id":"Pemrograman Berorientasi Objek","pt":"Programação orientada a objetos"},
           "facets": [
+            "facet:polymorphism",
             "facet:instantiateFromClass",
             "facet:methodLookupUp",
             "facet:dynamicDispatch",
@@ -282,6 +285,8 @@
           "id": "fp",
           "name": {"en":"Functional Programming","ko":"함수형 프로그래밍","ja":"関数型プログラミング","zh":"函数式编程","ar":"البرمجة الوظيفية","es":"Programación funcional","fr":"Programmation fonctionnelle","hi":"फ़ंक्शनल प्रोग्रामिंग","id":"Pemrograman Fungsional","pt":"Programação funcional"},
           "facets": [
+            "facet:pureFunction",
+            "facet:mapFilterReduce",
             "facet:pureSameOutput",
             "facet:noSideEffect",
             "facet:immutableCopy",
@@ -295,6 +300,8 @@
           "id": "memory-model",
           "name": {"en":"Memory Model","ko":"메모리 모델","ja":"メモリモデル","zh":"内存模型","ar":"نموذج الذاكرة","es":"Modelo de memoria","fr":"Modèle mémoire","hi":"मेमोरी मॉडल","id":"Model Memori","pt":"Modelo de memória"},
           "facets": [
+            "facet:tracingVsRefcount",
+            "facet:allocateAndFree",
             "facet:stackVsHeap",
             "facet:pointerDereference",
             "facet:gcReachableFromRoot",

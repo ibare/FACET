@@ -1304,20 +1304,9 @@
               "facetId": "facet:conditionalStatement"
             },
             {
-              "id": "loop",
-              "name": "반복문"
-            },
-            {
-              "id": "branching",
-              "name": "분기"
-            },
-            {
               "id": "recursive-call",
-              "name": "재귀 호출"
-            },
-            {
-              "id": "exception",
-              "name": "예외 처리"
+              "name": "반복과 재귀",
+              "facetId": "facet:loopVsRecursion"
             },
             {
               "id": "branch-take-one-path",
@@ -1339,7 +1328,7 @@
               "id": "loop-back",
               "name": "같은 곳을 다시 밟는다",
               "kind": "piece",
-              "origin": "loop",
+              "origin": "recursive-call",
               "facetId": "facet:loopBack"
             },
             {
@@ -1347,7 +1336,7 @@
               "name": "무한 루프",
               "desc": "멈출 조건이 없으면 끝나지 않는다",
               "kind": "piece",
-              "origin": "loop",
+              "origin": "recursive-call",
               "facetId": "facet:loopTermination"
             },
             {
@@ -1389,31 +1378,11 @@
           "name": "변수와 타입",
           "topics": [
             {
-              "id": "primitive",
-              "name": "원시 타입"
-            },
-            {
-              "id": "reference-type",
-              "name": "참조 타입"
-            },
-            {
-              "id": "type-coercion",
-              "name": "타입 변환"
-            },
-            {
-              "id": "scope",
-              "name": "스코프"
-            },
-            {
-              "id": "lifetime",
-              "name": "라이프타임"
-            },
-            {
               "id": "value-in-place",
               "name": "값 타입",
               "desc": "값이 자리에 직접 있다",
               "kind": "piece",
-              "origin": "primitive",
+              "origin": "argument-passing",
               "facetId": "facet:valueInPlace"
             },
             {
@@ -1421,7 +1390,7 @@
               "name": "참조 타입",
               "desc": "자리에는 주소만 있다",
               "kind": "piece",
-              "origin": "reference-type",
+              "origin": "argument-passing",
               "facetId": "facet:referenceHoldsAddress"
             },
             {
@@ -1429,7 +1398,7 @@
               "name": "별칭",
               "desc": "이름이 둘, 실체는 하나",
               "kind": "piece",
-              "origin": "reference-type",
+              "origin": "argument-passing",
               "facetId": "facet:aliasing"
             },
             {
@@ -1461,7 +1430,7 @@
               "name": "댕글링 참조",
               "desc": "가리키던 것이 먼저 사라진다",
               "kind": "piece",
-              "origin": "lifetime",
+              "origin": "manual-memory",
               "facetId": "facet:danglingReference"
             }
           ]
@@ -1472,23 +1441,8 @@
           "topics": [
             {
               "id": "argument-passing",
-              "name": "인자 전달"
-            },
-            {
-              "id": "return-value",
-              "name": "반환"
-            },
-            {
-              "id": "closure",
-              "name": "클로저"
-            },
-            {
-              "id": "higher-order",
-              "name": "고차 함수"
-            },
-            {
-              "id": "currying",
-              "name": "커링"
+              "name": "복사와 공유",
+              "facetId": "facet:copyVsShare"
             },
             {
               "id": "pass-by-value-vs-reference",
@@ -1503,7 +1457,7 @@
               "name": "반환",
               "desc": "부른 자리로 값을 들고 돌아온다",
               "kind": "piece",
-              "origin": "return-value",
+              "origin": "recursive-call",
               "facetId": "facet:returnToCaller"
             },
             {
@@ -1519,7 +1473,7 @@
               "name": "일급 함수",
               "desc": "함수를 값처럼 넘긴다",
               "kind": "piece",
-              "origin": "higher-order",
+              "origin": "map-filter-reduce",
               "facetId": "facet:functionAsValue"
             },
             {
@@ -1537,35 +1491,16 @@
           "name": "객체 지향",
           "topics": [
             {
-              "id": "class",
-              "name": "클래스"
-            },
-            {
-              "id": "inheritance",
-              "name": "상속"
-            },
-            {
               "id": "polymorphism",
-              "name": "다형성"
-            },
-            {
-              "id": "interface",
-              "name": "인터페이스"
-            },
-            {
-              "id": "abstraction",
-              "name": "추상화"
-            },
-            {
-              "id": "encapsulation",
-              "name": "캡슐화"
+              "name": "다형성",
+              "facetId": "facet:polymorphism"
             },
             {
               "id": "instantiate-from-class",
               "name": "인스턴스화",
               "desc": "틀에서 찍어 낸다",
               "kind": "piece",
-              "origin": "class",
+              "origin": "polymorphism",
               "facetId": "facet:instantiateFromClass"
             },
             {
@@ -1573,7 +1508,7 @@
               "name": "메서드 탐색",
               "desc": "없으면 위로 찾아 올라간다",
               "kind": "piece",
-              "origin": "inheritance",
+              "origin": "polymorphism",
               "facetId": "facet:methodLookupUp"
             },
             {
@@ -1589,7 +1524,7 @@
               "name": "인터페이스",
               "desc": "약속만 있고 몸통은 꽂아 넣는다",
               "kind": "piece",
-              "origin": "interface",
+              "origin": "polymorphism",
               "facetId": "facet:interfaceSlot"
             },
             {
@@ -1608,19 +1543,13 @@
           "topics": [
             {
               "id": "pure-function",
-              "name": "순수 함수"
-            },
-            {
-              "id": "immutability",
-              "name": "불변성"
+              "name": "순수 함수",
+              "facetId": "facet:pureFunction"
             },
             {
               "id": "map-filter-reduce",
-              "name": "map/filter/reduce"
-            },
-            {
-              "id": "monad-basics",
-              "name": "모나드 기초"
+              "name": "map/filter/reduce",
+              "facetId": "facet:mapFilterReduce"
             },
             {
               "id": "pure-same-output",
@@ -1643,7 +1572,7 @@
               "name": "불변성",
               "desc": "고치지 않고 새로 만든다",
               "kind": "piece",
-              "origin": "immutability",
+              "origin": "pure-function",
               "facetId": "facet:immutableCopy"
             },
             {
@@ -1685,31 +1614,21 @@
           "name": "메모리 모델",
           "topics": [
             {
-              "id": "stack-heap",
-              "name": "스택과 힙"
-            },
-            {
-              "id": "pointer",
-              "name": "포인터"
-            },
-            {
-              "id": "reference",
-              "name": "참조"
-            },
-            {
               "id": "gc",
-              "name": "가비지 컬렉션"
+              "name": "가비지 컬렉션",
+              "facetId": "facet:tracingVsRefcount"
             },
             {
               "id": "manual-memory",
-              "name": "수동 메모리 관리"
+              "name": "수동 메모리 관리",
+              "facetId": "facet:allocateAndFree"
             },
             {
               "id": "stack-vs-heap",
               "name": "스택과 힙",
               "desc": "쌓였다 사라지는 곳, 흩어져 남는 곳",
               "kind": "piece",
-              "origin": "stack-heap",
+              "origin": "manual-memory",
               "facetId": "facet:stackVsHeap"
             },
             {
@@ -1717,7 +1636,7 @@
               "name": "역참조",
               "desc": "주소를 따라간다",
               "kind": "piece",
-              "origin": "pointer",
+              "origin": "manual-memory",
               "facetId": "facet:pointerDereference"
             },
             {

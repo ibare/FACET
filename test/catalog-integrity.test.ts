@@ -163,10 +163,15 @@ describe('계획 카탈로그', () => {
    *
    * 그래서 1077 → 1076 이다. **이 검사가 제 할 일을 했다** — 줄어든 것을 잡았고,
    * 그것이 실수인지 판정인지는 사람이 갈랐다. 다음에 또 줄면 같은 물음을 다시 한다.
+   *
+   * 2026-09-25 프로그래밍 기초 완제품 판정에서 토픽 스물둘을 지웠다 — 버림 아홉
+   * (분기 · 예외 처리 · 타입 변환 · 스코프 · 클로저 · 커링 · 추상화 · 캡슐화 · 모나드 기초)과
+   * 완제품 일곱 안에 합친 열셋. 합친 토픽의 조각은 `origin` 을 완제품 토픽으로 옮겼다.
+   * 사용자가 정했다 (`tasks/programming-fundamentals-whole-batch.md`). 1076 → 1054.
    */
   it('규모가 줄지 않았다 — 실수로 잘려 나간 것을 잡는다', () => {
     expect(domains.length).toBeGreaterThanOrEqual(16);
-    expect(rows.length).toBeGreaterThanOrEqual(1076);
+    expect(rows.length).toBeGreaterThanOrEqual(1054);
   });
 });
 

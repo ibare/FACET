@@ -1265,4 +1265,25 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:memoryLeak', () =>
     import('@ffacet/algorithm-memory-leak').then((m) => m.registerMemoryLeak()),
   );
+  registerFacetLoader('facet:loopVsRecursion', () =>
+    import('@ffacet/algorithm-loop-vs-recursion').then((m) => m.registerLoopVsRecursion()),
+  );
+  registerFacetLoader('facet:copyVsShare', () =>
+    import('@ffacet/algorithm-copy-vs-share').then((m) => m.registerCopyVsShare()),
+  );
+  registerFacetLoader('facet:polymorphism', () =>
+    import('@ffacet/algorithm-polymorphism').then((m) => m.registerPolymorphism()),
+  );
+  registerFacetLoader('facet:pureFunction', () =>
+    import('@ffacet/algorithm-pure-function').then((m) => m.registerPureFunction()),
+  );
+  registerFacetLoader('facet:mapFilterReduce', () =>
+    import('@ffacet/algorithm-map-filter-reduce').then((m) => m.registerMapFilterReduce()),
+  );
+  registerFacetLoader('facet:tracingVsRefcount', () =>
+    import('@ffacet/algorithm-tracing-vs-refcount').then((m) => m.registerTracingVsRefcount()),
+  );
+  registerFacetLoader('facet:allocateAndFree', () =>
+    import('@ffacet/algorithm-allocate-and-free').then((m) => m.registerAllocateAndFree()),
+  );
 }

@@ -3334,6 +3334,16 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/programming-fundamentals/allocate-and-free:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/programming-fundamentals/base-case:
     dependencies:
       '@ffacet/core':
@@ -3363,6 +3373,16 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/programming-fundamentals/copy-vs-share:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/programming-fundamentals/currying-partial:
     dependencies:
@@ -3448,11 +3468,31 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/programming-fundamentals/loop-vs-recursion:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/programming-fundamentals/manual-free:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/programming-fundamentals/map-filter-reduce:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/programming-fundamentals/map-one-by-one:
     dependencies:
@@ -3507,6 +3547,26 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/programming-fundamentals/polymorphism:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/programming-fundamentals/pure-function:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/programming-fundamentals/pure-same-output:
     dependencies:
@@ -3567,6 +3627,16 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/programming-fundamentals/tracing-vs-refcount:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/programming-fundamentals/value-in-place:
     dependencies:
@@ -3666,6 +3736,9 @@ importers:
       '@ffacet/algorithm-all-suffixes-sorted':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/all-suffixes-sorted
+      '@ffacet/algorithm-allocate-and-free':
+        specifier: workspace:*
+        version: link:../../facets/programming-fundamentals/allocate-and-free
       '@ffacet/algorithm-always-the-highest':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/always-the-highest
@@ -3870,6 +3943,9 @@ importers:
       '@ffacet/algorithm-control-hazard':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/control-hazard
+      '@ffacet/algorithm-copy-vs-share':
+        specifier: workspace:*
+        version: link:../../facets/programming-fundamentals/copy-vs-share
       '@ffacet/algorithm-count-min-sketch':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/count-min-sketch
@@ -4233,6 +4309,9 @@ importers:
       '@ffacet/algorithm-loop-termination':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/loop-termination
+      '@ffacet/algorithm-loop-vs-recursion':
+        specifier: workspace:*
+        version: link:../../facets/programming-fundamentals/loop-vs-recursion
       '@ffacet/algorithm-lost-in-the-middle':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/lost-in-the-middle
@@ -4254,6 +4333,9 @@ importers:
       '@ffacet/algorithm-many-trees-vote':
         specifier: workspace:*
         version: link:../../facets/ml-basics/many-trees-vote
+      '@ffacet/algorithm-map-filter-reduce':
+        specifier: workspace:*
+        version: link:../../facets/programming-fundamentals/map-filter-reduce
       '@ffacet/algorithm-map-one-by-one':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/map-one-by-one
@@ -4410,6 +4492,9 @@ importers:
       '@ffacet/algorithm-pointer-dereference':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/pointer-dereference
+      '@ffacet/algorithm-polymorphism':
+        specifier: workspace:*
+        version: link:../../facets/programming-fundamentals/polymorphism
       '@ffacet/algorithm-positional-value':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/positional-value
@@ -4437,6 +4522,9 @@ importers:
       '@ffacet/algorithm-prune-branch':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/prune-branch
+      '@ffacet/algorithm-pure-function':
+        specifier: workspace:*
+        version: link:../../facets/programming-fundamentals/pure-function
       '@ffacet/algorithm-pure-same-output':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/pure-same-output
@@ -4710,6 +4798,9 @@ importers:
       '@ffacet/algorithm-topological-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/topological-sort
+      '@ffacet/algorithm-tracing-vs-refcount':
+        specifier: workspace:*
+        version: link:../../facets/programming-fundamentals/tracing-vs-refcount
       '@ffacet/algorithm-traversal-order':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/traversal-order
