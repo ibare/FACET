@@ -133,6 +133,9 @@ coroutine 으로 두면 러너가 **마운트 시점에 throw** 하고, 통과�
   - `codePanel: { type: 'code-view', ir: 'ir:<topic>-imperative', label: <열 언어> }` (IR 을 두지 않으면 이 블록도 없다)
 - `messages` — stage 와 projector 가 그리는 문안 전부. 모양은 **키가 바깥, 언어가 안쪽**
   (`{ 'caption.x': { en, ko, … } }` — 거꾸로 써도 tsc 는 통과하고 검사가 키 전부를 "선언 없음" 으로 잡는다)
+- `messages` 의 값은 **리터럴로 적는다** — facet-i18n 검사는 `facet.ts` 를 글자로 읽어 `'label.x': SOME_CONST` 를 선언으로 보지 못한다.
+  번역하지 않는 약어(`DMA`)도 열 언어 모두 같은 값의 객체로 둔다(단일 문자열은 손잡이 구간 라벨에만) (2026-09-25 운영체제 배치)
+- `initialData` 의 타입은 `type` 별칭으로 — `interface` 로 두면 index signature 가 없어 `initialData` 자리에서 tsc 가 막는다 (같은 배치)
 
 **손잡이 (`segmented-slider`)**
 
@@ -249,6 +252,8 @@ IR 이 셈하는 값과 화면이 보이는 값이 어긋나면 그것이 거짓
 node scripts/whole-check.mjs facets/<domain>/<topic> --static   # 쓰는 도중엔 이것 (1 초)
 node scripts/whole-check.mjs facets/<domain>/<topic>            # 마치기 전에 한 번 (20 초 안팎)
 ```
+- 새 디렉터리라 `@ffacet/core` 를 못 찾으면 `pnpm install` 대신 링크: `mkdir -p <dir>/node_modules/@ffacet && ln -s ../../../../../packages/core <dir>/node_modules/@ffacet/core`
+  (IR 을 쓰면 `ir-interpreter` 도 같은 꼴). 등록 때 호스트가 `pnpm install` 로 정리한다 (2026-09-25 — 조각 쉰넷 · 완제품 열여섯이 이렇게 했다)
 
 정적 검사 · tsc(src 와 test) · 좁힌 전수 검사 · **완제품 자체 검증**(손잡이가 닿는가 · 덮이는 phase · 계기가 판마다
 쌓이는가 · 선언한 계기가 첫 판에 실리는가 · 여섯 transpiler 가 옮기는가) · facet 자신의 test 가 한 번에 돈다.

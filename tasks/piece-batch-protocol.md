@@ -57,6 +57,9 @@
    node scripts/piece-inertia.mjs facets/<domain>/{a,b,…}/src/*-stage.ts
    node scripts/scene-audit.mjs --port <포트> --only facet:<id>,…
    ```
+   scene-audit 는 **모든 편집이 끝난 뒤** 돌린다 — 사용자가 띄운 vite 는 파일이 바뀔 때마다 감사 페이지를 다시 불러
+   0 부터 다시 잰다(2026-09-25 운영체제 배치에서 완제품 에이전트가 도는 동안 돌려 헛돌았다). 포트는 `lsof -iTCP -sTCP:LISTEN` 에서
+   cwd 가 `apps/playground` 인 vite 의 것이다 — 다른 프로젝트 서버가 옆 포트에 떠 있다.
    rule-guard 는 5 에서 흘려보내며 이미 돌았다. piece-check 가 기계적으로 잡는 것은
    rule-guard 가 다시 세지 않고, 정규식이 못 보는 자리(헬퍼 함수 안의 발신, 기다림이 없는
    루프, 객체 첫 키가 아닌 `type`)와 의미 판단만 본다 — 목록은 rule-guard 정의의 "배치 감사" 절.
@@ -96,6 +99,9 @@ view id   merkle-tree-stage
   `shift-stage` 로 잡아 나중에 개명했다. `<디렉터리명>-stage` 로 못박는다.
 - **임시 파일 자리를 말하지 않았다.** 스모크 스크립트가 레포 루트에 남거나
   스크래치패드에서 파일명이 부딪혔다. 이름을 조각별로 갈라 쓰게 한다.
+- **재생 길이를 stepMs 합으로만 셌다.** 걸음마다 운동이 얹히니 실제 길이는 (stepMs + 운동) 합이다.
+  2026-09-25 운영체제 배치에서 조각 셋이 사양의 "17.6 초" 를 믿고 짜다 20 초를 넘겨 stepMs 를 깎았다.
+  사양의 재생 길이는 운동을 더해 적는다.
 - **`pnpm install` 을 각자 돌렸다.** 열이 동시에 `pnpm-lock.yaml` 을 건드렸다.
   typecheck 는 호스트가 배치 끝에 일괄로 돌리는 편이 낫다.
 

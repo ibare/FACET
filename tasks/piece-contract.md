@@ -160,6 +160,7 @@ getColors, makeTranslator, fonts, fontSizes, PIECE_CANVAS_W, categorical
 - 색은 `getColors(params.theme)`, 글꼴은 `fonts`/`fontSizes`. hex·rgb 리터럴 0 건. **글자 폭을 셈하려고 쥐는 크기도 토큰에서** — `const CODE_PX = 12` 가 아니라 `parseFloat(fontSizes.sm)`. 따로 쥐면 토큰이 바뀔 때 셈과 글자가 어긋난다 (2026-09-25 배치에서 넷이 이 꼴로 걸렸다. `piece-check` 가 경고한다)
 - **수는 문장 밖에 둔다** — `'Open slots: {n}'` 이지 `'{n} open slots'` 가 아니다 (n=1 에서 복수형이 깨진다. 관사 `a {cls}` 도 같은 꼴 — 이름이 모음으로 시작하면 틀린다)
 - 문안은 `const t = params.t ?? makeTranslator(params.locale)` 로 만들고 `t('caption.x', 'en 원본', vars)` — **en 원본은 호출부에 리터럴**, facet.ts 의 en 과 글자까지 같게 (en-original 테스트)
+  **stage 의 조회 함수 이름은 반드시 `t`** (`tr` 도 됨) — `tx` · `tl` 로 두면 en-original 테스트가 호출을 0 으로 세어 원인 없이 "expected 0 to be greater than 0" 으로 실패한다 (2026-09-25 운영체제 배치에서 넷이 걸림)
 - `mount` 가 `initialData` 를 좁힌다. 좁히개는 stage 가 가진다. **`initialData` 가 없어도 던지지 않는다** — `canvas-attach` 전수 검사가 `config: {}` 만 주고 마운트한다. 던지면 잰 수 0 으로 실패한다. 빈 캔버스를 두는 렌더러를 돌려주거나, 값을 장면(`init` 이벤트)에서 읽는다 (2026-09-18, 둘이 따로 걸렸다)
 
 **render**
@@ -219,6 +220,8 @@ getColors, makeTranslator, fonts, fontSizes, PIECE_CANVAS_W, categorical
 node scripts/piece-check.mjs facets/<domain>/<name> --static   # 쓰는 도중엔 이것 (1 초)
 node scripts/piece-check.mjs facets/<domain>/<name>            # 마치기 전에 (17 초 안팎)
 ```
+- 새 디렉터리라 `@ffacet/core` 를 못 찾으면 `pnpm install` 대신 링크: `mkdir -p <dir>/node_modules/@ffacet && ln -s ../../../../../packages/core <dir>/node_modules/@ffacet/core`
+  (IR 을 쓰면 `ir-interpreter` 도 같은 꼴). 등록 때 호스트가 `pnpm install` 로 정리한다 (2026-09-25 — 조각 쉰넷 · 완제품 열여섯이 이렇게 했다)
 
 정적 검사 · tsc · 좁힌 전수 검사 · **장면 자체 검증**(바탕 · 순수 · 흘림과 곧바로의 일치 ·
 지연 발화 · 뛰어다니기 · 흘리는 도중 destroy)을 한 번에 돈다. **오류 0 이 될 때까지 고친다.**
