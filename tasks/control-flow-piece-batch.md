@@ -90,3 +90,20 @@ scene-audit 8/8 흔들림 0 · 왕복어긋남 0
 갈랐다 — `unwind · return value` 는 callStackUnwind 만, `base case · overflow` 는 baseCase 만, `frame · stack · return` 은
 recursionSelfCall 이 쓰지 않는다. definition 짝별 겹침 최대 18% (일반어). 기존 `conditional-statement.ts` 의 `contrastWith` 에
 branchTakeOnePath 한 줄을 더했다. multiwayBranch ↔ conditionalStatement 가 벡터로 가장 가까울 수 있다고 에이전트가 짚었다.
+
+## 표기 옮기기 — 파이썬 → 어느 언어도 아닌 표기 (같은 날)
+
+배치를 닫은 뒤 사용자가 짚었다: 개념을 설명하는데 특정 언어 문법을 쓰면 **그 언어를 모르는 학습자에게는 문법이 먼저 허들**이다.
+`tasks/pseudo-notation.md` 를 세우고(결정 넷: `let`/`const` 선언 · 0 부터 · `x => …` · 낱말 함수) 여덟을 옮겼다.
+
+- **만든 에이전트 여덟에게 돌려보냈다** (SendMessage). 한 번에 1~3 분. 여섯은 콜론을 떼고 낱말만 바꿔 줄 수 · 걸음이 그대로였다.
+- **선언이 주장을 바꾼 둘** — `multiway-branch` 는 `let grade = ""` 한 줄로 걸음 7 → 8. `branch-take-one-path` 는 "안 간 쪽 변수는
+  끝내 생기지 않는다" 가 파이썬의 "대입이 곧 선언" 에 기대고 있었다 — "안 간 갈래의 줄은 한 번도 실행되지 않는다 — `heater` 는 처음 값
+  그대로" 로 바꾸고 선언 셋이 늘어 걸음 6 → 9. 규약 초안은 선언 한 줄이면 된다고 잘못 적었고 에이전트가 짚었다.
+- **에이전트들이 규약의 빈자리 넷을 짚었다** — `show` 에 식 여럿 · 몸 안 `let` 의 가림(섀도잉) · 한 줄에 선언 여럿 · 설명 글에서 실제
+  언어 사실을 말해도 되는가. 모두 규약에 넣었다.
+- `piece-check` 에 **표기 검사**(다른 언어의 흔적 — `def` · `elif` · `print(` · 줄 끝 콜론 · `ValueError` …)를 오류로 넣었다. 다른 분야
+  조각 213 에서 거짓 양성 0. 특정 언어가 곧 주장인 조각은 `@notation native` 로 뺀다.
+- 개념 메타는 검색어(`exemplarKeywords`)에 `elif` · `RecursionError` 를 **일부러 남겼다** — 파이썬으로 쓴 글도 이 개념에 걸리게. 코드 표기가
+  아니므로 규약 밖이다.
+- 옮긴 뒤: piece-check 8/8 오류 0 · 관성 PASS(0.14 · 0.20) · scene-audit 8/8 · test 2083/2083.
