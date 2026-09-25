@@ -86,6 +86,10 @@ export const manualFreeConcept: FacetConceptSource = {
         concept: 'stackVsHeap',
         note: 'Stack storage disappears when its function returns without anyone asking. Heap blocks stay until explicitly returned, and this concept is about what that return does.',
       },
+      {
+        concept: 'allocateAndFree',
+        note: 'Returning a block once, after its last use, is the correct case taken alone. The wider claim is that the timing and number of returns decide between four outcomes, of which this is the only harmless one.',
+      },
     ],
   },
 };

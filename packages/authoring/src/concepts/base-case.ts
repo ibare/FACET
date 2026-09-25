@@ -89,6 +89,10 @@ export const baseCaseConcept: FacetConceptSource = {
         concept: 'splitUntilOne',
         note: 'In a divide step the one-item group is a base case that cannot be missed, since halving always arrives there. Here the step size can carry the argument past the stopping value, which is exactly what makes the base case worth checking.',
       },
+      {
+        concept: 'loopVsRecursion',
+        note: 'Reaching the base case decides whether a recursion stops. Comparing it with a loop assumes it does and asks how much stack the finished recursion needed along the way, against a single frame.',
+      },
     ],
   },
 };

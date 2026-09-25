@@ -82,6 +82,10 @@ export const returnToCallerConcept: FacetConceptSource = {
         concept: 'exceptionPropagate',
         note: 'A return always goes to the call that invoked the function, carrying a value that the expression then uses. A thrown exception skips that call\'s remaining work and keeps climbing until something catches it.',
       },
+      {
+        concept: 'loopVsRecursion',
+        note: 'Here a result takes the place of one call. When a recursion is weighed against a loop, that same hand-back happens once per level, while an iterative version keeps its running total in one variable.',
+      },
     ],
   },
 };

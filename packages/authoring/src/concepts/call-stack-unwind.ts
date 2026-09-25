@@ -87,6 +87,10 @@ export const callStackUnwindConcept: FacetConceptSource = {
         concept: 'exceptionPropagate',
         note: 'Both remove frames in reverse order of creation. Here each frame finishes its work and hands a value down; an exception abandons each frame\'s remaining lines and carries no value until something catches it.',
       },
+      {
+        concept: 'loopVsRecursion',
+        note: 'The order of returns belongs to one recursion on its own. Comparing recursion with iteration asks how deep that stack had to grow before unwinding started, where a loop never grows it.',
+      },
     ],
   },
 };

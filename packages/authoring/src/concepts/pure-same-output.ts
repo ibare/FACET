@@ -31,7 +31,6 @@ export const pureSameOutputConcept: FacetConceptSource = {
       'referential transparency',
       'deterministic function',
       'same input same output',
-      'pure function',
       'function depends on a global variable',
       'hidden input',
       'result depends on external state',
@@ -86,6 +85,10 @@ export const pureSameOutputConcept: FacetConceptSource = {
       {
         concept: 'functionAsValue',
         note: 'Treating functions as values is safest when calling them has no hidden inputs; this concept is that condition, independent of how the function is passed around.',
+      },
+      {
+        concept: 'pureFunction',
+        note: 'Here determinism is tested by calling one function repeatedly while something it reads changes. The broader claim tests purity by reordering several calls, which exposes functions that change what the next call receives.',
       },
     ],
   },

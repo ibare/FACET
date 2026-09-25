@@ -387,6 +387,10 @@ import { referenceCycleConcept } from './reference-cycle.js';
 import { manualFreeConcept } from './manual-free.js';
 import { doubleFreeConcept } from './double-free.js';
 import { memoryLeakConcept } from './memory-leak.js';
+import { tracingVsRefcountConcept } from './tracing-vs-refcount.js';
+import { allocateAndFreeConcept } from './allocate-and-free.js';
+import { loopVsRecursionConcept } from './loop-vs-recursion.js';
+import { copyVsShareConcept } from './copy-vs-share.js';
 import { pureSameOutputConcept } from './pure-same-output.js';
 import { noSideEffectConcept } from './no-side-effect.js';
 import { immutableCopyConcept } from './immutable-copy.js';
@@ -399,6 +403,9 @@ import { methodLookupUpConcept } from './method-lookup-up.js';
 import { dynamicDispatchConcept } from './dynamic-dispatch.js';
 import { interfaceSlotConcept } from './interface-slot.js';
 import { encapsulationBoundaryConcept } from './encapsulation-boundary.js';
+import { polymorphismConcept } from './polymorphism.js';
+import { pureFunctionConcept } from './pure-function.js';
+import { mapFilterReduceConcept } from './map-filter-reduce.js';
 
 export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   adjacencyListVsMatrixConcept,
@@ -768,6 +775,10 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   manualFreeConcept,
   doubleFreeConcept,
   memoryLeakConcept,
+  tracingVsRefcountConcept,
+  allocateAndFreeConcept,
+  loopVsRecursionConcept,
+  copyVsShareConcept,
   pureSameOutputConcept,
   noSideEffectConcept,
   immutableCopyConcept,
@@ -780,4 +791,7 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   dynamicDispatchConcept,
   interfaceSlotConcept,
   encapsulationBoundaryConcept,
+  polymorphismConcept,
+  pureFunctionConcept,
+  mapFilterReduceConcept,
 ];

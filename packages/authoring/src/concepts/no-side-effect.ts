@@ -29,14 +29,11 @@ export const noSideEffectConcept: FacetConceptSource = {
     exemplarKeywords: [
       'side effect',
       'side-effect free',
-      'pure function',
       'mutating global state',
       'global variable modified inside a function',
       'call counter',
       'hidden state change',
       'global keyword in Python',
-      'why order of calls matters',
-      'impure function',
     ],
   },
 
@@ -87,6 +84,10 @@ export const noSideEffectConcept: FacetConceptSource = {
       {
         concept: 'immutableCopy',
         note: 'Never modifying existing data is one way to avoid side effects on shared structures; this concept names the effect itself, whatever kind of variable it lands on.',
+      },
+      {
+        concept: 'pureFunction',
+        note: 'This names the effect a call leaves behind in an outer variable. Purity in the broader sense ties such effects to their cost: once calls change shared data, the order in which they run decides every result.',
       },
     ],
   },

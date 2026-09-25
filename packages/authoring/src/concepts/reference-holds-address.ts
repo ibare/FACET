@@ -86,6 +86,10 @@ export const referenceHoldsAddressConcept: FacetConceptSource = {
         concept: 'pointerDereference',
         note: 'Holding an address and following it are two separate acts. This concept only stores and replaces the address; dereferencing reads it and goes to the location it names.',
       },
+      {
+        concept: 'copyVsShare',
+        note: 'A variable holding only an address is the precondition; handing that address across a function call, so the callee edits the caller\'s list rather than a duplicate, is where it matters.',
+      },
     ],
   },
 };

@@ -91,6 +91,10 @@ export const memoryLeakConcept: FacetConceptSource = {
         concept: 'lostLink',
         note: 'Both are cases where the only stored address of some memory is overwritten, leaving it with no way in. A lost link cuts off the rest of a list at once; a leak cuts off one block per round.',
       },
+      {
+        concept: 'allocateAndFree',
+        note: 'Never returning a replaced block is one wrong count of returns. The wider claim sets it beside returning too early or too often, which keep consumption bounded but fail in other ways.',
+      },
     ],
   },
 };

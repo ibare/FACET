@@ -91,6 +91,10 @@ export const immutableCopyConcept: FacetConceptSource = {
         concept: 'mapOneByOne',
         note: 'Transforming every element into a fresh list also leaves the source alone, but only as a by-product of how that operation is defined. Keeping the old version intact beside the new one is the whole claim of immutability.',
       },
+      {
+        concept: 'pureFunction',
+        note: 'Immutability is a rule about data: keep the old version intact beside the new. Purity is the property that rule gives a function, namely that its answer no longer depends on what was called before it.',
+      },
     ],
   },
 };

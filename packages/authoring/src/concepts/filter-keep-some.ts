@@ -35,7 +35,6 @@ export const filterKeepSomeConcept: FacetConceptSource = {
       'select elements matching a condition',
       'remove items that fail a test',
       'boolean callback',
-      'functional programming list operations',
     ],
   },
 
@@ -82,6 +81,10 @@ export const filterKeepSomeConcept: FacetConceptSource = {
       {
         concept: 'linearSearch',
         note: 'Both examine a sequence front to back against a test. A search stops at the first match and reports where it is; selection keeps going to the end and collects every element that passes.',
+      },
+      {
+        concept: 'mapFilterReduce',
+        note: 'Selection alone is a claim about which elements pass. In a chain of stages it is the only one that changes the count, so every later stage inherits its decisions.',
       },
     ],
   },

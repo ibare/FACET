@@ -86,6 +86,10 @@ export const instantiateFromClassConcept: FacetConceptSource = {
         concept: 'encapsulationBoundary',
         note: 'Giving each object its own fields says nothing about who may touch them. Restricting access to those fields is a separate rule layered on top.',
       },
+      {
+        concept: 'polymorphism',
+        note: 'Making objects is where the story of an object\'s behaviour starts. Polymorphism takes the class an object was made from as the starting point and asks which code answers when that object is called.',
+      },
     ],
   },
 };

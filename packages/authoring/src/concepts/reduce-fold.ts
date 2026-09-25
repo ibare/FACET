@@ -85,6 +85,10 @@ export const reduceFoldConcept: FacetConceptSource = {
         concept: 'loopBack',
         note: 'A fold is the loop-with-a-running-total pattern packaged as one call. The repetition is still there; the loop header, counter and update line are hidden inside the operation.',
       },
+      {
+        concept: 'mapFilterReduce',
+        note: 'A fold alone turns one list into one value. As the last stage of a chain, it is where every change made earlier becomes a change in a single number.',
+      },
     ],
   },
 };

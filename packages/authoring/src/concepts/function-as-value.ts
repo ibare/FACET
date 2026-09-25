@@ -83,6 +83,10 @@ export const functionAsValueConcept: FacetConceptSource = {
         concept: 'returnToCaller',
         note: 'Handing over a function sends code to run later; handing back a result sends a finished value to the call that asked for it. Calling a received function combines the two: its result returns to the call made through the new name.',
       },
+      {
+        concept: 'mapFilterReduce',
+        note: 'A function handed over as a value is the shared ingredient; a chain of list stages is one large use of it, where each stage receives a different function and passes its result to the next.',
+      },
     ],
   },
 };

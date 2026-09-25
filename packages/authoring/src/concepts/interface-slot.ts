@@ -86,6 +86,10 @@ export const interfaceSlotConcept: FacetConceptSource = {
         concept: 'functionAsValue',
         note: 'Both let a function run code chosen by whoever calls it. Passing a function hands over a single behaviour; an interface hands over an object that must supply a whole named set of them.',
       },
+      {
+        concept: 'polymorphism',
+        note: 'An interface alone is a promise that each class fills with its own bodies. Polymorphism puts that promise over an inheritance chain, where a promised name may be filled by an inherited body rather than one the class wrote itself.',
+      },
     ],
   },
 };

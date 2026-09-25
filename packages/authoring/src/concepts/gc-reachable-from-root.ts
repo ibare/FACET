@@ -87,6 +87,10 @@ export const gcReachableFromRootConcept: FacetConceptSource = {
         concept: 'memoryLeak',
         note: 'Memory that can no longer be reached is reclaimed automatically under tracing collection. Without a collector, the same lost memory stays allocated until the program ends.',
       },
+      {
+        concept: 'tracingVsRefcount',
+        note: 'Reachability from the roots is what a tracing collector judges by. Setting that verdict against counting on the same objects adds a further claim: the two agree everywhere except where pointers close a loop.',
+      },
     ],
   },
 };

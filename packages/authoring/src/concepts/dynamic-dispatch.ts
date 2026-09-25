@@ -29,7 +29,6 @@ export const dynamicDispatchConcept: FacetConceptSource = {
     definition:
       'Dynamic dispatch lets one call site choose its target at run time by the class of whichever object it receives, so an unchanged line yields a different result for each kind of object in a collection.',
     exemplarKeywords: [
-      'polymorphism',
       'runtime polymorphism',
       'subtype polymorphism',
       'virtual method',
@@ -88,6 +87,10 @@ export const dynamicDispatchConcept: FacetConceptSource = {
       {
         concept: 'functionAsValue',
         note: 'Both run code that the calling line does not name. Passing a function hands over one piece of code explicitly; dispatch picks the code from the object, among methods that share one name.',
+      },
+      {
+        concept: 'polymorphism',
+        note: 'Dispatch is the single claim that one line reaches different code for different objects. Polymorphism as a whole also covers where that code is found among ancestors, when no class provides it, and which names an interface guarantees.',
       },
     ],
   },

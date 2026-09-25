@@ -90,6 +90,10 @@ export const stackVsHeapConcept: FacetConceptSource = {
         concept: 'gcReachableFromRoot',
         note: 'Heap memory that survives a call must eventually be removed by someone. This concept establishes only that it survives; a tracing collector is one answer to who removes it and when.',
       },
+      {
+        concept: 'allocateAndFree',
+        note: 'That heap memory outlasts the call that requested it is this claim. What follows when the program later returns that memory (on time, too early, twice or never) is a separate, wider one.',
+      },
     ],
   },
 };

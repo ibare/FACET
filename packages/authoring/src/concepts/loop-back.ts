@@ -78,6 +78,10 @@ export const loopBackConcept: FacetConceptSource = {
         concept: 'backwardTaken',
         note: 'The same backward jump, seen at two levels: in the source it is how a loop repeats, and in the processor it is a branch whose target lies at a lower address that a predictor can guess taken.',
       },
+      {
+        concept: 'loopVsRecursion',
+        note: 'Going back up to the condition is how one loop repeats. Setting a loop beside a recursion that computes the same thing is a different question: what the two cost, given that the loop repeats inside a single frame.',
+      },
     ],
   },
 };

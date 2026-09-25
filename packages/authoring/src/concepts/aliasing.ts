@@ -81,6 +81,10 @@ export const aliasingConcept: FacetConceptSource = {
         concept: 'passByValueVsReference',
         note: 'Handing a list to a function produces the same sharing between the caller\'s name and the parameter. Here the two names sit in one scope, so the sharing is visible without any call.',
       },
+      {
+        concept: 'copyVsShare',
+        note: 'Assignment leaves two lasting names for one list in the same scope. A list parameter is a second name that lives only for one call, yet the edits made through it outlive the call.',
+      },
     ],
   },
 };

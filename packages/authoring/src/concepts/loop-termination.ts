@@ -82,6 +82,10 @@ export const loopTerminationConcept: FacetConceptSource = {
         concept: 'markVisitedOrLoop',
         note: 'Both are non-termination, but a graph walk without a visited record repeats because of the shape of the data, while this loop repeats because of what its own body fails to update.',
       },
+      {
+        concept: 'loopVsRecursion',
+        note: 'Whether a loop can end at all comes before any comparison. Weighing a loop against an equivalent recursion takes for granted that both finish and asks what else differs between them.',
+      },
     ],
   },
 };

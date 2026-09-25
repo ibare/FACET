@@ -93,6 +93,10 @@ export const danglingReferenceConcept: FacetConceptSource = {
         concept: 'stackVsHeap',
         note: 'A returning function may safely hand back the location of heap memory it requested, because that memory outlasts the call. Handing back the location of its own local is what fails, because the frame holding it does not.',
       },
+      {
+        concept: 'allocateAndFree',
+        note: 'Both involve using storage after its lifetime has ended. Here a returning function ends it on the stack; under manual heap management the program ends it with a free call placed too early.',
+      },
     ],
   },
 };

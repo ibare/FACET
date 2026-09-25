@@ -87,6 +87,10 @@ export const referenceCycleConcept: FacetConceptSource = {
         concept: 'markVisitedOrLoop',
         note: 'A cycle in a graph traps a walk that does not remember where it has been. A cycle between objects instead traps a count that can only be lowered from outside the cycle.',
       },
+      {
+        concept: 'tracingVsRefcount',
+        note: 'A pair holding each other is the case where counting fails. The comparison of the two strategies adds that it is the only such case: without a loop, counting and tracing remove the same objects.',
+      },
     ],
   },
 };

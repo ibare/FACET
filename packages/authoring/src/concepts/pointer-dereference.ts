@@ -85,6 +85,10 @@ export const pointerDereferenceConcept: FacetConceptSource = {
         concept: 'danglingReference',
         note: 'Following an address is only meaningful while the location still holds what was put there. This concept assumes it does; a dangling reference is the case where the storage has been handed to someone else.',
       },
+      {
+        concept: 'allocateAndFree',
+        note: 'Following an address assumes the memory behind it is still in use. Whether it is depends on when that memory was returned, a question of lifetime rather than of indirection.',
+      },
     ],
   },
 };

@@ -79,6 +79,10 @@ export const recursionSelfCallConcept: FacetConceptSource = {
         concept: 'loopBack',
         note: 'Both send control back to an earlier line of the same code. A loop keeps one set of variables across passes; a self-call starts a fresh invocation with its own argument while the caller keeps its own.',
       },
+      {
+        concept: 'loopVsRecursion',
+        note: 'A self-call opening a new invocation is the mechanism; choosing between recursion and a loop for the same computation is about its price, one more invocation held open for every level of input.',
+      },
     ],
   },
 };

@@ -81,6 +81,10 @@ export const valueInPlaceConcept: FacetConceptSource = {
         concept: 'passByValueVsReference',
         note: 'The same duplication happens when a number is handed to a function by value. This concept is the plain assignment case, with no function or parameter involved.',
       },
+      {
+        concept: 'copyVsShare',
+        note: 'Assignment duplicating a number is the plain case. Handing a number to a function duplicates it the same way, and the duplicate also ends with the call, so repeated calls never add up.',
+      },
     ],
   },
 };

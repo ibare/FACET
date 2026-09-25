@@ -89,6 +89,10 @@ export const methodLookupUpConcept: FacetConceptSource = {
         concept: 'shadowing',
         note: 'Both let a nearer definition win over a farther one with the same name. Shadowing concerns variable names in nested blocks; this concerns method names across a family of classes.',
       },
+      {
+        concept: 'polymorphism',
+        note: 'Lookup is one rule with the object held still. Polymorphism is what that rule produces once the object varies: the same name resolves to different ancestors, or to nothing, depending on where the search begins.',
+      },
     ],
   },
 };

@@ -87,6 +87,10 @@ export const passByValueVsReferenceConcept: FacetConceptSource = {
         concept: 'aliasing',
         note: 'A by-reference parameter is a second name for the caller\'s variable, lasting one call. Aliasing is two names for one list within the same scope, created by ordinary assignment.',
       },
+      {
+        concept: 'copyVsShare',
+        note: 'By-reference is a marker on the parameter that lends the caller\'s variable itself. Call by sharing uses no marker: every argument crosses the same way, and a caller sees a change only when what crossed was the address of a list.',
+      },
     ],
   },
 };

@@ -37,7 +37,6 @@ export const mapOneByOneConcept: FacetConceptSource = {
       'element-wise transformation',
       'one-to-one mapping of a list',
       'map vs forEach',
-      'functional programming list operations',
     ],
   },
 
@@ -83,6 +82,10 @@ export const mapOneByOneConcept: FacetConceptSource = {
       {
         concept: 'functionAsValue',
         note: 'Handing a function to another function is the mechanism map relies on; this concept is what that particular receiver does with it — apply it once per element and keep positions.',
+      },
+      {
+        concept: 'mapFilterReduce',
+        note: 'Mapping alone is one stage whose property is keeping count and position. Chained after a selection and before a fold, that property is what makes its length always follow the stage before it.',
       },
     ],
   },

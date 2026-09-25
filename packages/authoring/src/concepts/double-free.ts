@@ -86,6 +86,10 @@ export const doubleFreeConcept: FacetConceptSource = {
         concept: 'memoryLeak',
         note: 'The two classic errors of manual memory management point in opposite directions: returning a block more often than it was borrowed, or less often.',
       },
+      {
+        concept: 'allocateAndFree',
+        note: 'Returning a block twice is one wrong count. The wider claim weighs timing and count of returns against each other (none, too early, too many), with this as the case of too many.',
+      },
     ],
   },
 };

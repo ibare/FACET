@@ -86,6 +86,10 @@ export const refcountZeroConcept: FacetConceptSource = {
         concept: 'manualFree',
         note: 'Both end with memory given back. Counting decides the moment automatically from the number of holders; manual management leaves the moment to an explicit call written by the programmer.',
       },
+      {
+        concept: 'tracingVsRefcount',
+        note: 'Removal when the last holder lets go is a complete rule on its own terms. Compared with a search from the roots, it gives the same result on graphs without loops and falls short only on graphs with them.',
+      },
     ],
   },
 };
