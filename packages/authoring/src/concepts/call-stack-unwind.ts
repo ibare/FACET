@@ -38,13 +38,13 @@ export const callStackUnwindConcept: FacetConceptSource = {
 
   briefing: {
     observable: [
-      'The code on the left is `fact(n)` with `if n == 1: return 1` and `return n * fact(n - 1)`, called from an outer line `x = fact(4)`. The code panel marks only the line where the current event happened.',
+      'The code on the left is `function fact(n)` with `if n == 1` → `return 1` and `return n * fact(n - 1)`, called from an outer line `let x = fact(4)`. The code panel marks only the line where the current event happened.',
       'Each call drops a new frame onto the previous one: fact(4), fact(3), fact(2), fact(1), reaching depth 4. Every frame but the last shows its multiplication as `return 4 *`, `return 3 *`, `return 2 *` followed by an empty slot.',
       'fact(1) makes no further call and returns 1. From there the frames come off top first: each removed frame\'s value drops into the empty slot of the frame below, so fact(2) finishes 2 * 1, fact(3) finishes 3 * 2, fact(4) finishes 4 * 6.',
-      'The last value, 24, drops into `x =` on the outer line, outside every frame.',
+      'The last value, 24, drops into `let x =` on the outer line, outside every frame.',
       'Removed frames leave dashed outlines in place, and two columns record push order and pop order: fact(4) is first pushed and last popped, fact(1) last pushed and first popped.',
       'A step is one frame going on or coming off — eight in all. Lines evaluated in between (the test, the multiplication) are not counted as steps, and a frame shows only `n` and its empty slot, not the return address or temporaries a real frame holds.',
-      'The code is a small subset of Python notation.',
+      'The code is written in a small language-neutral notation — `function`, `let`, `if`, `return`, indentation for bodies — rather than in any one real language.',
     ],
 
     screen: {

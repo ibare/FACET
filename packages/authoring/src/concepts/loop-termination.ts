@@ -1,9 +1,9 @@
 /**
  * loopTermination 개념 선언.
  *
- * canonical facet 은 `facet:loopTermination` — `while i < 3:` 의 몸이 `total` 만 쓰고 `i` 는
+ * canonical facet 은 `facet:loopTermination` — `while i < 3` 의 몸이 `total` 만 쓰고 `i` 는
  * 건드리지 않는다. 조건 줄로 돌아올 때마다 `i` 칸에서 0 이 한 알 떨어져 셈 칸에 내려앉고
- * 다섯 번 모두 참이다. 재생은 다섯 번째 셈에서 멈추고 `print(total)` 은 "never reached".
+ * 다섯 번 모두 참이다. 재생은 다섯 번째 셈에서 멈추고 `show total` 은 "never reached".
  *
  * ── 묶음 안에서의 자리
  *
@@ -41,13 +41,13 @@ export const loopTerminationConcept: FacetConceptSource = {
 
   briefing: {
     observable: [
-      'Five lines: `i = 0`, `total = 0`, `while i < 3:`, `total = total + 1`, `print(total)`. On the right, variable cells are tagged — `i` with "the condition reads", `total` with "the body writes".',
+      'Five lines: `let i = 0`, `let total = 0`, `while i < 3`, `total = total + 1`, `show total`. On the right, variable cells are tagged — `i` with "the condition reads", `total` with "the body writes".',
       'Each time the flow returns to the condition line, a 0 detaches from the `i` cell and settles in a new check cell with `0 < 3` and true beneath it. Five checks, five identical answers.',
       'Under the checks a bar for `total` grows 0, 1, 2, 3, 4 — the value the body changes is not the value the condition reads.',
-      '`print(total)` carries the label "never reached" throughout.',
+      '`show total` carries the label "never reached" throughout.',
       'The last caption reads: "Check 5: 0 < 3 is true again. The body writes total, the condition reads i, and they share nothing, so the answer cannot change. Playback stops here; the loop does not."',
       'Stopping after five checks is a limit chosen for the drawing, not evidence of anything: the argument that the loop never ends rests on the read and write sets not overlapping, which the tags show, not on the count.',
-      'The code is a small subset of Python notation.',
+      'The code is written in a small language-neutral notation — `let`, `while`, `show`, indentation for the body — rather than in any one real language.',
     ],
 
     screen: {

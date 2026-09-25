@@ -39,12 +39,12 @@ export const recursionSelfCallConcept: FacetConceptSource = {
 
   briefing: {
     observable: [
-      'The program `def countdown(n):` with its three body lines stays at the top left as the original.',
-      'When `countdown(3)` runs, a copy of the body peels off, and the flow travels along an arc from the value pill at the end of the call line to the new copy\'s first line `if n > 0:`, where the value sits as `n = 3`.',
+      'The program `function countdown(n)` with its three body lines stays at the top left as the original.',
+      'When `countdown(3)` runs, a copy of the body peels off, and the flow travels along an arc from the value pill at the end of the call line to the new copy\'s first line `if n > 0`, where the value sits as `n = 3`.',
       'Each `countdown(n - 1)` inside a body repeats this, copying the calling body itself, with the value one smaller each time: `n = 2`, `n = 1`, `n = 0`.',
       'As each new copy stands, the earlier one falls behind with a pause mark on its `countdown(n - 1)` line and still holds its own `n`; the caption lists how many bodies are paused.',
       'In the fourth copy `0 > 0` is false — "no deeper call" — and the picture stops there at depth 4, with 3, 2, 1 in the output and three bodies paused. The way back out of those bodies is not drawn.',
-      'The run is twelve steps: one per line stepped on, and the next step after a call is always the first line of the new copy. The code is a small subset of Python notation.',
+      'The run is twelve steps: one per line stepped on, and the next step after a call is always the first line of the new copy. The code is written in a small language-neutral notation — `function`, `if`, `show`, indentation for bodies — rather than in any one real language.',
     ],
 
     screen: {

@@ -1,7 +1,7 @@
 /**
  * loopBack 개념 선언.
  *
- * canonical facet 은 `facet:loopBack` — 여섯 줄 프로그램에서 `while i <= 3:` 의 몸을 끝낸
+ * canonical facet 은 `facet:loopBack` — 여섯 줄 프로그램에서 `while i <= 3` 의 몸을 끝낸
  * 흐름이 조건 줄로 거슬러 올라가 같은 줄을 되밟는다. 줄마다 발자국 점이 쌓이고, 되돌이 호가
  * 한 겹씩 바깥에 쌓이며, 조건이 거짓인 한 번에만 빠짐 길로 내려간다.
  *
@@ -42,13 +42,13 @@ export const loopBackConcept: FacetConceptSource = {
       'Whenever the next line is above the current one, the marker rides a return arc on the left of the rail back up to line 3. The arc stays, and each later return adds a new arc one layer further out.',
       'The captions count it: "Back up to line 3 — stepped on 2 times now", then 3, then 4.',
       'By the end, lines 1, 2 and 6 carry one dot each, lines 4 and 5 (the body) carry three, and line 3 (the condition) carries four, because the condition is evaluated before every entry into the body and once more to leave.',
-      'On the fourth evaluation `i <= 3` is false and the marker takes the exit path on the right of the rail, past the body, down to `print(total)`. The output is 6; the variables end at total 6 and i 4.',
-      'The whole run is thirteen steps. The code is a small subset of Python notation.',
+      'On the fourth evaluation `i <= 3` is false and the marker takes the exit path on the right of the rail, past the body, down to `show total`. The output is 6; the variables end at total 6 and i 4.',
+      'The whole run is thirteen steps. The code is written in a small language-neutral notation — `let`, `while`, `show`, indentation for the body — rather than in any one real language.',
     ],
 
     screen: {
       affordances: [
-        'The screen plays the program by itself and stops after the print.',
+        'The screen plays the program by itself and stops after `show total`.',
         'A Replay button and a playback strip sit below it. Once finished, dragging the strip back through the run shows the arcs and footprint dots building up one return at a time.',
         'The six lines and the starting values are fixed, so the counts 1, 3 and 4 can be quoted from the finished screen.',
       ],

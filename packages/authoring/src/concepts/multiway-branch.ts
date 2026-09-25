@@ -3,7 +3,8 @@
  *
  * canonical facet 은 `facet:multiwayBranch` — 점수 74 로 성적을 매기는 다섯 갈래 사슬.
  * 구슬이 조건 머리줄마다 선 문짝에 멈추고, 거짓이면 문짝이 열려 다음 조건으로 떨어지며,
- * `74 >= 70` 에서 옆문으로 빠져나간다. `elif score >= 60:` 은 참일 수 있는데도 묻지 않는다.
+ * `74 >= 70` 에서 옆문으로 빠져나간다. L9 `else if score >= 60` 은 참일 수 있는데도 묻지 않는다.
+ * 코드는 어느 한 언어도 아닌 표기(`tasks/pseudo-notation.md`)다 — `else if` 는 두 낱말.
  *
  * ── 묶음 안에서의 자리
  *
@@ -17,19 +18,20 @@ import type { FacetConceptSource } from '../concept-types.js';
 
 export const multiwayBranchConcept: FacetConceptSource = {
   id: 'multiwayBranch',
-  label: 'Multiway Branch (elif Chain Asked Top Down)',
+  label: 'Multiway Branch (else-if Chain Asked Top Down)',
   canonicalFacet: 'facet:multiwayBranch',
 
   surface: {
     definition:
-      'An elif chain tests its conditions downward one at a time and exits at the first true one, so with overlapping ranges the earlier test wins and later tests are never evaluated.',
+      'An else-if chain tests its conditions downward one at a time and exits at the first true one, so with overlapping ranges the earlier test wins and later tests are never evaluated.',
     exemplarKeywords: [
+      'else if',
       'elif',
       'else if ladder',
       'if-elif-else chain',
       'grading with score thresholds',
       'overlapping conditions',
-      'order of elif conditions matters',
+      'order of else-if conditions matters',
       'put the narrow condition first',
       'fall through to the next condition',
       'conditions below are not checked',
@@ -38,18 +40,18 @@ export const multiwayBranchConcept: FacetConceptSource = {
 
   briefing: {
     observable: [
-      'A five-way chain grades the score 74: `>= 90` → A, `>= 80` → B, `>= 70` → C, `>= 60` → D, else → F. The outer lines stand on the left, each branch body on the right.',
+      'Two `let` lines declare `score = 74` and `grade = ""`, then a five-way chain grades the score: `>= 90` → A, `>= 80` → B, `>= 70` → C, `>= 60` → D, else → F. The outer lines stand on the left, each branch body on the right.',
       'The flow is a marble falling down a track beside the chain, stopping at a door on every condition line.',
       'At `74 >= 90` and `74 >= 80` the tag reads false, the door swings down and the marble drops to the next condition.',
       'At `74 >= 70` the tag reads true; the door stays shut and the marble rolls out through a side door into `grade = "C"`.',
-      'Leaving the body, the marble rides a rail on the right down to `print(grade)`, passing `elif score >= 60:`, which is marked "not asked" even though 74 would satisfy it.',
-      'The last caption reads "Conditions asked: 3 of 4. Passed without asking: 1." and the output is `C`. The run is seven steps after the start.',
-      'The code is a small subset of Python notation, and the score is fixed at 74.',
+      'Leaving the body, the marble rides a rail on the right down to `show grade`, passing line 9, `else if score >= 60`, which is marked "not asked" even though 74 would satisfy it.',
+      'The last caption reads "Conditions asked: 3 of 4. Passed without asking: 1." and the output is `C`. The run is eight steps after the start.',
+      'The code is written in a small language-neutral notation — `let`, `if` / `else if` / `else`, `show`, indentation for bodies — rather than in any one real language. The score is fixed at 74.',
     ],
 
     screen: {
       affordances: [
-        'The screen plays the chain by itself and stops on the printed grade.',
+        'The screen plays the chain by itself and stops on the shown grade.',
         'A Replay button and a playback strip sit below it. After the run, dragging the strip back to the `74 >= 70` step holds the marble at the side door with the door below still unopened.',
         'The score and the thresholds are fixed and never shuffled, since the point depends on 74 satisfying two conditions at once.',
       ],
