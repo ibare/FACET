@@ -1613,4 +1613,43 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:ttlExpiredReports', () =>
     import('@ffacet/algorithm-ttl-expired-reports').then((m) => m.registerTtlExpiredReports()),
   );
+  registerFacetLoader('facet:physicalLayer', () =>
+    import('@ffacet/algorithm-physical-layer').then((m) => m.registerPhysicalLayer()),
+  );
+  registerFacetLoader('facet:networkLayer', () =>
+    import('@ffacet/algorithm-network-layer').then((m) => m.registerNetworkLayer()),
+  );
+  registerFacetLoader('facet:ethernet', () =>
+    import('@ffacet/algorithm-ethernet').then((m) => m.registerEthernet()),
+  );
+  registerFacetLoader('facet:arp', () =>
+    import('@ffacet/algorithm-arp').then((m) => m.registerArp()),
+  );
+  registerFacetLoader('facet:rip', () =>
+    import('@ffacet/algorithm-rip').then((m) => m.registerRip()),
+  );
+  registerFacetLoader('facet:nat', () =>
+    import('@ffacet/algorithm-nat').then((m) => m.registerNat()),
+  );
+  registerFacetLoader('facet:firewall', () =>
+    import('@ffacet/algorithm-firewall').then((m) => m.registerFirewall()),
+  );
+  registerFacetLoader('facet:tcpHandshake', () =>
+    import('@ffacet/algorithm-tcp-handshake').then((m) => m.registerTcpHandshake()),
+  );
+  registerFacetLoader('facet:congestionControl', () =>
+    import('@ffacet/algorithm-congestion-control').then((m) => m.registerCongestionControl()),
+  );
+  registerFacetLoader('facet:http', () =>
+    import('@ffacet/algorithm-http').then((m) => m.registerHttp()),
+  );
+  registerFacetLoader('facet:dns', () =>
+    import('@ffacet/algorithm-dns').then((m) => m.registerDns()),
+  );
+  registerFacetLoader('facet:tlsHandshake', () =>
+    import('@ffacet/algorithm-tls-handshake').then((m) => m.registerTlsHandshake()),
+  );
+  registerFacetLoader('facet:auth', () =>
+    import('@ffacet/algorithm-auth').then((m) => m.registerAuth()),
+  );
 }

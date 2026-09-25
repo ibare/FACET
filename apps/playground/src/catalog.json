@@ -2717,23 +2717,13 @@
           "topics": [
             {
               "id": "physical-layer",
-              "name": "물리 계층"
-            },
-            {
-              "id": "datalink-layer",
-              "name": "데이터 링크 계층"
+              "name": "부호와 틀",
+              "facetId": "facet:physicalLayer"
             },
             {
               "id": "network-layer",
-              "name": "네트워크 계층"
-            },
-            {
-              "id": "transport-layer",
-              "name": "전송 계층"
-            },
-            {
-              "id": "application-layer",
-              "name": "응용 계층"
+              "name": "캡슐화와 홉 전달",
+              "facetId": "facet:networkLayer"
             },
             {
               "id": "layer-wraps-payload",
@@ -2764,7 +2754,7 @@
               "name": "프레임 구분",
               "desc": "어디서 시작해 어디서 끝나는가",
               "kind": "piece",
-              "origin": "datalink-layer",
+              "origin": "physical-layer",
               "facetId": "facet:frameBoundary"
             },
             {
@@ -2780,7 +2770,7 @@
               "name": "포트 역다중화",
               "desc": "같은 주소 안에서 문을 나눈다",
               "kind": "piece",
-              "origin": "transport-layer",
+              "origin": "tcp-handshake",
               "facetId": "facet:portDemultiplex"
             }
           ]
@@ -2791,15 +2781,13 @@
           "topics": [
             {
               "id": "ethernet",
-              "name": "이더넷 프레이밍"
-            },
-            {
-              "id": "mac",
-              "name": "MAC 주소"
+              "name": "CSMA/CD",
+              "facetId": "facet:ethernet"
             },
             {
               "id": "arp",
-              "name": "ARP 프로토콜"
+              "name": "ARP 와 MAC 주소",
+              "facetId": "facet:arp"
             },
             {
               "id": "collision-and-backoff",
@@ -2814,7 +2802,7 @@
               "name": "MAC 주소",
               "desc": "같은 망 안에서만 쓰는 이름",
               "kind": "piece",
-              "origin": "mac",
+              "origin": "arp",
               "facetId": "facet:macIsLocal"
             },
             {
@@ -2846,23 +2834,13 @@
             },
             {
               "id": "rip",
-              "name": "RIP"
-            },
-            {
-              "id": "ospf",
-              "name": "OSPF"
-            },
-            {
-              "id": "bgp",
-              "name": "BGP"
+              "name": "라우팅 프로토콜",
+              "facetId": "facet:rip"
             },
             {
               "id": "nat",
-              "name": "NAT"
-            },
-            {
-              "id": "icmp",
-              "name": "ICMP"
+              "name": "NAT",
+              "facetId": "facet:nat"
             },
             {
               "id": "longest-prefix-match",
@@ -2901,7 +2879,7 @@
               "name": "링크 상태 플러딩",
               "desc": "내 이웃을 모두에게 알린다",
               "kind": "piece",
-              "origin": "ospf",
+              "origin": "rip",
               "facetId": "facet:linkStateFlood"
             },
             {
@@ -2909,7 +2887,7 @@
               "name": "최단 경로 트리",
               "desc": "각자 최단 나무를 그린다",
               "kind": "piece",
-              "origin": "ospf",
+              "origin": "rip",
               "facetId": "facet:shortestPathTree"
             },
             {
@@ -2917,7 +2895,7 @@
               "name": "경로 벡터",
               "desc": "길 전체를 보고 정책으로 고른다",
               "kind": "piece",
-              "origin": "bgp",
+              "origin": "rip",
               "facetId": "facet:pathVectorPolicy"
             },
             {
@@ -2941,7 +2919,7 @@
               "name": "ICMP 에코",
               "desc": "찔러 보고 답을 듣는다",
               "kind": "piece",
-              "origin": "icmp",
+              "origin": "ip-routing",
               "facetId": "facet:echoAndReply"
             },
             {
@@ -2949,7 +2927,7 @@
               "name": "TTL 만료",
               "desc": "수명이 다하면 알려 준다",
               "kind": "piece",
-              "origin": "icmp",
+              "origin": "ip-routing",
               "facetId": "facet:ttlExpiredReports"
             }
           ]
@@ -2960,19 +2938,13 @@
           "topics": [
             {
               "id": "tcp-handshake",
-              "name": "TCP 핸드셰이크"
-            },
-            {
-              "id": "flow-control",
-              "name": "흐름 제어"
+              "name": "TCP 와 UDP",
+              "facetId": "facet:tcpHandshake"
             },
             {
               "id": "congestion-control",
-              "name": "혼잡 제어"
-            },
-            {
-              "id": "udp",
-              "name": "UDP"
+              "name": "흐름 제어와 혼잡 제어",
+              "facetId": "facet:congestionControl"
             },
             {
               "id": "three-way-sync",
@@ -2995,7 +2967,7 @@
               "name": "수신 윈도",
               "desc": "받는 쪽이 감당할 만큼만",
               "kind": "piece",
-              "origin": "flow-control",
+              "origin": "congestion-control",
               "facetId": "facet:receiverWindow"
             },
             {
@@ -3027,7 +2999,7 @@
               "name": "UDP",
               "desc": "보내고 확인하지 않는다",
               "kind": "piece",
-              "origin": "udp",
+              "origin": "tcp-handshake",
               "facetId": "facet:sendAndForget"
             }
           ]
@@ -3038,23 +3010,13 @@
           "topics": [
             {
               "id": "http",
-              "name": "HTTP / HTTPS"
+              "name": "HTTP 와 웹소켓",
+              "facetId": "facet:http"
             },
             {
               "id": "dns",
-              "name": "DNS"
-            },
-            {
-              "id": "smtp",
-              "name": "SMTP"
-            },
-            {
-              "id": "ftp",
-              "name": "FTP"
-            },
-            {
-              "id": "websocket",
-              "name": "WebSocket"
+              "name": "DNS",
+              "facetId": "facet:dns"
             },
             {
               "id": "request-response",
@@ -3093,7 +3055,7 @@
               "name": "저장 후 전달",
               "desc": "받아 두었다 다음으로 넘긴다",
               "kind": "piece",
-              "origin": "smtp",
+              "origin": "network-layer",
               "facetId": "facet:storeAndForward"
             },
             {
@@ -3101,7 +3063,7 @@
               "name": "제어 채널과 데이터 채널",
               "desc": "명령 길과 짐 길이 따로",
               "kind": "piece",
-              "origin": "ftp",
+              "origin": "tcp-handshake",
               "facetId": "facet:controlAndDataChannel"
             },
             {
@@ -3109,7 +3071,7 @@
               "name": "프로토콜 업그레이드",
               "desc": "한 번 열고 계속 쓴다",
               "kind": "piece",
-              "origin": "websocket",
+              "origin": "http",
               "facetId": "facet:upgradeThenKeepOpen"
             }
           ]
@@ -3120,15 +3082,18 @@
           "topics": [
             {
               "id": "tls-handshake",
-              "name": "TLS 핸드셰이크"
+              "name": "TLS 핸드셰이크",
+              "facetId": "facet:tlsHandshake"
             },
             {
               "id": "auth",
-              "name": "인증"
+              "name": "인증",
+              "facetId": "facet:auth"
             },
             {
               "id": "firewall",
-              "name": "방화벽"
+              "name": "방화벽",
+              "facetId": "facet:firewall"
             },
             {
               "id": "shared-secret-in-public",

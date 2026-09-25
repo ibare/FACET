@@ -172,10 +172,14 @@ describe('계획 카탈로그', () => {
    * 같은 날 운영체제 완제품 판정에서 열을 지웠다 — 완제품 안에 합친 일곱(SJF · MLFQ · 세마포어 ·
    * FIFO 페이지 교체 · Clock · FAT · DMA)과 버린 셋(PCB · 모니터 · 디렉토리 구조). 조각 origin 은
    * host 토픽으로 옮겼다. 사용자가 정했다 (`tasks/os-whole-batch.md`). 1054 → 1044.
+   *
+   * 같은 날 컴퓨터 네트워크 완제품 판정에서 열둘을 지웠다 — 완제품 안에 합친 아홉(데이터 링크 계층 ·
+   * 전송 계층 · MAC · OSPF · BGP · ICMP · UDP · 흐름 제어 · WebSocket)과 버린 셋(응용 계층 · SMTP · FTP).
+   * 조각 origin 은 host 토픽으로 옮겼다. 사용자가 정했다 (`tasks/network-whole-batch.md`). 1044 → 1032.
    */
   it('규모가 줄지 않았다 — 실수로 잘려 나간 것을 잡는다', () => {
     expect(domains.length).toBeGreaterThanOrEqual(16);
-    expect(rows.length).toBeGreaterThanOrEqual(1044);
+    expect(rows.length).toBeGreaterThanOrEqual(1032);
   });
 });
 
