@@ -1,0 +1,161 @@
+import { CONTROL_SET } from '@ffacet/core/runtime';
+import type { FacetJson } from '@ffacet/core/runtime';
+
+/**
+ * @piece
+ * 재귀 호출은 어떤 차례로 끝나며, 돌려준 값은 어디로 가는가.
+ *
+ * 부를 때마다 새 틀이 앞 틀 위에 얹히고, 가장 위의 틀이 돌려준 값이 한 층 아래 틀의
+ * 비어 있던 자리로 내려가 그 틀의 곱셈을 마치게 한다. 틀은 얹힌 차례의 거꾸로 걷힌다.
+ * 걸음은 호출 걸음 — 시작 · 틀이 설 때(push) · 틀이 걷힐 때(pop).
+ */
+export const callStackUnwindFacet: FacetJson = {
+  id: 'facet:callStackUnwind',
+  title: {
+    en: 'The call stack unwinds',
+    ko: '호출 스택이 걷히는 차례',
+    ja: 'コールスタックがほどける順番',
+    zh: '调用栈的回退顺序',
+    ar: 'تفكك مكدس الاستدعاءات',
+    es: 'La pila de llamadas se deshace',
+    fr: "La pile d'appels se défait",
+    hi: 'कॉल स्टैक का खुलना',
+    id: 'Tumpukan panggilan dibongkar',
+    pt: 'A pilha de chamadas se desfaz',
+  },
+  description: {
+    en: 'In what order do recursive calls finish, and where does each returned value go?',
+    ko: '재귀 호출은 어떤 차례로 끝나며, 돌려준 값은 어디로 가는가?',
+    ja: '再帰呼び出しはどの順番で終わり、返した値はどこへ行くのか?',
+    zh: '递归调用按什么顺序结束,返回的值又去了哪里?',
+    ar: 'بأي ترتيب تنتهي الاستدعاءات العودية، وإلى أين تذهب كل قيمة معادة؟',
+    es: '¿En qué orden terminan las llamadas recursivas y adónde va cada valor devuelto?',
+    fr: 'Dans quel ordre les appels récursifs se terminent-ils, et où va chaque valeur renvoyée ?',
+    hi: 'पुनरावर्ती कॉल किस क्रम में ख़त्म होते हैं, और हर लौटाया गया मान कहाँ जाता है?',
+    id: 'Dalam urutan apa panggilan rekursif selesai, dan ke mana setiap nilai kembalian pergi?',
+    pt: 'Em que ordem as chamadas recursivas terminam, e para onde vai cada valor retornado?',
+  },
+  algorithm: 'module:callStackUnwind',
+  scene: 'module:callStackUnwindScene',
+  initialData: {
+    type: 'call-stack-unwind',
+    stepMs: 1500,
+    lines: [
+      { indent: 0, text: 'def fact(n):', stmt: { k: 'def', name: 'fact', params: ['n'] } },
+      {
+        indent: 1,
+        text: 'if n == 1:',
+        stmt: { k: 'if', cond: { op: '==', l: { var: 'n' }, r: { num: 1 } } },
+      },
+      { indent: 2, text: 'return 1', stmt: { k: 'return', value: { num: 1 } } },
+      {
+        indent: 1,
+        text: 'return n * fact(n - 1)',
+        stmt: {
+          k: 'return',
+          value: {
+            op: '*',
+            l: { var: 'n' },
+            r: { call: 'fact', args: [{ op: '-', l: { var: 'n' }, r: { num: 1 } }] },
+          },
+        },
+      },
+      {
+        indent: 0,
+        text: 'x = fact(4)',
+        stmt: { k: 'assign', to: 'x', value: { call: 'fact', args: [{ num: 4 }] } },
+      },
+    ],
+  },
+  shuffleOnReset: false,
+  messages: {
+    'label.outer': {
+      en: 'outside',
+      ko: '바깥',
+      ja: '外側',
+      zh: '外层',
+      ar: 'الخارج',
+      es: 'fuera',
+      fr: 'dehors',
+      hi: 'बाहर',
+      id: 'luar',
+      pt: 'fora',
+    },
+    'label.pushed': {
+      en: 'push order',
+      ko: '쌓인 차례',
+      ja: '積んだ順',
+      zh: '压入顺序',
+      ar: 'ترتيب الوضع',
+      es: 'orden de apilado',
+      fr: "ordre d'empilement",
+      hi: 'रखने का क्रम',
+      id: 'urutan tumpuk',
+      pt: 'ordem de empilhar',
+    },
+    'label.popped': {
+      en: 'pop order',
+      ko: '걷힌 차례',
+      ja: '外した順',
+      zh: '弹出顺序',
+      ar: 'ترتيب الإزالة',
+      es: 'orden de retirada',
+      fr: 'ordre de retrait',
+      hi: 'हटने का क्रम',
+      id: 'urutan lepas',
+      pt: 'ordem de retirar',
+    },
+    'caption.start': {
+      en: 'No call yet — only the outer program.',
+      ko: '아직 부른 것이 없다 — 바깥 프로그램뿐.',
+      ja: 'まだ呼び出しはない — 外側のプログラムだけ。',
+      zh: '还没有调用 — 只有外层程序。',
+      ar: 'لا استدعاء بعد — البرنامج الخارجي فقط.',
+      es: 'Aún no hay llamadas — solo el programa exterior.',
+      fr: "Aucun appel pour l'instant — seulement le programme extérieur.",
+      hi: 'अभी कोई कॉल नहीं — केवल बाहरी प्रोग्राम।',
+      id: 'Belum ada panggilan — hanya program luar.',
+      pt: 'Nenhuma chamada ainda — só o programa externo.',
+    },
+    'caption.push': {
+      en: 'L{line} calls {call} — a new frame goes on top (depth {depth}).',
+      ko: 'L{line} 에서 {call} 호출 — 새 틀이 맨 위에 얹힌다 (깊이 {depth}).',
+      ja: 'L{line} が {call} を呼ぶ — 新しいフレームが一番上に載る (深さ {depth})。',
+      zh: 'L{line} 调用 {call} — 新的栈帧放到最上面 (深度 {depth})。',
+      ar: 'L{line} يستدعي {call} — إطار جديد يوضع في الأعلى (العمق {depth}).',
+      es: 'L{line} llama a {call} — un marco nuevo se apila encima (profundidad {depth}).',
+      fr: 'L{line} appelle {call} — un nouveau cadre se pose au sommet (profondeur {depth}).',
+      hi: 'L{line} ने {call} को बुलाया — नया फ़्रेम सबसे ऊपर रखा गया (गहराई {depth})।',
+      id: 'L{line} memanggil {call} — bingkai baru ditaruh di atas (kedalaman {depth}).',
+      pt: 'L{line} chama {call} — um novo quadro vai para o topo (profundidade {depth}).',
+    },
+    'caption.pop': {
+      en: 'The {call} frame is removed — its return value {value} drops into the empty slot of {below}.',
+      ko: '{call} 의 틀이 걷힌다 — 돌려준 값 {value}, 한 층 아래 {below} 의 빈자리로.',
+      ja: '{call} のフレームが外れる — 返した値 {value} が一段下の {below} の空欄へ落ちる。',
+      zh: '{call} 的栈帧被移除 — 返回值 {value} 落入下一层 {below} 的空位。',
+      ar: 'يُزال إطار {call} — تنزل القيمة المعادة {value} إلى الخانة الفارغة في {below}.',
+      es: 'Se retira el marco de {call} — su valor devuelto {value} cae en el hueco vacío de {below}.',
+      fr: 'Le cadre de {call} est retiré — sa valeur de retour {value} tombe dans la case vide de {below}.',
+      hi: '{call} का फ़्रेम हटता है — लौटाया गया मान {value} नीचे {below} की खाली जगह में जाता है।',
+      id: 'Bingkai {call} dilepas — nilai kembalian {value} turun ke tempat kosong di {below}.',
+      pt: 'O quadro de {call} é retirado — seu valor de retorno {value} cai no espaço vazio de {below}.',
+    },
+    'caption.popOuter': {
+      en: 'The {call} frame is removed — its return value {value} drops into the empty slot of L{line}, outside every frame.',
+      ko: '{call} 의 틀이 걷힌다 — 돌려준 값 {value}, 모든 틀 바깥 L{line} 의 빈자리로.',
+      ja: '{call} のフレームが外れる — 返した値 {value} がすべてのフレームの外、L{line} の空欄へ落ちる。',
+      zh: '{call} 的栈帧被移除 — 返回值 {value} 落入所有栈帧之外 L{line} 的空位。',
+      ar: 'يُزال إطار {call} — تنزل القيمة المعادة {value} إلى الخانة الفارغة في L{line} خارج كل الإطارات.',
+      es: 'Se retira el marco de {call} — su valor devuelto {value} cae en el hueco vacío de L{line}, fuera de todo marco.',
+      fr: 'Le cadre de {call} est retiré — sa valeur de retour {value} tombe dans la case vide de L{line}, hors de tout cadre.',
+      hi: '{call} का फ़्रेम हटता है — लौटाया गया मान {value} सभी फ़्रेम के बाहर L{line} की खाली जगह में जाता है।',
+      id: 'Bingkai {call} dilepas — nilai kembalian {value} turun ke tempat kosong di L{line}, di luar semua bingkai.',
+      pt: 'O quadro de {call} é retirado — seu valor de retorno {value} cai no espaço vazio de L{line}, fora de todos os quadros.',
+    },
+  },
+  blocks: {
+    stage: { type: 'call-stack-unwind-stage' },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
+  },
+};
