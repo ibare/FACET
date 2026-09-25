@@ -134,6 +134,11 @@ export function checkDrawing(file, src, { err, warn }) {
   if (/['"]font-family['"]\s*,\s*['"`]|fontFamily\s*[:=]\s*['"`]|font-family\s*:\s*[A-Za-z'"]/.test(plain)) {
     err('S-view', `${file} 에 글꼴 리터럴이 있다 — fonts.* (design-tokens) 를 쓴다`);
   }
+  // 글꼴 크기도 fontSizes 로 (S-view). 기존 facet 에 수 리터럴이 여럿 있어 경고로 둔다 — 새 facet 은 0 건을 목표로.
+  // 글자 폭 셈용으로 따로 쥔 크기 상수(`const CODE_PX = 12`)도 같다 — 2026-09-25 배치에서 조각 셋이 이 꼴로 걸렸다.
+  if (/['"]font-size['"]\s*[:,]\s*(['"`]?\d)|fontSize\s*[:=]\s*['"`]?\d|const\s+[A-Z_]*(?:FS|FONT\w*|_PX|FONT_SIZE)\s*=\s*\d/.test(plain)) {
+    warn('S-view', `${file} 에 글꼴 크기 리터럴이 있다 — fontSizes.* (design-tokens) 를 쓴다 (2026-09-25 감사)`);
+  }
   if (/container\.(textContent|innerHTML)\s*=/.test(code)) {
     warn('S-view', `${file} 가 container 를 비운다 — 캔버스가 떨어져 나간다. params.canvas 안쪽을 비운다 (제 껍데기를 두고 캔버스를 되붙이는 view 면 무시)`);
   }
