@@ -68,6 +68,14 @@ export const contextSwitchingConcept: FacetConceptSource = {
         concept: 'stack',
         note: 'The register bundle lifted into a holder is the same instinct as a stack frame — state set aside so it can be resumed exactly as it was.',
       },
+      {
+        concept: 'saveAndRestore',
+        note: 'Saving and restoring on its own is the reason a switch is correct: the registers are shared, so the outgoing values must be kept and brought back. Context switching sets that pair inside the whole event, with its external trigger and the idle gap it leaves.',
+      },
+      {
+        concept: 'switchCosts',
+        note: 'The idle gap between save and restore is the cost paid during the switch; the cold cache the incoming flow meets is a further cost paid after it, often the larger of the two.',
+      },
     ],
   },
 };

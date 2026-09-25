@@ -406,6 +406,76 @@ import { encapsulationBoundaryConcept } from './encapsulation-boundary.js';
 import { polymorphismConcept } from './polymorphism.js';
 import { pureFunctionConcept } from './pure-function.js';
 import { mapFilterReduceConcept } from './map-filter-reduce.js';
+import { fileBlockPlacementConcept } from './file-block-placement.js';
+import { inodePointsBlocksConcept } from './inode-points-blocks.js';
+import { indirectBlockConcept } from './indirect-block.js';
+import { chainOfBlocksConcept } from './chain-of-blocks.js';
+import { pathResolutionConcept } from './path-resolution.js';
+import { hardVsSoftLinkConcept } from './hard-vs-soft-link.js';
+import { journalingConcept } from './journaling.js';
+import { writeIntentFirstConcept } from './write-intent-first.js';
+import { replayAfterCrashConcept } from './replay-after-crash.js';
+import { ioTransferModesConcept } from './io-transfer-modes.js';
+import { transferWithoutCpuConcept } from './transfer-without-cpu.js';
+import { interruptPreemptsConcept } from './interrupt-preempts.js';
+import { pollingVsInterruptConcept } from './polling-vs-interrupt.js';
+import { diskSchedulingConcept } from './disk-scheduling.js';
+import { seekDistanceCostsConcept } from './seek-distance-costs.js';
+import { elevatorSweepConcept } from './elevator-sweep.js';
+import { schedulingPolicyConcept } from './scheduling-policy.js';
+import { roundRobinQuantumConcept } from './round-robin-quantum.js';
+import { priorityAgingConcept } from './priority-aging.js';
+import { weightedFairShareConcept } from './weighted-fair-share.js';
+import { readyQueuePickConcept } from './ready-queue-pick.js';
+import { turnaroundVsWaitConcept } from './turnaround-vs-wait.js';
+import { firstComeFirstRunConcept } from './first-come-first-run.js';
+import { convoyEffectConcept } from './convoy-effect.js';
+import { shortestFirstConcept } from './shortest-first.js';
+import { starvationOfLongConcept } from './starvation-of-long.js';
+import { demoteOnOveruseConcept } from './demote-on-overuse.js';
+import { timeSliceRotateConcept } from './time-slice-rotate.js';
+import { quantumSizeTradeoffConcept } from './quantum-size-tradeoff.js';
+import { priorityPreemptConcept } from './priority-preempt.js';
+import { agingConcept } from './aging.js';
+import { virtualRuntimeConcept } from './virtual-runtime.js';
+import { pagingConcept } from './paging.js';
+import { pageTableLookupConcept } from './page-table-lookup.js';
+import { fixedSizeFramesConcept } from './fixed-size-frames.js';
+import { tlbCachesTranslationConcept } from './tlb-caches-translation.js';
+import { segmentationConcept } from './segmentation.js';
+import { variableSizeSegmentsConcept } from './variable-size-segments.js';
+import { externalFragmentationConcept } from './external-fragmentation.js';
+import { virtualMemoryConcept } from './virtual-memory.js';
+import { pageFaultConcept } from './page-fault.js';
+import { swapInOutConcept } from './swap-in-out.js';
+import { thrashingConcept } from './thrashing.js';
+import { pageReplacementConcept } from './page-replacement.js';
+import { evictLeastRecentConcept } from './evict-least-recent.js';
+import { recencyReorderConcept } from './recency-reorder.js';
+import { evictOldestConcept } from './evict-oldest.js';
+import { beladyAnomalyConcept } from './belady-anomaly.js';
+import { secondChanceConcept } from './second-chance.js';
+import { processStateConcept } from './process-state.js';
+import { stateTransitionsConcept } from './state-transitions.js';
+import { blockedWaitsEventConcept } from './blocked-waits-event.js';
+import { pcbHoldsStateConcept } from './pcb-holds-state.js';
+import { saveAndRestoreConcept } from './save-and-restore.js';
+import { switchCostsConcept } from './switch-costs.js';
+import { mutexConcept } from './mutex.js';
+import { interleavingConcept } from './interleaving.js';
+import { nonAtomicIncrementConcept } from './non-atomic-increment.js';
+import { lostUpdateConcept } from './lost-update.js';
+import { criticalSectionConcept } from './critical-section.js';
+import { lockExcludesConcept } from './lock-excludes.js';
+import { deadlockConcept } from './deadlock.js';
+import { holdAndWaitConcept } from './hold-and-wait.js';
+import { noPreemptionConcept } from './no-preemption.js';
+import { waitCycleConcept } from './wait-cycle.js';
+import { lockOrderingConcept } from './lock-ordering.js';
+import { producerConsumerConcept } from './producer-consumer.js';
+import { countingPermitsConcept } from './counting-permits.js';
+import { waitAndSignalConcept } from './wait-and-signal.js';
+import { boundedBufferConcept } from './bounded-buffer.js';
 
 export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   adjacencyListVsMatrixConcept,
@@ -794,4 +864,74 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   polymorphismConcept,
   pureFunctionConcept,
   mapFilterReduceConcept,
+  fileBlockPlacementConcept,
+  inodePointsBlocksConcept,
+  indirectBlockConcept,
+  chainOfBlocksConcept,
+  pathResolutionConcept,
+  hardVsSoftLinkConcept,
+  journalingConcept,
+  writeIntentFirstConcept,
+  replayAfterCrashConcept,
+  ioTransferModesConcept,
+  transferWithoutCpuConcept,
+  interruptPreemptsConcept,
+  pollingVsInterruptConcept,
+  diskSchedulingConcept,
+  seekDistanceCostsConcept,
+  elevatorSweepConcept,
+  schedulingPolicyConcept,
+  roundRobinQuantumConcept,
+  priorityAgingConcept,
+  weightedFairShareConcept,
+  readyQueuePickConcept,
+  turnaroundVsWaitConcept,
+  firstComeFirstRunConcept,
+  convoyEffectConcept,
+  shortestFirstConcept,
+  starvationOfLongConcept,
+  demoteOnOveruseConcept,
+  timeSliceRotateConcept,
+  quantumSizeTradeoffConcept,
+  priorityPreemptConcept,
+  agingConcept,
+  virtualRuntimeConcept,
+  pagingConcept,
+  pageTableLookupConcept,
+  fixedSizeFramesConcept,
+  tlbCachesTranslationConcept,
+  segmentationConcept,
+  variableSizeSegmentsConcept,
+  externalFragmentationConcept,
+  virtualMemoryConcept,
+  pageFaultConcept,
+  swapInOutConcept,
+  thrashingConcept,
+  pageReplacementConcept,
+  evictLeastRecentConcept,
+  recencyReorderConcept,
+  evictOldestConcept,
+  beladyAnomalyConcept,
+  secondChanceConcept,
+  processStateConcept,
+  stateTransitionsConcept,
+  blockedWaitsEventConcept,
+  pcbHoldsStateConcept,
+  saveAndRestoreConcept,
+  switchCostsConcept,
+  mutexConcept,
+  interleavingConcept,
+  nonAtomicIncrementConcept,
+  lostUpdateConcept,
+  criticalSectionConcept,
+  lockExcludesConcept,
+  deadlockConcept,
+  holdAndWaitConcept,
+  noPreemptionConcept,
+  waitCycleConcept,
+  lockOrderingConcept,
+  producerConsumerConcept,
+  countingPermitsConcept,
+  waitAndSignalConcept,
+  boundedBufferConcept,
 ];
