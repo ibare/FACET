@@ -77,6 +77,8 @@ getColors, makeTranslator, fonts, fontSizes, PIECE_CANVAS_W, categorical
 - `ReactiveContext` 는 `FacetContext` 에 `sleep(ms): Promise<boolean>` 을 더한 것. 알고리즘은 `FacetContext<Data>` 로 받아 `as ReactiveContext<Data>` 로 좁힌다.
 - `params`: `canvas`(러너가 만든 SVG) · `t`(문안 조회기) · `theme` · `locale` · `initialData`
 - 팔레트 이름: `bg bgSubtle border text textMuted textInverse primary primaryHover accent danger success itemDefault itemComparing itemSwapping itemSorted itemPivot itemActive stateInk`
+  — **`success` 는 신호색이 아니다**: 두 테마 모두 `text` 와 같은 값이다(밝은 `#171717` · 어두운 `#fafafa`). 성공 · 허용 · 완료를 이 색 하나로
+  가르면 본문 글자와 구별되지 않는다 — 글자 · 모양 · 테두리를 함께 쓴다 (2026-09-25 네트워크 배치에서 조각 · 완제품 여섯 넘게가 따로 걸렸다)
 
 ## index.ts — 등록 순서 (S-facet MUST)
 
@@ -227,6 +229,7 @@ node scripts/piece-check.mjs facets/<domain>/<name>            # 마치기 전�
 지연 발화 · 뛰어다니기 · 흘리는 도중 destroy)을 한 번에 돈다. **오류 0 이 될 때까지 고친다.**
 경고는 읽고 판단한다. 전체 검사는 조각 하나에 평균 다섯 번 돌았다(2026-09-18) — 정적 오류는
 `--static` 으로 먼저 걷어 내고 전체는 마칠 때 돌린다.
+**`--static` 은 tsc 를 건너뛴다** — 인자를 빠뜨린 호출(색이 `undefined` 로 들어가 검게 그려짐)을 못 잡는다. 화면을 뜨기 전에는 전체를 한 번 돈다 (2026-09-25).
 
 **화면을 볼 때**는 렌더 스크립트를 새로 짜지 않는다:
 

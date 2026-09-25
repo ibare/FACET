@@ -89,6 +89,8 @@ getAlgorithmMechanismKind('<camel>')
 - `ViewMountParams` = `{ config, initialData?, locale?, t?, theme? }`
 - 코드 패널(`code-view`) 인스턴스는 `highlightPhase(phase: string | null)` · `clearHighlight()` 를 연다
 - 팔레트 이름: `bg bgSubtle border text textMuted textInverse primary primaryHover accent danger success itemDefault itemComparing itemSwapping itemSorted itemPivot itemActive stateInk`
+  — **`success` 는 신호색이 아니다**: 두 테마 모두 `text` 와 같은 값이다(밝은 `#171717` · 어두운 `#fafafa`). 성공 · 허용 · 완료를 이 색 하나로
+  가르면 본문 글자와 구별되지 않는다 — 글자 · 모양 · 테두리를 함께 쓴다 (2026-09-25 네트워크 배치에서 조각 · 완제품 여섯 넘게가 따로 걸렸다)
 
 **IR 어휘** (`packages/core/src/types/ir.ts` 전부다):
 
@@ -164,6 +166,8 @@ coroutine 으로 두면 러너가 **마운트 시점에 throw** 하고, 통과�
 - 루프 바디 첫 문장에서 취소를 본다 — `if (ctx.cancelled) return …;` 또는 `if (!(await pause())) return …;` (C8)
 - `ctx.sleep` 은 `Promise<boolean>` — **그 값을 버리면 취소가 먹지 않는다** (C8. `whole-check` 가 잡는다)
 - 헬퍼 이름을 `t` · `tr` 로 두지 않는다 — C10 · i18n 검사가 번역 호출로 읽는다
+- 반대로 **stage 의 문안 조회 함수 이름은 반드시 `t`** — `tx` 로 두면 `--static` 은 통과하고 en-original 테스트만 호출을 0 으로 세어
+  원인 없이 "expected 0 to be greater than 0" 으로 실패한다 (조각 카드에만 있던 줄. 2026-09-25 네트워크 완제품 하나가 또 걸렸다)
 - 셈하는 코드는 모르는 모양 · 셈할 수 없는 상태를 `?? 0` · `continue` 로 지나치지 않고 던진다 (C6). projector · stage 도 받은 값이 비면 0 을 지어내지 말고 던진다
 - 테스트 파일이 stage 를 마운트하면 머리에 `// @vitest-environment happy-dom` (둘이 따로 `document is not defined` 에 걸렸다)
 - `waitForInput` 루프는 **앞뒤로** `ctx.cancelled` 를 본다. 우리 것이 아닌 입력은 `continue` 로 흘리고, payload 의
@@ -199,6 +203,7 @@ coroutine 으로 두면 러너가 **마운트 시점에 throw** 하고, 통과�
 - stage 의 구조적 표면을 **타입 하나로 모아** `views.stage as unknown as <Stage> | undefined` 로 좁힌다 (C9).
   `mountView` 반환형은 오픈 타입이라 그대로 쓰면 `instance.setX?.()` 가 `{}` 로 좁혀져 **호출이 불가능해진다** —
   손잡이가 죽는데 눈으로는 안 잡힌다
+- projector 는 **`switch (event.type)` 의 `case 'phase':`** 로 가른다 — 검사가 이 글자를 찾으므로 `if` 사슬이면 C3 오류가 난다 (2026-09-25 셋이 걸려 `switch` 로 바꿨다)
 - `case 'phase'` 에서 코드 패널로 `highlightPhase(phase)` 를 넘긴다. silent 는 "걸음 경계가 아니다" 이지
   "projector 에 안 온다" 가 아니다 (code-panel-phase 테스트)
 - 번역기는 러너가 주는 것 — projector 는 `runtime?.t ?? makeTranslator()`, stage 는 `params.t ?? makeTranslator(params.locale)`.
