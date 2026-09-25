@@ -367,6 +367,38 @@ import { recursionSelfCallConcept } from './recursion-self-call.js';
 import { callStackUnwindConcept } from './call-stack-unwind.js';
 import { baseCaseConcept } from './base-case.js';
 import { exceptionPropagateConcept } from './exception-propagate.js';
+import { passByValueVsReferenceConcept } from './pass-by-value-vs-reference.js';
+import { returnToCallerConcept } from './return-to-caller.js';
+import { closureCapturesConcept } from './closure-captures.js';
+import { functionAsValueConcept } from './function-as-value.js';
+import { curryingPartialConcept } from './currying-partial.js';
+import { valueInPlaceConcept } from './value-in-place.js';
+import { referenceHoldsAddressConcept } from './reference-holds-address.js';
+import { aliasingConcept } from './aliasing.js';
+import { narrowingLossConcept } from './narrowing-loss.js';
+import { shadowingConcept } from './shadowing.js';
+import { scopeExitConcept } from './scope-exit.js';
+import { danglingReferenceConcept } from './dangling-reference.js';
+import { stackVsHeapConcept } from './stack-vs-heap.js';
+import { pointerDereferenceConcept } from './pointer-dereference.js';
+import { gcReachableFromRootConcept } from './gc-reachable-from-root.js';
+import { refcountZeroConcept } from './refcount-zero.js';
+import { referenceCycleConcept } from './reference-cycle.js';
+import { manualFreeConcept } from './manual-free.js';
+import { doubleFreeConcept } from './double-free.js';
+import { memoryLeakConcept } from './memory-leak.js';
+import { pureSameOutputConcept } from './pure-same-output.js';
+import { noSideEffectConcept } from './no-side-effect.js';
+import { immutableCopyConcept } from './immutable-copy.js';
+import { mapOneByOneConcept } from './map-one-by-one.js';
+import { filterKeepSomeConcept } from './filter-keep-some.js';
+import { reduceFoldConcept } from './reduce-fold.js';
+import { monadChainInBoxConcept } from './monad-chain-in-box.js';
+import { instantiateFromClassConcept } from './instantiate-from-class.js';
+import { methodLookupUpConcept } from './method-lookup-up.js';
+import { dynamicDispatchConcept } from './dynamic-dispatch.js';
+import { interfaceSlotConcept } from './interface-slot.js';
+import { encapsulationBoundaryConcept } from './encapsulation-boundary.js';
 
 export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   adjacencyListVsMatrixConcept,
@@ -716,4 +748,36 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   callStackUnwindConcept,
   baseCaseConcept,
   exceptionPropagateConcept,
+  passByValueVsReferenceConcept,
+  returnToCallerConcept,
+  closureCapturesConcept,
+  functionAsValueConcept,
+  curryingPartialConcept,
+  valueInPlaceConcept,
+  referenceHoldsAddressConcept,
+  aliasingConcept,
+  narrowingLossConcept,
+  shadowingConcept,
+  scopeExitConcept,
+  danglingReferenceConcept,
+  stackVsHeapConcept,
+  pointerDereferenceConcept,
+  gcReachableFromRootConcept,
+  refcountZeroConcept,
+  referenceCycleConcept,
+  manualFreeConcept,
+  doubleFreeConcept,
+  memoryLeakConcept,
+  pureSameOutputConcept,
+  noSideEffectConcept,
+  immutableCopyConcept,
+  mapOneByOneConcept,
+  filterKeepSomeConcept,
+  reduceFoldConcept,
+  monadChainInBoxConcept,
+  instantiateFromClassConcept,
+  methodLookupUpConcept,
+  dynamicDispatchConcept,
+  interfaceSlotConcept,
+  encapsulationBoundaryConcept,
 ];
