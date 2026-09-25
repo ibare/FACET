@@ -1,0 +1,121 @@
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
+
+/**
+ * @piece
+ * 질문: 거리 벡터 라우터는 멀리 있는 망까지 몇 걸음인지를 어떻게 알게 되고, 무엇으로 길을 고르는가.
+ *
+ * 망이 붙은 라우터가 수 1 을 이웃에게 알리면, 받은 쪽은 거기에 1 을 더해 적고 다음 라운드에 그 수를
+ * 다시 제 이웃에게 알린다. 수는 선을 건널 때마다 하나씩 불어나며 망에서 멀어진다. 한 라우터에 두 이웃의
+ * 수가 닿으면 작은 쪽이 남고 큰 쪽은 버려진다 — 선의 속도나 지연은 셈에 들어가지 않는다.
+ */
+export const hopCountMetricFacet: FacetJson = {
+  id: 'facet:hopCountMetric',
+  title: {
+    en: 'Hop count',
+    ko: '홉 카운트',
+    ja: 'ホップ数',
+    zh: '跳数',
+    ar: 'عدد القفزات',
+    es: 'Número de saltos',
+    fr: 'Nombre de sauts',
+    hi: 'हॉप काउंट',
+    id: 'Jumlah hop',
+    pt: 'Contagem de saltos',
+  },
+  description: {
+    en: 'Each router adds one to the count its neighbor announces — and when two counts arrive, the smaller one stays.',
+    ko: '이웃이 알린 수에 하나를 더해 적는다 — 두 수가 닿으면 작은 쪽이 남는다.',
+    ja: '隣が知らせた数に一を足して書き込む — 二つの数が届けば小さい方が残る。',
+    zh: '每台路由器把邻居通告的数加一记下——两个数同时到达时，较小的留下。',
+    ar: 'يضيف كل موجّه واحدًا إلى العدد الذي يعلنه جاره — وإذا وصل عددان يبقى الأصغر.',
+    es: 'Cada router suma uno a la cuenta que anuncia su vecino — y si llegan dos cuentas, se queda la menor.',
+    fr: 'Chaque routeur ajoute un au compte annoncé par son voisin — et quand deux comptes arrivent, le plus petit reste.',
+    hi: 'हर राउटर पड़ोसी की बताई गिनती में एक जोड़कर लिखता है — दो गिनतियाँ पहुँचें तो छोटी वाली रहती है।',
+    id: 'Setiap router menambahkan satu pada hitungan yang diumumkan tetangganya — jika dua hitungan tiba, yang lebih kecil tetap.',
+    pt: 'Cada roteador soma um à contagem que o vizinho anuncia — e, quando chegam duas, fica a menor.',
+  },
+  algorithm: 'module:hopCountMetric',
+  scene: 'module:hopCountMetricScene',
+  initialData: {
+    type: 'hop-count-metric',
+    stepMs: 1800,
+    routers: ['A', 'B', 'C', 'D', 'E'],
+    links: [
+      ['A', 'B'],
+      ['B', 'E'],
+      ['A', 'C'],
+      ['C', 'D'],
+      ['D', 'E'],
+    ],
+    net: '172.20.0.0/16',
+    attached: 'E',
+    watch: 'A',
+  },
+  shuffleOnReset: false,
+  messages: {
+    'caption.start': {
+      en: 'Network {net} sits directly on router {router}. Count: {n}',
+      ko: '망 {net} — 라우터 {router} 에 바로 붙어 있다. 수: {n}',
+      ja: 'ネットワーク {net} — ルーター {router} に直接つながっている。数: {n}',
+      zh: '网络 {net} —— 直接连在路由器 {router} 上。计数：{n}',
+      ar: 'الشبكة {net} متصلة مباشرة بالموجّه {router}. العدد: {n}',
+      es: 'La red {net} está conectada directamente al router {router}. Cuenta: {n}',
+      fr: 'Le réseau {net} est relié directement au routeur {router}. Compte : {n}',
+      hi: 'नेटवर्क {net} — सीधे राउटर {router} से जुड़ा है। गिनती: {n}',
+      id: 'Jaringan {net} terhubung langsung ke router {router}. Hitungan: {n}',
+      pt: 'A rede {net} está ligada diretamente ao roteador {router}. Contagem: {n}',
+    },
+    'caption.round': {
+      en: 'Round {n}: each count crosses a link and gains 1. Written: {k} · dropped: {d}',
+      ko: '라운드 {n} — 수가 선을 건너며 하나씩 는다. 받아 적음: {k} · 버림: {d}',
+      ja: 'ラウンド {n} — 数は線を渡るたびに一つ増える。書き込み: {k} · 破棄: {d}',
+      zh: '第 {n} 轮 —— 每个数穿过一条链路就加一。记下：{k} · 丢弃：{d}',
+      ar: 'الجولة {n}: كل عدد يعبر وصلة ويزيد واحدًا. مُسجَّل: {k} · مُهمَل: {d}',
+      es: 'Ronda {n}: cada cuenta cruza un enlace y suma 1. Anotadas: {k} · descartadas: {d}',
+      fr: 'Tour {n} : chaque compte traverse un lien et gagne 1. Inscrits : {k} · rejetés : {d}',
+      hi: 'राउंड {n}: हर गिनती एक लिंक पार करके एक बढ़ती है। लिखी गईं: {k} · छोड़ी गईं: {d}',
+      id: 'Putaran {n}: setiap hitungan menyeberangi satu tautan dan bertambah 1. Dicatat: {k} · dibuang: {d}',
+      pt: 'Rodada {n}: cada contagem atravessa um enlace e ganha 1. Anotadas: {k} · descartadas: {d}',
+    },
+    'caption.settled': {
+      en: 'Round {n}: nothing written, dropped: {d}. The tables stop changing.',
+      ko: '라운드 {n} — 받아 적은 것 없음 · 버림: {d}. 표가 더는 바뀌지 않는다.',
+      ja: 'ラウンド {n} — 書き込みなし · 破棄: {d}。表はもう変わらない。',
+      zh: '第 {n} 轮 —— 没有记下任何数 · 丢弃：{d}。路由表不再变化。',
+      ar: 'الجولة {n}: لم يُسجَّل شيء، مُهمَل: {d}. الجداول لم تعد تتغير.',
+      es: 'Ronda {n}: nada anotado, descartadas: {d}. Las tablas dejan de cambiar.',
+      fr: 'Tour {n} : rien d’inscrit, rejetés : {d}. Les tables ne changent plus.',
+      hi: 'राउंड {n}: कुछ नहीं लिखा गया, छोड़ी गईं: {d}। तालिकाएँ अब नहीं बदलतीं।',
+      id: 'Putaran {n}: tidak ada yang dicatat, dibuang: {d}. Tabel berhenti berubah.',
+      pt: 'Rodada {n}: nada anotado, descartadas: {d}. As tabelas param de mudar.',
+    },
+    'caption.choose': {
+      en: 'At router {router} the smallest count stays: {kept} via {via}',
+      ko: '라우터 {router} 에서는 가장 작은 수가 남는다 — {via} 쪽 {kept}',
+      ja: 'ルーター {router} では最も小さい数が残る — {via} 経由 {kept}',
+      zh: '在路由器 {router} 上，最小的数留下 —— 经 {via}：{kept}',
+      ar: 'في الموجّه {router} يبقى أصغر عدد: {kept} عبر {via}',
+      es: 'En el router {router} se queda la cuenta menor: {kept} vía {via}',
+      fr: 'Au routeur {router}, le plus petit compte reste : {kept} via {via}',
+      hi: 'राउटर {router} पर सबसे छोटी गिनती रहती है: {via} के रास्ते {kept}',
+      id: 'Di router {router} hitungan terkecil yang tetap: {kept} lewat {via}',
+      pt: 'No roteador {router} fica a menor contagem: {kept} via {via}',
+    },
+    'label.via': {
+      en: 'via {r}: {n}',
+      ko: '{r} 쪽: {n}',
+      ja: '{r} 経由: {n}',
+      zh: '经 {r}：{n}',
+      ar: 'عبر {r}: {n}',
+      es: 'vía {r}: {n}',
+      fr: 'via {r} : {n}',
+      hi: '{r} से: {n}',
+      id: 'lewat {r}: {n}',
+      pt: 'via {r}: {n}',
+    },
+  },
+  blocks: {
+    stage: { type: 'hop-count-metric-stage' },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
+  },
+};
