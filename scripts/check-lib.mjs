@@ -154,6 +154,39 @@ export function checkCommon(files, { err }) {
   }
 }
 
+/**
+ * 코드 표기 (tasks/pseudo-notation.md) — 조각 화면의 프로그램 텍스트에 다른 언어의 흔적이 없는가.
+ *
+ * 코드 줄을 두는 필드 이름이 조각마다 달라(`text` · `code` …) facet.ts 의 문자열 리터럴 전부에서
+ * **코드처럼 생긴 것**만 본다. 영어 문장의 "None" 같은 낱말은 코드 모양(`=` · `(`)이 함께 있을 때만 잡는다.
+ * 특정 언어 · 런타임이 곧 주장인 조각(이벤트 루프 등)은 facet.ts JSDoc 에 `@notation native` 를 달아 뺀다.
+ */
+export function checkNotation(facet, { err }) {
+  if (/@notation\s+native\b/.test(facet)) return;
+  const RULES = [
+    [/^\s*def\s+\w+\s*\(/, "def → function"],
+    [/^\s*elif\b/, "elif → else if"],
+    [/\bprint\s*\(/, "print(…) → show …"],
+    [/^\s*raise\s+\w/, "raise → throw"],
+    [/^\s*except\b/, "except → catch"],
+    [/\blambda\b/, "lambda → x => …"],
+    [/^\s*(if|else|elif|while|for|try|except|def|class)\b[^'"]*:\s*$/, "줄 끝 콜론을 뗀다"],
+    [/(=|\(|return\s).*\b(True|False|None)\b/, "True/False/None → true/false/null"],
+    [/\b(ValueError|RecursionError|TypeError|KeyError|IndexError)\b/, "언어 고유 오류 이름 → BadValue · StackOverflow 등"],
+    [/\S\s*(&&|\|\|)\s*\S/, "&& · || → and · or"],
+  ];
+  const seen = new Set();
+  for (const m of facet.matchAll(/(['"`])((?:\\.|(?!\1)[^\\\n])*)\1/g)) {
+    const text = m[2];
+    for (const [re, fix] of RULES) {
+      if (re.test(text) && !seen.has(fix)) {
+        seen.add(fix);
+        err('표기', `코드 글자에 다른 언어의 흔적: "${text.slice(0, 40)}" — ${fix} (tasks/pseudo-notation.md)`);
+      }
+    }
+  }
+}
+
 /** 수 뒤 조사 — `{n} 이` 꼴. 자리 표시자 이름이 수를 뜻할 때만 본다 (S-piece 는 "수 뒤에" 다). */
 export function checkParticles(facet, { warn }) {
   const NUMERIC = /^(n|k|m|i|j|count|num|total|size|len|length|index|idx|steps?|ms|bits|bytes|value|val|\w*(Count|Num|Total|Size|Len|Length|Index|Bits|Bytes|Ms|Pct|Percent))$/;

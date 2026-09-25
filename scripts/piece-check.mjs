@@ -31,6 +31,7 @@ import {
   checkCommon,
   checkDescription,
   checkDrawing,
+  checkNotation,
   checkParticles,
   checkPayload,
   codeOnly,
@@ -119,6 +120,7 @@ function staticCheck(dir) {
   if (/\bheader:\s*\{\s*type:/.test(facetCode)) err('S-piece', '조각은 header (title-block) 를 두지 않는다');
   if (/^ {2}canvas:/m.test(facetCode)) warn('S-piece', 'facet.ts 에 canvas 선언이 있다 — 세로는 stage 가 상수로 갖는다');
   checkParticles(facet, { warn });
+  checkNotation(facet, { err });
 
   // ── 등록 (index.ts)
   const indexCode = codeOnly(index);
