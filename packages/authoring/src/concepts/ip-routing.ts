@@ -5,6 +5,10 @@
  * 라우팅 테이블 + 비트 비교 + TTL 표시 + 현재 사건 패널.
  *
  * reactive 다. 발신 / 한 hop / 자동 시연 / 초기 TTL 조절을 지원한다.
+ *
+ * 컴퓨터 네트워크 배치에서 icmp 토픽이 이 완제품에 합쳐졌다 — ICMP 로 오는 검색이 닿게 exemplarKeywords 에 두 낱말을
+ * 더했다(화면은 TTL 이 0 에서 버려지는 것까지이고 ICMP 알림은 그리지 않는다). 조각 넷(longestPrefixMatch ·
+ * forwardingTable · echoAndReply · ttlExpiredReports)과 라우팅 프로토콜 완제품 rip 을 contrastWith 로 잇는다.
  */
 
 import type { FacetConceptSource } from '../concept-types.js';
@@ -28,6 +32,8 @@ export const ipRoutingConcept: FacetConceptSource = {
       'default route',
       'packet dropped',
       'distributed decision',
+      'ICMP',
+      'TTL exceeded',
     ],
   },
 
@@ -69,6 +75,26 @@ export const ipRoutingConcept: FacetConceptSource = {
       {
         concept: 'bfs',
         note: 'A graph traversal knows the whole graph and plans; a router knows only its own table and decides one step at a time. Same topology, opposite vantage point.',
+      },
+      {
+        concept: 'longestPrefixMatch',
+        note: 'Longest prefix match is the rule one router applies to one lookup; routing chains that lookup across routers that never see each other\'s tables.',
+      },
+      {
+        concept: 'forwardingTable',
+        note: 'A forwarding table fixes the exit and next hop at one router; routing is the journey that results when every router on the way does the same.',
+      },
+      {
+        concept: 'echoAndReply',
+        note: 'Forwarding moves a packet toward its destination; an ICMP echo only asks whether that destination answers and how long the round trip takes.',
+      },
+      {
+        concept: 'ttlExpiredReports',
+        note: 'Dropping a packet when its TTL reaches zero is part of forwarding; reporting that drop back to the sender with ICMP Time Exceeded is what turns it into a tool for mapping the path.',
+      },
+      {
+        concept: 'rip',
+        note: 'Forwarding reads tables that already exist; routing protocols are how those tables are filled and repaired when links fail.',
       },
     ],
   },

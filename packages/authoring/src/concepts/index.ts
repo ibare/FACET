@@ -476,6 +476,58 @@ import { producerConsumerConcept } from './producer-consumer.js';
 import { countingPermitsConcept } from './counting-permits.js';
 import { waitAndSignalConcept } from './wait-and-signal.js';
 import { boundedBufferConcept } from './bounded-buffer.js';
+import { tcpHandshakeConcept } from './tcp-handshake.js';
+import { threeWaySyncConcept } from './three-way-sync.js';
+import { sequenceNumberConcept } from './sequence-number.js';
+import { sendAndForgetConcept } from './send-and-forget.js';
+import { portDemultiplexConcept } from './port-demultiplex.js';
+import { controlAndDataChannelConcept } from './control-and-data-channel.js';
+import { congestionControlConcept } from './congestion-control.js';
+import { receiverWindowConcept } from './receiver-window.js';
+import { slowStartConcept } from './slow-start.js';
+import { backOffOnLossConcept } from './back-off-on-loss.js';
+import { sawtoothConcept } from './sawtooth.js';
+import { ripConcept } from './rip.js';
+import { natConcept } from './nat.js';
+import { firewallConcept } from './firewall.js';
+import { hopCountMetricConcept } from './hop-count-metric.js';
+import { countToInfinityConcept } from './count-to-infinity.js';
+import { linkStateFloodConcept } from './link-state-flood.js';
+import { shortestPathTreeConcept } from './shortest-path-tree.js';
+import { pathVectorPolicyConcept } from './path-vector-policy.js';
+import { rewriteAddressPortConcept } from './rewrite-address-port.js';
+import { natMappingTableConcept } from './nat-mapping-table.js';
+import { ruleMatchOrderConcept } from './rule-match-order.js';
+import { longestPrefixMatchConcept } from './longest-prefix-match.js';
+import { forwardingTableConcept } from './forwarding-table.js';
+import { echoAndReplyConcept } from './echo-and-reply.js';
+import { ttlExpiredReportsConcept } from './ttl-expired-reports.js';
+import { physicalLayerConcept } from './physical-layer.js';
+import { bitsAsSignalConcept } from './bits-as-signal.js';
+import { frameBoundaryConcept } from './frame-boundary.js';
+import { networkLayerConcept } from './network-layer.js';
+import { layerWrapsPayloadConcept } from './layer-wraps-payload.js';
+import { peerLayerTalkConcept } from './peer-layer-talk.js';
+import { hopByHopConcept } from './hop-by-hop.js';
+import { storeAndForwardConcept } from './store-and-forward.js';
+import { ethernetConcept } from './ethernet.js';
+import { collisionAndBackoffConcept } from './collision-and-backoff.js';
+import { arpConcept } from './arp.js';
+import { askWhoHasConcept } from './ask-who-has.js';
+import { arpCacheConcept } from './arp-cache.js';
+import { macIsLocalConcept } from './mac-is-local.js';
+import { httpConcept } from './http.js';
+import { requestResponseConcept } from './request-response.js';
+import { statelessNeedsTokenConcept } from './stateless-needs-token.js';
+import { upgradeThenKeepOpenConcept } from './upgrade-then-keep-open.js';
+import { dnsConcept } from './dns.js';
+import { delegateDownTheTreeConcept } from './delegate-down-the-tree.js';
+import { cacheTtlConcept } from './cache-ttl.js';
+import { tlsHandshakeConcept } from './tls-handshake.js';
+import { sharedSecretInPublicConcept } from './shared-secret-in-public.js';
+import { certificateChainConcept } from './certificate-chain.js';
+import { authConcept } from './auth.js';
+import { tokenBearerConcept } from './token-bearer.js';
 
 export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   adjacencyListVsMatrixConcept,
@@ -934,4 +986,56 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   countingPermitsConcept,
   waitAndSignalConcept,
   boundedBufferConcept,
+  tcpHandshakeConcept,
+  threeWaySyncConcept,
+  sequenceNumberConcept,
+  sendAndForgetConcept,
+  portDemultiplexConcept,
+  controlAndDataChannelConcept,
+  congestionControlConcept,
+  receiverWindowConcept,
+  slowStartConcept,
+  backOffOnLossConcept,
+  sawtoothConcept,
+  ripConcept,
+  natConcept,
+  firewallConcept,
+  hopCountMetricConcept,
+  countToInfinityConcept,
+  linkStateFloodConcept,
+  shortestPathTreeConcept,
+  pathVectorPolicyConcept,
+  rewriteAddressPortConcept,
+  natMappingTableConcept,
+  ruleMatchOrderConcept,
+  longestPrefixMatchConcept,
+  forwardingTableConcept,
+  echoAndReplyConcept,
+  ttlExpiredReportsConcept,
+  physicalLayerConcept,
+  bitsAsSignalConcept,
+  frameBoundaryConcept,
+  networkLayerConcept,
+  layerWrapsPayloadConcept,
+  peerLayerTalkConcept,
+  hopByHopConcept,
+  storeAndForwardConcept,
+  ethernetConcept,
+  collisionAndBackoffConcept,
+  arpConcept,
+  askWhoHasConcept,
+  arpCacheConcept,
+  macIsLocalConcept,
+  httpConcept,
+  requestResponseConcept,
+  statelessNeedsTokenConcept,
+  upgradeThenKeepOpenConcept,
+  dnsConcept,
+  delegateDownTheTreeConcept,
+  cacheTtlConcept,
+  tlsHandshakeConcept,
+  sharedSecretInPublicConcept,
+  certificateChainConcept,
+  authConcept,
+  tokenBearerConcept,
 ];
