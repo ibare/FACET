@@ -1145,4 +1145,28 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:speculativeDecoding', () =>
     import('@ffacet/algorithm-speculative-decoding').then((m) => m.registerSpeculativeDecoding()),
   );
+  registerFacetLoader('facet:branchTakeOnePath', () =>
+    import('@ffacet/algorithm-branch-take-one-path').then((m) => m.registerBranchTakeOnePath()),
+  );
+  registerFacetLoader('facet:multiwayBranch', () =>
+    import('@ffacet/algorithm-multiway-branch').then((m) => m.registerMultiwayBranch()),
+  );
+  registerFacetLoader('facet:loopBack', () =>
+    import('@ffacet/algorithm-loop-back').then((m) => m.registerLoopBack()),
+  );
+  registerFacetLoader('facet:loopTermination', () =>
+    import('@ffacet/algorithm-loop-termination').then((m) => m.registerLoopTermination()),
+  );
+  registerFacetLoader('facet:recursionSelfCall', () =>
+    import('@ffacet/algorithm-recursion-self-call').then((m) => m.registerRecursionSelfCall()),
+  );
+  registerFacetLoader('facet:callStackUnwind', () =>
+    import('@ffacet/algorithm-call-stack-unwind').then((m) => m.registerCallStackUnwind()),
+  );
+  registerFacetLoader('facet:baseCase', () =>
+    import('@ffacet/algorithm-base-case').then((m) => m.registerBaseCase()),
+  );
+  registerFacetLoader('facet:exceptionPropagate', () =>
+    import('@ffacet/algorithm-exception-propagate').then((m) => m.registerExceptionPropagate()),
+  );
 }

@@ -1324,55 +1324,63 @@
               "name": "조건 분기",
               "desc": "갈림길에서 한쪽만 간다",
               "kind": "piece",
-              "origin": "conditional"
+              "origin": "conditional",
+              "facetId": "facet:branchTakeOnePath"
             },
             {
               "id": "multiway-branch",
               "name": "다중 분기",
               "desc": "여러 갈래 중 하나로",
               "kind": "piece",
-              "origin": "branching"
+              "origin": "branching",
+              "facetId": "facet:multiwayBranch"
             },
             {
               "id": "loop-back",
               "name": "같은 곳을 다시 밟는다",
               "kind": "piece",
-              "origin": "loop"
+              "origin": "loop",
+              "facetId": "facet:loopBack"
             },
             {
               "id": "loop-termination",
               "name": "무한 루프",
               "desc": "멈출 조건이 없으면 끝나지 않는다",
               "kind": "piece",
-              "origin": "loop"
+              "origin": "loop",
+              "facetId": "facet:loopTermination"
             },
             {
               "id": "recursion-self-call",
               "name": "재귀 호출",
               "desc": "자기를 다시 부른다",
               "kind": "piece",
-              "origin": "recursive-call"
+              "origin": "recursive-call",
+              "facetId": "facet:recursionSelfCall"
             },
             {
               "id": "call-stack-unwind",
               "name": "호출 스택",
               "desc": "쌓였다가 되돌아온다",
               "kind": "piece",
-              "origin": "recursive-call"
+              "origin": "recursive-call",
+              "facetId": "facet:callStackUnwind"
             },
             {
               "id": "base-case",
               "name": "기저 조건",
               "desc": "바닥에 닿아야 돌아온다",
               "kind": "piece",
-              "origin": "recursive-call"
+              "origin": "recursive-call",
+              "facetId": "facet:baseCase"
             },
             {
               "id": "exception-propagate",
               "name": "예외 전파",
               "desc": "던지면 부른 자리를 거슬러 오른다",
               "kind": "piece",
-              "origin": "exception"
+              "origin": "exception",
+              "facetId": "facet:exceptionPropagate"
             }
           ]
         },

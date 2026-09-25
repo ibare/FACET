@@ -3328,7 +3328,55 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/programming-fundamentals/base-case:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/programming-fundamentals/branch-take-one-path:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/programming-fundamentals/call-stack-unwind:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/programming-fundamentals/conditional-statement:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/programming-fundamentals/exception-propagate:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/programming-fundamentals/loop-back:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/programming-fundamentals/loop-termination:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/programming-fundamentals/multiway-branch:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/programming-fundamentals/recursion-self-call:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -3471,6 +3519,9 @@ importers:
       '@ffacet/algorithm-bagging-sample':
         specifier: workspace:*
         version: link:../../facets/ml-basics/bagging-sample
+      '@ffacet/algorithm-base-case':
+        specifier: workspace:*
+        version: link:../../facets/programming-fundamentals/base-case
       '@ffacet/algorithm-batching-and-padding':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/batching-and-padding
@@ -3534,6 +3585,9 @@ importers:
       '@ffacet/algorithm-branch-history-table':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/branch-history-table
+      '@ffacet/algorithm-branch-take-one-path':
+        specifier: workspace:*
+        version: link:../../facets/programming-fundamentals/branch-take-one-path
       '@ffacet/algorithm-bst':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bst
@@ -3570,6 +3624,9 @@ importers:
       '@ffacet/algorithm-caching-cdn':
         specifier: workspace:*
         version: link:../../facets/system-design/caching-cdn
+      '@ffacet/algorithm-call-stack-unwind':
+        specifier: workspace:*
+        version: link:../../facets/programming-fundamentals/call-stack-unwind
       '@ffacet/algorithm-cannot-unset':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/cannot-unset
@@ -3711,6 +3768,9 @@ importers:
       '@ffacet/algorithm-euclidean':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/euclidean
+      '@ffacet/algorithm-exception-propagate':
+        specifier: workspace:*
+        version: link:../../facets/programming-fundamentals/exception-propagate
       '@ffacet/algorithm-exhaustive-search':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/exhaustive-search
@@ -3936,6 +3996,12 @@ importers:
       '@ffacet/algorithm-look-closely-at-few':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/look-closely-at-few
+      '@ffacet/algorithm-loop-back':
+        specifier: workspace:*
+        version: link:../../facets/programming-fundamentals/loop-back
+      '@ffacet/algorithm-loop-termination':
+        specifier: workspace:*
+        version: link:../../facets/programming-fundamentals/loop-termination
       '@ffacet/algorithm-lost-in-the-middle':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/lost-in-the-middle
@@ -3996,6 +4062,9 @@ importers:
       '@ffacet/algorithm-misprediction-penalty':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/misprediction-penalty
+      '@ffacet/algorithm-multiway-branch':
+        specifier: workspace:*
+        version: link:../../facets/programming-fundamentals/multiway-branch
       '@ffacet/algorithm-mutually-reachable':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/mutually-reachable
@@ -4143,6 +4212,9 @@ importers:
       '@ffacet/algorithm-recolor-then-rotate':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/recolor-then-rotate
+      '@ffacet/algorithm-recursion-self-call':
+        specifier: workspace:*
+        version: link:../../facets/programming-fundamentals/recursion-self-call
       '@ffacet/algorithm-red-black-tree':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/red-black-tree

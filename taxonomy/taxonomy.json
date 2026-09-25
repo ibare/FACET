@@ -232,7 +232,15 @@
           "id": "control-flow",
           "name": {"en":"Control Flow","ko":"제어 흐름","ja":"制御フロー","zh":"控制流","ar":"تدفق التحكم","es":"Flujo de control","fr":"Flot de contrôle","hi":"नियंत्रण प्रवाह","id":"Alur Kendali","pt":"Fluxo de controle"},
           "facets": [
-            "facet:conditionalStatement"
+            "facet:conditionalStatement",
+            "facet:branchTakeOnePath",
+            "facet:multiwayBranch",
+            "facet:loopBack",
+            "facet:loopTermination",
+            "facet:recursionSelfCall",
+            "facet:callStackUnwind",
+            "facet:baseCase",
+            "facet:exceptionPropagate"
           ]
         },
         {
