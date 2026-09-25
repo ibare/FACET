@@ -1413,49 +1413,56 @@
               "name": "값 타입",
               "desc": "값이 자리에 직접 있다",
               "kind": "piece",
-              "origin": "primitive"
+              "origin": "primitive",
+              "facetId": "facet:valueInPlace"
             },
             {
               "id": "reference-holds-address",
               "name": "참조 타입",
               "desc": "자리에는 주소만 있다",
               "kind": "piece",
-              "origin": "reference-type"
+              "origin": "reference-type",
+              "facetId": "facet:referenceHoldsAddress"
             },
             {
               "id": "aliasing",
               "name": "별칭",
               "desc": "이름이 둘, 실체는 하나",
               "kind": "piece",
-              "origin": "reference-type"
+              "origin": "reference-type",
+              "facetId": "facet:aliasing"
             },
             {
               "id": "narrowing-loss",
               "name": "축소 변환",
               "desc": "좁은 그릇으로 옮기면 넘친다",
               "kind": "piece",
-              "origin": "type-coercion"
+              "origin": "type-coercion",
+              "facetId": "facet:narrowingLoss"
             },
             {
               "id": "shadowing",
               "name": "섀도잉",
               "desc": "안쪽 이름이 바깥을 가린다",
               "kind": "piece",
-              "origin": "scope"
+              "origin": "scope",
+              "facetId": "facet:shadowing"
             },
             {
               "id": "scope-exit",
               "name": "스코프 종료",
               "desc": "블록을 벗어나면 사라진다",
               "kind": "piece",
-              "origin": "scope"
+              "origin": "scope",
+              "facetId": "facet:scopeExit"
             },
             {
               "id": "dangling-reference",
               "name": "댕글링 참조",
               "desc": "가리키던 것이 먼저 사라진다",
               "kind": "piece",
-              "origin": "lifetime"
+              "origin": "lifetime",
+              "facetId": "facet:danglingReference"
             }
           ]
         },
@@ -1488,35 +1495,40 @@
               "name": "값 전달과 참조 전달",
               "desc": "복사해 넘기는가, 자리를 넘기는가",
               "kind": "piece",
-              "origin": "argument-passing"
+              "origin": "argument-passing",
+              "facetId": "facet:passByValueVsReference"
             },
             {
               "id": "return-to-caller",
               "name": "반환",
               "desc": "부른 자리로 값을 들고 돌아온다",
               "kind": "piece",
-              "origin": "return-value"
+              "origin": "return-value",
+              "facetId": "facet:returnToCaller"
             },
             {
               "id": "closure-captures",
               "name": "클로저",
               "desc": "함수가 바깥 변수를 데리고 다닌다",
               "kind": "piece",
-              "origin": "closure"
+              "origin": "closure",
+              "facetId": "facet:closureCaptures"
             },
             {
               "id": "function-as-value",
               "name": "일급 함수",
               "desc": "함수를 값처럼 넘긴다",
               "kind": "piece",
-              "origin": "higher-order"
+              "origin": "higher-order",
+              "facetId": "facet:functionAsValue"
             },
             {
               "id": "currying-partial",
               "name": "커링",
               "desc": "인자를 하나씩 받아 함수를 남긴다",
               "kind": "piece",
-              "origin": "currying"
+              "origin": "currying",
+              "facetId": "facet:curryingPartial"
             }
           ]
         },
@@ -1553,35 +1565,40 @@
               "name": "인스턴스화",
               "desc": "틀에서 찍어 낸다",
               "kind": "piece",
-              "origin": "class"
+              "origin": "class",
+              "facetId": "facet:instantiateFromClass"
             },
             {
               "id": "method-lookup-up",
               "name": "메서드 탐색",
               "desc": "없으면 위로 찾아 올라간다",
               "kind": "piece",
-              "origin": "inheritance"
+              "origin": "inheritance",
+              "facetId": "facet:methodLookupUp"
             },
             {
               "id": "dynamic-dispatch",
               "name": "동적 디스패치",
               "desc": "같은 이름이 대상마다 다르게 간다",
               "kind": "piece",
-              "origin": "polymorphism"
+              "origin": "polymorphism",
+              "facetId": "facet:dynamicDispatch"
             },
             {
               "id": "interface-slot",
               "name": "인터페이스",
               "desc": "약속만 있고 몸통은 꽂아 넣는다",
               "kind": "piece",
-              "origin": "interface"
+              "origin": "interface",
+              "facetId": "facet:interfaceSlot"
             },
             {
               "id": "encapsulation-boundary",
               "name": "캡슐화",
               "desc": "밖에서 닿는 것과 닿지 않는 것",
               "kind": "piece",
-              "origin": "encapsulation"
+              "origin": "encapsulation",
+              "facetId": "facet:encapsulationBoundary"
             }
           ]
         },
@@ -1610,49 +1627,56 @@
               "name": "참조 투명성",
               "desc": "같은 입력이면 언제나 같은 출력",
               "kind": "piece",
-              "origin": "pure-function"
+              "origin": "pure-function",
+              "facetId": "facet:pureSameOutput"
             },
             {
               "id": "no-side-effect",
               "name": "부수 효과 없음",
               "desc": "바깥을 건드리지 않는다",
               "kind": "piece",
-              "origin": "pure-function"
+              "origin": "pure-function",
+              "facetId": "facet:noSideEffect"
             },
             {
               "id": "immutable-copy",
               "name": "불변성",
               "desc": "고치지 않고 새로 만든다",
               "kind": "piece",
-              "origin": "immutability"
+              "origin": "immutability",
+              "facetId": "facet:immutableCopy"
             },
             {
               "id": "map-one-by-one",
               "name": "map",
               "desc": "하나씩 바꾼다",
               "kind": "piece",
-              "origin": "map-filter-reduce"
+              "origin": "map-filter-reduce",
+              "facetId": "facet:mapOneByOne"
             },
             {
               "id": "filter-keep-some",
               "name": "filter",
               "desc": "걸러 낸다",
               "kind": "piece",
-              "origin": "map-filter-reduce"
+              "origin": "map-filter-reduce",
+              "facetId": "facet:filterKeepSome"
             },
             {
               "id": "reduce-fold",
               "name": "reduce",
               "desc": "접어서 하나로",
               "kind": "piece",
-              "origin": "map-filter-reduce"
+              "origin": "map-filter-reduce",
+              "facetId": "facet:reduceFold"
             },
             {
               "id": "monad-chain-in-box",
               "name": "모나드",
               "desc": "상자에 담은 채로 이어 붙인다",
               "kind": "piece",
-              "origin": "monad-basics"
+              "origin": "monad-basics",
+              "facetId": "facet:monadChainInBox"
             }
           ]
         },
@@ -1685,56 +1709,64 @@
               "name": "스택과 힙",
               "desc": "쌓였다 사라지는 곳, 흩어져 남는 곳",
               "kind": "piece",
-              "origin": "stack-heap"
+              "origin": "stack-heap",
+              "facetId": "facet:stackVsHeap"
             },
             {
               "id": "pointer-dereference",
               "name": "역참조",
               "desc": "주소를 따라간다",
               "kind": "piece",
-              "origin": "pointer"
+              "origin": "pointer",
+              "facetId": "facet:pointerDereference"
             },
             {
               "id": "gc-reachable-from-root",
               "name": "도달 가능성",
               "desc": "뿌리에서 닿지 않으면 치운다",
               "kind": "piece",
-              "origin": "gc"
+              "origin": "gc",
+              "facetId": "facet:gcReachableFromRoot"
             },
             {
               "id": "refcount-zero",
               "name": "참조 계수",
               "desc": "세던 수가 0이 되면 치운다",
               "kind": "piece",
-              "origin": "gc"
+              "origin": "gc",
+              "facetId": "facet:refcountZero"
             },
             {
               "id": "reference-cycle",
               "name": "순환 참조",
               "desc": "서로 가리키면 수가 0이 되지 않는다",
               "kind": "piece",
-              "origin": "gc"
+              "origin": "gc",
+              "facetId": "facet:referenceCycle"
             },
             {
               "id": "manual-free",
               "name": "수동 해제",
               "desc": "빌린 것을 돌려준다",
               "kind": "piece",
-              "origin": "manual-memory"
+              "origin": "manual-memory",
+              "facetId": "facet:manualFree"
             },
             {
               "id": "double-free",
               "name": "이중 해제",
               "desc": "두 번 돌려주면 망가진다",
               "kind": "piece",
-              "origin": "manual-memory"
+              "origin": "manual-memory",
+              "facetId": "facet:doubleFree"
             },
             {
               "id": "memory-leak",
               "name": "메모리 누수",
               "desc": "돌려주지 않으면 쌓인다",
               "kind": "piece",
-              "origin": "manual-memory"
+              "origin": "manual-memory",
+              "facetId": "facet:memoryLeak"
             }
           ]
         }

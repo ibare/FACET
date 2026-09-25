@@ -246,27 +246,64 @@
         {
           "id": "variables-types",
           "name": {"en":"Variables and Types","ko":"변수와 타입","ja":"変数と型","zh":"变量与类型","ar":"المتغيرات والأنواع","es":"Variables y tipos","fr":"Variables et types","hi":"चर और प्रकार","id":"Variabel dan Tipe","pt":"Variáveis e tipos"},
-          "facets": []
+          "facets": [
+            "facet:valueInPlace",
+            "facet:referenceHoldsAddress",
+            "facet:aliasing",
+            "facet:narrowingLoss",
+            "facet:shadowing",
+            "facet:scopeExit",
+            "facet:danglingReference"
+          ]
         },
         {
           "id": "functions",
           "name": {"en":"Functions","ko":"함수","ja":"関数","zh":"函数","ar":"الدوال","es":"Funciones","fr":"Fonctions","hi":"फ़ंक्शन","id":"Fungsi","pt":"Funções"},
-          "facets": []
+          "facets": [
+            "facet:passByValueVsReference",
+            "facet:returnToCaller",
+            "facet:closureCaptures",
+            "facet:functionAsValue",
+            "facet:curryingPartial"
+          ]
         },
         {
           "id": "oop",
           "name": {"en":"Object-Oriented Programming","ko":"객체 지향","ja":"オブジェクト指向","zh":"面向对象编程","ar":"البرمجة كائنية التوجه","es":"Programación orientada a objetos","fr":"Programmation orientée objet","hi":"ऑब्जेक्ट-ओरिएंटेड प्रोग्रामिंग","id":"Pemrograman Berorientasi Objek","pt":"Programação orientada a objetos"},
-          "facets": []
+          "facets": [
+            "facet:instantiateFromClass",
+            "facet:methodLookupUp",
+            "facet:dynamicDispatch",
+            "facet:interfaceSlot",
+            "facet:encapsulationBoundary"
+          ]
         },
         {
           "id": "fp",
           "name": {"en":"Functional Programming","ko":"함수형 프로그래밍","ja":"関数型プログラミング","zh":"函数式编程","ar":"البرمجة الوظيفية","es":"Programación funcional","fr":"Programmation fonctionnelle","hi":"फ़ंक्शनल प्रोग्रामिंग","id":"Pemrograman Fungsional","pt":"Programação funcional"},
-          "facets": []
+          "facets": [
+            "facet:pureSameOutput",
+            "facet:noSideEffect",
+            "facet:immutableCopy",
+            "facet:mapOneByOne",
+            "facet:filterKeepSome",
+            "facet:reduceFold",
+            "facet:monadChainInBox"
+          ]
         },
         {
           "id": "memory-model",
           "name": {"en":"Memory Model","ko":"메모리 모델","ja":"メモリモデル","zh":"内存模型","ar":"نموذج الذاكرة","es":"Modelo de memoria","fr":"Modèle mémoire","hi":"मेमोरी मॉडल","id":"Model Memori","pt":"Modelo de memória"},
-          "facets": []
+          "facets": [
+            "facet:stackVsHeap",
+            "facet:pointerDereference",
+            "facet:gcReachableFromRoot",
+            "facet:refcountZero",
+            "facet:referenceCycle",
+            "facet:manualFree",
+            "facet:doubleFree",
+            "facet:memoryLeak"
+          ]
         }
       ]
     },
