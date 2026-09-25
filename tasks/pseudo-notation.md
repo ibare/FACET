@@ -49,6 +49,7 @@
 | 없음 | `null` | `None` · `nil` · `nothing` 이 아니다 |
 | 목록 | `[1, 2, 3]` | |
 | 목록 읽기 | `list[0]` | **0 부터** (정한 것 ②) |
+| 목록 칸에 넣기 | `list[1] = 0` | 읽기 모양을 넣기 왼쪽에 그대로 (2026-09-25 aliasing · immutable-copy) |
 | 길이 | `length(list)` | `len` · `.size()` 가 아니다 |
 
 ### 연산
@@ -77,7 +78,8 @@
   들여와야 해 표기가 한 분야 안에서 갈린다.
 
 타입을 말해야 하는 조각(원시 타입 · 축소 변환)만 `let n: int8 = 100` 처럼 타입을 붙인다. 타입 이름은 `int` · `int8` · `int32`
-· `float` · `bool` · `string`. 그 밖의 조각은 타입을 적지 않는다.
+· `float` · `bool` · `string`. 그 밖의 조각은 타입을 적지 않는다. **변환은 타입 이름을 함수처럼 부른다** — `let b: int8 = int8(large)`
+(고 · 명시 변환. 암묵 변환 `let b: int8 = large` 는 자바 · C# 에 익숙한 사람이 컴파일 오류로 읽는다. 2026-09-25 narrowing-loss).
 
 ### 흐름
 
@@ -116,6 +118,11 @@ let doubled = map(list, x => x * 2)
 ```
 
 - 정의는 `function 이름(인자)`. `def` · `fn` · `func` 가 아니다
+- **자리를 넘기는 인자**는 정의 쪽 인자 이름 앞에만 `ref` — `function bumpRef(ref n)`. 부르는 쪽에는 붙이지 않는다 (C# 은 양쪽에 적는다 — 설명 글이 밝힌다. 2026-09-25 pass-by-value-vs-reference)
+- 여러 줄 몸이 필요한 안쪽 함수는 몸 안에 이름 있는 `function` 을 둔다 (클로저). 한 줄이면 `x => …`
+- **목록 함수는 목록이 첫 인자** — `map(list, f)` · `filter(list, f)` · `reduce(list, start, f)` · `copyWith(list, i, v)`(자리 i 만 바꾼 새 목록).
+  인자 차례는 어느 실제 언어와도 같지 않을 수 있다 — 설명 글이 실제 언어와 잇는다
+- **값이 없을 수 있는 상자** — `box(v)` · `empty` · `then(b, f)`. 빈 상자를 `None`(검사에 걸림) · `null`("없음" 과 겹침)로 쓰지 않는다 (2026-09-25 monad-chain-in-box)
 - 돌려줌은 `return 값`
 - **이름 없는 함수** — `x => x * 2`, 인자가 여럿이면 `(a, b) => a + b` (정한 것 ③)
 - 출력은 **`show 값`** — `print` 는 "종이에 찍는다" 로 읽혀 처음 보는 사람에게 뜻이 어긋난다. 괄호 없이 쓴다 (함수 부르기와 가른다).
@@ -156,12 +163,19 @@ class Robot implements Speaker
 ```
 
 - `class` · `extends` · `implements` · `interface` · `new` · `this` · `private` · `public` — 자바 · C# · 타입스크립트가 공유하는 낱말
-- 만들 때 부르는 것은 `function create(…)` — `__init__` · `constructor` 가 아니다 (정한 것 ④)
+- 만들 때 부르는 것은 `function create(…)` — `__init__` · `constructor` 가 아니다 (정한 것 ④). `create` 가 없는 클래스는 `new C()`
+- **필드 선언 줄에는 가시성 낱말을 늘 붙인다** (`public count` · `private balance`). 메서드는 낱말이 없으면 `public`
+- 필드에는 클래스 안에서도 `this.이름` 으로 닿는다
+- 약속(`interface`)의 서명은 몸 없는 `function` 줄
+- 가시성 위반은 **실행 전 거부**로 그린다 — 정적 검사 언어의 모습. 설명 글이 파이썬(이름 관례)과 견준다 (2026-09-25 객체 지향 배치)
 
 ### 메모리 (메모리 모델 서브도메인용)
 
 - 주소 얻기 `address(x)`, 따라가기 `valueAt(p)`, 빌리기 `allocate(3)`, 돌려주기 `free(p)`. **`&x` · `*p` 는 쓰지 않는다** —
   C 를 모르면 가장 먼저 막히는 기호다 (정한 것 ④)
+- 힙 칸에 넣기 `valueAt(p) = v` — 읽기 모양을 넣기 왼쪽에 그대로
+- 객체만 필요하고 클래스가 주장 밖이면 정의 없이 `new Node()` · `a.next` · 놓기는 `a = null`
+- 주소를 화면에 적을 때는 `@1000` 처럼 `@` 를 붙인다. 주소 값은 예로 정한 값이다 — 설명 글이 밝힌다 (2026-09-25 메모리 모델 배치)
 
 ### 이름
 

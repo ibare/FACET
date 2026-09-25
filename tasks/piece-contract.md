@@ -112,7 +112,7 @@ getColors, makeTranslator, fonts, fontSizes, PIECE_CANVAS_W, categorical
 
 ## algorithm.ts
 
-- 상단 JSDoc 에 **이벤트 목록 + payload 스키마 + silent 여부** (C2). 주석과 실제 발신을 맞춘다
+- 상단 JSDoc 에 **이벤트 목록 + payload 스키마 + silent 여부** (C2). 주석과 실제 발신을 맞춘다 — JSDoc 은 **첫 `import` 보다 앞에** 둔다 (검사가 그 자리만 본다)
 - `ctx.emit` 의 `type` 은 **리터럴** (C2). 삼항식·변수 금지. 걸음표를 사람이 적은 배열로 두르지 않는다 — 데이터 순회의 결과라면 괜찮다 (S-piece)
 - `ctx.emit` 은 **늘 `await`** (C8)
 - 걸음 사이는 문 하나로 — 취소를 함께 진다 (C8)
@@ -130,10 +130,18 @@ getColors, makeTranslator, fonts, fontSizes, PIECE_CANVAS_W, categorical
 - `ctx.metric` 을 부르지 않는다 (S-piece)
 - 화면에 뜰 값은 사양이 준 실측값이거나 알고리즘이 셈한 값이다. **지어내지 않는다** (S-piece)
 - 바탕에서 결정되는 셈은 payload 에 싣지 말고 장면·그림이 같은 함수를 부르게 한다 — 두 자리에서 세면 언젠가 갈린다
+- **소재가 코드라 작은 해석기를 두면, 모르는 모양과 셈할 수 없는 상태는 줄 번호를 담아 던진다** (C6) — 모르는 문 · 식 모양을
+  `else` 로 몰지 않는다, `continue` / `return` 으로 조용히 지나치지 않는다, 없는 이름 · 빈 칸 · 크기를 `?? 0` · `''` 로 지어내지 않는다,
+  `args[0]!` 단언으로 TypeError 를 내지 않는다. 데이터가 틀리면 걸음이 줄어든 그림이 오류 없이 나오기 때문이다
+  (2026-09-25 프로그래밍 기초 배치에서 일곱 조각이 걸렸다 — 메모리 · 객체 조각에 몰렸다)
+- 헬퍼 이름을 `t` 로 두지 않는다 — i18n 검사가 알고리즘 · 장면의 `t('…')` 도 문안 키로 읽는다
 
 ## scene.ts (S-scene)
 
-- `initial` 은 넘겨받은 자료를 **참조로 쥐지 않는다** — 값을 베끼거나 빈 장면을 돌려주고 `init` 이벤트가 채운다
+- `initial` 은 넘겨받은 자료를 **참조로 쥐지 않는다** — 값을 베낀다. **걸음 0 은 `initial()` 이 `initialData` 에서 채우는 것을 먼저 고른다**
+  (코드 줄 · 바탕 구조). 알고리즘이 셈해야 하는 바탕이면 `silent: true` 인 `init` 이 걸음 0 을 갈아 끼운다. 빈 장면 + silent 가 아닌
+  `init` 은 **빈 걸음 0 이 하나 더 생긴다** — 되짚기 띠의 첫 칸이 빈 화면이다. 옛 조각에 남아 있는 꼴이라 검사는 막지 않지만 새로 쓰지 않는다
+  (2026-09-25 감사가 이 꼴을 조각마다 다르게 판정했다. 이 줄이 판정이다)
 - `reduce` 는 **새 객체를 돌려준다.** 앞 장면을 고치면 되짚을 때 과거가 바뀐다
 - `reduce` 는 순수하다 — DOM · 타이머 · 무작위 없음
 - `event.payload` 를 이름 붙은 타입으로 통째 단언하지 않는다 (`payload as StepPayload` ✗) — `typeof` 가드로 필드를 좁힌다 (C9. `piece-check` 가 잡는다. 2026-09-18 AI 배치에서 넷이 걸렸다)
@@ -150,6 +158,7 @@ getColors, makeTranslator, fonts, fontSizes, PIECE_CANVAS_W, categorical
 - **그 폭을 채운다** — 크기는 캔버스에서 역산하고 상수로는 상한만 둔다 (S-piece)
 - 비울 때는 `params.canvas.textContent = ''` — **container 를 비우면 캔버스가 떨어져 나간다**
 - 색은 `getColors(params.theme)`, 글꼴은 `fonts`/`fontSizes`. hex·rgb 리터럴 0 건. **글자 폭을 셈하려고 쥐는 크기도 토큰에서** — `const CODE_PX = 12` 가 아니라 `parseFloat(fontSizes.sm)`. 따로 쥐면 토큰이 바뀔 때 셈과 글자가 어긋난다 (2026-09-25 배치에서 넷이 이 꼴로 걸렸다. `piece-check` 가 경고한다)
+- **수는 문장 밖에 둔다** — `'Open slots: {n}'` 이지 `'{n} open slots'` 가 아니다 (n=1 에서 복수형이 깨진다. 관사 `a {cls}` 도 같은 꼴 — 이름이 모음으로 시작하면 틀린다)
 - 문안은 `const t = params.t ?? makeTranslator(params.locale)` 로 만들고 `t('caption.x', 'en 원본', vars)` — **en 원본은 호출부에 리터럴**, facet.ts 의 en 과 글자까지 같게 (en-original 테스트)
 - `mount` 가 `initialData` 를 좁힌다. 좁히개는 stage 가 가진다. **`initialData` 가 없어도 던지지 않는다** — `canvas-attach` 전수 검사가 `config: {}` 만 주고 마운트한다. 던지면 잰 수 0 으로 실패한다. 빈 캔버스를 두는 렌더러를 돌려주거나, 값을 장면(`init` 이벤트)에서 읽는다 (2026-09-18, 둘이 따로 걸렸다)
 
