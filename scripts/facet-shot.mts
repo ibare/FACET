@@ -261,7 +261,11 @@ if (typeof facet.scene === 'string') {
     const e = events[i]!;
     const next = plan.reduce(scene, e);
     if (e.silent === true) {
+      // 러너의 SceneTrack 처럼 지금 걸음의 장면을 갈아 끼우고 다시 찍는다 — 걸음은 늘지 않는다
       scene = next;
+      const last = all[all.length - 1]!;
+      await inst.render(scene, prev, { animate: false });
+      all[all.length - 1] = { ...last, svg: svgOf(), text: textOf() };
     } else {
       prev = scene;
       scene = next;
