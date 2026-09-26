@@ -1871,4 +1871,28 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:graphDb', () =>
     import('@ffacet/algorithm-graph-db').then((m) => m.registerGraphDb()),
   );
+  registerFacetLoader('facet:cascadePriority', () =>
+    import('@ffacet/algorithm-cascade-priority').then((m) => m.registerCascadePriority()),
+  );
+  registerFacetLoader('facet:layoutThrash', () =>
+    import('@ffacet/algorithm-layout-thrash').then((m) => m.registerLayoutThrash()),
+  );
+  registerFacetLoader('facet:repaintCost', () =>
+    import('@ffacet/algorithm-repaint-cost').then((m) => m.registerRepaintCost()),
+  );
+  registerFacetLoader('facet:keyedReconciliation', () =>
+    import('@ffacet/algorithm-keyed-reconciliation').then((m) => m.registerKeyedReconciliation()),
+  );
+  registerFacetLoader('facet:reactiveUpdates', () =>
+    import('@ffacet/algorithm-reactive-updates').then((m) => m.registerReactiveUpdates()),
+  );
+  registerFacetLoader('facet:cooperativeYielding', () =>
+    import('@ffacet/algorithm-cooperative-yielding').then((m) => m.registerCooperativeYielding()),
+  );
+  registerFacetLoader('facet:frameBudget', () =>
+    import('@ffacet/algorithm-frame-budget').then((m) => m.registerFrameBudget()),
+  );
+  registerFacetLoader('facet:criticalPath', () =>
+    import('@ffacet/algorithm-critical-path').then((m) => m.registerCriticalPath()),
+  );
 }

@@ -3148,7 +3148,8 @@
             },
             {
               "id": "blocking-and-yield",
-              "name": "협조적 양보"
+              "name": "협조적 양보",
+              "facetId": "facet:cooperativeYielding"
             },
             {
               "id": "frames-stack-up",
@@ -3214,15 +3215,18 @@
           "topics": [
             {
               "id": "style-calculation",
-              "name": "스타일 계산"
+              "name": "스타일 계산",
+              "facetId": "facet:cascadePriority"
             },
             {
               "id": "layout-reflow",
-              "name": "레이아웃"
+              "name": "레이아웃",
+              "facetId": "facet:layoutThrash"
             },
             {
               "id": "paint-and-composite",
-              "name": "페인트와 합성"
+              "name": "페인트와 합성",
+              "facetId": "facet:repaintCost"
             },
             {
               "id": "two-trees-meet",
@@ -3288,11 +3292,13 @@
           "topics": [
             {
               "id": "keys-in-lists",
-              "name": "키 있는 재조정"
+              "name": "키 있는 재조정",
+              "facetId": "facet:keyedReconciliation"
             },
             {
               "id": "dependency-tracking",
-              "name": "반응형 갱신"
+              "name": "반응형 갱신",
+              "facetId": "facet:reactiveUpdates"
             },
             {
               "id": "side-by-side-trees",
@@ -3362,7 +3368,8 @@
             },
             {
               "id": "composited-animation",
-              "name": "프레임 예산과 합성"
+              "name": "프레임 예산과 합성",
+              "facetId": "facet:frameBudget"
             },
             {
               "id": "sixteen-milliseconds",
@@ -3420,7 +3427,8 @@
           "topics": [
             {
               "id": "critical-rendering-path",
-              "name": "크리티컬 렌더링 패스와 로딩 순서"
+              "name": "크리티컬 렌더링 패스와 로딩 순서",
+              "facetId": "facet:criticalPath"
             },
             {
               "id": "parser-stops",
