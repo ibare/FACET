@@ -193,10 +193,15 @@ describe('계획 카탈로그', () => {
    * 잘못 표시했다 — 실제로는 "안 만들기로 정함"이지 "아직 못 만듦"이 아니다. 항목째 지웠다(조각의
    * `origin` 문자열은 그대로 둔다 — `concept-meta-batch-protocol.md` 규칙 2번이 이 모양을 다룬다).
    * 1010 → 1008.
+   *
+   * 같은 날 컴파일러와 언어 완제품 판정에서 다섯을 지웠다 — 완제품 안에 합친 넷(AST → cfg ·
+   * 심볼 테이블 → scope-resolve · DFG → cfg-ir · 죽은 코드 제거 → constant-folding)과 버린 하나
+   * (IR 설계 — 조각 lower-to-simpler 의 origin 은 cfg-ir 로). 조각 origin 은 host 토픽으로 옮겼다.
+   * 사용자가 정했다 (`tasks/compilers-whole-batch.md`). 1008 → 1003.
    */
   it('규모가 줄지 않았다 — 실수로 잘려 나간 것을 잡는다', () => {
     expect(domains.length).toBeGreaterThanOrEqual(16);
-    expect(rows.length).toBeGreaterThanOrEqual(1008);
+    expect(rows.length).toBeGreaterThanOrEqual(1003);
   });
 });
 

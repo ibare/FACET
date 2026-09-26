@@ -824,33 +824,89 @@
           "id": "lexical",
           "name": {"en":"Lexical Analysis","ko":"어휘 분석","ja":"字句解析","zh":"词法分析","ar":"التحليل المعجمي","es":"Análisis léxico","fr":"Analyse lexicale","hi":"लेक्सिकल विश्लेषण","id":"Analisis Leksikal","pt":"Análise léxica"},
           "facets": [
-            "facet:tokenization"
+            "facet:tokenization",
+            "facet:regexBacktracking",
+            "facet:finiteAutomata",
+            "facet:splitIntoTokens",
+            "facet:longestMatchWins",
+            "facet:patternMatchesSet",
+            "facet:backtrackOnFail",
+            "facet:stateEatsChar",
+            "facet:acceptState",
+            "facet:nfaToDfa"
           ]
         },
         {
           "id": "parsing",
           "name": {"en":"Parsing","ko":"구문 분석","ja":"構文解析","zh":"语法分析","ar":"التحليل النحوي","es":"Análisis sintáctico","fr":"Analyse syntaxique","hi":"पार्सिंग","id":"Parsing","pt":"Análise sintática"},
-          "facets": []
+          "facets": [
+            "facet:parseTreeToAst",
+            "facet:recursiveDescent",
+            "facet:lrPrecedence",
+            "facet:ruleExpands",
+            "facet:derivationTree",
+            "facet:oneFunctionPerRule",
+            "facet:lookaheadOne",
+            "facet:shiftOrReduce",
+            "facet:parseConflict",
+            "facet:treeDropsSyntax"
+          ]
         },
         {
           "id": "semantic",
           "name": {"en":"Semantic Analysis","ko":"의미 분석","ja":"意味解析","zh":"语义分析","ar":"التحليل الدلالي","es":"Análisis semántico","fr":"Analyse sémantique","hi":"सिमेंटिक विश्लेषण","id":"Analisis Semantik","pt":"Análise semântica"},
-          "facets": []
+          "facets": [
+            "facet:typeChecking",
+            "facet:scopeAndSymbols",
+            "facet:typeFlowsUp",
+            "facet:typeMismatch",
+            "facet:resolveToDeclaration",
+            "facet:tablePerScope"
+          ]
         },
         {
           "id": "ir",
           "name": {"en":"Intermediate Representation","ko":"중간 표현","ja":"中間表現","zh":"中间表示","ar":"التمثيل الوسيط","es":"Representación intermedia","fr":"Représentation intermédiaire","hi":"मध्यवर्ती निरूपण","id":"Representasi Antara","pt":"Representação intermediária"},
-          "facets": []
+          "facets": [
+            "facet:ssaForm",
+            "facet:flowGraphs",
+            "facet:lowerToSimpler",
+            "facet:assignOnce",
+            "facet:phiMerges",
+            "facet:basicBlock",
+            "facet:edgesAreJumps",
+            "facet:valueFlowsToUse"
+          ]
         },
         {
           "id": "optimization",
           "name": {"en":"Optimization","ko":"최적화","ja":"最適化","zh":"优化","ar":"التحسين","es":"Optimización","fr":"Optimisation","hi":"ऑप्टिमाइज़ेशन","id":"Optimisasi","pt":"Otimização"},
-          "facets": []
+          "facets": [
+            "facet:foldAndSweep",
+            "facet:loopOptimization",
+            "facet:inliningTradeoff",
+            "facet:foldAtCompile",
+            "facet:unusedIsRemoved",
+            "facet:hoistInvariant",
+            "facet:unrollLoop",
+            "facet:pasteTheBody",
+            "facet:inlineGrowsCode"
+          ]
         },
         {
           "id": "codegen",
           "name": {"en":"Code Generation","ko":"코드 생성","ja":"コード生成","zh":"代码生成","ar":"توليد الشيفرة","es":"Generación de código","fr":"Génération de code","hi":"कोड जनरेशन","id":"Pembuatan Kode","pt":"Geração de código"},
-          "facets": []
+          "facets": [
+            "facet:registerAllocation",
+            "facet:instructionSelection",
+            "facet:linker",
+            "facet:registersAreFew",
+            "facet:spillToMemory",
+            "facet:interferenceGraph",
+            "facet:patternToInstruction",
+            "facet:resolveSymbols",
+            "facet:relocateAddresses"
+          ]
         }
       ]
     },

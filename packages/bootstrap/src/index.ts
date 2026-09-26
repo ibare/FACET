@@ -1994,4 +1994,157 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:whatFirstPaintNeeds', () =>
     import('@ffacet/algorithm-what-first-paint-needs').then((m) => m.registerWhatFirstPaintNeeds()),
   );
+  registerFacetLoader('facet:splitIntoTokens', () =>
+    import('@ffacet/algorithm-split-into-tokens').then((m) => m.registerSplitIntoTokens()),
+  );
+  registerFacetLoader('facet:longestMatchWins', () =>
+    import('@ffacet/algorithm-longest-match-wins').then((m) => m.registerLongestMatchWins()),
+  );
+  registerFacetLoader('facet:patternMatchesSet', () =>
+    import('@ffacet/algorithm-pattern-matches-set').then((m) => m.registerPatternMatchesSet()),
+  );
+  registerFacetLoader('facet:backtrackOnFail', () =>
+    import('@ffacet/algorithm-backtrack-on-fail').then((m) => m.registerBacktrackOnFail()),
+  );
+  registerFacetLoader('facet:stateEatsChar', () =>
+    import('@ffacet/algorithm-state-eats-char').then((m) => m.registerStateEatsChar()),
+  );
+  registerFacetLoader('facet:acceptState', () =>
+    import('@ffacet/algorithm-accept-state').then((m) => m.registerAcceptState()),
+  );
+  registerFacetLoader('facet:nfaToDfa', () =>
+    import('@ffacet/algorithm-nfa-to-dfa').then((m) => m.registerNfaToDfa()),
+  );
+  registerFacetLoader('facet:ruleExpands', () =>
+    import('@ffacet/algorithm-rule-expands').then((m) => m.registerRuleExpands()),
+  );
+  registerFacetLoader('facet:derivationTree', () =>
+    import('@ffacet/algorithm-derivation-tree').then((m) => m.registerDerivationTree()),
+  );
+  registerFacetLoader('facet:oneFunctionPerRule', () =>
+    import('@ffacet/algorithm-one-function-per-rule').then((m) => m.registerOneFunctionPerRule()),
+  );
+  registerFacetLoader('facet:lookaheadOne', () =>
+    import('@ffacet/algorithm-lookahead-one').then((m) => m.registerLookaheadOne()),
+  );
+  registerFacetLoader('facet:shiftOrReduce', () =>
+    import('@ffacet/algorithm-shift-or-reduce').then((m) => m.registerShiftOrReduce()),
+  );
+  registerFacetLoader('facet:parseConflict', () =>
+    import('@ffacet/algorithm-parse-conflict').then((m) => m.registerParseConflict()),
+  );
+  registerFacetLoader('facet:treeDropsSyntax', () =>
+    import('@ffacet/algorithm-tree-drops-syntax').then((m) => m.registerTreeDropsSyntax()),
+  );
+  registerFacetLoader('facet:typeFlowsUp', () =>
+    import('@ffacet/algorithm-type-flows-up').then((m) => m.registerTypeFlowsUp()),
+  );
+  registerFacetLoader('facet:typeMismatch', () =>
+    import('@ffacet/algorithm-type-mismatch').then((m) => m.registerTypeMismatch()),
+  );
+  registerFacetLoader('facet:resolveToDeclaration', () =>
+    import('@ffacet/algorithm-resolve-to-declaration').then((m) => m.registerResolveToDeclaration()),
+  );
+  registerFacetLoader('facet:tablePerScope', () =>
+    import('@ffacet/algorithm-table-per-scope').then((m) => m.registerTablePerScope()),
+  );
+  registerFacetLoader('facet:lowerToSimpler', () =>
+    import('@ffacet/algorithm-lower-to-simpler').then((m) => m.registerLowerToSimpler()),
+  );
+  registerFacetLoader('facet:assignOnce', () =>
+    import('@ffacet/algorithm-assign-once').then((m) => m.registerAssignOnce()),
+  );
+  registerFacetLoader('facet:phiMerges', () =>
+    import('@ffacet/algorithm-phi-merges').then((m) => m.registerPhiMerges()),
+  );
+  registerFacetLoader('facet:basicBlock', () =>
+    import('@ffacet/algorithm-basic-block').then((m) => m.registerBasicBlock()),
+  );
+  registerFacetLoader('facet:edgesAreJumps', () =>
+    import('@ffacet/algorithm-edges-are-jumps').then((m) => m.registerEdgesAreJumps()),
+  );
+  registerFacetLoader('facet:valueFlowsToUse', () =>
+    import('@ffacet/algorithm-value-flows-to-use').then((m) => m.registerValueFlowsToUse()),
+  );
+  registerFacetLoader('facet:foldAtCompile', () =>
+    import('@ffacet/algorithm-fold-at-compile').then((m) => m.registerFoldAtCompile()),
+  );
+  registerFacetLoader('facet:unusedIsRemoved', () =>
+    import('@ffacet/algorithm-unused-is-removed').then((m) => m.registerUnusedIsRemoved()),
+  );
+  registerFacetLoader('facet:hoistInvariant', () =>
+    import('@ffacet/algorithm-hoist-invariant').then((m) => m.registerHoistInvariant()),
+  );
+  registerFacetLoader('facet:unrollLoop', () =>
+    import('@ffacet/algorithm-unroll-loop').then((m) => m.registerUnrollLoop()),
+  );
+  registerFacetLoader('facet:pasteTheBody', () =>
+    import('@ffacet/algorithm-paste-the-body').then((m) => m.registerPasteTheBody()),
+  );
+  registerFacetLoader('facet:inlineGrowsCode', () =>
+    import('@ffacet/algorithm-inline-grows-code').then((m) => m.registerInlineGrowsCode()),
+  );
+  registerFacetLoader('facet:registersAreFew', () =>
+    import('@ffacet/algorithm-registers-are-few').then((m) => m.registerRegistersAreFew()),
+  );
+  registerFacetLoader('facet:spillToMemory', () =>
+    import('@ffacet/algorithm-spill-to-memory').then((m) => m.registerSpillToMemory()),
+  );
+  registerFacetLoader('facet:interferenceGraph', () =>
+    import('@ffacet/algorithm-interference-graph').then((m) => m.registerInterferenceGraph()),
+  );
+  registerFacetLoader('facet:patternToInstruction', () =>
+    import('@ffacet/algorithm-pattern-to-instruction').then((m) => m.registerPatternToInstruction()),
+  );
+  registerFacetLoader('facet:resolveSymbols', () =>
+    import('@ffacet/algorithm-resolve-symbols').then((m) => m.registerResolveSymbols()),
+  );
+  registerFacetLoader('facet:relocateAddresses', () =>
+    import('@ffacet/algorithm-relocate-addresses').then((m) => m.registerRelocateAddresses()),
+  );
+  registerFacetLoader('facet:regexBacktracking', () =>
+    import('@ffacet/algorithm-regex-backtracking').then((m) => m.registerRegexBacktracking()),
+  );
+  registerFacetLoader('facet:finiteAutomata', () =>
+    import('@ffacet/algorithm-finite-automata').then((m) => m.registerFiniteAutomata()),
+  );
+  registerFacetLoader('facet:parseTreeToAst', () =>
+    import('@ffacet/algorithm-parse-tree-to-ast').then((m) => m.registerParseTreeToAst()),
+  );
+  registerFacetLoader('facet:recursiveDescent', () =>
+    import('@ffacet/algorithm-recursive-descent').then((m) => m.registerRecursiveDescent()),
+  );
+  registerFacetLoader('facet:lrPrecedence', () =>
+    import('@ffacet/algorithm-lr-precedence').then((m) => m.registerLrPrecedence()),
+  );
+  registerFacetLoader('facet:typeChecking', () =>
+    import('@ffacet/algorithm-type-checking').then((m) => m.registerTypeChecking()),
+  );
+  registerFacetLoader('facet:scopeAndSymbols', () =>
+    import('@ffacet/algorithm-scope-and-symbols').then((m) => m.registerScopeAndSymbols()),
+  );
+  registerFacetLoader('facet:ssaForm', () =>
+    import('@ffacet/algorithm-ssa-form').then((m) => m.registerSsaForm()),
+  );
+  registerFacetLoader('facet:flowGraphs', () =>
+    import('@ffacet/algorithm-flow-graphs').then((m) => m.registerFlowGraphs()),
+  );
+  registerFacetLoader('facet:foldAndSweep', () =>
+    import('@ffacet/algorithm-fold-and-sweep').then((m) => m.registerFoldAndSweep()),
+  );
+  registerFacetLoader('facet:loopOptimization', () =>
+    import('@ffacet/algorithm-loop-optimization').then((m) => m.registerLoopOptimization()),
+  );
+  registerFacetLoader('facet:inliningTradeoff', () =>
+    import('@ffacet/algorithm-inlining-tradeoff').then((m) => m.registerInliningTradeoff()),
+  );
+  registerFacetLoader('facet:registerAllocation', () =>
+    import('@ffacet/algorithm-register-allocation').then((m) => m.registerRegisterAllocation()),
+  );
+  registerFacetLoader('facet:instructionSelection', () =>
+    import('@ffacet/algorithm-instruction-selection').then((m) => m.registerInstructionSelection()),
+  );
+  registerFacetLoader('facet:linker', () =>
+    import('@ffacet/algorithm-linker').then((m) => m.registerLinker()),
+  );
 }

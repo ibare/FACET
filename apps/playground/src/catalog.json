@@ -4072,60 +4072,69 @@
             },
             {
               "id": "regex",
-              "name": "정규 표현식"
+              "name": "정규 표현식",
+              "facetId": "facet:regexBacktracking"
             },
             {
               "id": "fa",
-              "name": "유한 오토마타"
+              "name": "유한 오토마타",
+              "facetId": "facet:finiteAutomata"
             },
             {
               "id": "split-into-tokens",
               "name": "토큰화",
               "desc": "글자 줄을 낱말로 자른다",
               "kind": "piece",
-              "origin": "tokenization"
+              "origin": "tokenization",
+              "facetId": "facet:splitIntoTokens"
             },
             {
               "id": "longest-match-wins",
               "name": "최장 일치",
               "desc": "가장 길게 맞는 것을 집는다",
               "kind": "piece",
-              "origin": "tokenization"
+              "origin": "tokenization",
+              "facetId": "facet:longestMatchWins"
             },
             {
               "id": "pattern-matches-set",
               "name": "정규 표현식",
               "desc": "한 무늬가 여러 글줄을 뜻한다",
               "kind": "piece",
-              "origin": "regex"
+              "origin": "regex",
+              "facetId": "facet:patternMatchesSet"
             },
             {
               "id": "backtrack-on-fail",
               "name": "역추적",
               "desc": "안 맞으면 되돌아가 다시",
               "kind": "piece",
-              "origin": "regex"
+              "origin": "regex",
+              "facetId": "facet:backtrackOnFail"
             },
             {
               "id": "state-eats-char",
               "name": "상태 전이",
               "desc": "글자 하나에 자리 하나를 옮긴다",
               "kind": "piece",
-              "origin": "fa"
+              "origin": "fa",
+              "facetId": "facet:stateEatsChar"
             },
             {
               "id": "accept-state",
               "name": "수락 상태",
               "desc": "멈춘 자리가 받는 자리인가",
               "kind": "piece",
-              "origin": "fa"
+              "origin": "fa",
+              "facetId": "facet:acceptState"
             },
             {
               "id": "nfa-to-dfa",
               "name": "부분집합 구성",
               "desc": "여럿일 수 있는 것을 하나로 모은다",
               "kind": "piece",
-              "origin": "fa"
+              "origin": "fa",
+              "facetId": "facet:nfaToDfa"
             }
           ]
         },
@@ -4135,68 +4144,74 @@
           "topics": [
             {
               "id": "cfg",
-              "name": "CFG"
+              "name": "파스 나무와 AST",
+              "facetId": "facet:parseTreeToAst"
             },
             {
               "id": "recursive-descent",
-              "name": "재귀 하강"
+              "name": "재귀 하강",
+              "facetId": "facet:recursiveDescent"
             },
             {
               "id": "lr-lalr",
-              "name": "LR / LALR"
-            },
-            {
-              "id": "ast",
-              "name": "AST 생성"
+              "name": "LR / LALR",
+              "facetId": "facet:lrPrecedence"
             },
             {
               "id": "rule-expands",
               "name": "생성 규칙",
               "desc": "규칙이 자기를 펼친다",
               "kind": "piece",
-              "origin": "cfg"
+              "origin": "cfg",
+              "facetId": "facet:ruleExpands"
             },
             {
               "id": "derivation-tree",
               "name": "유도 트리",
               "desc": "펼친 자취가 나무가 된다",
               "kind": "piece",
-              "origin": "cfg"
+              "origin": "cfg",
+              "facetId": "facet:derivationTree"
             },
             {
               "id": "one-function-per-rule",
               "name": "재귀 하향 파싱",
               "desc": "규칙마다 함수 하나",
               "kind": "piece",
-              "origin": "recursive-descent"
+              "origin": "recursive-descent",
+              "facetId": "facet:oneFunctionPerRule"
             },
             {
               "id": "lookahead-one",
               "name": "선행 탐색",
               "desc": "한 낱말 앞을 보고 고른다",
               "kind": "piece",
-              "origin": "recursive-descent"
+              "origin": "recursive-descent",
+              "facetId": "facet:lookaheadOne"
             },
             {
               "id": "shift-or-reduce",
               "name": "시프트와 리듀스",
               "desc": "밀어 넣을까 접을까",
               "kind": "piece",
-              "origin": "lr-lalr"
+              "origin": "lr-lalr",
+              "facetId": "facet:shiftOrReduce"
             },
             {
               "id": "parse-conflict",
               "name": "파싱 충돌",
               "desc": "어느 쪽인지 못 정하면 충돌",
               "kind": "piece",
-              "origin": "lr-lalr"
+              "origin": "lr-lalr",
+              "facetId": "facet:parseConflict"
             },
             {
               "id": "tree-drops-syntax",
               "name": "추상 구문 트리",
               "desc": "괄호는 버리고 뜻만 남긴다",
               "kind": "piece",
-              "origin": "ast"
+              "origin": "cfg",
+              "facetId": "facet:treeDropsSyntax"
             }
           ]
         },
@@ -4206,43 +4221,45 @@
           "topics": [
             {
               "id": "type-check",
-              "name": "타입 검사"
+              "name": "타입 검사",
+              "facetId": "facet:typeChecking"
             },
             {
               "id": "scope-resolve",
-              "name": "스코프 해석"
-            },
-            {
-              "id": "symbol-table",
-              "name": "심볼 테이블"
+              "name": "스코프와 심볼 테이블",
+              "facetId": "facet:scopeAndSymbols"
             },
             {
               "id": "type-flows-up",
               "name": "타입 추론",
               "desc": "아래에서 정해진 타입이 위로 오른다",
               "kind": "piece",
-              "origin": "type-check"
+              "origin": "type-check",
+              "facetId": "facet:typeFlowsUp"
             },
             {
               "id": "type-mismatch",
               "name": "타입 불일치",
               "desc": "맞물리지 않는 자리",
               "kind": "piece",
-              "origin": "type-check"
+              "origin": "type-check",
+              "facetId": "facet:typeMismatch"
             },
             {
               "id": "resolve-to-declaration",
               "name": "이름 해석",
               "desc": "이름을 선언한 자리로 잇는다",
               "kind": "piece",
-              "origin": "scope-resolve"
+              "origin": "scope-resolve",
+              "facetId": "facet:resolveToDeclaration"
             },
             {
               "id": "table-per-scope",
               "name": "심볼 테이블",
               "desc": "스코프마다 이름 표를 쌓는다",
               "kind": "piece",
-              "origin": "symbol-table"
+              "origin": "scope-resolve",
+              "facetId": "facet:tablePerScope"
             }
           ]
         },
@@ -4251,62 +4268,62 @@
           "name": "중간 표현",
           "topics": [
             {
-              "id": "ir-design",
-              "name": "IR 설계"
-            },
-            {
               "id": "ssa",
-              "name": "SSA 형식"
+              "name": "SSA 형식",
+              "facetId": "facet:ssaForm"
             },
             {
               "id": "cfg-ir",
-              "name": "CFG"
-            },
-            {
-              "id": "dfg",
-              "name": "DFG"
+              "name": "흐름 그래프 — 블록과 사슬",
+              "facetId": "facet:flowGraphs"
             },
             {
               "id": "lower-to-simpler",
               "name": "낮추기",
               "desc": "뜻은 두고 말을 단순하게",
               "kind": "piece",
-              "origin": "ir-design"
+              "origin": "cfg-ir",
+              "facetId": "facet:lowerToSimpler"
             },
             {
               "id": "assign-once",
               "name": "단일 할당",
               "desc": "이름마다 한 번만 적는다",
               "kind": "piece",
-              "origin": "ssa"
+              "origin": "ssa",
+              "facetId": "facet:assignOnce"
             },
             {
               "id": "phi-merges",
               "name": "파이 노드",
               "desc": "갈라진 값이 만나는 자리",
               "kind": "piece",
-              "origin": "ssa"
+              "origin": "ssa",
+              "facetId": "facet:phiMerges"
             },
             {
               "id": "basic-block",
               "name": "기본 블록",
               "desc": "갈래 없이 쭉 가는 토막",
               "kind": "piece",
-              "origin": "cfg-ir"
+              "origin": "cfg-ir",
+              "facetId": "facet:basicBlock"
             },
             {
               "id": "edges-are-jumps",
               "name": "제어 흐름 간선",
               "desc": "토막과 토막을 잇는 뜀",
               "kind": "piece",
-              "origin": "cfg-ir"
+              "origin": "cfg-ir",
+              "facetId": "facet:edgesAreJumps"
             },
             {
               "id": "value-flows-to-use",
               "name": "정의-사용 사슬",
               "desc": "만든 자리에서 쓰는 자리로",
               "kind": "piece",
-              "origin": "dfg"
+              "origin": "cfg-ir",
+              "facetId": "facet:valueFlowsToUse"
             }
           ]
         },
@@ -4316,61 +4333,66 @@
           "topics": [
             {
               "id": "constant-folding",
-              "name": "상수 폴딩"
-            },
-            {
-              "id": "dce",
-              "name": "죽은 코드 제거"
+              "name": "상수 폴딩과 죽은 코드 제거",
+              "facetId": "facet:foldAndSweep"
             },
             {
               "id": "loop-opt",
-              "name": "루프 최적화"
+              "name": "루프 최적화",
+              "facetId": "facet:loopOptimization"
             },
             {
               "id": "inlining",
-              "name": "인라이닝"
+              "name": "인라이닝",
+              "facetId": "facet:inliningTradeoff"
             },
             {
               "id": "fold-at-compile",
               "name": "상수 폴딩",
               "desc": "미리 셈해 값으로 바꾼다",
               "kind": "piece",
-              "origin": "constant-folding"
+              "origin": "constant-folding",
+              "facetId": "facet:foldAtCompile"
             },
             {
               "id": "unused-is-removed",
               "name": "죽은 코드 제거",
               "desc": "아무도 안 쓰면 지운다",
               "kind": "piece",
-              "origin": "dce"
+              "origin": "constant-folding",
+              "facetId": "facet:unusedIsRemoved"
             },
             {
               "id": "hoist-invariant",
               "name": "루프 불변 코드 이동",
               "desc": "안 변하는 것을 밖으로 꺼낸다",
               "kind": "piece",
-              "origin": "loop-opt"
+              "origin": "loop-opt",
+              "facetId": "facet:hoistInvariant"
             },
             {
               "id": "unroll-loop",
               "name": "루프 펼치기",
               "desc": "반복을 펴서 늘어놓는다",
               "kind": "piece",
-              "origin": "loop-opt"
+              "origin": "loop-opt",
+              "facetId": "facet:unrollLoop"
             },
             {
               "id": "paste-the-body",
               "name": "인라이닝",
               "desc": "부르는 대신 몸통을 붙여 넣는다",
               "kind": "piece",
-              "origin": "inlining"
+              "origin": "inlining",
+              "facetId": "facet:pasteTheBody"
             },
             {
               "id": "inline-grows-code",
               "name": "코드 팽창",
               "desc": "빨라진 만큼 커진다",
               "kind": "piece",
-              "origin": "inlining"
+              "origin": "inlining",
+              "facetId": "facet:inlineGrowsCode"
             }
           ]
         },
@@ -4380,57 +4402,66 @@
           "topics": [
             {
               "id": "register-alloc",
-              "name": "레지스터 할당"
+              "name": "레지스터 할당",
+              "facetId": "facet:registerAllocation"
             },
             {
               "id": "instr-select",
-              "name": "명령어 선택"
+              "name": "명령어 선택",
+              "facetId": "facet:instructionSelection"
             },
             {
               "id": "linking",
-              "name": "링킹"
+              "name": "링킹",
+              "facetId": "facet:linker"
             },
             {
               "id": "registers-are-few",
               "name": "레지스터 압박",
               "desc": "자리는 적고 값은 많다",
               "kind": "piece",
-              "origin": "register-alloc"
+              "origin": "register-alloc",
+              "facetId": "facet:registersAreFew"
             },
             {
               "id": "spill-to-memory",
               "name": "스필",
               "desc": "넘치면 메모리로 밀어낸다",
               "kind": "piece",
-              "origin": "register-alloc"
+              "origin": "register-alloc",
+              "facetId": "facet:spillToMemory"
             },
             {
               "id": "interference-graph",
               "name": "간섭 그래프",
               "desc": "같이 살아 있으면 같은 자리를 못 쓴다",
               "kind": "piece",
-              "origin": "register-alloc"
+              "origin": "register-alloc",
+              "facetId": "facet:interferenceGraph"
             },
             {
               "id": "pattern-to-instruction",
               "name": "명령 선택",
               "desc": "나무 조각을 명령 하나로",
               "kind": "piece",
-              "origin": "instr-select"
+              "origin": "instr-select",
+              "facetId": "facet:patternToInstruction"
             },
             {
               "id": "resolve-symbols",
               "name": "심볼 해석",
               "desc": "빈 자리를 다른 파일에서 메운다",
               "kind": "piece",
-              "origin": "linking"
+              "origin": "linking",
+              "facetId": "facet:resolveSymbols"
             },
             {
               "id": "relocate-addresses",
               "name": "재배치",
               "desc": "주소를 옮겨 맞춘다",
               "kind": "piece",
-              "origin": "linking"
+              "origin": "linking",
+              "facetId": "facet:relocateAddresses"
             }
           ]
         }
