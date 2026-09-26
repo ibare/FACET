@@ -187,6 +187,14 @@ import { logisticRegressionConcept } from './logistic-regression.js';
 import { lookCloselyAtFewConcept } from './look-closely-at-few.js';
 import { lostLinkConcept } from './lost-link.js';
 import { lruCacheConcept } from './lru-cache.js';
+import { lfuCacheConcept } from './lfu-cache.js';
+import { evictLeastFrequentConcept } from './evict-least-frequent.js';
+import { cacheCoherenceConcept } from './cache-coherence.js';
+import { staleCopyConcept } from './stale-copy.js';
+import { invalidateOthersConcept } from './invalidate-others.js';
+import { cacheHitMissConcept } from './cache-hit-miss.js';
+import { serveFromNearConcept } from './serve-from-near.js';
+import { originPullConcept } from './origin-pull.js';
 import { mantissaAndExponentConcept } from './mantissa-and-exponent.js';
 import { manyPatternsOnePassConcept } from './many-patterns-one-pass.js';
 import { manyTreesVoteConcept } from './many-trees-vote.js';
@@ -203,6 +211,12 @@ import { mergeTheFrequentPairConcept } from './merge-the-frequent-pair.js';
 import { mergeTwoSortedConcept } from './merge-two-sorted.js';
 import { merkleTreeConcept } from './merkle-tree.js';
 import { messagingPubsubConcept } from './messaging-pubsub.js';
+import { kafkaPatternConcept } from './kafka-pattern.js';
+import { appendOnlyLogConcept } from './append-only-log.js';
+import { consumerOffsetConcept } from './consumer-offset.js';
+import { replayFromOffsetConcept } from './replay-from-offset.js';
+import { publishToManyConcept } from './publish-to-many.js';
+import { decoupleSenderReceiverConcept } from './decouple-sender-receiver.js';
 import { mispredictionPenaltyConcept } from './misprediction-penalty.js';
 import { mutuallyReachableConcept } from './mutually-reachable.js';
 import { naiveShiftByOneConcept } from './naive-shift-by-one.js';
@@ -434,6 +448,11 @@ import { seekDistanceCostsConcept } from './seek-distance-costs.js';
 import { elevatorSweepConcept } from './elevator-sweep.js';
 import { schedulingPolicyConcept } from './scheduling-policy.js';
 import { roundRobinQuantumConcept } from './round-robin-quantum.js';
+import { roundRobinLbConcept } from './round-robin-lb.js';
+import { spreadInTurnConcept } from './spread-in-turn.js';
+import { sendToIdlestConcept } from './send-to-idlest.js';
+import { ringOfHashesConcept } from './ring-of-hashes.js';
+import { moveFewOnChangeConcept } from './move-few-on-change.js';
 import { priorityAgingConcept } from './priority-aging.js';
 import { weightedFairShareConcept } from './weighted-fair-share.js';
 import { readyQueuePickConcept } from './ready-queue-pick.js';
@@ -818,6 +837,35 @@ import { adamConcept } from './adam.js';
 import { perParameterStepConcept } from './per-parameter-step.js';
 import { batchnormConcept } from './batchnorm.js';
 import { rescaleEachBatchConcept } from './rescale-each-batch.js';
+import { serviceDiscoveryConcept } from './service-discovery.js';
+import { registerAndFindConcept } from './register-and-find.js';
+import { oneDoorManyRoomsConcept } from './one-door-many-rooms.js';
+import { circuitBreakerConcept } from './circuit-breaker.js';
+import { tripAfterFailuresConcept } from './trip-after-failures.js';
+import { halfOpenProbeConcept } from './half-open-probe.js';
+import { consistencyModelConcept } from './consistency-model.js';
+import { readYourWriteConcept } from './read-your-write.js';
+import { eventuallyAgreesConcept } from './eventually-agrees.js';
+import { agreeOnOneValueConcept } from './agree-on-one-value.js';
+import { clockSyncConcept } from './clock-sync.js';
+import { clocksDriftConcept } from './clocks-drift.js';
+import { happensBeforeConcept } from './happens-before.js';
+import { backpressureConcept } from './backpressure.js';
+import { tellThemToSlowDownConcept } from './tell-them-to-slow-down.js';
+import { shedToSurviveConcept } from './shed-to-survive.js';
+import { retryAndBackoffConcept } from './retry-and-backoff.js';
+import { retryStormConcept } from './retry-storm.js';
+import { jitteredBackoffConcept } from './jittered-backoff.js';
+import { bulkheadConcept } from './bulkhead.js';
+import { isolateTheFloodConcept } from './isolate-the-flood.js';
+import { queueingModelConcept } from './queueing-model.js';
+import { arrivalVsServiceConcept } from './arrival-vs-service.js';
+import { lengthIsRateTimesWaitConcept } from './length-is-rate-times-wait.js';
+import { kneeOfTheCurveConcept } from './knee-of-the-curve.js';
+import { rateLimitingConcept } from './rate-limiting.js';
+import { tokenBucketConcept } from './token-bucket.js';
+import { leakyBucketConcept } from './leaky-bucket.js';
+import { slidingWindowCountConcept } from './sliding-window-count.js';
 
 export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   adjacencyListVsMatrixConcept,
@@ -983,6 +1031,14 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   lookCloselyAtFewConcept,
   lostLinkConcept,
   lruCacheConcept,
+  lfuCacheConcept,
+  evictLeastFrequentConcept,
+  cacheCoherenceConcept,
+  staleCopyConcept,
+  invalidateOthersConcept,
+  cacheHitMissConcept,
+  serveFromNearConcept,
+  originPullConcept,
   mantissaAndExponentConcept,
   manyPatternsOnePassConcept,
   manyTreesVoteConcept,
@@ -999,6 +1055,12 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   mergeTwoSortedConcept,
   merkleTreeConcept,
   messagingPubsubConcept,
+  kafkaPatternConcept,
+  appendOnlyLogConcept,
+  consumerOffsetConcept,
+  replayFromOffsetConcept,
+  publishToManyConcept,
+  decoupleSenderReceiverConcept,
   mispredictionPenaltyConcept,
   mutuallyReachableConcept,
   naiveShiftByOneConcept,
@@ -1234,6 +1296,11 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   elevatorSweepConcept,
   schedulingPolicyConcept,
   roundRobinQuantumConcept,
+  roundRobinLbConcept,
+  spreadInTurnConcept,
+  sendToIdlestConcept,
+  ringOfHashesConcept,
+  moveFewOnChangeConcept,
   priorityAgingConcept,
   weightedFairShareConcept,
   readyQueuePickConcept,
@@ -1618,4 +1685,33 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   perParameterStepConcept,
   batchnormConcept,
   rescaleEachBatchConcept,
+  serviceDiscoveryConcept,
+  registerAndFindConcept,
+  oneDoorManyRoomsConcept,
+  circuitBreakerConcept,
+  tripAfterFailuresConcept,
+  halfOpenProbeConcept,
+  consistencyModelConcept,
+  readYourWriteConcept,
+  eventuallyAgreesConcept,
+  agreeOnOneValueConcept,
+  clockSyncConcept,
+  clocksDriftConcept,
+  happensBeforeConcept,
+  backpressureConcept,
+  tellThemToSlowDownConcept,
+  shedToSurviveConcept,
+  retryAndBackoffConcept,
+  retryStormConcept,
+  jitteredBackoffConcept,
+  bulkheadConcept,
+  isolateTheFloodConcept,
+  queueingModelConcept,
+  arrivalVsServiceConcept,
+  lengthIsRateTimesWaitConcept,
+  kneeOfTheCurveConcept,
+  rateLimitingConcept,
+  tokenBucketConcept,
+  leakyBucketConcept,
+  slidingWindowCountConcept,
 ];
