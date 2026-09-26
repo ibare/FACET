@@ -253,6 +253,16 @@ import { recolorThenRotateConcept } from './recolor-then-rotate.js';
 import { redBlackTreeConcept } from './red-black-tree.js';
 import { reduceToKnownConcept } from './reduce-to-known.js';
 import { relationalTablesAndKeysConcept } from './relational-tables-and-keys.js';
+import { normalFormsConcept } from './normal-forms.js';
+import { updateAnomalyConcept } from './update-anomaly.js';
+import { atomicCellConcept } from './atomic-cell.js';
+import { partialDependencyConcept } from './partial-dependency.js';
+import { transitiveDependencyConcept } from './transitive-dependency.js';
+import { determinantMustBeKeyConcept } from './determinant-must-be-key.js';
+import { primaryKeyIdentifiesConcept } from './primary-key-identifies.js';
+import { foreignKeyPointsConcept } from './foreign-key-points.js';
+import { rowIsAFactConcept } from './row-is-a-fact.js';
+import { setOfRowsConcept } from './set-of-rows.js';
 import { relaxShorterPathConcept } from './relax-shorter-path.js';
 import { relinkInsertConcept } from './relink-insert.js';
 import { rerankingConcept } from './reranking.js';
@@ -528,6 +538,69 @@ import { sharedSecretInPublicConcept } from './shared-secret-in-public.js';
 import { certificateChainConcept } from './certificate-chain.js';
 import { authConcept } from './auth.js';
 import { tokenBearerConcept } from './token-bearer.js';
+import { documentKvConcept } from './document-kv.js';
+import { nestedDocumentConcept } from './nested-document.js';
+import { keyToValueConcept } from './key-to-value.js';
+import { columnFamilyConcept } from './column-family.js';
+import { columnOrientedConcept } from './column-oriented.js';
+import { graphDbConcept } from './graph-db.js';
+import { traverseRelationshipsConcept } from './traverse-relationships.js';
+import { dmlConcept } from './dml.js';
+import { joinKindsConcept } from './join-kinds.js';
+import { subqueryConcept } from './subquery.js';
+import { windowFunctionConcept } from './window-function.js';
+import { insertUpdateDeleteConcept } from './insert-update-delete.js';
+import { schemaDefinesShapeConcept } from './schema-defines-shape.js';
+import { matchOnKeyConcept } from './match-on-key.js';
+import { keepUnmatchedConcept } from './keep-unmatched.js';
+import { allPairsConcept } from './all-pairs.js';
+import { queryInsideQueryConcept } from './query-inside-query.js';
+import { windowSlidesConcept } from './window-slides.js';
+import { groupThenAggregateConcept } from './group-then-aggregate.js';
+import { acidConcept } from './acid.js';
+import { allOrNothingConcept } from './all-or-nothing.js';
+import { durableAfterCommitConcept } from './durable-after-commit.js';
+import { isolationConcept } from './isolation.js';
+import { dirtyReadConcept } from './dirty-read.js';
+import { nonRepeatableReadConcept } from './non-repeatable-read.js';
+import { phantomReadConcept } from './phantom-read.js';
+import { sharedVsExclusiveConcept } from './shared-vs-exclusive.js';
+import { lockWaitConcept } from './lock-wait.js';
+import { growThenShrinkConcept } from './grow-then-shrink.js';
+import { mvccConcept } from './mvcc.js';
+import { keepOldVersionConcept } from './keep-old-version.js';
+import { readSeesSnapshotConcept } from './read-sees-snapshot.js';
+import { replicationConcept } from './replication.js';
+import { copyToFollowersConcept } from './copy-to-followers.js';
+import { replicationLagConcept } from './replication-lag.js';
+import { partitionForcesChoiceConcept } from './partition-forces-choice.js';
+import { shardingConcept } from './sharding.js';
+import { splitByKeyConcept } from './split-by-key.js';
+import { hotShardConcept } from './hot-shard.js';
+import { raftConcept } from './raft.js';
+import { electALeaderConcept } from './elect-a-leader.js';
+import { majorityDecidesConcept } from './majority-decides.js';
+import { logReplicateInOrderConcept } from './log-replicate-in-order.js';
+import { splitBrainConcept } from './split-brain.js';
+import { paxosConcept } from './paxos.js';
+import { proposeAndPromiseConcept } from './propose-and-promise.js';
+import { indexChoiceConcept } from './index-choice.js';
+import { leavesLinkedConcept } from './leaves-linked.js';
+import { allDataInLeavesConcept } from './all-data-in-leaves.js';
+import { indexCostsWriteConcept } from './index-costs-write.js';
+import { exactMatchOnlyConcept } from './exact-match-only.js';
+import { bitmapIndexConcept } from './bitmap-index.js';
+import { bitPerRowConcept } from './bit-per-row.js';
+import { bitwiseCombineConcept } from './bitwise-combine.js';
+import { compositeIndexConcept } from './composite-index.js';
+import { leftmostPrefixConcept } from './leftmost-prefix.js';
+import { optimizerConcept } from './optimizer.js';
+import { sameAnswerDifferentPlanConcept } from './same-answer-different-plan.js';
+import { reorderJoinsConcept } from './reorder-joins.js';
+import { planIsATreeConcept } from './plan-is-a-tree.js';
+import { costModelConcept } from './cost-model.js';
+import { estimateFromStatsConcept } from './estimate-from-stats.js';
+import { badEstimateBadPlanConcept } from './bad-estimate-bad-plan.js';
 
 export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   adjacencyListVsMatrixConcept,
@@ -758,6 +831,16 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   redBlackTreeConcept,
   reduceToKnownConcept,
   relationalTablesAndKeysConcept,
+  normalFormsConcept,
+  updateAnomalyConcept,
+  atomicCellConcept,
+  partialDependencyConcept,
+  transitiveDependencyConcept,
+  determinantMustBeKeyConcept,
+  primaryKeyIdentifiesConcept,
+  foreignKeyPointsConcept,
+  rowIsAFactConcept,
+  setOfRowsConcept,
   relaxShorterPathConcept,
   relinkInsertConcept,
   rerankingConcept,
@@ -1038,4 +1121,67 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   certificateChainConcept,
   authConcept,
   tokenBearerConcept,
+  documentKvConcept,
+  nestedDocumentConcept,
+  keyToValueConcept,
+  columnFamilyConcept,
+  columnOrientedConcept,
+  graphDbConcept,
+  traverseRelationshipsConcept,
+  dmlConcept,
+  joinKindsConcept,
+  subqueryConcept,
+  windowFunctionConcept,
+  insertUpdateDeleteConcept,
+  schemaDefinesShapeConcept,
+  matchOnKeyConcept,
+  keepUnmatchedConcept,
+  allPairsConcept,
+  queryInsideQueryConcept,
+  windowSlidesConcept,
+  groupThenAggregateConcept,
+  acidConcept,
+  allOrNothingConcept,
+  durableAfterCommitConcept,
+  isolationConcept,
+  dirtyReadConcept,
+  nonRepeatableReadConcept,
+  phantomReadConcept,
+  sharedVsExclusiveConcept,
+  lockWaitConcept,
+  growThenShrinkConcept,
+  mvccConcept,
+  keepOldVersionConcept,
+  readSeesSnapshotConcept,
+  replicationConcept,
+  copyToFollowersConcept,
+  replicationLagConcept,
+  partitionForcesChoiceConcept,
+  shardingConcept,
+  splitByKeyConcept,
+  hotShardConcept,
+  raftConcept,
+  electALeaderConcept,
+  majorityDecidesConcept,
+  logReplicateInOrderConcept,
+  splitBrainConcept,
+  paxosConcept,
+  proposeAndPromiseConcept,
+  indexChoiceConcept,
+  leavesLinkedConcept,
+  allDataInLeavesConcept,
+  indexCostsWriteConcept,
+  exactMatchOnlyConcept,
+  bitmapIndexConcept,
+  bitPerRowConcept,
+  bitwiseCombineConcept,
+  compositeIndexConcept,
+  leftmostPrefixConcept,
+  optimizerConcept,
+  sameAnswerDifferentPlanConcept,
+  reorderJoinsConcept,
+  planIsATreeConcept,
+  costModelConcept,
+  estimateFromStatsConcept,
+  badEstimateBadPlanConcept,
 ];

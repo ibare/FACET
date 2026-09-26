@@ -5,6 +5,10 @@
  * 외래키 참조선 + 카디널리티 범례.
  *
  * reactive 다. 기본키를 다른 후보키로 바꿔 보는 토글이 핵심 조작.
+ *
+ * ── 묶음 안에서의 자리 (조각 넷: primaryKeyIdentifies · foreignKeyPoints · rowIsAFact · setOfRows)
+ * 조각들은 이 짜임의 한 장면씩이다 — 불러서 하나가 남음 · 값으로 찾아가고 없으면 튕김 · 줄 하나가 사실 하나 ·
+ * 줄들은 순서 없는 모음. 이 파일은 contrastWith 로 그들을 잇기만 하고 surface 는 그대로 둔다.
  */
 
 import type { FacetConceptSource } from '../concept-types.js';
@@ -65,6 +69,22 @@ export const relationalTablesAndKeysConcept: FacetConceptSource = {
       {
         concept: 'hashTableChaining',
         note: 'A primary key identifies a row; a hash key locates a slot. One is about identity, the other about address — the word "key" carries both.',
+      },
+      {
+        concept: 'primaryKeyIdentifies',
+        note: 'Within one table, a key is what leaves exactly one row when a row is asked for by value. The structure of keys and references across tables builds on that single guarantee.',
+      },
+      {
+        concept: 'foreignKeyPoints',
+        note: 'One direction of a relationship taken alone: a stored value finds its target by equality, and a value with no target is refused. The whole relationship adds the reverse reading and the choice of which candidate key is primary.',
+      },
+      {
+        concept: 'rowIsAFact',
+        note: 'Keys and references say how rows are identified and connected. Reading each row as one true statement says what a row means in the first place.',
+      },
+      {
+        concept: 'setOfRows',
+        note: 'A grid suggests rows have positions. Treating a relation as a set says they do not, and that rows are told apart only by their values.',
       },
     ],
   },
