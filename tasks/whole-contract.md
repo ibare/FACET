@@ -160,6 +160,9 @@ coroutine 으로 두면 러너가 **마운트 시점에 throw** 하고, 통과�
   i18n 감사가 열 언어를 요구해 깨진다. 낱말이면 열 언어
 - 손잡이 라벨은 **24 자 이하**, `이름 — 설명` · `이름: 설명` 꼴 금지 (`control-label-fits`)
 - 사다리(`initialData` 쪽)와 `segments[].value` 가 같아야 한다 — 검사로 잠근다
+- **구간은 아홉 칸 이하.** control-bar 의 칸은 글자 폭 아래로 줄지 않고(칸당 약 22px) 손잡이는 줄바꿈하지 않는다 —
+  18 칸이면 컨트롤바 폭 약 440px 아래(모바일)에서 가로로 넘친다. `control-label-fits` 는 손잡이 이름만 봐서 못 잡는다
+  (2026-09-26 보안과 암호 배치 ecc — 감사가 `control-bar.ts` 를 읽어 찾았다)
 
 **계기** (C5): `metrics: [{ name: '<kebab-case>', label: { 열 언어 }, initial: 0 }, ...]`. 이름은 사양 그대로.
 

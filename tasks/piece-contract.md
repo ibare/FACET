@@ -100,6 +100,8 @@ getColors, makeTranslator, fonts, fontSizes, PIECE_CANVAS_W, categorical
 - `initialData` — 첫 필드 `type: '<name>'`, 그리고 **`stepMs`** (걸음 뒤 머무는 ms)
 - `shuffleOnReset: false`
 - `messages` — stage 가 그리는 문안 전부. 키는 짧게 (`'caption.merge'`, `'label.top'`) (C10). 열 언어 (S-piece PREFER, facet-i18n 테스트가 막는다)
+  - 값은 **리터럴 객체로 열 언어를 풀어 적는다** — 도우미 함수(`same(s)` 로 열 언어 채우기)로 만들면 tsc 는 통과하지만 facet-i18n 검사가
+    `facet.ts` 를 글자로 읽어 키 전부를 "선언 없음" 으로 잡는다 (2026-09-26 보안과 암호 배치에서 조각 둘)
   - 모양은 **키가 바깥, 언어가 안쪽** — `{ 'caption.x': { en: '…', ko: '…', … } }`. 거꾸로(`{ en: { 'caption.x': … } }`) 써도 tsc 는 통과하고 검사가 키 전부를 "선언 없음" 으로 잡는다 (2026-09-18)
 - `blocks: { stage: { type: '<name>-stage' }, controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub } }`
 
