@@ -6538,49 +6538,56 @@
               "name": "치환-순열 구조",
               "desc": "바꾸고 섞기를 되풀이한다",
               "kind": "piece",
-              "origin": "block-cipher"
+              "origin": "block-cipher",
+              "facetId": "facet:substituteAndPermute"
             },
             {
               "id": "round-key-mix",
               "name": "라운드 키",
               "desc": "걸음마다 다른 열쇠를 섞는다",
               "kind": "piece",
-              "origin": "block-cipher"
+              "origin": "block-cipher",
+              "facetId": "facet:roundKeyMix"
             },
             {
               "id": "fixed-size-block",
               "name": "블록 암호",
               "desc": "정해진 덩어리씩 잠근다",
               "kind": "piece",
-              "origin": "block-cipher"
+              "origin": "block-cipher",
+              "facetId": "facet:fixedSizeBlock"
             },
             {
               "id": "mode-chains-blocks",
               "name": "CBC 모드",
               "desc": "앞 덩어리가 뒤에 영향을 준다",
               "kind": "piece",
-              "origin": "block-cipher"
+              "origin": "block-cipher",
+              "facetId": "facet:modeChainsBlocks"
             },
             {
               "id": "iv-makes-different",
               "name": "초기화 벡터",
               "desc": "같은 것도 다르게 잠긴다",
               "kind": "piece",
-              "origin": "block-cipher"
+              "origin": "block-cipher",
+              "facetId": "facet:ivMakesDifferent"
             },
             {
               "id": "xor-with-keystream",
               "name": "키스트림 XOR",
               "desc": "흐르는 열쇠와 겹쳐 뒤집는다",
               "kind": "piece",
-              "origin": "block-cipher"
+              "origin": "block-cipher",
+              "facetId": "facet:xorWithKeystream"
             },
             {
               "id": "never-reuse-keystream",
               "name": "키스트림 재사용",
               "desc": "같은 흐름을 두 번 쓰면 드러난다",
               "kind": "piece",
-              "origin": "block-cipher"
+              "origin": "block-cipher",
+              "facetId": "facet:neverReuseKeystream"
             }
           ]
         },
@@ -6602,35 +6609,40 @@
               "name": "일방향 함수",
               "desc": "가기는 쉽고 돌아오기는 어렵다",
               "kind": "piece",
-              "origin": "rsa"
+              "origin": "rsa",
+              "facetId": "facet:easyOneWayHardBack"
             },
             {
               "id": "trapdoor-with-key",
               "name": "트랩도어",
               "desc": "열쇠가 있으면 되돌아온다",
               "kind": "piece",
-              "origin": "rsa"
+              "origin": "rsa",
+              "facetId": "facet:trapdoorWithKey"
             },
             {
               "id": "mix-and-cannot-unmix",
               "name": "혼합의 비가역성",
               "desc": "섞으면 되돌릴 수 없다",
               "kind": "piece",
-              "origin": "ecc"
+              "origin": "ecc",
+              "facetId": "facet:mixAndCannotUnmix"
             },
             {
               "id": "point-add-on-curve",
               "name": "타원 곡선 점 덧셈",
               "desc": "곡선 위에서 점을 더한다",
               "kind": "piece",
-              "origin": "ecc"
+              "origin": "ecc",
+              "facetId": "facet:pointAddOnCurve"
             },
             {
               "id": "smaller-key-same-strength",
               "name": "키 길이와 강도",
               "desc": "짧은 열쇠로 같은 힘을",
               "kind": "piece",
-              "origin": "ecc"
+              "origin": "ecc",
+              "facetId": "facet:smallerKeySameStrength"
             }
           ]
         },
@@ -6706,35 +6718,40 @@
               "name": "압축 함수",
               "desc": "덩어리마다 접어 넣는다",
               "kind": "piece",
-              "origin": "sha"
+              "origin": "sha",
+              "facetId": "facet:compressBlockByBlock"
             },
             {
               "id": "internal-state-carries",
               "name": "메르클-담고르 구조",
               "desc": "접힌 결과가 다음으로 이어진다",
               "kind": "piece",
-              "origin": "sha"
+              "origin": "sha",
+              "facetId": "facet:internalStateCarries"
             },
             {
               "id": "birthday-paradox",
               "name": "생일 문제",
               "desc": "생각보다 빨리 겹친다",
               "kind": "piece",
-              "origin": "collision"
+              "origin": "collision",
+              "facetId": "facet:birthdayParadox"
             },
             {
               "id": "key-plus-message",
               "name": "메시지 인증 코드",
               "desc": "열쇠를 아는 사람만 만들 수 있는 표",
               "kind": "piece",
-              "origin": "sha"
+              "origin": "sha",
+              "facetId": "facet:keyPlusMessage"
             },
             {
               "id": "hash-twice-with-pads",
               "name": "HMAC",
               "desc": "안팎으로 두 번 접는다",
               "kind": "piece",
-              "origin": "sha"
+              "origin": "sha",
+              "facetId": "facet:hashTwiceWithPads"
             }
           ]
         },
@@ -6767,14 +6784,16 @@
               "name": "인증서",
               "desc": "이 열쇠가 이 이름의 것이라는 보증",
               "kind": "piece",
-              "origin": "certificate"
+              "origin": "certificate",
+              "facetId": "facet:bindsKeyToName"
             },
             {
               "id": "trust-anchor",
               "name": "신뢰 루트",
               "desc": "뿌리를 믿기로 하고 시작한다",
               "kind": "piece",
-              "origin": "certificate"
+              "origin": "certificate",
+              "facetId": "facet:trustAnchor"
             }
           ]
         },

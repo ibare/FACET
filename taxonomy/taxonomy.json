@@ -1371,13 +1371,26 @@
         {
           "id": "symmetric",
           "name": {"en":"Symmetric Cryptography","ko":"대칭 암호","ja":"共通鍵暗号","zh":"对称加密","ar":"التشفير المتماثل","es":"Criptografía simétrica","fr":"Cryptographie symétrique","hi":"सममित क्रिप्टोग्राफ़ी","id":"Kriptografi Simetris","pt":"Criptografia simétrica"},
-          "facets": []
+          "facets": [
+            "facet:substituteAndPermute",
+            "facet:roundKeyMix",
+            "facet:fixedSizeBlock",
+            "facet:modeChainsBlocks",
+            "facet:ivMakesDifferent",
+            "facet:xorWithKeystream",
+            "facet:neverReuseKeystream"
+          ]
         },
         {
           "id": "asymmetric",
           "name": {"en":"Asymmetric Cryptography","ko":"비대칭 암호","ja":"公開鍵暗号","zh":"非对称加密","ar":"التشفير غير المتماثل","es":"Criptografía asimétrica","fr":"Cryptographie asymétrique","hi":"असममित क्रिप्टोग्राफ़ी","id":"Kriptografi Asimetris","pt":"Criptografia assimétrica"},
           "facets": [
-            "facet:asymmetricRsa"
+            "facet:asymmetricRsa",
+            "facet:easyOneWayHardBack",
+            "facet:trapdoorWithKey",
+            "facet:mixAndCannotUnmix",
+            "facet:pointAddOnCurve",
+            "facet:smallerKeySameStrength"
           ]
         },
         {
@@ -1390,7 +1403,12 @@
             "facet:hashIntegrityCheck",
             "facet:hashSalt",
             "facet:hashChain",
-            "facet:merkleTree"
+            "facet:merkleTree",
+            "facet:compressBlockByBlock",
+            "facet:internalStateCarries",
+            "facet:birthdayParadox",
+            "facet:keyPlusMessage",
+            "facet:hashTwiceWithPads"
           ]
         },
         {
@@ -1398,7 +1416,9 @@
           "name": {"en":"Digital Signatures","ko":"디지털 서명","ja":"デジタル署名","zh":"数字签名","ar":"التوقيعات الرقمية","es":"Firmas digitales","fr":"Signatures numériques","hi":"डिजिटल हस्ताक्षर","id":"Tanda Tangan Digital","pt":"Assinaturas digitais"},
           "facets": [
             "facet:signatureKeyDirection",
-            "facet:signatureOnHash"
+            "facet:signatureOnHash",
+            "facet:bindsKeyToName",
+            "facet:trustAnchor"
           ]
         },
         {
