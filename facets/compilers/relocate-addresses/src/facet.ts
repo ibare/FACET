@@ -1,0 +1,178 @@
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
+
+/**
+ * @piece
+ * 질문: 파일마다 0 부터 센 주소는 이어 붙인 뒤 어떻게 맞춰지는가
+ *
+ * @notation native
+ * 까닭: 화면의 기계 명령 · 재배치 항목 · 주소 칸은 컴파일러와 링커가 만드는 자료다.
+ * 원시 프로그램의 가상 표기 규약이 거는 자리가 아니다.
+ */
+export const relocateAddressesFacet: FacetJson = {
+  id: 'facet:relocateAddresses',
+  title: {
+    en: 'Relocation: shifting addresses into place',
+    ko: '재배치 — 주소를 옮겨 맞춘다',
+    ja: '再配置 — アドレスをずらして合わせる',
+    zh: '重定位 — 把地址挪到位',
+    ar: 'إعادة التموضع: تحريك العناوين إلى مكانها',
+    es: 'Reubicación: mover las direcciones a su sitio',
+    fr: 'Relocalisation : décaler les adresses à leur place',
+    hi: 'रीलोकेशन: पतों को सही जगह खिसकाना',
+    id: 'Relokasi: menggeser alamat ke tempatnya',
+    pt: 'Relocação: deslocar os endereços para o lugar',
+  },
+  description: {
+    en: 'Each object file counts its addresses from 0. How do they line up once the files are joined?',
+    ko: '파일마다 0 부터 센 주소는 이어 붙인 뒤 어떻게 맞춰지는가',
+    ja: 'ファイルごとに 0 から数えたアドレスは、つなげた後どう合わせられるのか',
+    zh: '每个文件都从 0 数起的地址，拼接之后如何对齐？',
+    ar: 'كل ملف كائن يعدّ عناوينه من 0. كيف تتوافق بعد ضمّ الملفات؟',
+    es: 'Cada archivo objeto cuenta sus direcciones desde 0. ¿Cómo encajan al unir los archivos?',
+    fr: 'Chaque fichier objet compte ses adresses depuis 0. Comment s’accordent-elles une fois les fichiers réunis ?',
+    hi: 'हर ऑब्जेक्ट फ़ाइल अपने पते 0 से गिनती है। फ़ाइलें जोड़ने के बाद वे कैसे मेल खाते हैं?',
+    id: 'Setiap berkas objek menghitung alamatnya dari 0. Bagaimana alamat itu diselaraskan setelah berkas disambung?',
+    pt: 'Cada arquivo objeto conta seus endereços a partir de 0. Como eles se ajustam depois de unir os arquivos?',
+  },
+  algorithm: 'module:relocateAddresses',
+  scene: 'module:relocateAddressesScene',
+  initialData: {
+    type: 'relocate-addresses',
+    stepMs: 1400,
+    instrBytes: 4,
+    textBase: 1000,
+    dataBase: 2000,
+    files: [
+      {
+        name: 'app.o',
+        text: [
+          { op: 'load', dst: 'r1', srcs: [], addr: true },
+          { op: 'call', dst: null, srcs: [], addr: true },
+          { op: 'store', dst: null, srcs: ['r1'], addr: true },
+          { op: 'ret', dst: null, srcs: [], addr: false },
+        ],
+        data: [{ name: 'count', size: 8 }],
+        symbols: [
+          { name: 'main', section: 'text', offset: 0 },
+          { name: 'count', section: 'data', offset: 0 },
+        ],
+        relocs: [
+          { offset: 0, symbol: 'count', kind: 'ABS' },
+          { offset: 4, symbol: 'scale', kind: 'REL' },
+          { offset: 8, symbol: 'count', kind: 'ABS' },
+        ],
+      },
+      {
+        name: 'lib.o',
+        text: [
+          { op: 'load', dst: 'r2', srcs: [], addr: true },
+          { op: 'mul', dst: 'r1', srcs: ['r1', 'r2'], addr: false },
+          { op: 'ret', dst: null, srcs: [], addr: false },
+        ],
+        data: [{ name: 'limit', size: 4 }],
+        symbols: [
+          { name: 'scale', section: 'text', offset: 0 },
+          { name: 'limit', section: 'data', offset: 0 },
+        ],
+        relocs: [{ offset: 0, symbol: 'limit', kind: 'ABS' }],
+      },
+    ],
+  },
+  shuffleOnReset: false,
+  messages: {
+    'label.files': {
+      en: 'Object files',
+      ko: '오브젝트 파일',
+      ja: 'オブジェクトファイル',
+      zh: '目标文件',
+      ar: 'ملفات الكائنات',
+      es: 'Archivos objeto',
+      fr: 'Fichiers objets',
+      hi: 'ऑब्जेक्ट फ़ाइलें',
+      id: 'Berkas objek',
+      pt: 'Arquivos objeto',
+    },
+    'label.memory': {
+      en: 'Memory',
+      ko: '메모리',
+      ja: 'メモリ',
+      zh: '内存',
+      ar: 'الذاكرة',
+      es: 'Memoria',
+      fr: 'Mémoire',
+      hi: 'मेमोरी',
+      id: 'Memori',
+      pt: 'Memória',
+    },
+    'label.bytes': {
+      en: 'Bytes: {n}',
+      ko: '바이트: {n}',
+      ja: 'バイト: {n}',
+      zh: '字节：{n}',
+      ar: 'البايتات: {n}',
+      es: 'Bytes: {n}',
+      fr: 'Octets : {n}',
+      hi: 'बाइट: {n}',
+      id: 'Bita: {n}',
+      pt: 'Bytes: {n}',
+    },
+    'caption.start': {
+      en: 'Each file counts from 0 · address fields still at 0: {n}',
+      ko: '파일마다 0 부터 센다 · 아직 0 인 주소 칸: {n}',
+      ja: 'ファイルごとに 0 から数える · まだ 0 のアドレス欄: {n}',
+      zh: '每个文件都从 0 数起 · 仍为 0 的地址栏：{n}',
+      ar: 'كل ملف يعدّ من 0 · حقول العناوين التي ما زالت 0: {n}',
+      es: 'Cada archivo cuenta desde 0 · campos de dirección aún en 0: {n}',
+      fr: 'Chaque fichier compte depuis 0 · champs d’adresse encore à 0 : {n}',
+      hi: 'हर फ़ाइल 0 से गिनती है · अभी भी 0 वाले पता-खाने: {n}',
+      id: 'Setiap berkas menghitung dari 0 · kolom alamat yang masih 0: {n}',
+      pt: 'Cada arquivo conta a partir de 0 · campos de endereço ainda em 0: {n}',
+    },
+    'caption.place': {
+      en: 'Placed {file} {section} at @{from}–@{to}',
+      ko: '옮겨 놓음: {file} {section} → @{from}~@{to}',
+      ja: '配置: {file} {section} → @{from}〜@{to}',
+      zh: '放置：{file} {section} → @{from}–@{to}',
+      ar: 'وُضع {file} {section} في @{from}–@{to}',
+      es: 'Colocado {file} {section} en @{from}–@{to}',
+      fr: 'Placé : {file} {section} en @{from}–@{to}',
+      hi: 'रखा गया: {file} {section} → @{from}–@{to}',
+      id: 'Diletakkan: {file} {section} di @{from}–@{to}',
+      pt: 'Colocado {file} {section} em @{from}–@{to}',
+    },
+    'caption.abs': {
+      en: 'Rewrote {file}+{offset} · absolute {symbol}: S = @{s}',
+      ko: '고쳐 적음: {file}+{offset} · 절대 {symbol} · S = @{s}',
+      ja: '書き換え: {file}+{offset} · 絶対 {symbol} · S = @{s}',
+      zh: '改写：{file}+{offset} · 绝对 {symbol} · S = @{s}',
+      ar: 'أُعيدت كتابة {file}+{offset} · مطلق {symbol}: S = @{s}',
+      es: 'Reescrito {file}+{offset} · absoluto {symbol}: S = @{s}',
+      fr: 'Réécrit : {file}+{offset} · absolu {symbol} : S = @{s}',
+      hi: 'फिर से लिखा: {file}+{offset} · निरपेक्ष {symbol}: S = @{s}',
+      id: 'Ditulis ulang: {file}+{offset} · absolut {symbol}: S = @{s}',
+      pt: 'Reescrito {file}+{offset} · absoluto {symbol}: S = @{s}',
+    },
+    'caption.rel': {
+      en: 'Rewrote {file}+{offset} · relative {symbol}: S − P = {s} − {p} = {field}',
+      ko: '고쳐 적음: {file}+{offset} · 상대 {symbol} · S − P = {s} − {p} = {field}',
+      ja: '書き換え: {file}+{offset} · 相対 {symbol} · S − P = {s} − {p} = {field}',
+      zh: '改写：{file}+{offset} · 相对 {symbol} · S − P = {s} − {p} = {field}',
+      ar: 'أُعيدت كتابة {file}+{offset} · نسبي {symbol}: S − P = {s} − {p} = {field}',
+      es: 'Reescrito {file}+{offset} · relativo {symbol}: S − P = {s} − {p} = {field}',
+      fr: 'Réécrit : {file}+{offset} · relatif {symbol} : S − P = {s} − {p} = {field}',
+      hi: 'फिर से लिखा: {file}+{offset} · सापेक्ष {symbol}: S − P = {s} − {p} = {field}',
+      id: 'Ditulis ulang: {file}+{offset} · relatif {symbol}: S − P = {s} − {p} = {field}',
+      pt: 'Reescrito {file}+{offset} · relativo {symbol}: S − P = {s} − {p} = {field}',
+    },
+    'label.s': {
+      en: 'S', ko: 'S', ja: 'S', zh: 'S', ar: 'S', es: 'S', fr: 'S', hi: 'S', id: 'S', pt: 'S',
+    },
+    'label.p': {
+      en: 'P', ko: 'P', ja: 'P', zh: 'P', ar: 'P', es: 'P', fr: 'P', hi: 'P', id: 'P', pt: 'P',
+    },
+  },
+  blocks: {
+    stage: { type: 'relocate-addresses-stage' },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
+  },
+};

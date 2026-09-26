@@ -1,0 +1,120 @@
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
+
+/**
+ * @piece
+ * 질문: 유한 오토마타는 글자를 받을 때마다 무엇을 하는가.
+ *
+ * 입력 `function` 의 맨 앞 글자가 하나씩 기계로 들어가 사라지고, 그 글자가 적힌 옮김
+ * 하나를 따라 지금 자리가 옮겨 간다. 기계는 키워드 셋 `for` · `from` · `function` 을
+ * 알아보는 DFA 다 (상태 14 · 옮김 13). 판정은 하지 않는다 — 그것은 accept-state 의 말이다.
+ */
+export const stateEatsCharFacet: FacetJson = {
+  id: 'facet:stateEatsChar',
+  title: {
+    en: 'One letter, one move',
+    ko: '글자 하나에 옮김 하나',
+    ja: '一文字で一つ移る',
+    zh: '一个字符，一次转移',
+    ar: 'حرف واحد، انتقال واحد',
+    es: 'Una letra, un paso',
+    fr: 'Une lettre, un pas',
+    hi: 'एक अक्षर, एक चाल',
+    id: 'Satu huruf, satu langkah',
+    pt: 'Uma letra, um passo',
+  },
+  description: {
+    en: 'A finite automaton eats the first letter of its input and follows the one transition marked with that letter.',
+    ko: '유한 오토마타는 입력의 맨 앞 글자를 먹고, 그 글자가 적힌 옮김 하나를 따라 다음 자리로 간다.',
+    ja: '有限オートマトンは入力の先頭の文字を食べ、その文字が書かれた遷移ひとつをたどって次の状態へ移る。',
+    zh: '有限自动机吃掉输入的第一个字符，沿着标有该字符的唯一转移走到下一个状态。',
+    ar: 'يأكل الآلي المنتهي الحرف الأول من مدخله ويتبع الانتقال الوحيد الموسوم بذلك الحرف.',
+    es: 'Un autómata finito se come la primera letra de su entrada y sigue la única transición marcada con esa letra.',
+    fr: 'Un automate fini mange la première lettre de son entrée et suit la seule transition marquée de cette lettre.',
+    hi: 'परिमित ऑटोमेटन अपने इनपुट का पहला अक्षर खाता है और उसी अक्षर वाले एकमात्र संक्रमण पर आगे बढ़ता है।',
+    id: 'Automaton hingga memakan huruf pertama masukannya dan mengikuti satu-satunya transisi yang bertanda huruf itu.',
+    pt: 'Um autômato finito come a primeira letra da entrada e segue a única transição marcada com essa letra.',
+  },
+  algorithm: 'module:stateEatsChar',
+  scene: 'module:stateEatsCharScene',
+  initialData: {
+    type: 'state-eats-char',
+    stepMs: 1200,
+    start: '0',
+    edges: [
+      { from: '0', ch: 'f', to: '1' },
+      { from: '1', ch: 'o', to: '2' },
+      { from: '2', ch: 'r', to: '3' },
+      { from: '1', ch: 'r', to: '4' },
+      { from: '4', ch: 'o', to: '5' },
+      { from: '5', ch: 'm', to: '6' },
+      { from: '1', ch: 'u', to: '7' },
+      { from: '7', ch: 'n', to: '8' },
+      { from: '8', ch: 'c', to: '9' },
+      { from: '9', ch: 't', to: '10' },
+      { from: '10', ch: 'i', to: '11' },
+      { from: '11', ch: 'o', to: '12' },
+      { from: '12', ch: 'n', to: '13' },
+    ],
+    accept: [
+      { state: '3', kind: 'FOR' },
+      { state: '6', kind: 'FROM' },
+      { state: '13', kind: 'FUNCTION' },
+    ],
+    input: 'function',
+  },
+  shuffleOnReset: false,
+  messages: {
+    'caption.start': {
+      en: 'Start state: {state}',
+      ko: '시작 자리: {state}',
+      ja: '開始状態: {state}',
+      zh: '起始状态：{state}',
+      ar: 'حالة البداية: {state}',
+      es: 'Estado inicial: {state}',
+      fr: 'État de départ : {state}',
+      hi: 'आरंभिक अवस्था: {state}',
+      id: 'Keadaan awal: {state}',
+      pt: 'Estado inicial: {state}',
+    },
+    'caption.eat': {
+      en: 'Ate: {ch} · state {from} → {to}',
+      ko: '먹은 글자: {ch} · 자리 {from} → {to}',
+      ja: '食べた文字: {ch} · 状態 {from} → {to}',
+      zh: '吃掉的字符：{ch} · 状态 {from} → {to}',
+      ar: 'الحرف المأكول: {ch} · الحالة {from} → {to}',
+      es: 'Letra comida: {ch} · estado {from} → {to}',
+      fr: 'Lettre mangée : {ch} · état {from} → {to}',
+      hi: 'खाया अक्षर: {ch} · अवस्था {from} → {to}',
+      id: 'Huruf dimakan: {ch} · keadaan {from} → {to}',
+      pt: 'Letra comida: {ch} · estado {from} → {to}',
+    },
+    'caption.ways': {
+      en: 'Ways out: {n} · taken: {ch}',
+      ko: '나가는 길: {n} · 따라간 길: {ch}',
+      ja: '出ていく道: {n} · たどった道: {ch}',
+      zh: '出去的路：{n} · 走的路：{ch}',
+      ar: 'طرق الخروج: {n} · الطريق المتّبع: {ch}',
+      es: 'Salidas: {n} · tomada: {ch}',
+      fr: 'Sorties : {n} · prise : {ch}',
+      hi: 'निकलने के रास्ते: {n} · चुना रास्ता: {ch}',
+      id: 'Jalan keluar: {n} · yang diambil: {ch}',
+      pt: 'Saídas: {n} · tomada: {ch}',
+    },
+    'label.input': {
+      en: 'Input',
+      ko: '입력',
+      ja: '入力',
+      zh: '输入',
+      ar: 'المدخل',
+      es: 'Entrada',
+      fr: 'Entrée',
+      hi: 'इनपुट',
+      id: 'Masukan',
+      pt: 'Entrada',
+    },
+  },
+  blocks: {
+    stage: { type: 'state-eats-char-stage' },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
+  },
+};
