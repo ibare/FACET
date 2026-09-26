@@ -1895,4 +1895,103 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:criticalPath', () =>
     import('@ffacet/algorithm-critical-path').then((m) => m.registerCriticalPath()),
   );
+  registerFacetLoader('facet:twoTreesMeet', () =>
+    import('@ffacet/algorithm-two-trees-meet').then((m) => m.registerTwoTreesMeet()),
+  );
+  registerFacetLoader('facet:selectorRightToLeft', () =>
+    import('@ffacet/algorithm-selector-right-to-left').then((m) => m.registerSelectorRightToLeft()),
+  );
+  registerFacetLoader('facet:cascadeConflict', () =>
+    import('@ffacet/algorithm-cascade-conflict').then((m) => m.registerCascadeConflict()),
+  );
+  registerFacetLoader('facet:oneGrowsRestShift', () =>
+    import('@ffacet/algorithm-one-grows-rest-shift').then((m) => m.registerOneGrowsRestShift()),
+  );
+  registerFacetLoader('facet:forcedSyncLayout', () =>
+    import('@ffacet/algorithm-forced-sync-layout').then((m) => m.registerForcedSyncLayout()),
+  );
+  registerFacetLoader('facet:stackOfSheets', () =>
+    import('@ffacet/algorithm-stack-of-sheets').then((m) => m.registerStackOfSheets()),
+  );
+  registerFacetLoader('facet:layerPromotion', () =>
+    import('@ffacet/algorithm-layer-promotion').then((m) => m.registerLayerPromotion()),
+  );
+  registerFacetLoader('facet:sixteenMilliseconds', () =>
+    import('@ffacet/algorithm-sixteen-milliseconds').then((m) => m.registerSixteenMilliseconds()),
+  );
+  registerFacetLoader('facet:droppedFrame', () =>
+    import('@ffacet/algorithm-dropped-frame').then((m) => m.registerDroppedFrame()),
+  );
+  registerFacetLoader('facet:justBeforePaint', () =>
+    import('@ffacet/algorithm-just-before-paint').then((m) => m.registerJustBeforePaint()),
+  );
+  registerFacetLoader('facet:layoutPerFrame', () =>
+    import('@ffacet/algorithm-layout-per-frame').then((m) => m.registerLayoutPerFrame()),
+  );
+  registerFacetLoader('facet:moveWithoutRepaint', () =>
+    import('@ffacet/algorithm-move-without-repaint').then((m) => m.registerMoveWithoutRepaint()),
+  );
+  registerFacetLoader('facet:jankVsSlow', () =>
+    import('@ffacet/algorithm-jank-vs-slow').then((m) => m.registerJankVsSlow()),
+  );
+  registerFacetLoader('facet:framesStackUp', () =>
+    import('@ffacet/algorithm-frames-stack-up').then((m) => m.registerFramesStackUp()),
+  );
+  registerFacetLoader('facet:oneTurnAtATime', () =>
+    import('@ffacet/algorithm-one-turn-at-a-time').then((m) => m.registerOneTurnAtATime()),
+  );
+  registerFacetLoader('facet:microtaskCutsIn', () =>
+    import('@ffacet/algorithm-microtask-cuts-in').then((m) => m.registerMicrotaskCutsIn()),
+  );
+  registerFacetLoader('facet:microtaskStarvation', () =>
+    import('@ffacet/algorithm-microtask-starvation').then((m) => m.registerMicrotaskStarvation()),
+  );
+  registerFacetLoader('facet:timerIsAFloor', () =>
+    import('@ffacet/algorithm-timer-is-a-floor').then((m) => m.registerTimerIsAFloor()),
+  );
+  registerFacetLoader('facet:longTaskBlocks', () =>
+    import('@ffacet/algorithm-long-task-blocks').then((m) => m.registerLongTaskBlocks()),
+  );
+  registerFacetLoader('facet:yieldToRender', () =>
+    import('@ffacet/algorithm-yield-to-render').then((m) => m.registerYieldToRender()),
+  );
+  registerFacetLoader('facet:sideBySideTrees', () =>
+    import('@ffacet/algorithm-side-by-side-trees').then((m) => m.registerSideBySideTrees()),
+  );
+  registerFacetLoader('facet:typeChangeRebuild', () =>
+    import('@ffacet/algorithm-type-change-rebuild').then((m) => m.registerTypeChangeRebuild()),
+  );
+  registerFacetLoader('facet:missingKeyRemount', () =>
+    import('@ffacet/algorithm-missing-key-remount').then((m) => m.registerMissingKeyRemount()),
+  );
+  registerFacetLoader('facet:keyReorder', () =>
+    import('@ffacet/algorithm-key-reorder').then((m) => m.registerKeyReorder()),
+  );
+  registerFacetLoader('facet:readIsSubscribe', () =>
+    import('@ffacet/algorithm-read-is-subscribe').then((m) => m.registerReadIsSubscribe()),
+  );
+  registerFacetLoader('facet:dirtyScan', () =>
+    import('@ffacet/algorithm-dirty-scan').then((m) => m.registerDirtyScan()),
+  );
+  registerFacetLoader('facet:coalesceUpdates', () =>
+    import('@ffacet/algorithm-coalesce-updates').then((m) => m.registerCoalesceUpdates()),
+  );
+  registerFacetLoader('facet:parserStops', () =>
+    import('@ffacet/algorithm-parser-stops').then((m) => m.registerParserStops()),
+  );
+  registerFacetLoader('facet:styleBlocksPaint', () =>
+    import('@ffacet/algorithm-style-blocks-paint').then((m) => m.registerStyleBlocksPaint()),
+  );
+  registerFacetLoader('facet:preloadHint', () =>
+    import('@ffacet/algorithm-preload-hint').then((m) => m.registerPreloadHint()),
+  );
+  registerFacetLoader('facet:fontSwap', () =>
+    import('@ffacet/algorithm-font-swap').then((m) => m.registerFontSwap()),
+  );
+  registerFacetLoader('facet:deferVsAsync', () =>
+    import('@ffacet/algorithm-defer-vs-async').then((m) => m.registerDeferVsAsync()),
+  );
+  registerFacetLoader('facet:whatFirstPaintNeeds', () =>
+    import('@ffacet/algorithm-what-first-paint-needs').then((m) => m.registerWhatFirstPaintNeeds()),
+  );
 }

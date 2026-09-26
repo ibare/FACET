@@ -601,6 +601,47 @@ import { planIsATreeConcept } from './plan-is-a-tree.js';
 import { costModelConcept } from './cost-model.js';
 import { estimateFromStatsConcept } from './estimate-from-stats.js';
 import { badEstimateBadPlanConcept } from './bad-estimate-bad-plan.js';
+import { cascadePriorityConcept } from './cascade-priority.js';
+import { selectorRightToLeftConcept } from './selector-right-to-left.js';
+import { cascadeConflictConcept } from './cascade-conflict.js';
+import { layoutThrashConcept } from './layout-thrash.js';
+import { forcedSyncLayoutConcept } from './forced-sync-layout.js';
+import { oneGrowsRestShiftConcept } from './one-grows-rest-shift.js';
+import { repaintCostConcept } from './repaint-cost.js';
+import { stackOfSheetsConcept } from './stack-of-sheets.js';
+import { layerPromotionConcept } from './layer-promotion.js';
+import { keyedReconciliationConcept } from './keyed-reconciliation.js';
+import { sideBySideTreesConcept } from './side-by-side-trees.js';
+import { typeChangeRebuildConcept } from './type-change-rebuild.js';
+import { missingKeyRemountConcept } from './missing-key-remount.js';
+import { keyReorderConcept } from './key-reorder.js';
+import { reactiveUpdatesConcept } from './reactive-updates.js';
+import { readIsSubscribeConcept } from './read-is-subscribe.js';
+import { dirtyScanConcept } from './dirty-scan.js';
+import { coalesceUpdatesConcept } from './coalesce-updates.js';
+import { cooperativeYieldingConcept } from './cooperative-yielding.js';
+import { longTaskBlocksConcept } from './long-task-blocks.js';
+import { yieldToRenderConcept } from './yield-to-render.js';
+import { microtaskStarvationConcept } from './microtask-starvation.js';
+import { frameBudgetConcept } from './frame-budget.js';
+import { layoutPerFrameConcept } from './layout-per-frame.js';
+import { moveWithoutRepaintConcept } from './move-without-repaint.js';
+import { sixteenMillisecondsConcept } from './sixteen-milliseconds.js';
+import { droppedFrameConcept } from './dropped-frame.js';
+import { criticalPathConcept } from './critical-path.js';
+import { parserStopsConcept } from './parser-stops.js';
+import { deferVsAsyncConcept } from './defer-vs-async.js';
+import { styleBlocksPaintConcept } from './style-blocks-paint.js';
+import { preloadHintConcept } from './preload-hint.js';
+import { fontSwapConcept } from './font-swap.js';
+import { whatFirstPaintNeedsConcept } from './what-first-paint-needs.js';
+import { framesStackUpConcept } from './frames-stack-up.js';
+import { oneTurnAtATimeConcept } from './one-turn-at-a-time.js';
+import { timerIsAFloorConcept } from './timer-is-a-floor.js';
+import { microtaskCutsInConcept } from './microtask-cuts-in.js';
+import { twoTreesMeetConcept } from './two-trees-meet.js';
+import { justBeforePaintConcept } from './just-before-paint.js';
+import { jankVsSlowConcept } from './jank-vs-slow.js';
 
 export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   adjacencyListVsMatrixConcept,
@@ -1184,4 +1225,45 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   costModelConcept,
   estimateFromStatsConcept,
   badEstimateBadPlanConcept,
+  cascadePriorityConcept,
+  selectorRightToLeftConcept,
+  cascadeConflictConcept,
+  layoutThrashConcept,
+  forcedSyncLayoutConcept,
+  oneGrowsRestShiftConcept,
+  repaintCostConcept,
+  stackOfSheetsConcept,
+  layerPromotionConcept,
+  keyedReconciliationConcept,
+  sideBySideTreesConcept,
+  typeChangeRebuildConcept,
+  missingKeyRemountConcept,
+  keyReorderConcept,
+  reactiveUpdatesConcept,
+  readIsSubscribeConcept,
+  dirtyScanConcept,
+  coalesceUpdatesConcept,
+  cooperativeYieldingConcept,
+  longTaskBlocksConcept,
+  yieldToRenderConcept,
+  microtaskStarvationConcept,
+  frameBudgetConcept,
+  layoutPerFrameConcept,
+  moveWithoutRepaintConcept,
+  sixteenMillisecondsConcept,
+  droppedFrameConcept,
+  criticalPathConcept,
+  parserStopsConcept,
+  deferVsAsyncConcept,
+  styleBlocksPaintConcept,
+  preloadHintConcept,
+  fontSwapConcept,
+  whatFirstPaintNeedsConcept,
+  framesStackUpConcept,
+  oneTurnAtATimeConcept,
+  timerIsAFloorConcept,
+  microtaskCutsInConcept,
+  twoTreesMeetConcept,
+  justBeforePaintConcept,
+  jankVsSlowConcept,
 ];
