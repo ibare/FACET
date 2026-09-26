@@ -4,7 +4,7 @@
  * 조각과 완제품은 짜임(scene ↔ projector)이 다르지만 알고리즘 · 문안 · 색 · 글꼴 · 타입 경계의
  * 규약은 같다. 두 검사기가 같은 정규식을 따로 들고 있으면 한쪽만 고쳐지므로 여기 한 벌로 둔다.
  */
-import { spawnSync } from 'node:child_process';
+import { execFileSync, spawn } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -208,18 +208,93 @@ export function checkDescription(id, { err }, join, basename) {
   else if (!text.includes(`{${id}}`)) err('C4', `설명 글이 자기 토큰 {${id}} 을 부르지 않는다`);
 }
 
+/** `root` 아래 자손 pid 전부 (root 포함). `ps` 한 번으로 부모 사슬을 따라간다. */
+function descendants(root) {
+  const kids = new Map();
+  for (const line of execFileSync('ps', ['-axo', 'pid=,ppid='], { encoding: 'utf8' }).trim().split('\n')) {
+    const [pid, ppid] = line.trim().split(/\s+/).map(Number);
+    if (!kids.has(ppid)) kids.set(ppid, []);
+    kids.get(ppid).push(pid);
+  }
+  const out = [];
+  const stack = [root];
+  while (stack.length > 0) {
+    const p = stack.pop();
+    out.push(p);
+    stack.push(...(kids.get(p) ?? []));
+  }
+  return out;
+}
+
+/** 자손 나무째 끊는다. 자식 하나만 끊으면 그 아래(npx → vitest → 워커)가 PID 1 밑 고아로 남아 끝까지 돈다. */
+function killTree(root) {
+  let pids = [];
+  try {
+    pids = descendants(root);
+  } catch {
+    pids = [root];
+  }
+  for (const p of pids) {
+    try {
+      process.kill(p, 'SIGKILL');
+    } catch {
+      /* 이미 끝났다 */
+    }
+  }
+}
+
+/**
+ * 명령 하나를 돌리고 출력을 모은다. 시간 초과 · 이 스크립트가 신호를 받으면 자손 나무째 끊는다.
+ *
+ * 프로세스 묶음을 따로 떼지 않는다 — 떼면 에이전트를 멈출 때 셸이 묶음에 보내는 신호를
+ * 자식이 받지 못해 도리어 고아가 된다. 같은 묶음에 두고 나무를 걸어 끊는다.
+ * 여럿이 동시에 검사하다 CPU 를 다투면 시간 초과가 잦아지고, 그때마다 vitest 묶음이 고아로
+ * 남아 부하를 더 키웠다 (2026-09-26, 세 세션에서 수십 GB).
+ */
 export function run(cmd, cmdArgs, env, timeoutMs) {
-  const r = spawnSync(cmd, cmdArgs, {
-    cwd: repoRoot,
-    env: { ...process.env, ...env },
-    encoding: 'utf8',
-    timeout: timeoutMs,
-    killSignal: 'SIGKILL',
-    maxBuffer: 64 * 1024 * 1024,
+  return new Promise((done) => {
+    const child = spawn(cmd, cmdArgs, {
+      cwd: repoRoot,
+      env: { ...process.env, ...env },
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    const chunks = [];
+    let size = 0;
+    const take = (b) => {
+      if (size < 64 * 1024 * 1024) {
+        chunks.push(b);
+        size += b.length;
+      }
+    };
+    child.stdout.on('data', take);
+    child.stderr.on('data', take);
+    let timedOut = false;
+    const onSignal = (sig) => {
+      killTree(child.pid);
+      process.exit(sig === 'SIGINT' ? 130 : 143);
+    };
+    process.once('SIGINT', onSignal);
+    process.once('SIGTERM', onSignal);
+    process.once('SIGHUP', onSignal);
+    const timer = setTimeout(() => {
+      timedOut = true;
+      killTree(child.pid);
+    }, timeoutMs);
+    const finish = (code) => {
+      clearTimeout(timer);
+      process.off('SIGINT', onSignal);
+      process.off('SIGTERM', onSignal);
+      process.off('SIGHUP', onSignal);
+      const text = Buffer.concat(chunks).toString('utf8');
+      if (timedOut) done({ ok: false, text: `${text}\n[시간 초과 ${timeoutMs}ms]` });
+      else done({ ok: code === 0, text });
+    };
+    child.on('error', (e) => {
+      chunks.push(Buffer.from(String(e)));
+      finish(1);
+    });
+    child.on('close', finish);
   });
-  const text = `${r.stdout ?? ''}${r.stderr ?? ''}`;
-  if (r.error?.code === 'ETIMEDOUT') return { ok: false, text: `${text}\n[시간 초과 ${timeoutMs}ms]` };
-  return { ok: r.status === 0, text };
 }
 
 /** vitest 출력에서 실패와 요약만 남긴다. `keepPass` 에 맞는 통과 줄은 남긴다. */

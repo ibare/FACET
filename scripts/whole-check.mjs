@@ -184,7 +184,7 @@ if (!staticOnly) {
       project = join(tmp, 'tsconfig.json');
       writeFileSync(project, JSON.stringify({ extends: join(abs, 'tsconfig.json'), include: [join(abs, 'src'), join(abs, 'test')] }));
     }
-    const r = run('npx', ['tsc', '--noEmit', '-p', project], {}, 180_000);
+    const r = await run('npx', ['tsc', '--noEmit', '-p', project], {}, 180_000);
     if (tmp) rmSync(tmp, { recursive: true, force: true });
     const r2 = { ok: true, text: '' };
     const ok = r.ok && r2.ok;
@@ -196,7 +196,7 @@ if (!staticOnly) {
 
   console.log('== vitest (FACET_ONLY 로 좁힘 + facet 자신의 test/)');
   const own = dirs.filter((d) => existsSync(join(repoRoot, d, 'test')));
-  const r = run('npx', ['vitest', 'run', ...TESTS, ...own], { FACET_ONLY: names.join(','), FORCE_COLOR: '0', NO_COLOR: '1' }, 600_000);
+  const r = await run('npx', ['vitest', 'run', '--maxWorkers=2', '--minWorkers=1', ...TESTS, ...own], { FACET_ONLY: names.join(','), FORCE_COLOR: '0', NO_COLOR: '1' }, 600_000);
   if (!r.ok) failed = true;
   for (const l of vitestSummary(r.text, /whole-self-check/).slice(0, 80)) console.log(`  ${l.trim().slice(0, 400)}`);
 }

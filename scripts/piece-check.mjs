@@ -184,7 +184,7 @@ for (const dir of dirs) {
 if (!staticOnly) {
   console.log('== tsc');
   for (const dir of dirs) {
-    const r = run('npx', ['tsc', '--noEmit', '-p', join(dir, 'tsconfig.json')], {}, 180_000);
+    const r = await run('npx', ['tsc', '--noEmit', '-p', join(dir, 'tsconfig.json')], {}, 180_000);
     if (!r.ok) failed = true;
     const lines = r.text.split('\n').filter((l) => /error TS|시간 초과/.test(l));
     console.log(`  ${basename(dir)}: ${r.ok ? '통과' : `실패 ${lines.length}`}`);
@@ -192,7 +192,7 @@ if (!staticOnly) {
   }
 
   console.log('== vitest (FACET_ONLY 로 좁힘)');
-  const r = run('npx', ['vitest', 'run', ...TESTS], { FACET_ONLY: names.join(','), FORCE_COLOR: '0', NO_COLOR: '1' }, 600_000);
+  const r = await run('npx', ['vitest', 'run', '--maxWorkers=2', '--minWorkers=1', ...TESTS], { FACET_ONLY: names.join(','), FORCE_COLOR: '0', NO_COLOR: '1' }, 600_000);
   if (!r.ok) failed = true;
   const keep = vitestSummary(r.text, /piece-self-check/);
   for (const l of keep.slice(0, 80)) console.log(`  ${l.trim().slice(0, 400)}`);
