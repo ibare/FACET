@@ -866,6 +866,30 @@ import { rateLimitingConcept } from './rate-limiting.js';
 import { tokenBucketConcept } from './token-bucket.js';
 import { leakyBucketConcept } from './leaky-bucket.js';
 import { slidingWindowCountConcept } from './sliding-window-count.js';
+import { certificateConcept } from './certificate.js';
+import { bindsKeyToNameConcept } from './binds-key-to-name.js';
+import { trustAnchorConcept } from './trust-anchor.js';
+import { eccConcept } from './ecc.js';
+import { mixAndCannotUnmixConcept } from './mix-and-cannot-unmix.js';
+import { pointAddOnCurveConcept } from './point-add-on-curve.js';
+import { smallerKeySameStrengthConcept } from './smaller-key-same-strength.js';
+import { easyOneWayHardBackConcept } from './easy-one-way-hard-back.js';
+import { trapdoorWithKeyConcept } from './trapdoor-with-key.js';
+import { shaConcept } from './sha.js';
+import { compressBlockByBlockConcept } from './compress-block-by-block.js';
+import { internalStateCarriesConcept } from './internal-state-carries.js';
+import { keyPlusMessageConcept } from './key-plus-message.js';
+import { hashTwiceWithPadsConcept } from './hash-twice-with-pads.js';
+import { collisionConcept } from './collision.js';
+import { birthdayParadoxConcept } from './birthday-paradox.js';
+import { blockCipherConcept } from './block-cipher.js';
+import { substituteAndPermuteConcept } from './substitute-and-permute.js';
+import { roundKeyMixConcept } from './round-key-mix.js';
+import { fixedSizeBlockConcept } from './fixed-size-block.js';
+import { modeChainsBlocksConcept } from './mode-chains-blocks.js';
+import { ivMakesDifferentConcept } from './iv-makes-different.js';
+import { xorWithKeystreamConcept } from './xor-with-keystream.js';
+import { neverReuseKeystreamConcept } from './never-reuse-keystream.js';
 
 export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   adjacencyListVsMatrixConcept,
@@ -1714,4 +1738,28 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   tokenBucketConcept,
   leakyBucketConcept,
   slidingWindowCountConcept,
+  certificateConcept,
+  bindsKeyToNameConcept,
+  trustAnchorConcept,
+  eccConcept,
+  mixAndCannotUnmixConcept,
+  pointAddOnCurveConcept,
+  smallerKeySameStrengthConcept,
+  easyOneWayHardBackConcept,
+  trapdoorWithKeyConcept,
+  shaConcept,
+  compressBlockByBlockConcept,
+  internalStateCarriesConcept,
+  keyPlusMessageConcept,
+  hashTwiceWithPadsConcept,
+  collisionConcept,
+  birthdayParadoxConcept,
+  blockCipherConcept,
+  substituteAndPermuteConcept,
+  roundKeyMixConcept,
+  fixedSizeBlockConcept,
+  modeChainsBlocksConcept,
+  ivMakesDifferentConcept,
+  xorWithKeystreamConcept,
+  neverReuseKeystreamConcept,
 ];
