@@ -693,6 +693,49 @@ import { basicBlockConcept } from './basic-block.js';
 import { edgesAreJumpsConcept } from './edges-are-jumps.js';
 import { valueFlowsToUseConcept } from './value-flows-to-use.js';
 import { lowerToSimplerConcept } from './lower-to-simpler.js';
+import { branchCoverageConcept } from './branch-coverage.js';
+import { linesYouSteppedOnConcept } from './lines-you-stepped-on.js';
+import { linesCoveredBranchNotConcept } from './lines-covered-branch-not.js';
+import { whichConditionDecidedConcept } from './which-condition-decided.js';
+import { pathExplosionConcept } from './path-explosion.js';
+import { survivingMutantConcept } from './surviving-mutant.js';
+import { shrinkToSmallestConcept } from './shrink-to-smallest.js';
+import { semanticVersioningConcept } from './semantic-versioning.js';
+import { threeNumbersConcept } from './three-numbers.js';
+import { rangeAndCandidatesConcept } from './range-and-candidates.js';
+import { pinWhatWasChosenConcept } from './pin-what-was-chosen.js';
+import { dependencyResolutionConcept } from './dependency-resolution.js';
+import { diamondDependencyConcept } from './diamond-dependency.js';
+import { noOverlapConcept } from './no-overlap.js';
+import { twoCopiesCoexistConcept } from './two-copies-coexist.js';
+import { dependencyGraphConcept } from './dependency-graph.js';
+import { whoGoesFirstConcept } from './who-goes-first.js';
+import { independentInParallelConcept } from './independent-in-parallel.js';
+import { incrementalBuildConcept } from './incremental-build.js';
+import { onlyWhatChangedConcept } from './only-what-changed.js';
+import { timestampVsFingerprintConcept } from './timestamp-vs-fingerprint.js';
+import { cacheInvalidationConcept } from './cache-invalidation.js';
+import { invalidationCascadeConcept } from './invalidation-cascade.js';
+import { nobodyCanBeFirstConcept } from './nobody-can-be-first.js';
+import { myersDiffConcept } from './myers-diff.js';
+import { keepTheCommonConcept } from './keep-the-common.js';
+import { editScriptConcept } from './edit-script.js';
+import { diagonalIsFreeConcept } from './diagonal-is-free.js';
+import { threeWayMergeConcept } from './three-way-merge.js';
+import { ancestorAsRefereeConcept } from './ancestor-as-referee.js';
+import { oneSideChangedConcept } from './one-side-changed.js';
+import { bothTouchedSameLineConcept } from './both-touched-same-line.js';
+import { moveLooksLikeRewriteConcept } from './move-looks-like-rewrite.js';
+import { rebaseVsMergeConcept } from './rebase-vs-merge.js';
+import { historyBisectConcept } from './history-bisect.js';
+import { snapshotPointsBackConcept } from './snapshot-points-back.js';
+import { branchIsALabelConcept } from './branch-is-a-label.js';
+import { unreachableSnapshotConcept } from './unreachable-snapshot.js';
+import { fastForwardConcept } from './fast-forward.js';
+import { whereTheyPartedConcept } from './where-they-parted.js';
+import { replayOnNewBaseConcept } from './replay-on-new-base.js';
+import { pickOneOutConcept } from './pick-one-out.js';
+import { bisectHalvingConcept } from './bisect-halving.js';
 
 export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   adjacencyListVsMatrixConcept,
@@ -1368,4 +1411,47 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   edgesAreJumpsConcept,
   valueFlowsToUseConcept,
   lowerToSimplerConcept,
+  branchCoverageConcept,
+  linesYouSteppedOnConcept,
+  linesCoveredBranchNotConcept,
+  whichConditionDecidedConcept,
+  pathExplosionConcept,
+  survivingMutantConcept,
+  shrinkToSmallestConcept,
+  semanticVersioningConcept,
+  threeNumbersConcept,
+  rangeAndCandidatesConcept,
+  pinWhatWasChosenConcept,
+  dependencyResolutionConcept,
+  diamondDependencyConcept,
+  noOverlapConcept,
+  twoCopiesCoexistConcept,
+  dependencyGraphConcept,
+  whoGoesFirstConcept,
+  independentInParallelConcept,
+  incrementalBuildConcept,
+  onlyWhatChangedConcept,
+  timestampVsFingerprintConcept,
+  cacheInvalidationConcept,
+  invalidationCascadeConcept,
+  nobodyCanBeFirstConcept,
+  myersDiffConcept,
+  keepTheCommonConcept,
+  editScriptConcept,
+  diagonalIsFreeConcept,
+  threeWayMergeConcept,
+  ancestorAsRefereeConcept,
+  oneSideChangedConcept,
+  bothTouchedSameLineConcept,
+  moveLooksLikeRewriteConcept,
+  rebaseVsMergeConcept,
+  historyBisectConcept,
+  snapshotPointsBackConcept,
+  branchIsALabelConcept,
+  unreachableSnapshotConcept,
+  fastForwardConcept,
+  whereTheyPartedConcept,
+  replayOnNewBaseConcept,
+  pickOneOutConcept,
+  bisectHalvingConcept,
 ];
