@@ -308,6 +308,11 @@ worktree 셋에서 세션을 나란히 돌리자 메모리가 한 세션 2GB →
 | 세션이 늘면 CPU 를 다투며 검사 한 번이 길어지고, 길어진 만큼 더 겹친다 | 메모리 ≈ 동시에 떠 있는 검사 수 × 5.5GB — 세션 수에 초선형 | 워커 둘이면 겹쳐도 덜 다툰다 |
 | `spawnSync` 의 시간 초과는 바로 아래 자식(`npx`) 하나만 끊는다 | vitest 와 워커가 PID 1 밑 고아로 남아 끝까지 돈다 | `run()` 을 비동기로 — 시간 초과 · SIGINT/SIGTERM/SIGHUP 에 **자손 나무째** 끊는다 |
 
+**호스트의 전체 테스트도 워커를 묶는다.** `pnpm test` 는 `vitest run` 그대로라 워커 제한이 없다 — 닫기 단계에서는
+`npx vitest run --maxWorkers=2 --minWorkers=1` 로 돌린다(2026-09-26 개발 도구 배치, 테스트 파일 이백여 개가 약 5 분).
+`--maxWorkers=2` 만 주면 기본 `minWorkers` 와 부딪혀 `options.minThreads and options.maxThreads must not conflict` 로 **테스트 0 개로 끝난다** —
+통과처럼 보이니 둘을 함께 준다. 같은 배치에서 칸을 열이 아니라 여섯으로 줄여 나란한 세션 곁에서 검사기 · 크롬 합계가 7GB 안팎이었다.
+
 프로세스 묶음을 따로 떼지 않은 까닭 — 떼면 에이전트를 멈출 때 셸이 묶음에 보내는 신호를 vitest 가 받지 못해 도리어 고아가 된다.
 
 활동 모니터의 앱 메모리는 **앱이 띄운 자손 전부의 합**이다. 이번에는 세션을 띄운 터미널 앱과, 그 안에서 `facet-shot` · `scene-audit` 이
