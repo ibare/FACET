@@ -2246,4 +2246,34 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:whoGoesFirst', () =>
     import('@ffacet/algorithm-who-goes-first').then((m) => m.registerWhoGoesFirst()),
   );
+  registerFacetLoader('facet:myersDiff', () =>
+    import('@ffacet/algorithm-myers-diff').then((m) => m.registerMyersDiff()),
+  );
+  registerFacetLoader('facet:threeWayMerge', () =>
+    import('@ffacet/algorithm-three-way-merge').then((m) => m.registerThreeWayMerge()),
+  );
+  registerFacetLoader('facet:rebaseVsMerge', () =>
+    import('@ffacet/algorithm-rebase-vs-merge').then((m) => m.registerRebaseVsMerge()),
+  );
+  registerFacetLoader('facet:historyBisect', () =>
+    import('@ffacet/algorithm-history-bisect').then((m) => m.registerHistoryBisect()),
+  );
+  registerFacetLoader('facet:dependencyGraph', () =>
+    import('@ffacet/algorithm-dependency-graph').then((m) => m.registerDependencyGraph()),
+  );
+  registerFacetLoader('facet:incrementalBuild', () =>
+    import('@ffacet/algorithm-incremental-build').then((m) => m.registerIncrementalBuild()),
+  );
+  registerFacetLoader('facet:cacheInvalidation', () =>
+    import('@ffacet/algorithm-cache-invalidation').then((m) => m.registerCacheInvalidation()),
+  );
+  registerFacetLoader('facet:semanticVersioning', () =>
+    import('@ffacet/algorithm-semantic-versioning').then((m) => m.registerSemanticVersioning()),
+  );
+  registerFacetLoader('facet:dependencyResolution', () =>
+    import('@ffacet/algorithm-dependency-resolution').then((m) => m.registerDependencyResolution()),
+  );
+  registerFacetLoader('facet:branchCoverage', () =>
+    import('@ffacet/algorithm-branch-coverage').then((m) => m.registerBranchCoverage()),
+  );
 }

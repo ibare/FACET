@@ -918,6 +918,8 @@
           "id": "diff-and-merge",
           "name": {"en":"Diff and Merge","ko":"차이와 병합","ja":"差分とマージ","zh":"差异与合并","ar":"المقارنة والدمج","es":"Diferencias y fusión","fr":"Différences et fusion","hi":"डिफ़ और मर्ज","id":"Diff dan Merge","pt":"Diferenças e mesclagem"},
           "facets": [
+            "facet:myersDiff",
+            "facet:threeWayMerge",
             "facet:keepTheCommon",
             "facet:editScript",
             "facet:diagonalIsFree",
@@ -931,6 +933,8 @@
           "id": "history-graph",
           "name": {"en":"History Graph","ko":"이력 그래프","ja":"履歴グラフ","zh":"历史图","ar":"رسم السجل","es":"Grafo de historial","fr":"Graphe d'historique","hi":"इतिहास ग्राफ़","id":"Graf Riwayat","pt":"Grafo de histórico"},
           "facets": [
+            "facet:rebaseVsMerge",
+            "facet:historyBisect",
             "facet:snapshotPointsBack",
             "facet:branchIsALabel",
             "facet:fastForward",
@@ -945,6 +949,9 @@
           "id": "build-graph",
           "name": {"en":"Builds and Dependencies","ko":"빌드와 의존","ja":"ビルドと依存関係","zh":"构建与依赖","ar":"البناء والاعتماديات","es":"Compilación y dependencias","fr":"Builds et dépendances","hi":"बिल्ड और निर्भरताएँ","id":"Build dan Dependensi","pt":"Build e dependências"},
           "facets": [
+            "facet:dependencyGraph",
+            "facet:incrementalBuild",
+            "facet:cacheInvalidation",
             "facet:whoGoesFirst",
             "facet:onlyWhatChanged",
             "facet:timestampVsFingerprint",
@@ -957,6 +964,8 @@
           "id": "package-resolution",
           "name": {"en":"Package Resolution","ko":"패키지 해결","ja":"パッケージ解決","zh":"包解析","ar":"حل الحزم","es":"Resolución de paquetes","fr":"Résolution des paquets","hi":"पैकेज रिज़ॉल्यूशन","id":"Resolusi Paket","pt":"Resolução de pacotes"},
           "facets": [
+            "facet:semanticVersioning",
+            "facet:dependencyResolution",
             "facet:threeNumbers",
             "facet:rangeAndCandidates",
             "facet:diamondDependency",
@@ -969,6 +978,7 @@
           "id": "test-coverage",
           "name": {"en":"Tests and Coverage","ko":"테스트와 커버리지","ja":"テストとカバレッジ","zh":"测试与覆盖率","ar":"الاختبارات والتغطية","es":"Pruebas y cobertura","fr":"Tests et couverture","hi":"टेस्ट और कवरेज","id":"Pengujian dan Cakupan","pt":"Testes e cobertura"},
           "facets": [
+            "facet:branchCoverage",
             "facet:linesYouSteppedOn",
             "facet:linesCoveredBranchNot",
             "facet:whichConditionDecided",

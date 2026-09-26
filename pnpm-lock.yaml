@@ -3810,11 +3810,51 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/dev-tooling/branch-coverage:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/dev-tooling/branch-is-a-label:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/dev-tooling/cache-invalidation:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/dev-tooling/dependency-graph:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/dev-tooling/dependency-resolution:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/dev-tooling/diagonal-is-free:
     dependencies:
@@ -3839,6 +3879,26 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/dev-tooling/history-bisect:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/dev-tooling/incremental-build:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/dev-tooling/independent-in-parallel:
     dependencies:
@@ -3875,6 +3935,16 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/dev-tooling/myers-diff:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/dev-tooling/no-overlap:
     dependencies:
@@ -3924,11 +3994,31 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/dev-tooling/rebase-vs-merge:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/dev-tooling/replay-on-new-base:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/dev-tooling/semantic-versioning:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/dev-tooling/shrink-to-smallest:
     dependencies:
@@ -3953,6 +4043,16 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/dev-tooling/three-way-merge:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/dev-tooling/timestamp-vs-fingerprint:
     dependencies:
@@ -6133,6 +6233,9 @@ importers:
       '@ffacet/algorithm-branch-and-bound':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/branch-and-bound
+      '@ffacet/algorithm-branch-coverage':
+        specifier: workspace:*
+        version: link:../../facets/dev-tooling/branch-coverage
       '@ffacet/algorithm-branch-flush':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/branch-flush
@@ -6169,6 +6272,9 @@ importers:
       '@ffacet/algorithm-byte-order':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/byte-order
+      '@ffacet/algorithm-cache-invalidation':
+        specifier: workspace:*
+        version: link:../../facets/dev-tooling/cache-invalidation
       '@ffacet/algorithm-cache-keeps-growing':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/cache-keeps-growing
@@ -6352,6 +6458,12 @@ importers:
       '@ffacet/algorithm-dense-neighborhood':
         specifier: workspace:*
         version: link:../../facets/ml-basics/dense-neighborhood
+      '@ffacet/algorithm-dependency-graph':
+        specifier: workspace:*
+        version: link:../../facets/dev-tooling/dependency-graph
+      '@ffacet/algorithm-dependency-resolution':
+        specifier: workspace:*
+        version: link:../../facets/dev-tooling/dependency-resolution
       '@ffacet/algorithm-depth-doubles-count':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/depth-doubles-count
@@ -6682,6 +6794,9 @@ importers:
       '@ffacet/algorithm-hierarchical':
         specifier: workspace:*
         version: link:../../facets/ml-basics/hierarchical
+      '@ffacet/algorithm-history-bisect':
+        specifier: workspace:*
+        version: link:../../facets/dev-tooling/history-bisect
       '@ffacet/algorithm-hnsw':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/hnsw
@@ -6718,6 +6833,9 @@ importers:
       '@ffacet/algorithm-in-place-vs-extra':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/in-place-vs-extra
+      '@ffacet/algorithm-incremental-build':
+        specifier: workspace:*
+        version: link:../../facets/dev-tooling/incremental-build
       '@ffacet/algorithm-indegree-zero-first':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/indegree-zero-first
@@ -7075,6 +7193,9 @@ importers:
       '@ffacet/algorithm-mvcc':
         specifier: workspace:*
         version: link:../../facets/database/mvcc
+      '@ffacet/algorithm-myers-diff':
+        specifier: workspace:*
+        version: link:../../facets/dev-tooling/myers-diff
       '@ffacet/algorithm-naive-shift-by-one':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/naive-shift-by-one
@@ -7408,6 +7529,9 @@ importers:
       '@ffacet/algorithm-ready-queue-pick':
         specifier: workspace:*
         version: link:../../facets/os/ready-queue-pick
+      '@ffacet/algorithm-rebase-vs-merge':
+        specifier: workspace:*
+        version: link:../../facets/dev-tooling/rebase-vs-merge
       '@ffacet/algorithm-recall-speed-tradeoff':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/recall-speed-tradeoff
@@ -7591,6 +7715,9 @@ importers:
       '@ffacet/algorithm-selector-right-to-left':
         specifier: workspace:*
         version: link:../../facets/web-runtime/selector-right-to-left
+      '@ffacet/algorithm-semantic-versioning':
+        specifier: workspace:*
+        version: link:../../facets/dev-tooling/semantic-versioning
       '@ffacet/algorithm-send-and-forget':
         specifier: workspace:*
         version: link:../../facets/network/send-and-forget
@@ -7831,6 +7958,9 @@ importers:
       '@ffacet/algorithm-three-numbers':
         specifier: workspace:*
         version: link:../../facets/dev-tooling/three-numbers
+      '@ffacet/algorithm-three-way-merge':
+        specifier: workspace:*
+        version: link:../../facets/dev-tooling/three-way-merge
       '@ffacet/algorithm-three-way-sync':
         specifier: workspace:*
         version: link:../../facets/network/three-way-sync

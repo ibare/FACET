@@ -4480,11 +4480,13 @@
           "topics": [
             {
               "id": "myers-diff",
-              "name": "줄 단위 diff"
+              "name": "줄 단위 diff",
+              "facetId": "facet:myersDiff"
             },
             {
               "id": "three-way-merge",
-              "name": "3-way 병합과 충돌"
+              "name": "3-way 병합과 충돌",
+              "facetId": "facet:threeWayMerge"
             },
             {
               "id": "keep-the-common",
@@ -4550,11 +4552,13 @@
           "topics": [
             {
               "id": "rebase-vs-merge",
-              "name": "병합과 리베이스"
+              "name": "병합과 리베이스",
+              "facetId": "facet:rebaseVsMerge"
             },
             {
               "id": "history-bisect",
-              "name": "이진 탐색 추적"
+              "name": "이진 탐색 추적",
+              "facetId": "facet:historyBisect"
             },
             {
               "id": "snapshot-points-back",
@@ -4628,15 +4632,18 @@
           "topics": [
             {
               "id": "dependency-graph",
-              "name": "의존 그래프"
+              "name": "의존 그래프",
+              "facetId": "facet:dependencyGraph"
             },
             {
               "id": "incremental-build",
-              "name": "증분 빌드"
+              "name": "증분 빌드",
+              "facetId": "facet:incrementalBuild"
             },
             {
               "id": "cache-invalidation",
-              "name": "캐시 무효화"
+              "name": "캐시 무효화",
+              "facetId": "facet:cacheInvalidation"
             },
             {
               "id": "who-goes-first",
@@ -4694,11 +4701,13 @@
           "topics": [
             {
               "id": "semantic-versioning",
-              "name": "버전 범위와 잠금"
+              "name": "버전 범위와 잠금",
+              "facetId": "facet:semanticVersioning"
             },
             {
               "id": "dependency-resolution",
-              "name": "의존 해결"
+              "name": "의존 해결",
+              "facetId": "facet:dependencyResolution"
             },
             {
               "id": "three-numbers",
@@ -4756,7 +4765,8 @@
           "topics": [
             {
               "id": "branch-coverage",
-              "name": "커버리지와 변이 점수"
+              "name": "커버리지와 변이 점수",
+              "facetId": "facet:branchCoverage"
             },
             {
               "id": "lines-you-stepped-on",
