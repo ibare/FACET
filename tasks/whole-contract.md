@@ -97,7 +97,8 @@ getAlgorithmMechanismKind('<camel>')
 ```ts
 IR      = { id; algorithm; paradigm: 'imperative'; functions: IRFunc[] }   // 첫 함수가 진입점
 IRFunc  = { name; params: { name; type: IRType }[]; returnType: IRType; body: IRStmt[] }
-IRType  = int | double | bool | string | void | { kind: 'list'; of: IRType }
+IRType  = { kind: 'int' } | { kind: 'double' } | { kind: 'bool' } | { kind: 'string' } | { kind: 'void' } | { kind: 'list'; of: IRType }
+          (문자열 `'int'` 로 쓰면 tsc 가 막는다 — ir-interpreter 는 통과시키므로 tsc 에서만 잡힌다)
 IRExpr  = lit | var | index{arr,idx} | len{of} | binop{op,l,r} | unop{op:'!'|'-',x} | call{fn,args}
 IRStmt  = var{name,type,init} | assign{target,expr} | if{cond,then,else?} | for-range{var,from,to,inclusive,body}
         | while{cond,body} | swap{a,b} | return{expr?} | break | continue | expr-stmt{expr} | comment{text}
@@ -225,6 +226,15 @@ coroutine 으로 두면 러너가 **마운트 시점에 throw** 하고, 통과�
 opacity 만으로는 운동이 아니다. 앞 판의 결과가 새 판의 결과로 **옮겨 가는** 것이 가장 강한 운동이고, 지우고
 처음부터 다시 쌓는 것이 가장 약하다.
 
+**새 판의 걸음 0 에 앞 판의 결론을 남기지 않는다.** 옮겨 갈 **자리**(막대 폭 · 점선 틀 · 칸 위치)는 남겨도 되지만
+**결론**(값 글자 · "가장 쌈" 같은 표지 · OK/거절 글자 · 빨간 채움 · 코드 패널 강조)은 걸음 0 에서 걷고 이 판의 걸음이
+다시 칠한다. 남겨 두면 새 손잡이 값과 다른 말을 하는 화면이 몇 걸음 이어진다. 코드 패널은 판 머리에서
+`highlightPhase(null)` 로 끄거나 이 판의 첫 phase 를 켠다 (2026-09-26 데이터베이스 완제품 스물 중 여덟이 서로 못 본 채 걸렸다 —
+값 글자 · 표지 · 스냅샷 선 · 코드 줄)
+
+**무대는 알고리즘의 셈을 다시 하지 않는다** — 합 · 맞음 여부(`chosen === better`) · 잘림 여부 · 겹침 자리도 payload 로 받는다.
+없는 값을 `?? 0` · `?? ''` · 기본 사다리 값으로 지어내지 않고 던진다 (같은 배치에서 스물 중 열하나가 한 자리 이상 걸렸다)
+
 **금지** — 전제 · 출처 각주. "예로 정한 값" · "낱말 하나를 토큰 하나로 친다" · 논문 인용 같은 줄을 화면에 늘
 두지 않는다. 전제는 **설명 글과 개념 메타**가 밝힌다 (2026-09-18 AI 배치에서 완제품 다섯이 올렸다가 걷었다).
 
@@ -274,6 +284,12 @@ npx tsx scripts/facet-shot.mts facets/<domain>/<topic> --locale ko --input <acti
 열지 않는다** — 캡션의 수가 화면의 수와 같은지는 글자로 본다. 그림을 봐야 할 때만 PNG 한 장을 연다.
 **캡션에 들어가는 수가 정말 그 이름의 수인지** 손잡이를 바꿔 한 번 확인한다 — 이 함정은 검사가 전부 초록인 채로
 여섯 번 났고 매번 화면을 정독한 제삼자가 찾았다.
+
+`facet-shot` 을 쓸 때 알아 둘 것 (2026-09-26):
+- 운동이 400ms 보다 길면 `--settle` 을 운동보다 길게 준다 — 기본값으로 뜨면 운동 도중의 화면이 찍힌다
+- `--input` 은 payload 에 `{ value }` 만 싣는다. 러너는 다른 손잡이의 지금 값도 함께 싣는다 — 알고리즘은 `value` 만 읽고 나머지 손잡이 값은 스스로 쥔다
+- 글자 요약은 줄마다 약 200 자에서 잘린다. 캡션이 표 글자 뒤에 있으면 잘려 안 보이니 그때는 PNG 한 장을 연다
+- facet 자신의 test 만 따로 돌릴 때 `--maxWorkers=1` 만 주면 tinypool 이 min/max 충돌로 멎는다 — `--maxWorkers=1 --minWorkers=1` 로
 
 **하지 않는 것** — `pnpm install` · `pnpm typecheck` · `pnpm -r …` · 전체 `pnpm test` · dev 서버 · 등록 파일
 (`catalog.json` · `taxonomy.json` · bootstrap). 여럿이 동시에 도는 중이라 부딪힌다. 임시 파일은 호스트가 준
