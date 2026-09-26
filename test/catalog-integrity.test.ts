@@ -198,10 +198,16 @@ describe('계획 카탈로그', () => {
    * 심볼 테이블 → scope-resolve · DFG → cfg-ir · 죽은 코드 제거 → constant-folding)과 버린 하나
    * (IR 설계 — 조각 lower-to-simpler 의 origin 은 cfg-ir 로). 조각 origin 은 host 토픽으로 옮겼다.
    * 사용자가 정했다 (`tasks/compilers-whole-batch.md`). 1008 → 1003.
+   *
+   * 같은 날 개발 도구 완제품 판정에서 아홉을 지웠다 — 완제품 안에 합친 일곱(최장 공통 부분 수열 →
+   * myers-diff, 충돌 해소 → three-way-merge, 커밋 DAG · 병합 기준점 → rebase-vs-merge, 잠금 파일 →
+   * semantic-versioning, 구문 커버리지 · 변이 테스트 → branch-coverage)과 버린 둘(순환 의존 · 반례 축소).
+   * 합친 토픽의 조각 origin 은 host 토픽으로 옮기고, 버린 토픽의 조각은 origin 을 그대로 둔다.
+   * 사용자가 정했다 (`tasks/dev-tooling-whole-batch.md`). 1003 → 994.
    */
   it('규모가 줄지 않았다 — 실수로 잘려 나간 것을 잡는다', () => {
     expect(domains.length).toBeGreaterThanOrEqual(16);
-    expect(rows.length).toBeGreaterThanOrEqual(1003);
+    expect(rows.length).toBeGreaterThanOrEqual(994);
   });
 });
 

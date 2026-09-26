@@ -4479,27 +4479,19 @@
           "name": "차이와 병합",
           "topics": [
             {
-              "id": "longest-common-subsequence",
-              "name": "최장 공통 부분 수열"
-            },
-            {
               "id": "myers-diff",
-              "name": "Myers diff"
+              "name": "줄 단위 diff"
             },
             {
               "id": "three-way-merge",
-              "name": "3-way 병합"
-            },
-            {
-              "id": "conflict-resolution",
-              "name": "충돌 해소"
+              "name": "3-way 병합과 충돌"
             },
             {
               "id": "keep-the-common",
               "name": "같은 것을 최대한 남긴다",
               "desc": "남길 것을 정하면 고칠 것이 정해진다",
               "kind": "piece",
-              "origin": "longest-common-subsequence",
+              "origin": "myers-diff",
               "facetId": "facet:keepTheCommon"
             },
             {
@@ -4507,7 +4499,7 @@
               "name": "지운 줄과 넣은 줄",
               "desc": "차이를 손질 목록으로 적는다",
               "kind": "piece",
-              "origin": "longest-common-subsequence",
+              "origin": "myers-diff",
               "facetId": "facet:editScript"
             },
             {
@@ -4539,7 +4531,7 @@
               "name": "둘이 같은 줄을",
               "desc": "같은 자리를 고치면 멈춘다",
               "kind": "piece",
-              "origin": "conflict-resolution",
+              "origin": "three-way-merge",
               "facetId": "facet:bothTouchedSameLine"
             },
             {
@@ -4547,7 +4539,7 @@
               "name": "옮긴 것과 다시 쓴 것",
               "desc": "줄 단위로 보면 이동이 삭제와 삽입이다",
               "kind": "piece",
-              "origin": "conflict-resolution",
+              "origin": "three-way-merge",
               "facetId": "facet:moveLooksLikeRewrite"
             }
           ]
@@ -4557,16 +4549,8 @@
           "name": "이력 그래프",
           "topics": [
             {
-              "id": "commit-dag",
-              "name": "커밋 DAG"
-            },
-            {
-              "id": "merge-base",
-              "name": "병합 기준점"
-            },
-            {
               "id": "rebase-vs-merge",
-              "name": "리베이스와 병합"
+              "name": "병합과 리베이스"
             },
             {
               "id": "history-bisect",
@@ -4577,7 +4561,7 @@
               "name": "찍은 자리가 앞을 가리킨다",
               "desc": "이력은 뒤에서 앞으로 이어진 사슬이다",
               "kind": "piece",
-              "origin": "commit-dag",
+              "origin": "rebase-vs-merge",
               "facetId": "facet:snapshotPointsBack"
             },
             {
@@ -4585,7 +4569,7 @@
               "name": "가지가 아니라 이름표",
               "desc": "브랜치는 한 자리를 가리키는 이름이다",
               "kind": "piece",
-              "origin": "commit-dag",
+              "origin": "rebase-vs-merge",
               "facetId": "facet:branchIsALabel"
             },
             {
@@ -4593,7 +4577,7 @@
               "name": "빨리 감기",
               "desc": "갈라지지 않았으면 이름표만 옮긴다",
               "kind": "piece",
-              "origin": "merge-base",
+              "origin": "rebase-vs-merge",
               "facetId": "facet:fastForward"
             },
             {
@@ -4601,7 +4585,7 @@
               "name": "둘이 갈라진 자리",
               "desc": "두 갈래를 거슬러 처음 만나는 곳",
               "kind": "piece",
-              "origin": "merge-base",
+              "origin": "rebase-vs-merge",
               "facetId": "facet:whereTheyParted"
             },
             {
@@ -4633,7 +4617,7 @@
               "name": "아무도 안 가리키면",
               "desc": "이름이 떨어진 자리는 잊힌다",
               "kind": "piece",
-              "origin": "commit-dag",
+              "origin": "rebase-vs-merge",
               "facetId": "facet:unreachableSnapshot"
             }
           ]
@@ -4653,10 +4637,6 @@
             {
               "id": "cache-invalidation",
               "name": "캐시 무효화"
-            },
-            {
-              "id": "circular-dependency",
-              "name": "순환 의존"
             },
             {
               "id": "who-goes-first",
@@ -4714,15 +4694,11 @@
           "topics": [
             {
               "id": "semantic-versioning",
-              "name": "버전 범위"
+              "name": "버전 범위와 잠금"
             },
             {
               "id": "dependency-resolution",
               "name": "의존 해결"
-            },
-            {
-              "id": "lockfile",
-              "name": "잠금 파일"
             },
             {
               "id": "three-numbers",
@@ -4769,7 +4745,7 @@
               "name": "고른 것을 적어 둔다",
               "desc": "다음에도 같은 것이 뽑히도록",
               "kind": "piece",
-              "origin": "lockfile",
+              "origin": "semantic-versioning",
               "facetId": "facet:pinWhatWasChosen"
             }
           ]
@@ -4779,27 +4755,15 @@
           "name": "테스트와 커버리지",
           "topics": [
             {
-              "id": "statement-coverage",
-              "name": "구문 커버리지"
-            },
-            {
               "id": "branch-coverage",
-              "name": "분기 커버리지"
-            },
-            {
-              "id": "mutation-testing",
-              "name": "변이 테스트"
-            },
-            {
-              "id": "counterexample-shrinking",
-              "name": "반례 축소"
+              "name": "커버리지와 변이 점수"
             },
             {
               "id": "lines-you-stepped-on",
               "name": "밟은 줄",
               "desc": "지나간 줄에 표시가 남는다",
               "kind": "piece",
-              "origin": "statement-coverage",
+              "origin": "branch-coverage",
               "facetId": "facet:linesYouSteppedOn"
             },
             {
@@ -4831,7 +4795,7 @@
               "name": "망가뜨렸는데 안 잡힌다",
               "desc": "고쳐 놔도 통과하면 안 본 것이다",
               "kind": "piece",
-              "origin": "mutation-testing",
+              "origin": "branch-coverage",
               "facetId": "facet:survivingMutant"
             },
             {
