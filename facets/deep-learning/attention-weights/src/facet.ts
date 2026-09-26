@@ -1,0 +1,140 @@
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
+
+/**
+ * @piece
+ * 물음 하나가 열쇠 넷과 맞춰 본 점수는 어떻게 "어디를 얼마나 볼지" 가 되고,
+ * 결과는 그 무게로 어떻게 만들어지는가.
+ */
+export const attentionWeightsFacet: FacetJson = {
+  id: 'facet:attentionWeights',
+  title: {
+    en: 'Attention weights',
+    ko: '어텐션 가중치',
+    ja: 'アテンションの重み',
+    zh: '注意力权重',
+    ar: 'أوزان الانتباه',
+    es: 'Pesos de atención',
+    fr: 'Poids d’attention',
+    hi: 'अटेंशन भार',
+    id: 'Bobot atensi',
+    pt: 'Pesos de atenção',
+  },
+  description: {
+    en: 'One query’s scores against four keys split into weights that sum to 1, and each value piles into the result by its weight.',
+    ko: '물음 하나가 열쇠 넷과 맞춰 본 점수가 합 1 인 무게로 나뉘고, 값마다 제 무게만큼 결과에 쌓인다.',
+    ja: '一つのクエリが四つのキーと照らし合わせたスコアが合計 1 の重みに分かれ、各値がその重みの分だけ結果に積み上がる。',
+    zh: '一个查询与四个键比对得到的分数被分成和为 1 的权重，每个值按自己的权重累加到结果中。',
+    ar: 'تنقسم درجات استعلام واحد مقابل أربعة مفاتيح إلى أوزان مجموعها 1، وتتراكم كل قيمة في النتيجة بقدر وزنها.',
+    es: 'Las puntuaciones de una consulta frente a cuatro claves se reparten en pesos que suman 1, y cada valor se acumula en el resultado según su peso.',
+    fr: 'Les scores d’une requête face à quatre clés se partagent en poids de somme 1, et chaque valeur s’empile dans le résultat selon son poids.',
+    hi: 'एक क्वेरी के चार कुंजियों से मिले स्कोर ऐसे भारों में बँटते हैं जिनका योग 1 है, और हर मान अपने भार जितना परिणाम में जुड़ता है।',
+    id: 'Skor satu kueri terhadap empat kunci terbagi menjadi bobot berjumlah 1, dan setiap nilai menumpuk ke hasil sebesar bobotnya.',
+    pt: 'As pontuações de uma consulta contra quatro chaves dividem-se em pesos que somam 1, e cada valor se acumula no resultado conforme seu peso.',
+  },
+  algorithm: 'module:attentionWeights',
+  scene: 'module:attentionWeightsScene',
+  initialData: {
+    type: 'attention-weights',
+    stepMs: 1600,
+    query: [1, -1],
+    items: [
+      { id: 'A', key: [0, 1], value: [0, 4] },
+      { id: 'B', key: [0, -1], value: [2, 0] },
+      { id: 'C', key: [1, 1], value: [-1, 1] },
+      { id: 'D', key: [0, 2], value: [-1, -1] },
+    ],
+  },
+  shuffleOnReset: false,
+  messages: {
+    'label.query': {
+      en: 'Query {q}', ko: '물음 {q}', ja: 'クエリ {q}', zh: '查询 {q}', ar: 'الاستعلام {q}',
+      es: 'Consulta {q}', fr: 'Requête {q}', hi: 'क्वेरी {q}', id: 'Kueri {q}', pt: 'Consulta {q}',
+    },
+    'label.key': {
+      en: 'Key {k}', ko: '열쇠 {k}', ja: 'キー {k}', zh: '键 {k}', ar: 'المفتاح {k}',
+      es: 'Clave {k}', fr: 'Clé {k}', hi: 'कुंजी {k}', id: 'Kunci {k}', pt: 'Chave {k}',
+    },
+    'label.value': {
+      en: 'Value {v}', ko: '값 {v}', ja: '値 {v}', zh: '值 {v}', ar: 'القيمة {v}',
+      es: 'Valor {v}', fr: 'Valeur {v}', hi: 'मान {v}', id: 'Nilai {v}', pt: 'Valor {v}',
+    },
+    'label.score': {
+      en: 'Score', ko: '점수', ja: 'スコア', zh: '分数', ar: 'الدرجة',
+      es: 'Puntuación', fr: 'Score', hi: 'स्कोर', id: 'Skor', pt: 'Pontuação',
+    },
+    'label.weight': {
+      en: 'Weight', ko: '무게', ja: '重み', zh: '权重', ar: 'الوزن',
+      es: 'Peso', fr: 'Poids', hi: 'भार', id: 'Bobot', pt: 'Peso',
+    },
+    'label.sum': {
+      en: 'Sum {sum}', ko: '합 {sum}', ja: '合計 {sum}', zh: '和 {sum}', ar: 'المجموع {sum}',
+      es: 'Suma {sum}', fr: 'Somme {sum}', hi: 'योग {sum}', id: 'Jumlah {sum}', pt: 'Soma {sum}',
+    },
+    'label.dot': {
+      en: '{qk} {d}', ko: '{qk} {d}', ja: '{qk} {d}', zh: '{qk} {d}', ar: '{qk} {d}',
+      es: '{qk} {d}', fr: '{qk} {d}', hi: '{qk} {d}', id: '{qk} {d}', pt: '{qk} {d}',
+    },
+    'label.result': {
+      en: 'Result {vec}', ko: '결과 {vec}', ja: '結果 {vec}', zh: '结果 {vec}', ar: 'النتيجة {vec}',
+      es: 'Resultado {vec}', fr: 'Résultat {vec}', hi: 'परिणाम {vec}', id: 'Hasil {vec}', pt: 'Resultado {vec}',
+    },
+    'caption.start': {
+      en: 'The query is about to be matched against every key. Result: {vec}',
+      ko: '물음을 열쇠마다 맞춰 볼 차례. 결과: {vec}',
+      ja: 'クエリをすべてのキーと照らし合わせる。結果: {vec}',
+      zh: '查询将与每个键逐一比对。结果: {vec}',
+      ar: 'سيُقارَن الاستعلام بكل مفتاح. النتيجة: {vec}',
+      es: 'La consulta se va a comparar con cada clave. Resultado: {vec}',
+      fr: 'La requête va être confrontée à chaque clé. Résultat : {vec}',
+      hi: 'क्वेरी को हर कुंजी से मिलाया जाएगा। परिणाम: {vec}',
+      id: 'Kueri akan dicocokkan dengan setiap kunci. Hasil: {vec}',
+      pt: 'A consulta vai ser comparada com cada chave. Resultado: {vec}',
+    },
+    'caption.score': {
+      en: 'Score = {qk} / {root}, one per key.',
+      ko: '점수 = {qk} / {root}, 열쇠마다 하나.',
+      ja: 'スコア = {qk} / {root}、キーごとに一つ。',
+      zh: '分数 = {qk} / {root}，每个键一个。',
+      ar: 'الدرجة = {qk} / {root}، واحدة لكل مفتاح.',
+      es: 'Puntuación = {qk} / {root}, una por clave.',
+      fr: 'Score = {qk} / {root}, un par clé.',
+      hi: 'स्कोर = {qk} / {root}, हर कुंजी का एक।',
+      id: 'Skor = {qk} / {root}, satu per kunci.',
+      pt: 'Pontuação = {qk} / {root}, uma por chave.',
+    },
+    'caption.weigh': {
+      en: 'The scores split one whole into weights ({softmax}). Sum of weights: {sum}',
+      ko: '점수가 온 하나를 무게로 나눈다 ({softmax}). 무게의 합: {sum}',
+      ja: 'スコアが全体の 1 を重みに分ける ({softmax})。重みの合計: {sum}',
+      zh: '分数把整体 1 分成权重 ({softmax})。权重之和: {sum}',
+      ar: 'تقسّم الدرجات الواحد الكامل إلى أوزان ({softmax}). مجموع الأوزان: {sum}',
+      es: 'Las puntuaciones reparten un todo en pesos ({softmax}). Suma de los pesos: {sum}',
+      fr: 'Les scores partagent un tout en poids ({softmax}). Somme des poids : {sum}',
+      hi: 'स्कोर एक पूरे को भारों में बाँटते हैं ({softmax})। भारों का योग: {sum}',
+      id: 'Skor membagi satu keseluruhan menjadi bobot ({softmax}). Jumlah bobot: {sum}',
+      pt: 'As pontuações dividem um todo em pesos ({softmax}). Soma dos pesos: {sum}',
+    },
+    'caption.share': {
+      en: '{token} adds its share: {w} × {v} = {share}',
+      ko: '{token} 쪽 몫을 더한다: {w} × {v} = {share}',
+      ja: '{token} の取り分を足す: {w} × {v} = {share}',
+      zh: '加上 {token} 的份额: {w} × {v} = {share}',
+      ar: 'تُضاف حصة {token}: {w} × {v} = {share}',
+      es: 'Se suma la parte de {token}: {w} × {v} = {share}',
+      fr: 'On ajoute la part de {token} : {w} × {v} = {share}',
+      hi: '{token} का हिस्सा जुड़ता है: {w} × {v} = {share}',
+      id: 'Bagian {token} ditambahkan: {w} × {v} = {share}',
+      pt: 'Soma-se a parte de {token}: {w} × {v} = {share}',
+    },
+    'caption.done': {
+      en: 'Largest weight: {token} {w}', ko: '가장 큰 무게: {token} {w}', ja: '最大の重み: {token} {w}',
+      zh: '最大权重: {token} {w}', ar: 'أكبر وزن: {token} {w}', es: 'Peso mayor: {token} {w}',
+      fr: 'Poids le plus grand : {token} {w}', hi: 'सबसे बड़ा भार: {token} {w}',
+      id: 'Bobot terbesar: {token} {w}', pt: 'Maior peso: {token} {w}',
+    },
+  },
+  blocks: {
+    stage: { type: 'attention-weights-stage' },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
+  },
+};
