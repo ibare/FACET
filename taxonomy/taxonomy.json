@@ -656,38 +656,117 @@
           "id": "relational",
           "name": {"en":"Relational Model","ko":"관계 모델","ja":"リレーショナルモデル","zh":"关系模型","ar":"النموذج العلائقي","es":"Modelo relacional","fr":"Modèle relationnel","hi":"रिलेशनल मॉडल","id":"Model Relasional","pt":"Modelo relacional"},
           "facets": [
-            "facet:relationalTablesAndKeys"
+            "facet:relationalTablesAndKeys",
+            "facet:normalForms",
+            "facet:primaryKeyIdentifies",
+            "facet:foreignKeyPoints",
+            "facet:rowIsAFact",
+            "facet:setOfRows",
+            "facet:updateAnomaly",
+            "facet:atomicCell",
+            "facet:partialDependency",
+            "facet:transitiveDependency",
+            "facet:determinantMustBeKey"
           ]
         },
         {
           "id": "sql",
           "name": {"en":"SQL","ko":"SQL","ja":"SQL","zh":"SQL","ar":"SQL","es":"SQL","fr":"SQL","hi":"SQL","id":"SQL","pt":"SQL"},
-          "facets": []
+          "facets": [
+            "facet:dml",
+            "facet:joinKinds",
+            "facet:subquery",
+            "facet:windowFunction",
+            "facet:insertUpdateDelete",
+            "facet:groupThenAggregate",
+            "facet:schemaDefinesShape",
+            "facet:matchOnKey",
+            "facet:keepUnmatched",
+            "facet:allPairs",
+            "facet:queryInsideQuery",
+            "facet:windowSlides"
+          ]
         },
         {
           "id": "indexes",
           "name": {"en":"Indexes","ko":"인덱스","ja":"インデックス","zh":"索引","ar":"الفهارس","es":"Índices","fr":"Index","hi":"इंडेक्स","id":"Indeks","pt":"Índices"},
-          "facets": []
+          "facets": [
+            "facet:indexChoice",
+            "facet:bitmapIndex",
+            "facet:compositeIndex",
+            "facet:leavesLinked",
+            "facet:allDataInLeaves",
+            "facet:exactMatchOnly",
+            "facet:bitPerRow",
+            "facet:bitwiseCombine",
+            "facet:leftmostPrefix",
+            "facet:indexCostsWrite"
+          ]
         },
         {
           "id": "query-processing",
           "name": {"en":"Query Processing","ko":"쿼리 처리","ja":"クエリ処理","zh":"查询处理","ar":"معالجة الاستعلامات","es":"Procesamiento de consultas","fr":"Traitement des requêtes","hi":"क्वेरी प्रोसेसिंग","id":"Pemrosesan Kueri","pt":"Processamento de consultas"},
-          "facets": []
+          "facets": [
+            "facet:optimizer",
+            "facet:costModel",
+            "facet:sameAnswerDifferentPlan",
+            "facet:reorderJoins",
+            "facet:planIsATree",
+            "facet:estimateFromStats",
+            "facet:badEstimateBadPlan"
+          ]
         },
         {
           "id": "transaction",
           "name": {"en":"Transactions","ko":"트랜잭션","ja":"トランザクション","zh":"事务","ar":"المعاملات","es":"Transacciones","fr":"Transactions","hi":"ट्रांज़ैक्शन","id":"Transaksi","pt":"Transações"},
-          "facets": []
+          "facets": [
+            "facet:acid",
+            "facet:isolation",
+            "facet:mvcc",
+            "facet:allOrNothing",
+            "facet:durableAfterCommit",
+            "facet:dirtyRead",
+            "facet:nonRepeatableRead",
+            "facet:phantomRead",
+            "facet:sharedVsExclusive",
+            "facet:lockWait",
+            "facet:keepOldVersion",
+            "facet:readSeesSnapshot",
+            "facet:growThenShrink"
+          ]
         },
         {
           "id": "distributed-db",
           "name": {"en":"Distributed Databases","ko":"분산 DB","ja":"分散データベース","zh":"分布式数据库","ar":"قواعد البيانات الموزعة","es":"Bases de datos distribuidas","fr":"Bases de données distribuées","hi":"वितरित डेटाबेस","id":"Basis Data Terdistribusi","pt":"Bancos de dados distribuídos"},
-          "facets": []
+          "facets": [
+            "facet:sharding",
+            "facet:replication",
+            "facet:raft",
+            "facet:paxos",
+            "facet:splitByKey",
+            "facet:hotShard",
+            "facet:copyToFollowers",
+            "facet:replicationLag",
+            "facet:partitionForcesChoice",
+            "facet:electALeader",
+            "facet:majorityDecides",
+            "facet:logReplicateInOrder",
+            "facet:splitBrain",
+            "facet:proposeAndPromise"
+          ]
         },
         {
           "id": "nosql",
           "name": {"en":"NoSQL","ko":"NoSQL","ja":"NoSQL","zh":"NoSQL","ar":"NoSQL","es":"NoSQL","fr":"NoSQL","hi":"NoSQL","id":"NoSQL","pt":"NoSQL"},
-          "facets": []
+          "facets": [
+            "facet:documentKv",
+            "facet:columnFamily",
+            "facet:graphDb",
+            "facet:nestedDocument",
+            "facet:keyToValue",
+            "facet:columnOriented",
+            "facet:traverseRelationships"
+          ]
         }
       ]
     },

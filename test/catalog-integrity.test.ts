@@ -176,10 +176,14 @@ describe('계획 카탈로그', () => {
    * 같은 날 컴퓨터 네트워크 완제품 판정에서 열둘을 지웠다 — 완제품 안에 합친 아홉(데이터 링크 계층 ·
    * 전송 계층 · MAC · OSPF · BGP · ICMP · UDP · 흐름 제어 · WebSocket)과 버린 셋(응용 계층 · SMTP · FTP).
    * 조각 origin 은 host 토픽으로 옮겼다. 사용자가 정했다 (`tasks/network-whole-batch.md`). 1044 → 1032.
+   *
+   * 2026-09-26 데이터베이스 완제품 판정에서 열넷을 지웠다 — 완제품 안에 합친 열하나(2NF · 3NF · BCNF ·
+   * OUTER JOIN · CROSS JOIN · Hash Index · 실행 계획 · 락 · 2PL · CAP · 키-값 DB)와 버린 셋(관계 · DDL ·
+   * 파싱). 조각 origin 은 host 토픽으로 옮겼다. 사용자가 정했다 (`tasks/database-whole-batch.md`). 1032 → 1018.
    */
   it('규모가 줄지 않았다 — 실수로 잘려 나간 것을 잡는다', () => {
     expect(domains.length).toBeGreaterThanOrEqual(16);
-    expect(rows.length).toBeGreaterThanOrEqual(1032);
+    expect(rows.length).toBeGreaterThanOrEqual(1018);
   });
 });
 
