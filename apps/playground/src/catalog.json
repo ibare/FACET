@@ -3163,49 +3163,56 @@
               "name": "부르면 쌓인다",
               "desc": "끝나야 걷히고, 걷혀야 다음이 온다",
               "kind": "piece",
-              "origin": "call-stack"
+              "origin": "call-stack",
+              "facetId": "facet:framesStackUp"
             },
             {
               "id": "one-turn-at-a-time",
               "name": "한 번에 하나",
               "desc": "지금 것이 끝나야 다음이 시작된다",
               "kind": "piece",
-              "origin": "task-queue"
+              "origin": "task-queue",
+              "facetId": "facet:oneTurnAtATime"
             },
             {
               "id": "microtask-cuts-in",
               "name": "먼저 끼어든다",
               "desc": "다음 차례보다 앞서 비워진다",
               "kind": "piece",
-              "origin": "microtask-queue"
+              "origin": "microtask-queue",
+              "facetId": "facet:microtaskCutsIn"
             },
             {
               "id": "microtask-starvation",
               "name": "끼어들기가 멈추지 않으면",
               "desc": "계속 끼어들면 화면이 멎는다",
               "kind": "piece",
-              "origin": "microtask-queue"
+              "origin": "microtask-queue",
+              "facetId": "facet:microtaskStarvation"
             },
             {
               "id": "timer-is-a-floor",
               "name": "0밀리초라도 지금은 아니다",
               "desc": "타이머는 최소 시간이지 약속이 아니다",
               "kind": "piece",
-              "origin": "task-queue"
+              "origin": "task-queue",
+              "facetId": "facet:timerIsAFloor"
             },
             {
               "id": "long-task-blocks",
               "name": "셈하는 동안",
               "desc": "긴 일 하나가 클릭을 쌓아 둔다",
               "kind": "piece",
-              "origin": "blocking-and-yield"
+              "origin": "blocking-and-yield",
+              "facetId": "facet:longTaskBlocks"
             },
             {
               "id": "yield-to-render",
               "name": "중간에 놓아주기",
               "desc": "쪼개어 돌려주면 화면이 산다",
               "kind": "piece",
-              "origin": "blocking-and-yield"
+              "origin": "blocking-and-yield",
+              "facetId": "facet:yieldToRender"
             }
           ]
         },
@@ -3234,49 +3241,56 @@
               "name": "두 트리가 만난다",
               "desc": "구조와 꾸밈이 합쳐져 그릴 것이 된다",
               "kind": "piece",
-              "origin": "dom-and-cssom"
+              "origin": "dom-and-cssom",
+              "facetId": "facet:twoTreesMeet"
             },
             {
               "id": "selector-right-to-left",
               "name": "오른쪽부터 거슬러",
               "desc": "맞는지 보려고 위로 올라간다",
               "kind": "piece",
-              "origin": "style-calculation"
+              "origin": "style-calculation",
+              "facetId": "facet:selectorRightToLeft"
             },
             {
               "id": "cascade-conflict",
               "name": "같은 자리를 두고",
               "desc": "규칙이 다투면 무게로 정해진다",
               "kind": "piece",
-              "origin": "style-calculation"
+              "origin": "style-calculation",
+              "facetId": "facet:cascadeConflict"
             },
             {
               "id": "one-grows-rest-shift",
               "name": "하나가 커지면",
               "desc": "뒤의 것이 줄줄이 밀린다",
               "kind": "piece",
-              "origin": "layout-reflow"
+              "origin": "layout-reflow",
+              "facetId": "facet:oneGrowsRestShift"
             },
             {
               "id": "forced-sync-layout",
               "name": "읽고 쓰기를 번갈아",
               "desc": "물을 때마다 자리를 다시 잰다",
               "kind": "piece",
-              "origin": "layout-reflow"
+              "origin": "layout-reflow",
+              "facetId": "facet:forcedSyncLayout"
             },
             {
               "id": "stack-of-sheets",
               "name": "칠한 장을 포갠다",
               "desc": "따로 칠하고 겹쳐 한 장으로",
               "kind": "piece",
-              "origin": "paint-and-composite"
+              "origin": "paint-and-composite",
+              "facetId": "facet:stackOfSheets"
             },
             {
               "id": "layer-promotion",
               "name": "떼어 놓으면",
               "desc": "따로 둔 것은 다시 칠하지 않는다",
               "kind": "piece",
-              "origin": "paint-and-composite"
+              "origin": "paint-and-composite",
+              "facetId": "facet:layerPromotion"
             }
           ]
         },
@@ -3305,49 +3319,56 @@
               "name": "같은 자리끼리",
               "desc": "두 트리를 맞대어 다른 곳만 고친다",
               "kind": "piece",
-              "origin": "virtual-dom-diff"
+              "origin": "virtual-dom-diff",
+              "facetId": "facet:sideBySideTrees"
             },
             {
               "id": "type-change-rebuild",
               "name": "종류가 다르면",
               "desc": "아래를 통째로 버리고 새로 만든다",
               "kind": "piece",
-              "origin": "virtual-dom-diff"
+              "origin": "virtual-dom-diff",
+              "facetId": "facet:typeChangeRebuild"
             },
             {
               "id": "missing-key-remount",
               "name": "이름표가 없으면",
               "desc": "자리로만 맞춰 엉뚱한 것이 남는다",
               "kind": "piece",
-              "origin": "keys-in-lists"
+              "origin": "keys-in-lists",
+              "facetId": "facet:missingKeyRemount"
             },
             {
               "id": "key-reorder",
               "name": "이름표가 있으면",
               "desc": "만들지 않고 옮기기만 한다",
               "kind": "piece",
-              "origin": "keys-in-lists"
+              "origin": "keys-in-lists",
+              "facetId": "facet:keyReorder"
             },
             {
               "id": "read-is-subscribe",
               "name": "읽은 것만 기억한다",
               "desc": "읽은 값이 바뀔 때만 다시 그린다",
               "kind": "piece",
-              "origin": "dependency-tracking"
+              "origin": "dependency-tracking",
+              "facetId": "facet:readIsSubscribe"
             },
             {
               "id": "dirty-scan",
               "name": "무엇이 바뀌었나",
               "desc": "기억하지 않으면 전부 훑어야 한다",
               "kind": "piece",
-              "origin": "dependency-tracking"
+              "origin": "dependency-tracking",
+              "facetId": "facet:dirtyScan"
             },
             {
               "id": "coalesce-updates",
               "name": "모아서 한 번에",
               "desc": "여러 번 바꿔도 한 번만 그린다",
               "kind": "piece",
-              "origin": "update-batching"
+              "origin": "update-batching",
+              "facetId": "facet:coalesceUpdates"
             }
           ]
         },
@@ -3372,42 +3393,48 @@
               "name": "한 장에 주어진 시간",
               "desc": "늦으면 그 장은 나오지 않는다",
               "kind": "piece",
-              "origin": "frame-deadline"
+              "origin": "frame-deadline",
+              "facetId": "facet:sixteenMilliseconds"
             },
             {
               "id": "dropped-frame",
               "name": "건너뛴 한 장",
               "desc": "늦은 장은 기다려 주지 않는다",
               "kind": "piece",
-              "origin": "frame-deadline"
+              "origin": "frame-deadline",
+              "facetId": "facet:droppedFrame"
             },
             {
               "id": "just-before-paint",
               "name": "그리기 직전에",
               "desc": "한 장에 한 번만 불린다",
               "kind": "piece",
-              "origin": "animation-frame-callback"
+              "origin": "animation-frame-callback",
+              "facetId": "facet:justBeforePaint"
             },
             {
               "id": "layout-per-frame",
               "name": "매 프레임 다시 재기",
               "desc": "자리를 바꾸면 계속 다시 잰다",
               "kind": "piece",
-              "origin": "composited-animation"
+              "origin": "composited-animation",
+              "facetId": "facet:layoutPerFrame"
             },
             {
               "id": "move-without-repaint",
               "name": "옮기기만 하면",
               "desc": "이미 칠한 것을 밀기만 한다",
               "kind": "piece",
-              "origin": "composited-animation"
+              "origin": "composited-animation",
+              "facetId": "facet:moveWithoutRepaint"
             },
             {
               "id": "jank-vs-slow",
               "name": "고르지 않은 것",
               "desc": "느린 것보다 들쭉날쭉한 것이 거슬린다",
               "kind": "piece",
-              "origin": "frame-deadline"
+              "origin": "frame-deadline",
+              "facetId": "facet:jankVsSlow"
             }
           ]
         },
@@ -3432,42 +3459,48 @@
               "name": "읽기가 멎는다",
               "desc": "스크립트를 만나면 문서 읽기를 멈춘다",
               "kind": "piece",
-              "origin": "script-blocking"
+              "origin": "script-blocking",
+              "facetId": "facet:parserStops"
             },
             {
               "id": "defer-vs-async",
               "name": "미룰까 끼어들까",
               "desc": "기다렸다 순서대로냐 오는 대로냐",
               "kind": "piece",
-              "origin": "script-blocking"
+              "origin": "script-blocking",
+              "facetId": "facet:deferVsAsync"
             },
             {
               "id": "style-blocks-paint",
               "name": "꾸밈이 오기 전에는",
               "desc": "스타일이 없으면 첫 장을 안 그린다",
               "kind": "piece",
-              "origin": "critical-rendering-path"
+              "origin": "critical-rendering-path",
+              "facetId": "facet:styleBlocksPaint"
             },
             {
               "id": "preload-hint",
               "name": "앞당겨 부르기",
               "desc": "곧 쓸 것을 미리 시작한다",
               "kind": "piece",
-              "origin": "resource-priority"
+              "origin": "resource-priority",
+              "facetId": "facet:preloadHint"
             },
             {
               "id": "font-swap",
               "name": "글꼴이 늦으면",
               "desc": "글이 떴다가 모양을 바꾼다",
               "kind": "piece",
-              "origin": "resource-priority"
+              "origin": "resource-priority",
+              "facetId": "facet:fontSwap"
             },
             {
               "id": "what-first-paint-needs",
               "name": "첫 장에 필요한 것",
               "desc": "없어도 되는 것을 뒤로 미룬다",
               "kind": "piece",
-              "origin": "critical-rendering-path"
+              "origin": "critical-rendering-path",
+              "facetId": "facet:whatFirstPaintNeeds"
             }
           ]
         }

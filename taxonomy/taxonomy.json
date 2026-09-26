@@ -624,27 +624,65 @@
         {
           "id": "event-loop",
           "name": {"en":"Event Loop","ko":"이벤트 루프","ja":"イベントループ","zh":"事件循环","ar":"حلقة الأحداث","es":"Bucle de eventos","fr":"Boucle d'événements","hi":"इवेंट लूप","id":"Event Loop","pt":"Loop de eventos"},
-          "facets": []
+          "facets": [
+            "facet:framesStackUp",
+            "facet:oneTurnAtATime",
+            "facet:microtaskCutsIn",
+            "facet:microtaskStarvation",
+            "facet:timerIsAFloor",
+            "facet:longTaskBlocks",
+            "facet:yieldToRender"
+          ]
         },
         {
           "id": "rendering-pipeline",
           "name": {"en":"Rendering Pipeline","ko":"렌더링 파이프라인","ja":"レンダリングパイプライン","zh":"渲染流水线","ar":"خط التصيير","es":"Canalización de renderizado","fr":"Pipeline de rendu","hi":"रेंडरिंग पाइपलाइन","id":"Pipeline Rendering","pt":"Pipeline de renderização"},
-          "facets": []
+          "facets": [
+            "facet:twoTreesMeet",
+            "facet:selectorRightToLeft",
+            "facet:cascadeConflict",
+            "facet:oneGrowsRestShift",
+            "facet:forcedSyncLayout",
+            "facet:stackOfSheets",
+            "facet:layerPromotion"
+          ]
         },
         {
           "id": "reconciliation",
           "name": {"en":"Reconciliation and Reactivity","ko":"재조정과 반응성","ja":"差分調整とリアクティビティ","zh":"协调与响应式","ar":"المطابقة والتفاعلية","es":"Reconciliación y reactividad","fr":"Réconciliation et réactivité","hi":"रिकंसिलिएशन और रिएक्टिविटी","id":"Rekonsiliasi dan Reaktivitas","pt":"Reconciliação e reatividade"},
-          "facets": []
+          "facets": [
+            "facet:sideBySideTrees",
+            "facet:typeChangeRebuild",
+            "facet:missingKeyRemount",
+            "facet:keyReorder",
+            "facet:readIsSubscribe",
+            "facet:dirtyScan",
+            "facet:coalesceUpdates"
+          ]
         },
         {
           "id": "frame-budget",
           "name": {"en":"Frames and Animation","ko":"프레임과 애니메이션","ja":"フレームとアニメーション","zh":"帧与动画","ar":"الإطارات والرسوم المتحركة","es":"Fotogramas y animación","fr":"Images et animation","hi":"फ़्रेम और एनिमेशन","id":"Frame dan Animasi","pt":"Quadros e animação"},
-          "facets": []
+          "facets": [
+            "facet:sixteenMilliseconds",
+            "facet:droppedFrame",
+            "facet:justBeforePaint",
+            "facet:layoutPerFrame",
+            "facet:moveWithoutRepaint",
+            "facet:jankVsSlow"
+          ]
         },
         {
           "id": "resource-loading",
           "name": {"en":"Loading Order","ko":"로딩 순서","ja":"読み込み順序","zh":"加载顺序","ar":"ترتيب التحميل","es":"Orden de carga","fr":"Ordre de chargement","hi":"लोडिंग क्रम","id":"Urutan Pemuatan","pt":"Ordem de carregamento"},
-          "facets": []
+          "facets": [
+            "facet:parserStops",
+            "facet:deferVsAsync",
+            "facet:styleBlocksPaint",
+            "facet:preloadHint",
+            "facet:fontSwap",
+            "facet:whatFirstPaintNeeds"
+          ]
         }
       ]
     },
