@@ -64,6 +64,25 @@ if (dirs.length === 0) {
   process.exit(2);
 }
 
+/** facet.ts 에서 `segments: [ … ]` 배열 본문들을 괄호 짝으로 떼어 낸다 */
+function segmentBlocks(src) {
+  const blocks = [];
+  const re = /segments:\s*\[/g;
+  let m;
+  while ((m = re.exec(src)) !== null) {
+    let depth = 1;
+    let i = m.index + m[0].length;
+    const start = i;
+    for (; i < src.length && depth > 0; i++) {
+      if (src[i] === '[') depth++;
+      else if (src[i] === ']') depth--;
+    }
+    if (depth !== 0) throw new Error(`facet.ts 의 segments 배열이 닫히지 않는다 (${m.index} 자)`);
+    blocks.push(src.slice(start, i - 1));
+  }
+  return blocks;
+}
+
 function staticCheck(dir) {
   const out = [];
   const err = (rule, msg) => out.push(['오류', rule, msg]);
@@ -103,7 +122,8 @@ function staticCheck(dir) {
   if (/^\s*scene:/m.test(facetCode)) err('S-facet', 'facet.ts 가 scene 을 선언한다 — 완제품은 projector 하나');
   const knobs = /widget:\s*'segmented-slider'/.test(facet);
   if (knobs && /segments:\s*\[[\s\S]*?value:\s*['"`]/.test(facet)) err('S-facet', "segments[].value 에 문자열이 있다 — number 다 (식별자면 0.. 순번으로 두고 목록은 initialData 로)");
-  if (/label:\s*\{\s*en:\s*'\d[^']*'/.test(facet) && knobs) warn('C10', "구간 라벨이 수·기호면 { en: '16' } 이 아니라 단일 문자열 '16' 으로 둔다 — i18n 감사가 열 언어를 요구한다");
+  // 손잡이 구간 라벨만 본다 — 계기 라벨('503' 같은 약어)은 열 언어 객체가 맞다 (whole-contract "번역하지 않는 약어")
+  if (knobs && segmentBlocks(facet).some((b) => /label:\s*\{\s*en:\s*'\d[^']*'/.test(b))) warn('C10', "구간 라벨이 수·기호면 { en: '16' } 이 아니라 단일 문자열 '16' 으로 둔다 — i18n 감사가 열 언어를 요구한다");
   const initialType = /initialData:\s*\{\s*type:\s*'([^']+)'/.exec(facet)?.[1];
   if (initialType !== undefined && initialType !== name) warn('S-facet', `initialData.type 이 '${initialType}' — 디렉터리 이름 '${name}' 과 맞추는 것이 관례다`);
   checkParticles(facet, { warn });
