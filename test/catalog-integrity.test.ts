@@ -217,10 +217,14 @@ describe('계획 카탈로그', () => {
    * 일관된 해싱)과 버린 둘(합의 — database 의 Raft · Paxos 되풀이, API 게이트웨이 — 세 잣대 모두 약함).
    * 합친 토픽의 조각은 host 로, 버린 토픽의 조각은 가까운 완제품(consistency-model · service-discovery)으로
    * origin 을 옮겼다. 사용자가 정했다 (`tasks/system-design-whole-batch.md`). 986 → 982.
+   *
+   * 같은 날 보안과 암호 완제품 판정에서 일곱을 지웠다 — 완제품 안에 합친 일곱(AES 라운드 · 스트림 암호 →
+   * 블록 암호, Diffie-Hellman → 타원 곡선, MAC · HMAC → SHA, PKI · 인증 체인 → 인증서). 조각 origin 은
+   * host 토픽으로 옮겼다. 사용자가 정했다 (`tasks/security-whole-batch.md`). 982 → 975.
    */
   it('규모가 줄지 않았다 — 실수로 잘려 나간 것을 잡는다', () => {
     expect(domains.length).toBeGreaterThanOrEqual(16);
-    expect(rows.length).toBeGreaterThanOrEqual(982);
+    expect(rows.length).toBeGreaterThanOrEqual(975);
   });
 });
 

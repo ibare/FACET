@@ -6530,30 +6530,22 @@
           "name": "대칭 암호",
           "topics": [
             {
-              "id": "aes-round",
-              "name": "AES 라운드"
-            },
-            {
               "id": "block-cipher",
-              "name": "블록 암호"
-            },
-            {
-              "id": "stream-cipher",
-              "name": "스트림 암호"
+              "name": "블록 암호와 운용 모드"
             },
             {
               "id": "substitute-and-permute",
               "name": "치환-순열 구조",
               "desc": "바꾸고 섞기를 되풀이한다",
               "kind": "piece",
-              "origin": "aes-round"
+              "origin": "block-cipher"
             },
             {
               "id": "round-key-mix",
               "name": "라운드 키",
               "desc": "걸음마다 다른 열쇠를 섞는다",
               "kind": "piece",
-              "origin": "aes-round"
+              "origin": "block-cipher"
             },
             {
               "id": "fixed-size-block",
@@ -6581,14 +6573,14 @@
               "name": "키스트림 XOR",
               "desc": "흐르는 열쇠와 겹쳐 뒤집는다",
               "kind": "piece",
-              "origin": "stream-cipher"
+              "origin": "block-cipher"
             },
             {
               "id": "never-reuse-keystream",
               "name": "키스트림 재사용",
               "desc": "같은 흐름을 두 번 쓰면 드러난다",
               "kind": "piece",
-              "origin": "stream-cipher"
+              "origin": "block-cipher"
             }
           ]
         },
@@ -6602,12 +6594,8 @@
               "facetId": "facet:asymmetricRsa"
             },
             {
-              "id": "diffie-hellman",
-              "name": "Diffie-Hellman"
-            },
-            {
               "id": "ecc",
-              "name": "타원 곡선"
+              "name": "타원 곡선과 이산 로그"
             },
             {
               "id": "easy-one-way-hard-back",
@@ -6628,7 +6616,7 @@
               "name": "혼합의 비가역성",
               "desc": "섞으면 되돌릴 수 없다",
               "kind": "piece",
-              "origin": "diffie-hellman"
+              "origin": "ecc"
             },
             {
               "id": "point-add-on-curve",
@@ -6652,7 +6640,7 @@
           "topics": [
             {
               "id": "sha",
-              "name": "SHA"
+              "name": "해시와 메시지 인증"
             },
             {
               "id": "hash-fixed-length",
@@ -6660,14 +6648,14 @@
               "desc": "무엇을 넣든 같은 길이",
               "facetId": "facet:hashFixedLength",
               "kind": "piece",
-              "origin": "hash"
+              "origin": "collision"
             },
             {
               "id": "hash-avalanche",
               "name": "눈사태 효과",
               "facetId": "facet:hashAvalanche",
               "kind": "piece",
-              "origin": "hash"
+              "origin": "sha"
             },
             {
               "id": "pigeonhole-collision",
@@ -6675,7 +6663,7 @@
               "desc": "충돌은 반드시 있다",
               "facetId": "facet:pigeonholeCollision",
               "kind": "piece",
-              "origin": "hash"
+              "origin": "collision"
             },
             {
               "id": "hash-integrity",
@@ -6683,7 +6671,7 @@
               "desc": "받은 것이 원본인지 확인",
               "facetId": "facet:hashIntegrityCheck",
               "kind": "piece",
-              "origin": "hash"
+              "origin": "sha"
             },
             {
               "id": "hash-salt",
@@ -6691,7 +6679,7 @@
               "desc": "같은 비밀번호, 다른 저장값",
               "facetId": "facet:hashSalt",
               "kind": "piece",
-              "origin": "hash"
+              "origin": "sha"
             },
             {
               "id": "hash-chain",
@@ -6699,7 +6687,7 @@
               "desc": "지난 기록을 고치면 드러난다",
               "facetId": "facet:hashChain",
               "kind": "piece",
-              "origin": "hash"
+              "origin": "sha"
             },
             {
               "id": "merkle-tree",
@@ -6707,19 +6695,11 @@
               "desc": "무엇이 바뀌었는지 찾기",
               "facetId": "facet:merkleTree",
               "kind": "piece",
-              "origin": "hash"
+              "origin": "sha"
             },
             {
               "id": "collision",
               "name": "충돌"
-            },
-            {
-              "id": "mac-code",
-              "name": "MAC"
-            },
-            {
-              "id": "hmac",
-              "name": "HMAC"
             },
             {
               "id": "compress-block-by-block",
@@ -6747,14 +6727,14 @@
               "name": "메시지 인증 코드",
               "desc": "열쇠를 아는 사람만 만들 수 있는 표",
               "kind": "piece",
-              "origin": "mac-code"
+              "origin": "sha"
             },
             {
               "id": "hash-twice-with-pads",
               "name": "HMAC",
               "desc": "안팎으로 두 번 접는다",
               "kind": "piece",
-              "origin": "hmac"
+              "origin": "sha"
             }
           ]
         },
@@ -6768,7 +6748,7 @@
               "desc": "두 키의 자리가 바뀐다",
               "facetId": "facet:signatureKeyDirection",
               "kind": "piece",
-              "origin": "signature"
+              "origin": "certificate"
             },
             {
               "id": "signature-on-hash",
@@ -6776,19 +6756,11 @@
               "desc": "서명은 해시에 한다",
               "facetId": "facet:signatureOnHash",
               "kind": "piece",
-              "origin": "signature"
+              "origin": "certificate"
             },
             {
               "id": "certificate",
-              "name": "인증서"
-            },
-            {
-              "id": "pki",
-              "name": "PKI"
-            },
-            {
-              "id": "auth-chain",
-              "name": "인증 체인"
+              "name": "전자 서명과 인증서"
             },
             {
               "id": "binds-key-to-name",
@@ -6802,7 +6774,7 @@
               "name": "신뢰 루트",
               "desc": "뿌리를 믿기로 하고 시작한다",
               "kind": "piece",
-              "origin": "pki"
+              "origin": "certificate"
             }
           ]
         },
