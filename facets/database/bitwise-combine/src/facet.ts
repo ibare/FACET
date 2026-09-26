@@ -1,0 +1,132 @@
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
+
+/**
+ * @piece
+ * 조건 둘을 비트맵 인덱스로 어떻게 한 번에 거르는가?
+ *
+ * @notation native
+ * 화면의 질의 글자는 SQL 그대로다 (SQL) — 이 분야의 소재 자체라 가상 표기로 옮기지 않는다.
+ *
+ * 비트 줄 둘이 포개져 둘 다 1 인 자리만 남고, 그 자리의 줄만 읽힌다. 나머지 줄은 열리지 않는다.
+ */
+export const bitwiseCombineFacet: FacetJson = {
+  id: 'facet:bitwiseCombine',
+  title: {
+    en: 'Combining bitmaps with AND',
+    ko: '비트맵을 AND 로 포개기',
+    ja: 'ビットマップを AND で重ねる',
+    zh: '用 AND 叠合位图',
+    ar: 'دمج خرائط البتات بعملية AND',
+    es: 'Combinar mapas de bits con AND',
+    fr: 'Combiner des bitmaps avec AND',
+    hi: 'AND से बिटमैप मिलाना',
+    id: 'Menggabungkan bitmap dengan AND',
+    pt: 'Combinar bitmaps com AND',
+  },
+  description: {
+    en: 'Two bit strings, one per condition, are laid over each other; only positions where both are 1 survive, and only those rows are read.',
+    ko: '조건마다 하나씩인 비트 줄 둘을 포개면 둘 다 1 인 자리만 남고, 그 자리의 줄만 읽힌다.',
+    ja: '条件ごとのビット列二本を重ねると、両方が 1 の位置だけが残り、その行だけが読まれる。',
+    zh: '把每个条件各一条的两条位串叠在一起，只留下两者都为 1 的位置，也只读取那些行。',
+    ar: 'تُركَّب سلسلتا بتات، واحدة لكل شرط، فوق بعضهما؛ لا يبقى إلا الموضع الذي يكون فيه الاثنان 1، ولا تُقرأ إلا تلك الصفوف.',
+    es: 'Dos cadenas de bits, una por condición, se superponen; solo quedan las posiciones donde ambas valen 1, y solo esas filas se leen.',
+    fr: 'Deux chaînes de bits, une par condition, se superposent ; seules restent les positions où les deux valent 1, et seules ces lignes sont lues.',
+    hi: 'हर शर्त की एक-एक, दो बिट पंक्तियाँ एक-दूसरे पर रखी जाती हैं; केवल वे स्थान बचते हैं जहाँ दोनों 1 हैं, और केवल वही पंक्तियाँ पढ़ी जाती हैं।',
+    id: 'Dua deret bit, satu per kondisi, ditumpuk; hanya posisi yang keduanya 1 yang tersisa, dan hanya baris itu yang dibaca.',
+    pt: 'Duas cadeias de bits, uma por condição, são sobrepostas; só restam as posições em que ambas valem 1, e só essas linhas são lidas.',
+  },
+  algorithm: 'module:bitwiseCombine',
+  scene: 'module:bitwiseCombineScene',
+  initialData: {
+    type: 'bitwise-combine',
+    stepMs: 2200,
+    table: 'members',
+    columns: ['region', 'plan'],
+    rows: [
+      ['north', 'free'],
+      ['south', 'pro'],
+      ['north', 'pro'],
+      ['north', 'free'],
+      ['east', 'free'],
+      ['south', 'free'],
+      ['north', 'pro'],
+      ['east', 'pro'],
+      ['south', 'pro'],
+      ['north', 'free'],
+      ['east', 'free'],
+      ['north', 'pro'],
+    ],
+    query: "SELECT * FROM members WHERE region = 'north' AND plan = 'pro'",
+    conditions: [
+      { column: 'region', value: 'north' },
+      { column: 'plan', value: 'pro' },
+    ],
+  },
+  shuffleOnReset: false,
+  messages: {
+    'caption.start': {
+      en: 'One bit string per condition. The leftmost bit is the first row.',
+      ko: '조건마다 비트 줄이 하나씩 있다. 맨 왼쪽 비트가 첫 줄이다.',
+      ja: '条件ごとにビット列が一本ずつある。いちばん左のビットが最初の行だ。',
+      zh: '每个条件各有一条位串。最左边的位对应第一行。',
+      ar: 'لكل شرط سلسلة بتات واحدة. البت الأيسر هو الصف الأول.',
+      es: 'Una cadena de bits por condición. El bit de más a la izquierda es la primera fila.',
+      fr: 'Une chaîne de bits par condition. Le bit le plus à gauche est la première ligne.',
+      hi: 'हर शर्त की एक बिट पंक्ति। सबसे बायाँ बिट पहली पंक्ति है।',
+      id: 'Satu deret bit per kondisi. Bit paling kiri adalah baris pertama.',
+      pt: 'Uma cadeia de bits por condição. O bit mais à esquerda é a primeira linha.',
+    },
+    'caption.combine': {
+      en: 'The strings are laid over each other in a single AND. Bits still 1: {n}',
+      ko: '두 줄을 AND 한 번으로 포갰다. 1 로 남은 비트: {n}',
+      ja: '二本の列を一回の AND で重ねた。1 のまま残ったビット: {n}',
+      zh: '两条位串用一次 AND 叠在一起。仍为 1 的位：{n}',
+      ar: 'رُكِّبت السلاسل فوق بعضها بعملية AND واحدة. البتات التي بقيت 1: {n}',
+      es: 'Las cadenas se superponen con un solo AND. Bits que siguen en 1: {n}',
+      fr: 'Les chaînes se superposent en un seul AND. Bits encore à 1 : {n}',
+      hi: 'पंक्तियाँ एक ही AND में एक-दूसरे पर रखी गईं। 1 बचे बिट: {n}',
+      id: 'Deret-deret ditumpuk dengan satu AND. Bit yang tetap 1: {n}',
+      pt: 'As cadeias são sobrepostas com um único AND. Bits que continuam em 1: {n}',
+    },
+    'caption.read': {
+      en: 'Only the rows under a 1 are read: {rows}',
+      ko: '1 아래의 줄만 읽는다: {rows}',
+      ja: '1 の下の行だけを読む: {rows}',
+      zh: '只读取 1 下方的行：{rows}',
+      ar: 'تُقرأ الصفوف التي تحت 1 فقط: {rows}',
+      es: 'Solo se leen las filas bajo un 1: {rows}',
+      fr: 'Seules les lignes sous un 1 sont lues : {rows}',
+      hi: 'केवल 1 के नीचे की पंक्तियाँ पढ़ी जाती हैं: {rows}',
+      id: 'Hanya baris di bawah 1 yang dibaca: {rows}',
+      pt: 'Só as linhas sob um 1 são lidas: {rows}',
+    },
+    'caption.done': {
+      en: 'Rows read: {read} / {total} · Rows never opened: {skipped}',
+      ko: '읽은 줄: {read} / {total} · 한 번도 열지 않은 줄: {skipped}',
+      ja: '読んだ行: {read} / {total} · 一度も開かなかった行: {skipped}',
+      zh: '读取的行：{read} / {total} · 从未打开的行：{skipped}',
+      ar: 'الصفوف المقروءة: {read} / {total} · صفوف لم تُفتح قط: {skipped}',
+      es: 'Filas leídas: {read} / {total} · Filas nunca abiertas: {skipped}',
+      fr: 'Lignes lues : {read} / {total} · Lignes jamais ouvertes : {skipped}',
+      hi: 'पढ़ी गई पंक्तियाँ: {read} / {total} · कभी न खुली पंक्तियाँ: {skipped}',
+      id: 'Baris dibaca: {read} / {total} · Baris tak pernah dibuka: {skipped}',
+      pt: 'Linhas lidas: {read} / {total} · Linhas nunca abertas: {skipped}',
+    },
+    'label.and': {
+      en: 'AND',
+      ko: 'AND',
+      ja: 'AND',
+      zh: 'AND',
+      ar: 'AND',
+      es: 'AND',
+      fr: 'AND',
+      hi: 'AND',
+      id: 'AND',
+      pt: 'AND',
+    },
+  },
+  blocks: {
+    stage: { type: 'bitwise-combine-stage' },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
+  },
+};

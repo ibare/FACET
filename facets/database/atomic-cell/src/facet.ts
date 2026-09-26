@@ -1,0 +1,141 @@
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
+
+/**
+ * @piece
+ * @notation native
+ *
+ * 질문: 칸 하나에 값을 여럿 넣으면 무엇을 찾을 수 없게 되는가.
+ *
+ * 조건 글자는 SQL 그대로다 (`WHERE ingredients = 'egg'`) — 관계 모델 조각의 조건식은
+ * SQL 이 곧 소재라 가상 표기로 옮기지 않는다.
+ */
+export const atomicCellFacet: FacetJson = {
+  id: 'facet:atomicCell',
+  title: {
+    en: 'One value per cell',
+    ko: '칸 하나에 값 하나',
+    ja: '1つのセルに値は1つ',
+    zh: '一个单元格只放一个值',
+    ar: 'قيمة واحدة في كل خلية',
+    es: 'Un valor por celda',
+    fr: 'Une valeur par cellule',
+    hi: 'हर सेल में एक ही मान',
+    id: 'Satu nilai per sel',
+    pt: 'Um valor por célula',
+  },
+  description: {
+    en: 'A condition cannot find a value packed into a cell with others. Unpack the cell into one row per value, and the same condition finds it.',
+    ko: '다른 값과 한 칸에 뭉친 값은 조건으로 찾지 못한다. 칸을 풀어 값마다 한 줄씩 두면 같은 조건이 찾아낸다.',
+    ja: '他の値と1つのセルにまとめられた値は、条件で見つけられない。セルをほどいて値ごとに1行ずつ置くと、同じ条件で見つかる。',
+    zh: '与其他值挤在同一单元格里的值,条件找不到它。把单元格拆开、每个值占一行,同样的条件就能找到。',
+    ar: 'لا يستطيع الشرط أن يجد قيمة محشورة مع غيرها في خلية واحدة. افكك الخلية إلى صف لكل قيمة، فيجدها الشرط نفسه.',
+    es: 'Una condición no encuentra un valor empaquetado en una celda junto a otros. Desempaqueta la celda en una fila por valor y la misma condición lo encuentra.',
+    fr: 'Une condition ne trouve pas une valeur tassée avec d’autres dans une cellule. Dépliez la cellule en une ligne par valeur, et la même condition la trouve.',
+    hi: 'दूसरे मानों के साथ एक सेल में ठुँसे मान को शर्त नहीं ढूँढ पाती। सेल खोलकर हर मान को अपनी पंक्ति दें, तो वही शर्त उसे ढूँढ लेती है।',
+    id: 'Kondisi tidak bisa menemukan nilai yang dijejalkan bersama nilai lain dalam satu sel. Urai sel itu menjadi satu baris per nilai, dan kondisi yang sama menemukannya.',
+    pt: 'Uma condição não encontra um valor empacotado numa célula junto com outros. Desempacote a célula em uma linha por valor e a mesma condição o encontra.',
+  },
+  algorithm: 'module:atomicCell',
+  scene: 'module:atomicCellScene',
+  initialData: {
+    type: 'atomic-cell',
+    stepMs: 1400,
+    source: {
+      table: 'recipes',
+      columns: ['recipe', 'ingredients'],
+      key: ['recipe'],
+      rows: [
+        ['pancake', 'egg, milk, flour'],
+        ['omelet', 'egg, salt'],
+        ['bread', 'flour, salt'],
+      ],
+    },
+    target: {
+      table: 'recipe_ingredients',
+      columns: ['recipe', 'ingredient'],
+      key: ['recipe', 'ingredient'],
+    },
+    separator: ', ',
+    before: { column: 'ingredients', value: 'egg' },
+    after: { column: 'ingredient', value: 'egg' },
+  },
+  shuffleOnReset: false,
+  blocks: {
+    stage: { type: 'atomic-cell-stage' },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
+  },
+  messages: {
+    'caption.rows': {
+      en: 'Rows: {n}.',
+      ko: '줄 수: {n}.',
+      ja: '行数: {n}。',
+      zh: '行数: {n}。',
+      ar: 'عدد الصفوف: {n}.',
+      es: 'Filas: {n}.',
+      fr: 'Lignes : {n}.',
+      hi: 'पंक्तियाँ: {n}.',
+      id: 'Baris: {n}.',
+      pt: 'Linhas: {n}.',
+    },
+    'caption.table': {
+      en: 'Rows: {n}. Values packed into {column} cells: {m}.',
+      ko: '줄 수: {n}. {column} 칸들에 뭉쳐 있는 값: {m}.',
+      ja: '行数: {n}。{column} のセルに詰め込まれた値: {m}。',
+      zh: '行数: {n}。挤在 {column} 单元格里的值: {m}。',
+      ar: 'عدد الصفوف: {n}. القيم المحشورة في خلايا {column}: {m}.',
+      es: 'Filas: {n}. Valores empaquetados en las celdas de {column}: {m}.',
+      fr: 'Lignes : {n}. Valeurs tassées dans les cellules {column} : {m}.',
+      hi: 'पंक्तियाँ: {n}. {column} सेलों में ठुँसे मान: {m}.',
+      id: 'Baris: {n}. Nilai yang dijejalkan di sel {column}: {m}.',
+      pt: 'Linhas: {n}. Valores empacotados nas células de {column}: {m}.',
+    },
+    'caption.filterSource': {
+      en: "Each whole {column} cell is compared with '{value}'. Matching rows: {n}.",
+      ko: "조건은 {column} 칸 전체를 값 '{value}' 하나와 견준다. 맞는 줄: {n}.",
+      ja: "条件は {column} のセル全体を '{value}' と比べる。一致する行: {n}。",
+      zh: "条件把整个 {column} 单元格与 '{value}' 比较。匹配的行: {n}。",
+      ar: "تُقارَن كل خلية {column} كاملةً بـ '{value}'. الصفوف المطابقة: {n}.",
+      es: "Cada celda de {column} se compara entera con '{value}'. Filas que coinciden: {n}.",
+      fr: "Chaque cellule {column} est comparée en entier à '{value}'. Lignes retenues : {n}.",
+      hi: "हर {column} सेल को पूरा का पूरा '{value}' से मिलाया जाता है। मेल खाती पंक्तियाँ: {n}.",
+      id: "Setiap sel {column} dibandingkan utuh dengan '{value}'. Baris yang cocok: {n}.",
+      pt: "Cada célula de {column} é comparada inteira com '{value}'. Linhas que batem: {n}.",
+    },
+    'caption.unpack': {
+      en: '{name}: values released from one cell: {k}. Rows now: {n}.',
+      ko: '{name} — 칸 하나에서 풀려 나온 값: {k}. 이제 줄 수: {n}.',
+      ja: '{name} — 1つのセルからほどけた値: {k}。現在の行数: {n}。',
+      zh: '{name} — 从一个单元格里拆出的值: {k}。现在行数: {n}。',
+      ar: '{name} — قيم خرجت من خلية واحدة: {k}. عدد الصفوف الآن: {n}.',
+      es: '{name}: valores liberados de una celda: {k}. Filas ahora: {n}.',
+      fr: '{name} : valeurs libérées d’une cellule : {k}. Lignes maintenant : {n}.',
+      hi: '{name} — एक सेल से निकले मान: {k}. अब पंक्तियाँ: {n}.',
+      id: '{name}: nilai yang terlepas dari satu sel: {k}. Baris sekarang: {n}.',
+      pt: '{name}: valores soltos de uma célula: {k}. Linhas agora: {n}.',
+    },
+    'caption.filterTarget': {
+      en: "{column} = '{value}'. Matching rows: {n}.",
+      ko: "{column} = '{value}'. 맞는 줄: {n}.",
+      ja: "{column} = '{value}'。一致する行: {n}。",
+      zh: "{column} = '{value}'。匹配的行: {n}。",
+      ar: "{column} = '{value}'. الصفوف المطابقة: {n}.",
+      es: "{column} = '{value}'. Filas que coinciden: {n}.",
+      fr: "{column} = '{value}'. Lignes retenues : {n}.",
+      hi: "{column} = '{value}'. मेल खाती पंक्तियाँ: {n}.",
+      id: "{column} = '{value}'. Baris yang cocok: {n}.",
+      pt: "{column} = '{value}'. Linhas que batem: {n}.",
+    },
+    'label.matched': {
+      en: 'Matching rows: {n}',
+      ko: '맞는 줄: {n}',
+      ja: '一致する行: {n}',
+      zh: '匹配的行: {n}',
+      ar: 'الصفوف المطابقة: {n}',
+      es: 'Filas que coinciden: {n}',
+      fr: 'Lignes retenues : {n}',
+      hi: 'मेल खाती पंक्तियाँ: {n}',
+      id: 'Baris yang cocok: {n}',
+      pt: 'Linhas que batem: {n}',
+    },
+  },
+};

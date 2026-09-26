@@ -1,0 +1,112 @@
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
+
+/**
+ * @piece
+ * 질문: CROSS JOIN 은 결과 줄을 몇 개 만드는가.
+ *
+ * @notation native
+ * 화면의 질의는 SQL 그대로다 — SQL 문이 곧 주장의 소재라 가상 표기로 옮기지 않는다.
+ */
+export const allPairsFacet: FacetJson = {
+  id: 'facet:allPairs',
+  title: {
+    en: 'CROSS JOIN makes every pair',
+    ko: 'CROSS JOIN 은 모든 짝을 만든다',
+    ja: 'CROSS JOIN はすべての組を作る',
+    zh: 'CROSS JOIN 生成所有配对',
+    ar: 'CROSS JOIN يصنع كل الأزواج',
+    es: 'CROSS JOIN forma todos los pares',
+    fr: 'CROSS JOIN forme toutes les paires',
+    hi: 'CROSS JOIN हर जोड़ी बनाता है',
+    id: 'CROSS JOIN membuat semua pasangan',
+    pt: 'CROSS JOIN forma todos os pares',
+  },
+  description: {
+    en: 'With no condition, each row of sizes branches out to every row of colors at once. The result grows 4 · 8 · 12 — rows times rows.',
+    ko: '조건이 없으니 sizes 의 줄 하나가 colors 의 모든 줄로 한꺼번에 가지를 뻗는다. 결과는 4 · 8 · 12 로 — 줄 수 곱하기 줄 수로 불어난다.',
+    ja: '条件がないので、sizes の各行が colors のすべての行へ一度に枝を伸ばす。結果は 4 · 8 · 12 と、行数かける行数で増える。',
+    zh: '没有条件，sizes 的每一行一次性伸向 colors 的所有行。结果按 4 · 8 · 12 增长——行数乘以行数。',
+    ar: 'بلا شرط، يمتد كل صف من sizes إلى كل صفوف colors دفعة واحدة. تنمو النتيجة 4 · 8 · 12 — صفوف في صفوف.',
+    es: 'Sin condición, cada fila de sizes se ramifica a la vez hacia todas las filas de colors. El resultado crece 4 · 8 · 12: filas por filas.',
+    fr: 'Sans condition, chaque ligne de sizes se ramifie d’un coup vers toutes les lignes de colors. Le résultat croît 4 · 8 · 12 : lignes fois lignes.',
+    hi: 'कोई शर्त नहीं, इसलिए sizes की हर पंक्ति एक साथ colors की सभी पंक्तियों तक फैलती है। परिणाम 4 · 8 · 12 बढ़ता है — पंक्तियाँ गुणा पंक्तियाँ।',
+    id: 'Tanpa syarat, setiap baris sizes bercabang sekaligus ke semua baris colors. Hasilnya tumbuh 4 · 8 · 12 — baris kali baris.',
+    pt: 'Sem condição, cada linha de sizes se ramifica de uma vez para todas as linhas de colors. O resultado cresce 4 · 8 · 12 — linhas vezes linhas.',
+  },
+  algorithm: 'module:allPairs',
+  scene: 'module:allPairsScene',
+  initialData: {
+    type: 'all-pairs',
+    stepMs: 1800,
+    sql: ['SELECT *', 'FROM sizes', 'CROSS JOIN colors;'],
+    left: { name: 'sizes', column: 'size', rows: ['S', 'M', 'L'] },
+    right: { name: 'colors', column: 'color', rows: ['red', 'blue', 'green', 'black'] },
+  },
+  shuffleOnReset: false,
+  messages: {
+    'label.result': {
+      en: 'Result',
+      ko: '결과',
+      ja: '結果',
+      zh: '结果',
+      ar: 'النتيجة',
+      es: 'Resultado',
+      fr: 'Résultat',
+      hi: 'परिणाम',
+      id: 'Hasil',
+      pt: 'Resultado',
+    },
+    'label.rows': {
+      en: 'Result rows: {rows}',
+      ko: '결과 줄: {rows}',
+      ja: '結果の行: {rows}',
+      zh: '结果行数：{rows}',
+      ar: 'صفوف النتيجة: {rows}',
+      es: 'Filas del resultado: {rows}',
+      fr: 'Lignes du résultat : {rows}',
+      hi: 'परिणाम की पंक्तियाँ: {rows}',
+      id: 'Baris hasil: {rows}',
+      pt: 'Linhas do resultado: {rows}',
+    },
+    'label.product': {
+      en: 'Result rows: {used} × {per} = {rows}',
+      ko: '결과 줄: {used} × {per} = {rows}',
+      ja: '結果の行: {used} × {per} = {rows}',
+      zh: '结果行数：{used} × {per} = {rows}',
+      ar: 'صفوف النتيجة: {used} × {per} = {rows}',
+      es: 'Filas del resultado: {used} × {per} = {rows}',
+      fr: 'Lignes du résultat : {used} × {per} = {rows}',
+      hi: 'परिणाम की पंक्तियाँ: {used} × {per} = {rows}',
+      id: 'Baris hasil: {used} × {per} = {rows}',
+      pt: 'Linhas do resultado: {used} × {per} = {rows}',
+    },
+    'caption.start': {
+      en: 'Rows in {a}: {an} · Rows in {b}: {bn}',
+      ko: '{a} 의 줄: {an} · {b} 의 줄: {bn}',
+      ja: '{a} の行: {an} · {b} の行: {bn}',
+      zh: '{a} 的行数：{an} · {b} 的行数：{bn}',
+      ar: 'صفوف {a}: {an} · صفوف {b}: {bn}',
+      es: 'Filas en {a}: {an} · Filas en {b}: {bn}',
+      fr: 'Lignes de {a} : {an} · Lignes de {b} : {bn}',
+      hi: '{a} की पंक्तियाँ: {an} · {b} की पंक्तियाँ: {bn}',
+      id: 'Baris di {a}: {an} · Baris di {b}: {bn}',
+      pt: 'Linhas em {a}: {an} · Linhas em {b}: {bn}',
+    },
+    'caption.spread': {
+      en: 'Row {size} pairs with every row of {table} at once — new rows: {added}',
+      ko: '줄 {size} 하나가 {table} 의 모든 줄과 한꺼번에 짝을 짓는다 — 새 줄: {added}',
+      ja: '行 {size} が {table} のすべての行と一度に組になる — 新しい行: {added}',
+      zh: '行 {size} 一次性与 {table} 的每一行配对——新增行：{added}',
+      ar: 'الصف {size} يقترن بكل صفوف {table} دفعة واحدة — صفوف جديدة: {added}',
+      es: 'La fila {size} se empareja a la vez con cada fila de {table} — filas nuevas: {added}',
+      fr: 'La ligne {size} s’associe d’un coup à chaque ligne de {table} — nouvelles lignes : {added}',
+      hi: 'पंक्ति {size} एक साथ {table} की हर पंक्ति से जोड़ी बनाती है — नई पंक्तियाँ: {added}',
+      id: 'Baris {size} berpasangan sekaligus dengan setiap baris {table} — baris baru: {added}',
+      pt: 'A linha {size} forma par de uma vez com cada linha de {table} — linhas novas: {added}',
+    },
+  },
+  blocks: {
+    stage: { type: 'all-pairs-stage' },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
+  },
+};

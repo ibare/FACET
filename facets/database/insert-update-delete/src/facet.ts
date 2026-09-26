@@ -1,0 +1,162 @@
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
+
+/**
+ * @piece
+ * @notation native — 화면의 문은 SQL 그대로다. SQL 문이 곧 이 조각의 소재라 가상 표기로 옮기지 않는다.
+ *
+ * 질문: INSERT · UPDATE · DELETE 는 표에서 각각 무엇을 바꾸는가.
+ *
+ * INSERT 는 줄을 하나 새로 들이고, UPDATE 는 줄을 제자리에 둔 채 WHERE 에 걸린 줄의 칸 값만
+ * 바꾸며, DELETE 는 걸린 줄을 표 밖으로 뺀다. UPDATE · DELETE 는 먼저 모든 줄을 따지고
+ * 걸린 줄 전부에 한꺼번에 일어난다.
+ */
+export const insertUpdateDeleteFacet: FacetJson = {
+  id: 'facet:insertUpdateDelete',
+  title: {
+    en: 'Insert, update, delete',
+    ko: '넣고 고치고 지운다',
+    ja: '挿入・更新・削除',
+    zh: '插入、更新、删除',
+    ar: 'الإدراج والتحديث والحذف',
+    es: 'Insertar, actualizar, borrar',
+    fr: 'Insérer, modifier, supprimer',
+    hi: 'डालना, बदलना, हटाना',
+    id: 'Sisipkan, ubah, hapus',
+    pt: 'Inserir, atualizar, excluir',
+  },
+  description: {
+    en: 'What do INSERT, UPDATE and DELETE each change in a table?',
+    ko: 'INSERT · UPDATE · DELETE 는 표에서 각각 무엇을 바꾸는가?',
+    ja: 'INSERT・UPDATE・DELETE は表の何をそれぞれ変えるのか?',
+    zh: 'INSERT、UPDATE、DELETE 各自改变了表中的什么?',
+    ar: 'ماذا يغيّر كلٌّ من INSERT وUPDATE وDELETE في الجدول؟',
+    es: '¿Qué cambia cada una de INSERT, UPDATE y DELETE en una tabla?',
+    fr: 'Que change chacune des instructions INSERT, UPDATE et DELETE dans une table ?',
+    hi: 'INSERT, UPDATE और DELETE तालिका में अलग-अलग क्या बदलते हैं?',
+    id: 'Apa yang diubah masing-masing oleh INSERT, UPDATE, dan DELETE pada tabel?',
+    pt: 'O que INSERT, UPDATE e DELETE mudam, cada um, numa tabela?',
+  },
+  algorithm: 'module:insertUpdateDelete',
+  scene: 'module:insertUpdateDeleteScene',
+  initialData: {
+    type: 'insert-update-delete',
+    stepMs: 1400,
+    table: 'stock',
+    columns: ['id', 'item', 'qty'],
+    rows: [
+      [1, 'pen', 12],
+      [2, 'ink', 3],
+      [3, 'pad', 0],
+      [4, 'clip', 7],
+    ],
+    statements: [
+      {
+        kind: 'insert',
+        sql: "INSERT INTO stock VALUES (5, 'tape', 4);",
+        values: [5, 'tape', 4],
+      },
+      {
+        kind: 'update',
+        sql: 'UPDATE stock SET qty = qty + 10 WHERE qty < 5;',
+        set: { column: 'qty', from: 'qty', add: 10 },
+        where: { column: 'qty', op: '<', value: 5 },
+      },
+      {
+        kind: 'delete',
+        sql: 'DELETE FROM stock WHERE qty > 12;',
+        where: { column: 'qty', op: '>', value: 12 },
+      },
+    ],
+  },
+  shuffleOnReset: false,
+  messages: {
+    'caption.start': {
+      en: 'The statements run one at a time, from the top, each to the end.',
+      ko: '문은 위에서부터 하나씩, 끝까지 돈다.',
+      ja: '文は上から一つずつ、最後まで実行される。',
+      zh: '语句从上到下逐条执行,每条执行到底。',
+      ar: 'تُنفَّذ العبارات واحدةً تلو الأخرى من الأعلى، كلٌّ حتى نهايتها.',
+      es: 'Las sentencias se ejecutan de una en una, desde arriba, cada una hasta el final.',
+      fr: "Les instructions s'exécutent une à une, depuis le haut, chacune jusqu'au bout.",
+      hi: 'स्टेटमेंट ऊपर से एक-एक करके चलते हैं, हर एक अंत तक।',
+      id: 'Pernyataan dijalankan satu per satu dari atas, masing-masing sampai selesai.',
+      pt: 'As instruções rodam uma de cada vez, de cima para baixo, cada uma até o fim.',
+    },
+    'caption.insert': {
+      en: 'INSERT: a new row comes into the table, at the end. Affected rows: {n}.',
+      ko: 'INSERT — 새 줄이 표 끝에 들어온다. 영향받은 줄: {n}.',
+      ja: 'INSERT:新しい行が表の末尾に入る。影響を受けた行: {n}。',
+      zh: 'INSERT:新行进入表的末尾。受影响的行:{n}。',
+      ar: 'INSERT: يدخل صف جديد إلى الجدول في آخره. الصفوف المتأثرة: {n}.',
+      es: 'INSERT: una fila nueva entra en la tabla, al final. Filas afectadas: {n}.',
+      fr: 'INSERT : une nouvelle ligne entre dans la table, à la fin. Lignes affectées : {n}.',
+      hi: 'INSERT: एक नई पंक्ति तालिका के अंत में आती है। प्रभावित पंक्तियाँ: {n}।',
+      id: 'INSERT: baris baru masuk ke tabel, di bagian akhir. Baris terdampak: {n}.',
+      pt: 'INSERT: uma linha nova entra na tabela, no fim. Linhas afetadas: {n}.',
+    },
+    'caption.judge': {
+      en: 'Before anything changes, WHERE is checked on every row. Matching rows: {hit} / {total}.',
+      ko: '아무것도 바꾸기 전에 모든 줄을 WHERE 로 따진다. 걸린 줄: {hit} / {total}.',
+      ja: '何かを変える前に、すべての行を WHERE で判定する。該当した行: {hit} / {total}。',
+      zh: '在改动任何东西之前,先用 WHERE 判定每一行。命中的行:{hit} / {total}。',
+      ar: 'قبل أي تغيير، يُفحص كل صف بشرط WHERE. الصفوف المطابقة: {hit} / {total}.',
+      es: 'Antes de cambiar nada, se evalúa WHERE en cada fila. Filas que cumplen: {hit} / {total}.',
+      fr: 'Avant tout changement, WHERE est évalué sur chaque ligne. Lignes retenues : {hit} / {total}.',
+      hi: 'कुछ भी बदलने से पहले, हर पंक्ति पर WHERE जाँचा जाता है। मेल खाने वाली पंक्तियाँ: {hit} / {total}।',
+      id: 'Sebelum apa pun berubah, WHERE diperiksa pada setiap baris. Baris yang cocok: {hit} / {total}.',
+      pt: 'Antes de qualquer mudança, WHERE é avaliado em cada linha. Linhas que atendem: {hit} / {total}.',
+    },
+    'caption.update': {
+      en: 'UPDATE: the rows stay where they are; only the {col} cells of the matching rows change, all at once. Affected rows: {n}.',
+      ko: 'UPDATE — 줄은 제자리에 있고, 걸린 줄의 {col} 칸만 한꺼번에 바뀐다. 영향받은 줄: {n}.',
+      ja: 'UPDATE:行はその場にとどまり、該当した行の {col} セルだけが一度に変わる。影響を受けた行: {n}。',
+      zh: 'UPDATE:行留在原位,只有命中行的 {col} 单元格同时改变。受影响的行:{n}。',
+      ar: 'UPDATE: تبقى الصفوف في أماكنها؛ تتغير خلايا {col} في الصفوف المطابقة فقط، دفعةً واحدة. الصفوف المتأثرة: {n}.',
+      es: 'UPDATE: las filas se quedan en su sitio; solo cambian a la vez las celdas {col} de las filas que cumplen. Filas afectadas: {n}.',
+      fr: 'UPDATE : les lignes restent en place ; seules les cellules {col} des lignes retenues changent, toutes à la fois. Lignes affectées : {n}.',
+      hi: 'UPDATE: पंक्तियाँ अपनी जगह रहती हैं; केवल मेल खाने वाली पंक्तियों के {col} सेल एक साथ बदलते हैं। प्रभावित पंक्तियाँ: {n}।',
+      id: 'UPDATE: baris tetap di tempatnya; hanya sel {col} pada baris yang cocok yang berubah, sekaligus. Baris terdampak: {n}.',
+      pt: 'UPDATE: as linhas ficam no lugar; só as células {col} das linhas que atendem mudam, todas de uma vez. Linhas afetadas: {n}.',
+    },
+    'caption.delete': {
+      en: 'DELETE: every matching row leaves the table at once. Affected rows: {n}.',
+      ko: 'DELETE — 걸린 줄이 전부 한꺼번에 표 밖으로 빠진다. 영향받은 줄: {n}.',
+      ja: 'DELETE:該当した行がすべて一度に表から抜ける。影響を受けた行: {n}。',
+      zh: 'DELETE:所有命中的行同时离开表。受影响的行:{n}。',
+      ar: 'DELETE: تخرج كل الصفوف المطابقة من الجدول دفعةً واحدة. الصفوف المتأثرة: {n}.',
+      es: 'DELETE: todas las filas que cumplen salen de la tabla a la vez. Filas afectadas: {n}.',
+      fr: 'DELETE : toutes les lignes retenues quittent la table à la fois. Lignes affectées : {n}.',
+      hi: 'DELETE: मेल खाने वाली सभी पंक्तियाँ एक साथ तालिका से बाहर निकलती हैं। प्रभावित पंक्तियाँ: {n}।',
+      id: 'DELETE: semua baris yang cocok keluar dari tabel sekaligus. Baris terdampak: {n}.',
+      pt: 'DELETE: todas as linhas que atendem saem da tabela de uma vez. Linhas afetadas: {n}.',
+    },
+    'label.rows': {
+      en: 'Rows: {n}',
+      ko: '줄 수: {n}',
+      ja: '行数: {n}',
+      zh: '行数:{n}',
+      ar: 'الصفوف: {n}',
+      es: 'Filas: {n}',
+      fr: 'Lignes : {n}',
+      hi: 'पंक्तियाँ: {n}',
+      id: 'Baris: {n}',
+      pt: 'Linhas: {n}',
+    },
+    'label.affected': {
+      en: 'Affected rows: {n}',
+      ko: '영향받은 줄: {n}',
+      ja: '影響を受けた行: {n}',
+      zh: '受影响的行:{n}',
+      ar: 'الصفوف المتأثرة: {n}',
+      es: 'Filas afectadas: {n}',
+      fr: 'Lignes affectées : {n}',
+      hi: 'प्रभावित पंक्तियाँ: {n}',
+      id: 'Baris terdampak: {n}',
+      pt: 'Linhas afetadas: {n}',
+    },
+  },
+  blocks: {
+    stage: { type: 'insert-update-delete-stage' },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
+  },
+};

@@ -1,0 +1,112 @@
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
+
+/**
+ * @piece
+ * 질문: 비트맵 인덱스는 줄마다 무엇을 적어 두는가.
+ *
+ * 표 `orders` 의 열 `status` 를 값마다 비트 줄 하나로 옮긴다. 줄이 하나씩 내려와
+ * 제 값의 비트 줄 제 자리에 1 을 찍고, 다른 비트 줄 같은 자리에는 0 을 남긴다.
+ */
+export const bitPerRowFacet: FacetJson = {
+  id: 'facet:bitPerRow',
+  title: {
+    en: 'One bit per row',
+    ko: '줄마다 비트 하나',
+    ja: '行ごとに 1 ビット',
+    zh: '每行一位',
+    ar: 'بت واحد لكل صف',
+    es: 'Un bit por fila',
+    fr: 'Un bit par ligne',
+    hi: 'हर पंक्ति के लिए एक बिट',
+    id: 'Satu bit per baris',
+    pt: 'Um bit por linha',
+  },
+  description: {
+    en: 'A bitmap index keeps one bit row per value. Each table row puts a 1 in its own value’s row and a 0 in the others.',
+    ko: '비트맵 인덱스는 값마다 비트 줄 하나를 둔다. 표의 줄마다 제 값의 비트 줄에 1, 다른 비트 줄에 0 을 적는다.',
+    ja: 'ビットマップインデックスは値ごとにビット列を一つ持つ。表の各行は自分の値の列に 1、ほかの列に 0 を書く。',
+    zh: '位图索引为每个值保留一条位行。表中每一行在自己值的位行记 1，在其余位行记 0。',
+    ar: 'يحتفظ فهرس الخريطة النقطية بصف بتات لكل قيمة. يضع كل صف من الجدول ‏1 في صف قيمته و‏0 في الصفوف الأخرى.',
+    es: 'Un índice de mapa de bits guarda una fila de bits por valor. Cada fila de la tabla pone un 1 en la fila de su valor y un 0 en las demás.',
+    fr: 'Un index bitmap garde une ligne de bits par valeur. Chaque ligne de la table met un 1 dans la ligne de sa valeur et un 0 dans les autres.',
+    hi: 'बिटमैप इंडेक्स हर मान के लिए एक बिट पंक्ति रखता है। तालिका की हर पंक्ति अपने मान की पंक्ति में 1 और बाकी में 0 लिखती है।',
+    id: 'Indeks bitmap menyimpan satu baris bit per nilai. Tiap baris tabel menaruh 1 di baris nilainya sendiri dan 0 di baris lain.',
+    pt: 'Um índice bitmap guarda uma linha de bits por valor. Cada linha da tabela põe 1 na linha do seu valor e 0 nas outras.',
+  },
+  algorithm: 'module:bitPerRow',
+  scene: 'module:bitPerRowScene',
+  initialData: {
+    type: 'bit-per-row',
+    stepMs: 900,
+    table: 'orders',
+    column: 'status',
+    rows: ['paid', 'pending', 'shipped', 'paid', 'paid', 'shipped', 'pending', 'paid', 'shipped', 'paid'],
+  },
+  shuffleOnReset: false,
+  messages: {
+    'label.bitRows': {
+      en: 'Bit rows',
+      ko: '비트 줄',
+      ja: 'ビット列',
+      zh: '位行',
+      ar: 'صفوف البتات',
+      es: 'Filas de bits',
+      fr: 'Lignes de bits',
+      hi: 'बिट पंक्तियाँ',
+      id: 'Baris bit',
+      pt: 'Linhas de bits',
+    },
+    'label.ones': {
+      en: 'Ones',
+      ko: '1 의 수',
+      ja: '1 の数',
+      zh: '1 的个数',
+      ar: 'عدد الآحاد',
+      es: 'Unos',
+      fr: 'Uns',
+      hi: '1 की गिनती',
+      id: 'Jumlah 1',
+      pt: 'Uns',
+    },
+    'caption.start': {
+      en: 'Column {column}: one empty bit row per value.',
+      ko: '{column} 열 — 값마다 빈 비트 줄 하나.',
+      ja: '列 {column}：値ごとに空のビット列が一つ。',
+      zh: '列 {column}：每个值一条空的位行。',
+      ar: 'العمود {column}: صف بتات فارغ لكل قيمة.',
+      es: 'Columna {column}: una fila de bits vacía por valor.',
+      fr: 'Colonne {column} : une ligne de bits vide par valeur.',
+      hi: 'कॉलम {column}: हर मान के लिए एक खाली बिट पंक्ति।',
+      id: 'Kolom {column}: satu baris bit kosong untuk tiap nilai.',
+      pt: 'Coluna {column}: uma linha de bits vazia por valor.',
+    },
+    'caption.row': {
+      en: '{row} holds {value}: 1 in the {value} bit row, 0 in the others.',
+      ko: '{row} · 값 {value} — {value} 비트 줄에 1, 다른 비트 줄에 0.',
+      ja: '{row} の値は {value}：{value} のビット列に 1、ほかには 0。',
+      zh: '{row} 的值是 {value}：{value} 位行记 1，其余记 0。',
+      ar: '{row} قيمته {value}: ‏1 في صف {value}، و‏0 في الباقي.',
+      es: '{row} vale {value}: 1 en la fila de {value}, 0 en las demás.',
+      fr: '{row} vaut {value} : 1 dans la ligne {value}, 0 dans les autres.',
+      hi: '{row} का मान {value}: {value} की बिट पंक्ति में 1, बाकी में 0।',
+      id: '{row} bernilai {value}: 1 di baris bit {value}, 0 di baris lain.',
+      pt: '{row} vale {value}: 1 na linha de {value}, 0 nas outras.',
+    },
+    'caption.done': {
+      en: 'Ones: {sum} = {ones}. Rows: {rows}. Bits: {values} × {rows} = {bits}',
+      ko: '1 의 수: {sum} = {ones}. 줄: {rows}. 비트: {values} × {rows} = {bits}',
+      ja: '1 の数: {sum} = {ones}。行: {rows}。ビット: {values} × {rows} = {bits}',
+      zh: '1 的个数: {sum} = {ones}。行: {rows}。位: {values} × {rows} = {bits}',
+      ar: 'عدد الآحاد: {sum} = {ones}. الصفوف: {rows}. البتات: {values} × {rows} = {bits}',
+      es: 'Unos: {sum} = {ones}. Filas: {rows}. Bits: {values} × {rows} = {bits}',
+      fr: 'Uns : {sum} = {ones}. Lignes : {rows}. Bits : {values} × {rows} = {bits}',
+      hi: '1 की गिनती: {sum} = {ones}। पंक्तियाँ: {rows}। बिट: {values} × {rows} = {bits}',
+      id: 'Jumlah 1: {sum} = {ones}. Baris: {rows}. Bit: {values} × {rows} = {bits}',
+      pt: 'Uns: {sum} = {ones}. Linhas: {rows}. Bits: {values} × {rows} = {bits}',
+    },
+  },
+  blocks: {
+    stage: { type: 'bit-per-row-stage' },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
+  },
+};
