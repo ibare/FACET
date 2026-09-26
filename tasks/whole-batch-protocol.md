@@ -113,6 +113,8 @@
    남의 미완성 패키지를 물어 결과가 흔들린다.
 7. **개념 메타를 붙인다** — `tasks/concept-meta-batch-protocol.md`. 완제품 하나와
    그것을 `origin` 으로 삼는 조각 전부가 한 묶음이다.
+   **완제품을 먼저 등록한다**(`piece-register --topic`) — 등록 전에는 `concept-covers-facets` 가 "분류표에 없는 canonicalFacet" 으로
+   통째 멈춰 개념 에이전트가 제 묶음을 검사하지 못한다 (2026-09-26 딥러닝 배치에서 먼저 끝난 묶음 둘이 임시 스크립트로 에둘렀다).
 
 ## 사양에 넣을 것
 

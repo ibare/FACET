@@ -179,6 +179,11 @@ coroutine 으로 두면 러너가 **마운트 시점에 throw** 하고, 통과�
 - 최상위 `try` 를 두면 `catch (err) { if (!ctx.cancelled) throw err; }` 가 정본. `catch { return; }` 금지 (C8)
 - `phase` 는 `silent: true`. 헬퍼 `const phase = (name: string) => ctx.emit({ type: 'phase', payload: { phase: name }, silent: true })`
   는 허용 — 호출부가 **리터럴** (C3). phase 집합은 algorithm 과 irs.ts 가 **정확히 같다**
+- **phase 는 그 걸음의 발신 앞에** 보낸다 — 자취(`timeline.ts`)는 silent 아닌 발신에서 걸음을 끊어, 발신 **뒤에** 보낸 silent phase 는
+  되짚기에서 **다음 걸음**에 묶인다(첫 걸음은 패널이 꺼지고 끝 걸음에는 앞 phase 가 켜진다). 재생 중엔 sleep 이 경계라 드러나지 않고
+  `whole-check` 도 못 잡는다 — 걸음 이벤트마다 바로 앞이 그 걸음의 phase 인지 facet 테스트로 잠근다 (2026-09-26 딥러닝 열셋 중 셋 — 감사가 둘,
+  호스트의 확인 요청이 감사가 놓친 하나를 찾았다)
+- **걸음 이벤트는 silent 가 아니다.** silent 는 걸음 0 을 갈아 끼우는 init 과 phase 뿐이다 — 걸음 이벤트까지 silent 로 두면 facet-shot · 자취가 걸음을 세지 못한다
 - `Math.random` 금지 — 난수가 필요하면 식까지 적힌 생성기
 
 **손잡이를 받는 짜임** — "한 판을 끝까지 재생 → `waitForInput` → 받은 값으로 다시 재생". 입력은 mechanism 의
@@ -221,6 +226,12 @@ coroutine 으로 두면 러너가 **마운트 시점에 throw** 하고, 통과�
 - 러너가 붙여 준 캔버스를 떼지 않는다 — `container.textContent = ''` 금지 (canvas-attach)
 - `initialData` 가 없어도 마운트에서 던지지 않는다 — 전수 검사가 `config: {}` 만 주고 마운트한다
 - 한 판이 끝나 입력을 기다리는 동안 재생 · 한 걸음 단추가 꺼지는 것은 정상이다
+- **되짚기는 `onReset` 뒤에 자취의 첫 줄(silent init)부터 다시 먹인다.** 첫 그림이 svg 를 비우지 않고 덧붙이면 되짚을 때마다 무대가
+  한 벌씩 는다 — 첫 그림을 멱등으로(들어오면 비우고 다시 짓는다) 두거나 `onReset` 에서 무대의 `reset()` 을 부른다. 첫 그림을 두 번 먹여
+  요소 수가 같은지 facet 테스트로 잠근다 (2026-09-26 learned-filter 가 272 → 544 요소. `whole-check` 는 못 잡는다)
+- 코드 패널은 없을 수 있다 — `facet-first-step` 은 패널 없이 띄운다. 없으면 던지지 말고 넘긴다
+- `facet-shot` 은 projector 경로에서 silent init 뒤의 걸음 0 을 다시 찍지 않아 "처음" 칸이 빈 무대로 나온다 — 도구의 빈틈이다.
+  걸음 0 은 facet 테스트로 확인한다 (2026-09-26 셋이 같은 자리에서 멈칫했다)
 
 **운동 — 필수.** 손잡이를 돌리면 화면의 무엇이 **자리를 옮기거나 모양이 바뀌어야** 한다. 값을 갈아 끼우는
 재그리기만으로는 관성 계측의 운동 항목(≥ 70%)을 못 넘는다. 사양의 **운동의 동사**가 화면에서 **시간에 걸쳐**
