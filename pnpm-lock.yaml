@@ -4400,17 +4400,63 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ml-basics/adam:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/ml-basics/assign-then-move:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ml-basics/backprop:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/ml-basics/bagging-sample:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/ml-basics/batchnorm:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/ml-basics/carry-velocity:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/cross-validation:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/ml-basics/dbscan:
     dependencies:
@@ -4492,7 +4538,67 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ml-basics/drop-random-units:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/dropout:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/ml-basics/early-stopping:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/ml-basics/error-flows-backward:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/four-boxes:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ml-basics/global-and-local:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/gradient-descent:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/ml-basics/gradient-through-layers:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/hidden-layer-features:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -4525,6 +4631,12 @@ importers:
       '@ffacet/transpiler-typescript':
         specifier: workspace:*
         version: link:../../../packages/transpiler-typescript
+
+  facets/ml-basics/hold-out-some:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
 
   facets/ml-basics/impurity-drops:
     dependencies:
@@ -4612,6 +4724,18 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/transpiler-typescript
 
+  facets/ml-basics/layers-compose:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/learning-rate-too-big:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ml-basics/least-squares:
     dependencies:
       '@ffacet/core':
@@ -4619,6 +4743,12 @@ importers:
         version: link:../../../packages/core
 
   facets/ml-basics/linear-regression:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/local-minimum:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -4652,7 +4782,29 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/transpiler-typescript
 
+  facets/ml-basics/loss:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/ml-basics/loss-measures-wrongness:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ml-basics/many-trees-vote:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/memorize-vs-generalize:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -4664,11 +4816,59 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/ml-basics/mlp-activation:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/ml-basics/momentum:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/ml-basics/noise-left-out:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/ml-basics/noisy-path:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/nonlinear-bends:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/one-batch-at-a-time:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/overfitting:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/ml-basics/pca:
     dependencies:
@@ -4698,7 +4898,29 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/transpiler-typescript
 
+  facets/ml-basics/per-parameter-step:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/perceptron:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/ml-basics/project-and-lose:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/push-to-zero:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -4732,7 +4954,51 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/transpiler-typescript
 
+  facets/ml-basics/rescale-each-batch:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ml-basics/residual-distance:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/roc-imbalance:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/ml-basics/rotate-the-fold:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/saturate-and-vanish:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/sgd:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/ml-basics/shrink-all:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -4745,6 +5011,12 @@ importers:
         version: link:../../../packages/core
 
   facets/ml-basics/squash-to-probability:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/stop-before-turn:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -4784,6 +5056,18 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/transpiler-typescript
 
+  facets/ml-basics/threshold-slides:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/train-down-val-up:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ml-basics/tsne:
     dependencies:
       '@ffacet/core':
@@ -4791,6 +5075,22 @@ importers:
         version: link:../../../packages/core
 
   facets/ml-basics/vote-by-neighbors:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/ml-basics/weight-penalty:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/ml-basics/weighted-sum-threshold:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -6342,6 +6642,9 @@ importers:
       '@ffacet/algorithm-acid':
         specifier: workspace:*
         version: link:../../facets/database/acid
+      '@ffacet/algorithm-adam':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/adam
       '@ffacet/algorithm-add-noise-then-remove':
         specifier: workspace:*
         version: link:../../facets/deep-learning/add-noise-then-remove
@@ -6438,6 +6741,9 @@ importers:
       '@ffacet/algorithm-back-off-on-loss':
         specifier: workspace:*
         version: link:../../facets/network/back-off-on-loss
+      '@ffacet/algorithm-backprop':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/backprop
       '@ffacet/algorithm-backtrack-on-fail':
         specifier: workspace:*
         version: link:../../facets/compilers/backtrack-on-fail
@@ -6465,6 +6771,9 @@ importers:
       '@ffacet/algorithm-batching-and-padding':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/batching-and-padding
+      '@ffacet/algorithm-batchnorm':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/batchnorm
       '@ffacet/algorithm-beam-search':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/beam-search
@@ -6615,6 +6924,9 @@ importers:
       '@ffacet/algorithm-carry-several-lines':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/carry-several-lines
+      '@ffacet/algorithm-carry-velocity':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/carry-velocity
       '@ffacet/algorithm-cascade-conflict':
         specifier: workspace:*
         version: link:../../facets/web-runtime/cascade-conflict
@@ -6732,6 +7044,9 @@ importers:
       '@ffacet/algorithm-critical-section':
         specifier: workspace:*
         version: link:../../facets/os/critical-section
+      '@ffacet/algorithm-cross-validation':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/cross-validation
       '@ffacet/algorithm-crowd-the-tails':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/crowd-the-tails
@@ -6864,6 +7179,12 @@ importers:
       '@ffacet/algorithm-draft-then-verify':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/draft-then-verify
+      '@ffacet/algorithm-drop-random-units':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/drop-random-units
+      '@ffacet/algorithm-dropout':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/dropout
       '@ffacet/algorithm-dropped-frame':
         specifier: workspace:*
         version: link:../../facets/web-runtime/dropped-frame
@@ -6879,6 +7200,9 @@ importers:
       '@ffacet/algorithm-dynamic-programming':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/dynamic-programming
+      '@ffacet/algorithm-early-stopping':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/early-stopping
       '@ffacet/algorithm-echo-and-reply':
         specifier: workspace:*
         version: link:../../facets/network/echo-and-reply
@@ -6912,6 +7236,9 @@ importers:
       '@ffacet/algorithm-erase-the-impossible':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/erase-the-impossible
+      '@ffacet/algorithm-error-flows-backward':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/error-flows-backward
       '@ffacet/algorithm-estimate-from-stats':
         specifier: workspace:*
         version: link:../../facets/database/estimate-from-stats
@@ -7032,6 +7359,9 @@ importers:
       '@ffacet/algorithm-forwarding-table':
         specifier: workspace:*
         version: link:../../facets/network/forwarding-table
+      '@ffacet/algorithm-four-boxes':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/four-boxes
       '@ffacet/algorithm-four-state-hysteresis':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/four-state-hysteresis
@@ -7068,6 +7398,12 @@ importers:
       '@ffacet/algorithm-global-and-local':
         specifier: workspace:*
         version: link:../../facets/ml-basics/global-and-local
+      '@ffacet/algorithm-gradient-descent':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/gradient-descent
+      '@ffacet/algorithm-gradient-through-layers':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/gradient-through-layers
       '@ffacet/algorithm-graph-db':
         specifier: workspace:*
         version: link:../../facets/database/graph-db
@@ -7146,6 +7482,9 @@ importers:
       '@ffacet/algorithm-heuristic-guides':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/heuristic-guides
+      '@ffacet/algorithm-hidden-layer-features':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/hidden-layer-features
       '@ffacet/algorithm-hierarchical':
         specifier: workspace:*
         version: link:../../facets/ml-basics/hierarchical
@@ -7161,6 +7500,9 @@ importers:
       '@ffacet/algorithm-hold-and-wait':
         specifier: workspace:*
         version: link:../../facets/os/hold-and-wait
+      '@ffacet/algorithm-hold-out-some':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/hold-out-some
       '@ffacet/algorithm-hop-by-hop':
         specifier: workspace:*
         version: link:../../facets/network/hop-by-hop
@@ -7338,6 +7680,9 @@ importers:
       '@ffacet/algorithm-layer-wraps-payload':
         specifier: workspace:*
         version: link:../../facets/network/layer-wraps-payload
+      '@ffacet/algorithm-layers-compose':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/layers-compose
       '@ffacet/algorithm-layout-per-frame':
         specifier: workspace:*
         version: link:../../facets/web-runtime/layout-per-frame
@@ -7350,6 +7695,9 @@ importers:
       '@ffacet/algorithm-learned-filter':
         specifier: workspace:*
         version: link:../../facets/deep-learning/learned-filter
+      '@ffacet/algorithm-learning-rate-too-big':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/learning-rate-too-big
       '@ffacet/algorithm-least-squares':
         specifier: workspace:*
         version: link:../../facets/ml-basics/least-squares
@@ -7386,6 +7734,9 @@ importers:
       '@ffacet/algorithm-load-factor-rehash':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/load-factor-rehash
+      '@ffacet/algorithm-local-minimum':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/local-minimum
       '@ffacet/algorithm-lock-excludes':
         specifier: workspace:*
         version: link:../../facets/os/lock-excludes
@@ -7428,6 +7779,12 @@ importers:
       '@ffacet/algorithm-loop-vs-recursion':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/loop-vs-recursion
+      '@ffacet/algorithm-loss':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/loss
+      '@ffacet/algorithm-loss-measures-wrongness':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/loss-measures-wrongness
       '@ffacet/algorithm-lost-in-the-middle':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/lost-in-the-middle
@@ -7497,6 +7854,9 @@ importers:
       '@ffacet/algorithm-memo-write-once':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/memo-write-once
+      '@ffacet/algorithm-memorize-vs-generalize':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/memorize-vs-generalize
       '@ffacet/algorithm-memory-leak':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/memory-leak
@@ -7533,9 +7893,15 @@ importers:
       '@ffacet/algorithm-missing-key-remount':
         specifier: workspace:*
         version: link:../../facets/web-runtime/missing-key-remount
+      '@ffacet/algorithm-mlp-activation':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/mlp-activation
       '@ffacet/algorithm-mode-collapse':
         specifier: workspace:*
         version: link:../../facets/deep-learning/mode-collapse
+      '@ffacet/algorithm-momentum':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/momentum
       '@ffacet/algorithm-monad-chain-in-box':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/monad-chain-in-box
@@ -7611,18 +7977,27 @@ importers:
       '@ffacet/algorithm-noise-left-out':
         specifier: workspace:*
         version: link:../../facets/ml-basics/noise-left-out
+      '@ffacet/algorithm-noisy-path':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/noisy-path
       '@ffacet/algorithm-non-atomic-increment':
         specifier: workspace:*
         version: link:../../facets/os/non-atomic-increment
       '@ffacet/algorithm-non-repeatable-read':
         specifier: workspace:*
         version: link:../../facets/database/non-repeatable-read
+      '@ffacet/algorithm-nonlinear-bends':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/nonlinear-bends
       '@ffacet/algorithm-normal-forms':
         specifier: workspace:*
         version: link:../../facets/database/normal-forms
       '@ffacet/algorithm-nudge-toward-reward':
         specifier: workspace:*
         version: link:../../facets/deep-learning/nudge-toward-reward
+      '@ffacet/algorithm-one-batch-at-a-time':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/one-batch-at-a-time
       '@ffacet/algorithm-one-bit-double-fault':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/one-bit-double-fault
@@ -7665,6 +8040,9 @@ importers:
       '@ffacet/algorithm-out-of-order-execution':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/out-of-order-execution
+      '@ffacet/algorithm-overfitting':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/overfitting
       '@ffacet/algorithm-overlap-the-seam':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/overlap-the-seam
@@ -7752,6 +8130,12 @@ importers:
       '@ffacet/algorithm-penalize-repeats':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/penalize-repeats
+      '@ffacet/algorithm-per-parameter-step':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/per-parameter-step
+      '@ffacet/algorithm-perceptron':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/perceptron
       '@ffacet/algorithm-phantom-read':
         specifier: workspace:*
         version: link:../../facets/database/phantom-read
@@ -7857,6 +8241,9 @@ importers:
       '@ffacet/algorithm-push-pop-top':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/push-pop-top
+      '@ffacet/algorithm-push-to-zero':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/push-to-zero
       '@ffacet/algorithm-q-learning':
         specifier: workspace:*
         version: link:../../facets/deep-learning/q-learning
@@ -8007,6 +8394,9 @@ importers:
       '@ffacet/algorithm-reranking':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/reranking
+      '@ffacet/algorithm-rescale-each-batch':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/rescale-each-batch
       '@ffacet/algorithm-residual-distance':
         specifier: workspace:*
         version: link:../../facets/ml-basics/residual-distance
@@ -8025,9 +8415,15 @@ importers:
       '@ffacet/algorithm-rip':
         specifier: workspace:*
         version: link:../../facets/network/rip
+      '@ffacet/algorithm-roc-imbalance':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/roc-imbalance
       '@ffacet/algorithm-rolling-hash':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/rolling-hash
+      '@ffacet/algorithm-rotate-the-fold':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/rotate-the-fold
       '@ffacet/algorithm-rotate-to-balance':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/rotate-to-balance
@@ -8061,6 +8457,9 @@ importers:
       '@ffacet/algorithm-sample-and-decode':
         specifier: workspace:*
         version: link:../../facets/deep-learning/sample-and-decode
+      '@ffacet/algorithm-saturate-and-vanish':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/saturate-and-vanish
       '@ffacet/algorithm-saturating-counter':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/saturating-counter
@@ -8133,6 +8532,9 @@ importers:
       '@ffacet/algorithm-several-views':
         specifier: workspace:*
         version: link:../../facets/deep-learning/several-views
+      '@ffacet/algorithm-sgd':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/sgd
       '@ffacet/algorithm-shadowing':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/shadowing
@@ -8169,6 +8571,9 @@ importers:
       '@ffacet/algorithm-shortest-path-tree':
         specifier: workspace:*
         version: link:../../facets/network/shortest-path-tree
+      '@ffacet/algorithm-shrink-all':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/shrink-all
       '@ffacet/algorithm-shrink-by-summary':
         specifier: workspace:*
         version: link:../../facets/deep-learning/shrink-by-summary
@@ -8301,6 +8706,9 @@ importers:
       '@ffacet/algorithm-static-prediction':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/static-prediction
+      '@ffacet/algorithm-stop-before-turn':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/stop-before-turn
       '@ffacet/algorithm-store-and-forward':
         specifier: workspace:*
         version: link:../../facets/network/store-and-forward
@@ -8373,6 +8781,9 @@ importers:
       '@ffacet/algorithm-three-way-sync':
         specifier: workspace:*
         version: link:../../facets/network/three-way-sync
+      '@ffacet/algorithm-threshold-slides':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/threshold-slides
       '@ffacet/algorithm-through-middle-node':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/through-middle-node
@@ -8412,6 +8823,9 @@ importers:
       '@ffacet/algorithm-tracing-vs-refcount':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/tracing-vs-refcount
+      '@ffacet/algorithm-train-down-val-up':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/train-down-val-up
       '@ffacet/algorithm-transfer-without-cpu':
         specifier: workspace:*
         version: link:../../facets/os/transfer-without-cpu
@@ -8562,12 +8976,18 @@ importers:
       '@ffacet/algorithm-walk-per-character':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/walk-per-character
+      '@ffacet/algorithm-weight-penalty':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/weight-penalty
       '@ffacet/algorithm-weight-sharing':
         specifier: workspace:*
         version: link:../../facets/deep-learning/weight-sharing
       '@ffacet/algorithm-weighted-fair-share':
         specifier: workspace:*
         version: link:../../facets/os/weighted-fair-share
+      '@ffacet/algorithm-weighted-sum-threshold':
+        specifier: workspace:*
+        version: link:../../facets/ml-basics/weighted-sum-threshold
       '@ffacet/algorithm-what-first-paint-needs':
         specifier: workspace:*
         version: link:../../facets/web-runtime/what-first-paint-needs

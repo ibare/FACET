@@ -1042,22 +1042,66 @@
         {
           "id": "neural-basics",
           "name": {"en":"Neural Network Basics","ko":"신경망 기초","ja":"ニューラルネットワークの基礎","zh":"神经网络基础","ar":"أساسيات الشبكات العصبية","es":"Fundamentos de redes neuronales","fr":"Bases des réseaux de neurones","hi":"न्यूरल नेटवर्क की बुनियाद","id":"Dasar Jaringan Saraf","pt":"Fundamentos de redes neurais"},
-          "facets": []
+          "facets": [
+            "facet:perceptron",
+            "facet:mlpActivation",
+            "facet:loss",
+            "facet:weightedSumThreshold",
+            "facet:layersCompose",
+            "facet:hiddenLayerFeatures",
+            "facet:nonlinearBends",
+            "facet:saturateAndVanish",
+            "facet:lossMeasuresWrongness"
+          ]
         },
         {
           "id": "learning-mechanism",
           "name": {"en":"Learning Mechanisms","ko":"학습 메커니즘","ja":"学習の仕組み","zh":"学习机制","ar":"آليات التعلم","es":"Mecanismos de aprendizaje","fr":"Mécanismes d'apprentissage","hi":"सीखने की क्रियाविधि","id":"Mekanisme Pembelajaran","pt":"Mecanismos de aprendizado"},
-          "facets": []
+          "facets": [
+            "facet:gradientDescent",
+            "facet:sgd",
+            "facet:momentum",
+            "facet:adam",
+            "facet:backprop",
+            "facet:learningRateTooBig",
+            "facet:localMinimum",
+            "facet:oneBatchAtATime",
+            "facet:noisyPath",
+            "facet:carryVelocity",
+            "facet:perParameterStep",
+            "facet:errorFlowsBackward",
+            "facet:gradientThroughLayers"
+          ]
         },
         {
           "id": "regularization",
           "name": {"en":"Regularization","ko":"정규화","ja":"正則化","zh":"正则化","ar":"التنظيم","es":"Regularización","fr":"Régularisation","hi":"रेगुलराइज़ेशन","id":"Regularisasi","pt":"Regularização"},
-          "facets": []
+          "facets": [
+            "facet:weightPenalty",
+            "facet:dropout",
+            "facet:batchnorm",
+            "facet:earlyStopping",
+            "facet:pushToZero",
+            "facet:shrinkAll",
+            "facet:dropRandomUnits",
+            "facet:rescaleEachBatch",
+            "facet:stopBeforeTurn"
+          ]
         },
         {
           "id": "evaluation",
           "name": {"en":"Evaluation","ko":"평가","ja":"評価","zh":"评估","ar":"التقييم","es":"Evaluación","fr":"Évaluation","hi":"मूल्यांकन","id":"Evaluasi","pt":"Avaliação"},
-          "facets": []
+          "facets": [
+            "facet:crossValidation",
+            "facet:rocImbalance",
+            "facet:overfitting",
+            "facet:holdOutSome",
+            "facet:rotateTheFold",
+            "facet:thresholdSlides",
+            "facet:fourBoxes",
+            "facet:memorizeVsGeneralize",
+            "facet:trainDownValUp"
+          ]
         }
       ]
     },

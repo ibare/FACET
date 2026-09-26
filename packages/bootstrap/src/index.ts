@@ -2402,4 +2402,124 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:policyGradient', () =>
     import('@ffacet/algorithm-policy-gradient').then((m) => m.registerPolicyGradient()),
   );
+  registerFacetLoader('facet:weightedSumThreshold', () =>
+    import('@ffacet/algorithm-weighted-sum-threshold').then((m) => m.registerWeightedSumThreshold()),
+  );
+  registerFacetLoader('facet:layersCompose', () =>
+    import('@ffacet/algorithm-layers-compose').then((m) => m.registerLayersCompose()),
+  );
+  registerFacetLoader('facet:hiddenLayerFeatures', () =>
+    import('@ffacet/algorithm-hidden-layer-features').then((m) => m.registerHiddenLayerFeatures()),
+  );
+  registerFacetLoader('facet:nonlinearBends', () =>
+    import('@ffacet/algorithm-nonlinear-bends').then((m) => m.registerNonlinearBends()),
+  );
+  registerFacetLoader('facet:saturateAndVanish', () =>
+    import('@ffacet/algorithm-saturate-and-vanish').then((m) => m.registerSaturateAndVanish()),
+  );
+  registerFacetLoader('facet:lossMeasuresWrongness', () =>
+    import('@ffacet/algorithm-loss-measures-wrongness').then((m) => m.registerLossMeasuresWrongness()),
+  );
+  registerFacetLoader('facet:learningRateTooBig', () =>
+    import('@ffacet/algorithm-learning-rate-too-big').then((m) => m.registerLearningRateTooBig()),
+  );
+  registerFacetLoader('facet:localMinimum', () =>
+    import('@ffacet/algorithm-local-minimum').then((m) => m.registerLocalMinimum()),
+  );
+  registerFacetLoader('facet:oneBatchAtATime', () =>
+    import('@ffacet/algorithm-one-batch-at-a-time').then((m) => m.registerOneBatchAtATime()),
+  );
+  registerFacetLoader('facet:noisyPath', () =>
+    import('@ffacet/algorithm-noisy-path').then((m) => m.registerNoisyPath()),
+  );
+  registerFacetLoader('facet:carryVelocity', () =>
+    import('@ffacet/algorithm-carry-velocity').then((m) => m.registerCarryVelocity()),
+  );
+  registerFacetLoader('facet:perParameterStep', () =>
+    import('@ffacet/algorithm-per-parameter-step').then((m) => m.registerPerParameterStep()),
+  );
+  registerFacetLoader('facet:errorFlowsBackward', () =>
+    import('@ffacet/algorithm-error-flows-backward').then((m) => m.registerErrorFlowsBackward()),
+  );
+  registerFacetLoader('facet:gradientThroughLayers', () =>
+    import('@ffacet/algorithm-gradient-through-layers').then((m) => m.registerGradientThroughLayers()),
+  );
+  registerFacetLoader('facet:pushToZero', () =>
+    import('@ffacet/algorithm-push-to-zero').then((m) => m.registerPushToZero()),
+  );
+  registerFacetLoader('facet:shrinkAll', () =>
+    import('@ffacet/algorithm-shrink-all').then((m) => m.registerShrinkAll()),
+  );
+  registerFacetLoader('facet:dropRandomUnits', () =>
+    import('@ffacet/algorithm-drop-random-units').then((m) => m.registerDropRandomUnits()),
+  );
+  registerFacetLoader('facet:rescaleEachBatch', () =>
+    import('@ffacet/algorithm-rescale-each-batch').then((m) => m.registerRescaleEachBatch()),
+  );
+  registerFacetLoader('facet:stopBeforeTurn', () =>
+    import('@ffacet/algorithm-stop-before-turn').then((m) => m.registerStopBeforeTurn()),
+  );
+  registerFacetLoader('facet:holdOutSome', () =>
+    import('@ffacet/algorithm-hold-out-some').then((m) => m.registerHoldOutSome()),
+  );
+  registerFacetLoader('facet:rotateTheFold', () =>
+    import('@ffacet/algorithm-rotate-the-fold').then((m) => m.registerRotateTheFold()),
+  );
+  registerFacetLoader('facet:thresholdSlides', () =>
+    import('@ffacet/algorithm-threshold-slides').then((m) => m.registerThresholdSlides()),
+  );
+  registerFacetLoader('facet:fourBoxes', () =>
+    import('@ffacet/algorithm-four-boxes').then((m) => m.registerFourBoxes()),
+  );
+  registerFacetLoader('facet:memorizeVsGeneralize', () =>
+    import('@ffacet/algorithm-memorize-vs-generalize').then((m) => m.registerMemorizeVsGeneralize()),
+  );
+  registerFacetLoader('facet:trainDownValUp', () =>
+    import('@ffacet/algorithm-train-down-val-up').then((m) => m.registerTrainDownValUp()),
+  );
+  registerFacetLoader('facet:perceptron', () =>
+    import('@ffacet/algorithm-perceptron').then((m) => m.registerPerceptron()),
+  );
+  registerFacetLoader('facet:mlpActivation', () =>
+    import('@ffacet/algorithm-mlp-activation').then((m) => m.registerMlpActivation()),
+  );
+  registerFacetLoader('facet:loss', () =>
+    import('@ffacet/algorithm-loss').then((m) => m.registerLoss()),
+  );
+  registerFacetLoader('facet:backprop', () =>
+    import('@ffacet/algorithm-backprop').then((m) => m.registerBackprop()),
+  );
+  registerFacetLoader('facet:dropout', () =>
+    import('@ffacet/algorithm-dropout').then((m) => m.registerDropout()),
+  );
+  registerFacetLoader('facet:gradientDescent', () =>
+    import('@ffacet/algorithm-gradient-descent').then((m) => m.registerGradientDescent()),
+  );
+  registerFacetLoader('facet:sgd', () =>
+    import('@ffacet/algorithm-sgd').then((m) => m.registerSgd()),
+  );
+  registerFacetLoader('facet:momentum', () =>
+    import('@ffacet/algorithm-momentum').then((m) => m.registerMomentum()),
+  );
+  registerFacetLoader('facet:adam', () =>
+    import('@ffacet/algorithm-adam').then((m) => m.registerAdam()),
+  );
+  registerFacetLoader('facet:batchnorm', () =>
+    import('@ffacet/algorithm-batchnorm').then((m) => m.registerBatchnorm()),
+  );
+  registerFacetLoader('facet:weightPenalty', () =>
+    import('@ffacet/algorithm-weight-penalty').then((m) => m.registerWeightPenalty()),
+  );
+  registerFacetLoader('facet:earlyStopping', () =>
+    import('@ffacet/algorithm-early-stopping').then((m) => m.registerEarlyStopping()),
+  );
+  registerFacetLoader('facet:overfitting', () =>
+    import('@ffacet/algorithm-overfitting').then((m) => m.registerOverfitting()),
+  );
+  registerFacetLoader('facet:crossValidation', () =>
+    import('@ffacet/algorithm-cross-validation').then((m) => m.registerCrossValidation()),
+  );
+  registerFacetLoader('facet:rocImbalance', () =>
+    import('@ffacet/algorithm-roc-imbalance').then((m) => m.registerRocImbalance()),
+  );
 }

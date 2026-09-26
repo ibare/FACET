@@ -208,10 +208,14 @@ describe('계획 카탈로그', () => {
    * 같은 날 딥러닝 완제품 판정에서 넷을 지웠다 — 완제품 안에 합친 넷(풀링 → 수용 영역 · 시퀀스 처리 →
    * BPTT · GRU → LSTM · 멀티 헤드 → 셀프 어텐션). 조각 origin 은 host 토픽으로 옮겼다. 사용자가 정했다
    * (`tasks/deep-learning-whole-batch.md`). 994 → 990.
+   *
+   * 같은 날 머신러닝 기초 완제품 판정에서 넷을 지웠다 — 완제품 안에 합친 넷(활성화 함수 → mlp ·
+   * L2 → l1 · 훈련/검증 분할 → cross-validation · 혼동 행렬 → roc). 조각 origin 은 host 토픽으로 옮겼다.
+   * 사용자가 정했다 (`tasks/ml-foundations-whole-batch.md`). 990 → 986.
    */
   it('규모가 줄지 않았다 — 실수로 잘려 나간 것을 잡는다', () => {
     expect(domains.length).toBeGreaterThanOrEqual(16);
-    expect(rows.length).toBeGreaterThanOrEqual(990);
+    expect(rows.length).toBeGreaterThanOrEqual(986);
   });
 });
 
