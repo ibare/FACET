@@ -4499,49 +4499,56 @@
               "name": "같은 것을 최대한 남긴다",
               "desc": "남길 것을 정하면 고칠 것이 정해진다",
               "kind": "piece",
-              "origin": "longest-common-subsequence"
+              "origin": "longest-common-subsequence",
+              "facetId": "facet:keepTheCommon"
             },
             {
               "id": "edit-script",
               "name": "지운 줄과 넣은 줄",
               "desc": "차이를 손질 목록으로 적는다",
               "kind": "piece",
-              "origin": "longest-common-subsequence"
+              "origin": "longest-common-subsequence",
+              "facetId": "facet:editScript"
             },
             {
               "id": "diagonal-is-free",
               "name": "대각선은 공짜",
               "desc": "같은 줄로 갈 때는 값을 안 치른다",
               "kind": "piece",
-              "origin": "myers-diff"
+              "origin": "myers-diff",
+              "facetId": "facet:diagonalIsFree"
             },
             {
               "id": "ancestor-as-referee",
               "name": "갈라지기 전 자리",
               "desc": "누가 고쳤는지는 공통 조상이 안다",
               "kind": "piece",
-              "origin": "three-way-merge"
+              "origin": "three-way-merge",
+              "facetId": "facet:ancestorAsReferee"
             },
             {
               "id": "one-side-changed",
               "name": "한쪽만 고쳤으면",
               "desc": "고친 쪽을 그대로 쓴다",
               "kind": "piece",
-              "origin": "three-way-merge"
+              "origin": "three-way-merge",
+              "facetId": "facet:oneSideChanged"
             },
             {
               "id": "both-touched-same-line",
               "name": "둘이 같은 줄을",
               "desc": "같은 자리를 고치면 멈춘다",
               "kind": "piece",
-              "origin": "conflict-resolution"
+              "origin": "conflict-resolution",
+              "facetId": "facet:bothTouchedSameLine"
             },
             {
               "id": "move-looks-like-rewrite",
               "name": "옮긴 것과 다시 쓴 것",
               "desc": "줄 단위로 보면 이동이 삭제와 삽입이다",
               "kind": "piece",
-              "origin": "conflict-resolution"
+              "origin": "conflict-resolution",
+              "facetId": "facet:moveLooksLikeRewrite"
             }
           ]
         },
@@ -4570,56 +4577,64 @@
               "name": "찍은 자리가 앞을 가리킨다",
               "desc": "이력은 뒤에서 앞으로 이어진 사슬이다",
               "kind": "piece",
-              "origin": "commit-dag"
+              "origin": "commit-dag",
+              "facetId": "facet:snapshotPointsBack"
             },
             {
               "id": "branch-is-a-label",
               "name": "가지가 아니라 이름표",
               "desc": "브랜치는 한 자리를 가리키는 이름이다",
               "kind": "piece",
-              "origin": "commit-dag"
+              "origin": "commit-dag",
+              "facetId": "facet:branchIsALabel"
             },
             {
               "id": "fast-forward",
               "name": "빨리 감기",
               "desc": "갈라지지 않았으면 이름표만 옮긴다",
               "kind": "piece",
-              "origin": "merge-base"
+              "origin": "merge-base",
+              "facetId": "facet:fastForward"
             },
             {
               "id": "where-they-parted",
               "name": "둘이 갈라진 자리",
               "desc": "두 갈래를 거슬러 처음 만나는 곳",
               "kind": "piece",
-              "origin": "merge-base"
+              "origin": "merge-base",
+              "facetId": "facet:whereTheyParted"
             },
             {
               "id": "replay-on-new-base",
               "name": "다시 얹기",
               "desc": "고친 것을 새 바닥 위에 하나씩 다시 놓는다",
               "kind": "piece",
-              "origin": "rebase-vs-merge"
+              "origin": "rebase-vs-merge",
+              "facetId": "facet:replayOnNewBase"
             },
             {
               "id": "pick-one-out",
               "name": "하나만 골라 옮기기",
               "desc": "가지 전체가 아니라 한 뭉치만",
               "kind": "piece",
-              "origin": "rebase-vs-merge"
+              "origin": "rebase-vs-merge",
+              "facetId": "facet:pickOneOut"
             },
             {
               "id": "bisect-halving",
               "name": "절반씩 좁히기",
               "desc": "어디서 깨졌는지 반씩 줄여 찾는다",
               "kind": "piece",
-              "origin": "history-bisect"
+              "origin": "history-bisect",
+              "facetId": "facet:bisectHalving"
             },
             {
               "id": "unreachable-snapshot",
               "name": "아무도 안 가리키면",
               "desc": "이름이 떨어진 자리는 잊힌다",
               "kind": "piece",
-              "origin": "commit-dag"
+              "origin": "commit-dag",
+              "facetId": "facet:unreachableSnapshot"
             }
           ]
         },
@@ -4648,42 +4663,48 @@
               "name": "먼저 될 것부터",
               "desc": "남을 기다리는 것은 나중에 세운다",
               "kind": "piece",
-              "origin": "dependency-graph"
+              "origin": "dependency-graph",
+              "facetId": "facet:whoGoesFirst"
             },
             {
               "id": "only-what-changed",
               "name": "손댄 것과 그 위만",
               "desc": "아래가 그대로면 다시 세우지 않는다",
               "kind": "piece",
-              "origin": "incremental-build"
+              "origin": "incremental-build",
+              "facetId": "facet:onlyWhatChanged"
             },
             {
               "id": "timestamp-vs-fingerprint",
               "name": "언제 고쳤나 무엇이 되었나",
               "desc": "시각으로 보면 안 바뀐 것도 다시 센다",
               "kind": "piece",
-              "origin": "incremental-build"
+              "origin": "incremental-build",
+              "facetId": "facet:timestampVsFingerprint"
             },
             {
               "id": "invalidation-cascade",
               "name": "하나가 흐려지면",
               "desc": "딸린 것까지 줄줄이 다시 해야 한다",
               "kind": "piece",
-              "origin": "cache-invalidation"
+              "origin": "cache-invalidation",
+              "facetId": "facet:invalidationCascade"
             },
             {
               "id": "nobody-can-be-first",
               "name": "서로를 기다린다",
               "desc": "고리가 있으면 시작할 자리가 없다",
               "kind": "piece",
-              "origin": "circular-dependency"
+              "origin": "circular-dependency",
+              "facetId": "facet:nobodyCanBeFirst"
             },
             {
               "id": "independent-in-parallel",
               "name": "안 기다리는 것끼리",
               "desc": "서로 모르는 것은 함께 세운다",
               "kind": "piece",
-              "origin": "dependency-graph"
+              "origin": "dependency-graph",
+              "facetId": "facet:independentInParallel"
             }
           ]
         },
@@ -4708,42 +4729,48 @@
               "name": "세 자리 수",
               "desc": "무엇이 바뀌면 어느 자리를 올리는가",
               "kind": "piece",
-              "origin": "semantic-versioning"
+              "origin": "semantic-versioning",
+              "facetId": "facet:threeNumbers"
             },
             {
               "id": "range-and-candidates",
               "name": "범위와 후보",
               "desc": "이 안이면 어느 것이든 좋다",
               "kind": "piece",
-              "origin": "semantic-versioning"
+              "origin": "semantic-versioning",
+              "facetId": "facet:rangeAndCandidates"
             },
             {
               "id": "diamond-dependency",
               "name": "다이아몬드",
               "desc": "둘이 같은 것을 다른 버전으로 부른다",
               "kind": "piece",
-              "origin": "dependency-resolution"
+              "origin": "dependency-resolution",
+              "facetId": "facet:diamondDependency"
             },
             {
               "id": "no-overlap",
               "name": "겹치는 데가 없다",
               "desc": "두 요구가 만나지 않으면 풀 수 없다",
               "kind": "piece",
-              "origin": "dependency-resolution"
+              "origin": "dependency-resolution",
+              "facetId": "facet:noOverlap"
             },
             {
               "id": "two-copies-coexist",
               "name": "두 벌이 함께 산다",
               "desc": "못 맞추면 각자 자기 것을 갖는다",
               "kind": "piece",
-              "origin": "dependency-resolution"
+              "origin": "dependency-resolution",
+              "facetId": "facet:twoCopiesCoexist"
             },
             {
               "id": "pin-what-was-chosen",
               "name": "고른 것을 적어 둔다",
               "desc": "다음에도 같은 것이 뽑히도록",
               "kind": "piece",
-              "origin": "lockfile"
+              "origin": "lockfile",
+              "facetId": "facet:pinWhatWasChosen"
             }
           ]
         },
@@ -4772,42 +4799,48 @@
               "name": "밟은 줄",
               "desc": "지나간 줄에 표시가 남는다",
               "kind": "piece",
-              "origin": "statement-coverage"
+              "origin": "statement-coverage",
+              "facetId": "facet:linesYouSteppedOn"
             },
             {
               "id": "lines-covered-branch-not",
               "name": "줄은 다 밟았는데",
               "desc": "갈래 한쪽은 한 번도 안 갔다",
               "kind": "piece",
-              "origin": "branch-coverage"
+              "origin": "branch-coverage",
+              "facetId": "facet:linesCoveredBranchNot"
             },
             {
               "id": "which-condition-decided",
               "name": "누가 정했나",
               "desc": "묶인 조건 중 결과를 가른 것 하나",
               "kind": "piece",
-              "origin": "branch-coverage"
+              "origin": "branch-coverage",
+              "facetId": "facet:whichConditionDecided"
             },
             {
               "id": "path-explosion",
               "name": "길이 불어난다",
               "desc": "갈래 열이면 길이 천을 넘는다",
               "kind": "piece",
-              "origin": "branch-coverage"
+              "origin": "branch-coverage",
+              "facetId": "facet:pathExplosion"
             },
             {
               "id": "surviving-mutant",
               "name": "망가뜨렸는데 안 잡힌다",
               "desc": "고쳐 놔도 통과하면 안 본 것이다",
               "kind": "piece",
-              "origin": "mutation-testing"
+              "origin": "mutation-testing",
+              "facetId": "facet:survivingMutant"
             },
             {
               "id": "shrink-to-smallest",
               "name": "깎아 내려가기",
               "desc": "터진 입력을 줄여 가장 작은 것으로",
               "kind": "piece",
-              "origin": "counterexample-shrinking"
+              "origin": "counterexample-shrinking",
+              "facetId": "facet:shrinkToSmallest"
             }
           ]
         }

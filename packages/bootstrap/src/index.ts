@@ -2147,4 +2147,103 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:linker', () =>
     import('@ffacet/algorithm-linker').then((m) => m.registerLinker()),
   );
+  registerFacetLoader('facet:ancestorAsReferee', () =>
+    import('@ffacet/algorithm-ancestor-as-referee').then((m) => m.registerAncestorAsReferee()),
+  );
+  registerFacetLoader('facet:bisectHalving', () =>
+    import('@ffacet/algorithm-bisect-halving').then((m) => m.registerBisectHalving()),
+  );
+  registerFacetLoader('facet:bothTouchedSameLine', () =>
+    import('@ffacet/algorithm-both-touched-same-line').then((m) => m.registerBothTouchedSameLine()),
+  );
+  registerFacetLoader('facet:branchIsALabel', () =>
+    import('@ffacet/algorithm-branch-is-a-label').then((m) => m.registerBranchIsALabel()),
+  );
+  registerFacetLoader('facet:diagonalIsFree', () =>
+    import('@ffacet/algorithm-diagonal-is-free').then((m) => m.registerDiagonalIsFree()),
+  );
+  registerFacetLoader('facet:diamondDependency', () =>
+    import('@ffacet/algorithm-diamond-dependency').then((m) => m.registerDiamondDependency()),
+  );
+  registerFacetLoader('facet:editScript', () =>
+    import('@ffacet/algorithm-edit-script').then((m) => m.registerEditScript()),
+  );
+  registerFacetLoader('facet:fastForward', () =>
+    import('@ffacet/algorithm-fast-forward').then((m) => m.registerFastForward()),
+  );
+  registerFacetLoader('facet:independentInParallel', () =>
+    import('@ffacet/algorithm-independent-in-parallel').then((m) => m.registerIndependentInParallel()),
+  );
+  registerFacetLoader('facet:invalidationCascade', () =>
+    import('@ffacet/algorithm-invalidation-cascade').then((m) => m.registerInvalidationCascade()),
+  );
+  registerFacetLoader('facet:keepTheCommon', () =>
+    import('@ffacet/algorithm-keep-the-common').then((m) => m.registerKeepTheCommon()),
+  );
+  registerFacetLoader('facet:linesCoveredBranchNot', () =>
+    import('@ffacet/algorithm-lines-covered-branch-not').then((m) => m.registerLinesCoveredBranchNot()),
+  );
+  registerFacetLoader('facet:linesYouSteppedOn', () =>
+    import('@ffacet/algorithm-lines-you-stepped-on').then((m) => m.registerLinesYouSteppedOn()),
+  );
+  registerFacetLoader('facet:moveLooksLikeRewrite', () =>
+    import('@ffacet/algorithm-move-looks-like-rewrite').then((m) => m.registerMoveLooksLikeRewrite()),
+  );
+  registerFacetLoader('facet:noOverlap', () =>
+    import('@ffacet/algorithm-no-overlap').then((m) => m.registerNoOverlap()),
+  );
+  registerFacetLoader('facet:nobodyCanBeFirst', () =>
+    import('@ffacet/algorithm-nobody-can-be-first').then((m) => m.registerNobodyCanBeFirst()),
+  );
+  registerFacetLoader('facet:oneSideChanged', () =>
+    import('@ffacet/algorithm-one-side-changed').then((m) => m.registerOneSideChanged()),
+  );
+  registerFacetLoader('facet:onlyWhatChanged', () =>
+    import('@ffacet/algorithm-only-what-changed').then((m) => m.registerOnlyWhatChanged()),
+  );
+  registerFacetLoader('facet:pathExplosion', () =>
+    import('@ffacet/algorithm-path-explosion').then((m) => m.registerPathExplosion()),
+  );
+  registerFacetLoader('facet:pickOneOut', () =>
+    import('@ffacet/algorithm-pick-one-out').then((m) => m.registerPickOneOut()),
+  );
+  registerFacetLoader('facet:pinWhatWasChosen', () =>
+    import('@ffacet/algorithm-pin-what-was-chosen').then((m) => m.registerPinWhatWasChosen()),
+  );
+  registerFacetLoader('facet:rangeAndCandidates', () =>
+    import('@ffacet/algorithm-range-and-candidates').then((m) => m.registerRangeAndCandidates()),
+  );
+  registerFacetLoader('facet:replayOnNewBase', () =>
+    import('@ffacet/algorithm-replay-on-new-base').then((m) => m.registerReplayOnNewBase()),
+  );
+  registerFacetLoader('facet:shrinkToSmallest', () =>
+    import('@ffacet/algorithm-shrink-to-smallest').then((m) => m.registerShrinkToSmallest()),
+  );
+  registerFacetLoader('facet:snapshotPointsBack', () =>
+    import('@ffacet/algorithm-snapshot-points-back').then((m) => m.registerSnapshotPointsBack()),
+  );
+  registerFacetLoader('facet:survivingMutant', () =>
+    import('@ffacet/algorithm-surviving-mutant').then((m) => m.registerSurvivingMutant()),
+  );
+  registerFacetLoader('facet:threeNumbers', () =>
+    import('@ffacet/algorithm-three-numbers').then((m) => m.registerThreeNumbers()),
+  );
+  registerFacetLoader('facet:timestampVsFingerprint', () =>
+    import('@ffacet/algorithm-timestamp-vs-fingerprint').then((m) => m.registerTimestampVsFingerprint()),
+  );
+  registerFacetLoader('facet:twoCopiesCoexist', () =>
+    import('@ffacet/algorithm-two-copies-coexist').then((m) => m.registerTwoCopiesCoexist()),
+  );
+  registerFacetLoader('facet:unreachableSnapshot', () =>
+    import('@ffacet/algorithm-unreachable-snapshot').then((m) => m.registerUnreachableSnapshot()),
+  );
+  registerFacetLoader('facet:whereTheyParted', () =>
+    import('@ffacet/algorithm-where-they-parted').then((m) => m.registerWhereTheyParted()),
+  );
+  registerFacetLoader('facet:whichConditionDecided', () =>
+    import('@ffacet/algorithm-which-condition-decided').then((m) => m.registerWhichConditionDecided()),
+  );
+  registerFacetLoader('facet:whoGoesFirst', () =>
+    import('@ffacet/algorithm-who-goes-first').then((m) => m.registerWhoGoesFirst()),
+  );
 }
