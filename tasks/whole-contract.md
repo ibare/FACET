@@ -54,6 +54,9 @@
 - `initialData.type` 은 `'<topic>'`
 - **`register` 로 시작하는 export 는 `register<Pascal>` 하나뿐.** 전수 검사가 `register*` export 를 전부 인자 없이 부른다
 - camelCase 는 사양의 facet id 를 그대로 쓴다 (`topKTopP` · `kvCache` — 약어도 낱말 하나로 친다)
+- camelCase 가 `register` 로 시작하면(`registerAllocation`) 계약 이름 `<camel>Algorithm` · `<camel>Projector` 가 `register*` export 가 되어
+  전수 검사가 인자 없이 부른다 — TS 이름만 줄여 쓰고(`regAllocAlgorithm`) 등록 글자(`'registerAllocation'`)는 그대로 둔다. 까닭을 index.ts 머리에 적는다
+  (2026-09-26 컴파일러 배치에서 조각 하나 · 완제품 하나가 따로 걸렸다)
 
 ## 쓰는 API
 
@@ -232,6 +235,15 @@ opacity 만으로는 운동이 아니다. 앞 판의 결과가 새 판의 결과
 `highlightPhase(null)` 로 끄거나 이 판의 첫 phase 를 켠다 (2026-09-26 데이터베이스 완제품 스물 중 여덟이 서로 못 본 채 걸렸다 —
 값 글자 · 표지 · 스냅샷 선 · 코드 줄)
 
+**되감기 — `onReset` 이 무대를 비운다.** 띠를 걸음 0 이나 중간으로 끌면 러너는 projector `onReset` → `onInit` 을 부른 뒤 로그를 처음부터
+다시 먹인다. `onReset` 이 없거나 코드 패널 강조만 끄면 되감은 뒤에도 마지막 화면(판정 표지 · 캡션 · 걸림 틀)이 남고, 앞 회차 자국을
+쥐는 무대는 되감은 첫 회차에 아직 닿지 않은 자리까지 그린다. 무대에 `reset()` 을 두어 요소 · 자국 목록을 모두 비우고 `onReset` 에서
+부른다. 운동 도중에 되짚기가 오면(`onScrubStart` · `isInstant`) **걷히던 요소도** 지운다 — 목록에서 먼저 빼고 운동 끝에 지우는 무대는
+운동이 끊기면 반쯤 걷힌 앞 판을 남긴다. `whole-check` 는 이것을 잡지 못한다 (2026-09-26 컴파일러 완제품 열다섯 중 여섯이 걸렸다).
+
+**facet.ts `description` 도 셈한 값의 범위 안에서 말한다** — "반대로 움직인다" · "몸 길이만큼 는다" · "코드는 는다" 처럼 손잡이 사다리 전체에
+단정하면 한 칸만 어긋나도 거짓이 된다 (같은 배치에서 셋이 걸렸다).
+
 **무대는 알고리즘의 셈을 다시 하지 않는다** — 합 · 맞음 여부(`chosen === better`) · 잘림 여부 · 겹침 자리도 payload 로 받는다.
 없는 값을 `?? 0` · `?? ''` · 기본 사다리 값으로 지어내지 않고 던진다 (같은 배치에서 스물 중 열하나가 한 자리 이상 걸렸다)
 
@@ -252,6 +264,9 @@ IR 이 셈하는 값과 화면이 보이는 값이 어긋나면 그것이 거짓
   Python `pass lambda from global`, Java `final native`, C++ `and or not xor register union default`. `next` · `new` · `delete` · `char` 도
 - **32 비트** — 셋은 정수 폭이 유한하다. `(a + b) % m` 은 `(a % m + b % m) % m` 으로 접어 중간값을 키우지 않는다.
   `ir-interpreter` 는 배정도라 넘침을 통과시킨다 — 인터프리터 답이 맞아도 넘침이 없다는 증거가 아니다
+- **모르는 종류를 `else` 로 몰지 않는다** — `kind == 2` 가 아니면 모두 연산 · `isLib == 1` 이 아니면 모두 오브젝트처럼 쓰면, TS 쪽이 던지는 입력에
+  IR 은 조용히 답을 지어낸다. 종류마다 명시하고 나머지는 표지(−1 이나 정상 답과 겹치지 않는 음수)를 돌려주며, "TS 는 던지고 IR 은 표지" 를 test 로
+  잠근다 (2026-09-26 컴파일러 완제품 다섯이 따로 걸렸다)
 - **IR 안의 주석은 영어** — 코드 패널은 어느 언어 화면에서든 그대로 띄운다 (`whole-check` 가 잡는다)
 
 **검수 조건 — facet 자신의 `test/<topic>.test.ts` 로 잠근다** (공통분은 `whole-check` 가 한다):
