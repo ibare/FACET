@@ -48,21 +48,37 @@ export type FacetFacts = {
   placeholders: Map<string, string>;
 };
 
-/** `이름: {` 블록의 중괄호 균형을 세어 잘라낸다. */
+/**
+ * `이름: {` 블록의 중괄호 균형을 세어 잘라낸다.
+ *
+ * `label` 다음 첫 비공백 문자가 `{` 인 자리만 고른다 — 아니면(예: `[`) 그 자리는
+ * 동명의 데이터 필드(예: 조각 데이터의 `messages: [...]`)이지 i18n 블록이 아니므로
+ * 다음 occurrence 를 찾는다. (`just-before-paint` 가 `messages` 데이터 필드를 써서
+ * 첫 occurrence 가 배열이었고, 예전 구현은 그걸 블록으로 오인해 실제 i18n 키를
+ * 전부 놓쳤다.)
+ */
 function block(text: string, label: string): string {
-  const i = text.indexOf(label);
-  if (i < 0) return '';
-  const j = text.indexOf('{', i);
-  if (j < 0) return '';
-  let depth = 0;
-  for (let k = j; k < text.length; k += 1) {
-    if (text[k] === '{') depth += 1;
-    else if (text[k] === '}') {
-      depth -= 1;
-      if (depth === 0) return text.slice(j, k + 1);
+  let from = 0;
+  for (;;) {
+    const i = text.indexOf(label, from);
+    if (i < 0) return '';
+    let p = i + label.length;
+    while (p < text.length && /\s/.test(text[p]!)) p += 1;
+    if (text[p] !== '{') {
+      from = i + label.length;
+      continue;
     }
+    const j = p;
+    let depth = 0;
+    for (let k = j; k < text.length; k += 1) {
+      if (text[k] === '{') depth += 1;
+      else if (text[k] === '}') {
+        depth -= 1;
+        if (depth === 0) return text.slice(j, k + 1);
+      }
+    }
+    return text.slice(j);
   }
-  return text.slice(j);
 }
 
 function localesIn(seg: string): Set<string> {
