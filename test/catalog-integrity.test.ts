@@ -204,10 +204,14 @@ describe('계획 카탈로그', () => {
    * semantic-versioning, 구문 커버리지 · 변이 테스트 → branch-coverage)과 버린 둘(순환 의존 · 반례 축소).
    * 합친 토픽의 조각 origin 은 host 토픽으로 옮기고, 버린 토픽의 조각은 origin 을 그대로 둔다.
    * 사용자가 정했다 (`tasks/dev-tooling-whole-batch.md`). 1003 → 994.
+   *
+   * 같은 날 딥러닝 완제품 판정에서 넷을 지웠다 — 완제품 안에 합친 넷(풀링 → 수용 영역 · 시퀀스 처리 →
+   * BPTT · GRU → LSTM · 멀티 헤드 → 셀프 어텐션). 조각 origin 은 host 토픽으로 옮겼다. 사용자가 정했다
+   * (`tasks/deep-learning-whole-batch.md`). 994 → 990.
    */
   it('규모가 줄지 않았다 — 실수로 잘려 나간 것을 잡는다', () => {
     expect(domains.length).toBeGreaterThanOrEqual(16);
-    expect(rows.length).toBeGreaterThanOrEqual(994);
+    expect(rows.length).toBeGreaterThanOrEqual(990);
   });
 });
 
