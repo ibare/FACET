@@ -736,6 +736,48 @@ import { whereTheyPartedConcept } from './where-they-parted.js';
 import { replayOnNewBaseConcept } from './replay-on-new-base.js';
 import { pickOneOutConcept } from './pick-one-out.js';
 import { bisectHalvingConcept } from './bisect-halving.js';
+import { unrolledRnnConcept } from './unrolled-rnn.js';
+import { carryHiddenStateConcept } from './carry-hidden-state.js';
+import { sameWeightsEachStepConcept } from './same-weights-each-step.js';
+import { unrollThenBackpropConcept } from './unroll-then-backprop.js';
+import { vanishingOverTimeConcept } from './vanishing-over-time.js';
+import { gatedCellsConcept } from './gated-cells.js';
+import { gateLetsThroughConcept } from './gate-lets-through.js';
+import { cellCarriesLongConcept } from './cell-carries-long.js';
+import { fewerGatesConcept } from './fewer-gates.js';
+import { mdpConcept } from './mdp.js';
+import { stateActionRewardConcept } from './state-action-reward.js';
+import { discountFutureConcept } from './discount-future.js';
+import { qLearningConcept } from './q-learning.js';
+import { valueOfActionConcept } from './value-of-action.js';
+import { exploreVsExploitConcept } from './explore-vs-exploit.js';
+import { policyGradientConcept } from './policy-gradient.js';
+import { nudgeTowardRewardConcept } from './nudge-toward-reward.js';
+import { vaeConcept } from './vae.js';
+import { encodeToDistributionConcept } from './encode-to-distribution.js';
+import { sampleAndDecodeConcept } from './sample-and-decode.js';
+import { ganConcept } from './gan.js';
+import { twoNetsCompeteConcept } from './two-nets-compete.js';
+import { modeCollapseConcept } from './mode-collapse.js';
+import { diffusionConcept } from './diffusion.js';
+import { addNoiseThenRemoveConcept } from './add-noise-then-remove.js';
+import { denoiseStepByStepConcept } from './denoise-step-by-step.js';
+import { selfAttentionConcept } from './self-attention.js';
+import { queryKeyValueConcept } from './query-key-value.js';
+import { attendToAllAtOnceConcept } from './attend-to-all-at-once.js';
+import { attentionWeightsConcept } from './attention-weights.js';
+import { severalViewsConcept } from './several-views.js';
+import { positionalEncodingConcept } from './positional-encoding.js';
+import { orderMustBeAddedConcept } from './order-must-be-added.js';
+import { convolutionConcept } from './convolution.js';
+import { slideTheKernelConcept } from './slide-the-kernel.js';
+import { weightSharingConcept } from './weight-sharing.js';
+import { strideAndPaddingConcept } from './stride-and-padding.js';
+import { receptiveFieldConcept } from './receptive-field.js';
+import { fieldGrowsWithDepthConcept } from './field-grows-with-depth.js';
+import { shrinkBySummaryConcept } from './shrink-by-summary.js';
+import { learnedFilterConcept } from './learned-filter.js';
+import { filtersLearnEdgesConcept } from './filters-learn-edges.js';
 
 export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   adjacencyListVsMatrixConcept,
@@ -1454,4 +1496,46 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   replayOnNewBaseConcept,
   pickOneOutConcept,
   bisectHalvingConcept,
+  unrolledRnnConcept,
+  carryHiddenStateConcept,
+  sameWeightsEachStepConcept,
+  unrollThenBackpropConcept,
+  vanishingOverTimeConcept,
+  gatedCellsConcept,
+  gateLetsThroughConcept,
+  cellCarriesLongConcept,
+  fewerGatesConcept,
+  mdpConcept,
+  stateActionRewardConcept,
+  discountFutureConcept,
+  qLearningConcept,
+  valueOfActionConcept,
+  exploreVsExploitConcept,
+  policyGradientConcept,
+  nudgeTowardRewardConcept,
+  vaeConcept,
+  encodeToDistributionConcept,
+  sampleAndDecodeConcept,
+  ganConcept,
+  twoNetsCompeteConcept,
+  modeCollapseConcept,
+  diffusionConcept,
+  addNoiseThenRemoveConcept,
+  denoiseStepByStepConcept,
+  convolutionConcept,
+  slideTheKernelConcept,
+  weightSharingConcept,
+  strideAndPaddingConcept,
+  receptiveFieldConcept,
+  fieldGrowsWithDepthConcept,
+  shrinkBySummaryConcept,
+  learnedFilterConcept,
+  filtersLearnEdgesConcept,
+  selfAttentionConcept,
+  queryKeyValueConcept,
+  attendToAllAtOnceConcept,
+  attentionWeightsConcept,
+  severalViewsConcept,
+  positionalEncodingConcept,
+  orderMustBeAddedConcept,
 ];
