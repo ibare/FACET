@@ -1280,35 +1280,74 @@
           "name": {"en":"Caching","ko":"캐싱","ja":"キャッシング","zh":"缓存","ar":"التخزين المؤقت","es":"Caché","fr":"Mise en cache","hi":"कैशिंग","id":"Caching","pt":"Cache"},
           "facets": [
             "facet:lruCache",
-            "facet:cachingCdn"
+            "facet:cachingCdn",
+            "facet:cacheHitMiss",
+            "facet:evictLeastFrequent",
+            "facet:staleCopy",
+            "facet:invalidateOthers",
+            "facet:serveFromNear",
+            "facet:originPull"
           ]
         },
         {
           "id": "messaging",
           "name": {"en":"Message Queues","ko":"메시지 큐","ja":"メッセージキュー","zh":"消息队列","ar":"طوابير الرسائل","es":"Colas de mensajes","fr":"Files de messages","hi":"मैसेज क्यू","id":"Antrean Pesan","pt":"Filas de mensagens"},
           "facets": [
-            "facet:messagingPubsub"
+            "facet:messagingPubsub",
+            "facet:publishToMany",
+            "facet:decoupleSenderReceiver",
+            "facet:appendOnlyLog",
+            "facet:consumerOffset",
+            "facet:replayFromOffset"
           ]
         },
         {
           "id": "load-balancing",
           "name": {"en":"Load Balancing","ko":"로드 밸런싱","ja":"ロードバランシング","zh":"负载均衡","ar":"موازنة الأحمال","es":"Balanceo de carga","fr":"Répartition de charge","hi":"लोड बैलेंसिंग","id":"Penyeimbangan Beban","pt":"Balanceamento de carga"},
-          "facets": []
+          "facets": [
+            "facet:spreadInTurn",
+            "facet:sendToIdlest",
+            "facet:ringOfHashes",
+            "facet:moveFewOnChange"
+          ]
         },
         {
           "id": "load-and-backpressure",
           "name": {"en":"Load and Backpressure","ko":"부하와 배압","ja":"負荷とバックプレッシャー","zh":"负载与背压","ar":"الحمل والضغط العكسي","es":"Carga y contrapresión","fr":"Charge et contre-pression","hi":"लोड और बैकप्रेशर","id":"Beban dan Backpressure","pt":"Carga e contrapressão"},
-          "facets": []
+          "facets": [
+            "facet:arrivalVsService",
+            "facet:lengthIsRateTimesWait",
+            "facet:kneeOfTheCurve",
+            "facet:tokenBucket",
+            "facet:leakyBucket",
+            "facet:slidingWindowCount",
+            "facet:tellThemToSlowDown",
+            "facet:shedToSurvive",
+            "facet:retryStorm",
+            "facet:jitteredBackoff",
+            "facet:isolateTheFlood"
+          ]
         },
         {
           "id": "distributed",
           "name": {"en":"Distributed Systems","ko":"분산 시스템","ja":"分散システム","zh":"分布式系统","ar":"الأنظمة الموزعة","es":"Sistemas distribuidos","fr":"Systèmes distribués","hi":"वितरित सिस्टम","id":"Sistem Terdistribusi","pt":"Sistemas distribuídos"},
-          "facets": []
+          "facets": [
+            "facet:readYourWrite",
+            "facet:eventuallyAgrees",
+            "facet:agreeOnOneValue",
+            "facet:clocksDrift",
+            "facet:happensBefore"
+          ]
         },
         {
           "id": "microservices",
           "name": {"en":"Microservices","ko":"마이크로서비스","ja":"マイクロサービス","zh":"微服务","ar":"الخدمات المصغّرة","es":"Microservicios","fr":"Microservices","hi":"माइक्रोसर्विसेज़","id":"Layanan Mikro","pt":"Microsserviços"},
-          "facets": []
+          "facets": [
+            "facet:registerAndFind",
+            "facet:oneDoorManyRooms",
+            "facet:tripAfterFailures",
+            "facet:halfOpenProbe"
+          ]
         }
       ]
     },

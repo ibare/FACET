@@ -6147,42 +6147,48 @@
               "name": "캐시 적중과 실패",
               "desc": "있으면 바로, 없으면 가서 가져온다",
               "kind": "piece",
-              "origin": "lru-cache"
+              "origin": "lru-cache",
+              "facetId": "facet:cacheHitMiss"
             },
             {
               "id": "evict-least-frequent",
               "name": "LFU",
               "desc": "가장 덜 쓴 것을 버린다",
               "kind": "piece",
-              "origin": "lfu-cache"
+              "origin": "lfu-cache",
+              "facetId": "facet:evictLeastFrequent"
             },
             {
               "id": "stale-copy",
               "name": "오래된 사본",
               "desc": "한 곳을 고쳤는데 다른 곳은 옛것",
               "kind": "piece",
-              "origin": "cache-coherence"
+              "origin": "cache-coherence",
+              "facetId": "facet:staleCopy"
             },
             {
               "id": "invalidate-others",
               "name": "무효화",
               "desc": "고치면 남의 것을 무르게 한다",
               "kind": "piece",
-              "origin": "cache-coherence"
+              "origin": "cache-coherence",
+              "facetId": "facet:invalidateOthers"
             },
             {
               "id": "serve-from-near",
               "name": "엣지 서빙",
               "desc": "가까운 곳에서 내어 준다",
               "kind": "piece",
-              "origin": "cdn"
+              "origin": "cdn",
+              "facetId": "facet:serveFromNear"
             },
             {
               "id": "origin-pull",
               "name": "오리진 풀",
               "desc": "없으면 본진에서 한 번만 끌어온다",
               "kind": "piece",
-              "origin": "cdn"
+              "origin": "cdn",
+              "facetId": "facet:originPull"
             }
           ]
         },
@@ -6204,35 +6210,40 @@
               "name": "발행-구독",
               "desc": "한 번 보내면 여럿이 받는다",
               "kind": "piece",
-              "origin": "pubsub"
+              "origin": "pubsub",
+              "facetId": "facet:publishToMany"
             },
             {
               "id": "decouple-sender-receiver",
               "name": "느슨한 결합",
               "desc": "보내는 쪽은 누가 받는지 모른다",
               "kind": "piece",
-              "origin": "pubsub"
+              "origin": "pubsub",
+              "facetId": "facet:decoupleSenderReceiver"
             },
             {
               "id": "append-only-log",
               "name": "추가 전용 로그",
               "desc": "뒤에만 덧붙인다",
               "kind": "piece",
-              "origin": "kafka-pattern"
+              "origin": "kafka-pattern",
+              "facetId": "facet:appendOnlyLog"
             },
             {
               "id": "consumer-offset",
               "name": "컨슈머 오프셋",
               "desc": "어디까지 읽었는지 각자 센다",
               "kind": "piece",
-              "origin": "kafka-pattern"
+              "origin": "kafka-pattern",
+              "facetId": "facet:consumerOffset"
             },
             {
               "id": "replay-from-offset",
               "name": "오프셋 재생",
               "desc": "되감아 다시 읽는다",
               "kind": "piece",
-              "origin": "kafka-pattern"
+              "origin": "kafka-pattern",
+              "facetId": "facet:replayFromOffset"
             }
           ]
         },
@@ -6249,28 +6260,32 @@
               "name": "라운드 로빈 분배",
               "desc": "차례대로 돌려 보낸다",
               "kind": "piece",
-              "origin": "round-robin-lb"
+              "origin": "round-robin-lb",
+              "facetId": "facet:spreadInTurn"
             },
             {
               "id": "send-to-idlest",
               "name": "최소 연결",
               "desc": "가장 한가한 쪽으로",
               "kind": "piece",
-              "origin": "round-robin-lb"
+              "origin": "round-robin-lb",
+              "facetId": "facet:sendToIdlest"
             },
             {
               "id": "ring-of-hashes",
               "name": "해시 링",
               "desc": "고리 위에 자리를 잡는다",
               "kind": "piece",
-              "origin": "round-robin-lb"
+              "origin": "round-robin-lb",
+              "facetId": "facet:ringOfHashes"
             },
             {
               "id": "move-few-on-change",
               "name": "일관 해싱",
               "desc": "하나가 빠져도 조금만 옮긴다",
               "kind": "piece",
-              "origin": "round-robin-lb"
+              "origin": "round-robin-lb",
+              "facetId": "facet:moveFewOnChange"
             }
           ]
         },
@@ -6303,77 +6318,88 @@
               "name": "들어오는 속도와 처리 속도",
               "desc": "들어오는 쪽이 빠르면 줄이 는다",
               "kind": "piece",
-              "origin": "queueing-model"
+              "origin": "queueing-model",
+              "facetId": "facet:arrivalVsService"
             },
             {
               "id": "length-is-rate-times-wait",
               "name": "줄 길이와 기다림",
               "desc": "줄의 길이는 속도와 기다림의 곱이다",
               "kind": "piece",
-              "origin": "queueing-model"
+              "origin": "queueing-model",
+              "facetId": "facet:lengthIsRateTimesWait"
             },
             {
               "id": "knee-of-the-curve",
               "name": "무릎에서 꺾인다",
               "desc": "여유가 줄면 기다림이 갑자기 치솟는다",
               "kind": "piece",
-              "origin": "queueing-model"
+              "origin": "queueing-model",
+              "facetId": "facet:kneeOfTheCurve"
             },
             {
               "id": "token-bucket",
               "name": "토큰 버킷",
               "desc": "쌓아 둔 만큼은 한꺼번에 쓴다",
               "kind": "piece",
-              "origin": "rate-limiting"
+              "origin": "rate-limiting",
+              "facetId": "facet:tokenBucket"
             },
             {
               "id": "leaky-bucket",
               "name": "누출 버킷",
               "desc": "들어오는 대로가 아니라 일정하게 흘린다",
               "kind": "piece",
-              "origin": "rate-limiting"
+              "origin": "rate-limiting",
+              "facetId": "facet:leakyBucket"
             },
             {
               "id": "sliding-window-count",
               "name": "창을 밀며 센다",
               "desc": "칸을 고정하면 경계에서 두 배가 지나간다",
               "kind": "piece",
-              "origin": "rate-limiting"
+              "origin": "rate-limiting",
+              "facetId": "facet:slidingWindowCount"
             },
             {
               "id": "tell-them-to-slow-down",
               "name": "못 받겠다고 알린다",
               "desc": "받는 쪽이 보내는 쪽을 늦춘다",
               "kind": "piece",
-              "origin": "backpressure"
+              "origin": "backpressure",
+              "facetId": "facet:tellThemToSlowDown"
             },
             {
               "id": "shed-to-survive",
               "name": "넘치면 버린다",
               "desc": "다 무너지느니 일부를 거절한다",
               "kind": "piece",
-              "origin": "backpressure"
+              "origin": "backpressure",
+              "facetId": "facet:shedToSurvive"
             },
             {
               "id": "retry-storm",
               "name": "다 같이 다시 온다",
               "desc": "한꺼번에 재시도하면 두 번째로 무너진다",
               "kind": "piece",
-              "origin": "retry-and-backoff"
+              "origin": "retry-and-backoff",
+              "facetId": "facet:retryStorm"
             },
             {
               "id": "jittered-backoff",
               "name": "어긋나게 기다리기",
               "desc": "기다리는 시간을 흩어 겹치지 않게 한다",
               "kind": "piece",
-              "origin": "retry-and-backoff"
+              "origin": "retry-and-backoff",
+              "facetId": "facet:jitteredBackoff"
             },
             {
               "id": "isolate-the-flood",
               "name": "칸을 나눠 막는다",
               "desc": "한 칸이 차도 옆 칸은 산다",
               "kind": "piece",
-              "origin": "bulkhead"
+              "origin": "bulkhead",
+              "facetId": "facet:isolateTheFlood"
             }
           ]
         },
@@ -6394,35 +6420,40 @@
               "name": "자신의 쓰기 읽기",
               "desc": "내가 쓴 것은 내가 본다",
               "kind": "piece",
-              "origin": "consistency-model"
+              "origin": "consistency-model",
+              "facetId": "facet:readYourWrite"
             },
             {
               "id": "eventually-agrees",
               "name": "최종 일관성",
               "desc": "시간이 지나면 같아진다",
               "kind": "piece",
-              "origin": "consistency-model"
+              "origin": "consistency-model",
+              "facetId": "facet:eventuallyAgrees"
             },
             {
               "id": "agree-on-one-value",
               "name": "합의",
               "desc": "여럿이 하나를 정한다",
               "kind": "piece",
-              "origin": "consistency-model"
+              "origin": "consistency-model",
+              "facetId": "facet:agreeOnOneValue"
             },
             {
               "id": "clocks-drift",
               "name": "시계 편차",
               "desc": "시계가 저마다 어긋난다",
               "kind": "piece",
-              "origin": "clock-sync"
+              "origin": "clock-sync",
+              "facetId": "facet:clocksDrift"
             },
             {
               "id": "happens-before",
               "name": "happens-before 관계",
               "desc": "무엇이 먼저인지 순서만 정한다",
               "kind": "piece",
-              "origin": "clock-sync"
+              "origin": "clock-sync",
+              "facetId": "facet:happensBefore"
             }
           ]
         },
@@ -6443,28 +6474,32 @@
               "name": "서비스 디스커버리",
               "desc": "스스로 알리고 찾아 쓴다",
               "kind": "piece",
-              "origin": "service-discovery"
+              "origin": "service-discovery",
+              "facetId": "facet:registerAndFind"
             },
             {
               "id": "one-door-many-rooms",
               "name": "API 게이트웨이",
               "desc": "문 하나로 들어가 여럿에 닿는다",
               "kind": "piece",
-              "origin": "service-discovery"
+              "origin": "service-discovery",
+              "facetId": "facet:oneDoorManyRooms"
             },
             {
               "id": "trip-after-failures",
               "name": "서킷 브레이커",
               "desc": "자꾸 실패하면 아예 끊는다",
               "kind": "piece",
-              "origin": "circuit-breaker"
+              "origin": "circuit-breaker",
+              "facetId": "facet:tripAfterFailures"
             },
             {
               "id": "half-open-probe",
               "name": "반열림 상태",
               "desc": "가끔 한 번 찔러 본다",
               "kind": "piece",
-              "origin": "circuit-breaker"
+              "origin": "circuit-breaker",
+              "facetId": "facet:halfOpenProbe"
             }
           ]
         }

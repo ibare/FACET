@@ -2522,4 +2522,109 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:rocImbalance', () =>
     import('@ffacet/algorithm-roc-imbalance').then((m) => m.registerRocImbalance()),
   );
+  registerFacetLoader('facet:cacheHitMiss', () =>
+    import('@ffacet/algorithm-cache-hit-miss').then((m) => m.registerCacheHitMiss()),
+  );
+  registerFacetLoader('facet:evictLeastFrequent', () =>
+    import('@ffacet/algorithm-evict-least-frequent').then((m) => m.registerEvictLeastFrequent()),
+  );
+  registerFacetLoader('facet:staleCopy', () =>
+    import('@ffacet/algorithm-stale-copy').then((m) => m.registerStaleCopy()),
+  );
+  registerFacetLoader('facet:invalidateOthers', () =>
+    import('@ffacet/algorithm-invalidate-others').then((m) => m.registerInvalidateOthers()),
+  );
+  registerFacetLoader('facet:serveFromNear', () =>
+    import('@ffacet/algorithm-serve-from-near').then((m) => m.registerServeFromNear()),
+  );
+  registerFacetLoader('facet:originPull', () =>
+    import('@ffacet/algorithm-origin-pull').then((m) => m.registerOriginPull()),
+  );
+  registerFacetLoader('facet:publishToMany', () =>
+    import('@ffacet/algorithm-publish-to-many').then((m) => m.registerPublishToMany()),
+  );
+  registerFacetLoader('facet:decoupleSenderReceiver', () =>
+    import('@ffacet/algorithm-decouple-sender-receiver').then((m) => m.registerDecoupleSenderReceiver()),
+  );
+  registerFacetLoader('facet:appendOnlyLog', () =>
+    import('@ffacet/algorithm-append-only-log').then((m) => m.registerAppendOnlyLog()),
+  );
+  registerFacetLoader('facet:consumerOffset', () =>
+    import('@ffacet/algorithm-consumer-offset').then((m) => m.registerConsumerOffset()),
+  );
+  registerFacetLoader('facet:replayFromOffset', () =>
+    import('@ffacet/algorithm-replay-from-offset').then((m) => m.registerReplayFromOffset()),
+  );
+  registerFacetLoader('facet:spreadInTurn', () =>
+    import('@ffacet/algorithm-spread-in-turn').then((m) => m.registerSpreadInTurn()),
+  );
+  registerFacetLoader('facet:sendToIdlest', () =>
+    import('@ffacet/algorithm-send-to-idlest').then((m) => m.registerSendToIdlest()),
+  );
+  registerFacetLoader('facet:ringOfHashes', () =>
+    import('@ffacet/algorithm-ring-of-hashes').then((m) => m.registerRingOfHashes()),
+  );
+  registerFacetLoader('facet:moveFewOnChange', () =>
+    import('@ffacet/algorithm-move-few-on-change').then((m) => m.registerMoveFewOnChange()),
+  );
+  registerFacetLoader('facet:arrivalVsService', () =>
+    import('@ffacet/algorithm-arrival-vs-service').then((m) => m.registerArrivalVsService()),
+  );
+  registerFacetLoader('facet:lengthIsRateTimesWait', () =>
+    import('@ffacet/algorithm-length-is-rate-times-wait').then((m) => m.registerLengthIsRateTimesWait()),
+  );
+  registerFacetLoader('facet:kneeOfTheCurve', () =>
+    import('@ffacet/algorithm-knee-of-the-curve').then((m) => m.registerKneeOfTheCurve()),
+  );
+  registerFacetLoader('facet:tokenBucket', () =>
+    import('@ffacet/algorithm-token-bucket').then((m) => m.registerTokenBucket()),
+  );
+  registerFacetLoader('facet:leakyBucket', () =>
+    import('@ffacet/algorithm-leaky-bucket').then((m) => m.registerLeakyBucket()),
+  );
+  registerFacetLoader('facet:slidingWindowCount', () =>
+    import('@ffacet/algorithm-sliding-window-count').then((m) => m.registerSlidingWindowCount()),
+  );
+  registerFacetLoader('facet:tellThemToSlowDown', () =>
+    import('@ffacet/algorithm-tell-them-to-slow-down').then((m) => m.registerTellThemToSlowDown()),
+  );
+  registerFacetLoader('facet:shedToSurvive', () =>
+    import('@ffacet/algorithm-shed-to-survive').then((m) => m.registerShedToSurvive()),
+  );
+  registerFacetLoader('facet:retryStorm', () =>
+    import('@ffacet/algorithm-retry-storm').then((m) => m.registerRetryStorm()),
+  );
+  registerFacetLoader('facet:jitteredBackoff', () =>
+    import('@ffacet/algorithm-jittered-backoff').then((m) => m.registerJitteredBackoff()),
+  );
+  registerFacetLoader('facet:isolateTheFlood', () =>
+    import('@ffacet/algorithm-isolate-the-flood').then((m) => m.registerIsolateTheFlood()),
+  );
+  registerFacetLoader('facet:readYourWrite', () =>
+    import('@ffacet/algorithm-read-your-write').then((m) => m.registerReadYourWrite()),
+  );
+  registerFacetLoader('facet:eventuallyAgrees', () =>
+    import('@ffacet/algorithm-eventually-agrees').then((m) => m.registerEventuallyAgrees()),
+  );
+  registerFacetLoader('facet:agreeOnOneValue', () =>
+    import('@ffacet/algorithm-agree-on-one-value').then((m) => m.registerAgreeOnOneValue()),
+  );
+  registerFacetLoader('facet:clocksDrift', () =>
+    import('@ffacet/algorithm-clocks-drift').then((m) => m.registerClocksDrift()),
+  );
+  registerFacetLoader('facet:happensBefore', () =>
+    import('@ffacet/algorithm-happens-before').then((m) => m.registerHappensBefore()),
+  );
+  registerFacetLoader('facet:registerAndFind', () =>
+    import('@ffacet/algorithm-register-and-find').then((m) => m.registerRegisterAndFind()),
+  );
+  registerFacetLoader('facet:oneDoorManyRooms', () =>
+    import('@ffacet/algorithm-one-door-many-rooms').then((m) => m.registerOneDoorManyRooms()),
+  );
+  registerFacetLoader('facet:tripAfterFailures', () =>
+    import('@ffacet/algorithm-trip-after-failures').then((m) => m.registerTripAfterFailures()),
+  );
+  registerFacetLoader('facet:halfOpenProbe', () =>
+    import('@ffacet/algorithm-half-open-probe').then((m) => m.registerHalfOpenProbe()),
+  );
 }
