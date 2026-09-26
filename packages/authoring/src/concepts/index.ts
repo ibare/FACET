@@ -778,6 +778,46 @@ import { fieldGrowsWithDepthConcept } from './field-grows-with-depth.js';
 import { shrinkBySummaryConcept } from './shrink-by-summary.js';
 import { learnedFilterConcept } from './learned-filter.js';
 import { filtersLearnEdgesConcept } from './filters-learn-edges.js';
+import { crossValidationConcept } from './cross-validation.js';
+import { holdOutSomeConcept } from './hold-out-some.js';
+import { rotateTheFoldConcept } from './rotate-the-fold.js';
+import { rocImbalanceConcept } from './roc-imbalance.js';
+import { thresholdSlidesConcept } from './threshold-slides.js';
+import { fourBoxesConcept } from './four-boxes.js';
+import { weightPenaltyConcept } from './weight-penalty.js';
+import { pushToZeroConcept } from './push-to-zero.js';
+import { shrinkAllConcept } from './shrink-all.js';
+import { earlyStoppingConcept } from './early-stopping.js';
+import { stopBeforeTurnConcept } from './stop-before-turn.js';
+import { overfittingConcept } from './overfitting.js';
+import { memorizeVsGeneralizeConcept } from './memorize-vs-generalize.js';
+import { trainDownValUpConcept } from './train-down-val-up.js';
+import { perceptronConcept } from './perceptron.js';
+import { weightedSumThresholdConcept } from './weighted-sum-threshold.js';
+import { mlpActivationConcept } from './mlp-activation.js';
+import { layersComposeConcept } from './layers-compose.js';
+import { hiddenLayerFeaturesConcept } from './hidden-layer-features.js';
+import { nonlinearBendsConcept } from './nonlinear-bends.js';
+import { saturateAndVanishConcept } from './saturate-and-vanish.js';
+import { lossConcept } from './loss.js';
+import { lossMeasuresWrongnessConcept } from './loss-measures-wrongness.js';
+import { backpropConcept } from './backprop.js';
+import { errorFlowsBackwardConcept } from './error-flows-backward.js';
+import { gradientThroughLayersConcept } from './gradient-through-layers.js';
+import { dropoutConcept } from './dropout.js';
+import { dropRandomUnitsConcept } from './drop-random-units.js';
+import { gradientDescentConcept } from './gradient-descent.js';
+import { learningRateTooBigConcept } from './learning-rate-too-big.js';
+import { localMinimumConcept } from './local-minimum.js';
+import { sgdConcept } from './sgd.js';
+import { oneBatchAtATimeConcept } from './one-batch-at-a-time.js';
+import { noisyPathConcept } from './noisy-path.js';
+import { momentumConcept } from './momentum.js';
+import { carryVelocityConcept } from './carry-velocity.js';
+import { adamConcept } from './adam.js';
+import { perParameterStepConcept } from './per-parameter-step.js';
+import { batchnormConcept } from './batchnorm.js';
+import { rescaleEachBatchConcept } from './rescale-each-batch.js';
 
 export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   adjacencyListVsMatrixConcept,
@@ -1538,4 +1578,44 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   severalViewsConcept,
   positionalEncodingConcept,
   orderMustBeAddedConcept,
+  crossValidationConcept,
+  holdOutSomeConcept,
+  rotateTheFoldConcept,
+  rocImbalanceConcept,
+  thresholdSlidesConcept,
+  fourBoxesConcept,
+  weightPenaltyConcept,
+  pushToZeroConcept,
+  shrinkAllConcept,
+  earlyStoppingConcept,
+  stopBeforeTurnConcept,
+  overfittingConcept,
+  memorizeVsGeneralizeConcept,
+  trainDownValUpConcept,
+  perceptronConcept,
+  weightedSumThresholdConcept,
+  mlpActivationConcept,
+  layersComposeConcept,
+  hiddenLayerFeaturesConcept,
+  nonlinearBendsConcept,
+  saturateAndVanishConcept,
+  lossConcept,
+  lossMeasuresWrongnessConcept,
+  backpropConcept,
+  errorFlowsBackwardConcept,
+  gradientThroughLayersConcept,
+  dropoutConcept,
+  dropRandomUnitsConcept,
+  gradientDescentConcept,
+  learningRateTooBigConcept,
+  localMinimumConcept,
+  sgdConcept,
+  oneBatchAtATimeConcept,
+  noisyPathConcept,
+  momentumConcept,
+  carryVelocityConcept,
+  adamConcept,
+  perParameterStepConcept,
+  batchnormConcept,
+  rescaleEachBatchConcept,
 ];
