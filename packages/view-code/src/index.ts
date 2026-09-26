@@ -5,7 +5,7 @@
  * Shiki 로 문법 하이라이팅 (테마: github-light/github-dark).
  *
  * spec (runner 가 주입):
- *   { type: 'code-view', label?: string, _ir?: IR, _transpilers?: Transpiler[] }
+ *   { type: 'code-view', label?: LocaleStr, _ir?: IR, _transpilers?: Transpiler[] }
  *
  * 메서드:
  *   highlightPhase(phase: string | null)
@@ -21,6 +21,7 @@ import {
   radii,
   space,
   resolveLocale,
+  type LocaleStr,
 } from '@ffacet/core/runtime';
 import { makeTranslator, type Translate } from '@ffacet/core/runtime';
 import type { IR, Transpiler } from '@ffacet/core/runtime';
@@ -73,7 +74,7 @@ export const codeView: View = {
     const labels = codeViewLabels(tr);
 
     const cfg = params.config as {
-      label?: string;
+      label?: LocaleStr;
       _ir?: IR;
       _transpilers?: Transpiler[];
     };
@@ -104,7 +105,7 @@ export const codeView: View = {
     const labelEl = document.createElement('div');
     labelEl.style.fontSize = fontSizes.xs;
     labelEl.style.color = colors.textMuted;
-    labelEl.textContent = cfg.label ?? '';
+    labelEl.textContent = resolveLocale(cfg.label, locale);
     header.appendChild(labelEl);
 
     const addBtn = document.createElement('button');
