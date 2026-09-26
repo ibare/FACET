@@ -173,7 +173,6 @@ describe('계획 카탈로그', () => {
    * FIFO 페이지 교체 · Clock · FAT · DMA)과 버린 셋(PCB · 모니터 · 디렉토리 구조). 조각 origin 은
    * host 토픽으로 옮겼다. 사용자가 정했다 (`tasks/os-whole-batch.md`). 1054 → 1044.
    *
-<<<<<<< HEAD
    * 같은 날 컴퓨터 네트워크 완제품 판정에서 열둘을 지웠다 — 완제품 안에 합친 아홉(데이터 링크 계층 ·
    * 전송 계층 · MAC · OSPF · BGP · ICMP · UDP · 흐름 제어 · WebSocket)과 버린 셋(응용 계층 · SMTP · FTP).
    * 조각 origin 은 host 토픽으로 옮겼다. 사용자가 정했다 (`tasks/network-whole-batch.md`). 1044 → 1032.
@@ -187,10 +186,17 @@ describe('계획 카탈로그', () => {
    * dependency-tracking, frame-deadline 의 절반은 composited-animation 으로, script-blocking ·
    * resource-priority → critical-rendering-path)과 버린 넷(call-stack · task-queue ·
    * dom-and-cssom · animation-frame-callback). 조각 origin 은 host 토픽으로 옮겼다. 1018 → 1010.
+   *
+   * 같은 배치에서 둘을 더 지웠다 — `microtask-queue` · `frame-deadline` 은 절반만 완제품에 흡수되고
+   * 나머지 조각(microtask-cuts-in · jank-vs-slow)은 완제품 없이 조각으로만 남기기로 판정했는데,
+   * 컨테이너 항목을 남겨 뒀더니 `facetId` 없는 비피스 토픽이라 호스트 UI 가 "soon"(곧 나올 예정)으로
+   * 잘못 표시했다 — 실제로는 "안 만들기로 정함"이지 "아직 못 만듦"이 아니다. 항목째 지웠다(조각의
+   * `origin` 문자열은 그대로 둔다 — `concept-meta-batch-protocol.md` 규칙 2번이 이 모양을 다룬다).
+   * 1010 → 1008.
    */
   it('규모가 줄지 않았다 — 실수로 잘려 나간 것을 잡는다', () => {
     expect(domains.length).toBeGreaterThanOrEqual(16);
-    expect(rows.length).toBeGreaterThanOrEqual(1010);
+    expect(rows.length).toBeGreaterThanOrEqual(1008);
   });
 });
 

@@ -3143,10 +3143,6 @@
           "name": "이벤트 루프",
           "topics": [
             {
-              "id": "microtask-queue",
-              "name": "마이크로태스크 큐"
-            },
-            {
               "id": "blocking-and-yield",
               "name": "협조적 양보",
               "facetId": "facet:cooperativeYielding"
@@ -3362,10 +3358,6 @@
           "id": "frame-budget",
           "name": "프레임과 애니메이션",
           "topics": [
-            {
-              "id": "frame-deadline",
-              "name": "프레임 예산"
-            },
             {
               "id": "composited-animation",
               "name": "프레임 예산과 합성",
