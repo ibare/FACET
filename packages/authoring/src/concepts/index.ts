@@ -642,6 +642,57 @@ import { microtaskCutsInConcept } from './microtask-cuts-in.js';
 import { twoTreesMeetConcept } from './two-trees-meet.js';
 import { justBeforePaintConcept } from './just-before-paint.js';
 import { jankVsSlowConcept } from './jank-vs-slow.js';
+import { foldAndSweepConcept } from './fold-and-sweep.js';
+import { foldAtCompileConcept } from './fold-at-compile.js';
+import { unusedIsRemovedConcept } from './unused-is-removed.js';
+import { loopOptimizationConcept } from './loop-optimization.js';
+import { hoistInvariantConcept } from './hoist-invariant.js';
+import { unrollLoopConcept } from './unroll-loop.js';
+import { inliningTradeoffConcept } from './inlining-tradeoff.js';
+import { pasteTheBodyConcept } from './paste-the-body.js';
+import { inlineGrowsCodeConcept } from './inline-grows-code.js';
+import { splitIntoTokensConcept } from './split-into-tokens.js';
+import { longestMatchWinsConcept } from './longest-match-wins.js';
+import { regexBacktrackingConcept } from './regex-backtracking.js';
+import { patternMatchesSetConcept } from './pattern-matches-set.js';
+import { backtrackOnFailConcept } from './backtrack-on-fail.js';
+import { finiteAutomataConcept } from './finite-automata.js';
+import { stateEatsCharConcept } from './state-eats-char.js';
+import { acceptStateConcept } from './accept-state.js';
+import { nfaToDfaConcept } from './nfa-to-dfa.js';
+import { registerAllocationConcept } from './register-allocation.js';
+import { registersAreFewConcept } from './registers-are-few.js';
+import { spillToMemoryConcept } from './spill-to-memory.js';
+import { interferenceGraphConcept } from './interference-graph.js';
+import { instructionSelectionConcept } from './instruction-selection.js';
+import { patternToInstructionConcept } from './pattern-to-instruction.js';
+import { linkerConcept } from './linker.js';
+import { resolveSymbolsConcept } from './resolve-symbols.js';
+import { relocateAddressesConcept } from './relocate-addresses.js';
+import { parseTreeToAstConcept } from './parse-tree-to-ast.js';
+import { ruleExpandsConcept } from './rule-expands.js';
+import { derivationTreeConcept } from './derivation-tree.js';
+import { treeDropsSyntaxConcept } from './tree-drops-syntax.js';
+import { recursiveDescentConcept } from './recursive-descent.js';
+import { oneFunctionPerRuleConcept } from './one-function-per-rule.js';
+import { lookaheadOneConcept } from './lookahead-one.js';
+import { lrPrecedenceConcept } from './lr-precedence.js';
+import { shiftOrReduceConcept } from './shift-or-reduce.js';
+import { parseConflictConcept } from './parse-conflict.js';
+import { typeCheckingConcept } from './type-checking.js';
+import { typeFlowsUpConcept } from './type-flows-up.js';
+import { typeMismatchConcept } from './type-mismatch.js';
+import { scopeAndSymbolsConcept } from './scope-and-symbols.js';
+import { resolveToDeclarationConcept } from './resolve-to-declaration.js';
+import { tablePerScopeConcept } from './table-per-scope.js';
+import { ssaFormConcept } from './ssa-form.js';
+import { assignOnceConcept } from './assign-once.js';
+import { phiMergesConcept } from './phi-merges.js';
+import { flowGraphsConcept } from './flow-graphs.js';
+import { basicBlockConcept } from './basic-block.js';
+import { edgesAreJumpsConcept } from './edges-are-jumps.js';
+import { valueFlowsToUseConcept } from './value-flows-to-use.js';
+import { lowerToSimplerConcept } from './lower-to-simpler.js';
 
 export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   adjacencyListVsMatrixConcept,
@@ -1266,4 +1317,55 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   twoTreesMeetConcept,
   justBeforePaintConcept,
   jankVsSlowConcept,
+  foldAndSweepConcept,
+  foldAtCompileConcept,
+  unusedIsRemovedConcept,
+  loopOptimizationConcept,
+  hoistInvariantConcept,
+  unrollLoopConcept,
+  inliningTradeoffConcept,
+  pasteTheBodyConcept,
+  inlineGrowsCodeConcept,
+  splitIntoTokensConcept,
+  longestMatchWinsConcept,
+  regexBacktrackingConcept,
+  patternMatchesSetConcept,
+  backtrackOnFailConcept,
+  finiteAutomataConcept,
+  stateEatsCharConcept,
+  acceptStateConcept,
+  nfaToDfaConcept,
+  registerAllocationConcept,
+  registersAreFewConcept,
+  spillToMemoryConcept,
+  interferenceGraphConcept,
+  instructionSelectionConcept,
+  patternToInstructionConcept,
+  linkerConcept,
+  resolveSymbolsConcept,
+  relocateAddressesConcept,
+  parseTreeToAstConcept,
+  ruleExpandsConcept,
+  derivationTreeConcept,
+  treeDropsSyntaxConcept,
+  recursiveDescentConcept,
+  oneFunctionPerRuleConcept,
+  lookaheadOneConcept,
+  lrPrecedenceConcept,
+  shiftOrReduceConcept,
+  parseConflictConcept,
+  typeCheckingConcept,
+  typeFlowsUpConcept,
+  typeMismatchConcept,
+  scopeAndSymbolsConcept,
+  resolveToDeclarationConcept,
+  tablePerScopeConcept,
+  ssaFormConcept,
+  assignOnceConcept,
+  phiMergesConcept,
+  flowGraphsConcept,
+  basicBlockConcept,
+  edgesAreJumpsConcept,
+  valueFlowsToUseConcept,
+  lowerToSimplerConcept,
 ];
