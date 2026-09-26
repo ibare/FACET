@@ -148,8 +148,11 @@ function walk(stmts: IRStmt[], visit: (s: IRStmt) => void): void {
 
 /**
  * 판 차례 — 첫 판은 기본값. 손잡이마다 기본값이 아닌 값을 차례로 한 번씩 거치고 기본값으로 돌아온다.
+ * 손잡이가 둘 이상이고 칸이 `COMBO_LIMIT` 이하면 이어서 모든 조합을 한 번씩 거치고 다시 기본값으로 돌아온다.
  * 돌아온 판(`back`)이 첫 판과 같은 계기를 내야 한다.
  */
+const COMBO_LIMIT = 40;
+
 function planOf(knobs: Knob[]): { inputs: Input[]; backRounds: number[] } {
   const state: Record<string, string> = {};
   for (const k of knobs) state[k.name] = String(k.initial);
@@ -165,6 +168,30 @@ function planOf(knobs: Knob[]): { inputs: Input[]; backRounds: number[] } {
     for (const v of others) set(k, v);
     set(k, k.initial);
     backRounds.push(inputs.length); // 판 번호 = 받은 입력 수
+  }
+  // 손잡이 둘 이상을 함께 돌려야 닿는 칸이 있다 (예: 갈라짐 있음 × 기다릴 수 2 에서만 켜지는 phase).
+  // 하나씩만 돌리면 그 칸에 끝내 닿지 않아, 조합이 작으면 모든 칸을 한 번씩 거치고 기본값으로 돌아온다
+  // (2026-09-26 데이터베이스 replication).
+  const product = knobs.reduce((n, k) => n * k.values.length, 1);
+  if (knobs.length >= 2 && product <= COMBO_LIMIT) {
+    const current: Record<string, number> = {};
+    for (const k of knobs) current[k.name] = k.initial;
+    const visit = (i: number, combo: Record<string, number>): void => {
+      if (i === knobs.length) {
+        for (const k of knobs) {
+          if (current[k.name] !== combo[k.name]) {
+            current[k.name] = combo[k.name]!;
+            set(k, combo[k.name]!);
+          }
+        }
+        return;
+      }
+      for (const v of knobs[i]!.values) visit(i + 1, { ...combo, [knobs[i]!.name]: v });
+    };
+    visit(0, {});
+    const before = inputs.length;
+    for (const k of knobs) if (current[k.name] !== k.initial) set(k, k.initial);
+    if (inputs.length > before) backRounds.push(inputs.length);
   }
   return { inputs, backRounds };
 }
