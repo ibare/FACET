@@ -86,5 +86,7 @@ describe('facet 첫 걸음', () => {
     expect(mounted.length).toBeGreaterThan(atLeast(100));
     expect(errors).toEqual([]);
     expect(blank).toEqual([]);
-  }, 30_000);
+  // facet 을 모두 한꺼번에 띄워 시간이 facet 수에 비례한다. 581 개(2026-09-26, 네트워크 · 데이터베이스를 합친 뒤)에서
+  // 30.1 초가 들어 30 초 제한을 넘었다 — 멎은 것이 아니라 늘어난 것이다. 넉넉히 90 초.
+  }, 90_000);
 });
