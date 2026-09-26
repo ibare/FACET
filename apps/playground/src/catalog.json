@@ -5368,15 +5368,18 @@
           "topics": [
             {
               "id": "convolution",
-              "name": "합성곱 연산"
+              "name": "합성곱 연산",
+              "facetId": "facet:convolution"
             },
             {
               "id": "filter-viz",
-              "name": "필터 시각화"
+              "name": "필터 시각화",
+              "facetId": "facet:learnedFilter"
             },
             {
               "id": "receptive-field",
-              "name": "수용 영역과 풀링"
+              "name": "수용 영역과 풀링",
+              "facetId": "facet:receptiveField"
             },
             {
               "id": "slide-the-kernel",
@@ -5434,11 +5437,13 @@
           "topics": [
             {
               "id": "lstm",
-              "name": "게이트 셀 — LSTM · GRU"
+              "name": "게이트 셀 — LSTM · GRU",
+              "facetId": "facet:gatedCells"
             },
             {
               "id": "bptt",
-              "name": "펼친 RNN 과 시간 역전파"
+              "name": "펼친 RNN 과 시간 역전파",
+              "facetId": "facet:unrolledRnn"
             },
             {
               "id": "carry-hidden-state",
@@ -5504,11 +5509,13 @@
           "topics": [
             {
               "id": "self-attention",
-              "name": "셀프 어텐션과 멀티 헤드"
+              "name": "셀프 어텐션과 멀티 헤드",
+              "facetId": "facet:selfAttention"
             },
             {
               "id": "positional-encoding",
-              "name": "위치 인코딩"
+              "name": "위치 인코딩",
+              "facetId": "facet:positionalEncoding"
             },
             {
               "id": "query-key-value",
@@ -5558,15 +5565,18 @@
           "topics": [
             {
               "id": "vae",
-              "name": "VAE"
+              "name": "VAE",
+              "facetId": "facet:vae"
             },
             {
               "id": "gan",
-              "name": "GAN"
+              "name": "GAN",
+              "facetId": "facet:gan"
             },
             {
               "id": "diffusion",
-              "name": "Diffusion 기초"
+              "name": "Diffusion 기초",
+              "facetId": "facet:diffusion"
             },
             {
               "id": "encode-to-distribution",
@@ -5624,15 +5634,18 @@
           "topics": [
             {
               "id": "q-learning",
-              "name": "Q-learning"
+              "name": "Q-learning",
+              "facetId": "facet:qLearning"
             },
             {
               "id": "policy-gradient",
-              "name": "Policy Gradient"
+              "name": "Policy Gradient",
+              "facetId": "facet:policyGradient"
             },
             {
               "id": "mdp",
-              "name": "MDP"
+              "name": "MDP",
+              "facetId": "facet:mdp"
             },
             {
               "id": "state-action-reward",

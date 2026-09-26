@@ -3822,11 +3822,31 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/deep-learning/convolution:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/deep-learning/denoise-step-by-step:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/deep-learning/diffusion:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/deep-learning/discount-future:
     dependencies:
@@ -3864,11 +3884,51 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/deep-learning/gan:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/deep-learning/gate-lets-through:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/deep-learning/gated-cells:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/deep-learning/learned-filter:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/deep-learning/mdp:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/deep-learning/mode-collapse:
     dependencies:
@@ -3888,11 +3948,51 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/deep-learning/policy-gradient:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/deep-learning/positional-encoding:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/deep-learning/q-learning:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/deep-learning/query-key-value:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/deep-learning/receptive-field:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/deep-learning/same-weights-each-step:
     dependencies:
@@ -3905,6 +4005,16 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/deep-learning/self-attention:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/deep-learning/several-views:
     dependencies:
@@ -3947,6 +4057,26 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/deep-learning/unrolled-rnn:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/deep-learning/vae:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/deep-learning/value-of-action:
     dependencies:
@@ -6563,6 +6693,9 @@ importers:
       '@ffacet/algorithm-control-hazard':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/control-hazard
+      '@ffacet/algorithm-convolution':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/convolution
       '@ffacet/algorithm-convoy-effect':
         specifier: workspace:*
         version: link:../../facets/os/convoy-effect
@@ -6677,6 +6810,9 @@ importers:
       '@ffacet/algorithm-diamond-dependency':
         specifier: workspace:*
         version: link:../../facets/dev-tooling/diamond-dependency
+      '@ffacet/algorithm-diffusion':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/diffusion
       '@ffacet/algorithm-digit-by-digit':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/digit-by-digit
@@ -6914,12 +7050,18 @@ importers:
       '@ffacet/algorithm-fuse-two-rankings':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/fuse-two-rankings
+      '@ffacet/algorithm-gan':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/gan
       '@ffacet/algorithm-gap-shrink':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/gap-shrink
       '@ffacet/algorithm-gate-lets-through':
         specifier: workspace:*
         version: link:../../facets/deep-learning/gate-lets-through
+      '@ffacet/algorithm-gated-cells':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/gated-cells
       '@ffacet/algorithm-gc-reachable-from-root':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/gc-reachable-from-root
@@ -7205,6 +7347,9 @@ importers:
       '@ffacet/algorithm-leading-zeros-tell':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/leading-zeros-tell
+      '@ffacet/algorithm-learned-filter':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/learned-filter
       '@ffacet/algorithm-least-squares':
         specifier: workspace:*
         version: link:../../facets/ml-basics/least-squares
@@ -7346,6 +7491,9 @@ importers:
       '@ffacet/algorithm-max-flow':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/max-flow
+      '@ffacet/algorithm-mdp':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/mdp
       '@ffacet/algorithm-memo-write-once':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/memo-write-once
@@ -7637,6 +7785,9 @@ importers:
       '@ffacet/algorithm-pointer-dereference':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/pointer-dereference
+      '@ffacet/algorithm-policy-gradient':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/policy-gradient
       '@ffacet/algorithm-polling-vs-interrupt':
         specifier: workspace:*
         version: link:../../facets/os/polling-vs-interrupt
@@ -7646,6 +7797,9 @@ importers:
       '@ffacet/algorithm-port-demultiplex':
         specifier: workspace:*
         version: link:../../facets/network/port-demultiplex
+      '@ffacet/algorithm-positional-encoding':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/positional-encoding
       '@ffacet/algorithm-positional-value':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/positional-value
@@ -7703,6 +7857,9 @@ importers:
       '@ffacet/algorithm-push-pop-top':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/push-pop-top
+      '@ffacet/algorithm-q-learning':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/q-learning
       '@ffacet/algorithm-quantum-size-tradeoff':
         specifier: workspace:*
         version: link:../../facets/os/quantum-size-tradeoff
@@ -7766,6 +7923,9 @@ importers:
       '@ffacet/algorithm-recency-reorder':
         specifier: workspace:*
         version: link:../../facets/os/recency-reorder
+      '@ffacet/algorithm-receptive-field':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/receptive-field
       '@ffacet/algorithm-recolor-then-rotate':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/recolor-then-rotate
@@ -7946,6 +8106,9 @@ importers:
       '@ffacet/algorithm-selector-right-to-left':
         specifier: workspace:*
         version: link:../../facets/web-runtime/selector-right-to-left
+      '@ffacet/algorithm-self-attention':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/self-attention
       '@ffacet/algorithm-semantic-versioning':
         specifier: workspace:*
         version: link:../../facets/dev-tooling/semantic-versioning
@@ -8342,6 +8505,9 @@ importers:
       '@ffacet/algorithm-unroll-then-backprop':
         specifier: workspace:*
         version: link:../../facets/deep-learning/unroll-then-backprop
+      '@ffacet/algorithm-unrolled-rnn':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/unrolled-rnn
       '@ffacet/algorithm-unused-is-removed':
         specifier: workspace:*
         version: link:../../facets/compilers/unused-is-removed
@@ -8351,6 +8517,9 @@ importers:
       '@ffacet/algorithm-upgrade-then-keep-open':
         specifier: workspace:*
         version: link:../../facets/network/upgrade-then-keep-open
+      '@ffacet/algorithm-vae':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/vae
       '@ffacet/algorithm-value-flows-to-use':
         specifier: workspace:*
         version: link:../../facets/compilers/value-flows-to-use

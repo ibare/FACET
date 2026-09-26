@@ -2363,4 +2363,43 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:weightSharing', () =>
     import('@ffacet/algorithm-weight-sharing').then((m) => m.registerWeightSharing()),
   );
+  registerFacetLoader('facet:convolution', () =>
+    import('@ffacet/algorithm-convolution').then((m) => m.registerConvolution()),
+  );
+  registerFacetLoader('facet:receptiveField', () =>
+    import('@ffacet/algorithm-receptive-field').then((m) => m.registerReceptiveField()),
+  );
+  registerFacetLoader('facet:learnedFilter', () =>
+    import('@ffacet/algorithm-learned-filter').then((m) => m.registerLearnedFilter()),
+  );
+  registerFacetLoader('facet:unrolledRnn', () =>
+    import('@ffacet/algorithm-unrolled-rnn').then((m) => m.registerUnrolledRnn()),
+  );
+  registerFacetLoader('facet:gatedCells', () =>
+    import('@ffacet/algorithm-gated-cells').then((m) => m.registerGatedCells()),
+  );
+  registerFacetLoader('facet:selfAttention', () =>
+    import('@ffacet/algorithm-self-attention').then((m) => m.registerSelfAttention()),
+  );
+  registerFacetLoader('facet:positionalEncoding', () =>
+    import('@ffacet/algorithm-positional-encoding').then((m) => m.registerPositionalEncoding()),
+  );
+  registerFacetLoader('facet:vae', () =>
+    import('@ffacet/algorithm-vae').then((m) => m.registerVae()),
+  );
+  registerFacetLoader('facet:gan', () =>
+    import('@ffacet/algorithm-gan').then((m) => m.registerGan()),
+  );
+  registerFacetLoader('facet:diffusion', () =>
+    import('@ffacet/algorithm-diffusion').then((m) => m.registerDiffusion()),
+  );
+  registerFacetLoader('facet:mdp', () =>
+    import('@ffacet/algorithm-mdp').then((m) => m.registerMdp()),
+  );
+  registerFacetLoader('facet:qLearning', () =>
+    import('@ffacet/algorithm-q-learning').then((m) => m.registerQLearning()),
+  );
+  registerFacetLoader('facet:policyGradient', () =>
+    import('@ffacet/algorithm-policy-gradient').then((m) => m.registerPolicyGradient()),
+  );
 }

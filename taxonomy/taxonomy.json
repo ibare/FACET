@@ -1069,6 +1069,9 @@
           "id": "cnn",
           "name": {"en":"CNN","ko":"CNN","ja":"CNN","zh":"CNN","ar":"CNN","es":"CNN","fr":"CNN","hi":"CNN","id":"CNN","pt":"CNN"},
           "facets": [
+            "facet:convolution",
+            "facet:learnedFilter",
+            "facet:receptiveField",
             "facet:slideTheKernel",
             "facet:weightSharing",
             "facet:strideAndPadding",
@@ -1081,6 +1084,8 @@
           "id": "rnn",
           "name": {"en":"RNN","ko":"RNN","ja":"RNN","zh":"RNN","ar":"RNN","es":"RNN","fr":"RNN","hi":"RNN","id":"RNN","pt":"RNN"},
           "facets": [
+            "facet:gatedCells",
+            "facet:unrolledRnn",
             "facet:carryHiddenState",
             "facet:sameWeightsEachStep",
             "facet:gateLetsThrough",
@@ -1094,6 +1099,8 @@
           "id": "transformer",
           "name": {"en":"Attention and Transformers","ko":"어텐션과 트랜스포머","ja":"アテンションとトランスフォーマー","zh":"注意力与 Transformer","ar":"الانتباه والمحوّلات","es":"Atención y transformers","fr":"Attention et transformers","hi":"अटेंशन और ट्रांसफ़ॉर्मर","id":"Atensi dan Transformer","pt":"Atenção e transformers"},
           "facets": [
+            "facet:selfAttention",
+            "facet:positionalEncoding",
             "facet:queryKeyValue",
             "facet:attendToAllAtOnce",
             "facet:attentionWeights",
@@ -1105,6 +1112,9 @@
           "id": "generative",
           "name": {"en":"Generative Models","ko":"생성 모델","ja":"生成モデル","zh":"生成模型","ar":"النماذج التوليدية","es":"Modelos generativos","fr":"Modèles génératifs","hi":"जनरेटिव मॉडल","id":"Model Generatif","pt":"Modelos generativos"},
           "facets": [
+            "facet:vae",
+            "facet:gan",
+            "facet:diffusion",
             "facet:encodeToDistribution",
             "facet:sampleAndDecode",
             "facet:twoNetsCompete",
@@ -1117,6 +1127,9 @@
           "id": "rl",
           "name": {"en":"Reinforcement Learning","ko":"강화 학습","ja":"強化学習","zh":"强化学习","ar":"التعلم المعزز","es":"Aprendizaje por refuerzo","fr":"Apprentissage par renforcement","hi":"रीइन्फ़ोर्समेंट लर्निंग","id":"Pembelajaran Penguatan","pt":"Aprendizado por reforço"},
           "facets": [
+            "facet:qLearning",
+            "facet:policyGradient",
+            "facet:mdp",
             "facet:stateActionReward",
             "facet:discountFuture",
             "facet:valueOfAction",
