@@ -2276,4 +2276,91 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:branchCoverage', () =>
     import('@ffacet/algorithm-branch-coverage').then((m) => m.registerBranchCoverage()),
   );
+  registerFacetLoader('facet:addNoiseThenRemove', () =>
+    import('@ffacet/algorithm-add-noise-then-remove').then((m) => m.registerAddNoiseThenRemove()),
+  );
+  registerFacetLoader('facet:attendToAllAtOnce', () =>
+    import('@ffacet/algorithm-attend-to-all-at-once').then((m) => m.registerAttendToAllAtOnce()),
+  );
+  registerFacetLoader('facet:attentionWeights', () =>
+    import('@ffacet/algorithm-attention-weights').then((m) => m.registerAttentionWeights()),
+  );
+  registerFacetLoader('facet:carryHiddenState', () =>
+    import('@ffacet/algorithm-carry-hidden-state').then((m) => m.registerCarryHiddenState()),
+  );
+  registerFacetLoader('facet:cellCarriesLong', () =>
+    import('@ffacet/algorithm-cell-carries-long').then((m) => m.registerCellCarriesLong()),
+  );
+  registerFacetLoader('facet:denoiseStepByStep', () =>
+    import('@ffacet/algorithm-denoise-step-by-step').then((m) => m.registerDenoiseStepByStep()),
+  );
+  registerFacetLoader('facet:discountFuture', () =>
+    import('@ffacet/algorithm-discount-future').then((m) => m.registerDiscountFuture()),
+  );
+  registerFacetLoader('facet:encodeToDistribution', () =>
+    import('@ffacet/algorithm-encode-to-distribution').then((m) => m.registerEncodeToDistribution()),
+  );
+  registerFacetLoader('facet:exploreVsExploit', () =>
+    import('@ffacet/algorithm-explore-vs-exploit').then((m) => m.registerExploreVsExploit()),
+  );
+  registerFacetLoader('facet:fewerGates', () =>
+    import('@ffacet/algorithm-fewer-gates').then((m) => m.registerFewerGates()),
+  );
+  registerFacetLoader('facet:fieldGrowsWithDepth', () =>
+    import('@ffacet/algorithm-field-grows-with-depth').then((m) => m.registerFieldGrowsWithDepth()),
+  );
+  registerFacetLoader('facet:filtersLearnEdges', () =>
+    import('@ffacet/algorithm-filters-learn-edges').then((m) => m.registerFiltersLearnEdges()),
+  );
+  registerFacetLoader('facet:gateLetsThrough', () =>
+    import('@ffacet/algorithm-gate-lets-through').then((m) => m.registerGateLetsThrough()),
+  );
+  registerFacetLoader('facet:modeCollapse', () =>
+    import('@ffacet/algorithm-mode-collapse').then((m) => m.registerModeCollapse()),
+  );
+  registerFacetLoader('facet:nudgeTowardReward', () =>
+    import('@ffacet/algorithm-nudge-toward-reward').then((m) => m.registerNudgeTowardReward()),
+  );
+  registerFacetLoader('facet:orderMustBeAdded', () =>
+    import('@ffacet/algorithm-order-must-be-added').then((m) => m.registerOrderMustBeAdded()),
+  );
+  registerFacetLoader('facet:queryKeyValue', () =>
+    import('@ffacet/algorithm-query-key-value').then((m) => m.registerQueryKeyValue()),
+  );
+  registerFacetLoader('facet:sameWeightsEachStep', () =>
+    import('@ffacet/algorithm-same-weights-each-step').then((m) => m.registerSameWeightsEachStep()),
+  );
+  registerFacetLoader('facet:sampleAndDecode', () =>
+    import('@ffacet/algorithm-sample-and-decode').then((m) => m.registerSampleAndDecode()),
+  );
+  registerFacetLoader('facet:severalViews', () =>
+    import('@ffacet/algorithm-several-views').then((m) => m.registerSeveralViews()),
+  );
+  registerFacetLoader('facet:shrinkBySummary', () =>
+    import('@ffacet/algorithm-shrink-by-summary').then((m) => m.registerShrinkBySummary()),
+  );
+  registerFacetLoader('facet:slideTheKernel', () =>
+    import('@ffacet/algorithm-slide-the-kernel').then((m) => m.registerSlideTheKernel()),
+  );
+  registerFacetLoader('facet:stateActionReward', () =>
+    import('@ffacet/algorithm-state-action-reward').then((m) => m.registerStateActionReward()),
+  );
+  registerFacetLoader('facet:strideAndPadding', () =>
+    import('@ffacet/algorithm-stride-and-padding').then((m) => m.registerStrideAndPadding()),
+  );
+  registerFacetLoader('facet:twoNetsCompete', () =>
+    import('@ffacet/algorithm-two-nets-compete').then((m) => m.registerTwoNetsCompete()),
+  );
+  registerFacetLoader('facet:unrollThenBackprop', () =>
+    import('@ffacet/algorithm-unroll-then-backprop').then((m) => m.registerUnrollThenBackprop()),
+  );
+  registerFacetLoader('facet:valueOfAction', () =>
+    import('@ffacet/algorithm-value-of-action').then((m) => m.registerValueOfAction()),
+  );
+  registerFacetLoader('facet:vanishingOverTime', () =>
+    import('@ffacet/algorithm-vanishing-over-time').then((m) => m.registerVanishingOverTime()),
+  );
+  registerFacetLoader('facet:weightSharing', () =>
+    import('@ffacet/algorithm-weight-sharing').then((m) => m.registerWeightSharing()),
+  );
 }

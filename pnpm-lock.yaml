@@ -3792,6 +3792,180 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/deep-learning/add-noise-then-remove:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/attend-to-all-at-once:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/attention-weights:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/carry-hidden-state:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/cell-carries-long:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/denoise-step-by-step:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/discount-future:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/encode-to-distribution:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/explore-vs-exploit:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/fewer-gates:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/field-grows-with-depth:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/filters-learn-edges:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/gate-lets-through:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/mode-collapse:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/nudge-toward-reward:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/order-must-be-added:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/query-key-value:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/same-weights-each-step:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/sample-and-decode:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/several-views:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/shrink-by-summary:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/slide-the-kernel:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/state-action-reward:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/stride-and-padding:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/two-nets-compete:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/unroll-then-backprop:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/value-of-action:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/vanishing-over-time:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/deep-learning/weight-sharing:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/dev-tooling/ancestor-as-referee:
     dependencies:
       '@ffacet/core':
@@ -6038,6 +6212,9 @@ importers:
       '@ffacet/algorithm-acid':
         specifier: workspace:*
         version: link:../../facets/database/acid
+      '@ffacet/algorithm-add-noise-then-remove':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/add-noise-then-remove
       '@ffacet/algorithm-adjacency-list-vs-matrix':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/adjacency-list-vs-matrix
@@ -6110,6 +6287,12 @@ importers:
       '@ffacet/algorithm-atomic-cell':
         specifier: workspace:*
         version: link:../../facets/database/atomic-cell
+      '@ffacet/algorithm-attend-to-all-at-once':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/attend-to-all-at-once
+      '@ffacet/algorithm-attention-weights':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/attention-weights
       '@ffacet/algorithm-auth':
         specifier: workspace:*
         version: link:../../facets/network/auth
@@ -6296,6 +6479,9 @@ importers:
       '@ffacet/algorithm-cannot-unset':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/cannot-unset
+      '@ffacet/algorithm-carry-hidden-state':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/carry-hidden-state
       '@ffacet/algorithm-carry-several-lines':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/carry-several-lines
@@ -6305,6 +6491,9 @@ importers:
       '@ffacet/algorithm-cascade-priority':
         specifier: workspace:*
         version: link:../../facets/web-runtime/cascade-priority
+      '@ffacet/algorithm-cell-carries-long':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/cell-carries-long
       '@ffacet/algorithm-certificate-chain':
         specifier: workspace:*
         version: link:../../facets/network/certificate-chain
@@ -6455,6 +6644,9 @@ importers:
       '@ffacet/algorithm-dendrogram-cut':
         specifier: workspace:*
         version: link:../../facets/ml-basics/dendrogram-cut
+      '@ffacet/algorithm-denoise-step-by-step':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/denoise-step-by-step
       '@ffacet/algorithm-dense-neighborhood':
         specifier: workspace:*
         version: link:../../facets/ml-basics/dense-neighborhood
@@ -6503,6 +6695,9 @@ importers:
       '@ffacet/algorithm-dirty-scan':
         specifier: workspace:*
         version: link:../../facets/web-runtime/dirty-scan
+      '@ffacet/algorithm-discount-future':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/discount-future
       '@ffacet/algorithm-disk-scheduling':
         specifier: workspace:*
         version: link:../../facets/os/disk-scheduling
@@ -6572,6 +6767,9 @@ importers:
       '@ffacet/algorithm-encapsulation-boundary':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/encapsulation-boundary
+      '@ffacet/algorithm-encode-to-distribution':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/encode-to-distribution
       '@ffacet/algorithm-enqueue-dequeue-ends':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/enqueue-dequeue-ends
@@ -6602,6 +6800,9 @@ importers:
       '@ffacet/algorithm-exhaustive-search':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/exhaustive-search
+      '@ffacet/algorithm-explore-vs-exploit':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/explore-vs-exploit
       '@ffacet/algorithm-external-fragmentation':
         specifier: workspace:*
         version: link:../../facets/os/external-fragmentation
@@ -6620,9 +6821,15 @@ importers:
       '@ffacet/algorithm-fetch-ahead':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/fetch-ahead
+      '@ffacet/algorithm-fewer-gates':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/fewer-gates
       '@ffacet/algorithm-fewer-hops-not-shorter':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/fewer-hops-not-shorter
+      '@ffacet/algorithm-field-grows-with-depth':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/field-grows-with-depth
       '@ffacet/algorithm-field-order-size':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/field-order-size
@@ -6635,6 +6842,9 @@ importers:
       '@ffacet/algorithm-filter-keep-some':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/filter-keep-some
+      '@ffacet/algorithm-filters-learn-edges':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/filters-learn-edges
       '@ffacet/algorithm-find-root':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/find-root
@@ -6707,6 +6917,9 @@ importers:
       '@ffacet/algorithm-gap-shrink':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/gap-shrink
+      '@ffacet/algorithm-gate-lets-through':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/gate-lets-through
       '@ffacet/algorithm-gc-reachable-from-root':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/gc-reachable-from-root
@@ -7172,6 +7385,9 @@ importers:
       '@ffacet/algorithm-missing-key-remount':
         specifier: workspace:*
         version: link:../../facets/web-runtime/missing-key-remount
+      '@ffacet/algorithm-mode-collapse':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/mode-collapse
       '@ffacet/algorithm-monad-chain-in-box':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/monad-chain-in-box
@@ -7256,6 +7472,9 @@ importers:
       '@ffacet/algorithm-normal-forms':
         specifier: workspace:*
         version: link:../../facets/database/normal-forms
+      '@ffacet/algorithm-nudge-toward-reward':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/nudge-toward-reward
       '@ffacet/algorithm-one-bit-double-fault':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/one-bit-double-fault
@@ -7289,6 +7508,9 @@ importers:
       '@ffacet/algorithm-optimizer':
         specifier: workspace:*
         version: link:../../facets/database/optimizer
+      '@ffacet/algorithm-order-must-be-added':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/order-must-be-added
       '@ffacet/algorithm-out-of-bounds':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/out-of-bounds
@@ -7487,6 +7709,9 @@ importers:
       '@ffacet/algorithm-query-inside-query':
         specifier: workspace:*
         version: link:../../facets/database/query-inside-query
+      '@ffacet/algorithm-query-key-value':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/query-key-value
       '@ffacet/algorithm-queue-fifo':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/queue-fifo
@@ -7667,9 +7892,15 @@ importers:
       '@ffacet/algorithm-same-answer-different-plan':
         specifier: workspace:*
         version: link:../../facets/database/same-answer-different-plan
+      '@ffacet/algorithm-same-weights-each-step':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/same-weights-each-step
       '@ffacet/algorithm-same-word-vs-same-meaning':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/same-word-vs-same-meaning
+      '@ffacet/algorithm-sample-and-decode':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/sample-and-decode
       '@ffacet/algorithm-saturating-counter':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/saturating-counter
@@ -7736,6 +7967,9 @@ importers:
       '@ffacet/algorithm-several-hashes-one-value':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/several-hashes-one-value
+      '@ffacet/algorithm-several-views':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/several-views
       '@ffacet/algorithm-shadowing':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/shadowing
@@ -7772,6 +8006,9 @@ importers:
       '@ffacet/algorithm-shortest-path-tree':
         specifier: workspace:*
         version: link:../../facets/network/shortest-path-tree
+      '@ffacet/algorithm-shrink-by-summary':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/shrink-by-summary
       '@ffacet/algorithm-shrink-to-smallest':
         specifier: workspace:*
         version: link:../../facets/dev-tooling/shrink-to-smallest
@@ -7811,6 +8048,9 @@ importers:
       '@ffacet/algorithm-skip-list':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/skip-list
+      '@ffacet/algorithm-slide-the-kernel':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/slide-the-kernel
       '@ffacet/algorithm-slow-start':
         specifier: workspace:*
         version: link:../../facets/network/slow-start
@@ -7883,6 +8123,9 @@ importers:
       '@ffacet/algorithm-starvation-of-long':
         specifier: workspace:*
         version: link:../../facets/os/starvation-of-long
+      '@ffacet/algorithm-state-action-reward':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/state-action-reward
       '@ffacet/algorithm-state-eats-char':
         specifier: workspace:*
         version: link:../../facets/compilers/state-eats-char
@@ -7901,6 +8144,9 @@ importers:
       '@ffacet/algorithm-stride-and-miss':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/stride-and-miss
+      '@ffacet/algorithm-stride-and-padding':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/stride-and-padding
       '@ffacet/algorithm-struct-alignment':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/struct-alignment
@@ -8045,6 +8291,9 @@ importers:
       '@ffacet/algorithm-two-copies-coexist':
         specifier: workspace:*
         version: link:../../facets/dev-tooling/two-copies-coexist
+      '@ffacet/algorithm-two-nets-compete':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/two-nets-compete
       '@ffacet/algorithm-two-trees-meet':
         specifier: workspace:*
         version: link:../../facets/web-runtime/two-trees-meet
@@ -8090,6 +8339,9 @@ importers:
       '@ffacet/algorithm-unroll-loop':
         specifier: workspace:*
         version: link:../../facets/compilers/unroll-loop
+      '@ffacet/algorithm-unroll-then-backprop':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/unroll-then-backprop
       '@ffacet/algorithm-unused-is-removed':
         specifier: workspace:*
         version: link:../../facets/compilers/unused-is-removed
@@ -8105,6 +8357,12 @@ importers:
       '@ffacet/algorithm-value-in-place':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/value-in-place
+      '@ffacet/algorithm-value-of-action':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/value-of-action
+      '@ffacet/algorithm-vanishing-over-time':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/vanishing-over-time
       '@ffacet/algorithm-variable-size-segments':
         specifier: workspace:*
         version: link:../../facets/os/variable-size-segments
@@ -8135,6 +8393,9 @@ importers:
       '@ffacet/algorithm-walk-per-character':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/walk-per-character
+      '@ffacet/algorithm-weight-sharing':
+        specifier: workspace:*
+        version: link:../../facets/deep-learning/weight-sharing
       '@ffacet/algorithm-weighted-fair-share':
         specifier: workspace:*
         version: link:../../facets/os/weighted-fair-share

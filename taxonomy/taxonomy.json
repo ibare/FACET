@@ -1068,27 +1068,61 @@
         {
           "id": "cnn",
           "name": {"en":"CNN","ko":"CNN","ja":"CNN","zh":"CNN","ar":"CNN","es":"CNN","fr":"CNN","hi":"CNN","id":"CNN","pt":"CNN"},
-          "facets": []
+          "facets": [
+            "facet:slideTheKernel",
+            "facet:weightSharing",
+            "facet:strideAndPadding",
+            "facet:shrinkBySummary",
+            "facet:filtersLearnEdges",
+            "facet:fieldGrowsWithDepth"
+          ]
         },
         {
           "id": "rnn",
           "name": {"en":"RNN","ko":"RNN","ja":"RNN","zh":"RNN","ar":"RNN","es":"RNN","fr":"RNN","hi":"RNN","id":"RNN","pt":"RNN"},
-          "facets": []
+          "facets": [
+            "facet:carryHiddenState",
+            "facet:sameWeightsEachStep",
+            "facet:gateLetsThrough",
+            "facet:cellCarriesLong",
+            "facet:fewerGates",
+            "facet:unrollThenBackprop",
+            "facet:vanishingOverTime"
+          ]
         },
         {
           "id": "transformer",
           "name": {"en":"Attention and Transformers","ko":"어텐션과 트랜스포머","ja":"アテンションとトランスフォーマー","zh":"注意力与 Transformer","ar":"الانتباه والمحوّلات","es":"Atención y transformers","fr":"Attention et transformers","hi":"अटेंशन और ट्रांसफ़ॉर्मर","id":"Atensi dan Transformer","pt":"Atenção e transformers"},
-          "facets": []
+          "facets": [
+            "facet:queryKeyValue",
+            "facet:attendToAllAtOnce",
+            "facet:attentionWeights",
+            "facet:severalViews",
+            "facet:orderMustBeAdded"
+          ]
         },
         {
           "id": "generative",
           "name": {"en":"Generative Models","ko":"생성 모델","ja":"生成モデル","zh":"生成模型","ar":"النماذج التوليدية","es":"Modelos generativos","fr":"Modèles génératifs","hi":"जनरेटिव मॉडल","id":"Model Generatif","pt":"Modelos generativos"},
-          "facets": []
+          "facets": [
+            "facet:encodeToDistribution",
+            "facet:sampleAndDecode",
+            "facet:twoNetsCompete",
+            "facet:modeCollapse",
+            "facet:addNoiseThenRemove",
+            "facet:denoiseStepByStep"
+          ]
         },
         {
           "id": "rl",
           "name": {"en":"Reinforcement Learning","ko":"강화 학습","ja":"強化学習","zh":"强化学习","ar":"التعلم المعزز","es":"Aprendizaje por refuerzo","fr":"Apprentissage par renforcement","hi":"रीइन्फ़ोर्समेंट लर्निंग","id":"Pembelajaran Penguatan","pt":"Aprendizado por reforço"},
-          "facets": []
+          "facets": [
+            "facet:stateActionReward",
+            "facet:discountFuture",
+            "facet:valueOfAction",
+            "facet:exploreVsExploit",
+            "facet:nudgeTowardReward"
+          ]
         }
       ]
     },
