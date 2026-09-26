@@ -175,7 +175,10 @@ coroutine 으로 두면 러너가 **마운트 시점에 throw** 하고, 통과�
 - 셈하는 코드는 모르는 모양 · 셈할 수 없는 상태를 `?? 0` · `continue` 로 지나치지 않고 던진다 (C6). projector · stage 도 받은 값이 비면 0 을 지어내지 말고 던진다
 - 테스트 파일이 stage 를 마운트하면 머리에 `// @vitest-environment happy-dom` (둘이 따로 `document is not defined` 에 걸렸다)
 - `waitForInput` 루프는 **앞뒤로** `ctx.cancelled` 를 본다. 우리 것이 아닌 입력은 `continue` 로 흘리고, payload 의
-  `value` 는 `typeof === 'number'` 와 **사다리 소속**을 확인하고 받는다 (C8 · C9)
+  `value` 는 `typeof === 'number'` 와 **사다리 소속**을 확인하고 받는다 (C8 · C9). **제 type 인데 값이 어긋나면 던진다** —
+  `continue` 로 흘리는 것은 우리 것이 아닌 type 뿐이다 (2026-09-26 머신러닝 기초 열다섯 중 다섯이 제 손잡이의 사다리 밖 값을 흘렸다)
+- **판 길이는 걸음 수 × stepMs 로 센다** — reactive 의 `emit` 에는 러너의 발신 지연이 없다. 발신마다 100ms(`BASE_DELAY_MS`)를
+  더하는 것은 coroutine 메커니즘뿐이다 (`mechanism.ts`). 2026-09-26 호스트가 이것을 거꾸로 알려 한 완제품(early-stopping 550 → 450)이 stepMs 를 쓸데없이 줄였다
 - 최상위 `try` 를 두면 `catch (err) { if (!ctx.cancelled) throw err; }` 가 정본. `catch { return; }` 금지 (C8)
 - `phase` 는 `silent: true`. 헬퍼 `const phase = (name: string) => ctx.emit({ type: 'phase', payload: { phase: name }, silent: true })`
   는 허용 — 호출부가 **리터럴** (C3). phase 집합은 algorithm 과 irs.ts 가 **정확히 같다**
