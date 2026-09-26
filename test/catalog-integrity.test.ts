@@ -212,10 +212,15 @@ describe('계획 카탈로그', () => {
    * 같은 날 머신러닝 기초 완제품 판정에서 넷을 지웠다 — 완제품 안에 합친 넷(활성화 함수 → mlp ·
    * L2 → l1 · 훈련/검증 분할 → cross-validation · 혼동 행렬 → roc). 조각 origin 은 host 토픽으로 옮겼다.
    * 사용자가 정했다 (`tasks/ml-foundations-whole-batch.md`). 990 → 986.
+   *
+   * 같은 날 시스템 설계 완제품 판정에서 넷을 지웠다 — 로드 밸런싱(round-robin-lb) 안에 합친 둘(최소 연결 ·
+   * 일관된 해싱)과 버린 둘(합의 — database 의 Raft · Paxos 되풀이, API 게이트웨이 — 세 잣대 모두 약함).
+   * 합친 토픽의 조각은 host 로, 버린 토픽의 조각은 가까운 완제품(consistency-model · service-discovery)으로
+   * origin 을 옮겼다. 사용자가 정했다 (`tasks/system-design-whole-batch.md`). 986 → 982.
    */
   it('규모가 줄지 않았다 — 실수로 잘려 나간 것을 잡는다', () => {
     expect(domains.length).toBeGreaterThanOrEqual(16);
-    expect(rows.length).toBeGreaterThanOrEqual(986);
+    expect(rows.length).toBeGreaterThanOrEqual(982);
   });
 });
 

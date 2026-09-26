@@ -6242,15 +6242,7 @@
           "topics": [
             {
               "id": "round-robin-lb",
-              "name": "Round Robin"
-            },
-            {
-              "id": "least-connection",
-              "name": "Least Connection"
-            },
-            {
-              "id": "consistent-hashing",
-              "name": "일관된 해싱"
+              "name": "로드 밸런싱"
             },
             {
               "id": "spread-in-turn",
@@ -6264,21 +6256,21 @@
               "name": "최소 연결",
               "desc": "가장 한가한 쪽으로",
               "kind": "piece",
-              "origin": "least-connection"
+              "origin": "round-robin-lb"
             },
             {
               "id": "ring-of-hashes",
               "name": "해시 링",
               "desc": "고리 위에 자리를 잡는다",
               "kind": "piece",
-              "origin": "consistent-hashing"
+              "origin": "round-robin-lb"
             },
             {
               "id": "move-few-on-change",
               "name": "일관 해싱",
               "desc": "하나가 빠져도 조금만 옮긴다",
               "kind": "piece",
-              "origin": "consistent-hashing"
+              "origin": "round-robin-lb"
             }
           ]
         },
@@ -6394,10 +6386,6 @@
               "name": "일관성 모델"
             },
             {
-              "id": "consensus",
-              "name": "합의 알고리즘"
-            },
-            {
               "id": "clock-sync",
               "name": "시계 동기화"
             },
@@ -6420,7 +6408,7 @@
               "name": "합의",
               "desc": "여럿이 하나를 정한다",
               "kind": "piece",
-              "origin": "consensus"
+              "origin": "consistency-model"
             },
             {
               "id": "clocks-drift",
@@ -6447,10 +6435,6 @@
               "name": "서비스 디스커버리"
             },
             {
-              "id": "api-gateway",
-              "name": "API 게이트웨이"
-            },
-            {
               "id": "circuit-breaker",
               "name": "서킷 브레이커"
             },
@@ -6466,7 +6450,7 @@
               "name": "API 게이트웨이",
               "desc": "문 하나로 들어가 여럿에 닿는다",
               "kind": "piece",
-              "origin": "api-gateway"
+              "origin": "service-discovery"
             },
             {
               "id": "trip-after-failures",
