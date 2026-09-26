@@ -2723,4 +2723,19 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:trustAnchor', () =>
     import('@ffacet/algorithm-trust-anchor').then((m) => m.registerTrustAnchor()),
   );
+  registerFacetLoader('facet:blockCipher', () =>
+    import('@ffacet/algorithm-block-cipher').then((m) => m.registerBlockCipher()),
+  );
+  registerFacetLoader('facet:ecc', () =>
+    import('@ffacet/algorithm-ecc').then((m) => m.registerEcc()),
+  );
+  registerFacetLoader('facet:sha', () =>
+    import('@ffacet/algorithm-sha').then((m) => m.registerSha()),
+  );
+  registerFacetLoader('facet:collision', () =>
+    import('@ffacet/algorithm-collision').then((m) => m.registerCollision()),
+  );
+  registerFacetLoader('facet:certificate', () =>
+    import('@ffacet/algorithm-certificate').then((m) => m.registerCertificate()),
+  );
 }

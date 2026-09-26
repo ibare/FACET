@@ -1372,6 +1372,7 @@
           "id": "symmetric",
           "name": {"en":"Symmetric Cryptography","ko":"대칭 암호","ja":"共通鍵暗号","zh":"对称加密","ar":"التشفير المتماثل","es":"Criptografía simétrica","fr":"Cryptographie symétrique","hi":"सममित क्रिप्टोग्राफ़ी","id":"Kriptografi Simetris","pt":"Criptografia simétrica"},
           "facets": [
+            "facet:blockCipher",
             "facet:substituteAndPermute",
             "facet:roundKeyMix",
             "facet:fixedSizeBlock",
@@ -1386,6 +1387,7 @@
           "name": {"en":"Asymmetric Cryptography","ko":"비대칭 암호","ja":"公開鍵暗号","zh":"非对称加密","ar":"التشفير غير المتماثل","es":"Criptografía asimétrica","fr":"Cryptographie asymétrique","hi":"असममित क्रिप्टोग्राफ़ी","id":"Kriptografi Asimetris","pt":"Criptografia assimétrica"},
           "facets": [
             "facet:asymmetricRsa",
+            "facet:ecc",
             "facet:easyOneWayHardBack",
             "facet:trapdoorWithKey",
             "facet:mixAndCannotUnmix",
@@ -1397,6 +1399,7 @@
           "id": "hash",
           "name": {"en":"Hashing","ko":"해시","ja":"ハッシュ","zh":"哈希","ar":"التجزئة","es":"Hashing","fr":"Hachage","hi":"हैशिंग","id":"Hash","pt":"Hashing"},
           "facets": [
+            "facet:sha",
             "facet:hashFixedLength",
             "facet:hashAvalanche",
             "facet:pigeonholeCollision",
@@ -1404,6 +1407,7 @@
             "facet:hashSalt",
             "facet:hashChain",
             "facet:merkleTree",
+            "facet:collision",
             "facet:compressBlockByBlock",
             "facet:internalStateCarries",
             "facet:birthdayParadox",
@@ -1417,6 +1421,7 @@
           "facets": [
             "facet:signatureKeyDirection",
             "facet:signatureOnHash",
+            "facet:certificate",
             "facet:bindsKeyToName",
             "facet:trustAnchor"
           ]

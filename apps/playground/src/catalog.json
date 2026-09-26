@@ -6531,7 +6531,8 @@
           "topics": [
             {
               "id": "block-cipher",
-              "name": "블록 암호와 운용 모드"
+              "name": "블록 암호와 운용 모드",
+              "facetId": "facet:blockCipher"
             },
             {
               "id": "substitute-and-permute",
@@ -6602,7 +6603,8 @@
             },
             {
               "id": "ecc",
-              "name": "타원 곡선과 이산 로그"
+              "name": "타원 곡선과 이산 로그",
+              "facetId": "facet:ecc"
             },
             {
               "id": "easy-one-way-hard-back",
@@ -6652,7 +6654,8 @@
           "topics": [
             {
               "id": "sha",
-              "name": "해시와 메시지 인증"
+              "name": "해시와 메시지 인증",
+              "facetId": "facet:sha"
             },
             {
               "id": "hash-fixed-length",
@@ -6711,7 +6714,8 @@
             },
             {
               "id": "collision",
-              "name": "충돌"
+              "name": "충돌",
+              "facetId": "facet:collision"
             },
             {
               "id": "compress-block-by-block",
@@ -6777,7 +6781,8 @@
             },
             {
               "id": "certificate",
-              "name": "전자 서명과 인증서"
+              "name": "전자 서명과 인증서",
+              "facetId": "facet:certificate"
             },
             {
               "id": "binds-key-to-name",

@@ -6296,6 +6296,36 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/security/block-cipher:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/security/certificate:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/security/collision:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/security/compress-block-by-block:
     dependencies:
       '@ffacet/core':
@@ -6307,6 +6337,16 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/security/ecc:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/security/fixed-size-block:
     dependencies:
@@ -6409,6 +6449,16 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/security/sha:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/security/signature-key-direction:
     dependencies:
@@ -7294,6 +7344,9 @@ importers:
       '@ffacet/algorithm-black-height-equal':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/black-height-equal
+      '@ffacet/algorithm-block-cipher':
+        specifier: workspace:*
+        version: link:../../facets/security/block-cipher
       '@ffacet/algorithm-blocked-waits-event':
         specifier: workspace:*
         version: link:../../facets/os/blocked-waits-event
@@ -7417,6 +7470,9 @@ importers:
       '@ffacet/algorithm-cell-carries-long':
         specifier: workspace:*
         version: link:../../facets/deep-learning/cell-carries-long
+      '@ffacet/algorithm-certificate':
+        specifier: workspace:*
+        version: link:../../facets/security/certificate
       '@ffacet/algorithm-certificate-chain':
         specifier: workspace:*
         version: link:../../facets/network/certificate-chain
@@ -7453,6 +7509,9 @@ importers:
       '@ffacet/algorithm-coin-flip-height':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/coin-flip-height
+      '@ffacet/algorithm-collision':
+        specifier: workspace:*
+        version: link:../../facets/security/collision
       '@ffacet/algorithm-collision-and-backoff':
         specifier: workspace:*
         version: link:../../facets/network/collision-and-backoff
@@ -7708,6 +7767,9 @@ importers:
       '@ffacet/algorithm-easy-one-way-hard-back':
         specifier: workspace:*
         version: link:../../facets/security/easy-one-way-hard-back
+      '@ffacet/algorithm-ecc':
+        specifier: workspace:*
+        version: link:../../facets/security/ecc
       '@ffacet/algorithm-echo-and-reply':
         specifier: workspace:*
         version: link:../../facets/network/echo-and-reply
@@ -9154,6 +9216,9 @@ importers:
       '@ffacet/algorithm-sgd':
         specifier: workspace:*
         version: link:../../facets/ml-basics/sgd
+      '@ffacet/algorithm-sha':
+        specifier: workspace:*
+        version: link:../../facets/security/sha
       '@ffacet/algorithm-shadowing':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/shadowing
