@@ -2627,4 +2627,43 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:halfOpenProbe', () =>
     import('@ffacet/algorithm-half-open-probe').then((m) => m.registerHalfOpenProbe()),
   );
+  registerFacetLoader('facet:lfuCache', () =>
+    import('@ffacet/algorithm-lfu-cache').then((m) => m.registerLfuCache()),
+  );
+  registerFacetLoader('facet:cacheCoherence', () =>
+    import('@ffacet/algorithm-cache-coherence').then((m) => m.registerCacheCoherence()),
+  );
+  registerFacetLoader('facet:kafkaPattern', () =>
+    import('@ffacet/algorithm-kafka-pattern').then((m) => m.registerKafkaPattern()),
+  );
+  registerFacetLoader('facet:roundRobinLb', () =>
+    import('@ffacet/algorithm-round-robin-lb').then((m) => m.registerRoundRobinLb()),
+  );
+  registerFacetLoader('facet:queueingModel', () =>
+    import('@ffacet/algorithm-queueing-model').then((m) => m.registerQueueingModel()),
+  );
+  registerFacetLoader('facet:rateLimiting', () =>
+    import('@ffacet/algorithm-rate-limiting').then((m) => m.registerRateLimiting()),
+  );
+  registerFacetLoader('facet:backpressure', () =>
+    import('@ffacet/algorithm-backpressure').then((m) => m.registerBackpressure()),
+  );
+  registerFacetLoader('facet:retryAndBackoff', () =>
+    import('@ffacet/algorithm-retry-and-backoff').then((m) => m.registerRetryAndBackoff()),
+  );
+  registerFacetLoader('facet:bulkhead', () =>
+    import('@ffacet/algorithm-bulkhead').then((m) => m.registerBulkhead()),
+  );
+  registerFacetLoader('facet:consistencyModel', () =>
+    import('@ffacet/algorithm-consistency-model').then((m) => m.registerConsistencyModel()),
+  );
+  registerFacetLoader('facet:clockSync', () =>
+    import('@ffacet/algorithm-clock-sync').then((m) => m.registerClockSync()),
+  );
+  registerFacetLoader('facet:serviceDiscovery', () =>
+    import('@ffacet/algorithm-service-discovery').then((m) => m.registerServiceDiscovery()),
+  );
+  registerFacetLoader('facet:circuitBreaker', () =>
+    import('@ffacet/algorithm-circuit-breaker').then((m) => m.registerCircuitBreaker()),
+  );
 }

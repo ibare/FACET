@@ -6131,11 +6131,13 @@
             },
             {
               "id": "lfu-cache",
-              "name": "LFU 캐시"
+              "name": "LFU 캐시",
+              "facetId": "facet:lfuCache"
             },
             {
               "id": "cache-coherence",
-              "name": "캐시 일관성"
+              "name": "캐시 일관성",
+              "facetId": "facet:cacheCoherence"
             },
             {
               "id": "cdn",
@@ -6203,7 +6205,8 @@
             },
             {
               "id": "kafka-pattern",
-              "name": "Kafka 패턴"
+              "name": "Kafka 패턴",
+              "facetId": "facet:kafkaPattern"
             },
             {
               "id": "publish-to-many",
@@ -6253,7 +6256,8 @@
           "topics": [
             {
               "id": "round-robin-lb",
-              "name": "로드 밸런싱"
+              "name": "로드 밸런싱",
+              "facetId": "facet:roundRobinLb"
             },
             {
               "id": "spread-in-turn",
@@ -6295,23 +6299,28 @@
           "topics": [
             {
               "id": "queueing-model",
-              "name": "큐잉 모델"
+              "name": "큐잉 모델",
+              "facetId": "facet:queueingModel"
             },
             {
               "id": "rate-limiting",
-              "name": "레이트 리미팅"
+              "name": "레이트 리미팅",
+              "facetId": "facet:rateLimiting"
             },
             {
               "id": "backpressure",
-              "name": "배압"
+              "name": "배압",
+              "facetId": "facet:backpressure"
             },
             {
               "id": "retry-and-backoff",
-              "name": "재시도와 백오프"
+              "name": "재시도와 백오프",
+              "facetId": "facet:retryAndBackoff"
             },
             {
               "id": "bulkhead",
-              "name": "벌크헤드"
+              "name": "벌크헤드",
+              "facetId": "facet:bulkhead"
             },
             {
               "id": "arrival-vs-service",
@@ -6409,11 +6418,13 @@
           "topics": [
             {
               "id": "consistency-model",
-              "name": "일관성 모델"
+              "name": "일관성 모델",
+              "facetId": "facet:consistencyModel"
             },
             {
               "id": "clock-sync",
-              "name": "시계 동기화"
+              "name": "시계 동기화",
+              "facetId": "facet:clockSync"
             },
             {
               "id": "read-your-write",
@@ -6463,11 +6474,13 @@
           "topics": [
             {
               "id": "service-discovery",
-              "name": "서비스 디스커버리"
+              "name": "서비스 디스커버리",
+              "facetId": "facet:serviceDiscovery"
             },
             {
               "id": "circuit-breaker",
-              "name": "서킷 브레이커"
+              "name": "서킷 브레이커",
+              "facetId": "facet:circuitBreaker"
             },
             {
               "id": "register-and-find",

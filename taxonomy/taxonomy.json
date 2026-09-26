@@ -1280,6 +1280,8 @@
           "name": {"en":"Caching","ko":"캐싱","ja":"キャッシング","zh":"缓存","ar":"التخزين المؤقت","es":"Caché","fr":"Mise en cache","hi":"कैशिंग","id":"Caching","pt":"Cache"},
           "facets": [
             "facet:lruCache",
+            "facet:lfuCache",
+            "facet:cacheCoherence",
             "facet:cachingCdn",
             "facet:cacheHitMiss",
             "facet:evictLeastFrequent",
@@ -1294,6 +1296,7 @@
           "name": {"en":"Message Queues","ko":"메시지 큐","ja":"メッセージキュー","zh":"消息队列","ar":"طوابير الرسائل","es":"Colas de mensajes","fr":"Files de messages","hi":"मैसेज क्यू","id":"Antrean Pesan","pt":"Filas de mensagens"},
           "facets": [
             "facet:messagingPubsub",
+            "facet:kafkaPattern",
             "facet:publishToMany",
             "facet:decoupleSenderReceiver",
             "facet:appendOnlyLog",
@@ -1305,6 +1308,7 @@
           "id": "load-balancing",
           "name": {"en":"Load Balancing","ko":"로드 밸런싱","ja":"ロードバランシング","zh":"负载均衡","ar":"موازنة الأحمال","es":"Balanceo de carga","fr":"Répartition de charge","hi":"लोड बैलेंसिंग","id":"Penyeimbangan Beban","pt":"Balanceamento de carga"},
           "facets": [
+            "facet:roundRobinLb",
             "facet:spreadInTurn",
             "facet:sendToIdlest",
             "facet:ringOfHashes",
@@ -1315,6 +1319,11 @@
           "id": "load-and-backpressure",
           "name": {"en":"Load and Backpressure","ko":"부하와 배압","ja":"負荷とバックプレッシャー","zh":"负载与背压","ar":"الحمل والضغط العكسي","es":"Carga y contrapresión","fr":"Charge et contre-pression","hi":"लोड और बैकप्रेशर","id":"Beban dan Backpressure","pt":"Carga e contrapressão"},
           "facets": [
+            "facet:queueingModel",
+            "facet:rateLimiting",
+            "facet:backpressure",
+            "facet:retryAndBackoff",
+            "facet:bulkhead",
             "facet:arrivalVsService",
             "facet:lengthIsRateTimesWait",
             "facet:kneeOfTheCurve",
@@ -1332,6 +1341,8 @@
           "id": "distributed",
           "name": {"en":"Distributed Systems","ko":"분산 시스템","ja":"分散システム","zh":"分布式系统","ar":"الأنظمة الموزعة","es":"Sistemas distribuidos","fr":"Systèmes distribués","hi":"वितरित सिस्टम","id":"Sistem Terdistribusi","pt":"Sistemas distribuídos"},
           "facets": [
+            "facet:consistencyModel",
+            "facet:clockSync",
             "facet:readYourWrite",
             "facet:eventuallyAgrees",
             "facet:agreeOnOneValue",
@@ -1343,6 +1354,8 @@
           "id": "microservices",
           "name": {"en":"Microservices","ko":"마이크로서비스","ja":"マイクロサービス","zh":"微服务","ar":"الخدمات المصغّرة","es":"Microservicios","fr":"Microservices","hi":"माइक्रोसर्विसेज़","id":"Layanan Mikro","pt":"Microsserviços"},
           "facets": [
+            "facet:serviceDiscovery",
+            "facet:circuitBreaker",
             "facet:registerAndFind",
             "facet:oneDoorManyRooms",
             "facet:tripAfterFailures",

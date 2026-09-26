@@ -6356,6 +6356,36 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/system-design/backpressure:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/system-design/bulkhead:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/system-design/cache-coherence:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/system-design/cache-hit-miss:
     dependencies:
       '@ffacet/core':
@@ -6368,11 +6398,41 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/system-design/circuit-breaker:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/system-design/clock-sync:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/system-design/clocks-drift:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/system-design/consistency-model:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/system-design/consumer-offset:
     dependencies:
@@ -6428,6 +6488,16 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/system-design/kafka-pattern:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/system-design/knee-of-the-curve:
     dependencies:
       '@ffacet/core':
@@ -6445,6 +6515,16 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/system-design/lfu-cache:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/system-design/messaging-pubsub:
     dependencies:
@@ -6476,6 +6556,26 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/system-design/queueing-model:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/system-design/rate-limiting:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/system-design/read-your-write:
     dependencies:
       '@ffacet/core':
@@ -6494,6 +6594,16 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/system-design/retry-and-backoff:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/system-design/retry-storm:
     dependencies:
       '@ffacet/core':
@@ -6506,6 +6616,16 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/system-design/round-robin-lb:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/system-design/send-to-idlest:
     dependencies:
       '@ffacet/core':
@@ -6517,6 +6637,16 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/system-design/service-discovery:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/system-design/shed-to-survive:
     dependencies:
@@ -6960,6 +7090,9 @@ importers:
       '@ffacet/algorithm-back-off-on-loss':
         specifier: workspace:*
         version: link:../../facets/network/back-off-on-loss
+      '@ffacet/algorithm-backpressure':
+        specifier: workspace:*
+        version: link:../../facets/system-design/backpressure
       '@ffacet/algorithm-backprop':
         specifier: workspace:*
         version: link:../../facets/ml-basics/backprop
@@ -7110,9 +7243,15 @@ importers:
       '@ffacet/algorithm-budget-runs-out':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/budget-runs-out
+      '@ffacet/algorithm-bulkhead':
+        specifier: workspace:*
+        version: link:../../facets/system-design/bulkhead
       '@ffacet/algorithm-byte-order':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/byte-order
+      '@ffacet/algorithm-cache-coherence':
+        specifier: workspace:*
+        version: link:../../facets/system-design/cache-coherence
       '@ffacet/algorithm-cache-hit-miss':
         specifier: workspace:*
         version: link:../../facets/system-design/cache-hit-miss
@@ -7170,9 +7309,15 @@ importers:
       '@ffacet/algorithm-chunking':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/chunking
+      '@ffacet/algorithm-circuit-breaker':
+        specifier: workspace:*
+        version: link:../../facets/system-design/circuit-breaker
       '@ffacet/algorithm-circular-buffer-wrap':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/circular-buffer-wrap
+      '@ffacet/algorithm-clock-sync':
+        specifier: workspace:*
+        version: link:../../facets/system-design/clock-sync
       '@ffacet/algorithm-clocks-drift':
         specifier: workspace:*
         version: link:../../facets/system-design/clocks-drift
@@ -7215,6 +7360,9 @@ importers:
       '@ffacet/algorithm-congestion-control':
         specifier: workspace:*
         version: link:../../facets/network/congestion-control
+      '@ffacet/algorithm-consistency-model':
+        specifier: workspace:*
+        version: link:../../facets/system-design/consistency-model
       '@ffacet/algorithm-constant-fades':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/constant-fades
@@ -7881,6 +8029,9 @@ importers:
       '@ffacet/algorithm-k-must-be-given':
         specifier: workspace:*
         version: link:../../facets/ml-basics/k-must-be-given
+      '@ffacet/algorithm-kafka-pattern':
+        specifier: workspace:*
+        version: link:../../facets/system-design/kafka-pattern
       '@ffacet/algorithm-keep-neighbors-close':
         specifier: workspace:*
         version: link:../../facets/ml-basics/keep-neighbors-close
@@ -7968,6 +8119,9 @@ importers:
       '@ffacet/algorithm-length-is-rate-times-wait':
         specifier: workspace:*
         version: link:../../facets/system-design/length-is-rate-times-wait
+      '@ffacet/algorithm-lfu-cache':
+        specifier: workspace:*
+        version: link:../../facets/system-design/lfu-cache
       '@ffacet/algorithm-line-fill':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/line-fill
@@ -8535,6 +8689,9 @@ importers:
       '@ffacet/algorithm-queue-vs-stack-order':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/queue-vs-stack-order
+      '@ffacet/algorithm-queueing-model':
+        specifier: workspace:*
+        version: link:../../facets/system-design/queueing-model
       '@ffacet/algorithm-quick-sort':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/quick-sort
@@ -8553,6 +8710,9 @@ importers:
       '@ffacet/algorithm-range-and-candidates':
         specifier: workspace:*
         version: link:../../facets/dev-tooling/range-and-candidates
+      '@ffacet/algorithm-rate-limiting':
+        specifier: workspace:*
+        version: link:../../facets/system-design/rate-limiting
       '@ffacet/algorithm-reactive-updates':
         specifier: workspace:*
         version: link:../../facets/web-runtime/reactive-updates
@@ -8688,6 +8848,9 @@ importers:
       '@ffacet/algorithm-resolve-to-declaration':
         specifier: workspace:*
         version: link:../../facets/compilers/resolve-to-declaration
+      '@ffacet/algorithm-retry-and-backoff':
+        specifier: workspace:*
+        version: link:../../facets/system-design/retry-and-backoff
       '@ffacet/algorithm-retry-storm':
         specifier: workspace:*
         version: link:../../facets/system-design/retry-storm
@@ -8715,6 +8878,9 @@ importers:
       '@ffacet/algorithm-rotate-to-balance':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/rotate-to-balance
+      '@ffacet/algorithm-round-robin-lb':
+        specifier: workspace:*
+        version: link:../../facets/system-design/round-robin-lb
       '@ffacet/algorithm-round-robin-quantum':
         specifier: workspace:*
         version: link:../../facets/os/round-robin-quantum
@@ -8814,6 +8980,9 @@ importers:
       '@ffacet/algorithm-serve-from-near':
         specifier: workspace:*
         version: link:../../facets/system-design/serve-from-near
+      '@ffacet/algorithm-service-discovery':
+        specifier: workspace:*
+        version: link:../../facets/system-design/service-discovery
       '@ffacet/algorithm-set-associative-cache':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/set-associative-cache
