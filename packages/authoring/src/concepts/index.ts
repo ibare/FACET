@@ -920,7 +920,58 @@ import { normalDecidesBrightnessConcept } from './normal-decides-brightness.js';
 import { energyConservingConcept } from './energy-conserving.js';
 import { roughnessMetallicConcept } from './roughness-metallic.js';
 import { reflectDistributionConcept } from './reflect-distribution.js';
+import { vectorAsArrowConcept } from './vector-as-arrow.js';
+import { vectorAddTipToTailConcept } from './vector-add-tip-to-tail.js';
+import { vectorScaleConcept } from './vector-scale.js';
+import { vectorNormalizeConcept } from './vector-normalize.js';
+import { dotProductShadowConcept } from './dot-product-shadow.js';
+import { crossProductPerpendicularConcept } from './cross-product-perpendicular.js';
+import { handshakeLemmaConcept } from './handshake-lemma.js';
+import { bipartiteColoringConcept } from './bipartite-coloring.js';
+import { matrixOpsConcept } from './matrix-ops.js';
+import { matrixAsTransformConcept } from './matrix-as-transform.js';
+import { matrixColumnsAreBasisConcept } from './matrix-columns-are-basis.js';
+import { matvecAsCombinationConcept } from './matvec-as-combination.js';
+import { matrixProductChainConcept } from './matrix-product-chain.js';
+import { determinantAreaConcept } from './determinant-area.js';
+import { determinantZeroCollapseConcept } from './determinant-zero-collapse.js';
+import { inverseUndoesConcept } from './inverse-undoes.js';
+import { eigenConcept } from './eigen.js';
+import { eigenvectorDirectionConcept } from './eigenvector-direction.js';
+import { powerIterationDriftConcept } from './power-iteration-drift.js';
+import { svdConcept } from './svd.js';
+import { svdThreeStepsConcept } from './svd-three-steps.js';
+import { lowRankApproxConcept } from './low-rank-approx.js';
+import { integralConcept } from './integral.js';
+import { secantToTangentConcept } from './secant-to-tangent.js';
+import { chainRuleMultiplyConcept } from './chain-rule-multiply.js';
+import { riemannSumConcept } from './riemann-sum.js';
+import { fundamentalTheoremConcept } from './fundamental-theorem.js';
+import { gradientConcept } from './gradient.js';
+import { partialSliceConcept } from './partial-slice.js';
+import { gradientSteepestConcept } from './gradient-steepest.js';
+import { gradientStepConcept } from './gradient-step.js';
+import { cltConcept } from './clt.js';
+import { histogramShapeConcept } from './histogram-shape.js';
+import { meanAndSpreadConcept } from './mean-and-spread.js';
+import { cltBellConcept } from './clt-bell.js';
+import { lawOfLargeNumbersConcept } from './law-of-large-numbers.js';
+import { bayesConcept } from './bayes.js';
+import { conditionalNarrowingConcept } from './conditional-narrowing.js';
+import { bayesUpdateConcept } from './bayes-update.js';
+import { baseRateConcept } from './base-rate.js';
 
+import { combinatoricsConcept } from './combinatorics.js';
+import { setOperationsConcept } from './set-operations.js';
+import { inclusionExclusionConcept } from './inclusion-exclusion.js';
+import { powerSetConcept } from './power-set.js';
+import { productRuleTreeConcept } from './product-rule-tree.js';
+import { permutationVsCombinationConcept } from './permutation-vs-combination.js';
+import { pascalTriangleConcept } from './pascal-triangle.js';
+import { numberTheoryConcept } from './number-theory.js';
+import { modularClockConcept } from './modular-clock.js';
+import { euclidGcdConcept } from './euclid-gcd.js';
+import { sieveOfEratosthenesConcept } from './sieve-of-eratosthenes.js';
 export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   adjacencyListVsMatrixConcept,
   ahoCorasickConcept,
@@ -1822,4 +1873,55 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   energyConservingConcept,
   roughnessMetallicConcept,
   reflectDistributionConcept,
+  vectorAsArrowConcept,
+  vectorAddTipToTailConcept,
+  vectorScaleConcept,
+  vectorNormalizeConcept,
+  dotProductShadowConcept,
+  crossProductPerpendicularConcept,
+  handshakeLemmaConcept,
+  bipartiteColoringConcept,
+  matrixOpsConcept,
+  matrixAsTransformConcept,
+  matrixColumnsAreBasisConcept,
+  matvecAsCombinationConcept,
+  matrixProductChainConcept,
+  determinantAreaConcept,
+  determinantZeroCollapseConcept,
+  inverseUndoesConcept,
+  eigenConcept,
+  eigenvectorDirectionConcept,
+  powerIterationDriftConcept,
+  svdConcept,
+  svdThreeStepsConcept,
+  lowRankApproxConcept,
+  integralConcept,
+  secantToTangentConcept,
+  chainRuleMultiplyConcept,
+  riemannSumConcept,
+  fundamentalTheoremConcept,
+  gradientConcept,
+  partialSliceConcept,
+  gradientSteepestConcept,
+  gradientStepConcept,
+  cltConcept,
+  histogramShapeConcept,
+  meanAndSpreadConcept,
+  cltBellConcept,
+  lawOfLargeNumbersConcept,
+  bayesConcept,
+  conditionalNarrowingConcept,
+  bayesUpdateConcept,
+  baseRateConcept,
+  combinatoricsConcept,
+  setOperationsConcept,
+  inclusionExclusionConcept,
+  powerSetConcept,
+  productRuleTreeConcept,
+  permutationVsCombinationConcept,
+  pascalTriangleConcept,
+  numberTheoryConcept,
+  modularClockConcept,
+  euclidGcdConcept,
+  sieveOfEratosthenesConcept,
 ];
