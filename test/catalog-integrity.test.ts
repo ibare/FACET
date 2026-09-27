@@ -228,10 +228,16 @@ describe('계획 카탈로그', () => {
    * 2026-09-27 컴퓨터 그래픽스 완제품 판정에서 여섯을 지웠다 — 완제품 안에 합친 여섯(동차 좌표 → 변환의 합성,
    * 카메라 모델 · 클리핑 → 카메라와 투영, 퐁 · PBR → 반사 모형, 광선 투사 → 광선 추적). 조각 origin 은
    * host 토픽으로 옮겼다. 사용자가 판정대로 정했다 (`tasks/graphics-whole-batch.md`). 963 → 957.
+   *
+   * 2026-09-27 수학 기초 완제품 판정에서 여섯을 지웠다 — 완제품 안에 합친 넷(확률 분포 → 중심 극한 ·
+   * 미분 → 적분 · 편미분 → 그래디언트 · 집합 → 조합론)과 버린 둘(벡터 연산 — 손잡이가 조각의 스윕을
+   * 되풀이함, 그래프 이론 — cs-fundamentals 의 두 색 칠하기 · BFS 되풀이). 합친 토픽의 조각은 host 로
+   * origin 을 옮기고, 버린 토픽의 조각은 origin 을 그대로 둔다. 사용자가 판정 결론대로 하라고 미리
+   * 맡겼다 (`tasks/math-foundations-whole-batch.md`). 957 → 951.
    */
   it('규모가 줄지 않았다 — 실수로 잘려 나간 것을 잡는다', () => {
     expect(domains.length).toBeGreaterThanOrEqual(16);
-    expect(rows.length).toBeGreaterThanOrEqual(957);
+    expect(rows.length).toBeGreaterThanOrEqual(951);
   });
 });
 
