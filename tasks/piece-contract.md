@@ -227,6 +227,16 @@ getColors, makeTranslator, fonts, fontSizes, PIECE_CANVAS_W, categorical
 - **무대가 어긋난 장면을 말없이 넘기지 않는다** — `?? 0` · `?? ''` · `?? colors.text` · 범위 밖을 끝에 붙이는 clamp · 조용한 `return` 은 던지는 것으로.
   그림이 부를 수 있는 algorithm 의 함수는 바탕에서 정해지는 작은 셈(격자 자리 · 박자 경계)까지다. 알고리즘의 셈(인코더 · 어텐션 · 샘플링)을
   자료 전체에 다시 돌려 축 범위 · 축척을 정하면 장면 밖 값이다 — 범위는 알고리즘이 silent init 으로 싣는다 (2026-09-26 딥러닝 조각 넷이 걸렸다)
+- **운동 중에도 같다** — 주장의 셈(곱 · 몫과 나머지 · 그림자 · 기울기)을 운동의 매 프레임 export 함수로 다시 돌리지 않는다. 앞 값과 payload 값 사이를
+  보간하거나, 지나는 값 목록을 payload 에 싣는다. 멈춘 화면은 장면 값 그대로 (2026-09-27 수학 기초 조각 넷: modular-clock · power-iteration-drift ·
+  svd-three-steps · vector-add-tip-to-tail)
+- **캡션 갈래를 무대가 payload 값으로 고른다면 그 갈래의 결론을 그 비교가 받쳐야 한다** — `shadow > 0` 이면 "더 벌어진다" 를 고른 조각은 벌어졌는지
+  아무도 비교하지 않았다. 받쳐지지 않으면 알고리즘이 갈래를 셈해 싣는다 (2026-09-27 dot-product-shadow). "늘었다" 가 앞값 · 지금값 비교면 된다
+- `facet-shot` 은 `SVGRectElement` 같은 DOM 전역이 없는 환경에서 돈다 — `instanceof SVG…Element` 로 요소를 가리면 `ReferenceError`.
+  손잡이를 객체(`{ g, rect, text }`)로 쥔다 (2026-09-27 permutation-vs-combination)
+- 문안 자리 표시자 · 키에 `lambda` 를 쓰면 표기 검사가 다른 언어 흔적(`lambda → x => …`)으로 잡는다 — `{ev}` 처럼
+- 설명 글의 재생 길이는 **네 코드의 sleep · 운동 합**으로 센다 — 걸음 0 에 운동이 없고 마지막 걸음 뒤에 sleep 이 없다. 사양의 추정치를 옮긴
+  조각 셋이 걸렸다 (2026-09-27). 확신이 없으면 길이 문장을 쓰지 않는다
 
 - `-0` 과 부동소수 끝자리가 문자열을 가른다 — 좌표·글자를 만들 때 반올림하고 `-0` 을 0 으로
 - `Math.sin(π)` 는 0 이 아니다
