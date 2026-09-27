@@ -1,0 +1,115 @@
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
+
+/**
+ * @piece
+ * 질문: 행렬로 옮긴 점들을 제자리로 돌려놓는 행렬은 무엇이며, 걸면 정말 돌아오는가?
+ *
+ * 점 셋이 A 로 제자리를 떠났다가, A⁻¹ 로 옮기면 셋 모두 떠나기 전 자리로 돌아와
+ * 남은 거리가 0 이 된다. A⁻¹ 를 A 뒤에 곱한 한 행렬은 아무 점도 옮기지 않는다.
+ */
+export const inverseUndoesFacet: FacetJson = {
+  id: 'facet:inverseUndoes',
+  title: {
+    en: 'The inverse brings points back',
+    ko: '역행렬은 점을 제자리로 돌린다',
+    ja: '逆行列は点を元の位置に戻す',
+    zh: '逆矩阵把点送回原处',
+    ar: 'المصفوفة العكسية تعيد النقاط',
+    es: 'La inversa devuelve los puntos',
+    fr: 'L’inverse ramène les points',
+    hi: 'व्युत्क्रम आव्यूह बिंदुओं को लौटाता है',
+    id: 'Invers mengembalikan titik',
+    pt: 'A inversa traz os pontos de volta',
+  },
+  description: {
+    en: 'Three points leave their places under A; apply A⁻¹ and every one lands exactly where it started.',
+    ko: '점 셋이 A 로 제자리를 떠난다. A⁻¹ 를 걸면 셋 모두 떠나기 전 자리에 정확히 돌아온다.',
+    ja: '3つの点が A で元の位置を離れる。A⁻¹ をかけると、どれも出発した位置へ正確に戻る。',
+    zh: '三个点经 A 离开原处；再施加 A⁻¹，每个点都准确回到出发的位置。',
+    ar: 'تغادر ثلاث نقاط أماكنها تحت A؛ طبّق A⁻¹ فتعود كل نقطة إلى مكانها الأصلي تمامًا.',
+    es: 'Tres puntos dejan su lugar con A; aplica A⁻¹ y cada uno vuelve exactamente a donde empezó.',
+    fr: 'Trois points quittent leur place sous A ; appliquez A⁻¹ et chacun revient exactement à son départ.',
+    hi: 'A से तीन बिंदु अपनी जगह छोड़ते हैं; A⁻¹ लगाने पर हर बिंदु ठीक वहीं लौटता है जहाँ से चला था।',
+    id: 'Tiga titik meninggalkan tempatnya karena A; terapkan A⁻¹ dan setiap titik kembali tepat ke tempat awalnya.',
+    pt: 'Três pontos deixam seu lugar com A; aplique A⁻¹ e cada um volta exatamente para onde começou.',
+  },
+  algorithm: 'module:inverseUndoes',
+  scene: 'module:inverseUndoesScene',
+  initialData: {
+    type: 'inverse-undoes',
+    stepMs: 2000,
+    matrix: [3, 1, 1, 1],
+    points: [
+      [1, 2],
+      [-2, 1],
+      [1, -1],
+    ],
+  },
+  shuffleOnReset: false,
+  messages: {
+    'caption.start': {
+      en: 'Start — points at their place: {n}',
+      ko: '처음 — 제자리에 있는 점 {n}',
+      ja: 'はじめ — 元の位置にある点: {n}',
+      zh: '开始 — 在原处的点：{n}',
+      ar: 'البداية — نقاط في أماكنها: {n}',
+      es: 'Inicio — puntos en su lugar: {n}',
+      fr: 'Départ — points à leur place : {n}',
+      hi: 'शुरुआत — अपनी जगह पर बिंदु: {n}',
+      id: 'Awal — titik di tempatnya: {n}',
+      pt: 'Início — pontos no seu lugar: {n}',
+    },
+    'caption.leave': {
+      en: 'After A — points that left their place: {n} / {total}',
+      ko: 'A 를 건 뒤 — 제자리를 떠난 점 {n} / {total}',
+      ja: 'A の後 — 元の位置を離れた点: {n} / {total}',
+      zh: '施加 A 后 — 离开原处的点：{n} / {total}',
+      ar: 'بعد A — نقاط غادرت أماكنها: {n} / {total}',
+      es: 'Tras A — puntos que dejaron su lugar: {n} / {total}',
+      fr: 'Après A — points sortis de leur place : {n} / {total}',
+      hi: 'A के बाद — जगह छोड़ने वाले बिंदु: {n} / {total}',
+      id: 'Setelah A — titik yang meninggalkan tempatnya: {n} / {total}',
+      pt: 'Depois de A — pontos que deixaram seu lugar: {n} / {total}',
+    },
+    'caption.invert': {
+      en: 'Computing A⁻¹ — det A = ad − bc = {det}',
+      ko: 'A⁻¹ 셈 — det A = ad − bc = {det}',
+      ja: 'A⁻¹ を求める — det A = ad − bc = {det}',
+      zh: '计算 A⁻¹ — det A = ad − bc = {det}',
+      ar: 'حساب A⁻¹ — det A = ad − bc = {det}',
+      es: 'Calculando A⁻¹ — det A = ad − bc = {det}',
+      fr: 'Calcul de A⁻¹ — det A = ad − bc = {det}',
+      hi: 'A⁻¹ की गणना — det A = ad − bc = {det}',
+      id: 'Menghitung A⁻¹ — det A = ad − bc = {det}',
+      pt: 'Calculando A⁻¹ — det A = ad − bc = {det}',
+    },
+    'caption.return': {
+      en: 'After A⁻¹ — points back at their place: {n} / {total} · distance left: {d}',
+      ko: 'A⁻¹ 를 건 뒤 — 제자리로 온 점 {n} / {total} · 남은 거리 {d}',
+      ja: 'A⁻¹ の後 — 元の位置に戻った点: {n} / {total} · 残りの距離: {d}',
+      zh: '施加 A⁻¹ 后 — 回到原处的点：{n} / {total} · 剩余距离：{d}',
+      ar: 'بعد A⁻¹ — نقاط عادت إلى أماكنها: {n} / {total} · المسافة المتبقية: {d}',
+      es: 'Tras A⁻¹ — puntos de vuelta en su lugar: {n} / {total} · distancia restante: {d}',
+      fr: 'Après A⁻¹ — points revenus à leur place : {n} / {total} · distance restante : {d}',
+      hi: 'A⁻¹ के बाद — जगह पर लौटे बिंदु: {n} / {total} · बची दूरी: {d}',
+      id: 'Setelah A⁻¹ — titik kembali ke tempatnya: {n} / {total} · sisa jarak: {d}',
+      pt: 'Depois de A⁻¹ — pontos de volta ao lugar: {n} / {total} · distância restante: {d}',
+    },
+    'caption.compose': {
+      en: 'A⁻¹A as one matrix — points it moves: {n} / {total}',
+      ko: 'A⁻¹A 를 한 행렬로 — 옮기는 점 {n} / {total}',
+      ja: 'A⁻¹A を1つの行列に — 動かす点: {n} / {total}',
+      zh: '把 A⁻¹A 合成一个矩阵 — 它移动的点：{n} / {total}',
+      ar: 'A⁻¹A مصفوفة واحدة — نقاط تحرّكها: {n} / {total}',
+      es: 'A⁻¹A como una sola matriz — puntos que mueve: {n} / {total}',
+      fr: 'A⁻¹A en une seule matrice — points déplacés : {n} / {total}',
+      hi: 'A⁻¹A एक आव्यूह के रूप में — खिसकाए गए बिंदु: {n} / {total}',
+      id: 'A⁻¹A sebagai satu matriks — titik yang dipindahkannya: {n} / {total}',
+      pt: 'A⁻¹A como uma só matriz — pontos que ela move: {n} / {total}',
+    },
+  },
+  blocks: {
+    stage: { type: 'inverse-undoes-stage' },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
+  },
+};

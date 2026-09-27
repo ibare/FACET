@@ -1,0 +1,113 @@
+import { CONTROL_SET, type FacetJson } from '@ffacet/core/runtime';
+
+/**
+ * @piece
+ * 질문: 벡터에 수 k 를 곱하면 무엇이 바뀌고 무엇이 그대로인가.
+ *
+ * 한 화살표 v = (2, 1) 에 k = 1 · 2 · 3 · 0.5 를 차례로 곱한다. 머리가 제 방향의 곧은 줄
+ * 위를 미끄러져 길이가 늘고 준다. 길이 ÷ 처음 길이 와 각을 걸음마다 셈해 보인다.
+ */
+export const vectorScaleFacet: FacetJson = {
+  id: 'facet:vectorScale',
+  title: {
+    en: 'Scaling a vector',
+    ko: '벡터의 스칼라 곱',
+    ja: 'ベクトルのスカラー倍',
+    zh: '向量的数乘',
+    ar: 'ضرب المتجه في عدد',
+    es: 'Multiplicar un vector por un escalar',
+    fr: 'Multiplier un vecteur par un scalaire',
+    hi: 'सदिश का अदिश गुणन',
+    id: 'Perkalian skalar pada vektor',
+    pt: 'Multiplicar um vetor por um escalar',
+  },
+  description: {
+    en: 'Multiplying by a positive number slides the head along its own line: the length changes by that factor, the angle does not.',
+    ko: '양수를 곱하면 머리가 제 방향의 곧은 줄 위를 미끄러진다 — 길이는 그 배수만큼 바뀌고 각은 바뀌지 않는다.',
+    ja: '正の数を掛けると、矢印の先は自分の向きの直線上を滑る。長さはその倍率だけ変わり、角度は変わらない。',
+    zh: '乘以一个正数时，箭头的头部沿着自身方向的直线滑动：长度按该倍数改变，角度不变。',
+    ar: 'الضرب في عدد موجب يحرّك رأس السهم على خطه نفسه: يتغير الطول بذلك المعامل، ولا تتغير الزاوية.',
+    es: 'Multiplicar por un número positivo desliza la punta sobre su propia recta: la longitud cambia en ese factor y el ángulo no.',
+    fr: 'Multiplier par un nombre positif fait glisser la pointe sur sa propre droite : la longueur change de ce facteur, l’angle ne change pas.',
+    hi: 'धनात्मक संख्या से गुणा करने पर सिरा अपनी ही सीधी रेखा पर खिसकता है — लंबाई उसी गुणक से बदलती है, कोण नहीं बदलता।',
+    id: 'Mengalikan dengan bilangan positif menggeser ujung panah di sepanjang garisnya sendiri: panjangnya berubah sebesar faktor itu, sudutnya tidak.',
+    pt: 'Multiplicar por um número positivo desliza a ponta ao longo da própria reta: o comprimento muda por esse fator e o ângulo não.',
+  },
+  algorithm: 'module:vectorScale',
+  scene: 'module:vectorScaleScene',
+  initialData: {
+    type: 'vector-scale',
+    vectorName: 'v',
+    scalarName: 'k',
+    v: [2, 1],
+    ks: [1, 2, 3, 0.5],
+    stepMs: 1800,
+  },
+  shuffleOnReset: false,
+  messages: {
+    'caption.start': {
+      en: 'Before multiplying: {sym} = {value}',
+      ko: '곱하기 전: {sym} = {value}',
+      ja: '掛ける前: {sym} = {value}',
+      zh: '相乘之前：{sym} = {value}',
+      ar: 'قبل الضرب: {sym} = {value}',
+      es: 'Antes de multiplicar: {sym} = {value}',
+      fr: 'Avant de multiplier : {sym} = {value}',
+      hi: 'गुणा करने से पहले: {sym} = {value}',
+      id: 'Sebelum dikalikan: {sym} = {value}',
+      pt: 'Antes de multiplicar: {sym} = {value}',
+    },
+    'caption.grow': {
+      en: 'Length grows: {sym} = {value}',
+      ko: '길이가 는다: {sym} = {value}',
+      ja: '長さが伸びる: {sym} = {value}',
+      zh: '长度变长：{sym} = {value}',
+      ar: 'يزداد الطول: {sym} = {value}',
+      es: 'La longitud crece: {sym} = {value}',
+      fr: 'La longueur augmente : {sym} = {value}',
+      hi: 'लंबाई बढ़ती है: {sym} = {value}',
+      id: 'Panjang bertambah: {sym} = {value}',
+      pt: 'O comprimento cresce: {sym} = {value}',
+    },
+    'caption.shrink': {
+      en: 'Length shrinks: {sym} = {value}',
+      ko: '길이가 준다: {sym} = {value}',
+      ja: '長さが縮む: {sym} = {value}',
+      zh: '长度变短：{sym} = {value}',
+      ar: 'يقصر الطول: {sym} = {value}',
+      es: 'La longitud se reduce: {sym} = {value}',
+      fr: 'La longueur diminue : {sym} = {value}',
+      hi: 'लंबाई घटती है: {sym} = {value}',
+      id: 'Panjang berkurang: {sym} = {value}',
+      pt: 'O comprimento diminui: {sym} = {value}',
+    },
+    'label.length': {
+      en: 'length',
+      ko: '길이',
+      ja: '長さ',
+      zh: '长度',
+      ar: 'الطول',
+      es: 'longitud',
+      fr: 'longueur',
+      hi: 'लंबाई',
+      id: 'panjang',
+      pt: 'comprimento',
+    },
+    'label.ratio': {
+      en: 'length ÷ original length',
+      ko: '길이 ÷ 처음 길이',
+      ja: '長さ ÷ 元の長さ',
+      zh: '长度 ÷ 原长度',
+      ar: 'الطول ÷ الطول الأصلي',
+      es: 'longitud ÷ longitud original',
+      fr: 'longueur ÷ longueur initiale',
+      hi: 'लंबाई ÷ मूल लंबाई',
+      id: 'panjang ÷ panjang awal',
+      pt: 'comprimento ÷ comprimento original',
+    },
+  },
+  blocks: {
+    stage: { type: 'vector-scale-stage' },
+    controls: { type: 'control-bar', controls: CONTROL_SET.pieceScrub },
+  },
+};
