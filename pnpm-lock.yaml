@@ -4604,6 +4604,258 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/math-foundations/base-rate:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/bayes-update:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/bipartite-coloring:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/chain-rule-multiply:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/clt-bell:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/conditional-narrowing:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/cross-product-perpendicular:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/determinant-area:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/determinant-zero-collapse:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/dot-product-shadow:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/eigenvector-direction:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/euclid-gcd:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/fundamental-theorem:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/gradient-steepest:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/gradient-step:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/handshake-lemma:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/histogram-shape:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/inclusion-exclusion:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/inverse-undoes:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/law-of-large-numbers:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/low-rank-approx:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/matrix-as-transform:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/matrix-columns-are-basis:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/matrix-product-chain:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/matvec-as-combination:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/mean-and-spread:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/modular-clock:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/partial-slice:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/pascal-triangle:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/permutation-vs-combination:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/power-iteration-drift:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/power-set:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/product-rule-tree:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/riemann-sum:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/secant-to-tangent:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/set-operations:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/sieve-of-eratosthenes:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/svd-three-steps:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/vector-add-tip-to-tail:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/vector-as-arrow:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/vector-normalize:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/math-foundations/vector-scale:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/ml-basics/adam:
     dependencies:
       '@ffacet/core':
@@ -7488,6 +7740,9 @@ importers:
       '@ffacet/algorithm-base-case':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/base-case
+      '@ffacet/algorithm-base-rate':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/base-rate
       '@ffacet/algorithm-basic-block':
         specifier: workspace:*
         version: link:../../facets/compilers/basic-block
@@ -7497,6 +7752,9 @@ importers:
       '@ffacet/algorithm-batchnorm':
         specifier: workspace:*
         version: link:../../facets/ml-basics/batchnorm
+      '@ffacet/algorithm-bayes-update':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/bayes-update
       '@ffacet/algorithm-beam-search':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/beam-search
@@ -7521,6 +7779,9 @@ importers:
       '@ffacet/algorithm-binds-key-to-name':
         specifier: workspace:*
         version: link:../../facets/security/binds-key-to-name
+      '@ffacet/algorithm-bipartite-coloring':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/bipartite-coloring
       '@ffacet/algorithm-birthday-paradox':
         specifier: workspace:*
         version: link:../../facets/security/birthday-paradox
@@ -7689,6 +7950,9 @@ importers:
       '@ffacet/algorithm-chain-of-blocks':
         specifier: workspace:*
         version: link:../../facets/os/chain-of-blocks
+      '@ffacet/algorithm-chain-rule-multiply':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/chain-rule-multiply
       '@ffacet/algorithm-chaining-bucket':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/chaining-bucket
@@ -7710,6 +7974,9 @@ importers:
       '@ffacet/algorithm-closure-captures':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/closure-captures
+      '@ffacet/algorithm-clt-bell':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/clt-bell
       '@ffacet/algorithm-coalesce-updates':
         specifier: workspace:*
         version: link:../../facets/web-runtime/coalesce-updates
@@ -7746,6 +8013,9 @@ importers:
       '@ffacet/algorithm-compress-block-by-block':
         specifier: workspace:*
         version: link:../../facets/security/compress-block-by-block
+      '@ffacet/algorithm-conditional-narrowing':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/conditional-narrowing
       '@ffacet/algorithm-conditional-statement':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/conditional-statement
@@ -7815,6 +8085,9 @@ importers:
       '@ffacet/algorithm-critical-section':
         specifier: workspace:*
         version: link:../../facets/os/critical-section
+      '@ffacet/algorithm-cross-product-perpendicular':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/cross-product-perpendicular
       '@ffacet/algorithm-cross-validation':
         specifier: workspace:*
         version: link:../../facets/ml-basics/cross-validation
@@ -7893,9 +8166,15 @@ importers:
       '@ffacet/algorithm-derivation-tree':
         specifier: workspace:*
         version: link:../../facets/compilers/derivation-tree
+      '@ffacet/algorithm-determinant-area':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/determinant-area
       '@ffacet/algorithm-determinant-must-be-key':
         specifier: workspace:*
         version: link:../../facets/database/determinant-must-be-key
+      '@ffacet/algorithm-determinant-zero-collapse':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/determinant-zero-collapse
       '@ffacet/algorithm-dfs':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/dfs
@@ -7953,6 +8232,9 @@ importers:
       '@ffacet/algorithm-dont-recount-the-past':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/dont-recount-the-past
+      '@ffacet/algorithm-dot-product-shadow':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/dot-product-shadow
       '@ffacet/algorithm-double-free':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/double-free
@@ -8004,6 +8286,9 @@ importers:
       '@ffacet/algorithm-edit-table-fill':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/edit-table-fill
+      '@ffacet/algorithm-eigenvector-direction':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/eigenvector-direction
       '@ffacet/algorithm-elect-a-leader':
         specifier: workspace:*
         version: link:../../facets/database/elect-a-leader
@@ -8034,6 +8319,9 @@ importers:
       '@ffacet/algorithm-ethernet':
         specifier: workspace:*
         version: link:../../facets/network/ethernet
+      '@ffacet/algorithm-euclid-gcd':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/euclid-gcd
       '@ffacet/algorithm-euclidean':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/euclidean
@@ -8178,6 +8466,9 @@ importers:
       '@ffacet/algorithm-function-as-value':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/function-as-value
+      '@ffacet/algorithm-fundamental-theorem':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/fundamental-theorem
       '@ffacet/algorithm-fuse-two-rankings':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/fuse-two-rankings
@@ -8205,6 +8496,12 @@ importers:
       '@ffacet/algorithm-gradient-descent':
         specifier: workspace:*
         version: link:../../facets/ml-basics/gradient-descent
+      '@ffacet/algorithm-gradient-steepest':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/gradient-steepest
+      '@ffacet/algorithm-gradient-step':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/gradient-step
       '@ffacet/algorithm-gradient-through-layers':
         specifier: workspace:*
         version: link:../../facets/ml-basics/gradient-through-layers
@@ -8244,6 +8541,9 @@ importers:
       '@ffacet/algorithm-halve-the-range':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/halve-the-range
+      '@ffacet/algorithm-handshake-lemma':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/handshake-lemma
       '@ffacet/algorithm-happens-before':
         specifier: workspace:*
         version: link:../../facets/system-design/happens-before
@@ -8301,6 +8601,9 @@ importers:
       '@ffacet/algorithm-hierarchical':
         specifier: workspace:*
         version: link:../../facets/ml-basics/hierarchical
+      '@ffacet/algorithm-histogram-shape':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/histogram-shape
       '@ffacet/algorithm-history-bisect':
         specifier: workspace:*
         version: link:../../facets/dev-tooling/history-bisect
@@ -8343,6 +8646,9 @@ importers:
       '@ffacet/algorithm-in-place-vs-extra':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/in-place-vs-extra
+      '@ffacet/algorithm-inclusion-exclusion':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/inclusion-exclusion
       '@ffacet/algorithm-incremental-build':
         specifier: workspace:*
         version: link:../../facets/dev-tooling/incremental-build
@@ -8421,6 +8727,9 @@ importers:
       '@ffacet/algorithm-invalidation-cascade':
         specifier: workspace:*
         version: link:../../facets/dev-tooling/invalidation-cascade
+      '@ffacet/algorithm-inverse-undoes':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/inverse-undoes
       '@ffacet/algorithm-inverted-file-index':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/inverted-file-index
@@ -8514,6 +8823,9 @@ importers:
       '@ffacet/algorithm-latency-ladder':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/latency-ladder
+      '@ffacet/algorithm-law-of-large-numbers':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/law-of-large-numbers
       '@ffacet/algorithm-layer-promotion':
         specifier: workspace:*
         version: link:../../facets/web-runtime/layer-promotion
@@ -8649,6 +8961,9 @@ importers:
       '@ffacet/algorithm-lost-update':
         specifier: workspace:*
         version: link:../../facets/os/lost-update
+      '@ffacet/algorithm-low-rank-approx':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/low-rank-approx
       '@ffacet/algorithm-lower-to-simpler':
         specifier: workspace:*
         version: link:../../facets/compilers/lower-to-simpler
@@ -8694,18 +9009,33 @@ importers:
       '@ffacet/algorithm-match-on-key':
         specifier: workspace:*
         version: link:../../facets/database/match-on-key
+      '@ffacet/algorithm-matrix-as-transform':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/matrix-as-transform
+      '@ffacet/algorithm-matrix-columns-are-basis':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/matrix-columns-are-basis
       '@ffacet/algorithm-matrix-mul':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/matrix-mul
+      '@ffacet/algorithm-matrix-product-chain':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/matrix-product-chain
       '@ffacet/algorithm-matrix-transform-2d':
         specifier: workspace:*
         version: link:../../facets/graphics/matrix-transform-2d
+      '@ffacet/algorithm-matvec-as-combination':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/matvec-as-combination
       '@ffacet/algorithm-max-flow':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/max-flow
       '@ffacet/algorithm-mdp':
         specifier: workspace:*
         version: link:../../facets/deep-learning/mdp
+      '@ffacet/algorithm-mean-and-spread':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/mean-and-spread
       '@ffacet/algorithm-memo-write-once':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/memo-write-once
@@ -8760,6 +9090,9 @@ importers:
       '@ffacet/algorithm-mode-collapse':
         specifier: workspace:*
         version: link:../../facets/deep-learning/mode-collapse
+      '@ffacet/algorithm-modular-clock':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/modular-clock
       '@ffacet/algorithm-momentum':
         specifier: workspace:*
         version: link:../../facets/ml-basics/momentum
@@ -8964,12 +9297,18 @@ importers:
       '@ffacet/algorithm-partial-dependency':
         specifier: workspace:*
         version: link:../../facets/database/partial-dependency
+      '@ffacet/algorithm-partial-slice':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/partial-slice
       '@ffacet/algorithm-partition-around-pivot':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/partition-around-pivot
       '@ffacet/algorithm-partition-forces-choice':
         specifier: workspace:*
         version: link:../../facets/database/partition-forces-choice
+      '@ffacet/algorithm-pascal-triangle':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/pascal-triangle
       '@ffacet/algorithm-pass-by-value-vs-reference':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/pass-by-value-vs-reference
@@ -9018,6 +9357,9 @@ importers:
       '@ffacet/algorithm-perceptron':
         specifier: workspace:*
         version: link:../../facets/ml-basics/perceptron
+      '@ffacet/algorithm-permutation-vs-combination':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/permutation-vs-combination
       '@ffacet/algorithm-perspective-shrinks-far':
         specifier: workspace:*
         version: link:../../facets/graphics/perspective-shrinks-far
@@ -9075,6 +9417,12 @@ importers:
       '@ffacet/algorithm-positional-value':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/positional-value
+      '@ffacet/algorithm-power-iteration-drift':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/power-iteration-drift
+      '@ffacet/algorithm-power-set':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/power-set
       '@ffacet/algorithm-prefetching':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/prefetching
@@ -9111,6 +9459,9 @@ importers:
       '@ffacet/algorithm-product-quantization':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/product-quantization
+      '@ffacet/algorithm-product-rule-tree':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/product-rule-tree
       '@ffacet/algorithm-project-and-lose':
         specifier: workspace:*
         version: link:../../facets/ml-basics/project-and-lose
@@ -9339,6 +9690,9 @@ importers:
       '@ffacet/algorithm-rewrite-address-port':
         specifier: workspace:*
         version: link:../../facets/network/rewrite-address-port
+      '@ffacet/algorithm-riemann-sum':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/riemann-sum
       '@ffacet/algorithm-ring-of-hashes':
         specifier: workspace:*
         version: link:../../facets/system-design/ring-of-hashes
@@ -9435,6 +9789,9 @@ importers:
       '@ffacet/algorithm-scope-exit':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/scope-exit
+      '@ffacet/algorithm-secant-to-tangent':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/secant-to-tangent
       '@ffacet/algorithm-second-chance':
         specifier: workspace:*
         version: link:../../facets/os/second-chance
@@ -9483,6 +9840,9 @@ importers:
       '@ffacet/algorithm-set-of-rows':
         specifier: workspace:*
         version: link:../../facets/database/set-of-rows
+      '@ffacet/algorithm-set-operations':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/set-operations
       '@ffacet/algorithm-several-hashes-one-value':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/several-hashes-one-value
@@ -9555,6 +9915,9 @@ importers:
       '@ffacet/algorithm-sieve':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/sieve
+      '@ffacet/algorithm-sieve-of-eratosthenes':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/sieve-of-eratosthenes
       '@ffacet/algorithm-sift-down':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/sift-down
@@ -9723,6 +10086,9 @@ importers:
       '@ffacet/algorithm-surviving-mutant':
         specifier: workspace:*
         version: link:../../facets/dev-tooling/surviving-mutant
+      '@ffacet/algorithm-svd-three-steps':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/svd-three-steps
       '@ffacet/algorithm-svm':
         specifier: workspace:*
         version: link:../../facets/ml-basics/svm
@@ -9954,6 +10320,18 @@ importers:
       '@ffacet/algorithm-variable-size-segments':
         specifier: workspace:*
         version: link:../../facets/os/variable-size-segments
+      '@ffacet/algorithm-vector-add-tip-to-tail':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/vector-add-tip-to-tail
+      '@ffacet/algorithm-vector-as-arrow':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/vector-as-arrow
+      '@ffacet/algorithm-vector-normalize':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/vector-normalize
+      '@ffacet/algorithm-vector-scale':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/vector-scale
       '@ffacet/algorithm-vector-similarity':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/vector-similarity

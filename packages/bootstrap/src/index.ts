@@ -2828,4 +2828,130 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:globalIllumination', () =>
     import('@ffacet/algorithm-global-illumination').then((m) => m.registerGlobalIllumination()),
   );
+  registerFacetLoader('facet:vectorAsArrow', () =>
+    import('@ffacet/algorithm-vector-as-arrow').then((m) => m.registerVectorAsArrow()),
+  );
+  registerFacetLoader('facet:vectorAddTipToTail', () =>
+    import('@ffacet/algorithm-vector-add-tip-to-tail').then((m) => m.registerVectorAddTipToTail()),
+  );
+  registerFacetLoader('facet:vectorScale', () =>
+    import('@ffacet/algorithm-vector-scale').then((m) => m.registerVectorScale()),
+  );
+  registerFacetLoader('facet:dotProductShadow', () =>
+    import('@ffacet/algorithm-dot-product-shadow').then((m) => m.registerDotProductShadow()),
+  );
+  registerFacetLoader('facet:vectorNormalize', () =>
+    import('@ffacet/algorithm-vector-normalize').then((m) => m.registerVectorNormalize()),
+  );
+  registerFacetLoader('facet:crossProductPerpendicular', () =>
+    import('@ffacet/algorithm-cross-product-perpendicular').then((m) => m.registerCrossProductPerpendicular()),
+  );
+  registerFacetLoader('facet:matrixAsTransform', () =>
+    import('@ffacet/algorithm-matrix-as-transform').then((m) => m.registerMatrixAsTransform()),
+  );
+  registerFacetLoader('facet:matrixColumnsAreBasis', () =>
+    import('@ffacet/algorithm-matrix-columns-are-basis').then((m) => m.registerMatrixColumnsAreBasis()),
+  );
+  registerFacetLoader('facet:matvecAsCombination', () =>
+    import('@ffacet/algorithm-matvec-as-combination').then((m) => m.registerMatvecAsCombination()),
+  );
+  registerFacetLoader('facet:matrixProductChain', () =>
+    import('@ffacet/algorithm-matrix-product-chain').then((m) => m.registerMatrixProductChain()),
+  );
+  registerFacetLoader('facet:determinantArea', () =>
+    import('@ffacet/algorithm-determinant-area').then((m) => m.registerDeterminantArea()),
+  );
+  registerFacetLoader('facet:determinantZeroCollapse', () =>
+    import('@ffacet/algorithm-determinant-zero-collapse').then((m) => m.registerDeterminantZeroCollapse()),
+  );
+  registerFacetLoader('facet:inverseUndoes', () =>
+    import('@ffacet/algorithm-inverse-undoes').then((m) => m.registerInverseUndoes()),
+  );
+  registerFacetLoader('facet:eigenvectorDirection', () =>
+    import('@ffacet/algorithm-eigenvector-direction').then((m) => m.registerEigenvectorDirection()),
+  );
+  registerFacetLoader('facet:powerIterationDrift', () =>
+    import('@ffacet/algorithm-power-iteration-drift').then((m) => m.registerPowerIterationDrift()),
+  );
+  registerFacetLoader('facet:svdThreeSteps', () =>
+    import('@ffacet/algorithm-svd-three-steps').then((m) => m.registerSvdThreeSteps()),
+  );
+  registerFacetLoader('facet:lowRankApprox', () =>
+    import('@ffacet/algorithm-low-rank-approx').then((m) => m.registerLowRankApprox()),
+  );
+  registerFacetLoader('facet:histogramShape', () =>
+    import('@ffacet/algorithm-histogram-shape').then((m) => m.registerHistogramShape()),
+  );
+  registerFacetLoader('facet:meanAndSpread', () =>
+    import('@ffacet/algorithm-mean-and-spread').then((m) => m.registerMeanAndSpread()),
+  );
+  registerFacetLoader('facet:conditionalNarrowing', () =>
+    import('@ffacet/algorithm-conditional-narrowing').then((m) => m.registerConditionalNarrowing()),
+  );
+  registerFacetLoader('facet:bayesUpdate', () =>
+    import('@ffacet/algorithm-bayes-update').then((m) => m.registerBayesUpdate()),
+  );
+  registerFacetLoader('facet:baseRate', () =>
+    import('@ffacet/algorithm-base-rate').then((m) => m.registerBaseRate()),
+  );
+  registerFacetLoader('facet:cltBell', () =>
+    import('@ffacet/algorithm-clt-bell').then((m) => m.registerCltBell()),
+  );
+  registerFacetLoader('facet:lawOfLargeNumbers', () =>
+    import('@ffacet/algorithm-law-of-large-numbers').then((m) => m.registerLawOfLargeNumbers()),
+  );
+  registerFacetLoader('facet:secantToTangent', () =>
+    import('@ffacet/algorithm-secant-to-tangent').then((m) => m.registerSecantToTangent()),
+  );
+  registerFacetLoader('facet:chainRuleMultiply', () =>
+    import('@ffacet/algorithm-chain-rule-multiply').then((m) => m.registerChainRuleMultiply()),
+  );
+  registerFacetLoader('facet:riemannSum', () =>
+    import('@ffacet/algorithm-riemann-sum').then((m) => m.registerRiemannSum()),
+  );
+  registerFacetLoader('facet:fundamentalTheorem', () =>
+    import('@ffacet/algorithm-fundamental-theorem').then((m) => m.registerFundamentalTheorem()),
+  );
+  registerFacetLoader('facet:partialSlice', () =>
+    import('@ffacet/algorithm-partial-slice').then((m) => m.registerPartialSlice()),
+  );
+  registerFacetLoader('facet:gradientSteepest', () =>
+    import('@ffacet/algorithm-gradient-steepest').then((m) => m.registerGradientSteepest()),
+  );
+  registerFacetLoader('facet:gradientStep', () =>
+    import('@ffacet/algorithm-gradient-step').then((m) => m.registerGradientStep()),
+  );
+  registerFacetLoader('facet:setOperations', () =>
+    import('@ffacet/algorithm-set-operations').then((m) => m.registerSetOperations()),
+  );
+  registerFacetLoader('facet:inclusionExclusion', () =>
+    import('@ffacet/algorithm-inclusion-exclusion').then((m) => m.registerInclusionExclusion()),
+  );
+  registerFacetLoader('facet:powerSet', () =>
+    import('@ffacet/algorithm-power-set').then((m) => m.registerPowerSet()),
+  );
+  registerFacetLoader('facet:handshakeLemma', () =>
+    import('@ffacet/algorithm-handshake-lemma').then((m) => m.registerHandshakeLemma()),
+  );
+  registerFacetLoader('facet:bipartiteColoring', () =>
+    import('@ffacet/algorithm-bipartite-coloring').then((m) => m.registerBipartiteColoring()),
+  );
+  registerFacetLoader('facet:productRuleTree', () =>
+    import('@ffacet/algorithm-product-rule-tree').then((m) => m.registerProductRuleTree()),
+  );
+  registerFacetLoader('facet:permutationVsCombination', () =>
+    import('@ffacet/algorithm-permutation-vs-combination').then((m) => m.registerPermutationVsCombination()),
+  );
+  registerFacetLoader('facet:pascalTriangle', () =>
+    import('@ffacet/algorithm-pascal-triangle').then((m) => m.registerPascalTriangle()),
+  );
+  registerFacetLoader('facet:modularClock', () =>
+    import('@ffacet/algorithm-modular-clock').then((m) => m.registerModularClock()),
+  );
+  registerFacetLoader('facet:euclidGcd', () =>
+    import('@ffacet/algorithm-euclid-gcd').then((m) => m.registerEuclidGcd()),
+  );
+  registerFacetLoader('facet:sieveOfEratosthenes', () =>
+    import('@ffacet/algorithm-sieve-of-eratosthenes').then((m) => m.registerSieveOfEratosthenes()),
+  );
 }
