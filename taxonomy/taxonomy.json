@@ -1425,11 +1425,6 @@
             "facet:bindsKeyToName",
             "facet:trustAnchor"
           ]
-        },
-        {
-          "id": "attack-defense",
-          "name": {"en":"Attack and Defense","ko":"공격과 방어","ja":"攻撃と防御","zh":"攻击与防御","ar":"الهجوم والدفاع","es":"Ataque y defensa","fr":"Attaque et défense","hi":"हमला और बचाव","id":"Serangan dan Pertahanan","pt":"Ataque e defesa"},
-          "facets": []
         }
       ]
     },
