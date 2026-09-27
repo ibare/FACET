@@ -6829,35 +6829,40 @@
               "name": "크기 변환",
               "desc": "늘이고 줄인다",
               "kind": "piece",
-              "origin": "scale-rotate-translate"
+              "origin": "scale-rotate-translate",
+              "facetId": "facet:scaleStretches"
             },
             {
               "id": "rotate-turns",
               "name": "회전 변환",
               "desc": "한 점을 중심으로 돈다",
               "kind": "piece",
-              "origin": "scale-rotate-translate"
+              "origin": "scale-rotate-translate",
+              "facetId": "facet:rotateTurns"
             },
             {
               "id": "translate-slides",
               "name": "이동 변환",
               "desc": "통째로 옮긴다",
               "kind": "piece",
-              "origin": "scale-rotate-translate"
+              "origin": "scale-rotate-translate",
+              "facetId": "facet:translateSlides"
             },
             {
               "id": "extra-dimension-for-translate",
               "name": "동차 좌표",
               "desc": "한 줄을 더해 옮김도 곱으로",
               "kind": "piece",
-              "origin": "scale-rotate-translate"
+              "origin": "scale-rotate-translate",
+              "facetId": "facet:extraDimensionForTranslate"
             },
             {
               "id": "w-divide",
               "name": "원근 나눗셈",
               "desc": "나누어 되돌린다",
               "kind": "piece",
-              "origin": "scale-rotate-translate"
+              "origin": "scale-rotate-translate",
+              "facetId": "facet:wDivide"
             }
           ]
         },
@@ -6878,56 +6883,64 @@
               "name": "뷰 변환",
               "desc": "눈이 있는 자리로 세상을 옮긴다",
               "kind": "piece",
-              "origin": "projection"
+              "origin": "projection",
+              "facetId": "facet:worldToCamera"
             },
             {
               "id": "look-at-direction",
               "name": "카메라 방향",
               "desc": "어디를 보고 있는가",
               "kind": "piece",
-              "origin": "projection"
+              "origin": "projection",
+              "facetId": "facet:lookAtDirection"
             },
             {
               "id": "perspective-shrinks-far",
               "name": "원근 투영",
               "desc": "멀수록 작아진다",
               "kind": "piece",
-              "origin": "projection"
+              "origin": "projection",
+              "facetId": "facet:perspectiveShrinksFar"
             },
             {
               "id": "orthographic-keeps-size",
               "name": "직교 투영",
               "desc": "멀어도 그대로",
               "kind": "piece",
-              "origin": "projection"
+              "origin": "projection",
+              "facetId": "facet:orthographicKeepsSize"
             },
             {
               "id": "cut-outside-frustum",
               "name": "절두체 클리핑",
               "desc": "보이는 틀 밖은 잘라낸다",
               "kind": "piece",
-              "origin": "projection"
+              "origin": "projection",
+              "facetId": "facet:cutOutsideFrustum"
             },
             {
               "id": "triangle-to-pixels",
               "name": "래스터화",
               "desc": "삼각형을 격자에 채운다",
               "kind": "piece",
-              "origin": "rasterization"
+              "origin": "rasterization",
+              "facetId": "facet:triangleToPixels"
             },
             {
               "id": "depth-test",
               "name": "깊이 버퍼",
               "desc": "앞의 것이 뒤를 가린다",
               "kind": "piece",
-              "origin": "rasterization"
+              "origin": "rasterization",
+              "facetId": "facet:depthTest"
             },
             {
               "id": "interpolate-across",
               "name": "보간",
               "desc": "꼭짓점 값이 안으로 번진다",
               "kind": "piece",
-              "origin": "rasterization"
+              "origin": "rasterization",
+              "facetId": "facet:interpolateAcross"
             }
           ]
         },
@@ -6944,35 +6957,40 @@
               "name": "퐁 반사 모델",
               "desc": "바탕빛·퍼진빛·번쩍임을 더한다",
               "kind": "piece",
-              "origin": "brdf"
+              "origin": "brdf",
+              "facetId": "facet:ambientDiffuseSpecular"
             },
             {
               "id": "normal-decides-brightness",
               "name": "법선과 밝기",
               "desc": "면이 향한 쪽이 밝기를 정한다",
               "kind": "piece",
-              "origin": "brdf"
+              "origin": "brdf",
+              "facetId": "facet:normalDecidesBrightness"
             },
             {
               "id": "energy-conserving",
               "name": "에너지 보존",
               "desc": "나간 빛이 들어온 빛을 넘지 않는다",
               "kind": "piece",
-              "origin": "brdf"
+              "origin": "brdf",
+              "facetId": "facet:energyConserving"
             },
             {
               "id": "roughness-metallic",
               "name": "거칠기와 금속성",
               "desc": "거칠기와 금속성으로 재질을",
               "kind": "piece",
-              "origin": "brdf"
+              "origin": "brdf",
+              "facetId": "facet:roughnessMetallic"
             },
             {
               "id": "reflect-distribution",
               "name": "BRDF",
               "desc": "어느 쪽으로 얼마나 튀는가",
               "kind": "piece",
-              "origin": "brdf"
+              "origin": "brdf",
+              "facetId": "facet:reflectDistribution"
             }
           ]
         },
@@ -6993,42 +7011,48 @@
               "name": "광선 투사",
               "desc": "픽셀마다 광선을 쏜다",
               "kind": "piece",
-              "origin": "ray-tracing-base"
+              "origin": "ray-tracing-base",
+              "facetId": "facet:shootRayPerPixel"
             },
             {
               "id": "nearest-hit",
               "name": "최근접 교차",
               "desc": "가장 먼저 닿은 것",
               "kind": "piece",
-              "origin": "ray-tracing-base"
+              "origin": "ray-tracing-base",
+              "facetId": "facet:nearestHit"
             },
             {
               "id": "reflect-and-refract",
               "name": "반사와 굴절",
               "desc": "튕기고 꺾인다",
               "kind": "piece",
-              "origin": "ray-tracing-base"
+              "origin": "ray-tracing-base",
+              "facetId": "facet:reflectAndRefract"
             },
             {
               "id": "shadow-ray",
               "name": "그림자 광선",
               "desc": "빛까지 길이 막혔는가",
               "kind": "piece",
-              "origin": "ray-tracing-base"
+              "origin": "ray-tracing-base",
+              "facetId": "facet:shadowRay"
             },
             {
               "id": "light-bounces-many",
               "name": "다중 반사",
               "desc": "빛이 여러 번 튄다",
               "kind": "piece",
-              "origin": "global-illumination"
+              "origin": "global-illumination",
+              "facetId": "facet:lightBouncesMany"
             },
             {
               "id": "color-bleeding",
               "name": "색 번짐",
               "desc": "옆의 색이 묻어난다",
               "kind": "piece",
-              "origin": "global-illumination"
+              "origin": "global-illumination",
+              "facetId": "facet:colorBleeding"
             }
           ]
         }

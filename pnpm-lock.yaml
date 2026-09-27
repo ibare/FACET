@@ -4394,7 +4394,211 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/graphics/ambient-diffuse-specular:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/brdf:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/graphics/color-bleeding:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/cut-outside-frustum:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/depth-test:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/energy-conserving:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/extra-dimension-for-translate:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/global-illumination:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/graphics/interpolate-across:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/light-bounces-many:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/look-at-direction:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
   facets/graphics/matrix-transform-2d:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/nearest-hit:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/normal-decides-brightness:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/orthographic-keeps-size:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/perspective-shrinks-far:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/projection:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/graphics/rasterization:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/graphics/ray-tracing-base:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/graphics/reflect-and-refract:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/reflect-distribution:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/rotate-turns:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/roughness-metallic:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/scale-rotate-translate:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
+  facets/graphics/scale-stretches:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/shadow-ray:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/shoot-ray-per-pixel:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/translate-slides:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/triangle-to-pixels:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/w-divide:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+
+  facets/graphics/world-to-camera:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
@@ -7185,6 +7389,9 @@ importers:
       '@ffacet/algorithm-always-the-highest':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/always-the-highest
+      '@ffacet/algorithm-ambient-diffuse-specular':
+        specifier: workspace:*
+        version: link:../../facets/graphics/ambient-diffuse-specular
       '@ffacet/algorithm-ancestor-as-referee':
         specifier: workspace:*
         version: link:../../facets/dev-tooling/ancestor-as-referee
@@ -7515,6 +7722,9 @@ importers:
       '@ffacet/algorithm-collision-and-backoff':
         specifier: workspace:*
         version: link:../../facets/network/collision-and-backoff
+      '@ffacet/algorithm-color-bleeding':
+        specifier: workspace:*
+        version: link:../../facets/graphics/color-bleeding
       '@ffacet/algorithm-column-family':
         specifier: workspace:*
         version: link:../../facets/database/column-family
@@ -7614,6 +7824,9 @@ importers:
       '@ffacet/algorithm-curves-cross':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/curves-cross
+      '@ffacet/algorithm-cut-outside-frustum':
+        specifier: workspace:*
+        version: link:../../facets/graphics/cut-outside-frustum
       '@ffacet/algorithm-cut-the-tail':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/cut-the-tail
@@ -7668,6 +7881,9 @@ importers:
       '@ffacet/algorithm-depth-doubles-count':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/depth-doubles-count
+      '@ffacet/algorithm-depth-test':
+        specifier: workspace:*
+        version: link:../../facets/graphics/depth-test
       '@ffacet/algorithm-deque-both-ends':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/deque-both-ends
@@ -7797,6 +8013,9 @@ importers:
       '@ffacet/algorithm-encode-to-distribution':
         specifier: workspace:*
         version: link:../../facets/deep-learning/encode-to-distribution
+      '@ffacet/algorithm-energy-conserving':
+        specifier: workspace:*
+        version: link:../../facets/graphics/energy-conserving
       '@ffacet/algorithm-enqueue-dequeue-ends':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/enqueue-dequeue-ends
@@ -7842,6 +8061,9 @@ importers:
       '@ffacet/algorithm-external-fragmentation':
         specifier: workspace:*
         version: link:../../facets/os/external-fragmentation
+      '@ffacet/algorithm-extra-dimension-for-translate':
+        specifier: workspace:*
+        version: link:../../facets/graphics/extra-dimension-for-translate
       '@ffacet/algorithm-fail-link':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/fail-link
@@ -8178,6 +8400,9 @@ importers:
       '@ffacet/algorithm-internal-state-carries':
         specifier: workspace:*
         version: link:../../facets/security/internal-state-carries
+      '@ffacet/algorithm-interpolate-across':
+        specifier: workspace:*
+        version: link:../../facets/graphics/interpolate-across
       '@ffacet/algorithm-interpolation-search':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/interpolation-search
@@ -8325,6 +8550,9 @@ importers:
       '@ffacet/algorithm-lfu-cache':
         specifier: workspace:*
         version: link:../../facets/system-design/lfu-cache
+      '@ffacet/algorithm-light-bounces-many':
+        specifier: workspace:*
+        version: link:../../facets/graphics/light-bounces-many
       '@ffacet/algorithm-line-fill':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/line-fill
@@ -8379,6 +8607,9 @@ importers:
       '@ffacet/algorithm-longest-prefix-match':
         specifier: workspace:*
         version: link:../../facets/network/longest-prefix-match
+      '@ffacet/algorithm-look-at-direction':
+        specifier: workspace:*
+        version: link:../../facets/graphics/look-at-direction
       '@ffacet/algorithm-look-closely-at-few':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/look-closely-at-few
@@ -8565,6 +8796,9 @@ importers:
       '@ffacet/algorithm-nat-mapping-table':
         specifier: workspace:*
         version: link:../../facets/network/nat-mapping-table
+      '@ffacet/algorithm-nearest-hit':
+        specifier: workspace:*
+        version: link:../../facets/graphics/nearest-hit
       '@ffacet/algorithm-negate-and-add-one':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/negate-and-add-one
@@ -8619,6 +8853,9 @@ importers:
       '@ffacet/algorithm-nonlinear-bends':
         specifier: workspace:*
         version: link:../../facets/ml-basics/nonlinear-bends
+      '@ffacet/algorithm-normal-decides-brightness':
+        specifier: workspace:*
+        version: link:../../facets/graphics/normal-decides-brightness
       '@ffacet/algorithm-normal-forms':
         specifier: workspace:*
         version: link:../../facets/database/normal-forms
@@ -8670,6 +8907,9 @@ importers:
       '@ffacet/algorithm-origin-pull':
         specifier: workspace:*
         version: link:../../facets/system-design/origin-pull
+      '@ffacet/algorithm-orthographic-keeps-size':
+        specifier: workspace:*
+        version: link:../../facets/graphics/orthographic-keeps-size
       '@ffacet/algorithm-out-of-bounds':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/out-of-bounds
@@ -8772,6 +9012,9 @@ importers:
       '@ffacet/algorithm-perceptron':
         specifier: workspace:*
         version: link:../../facets/ml-basics/perceptron
+      '@ffacet/algorithm-perspective-shrinks-far':
+        specifier: workspace:*
+        version: link:../../facets/graphics/perspective-shrinks-far
       '@ffacet/algorithm-phantom-read':
         specifier: workspace:*
         version: link:../../facets/database/phantom-read
@@ -8994,6 +9237,12 @@ importers:
       '@ffacet/algorithm-refill-the-empty-slot':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/refill-the-empty-slot
+      '@ffacet/algorithm-reflect-and-refract':
+        specifier: workspace:*
+        version: link:../../facets/graphics/reflect-and-refract
+      '@ffacet/algorithm-reflect-distribution':
+        specifier: workspace:*
+        version: link:../../facets/graphics/reflect-distribution
       '@ffacet/algorithm-regex-backtracking':
         specifier: workspace:*
         version: link:../../facets/compilers/regex-backtracking
@@ -9093,6 +9342,12 @@ importers:
       '@ffacet/algorithm-rotate-to-balance':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/rotate-to-balance
+      '@ffacet/algorithm-rotate-turns':
+        specifier: workspace:*
+        version: link:../../facets/graphics/rotate-turns
+      '@ffacet/algorithm-roughness-metallic':
+        specifier: workspace:*
+        version: link:../../facets/graphics/roughness-metallic
       '@ffacet/algorithm-round-key-mix':
         specifier: workspace:*
         version: link:../../facets/security/round-key-mix
@@ -9141,6 +9396,9 @@ importers:
       '@ffacet/algorithm-sawtooth':
         specifier: workspace:*
         version: link:../../facets/network/sawtooth
+      '@ffacet/algorithm-scale-stretches':
+        specifier: workspace:*
+        version: link:../../facets/graphics/scale-stretches
       '@ffacet/algorithm-scan-until-found':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/scan-until-found
@@ -9219,6 +9477,9 @@ importers:
       '@ffacet/algorithm-sha':
         specifier: workspace:*
         version: link:../../facets/security/sha
+      '@ffacet/algorithm-shadow-ray':
+        specifier: workspace:*
+        version: link:../../facets/graphics/shadow-ray
       '@ffacet/algorithm-shadowing':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/shadowing
@@ -9249,6 +9510,9 @@ importers:
       '@ffacet/algorithm-shift-or-reduce':
         specifier: workspace:*
         version: link:../../facets/compilers/shift-or-reduce
+      '@ffacet/algorithm-shoot-ray-per-pixel':
+        specifier: workspace:*
+        version: link:../../facets/graphics/shoot-ray-per-pixel
       '@ffacet/algorithm-short-waits-for-long':
         specifier: workspace:*
         version: link:../../facets/ai-engineering/short-waits-for-long
@@ -9540,6 +9804,9 @@ importers:
       '@ffacet/algorithm-transitive-dependency':
         specifier: workspace:*
         version: link:../../facets/database/transitive-dependency
+      '@ffacet/algorithm-translate-slides':
+        specifier: workspace:*
+        version: link:../../facets/graphics/translate-slides
       '@ffacet/algorithm-trapdoor-with-key':
         specifier: workspace:*
         version: link:../../facets/security/trapdoor-with-key
@@ -9555,6 +9822,9 @@ importers:
       '@ffacet/algorithm-tree-drops-syntax':
         specifier: workspace:*
         version: link:../../facets/compilers/tree-drops-syntax
+      '@ffacet/algorithm-triangle-to-pixels':
+        specifier: workspace:*
+        version: link:../../facets/graphics/triangle-to-pixels
       '@ffacet/algorithm-trie':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/trie
@@ -9684,6 +9954,9 @@ importers:
       '@ffacet/algorithm-vote-by-neighbors':
         specifier: workspace:*
         version: link:../../facets/ml-basics/vote-by-neighbors
+      '@ffacet/algorithm-w-divide':
+        specifier: workspace:*
+        version: link:../../facets/graphics/w-divide
       '@ffacet/algorithm-wait-and-signal':
         specifier: workspace:*
         version: link:../../facets/os/wait-and-signal
@@ -9729,6 +10002,9 @@ importers:
       '@ffacet/algorithm-window-slides':
         specifier: workspace:*
         version: link:../../facets/database/window-slides
+      '@ffacet/algorithm-world-to-camera':
+        specifier: workspace:*
+        version: link:../../facets/graphics/world-to-camera
       '@ffacet/algorithm-write-back-vs-through':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/write-back-vs-through

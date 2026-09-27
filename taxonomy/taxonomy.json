@@ -1436,23 +1436,50 @@
           "id": "transform-2d",
           "name": {"en":"2D Transforms","ko":"2D 변환","ja":"2D 変換","zh":"2D 变换","ar":"التحويلات ثنائية الأبعاد","es":"Transformaciones 2D","fr":"Transformations 2D","hi":"2D रूपांतरण","id":"Transformasi 2D","pt":"Transformações 2D"},
           "facets": [
-            "facet:matrixTransform2d"
+            "facet:matrixTransform2d",
+            "facet:scaleStretches",
+            "facet:rotateTurns",
+            "facet:translateSlides",
+            "facet:extraDimensionForTranslate",
+            "facet:wDivide"
           ]
         },
         {
           "id": "rendering-3d",
           "name": {"en":"3D Rendering","ko":"3D 렌더링","ja":"3D レンダリング","zh":"3D 渲染","ar":"التصيير ثلاثي الأبعاد","es":"Renderizado 3D","fr":"Rendu 3D","hi":"3D रेंडरिंग","id":"Rendering 3D","pt":"Renderização 3D"},
-          "facets": []
+          "facets": [
+            "facet:worldToCamera",
+            "facet:lookAtDirection",
+            "facet:perspectiveShrinksFar",
+            "facet:orthographicKeepsSize",
+            "facet:cutOutsideFrustum",
+            "facet:triangleToPixels",
+            "facet:depthTest",
+            "facet:interpolateAcross"
+          ]
         },
         {
           "id": "shading",
           "name": {"en":"Shading","ko":"셰이딩","ja":"シェーディング","zh":"着色","ar":"التظليل","es":"Sombreado","fr":"Ombrage","hi":"शेडिंग","id":"Shading","pt":"Sombreamento"},
-          "facets": []
+          "facets": [
+            "facet:ambientDiffuseSpecular",
+            "facet:normalDecidesBrightness",
+            "facet:energyConserving",
+            "facet:roughnessMetallic",
+            "facet:reflectDistribution"
+          ]
         },
         {
           "id": "ray-tracing",
           "name": {"en":"Ray Tracing","ko":"광선 추적","ja":"レイトレーシング","zh":"光线追踪","ar":"تتبع الأشعة","es":"Trazado de rayos","fr":"Lancer de rayons","hi":"रे ट्रेसिंग","id":"Ray Tracing","pt":"Traçado de raios"},
-          "facets": []
+          "facets": [
+            "facet:shootRayPerPixel",
+            "facet:nearestHit",
+            "facet:reflectAndRefract",
+            "facet:shadowRay",
+            "facet:lightBouncesMany",
+            "facet:colorBleeding"
+          ]
         }
       ]
     },

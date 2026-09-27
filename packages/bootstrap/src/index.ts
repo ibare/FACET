@@ -2738,4 +2738,76 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:certificate', () =>
     import('@ffacet/algorithm-certificate').then((m) => m.registerCertificate()),
   );
+  registerFacetLoader('facet:ambientDiffuseSpecular', () =>
+    import('@ffacet/algorithm-ambient-diffuse-specular').then((m) => m.registerAmbientDiffuseSpecular()),
+  );
+  registerFacetLoader('facet:colorBleeding', () =>
+    import('@ffacet/algorithm-color-bleeding').then((m) => m.registerColorBleeding()),
+  );
+  registerFacetLoader('facet:cutOutsideFrustum', () =>
+    import('@ffacet/algorithm-cut-outside-frustum').then((m) => m.registerCutOutsideFrustum()),
+  );
+  registerFacetLoader('facet:depthTest', () =>
+    import('@ffacet/algorithm-depth-test').then((m) => m.registerDepthTest()),
+  );
+  registerFacetLoader('facet:energyConserving', () =>
+    import('@ffacet/algorithm-energy-conserving').then((m) => m.registerEnergyConserving()),
+  );
+  registerFacetLoader('facet:extraDimensionForTranslate', () =>
+    import('@ffacet/algorithm-extra-dimension-for-translate').then((m) => m.registerExtraDimensionForTranslate()),
+  );
+  registerFacetLoader('facet:interpolateAcross', () =>
+    import('@ffacet/algorithm-interpolate-across').then((m) => m.registerInterpolateAcross()),
+  );
+  registerFacetLoader('facet:lightBouncesMany', () =>
+    import('@ffacet/algorithm-light-bounces-many').then((m) => m.registerLightBouncesMany()),
+  );
+  registerFacetLoader('facet:lookAtDirection', () =>
+    import('@ffacet/algorithm-look-at-direction').then((m) => m.registerLookAtDirection()),
+  );
+  registerFacetLoader('facet:nearestHit', () =>
+    import('@ffacet/algorithm-nearest-hit').then((m) => m.registerNearestHit()),
+  );
+  registerFacetLoader('facet:normalDecidesBrightness', () =>
+    import('@ffacet/algorithm-normal-decides-brightness').then((m) => m.registerNormalDecidesBrightness()),
+  );
+  registerFacetLoader('facet:orthographicKeepsSize', () =>
+    import('@ffacet/algorithm-orthographic-keeps-size').then((m) => m.registerOrthographicKeepsSize()),
+  );
+  registerFacetLoader('facet:perspectiveShrinksFar', () =>
+    import('@ffacet/algorithm-perspective-shrinks-far').then((m) => m.registerPerspectiveShrinksFar()),
+  );
+  registerFacetLoader('facet:reflectAndRefract', () =>
+    import('@ffacet/algorithm-reflect-and-refract').then((m) => m.registerReflectAndRefract()),
+  );
+  registerFacetLoader('facet:reflectDistribution', () =>
+    import('@ffacet/algorithm-reflect-distribution').then((m) => m.registerReflectDistribution()),
+  );
+  registerFacetLoader('facet:rotateTurns', () =>
+    import('@ffacet/algorithm-rotate-turns').then((m) => m.registerRotateTurns()),
+  );
+  registerFacetLoader('facet:roughnessMetallic', () =>
+    import('@ffacet/algorithm-roughness-metallic').then((m) => m.registerRoughnessMetallic()),
+  );
+  registerFacetLoader('facet:scaleStretches', () =>
+    import('@ffacet/algorithm-scale-stretches').then((m) => m.registerScaleStretches()),
+  );
+  registerFacetLoader('facet:shadowRay', () =>
+    import('@ffacet/algorithm-shadow-ray').then((m) => m.registerShadowRay()),
+  );
+  registerFacetLoader('facet:shootRayPerPixel', () =>
+    import('@ffacet/algorithm-shoot-ray-per-pixel').then((m) => m.registerShootRayPerPixel()),
+  );
+  registerFacetLoader('facet:translateSlides', () =>
+    import('@ffacet/algorithm-translate-slides').then((m) => m.registerTranslateSlides()),
+  );
+  registerFacetLoader('facet:triangleToPixels', () =>
+    import('@ffacet/algorithm-triangle-to-pixels').then((m) => m.registerTriangleToPixels()),
+  );
+  registerFacetLoader('facet:wDivide', () =>
+    import('@ffacet/algorithm-w-divide').then((m) => m.registerWDivide()),
+  );
+  registerFacetLoader('facet:worldToCamera', () =>
+    import('@ffacet/algorithm-world-to-camera').then((m) => m.registerWorldToCamera()),
+  );
 }
