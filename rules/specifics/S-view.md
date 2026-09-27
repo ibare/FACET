@@ -141,4 +141,5 @@ last_verified: 2026-09-05
 ### Exception (view-local 허용)
 
 - `hexToRgba(hex, alpha)` 같은 **순수 변환 함수** 는 색 리터럴이 아니므로 view 에 둘 수 있다 (입력 hex 는 토큰 경유).
+- **자료가 곧 색인 경우** — 셈의 결과가 색 자체인 facet(그래픽스의 조명 · 보간 · 광선 색)은 선형 0..1 값을 `rgb(...)` 로 바꾸는 순수 변환을 stage 에 둘 수 있다. 값은 `initialData` 또는 algorithm 의 셈에서 오고 코드에 박힌 색이 아니다. 단 **무엇을 가르는 색**(R · G · B 채널 막대, 두 판 · 세 몫의 구별)은 셈의 값이 아니라 디자인 색이다 — 단위 벡터 `(1,0,0)` 을 같은 변환에 넣는 것도 리터럴로 본다. `categorical(n)` 에서 받고 글자 이름으로 가른다 (2026-09-27 그래픽스 배치에서 둘이 원색 채널 막대로 걸렸다).
 - view 가 categorical 시드의 어떤 인덱스를 쓰는지 결정하는 매직 넘버는 **named 상수로 끌어올려 `design-tokens.ts` 에 두는** 것을 원칙으로 한다 (`CATEGORICAL_QUEUE_*`). view-local 인덱스 상수는 다른 view 가 같은 의미를 재현할 일이 없을 때만.
