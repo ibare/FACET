@@ -226,6 +226,9 @@ coroutine 으로 두면 러너가 **마운트 시점에 throw** 하고, 통과�
 - `t('<키>', '<en 원본>', vars)` — **키와 en 원본 둘 다 리터럴**, en 원본은 facet.ts 의 en 과 **글자까지 같다** (C10)
 - 문안 — 자리 표시자 뒤에 **받침 따라 바뀌는 조사**를 붙이지 않는다 (`'{word} 를'` 이 `box 를` 로 뜬다). 문장을 바꿔
   조사가 필요 없게 한다. 값 삽입은 `{name}` + vars. 결론을 캡션 글자에 상수로 박지 않는다
+- **손잡이 끝값에서 캡션의 동사가 거짓이 되지 않게** — "꺾인다" · "가르는 선" 같은 동사 문안은 그 판의 셈이 참일 때만 고른다.
+  굴절률 1.0 이면 꺾이지 않고, 틀린 칸이 0 이면 가르는 선이 없다. 판정은 algorithm 이 payload 에 싣고(`bent` · `wrong.length`)
+  projector 는 문안을 고르기만 한다. 사다리 양 끝 값의 캡션 키를 facet 테스트로 잠근다 (2026-09-27 그래픽스 완제품 여섯 중 둘)
 - payload 는 `typeof` 가드로 읽는다. `payload as <이름 붙은 타입>` · `p.items as Item[]` 로 믿지 않는다 (C9)
 - 색은 `getColors(theme)`, 글꼴은 `fonts`/`fontSizes`. hex · rgba · 글꼴 이름 리터럴 0 건 (S-facet · S-view). 글자 폭 셈용 크기도 `parseFloat(fontSizes.sm)` 처럼 토큰에서 (`const CODE_PX = 12` 금지)
 - **마운트 뒤 세로를 바꾸지 않는다** — 사다리의 가장 큰 값이 들어갈 자리를 처음부터 잡는다 (canvas-height)
