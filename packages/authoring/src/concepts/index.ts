@@ -890,6 +890,36 @@ import { modeChainsBlocksConcept } from './mode-chains-blocks.js';
 import { ivMakesDifferentConcept } from './iv-makes-different.js';
 import { xorWithKeystreamConcept } from './xor-with-keystream.js';
 import { neverReuseKeystreamConcept } from './never-reuse-keystream.js';
+import { rasterizationConcept } from './rasterization.js';
+import { triangleToPixelsConcept } from './triangle-to-pixels.js';
+import { depthTestConcept } from './depth-test.js';
+import { interpolateAcrossConcept } from './interpolate-across.js';
+import { globalIlluminationConcept } from './global-illumination.js';
+import { lightBouncesManyConcept } from './light-bounces-many.js';
+import { colorBleedingConcept } from './color-bleeding.js';
+import { projectionConcept } from './projection.js';
+import { worldToCameraConcept } from './world-to-camera.js';
+import { lookAtDirectionConcept } from './look-at-direction.js';
+import { perspectiveShrinksFarConcept } from './perspective-shrinks-far.js';
+import { orthographicKeepsSizeConcept } from './orthographic-keeps-size.js';
+import { cutOutsideFrustumConcept } from './cut-outside-frustum.js';
+import { rayTracingBaseConcept } from './ray-tracing-base.js';
+import { shootRayPerPixelConcept } from './shoot-ray-per-pixel.js';
+import { nearestHitConcept } from './nearest-hit.js';
+import { reflectAndRefractConcept } from './reflect-and-refract.js';
+import { shadowRayConcept } from './shadow-ray.js';
+import { scaleRotateTranslateConcept } from './scale-rotate-translate.js';
+import { scaleStretchesConcept } from './scale-stretches.js';
+import { rotateTurnsConcept } from './rotate-turns.js';
+import { translateSlidesConcept } from './translate-slides.js';
+import { extraDimensionForTranslateConcept } from './extra-dimension-for-translate.js';
+import { wDivideConcept } from './w-divide.js';
+import { brdfConcept } from './brdf.js';
+import { ambientDiffuseSpecularConcept } from './ambient-diffuse-specular.js';
+import { normalDecidesBrightnessConcept } from './normal-decides-brightness.js';
+import { energyConservingConcept } from './energy-conserving.js';
+import { roughnessMetallicConcept } from './roughness-metallic.js';
+import { reflectDistributionConcept } from './reflect-distribution.js';
 
 export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   adjacencyListVsMatrixConcept,
@@ -1762,4 +1792,34 @@ export const CONCEPT_SOURCES: readonly FacetConceptSource[] = [
   ivMakesDifferentConcept,
   xorWithKeystreamConcept,
   neverReuseKeystreamConcept,
+  rasterizationConcept,
+  triangleToPixelsConcept,
+  depthTestConcept,
+  interpolateAcrossConcept,
+  globalIlluminationConcept,
+  lightBouncesManyConcept,
+  colorBleedingConcept,
+  projectionConcept,
+  worldToCameraConcept,
+  lookAtDirectionConcept,
+  perspectiveShrinksFarConcept,
+  orthographicKeepsSizeConcept,
+  cutOutsideFrustumConcept,
+  rayTracingBaseConcept,
+  shootRayPerPixelConcept,
+  nearestHitConcept,
+  reflectAndRefractConcept,
+  shadowRayConcept,
+  scaleRotateTranslateConcept,
+  scaleStretchesConcept,
+  rotateTurnsConcept,
+  translateSlidesConcept,
+  extraDimensionForTranslateConcept,
+  wDivideConcept,
+  brdfConcept,
+  ambientDiffuseSpecularConcept,
+  normalDecidesBrightnessConcept,
+  energyConservingConcept,
+  roughnessMetallicConcept,
+  reflectDistributionConcept,
 ];
