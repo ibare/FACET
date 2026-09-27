@@ -7602,6 +7602,9 @@ importers:
       '@ffacet/algorithm-branch-take-one-path':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/branch-take-one-path
+      '@ffacet/algorithm-brdf':
+        specifier: workspace:*
+        version: link:../../facets/graphics/brdf
       '@ffacet/algorithm-bst':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/bst
@@ -8196,6 +8199,9 @@ importers:
       '@ffacet/algorithm-global-and-local':
         specifier: workspace:*
         version: link:../../facets/ml-basics/global-and-local
+      '@ffacet/algorithm-global-illumination':
+        specifier: workspace:*
+        version: link:../../facets/graphics/global-illumination
       '@ffacet/algorithm-gradient-descent':
         specifier: workspace:*
         version: link:../../facets/ml-basics/gradient-descent
@@ -9108,6 +9114,9 @@ importers:
       '@ffacet/algorithm-project-and-lose':
         specifier: workspace:*
         version: link:../../facets/ml-basics/project-and-lose
+      '@ffacet/algorithm-projection':
+        specifier: workspace:*
+        version: link:../../facets/graphics/projection
       '@ffacet/algorithm-propose-and-promise':
         specifier: workspace:*
         version: link:../../facets/database/propose-and-promise
@@ -9168,9 +9177,15 @@ importers:
       '@ffacet/algorithm-range-and-candidates':
         specifier: workspace:*
         version: link:../../facets/dev-tooling/range-and-candidates
+      '@ffacet/algorithm-rasterization':
+        specifier: workspace:*
+        version: link:../../facets/graphics/rasterization
       '@ffacet/algorithm-rate-limiting':
         specifier: workspace:*
         version: link:../../facets/system-design/rate-limiting
+      '@ffacet/algorithm-ray-tracing-base':
+        specifier: workspace:*
+        version: link:../../facets/graphics/ray-tracing-base
       '@ffacet/algorithm-reactive-updates':
         specifier: workspace:*
         version: link:../../facets/web-runtime/reactive-updates
@@ -9396,6 +9411,9 @@ importers:
       '@ffacet/algorithm-sawtooth':
         specifier: workspace:*
         version: link:../../facets/network/sawtooth
+      '@ffacet/algorithm-scale-rotate-translate':
+        specifier: workspace:*
+        version: link:../../facets/graphics/scale-rotate-translate
       '@ffacet/algorithm-scale-stretches':
         specifier: workspace:*
         version: link:../../facets/graphics/scale-stretches

@@ -6822,7 +6822,8 @@
             },
             {
               "id": "scale-rotate-translate",
-              "name": "변환의 합성"
+              "name": "변환의 합성",
+              "facetId": "facet:scaleRotateTranslate"
             },
             {
               "id": "scale-stretches",
@@ -6872,11 +6873,13 @@
           "topics": [
             {
               "id": "projection",
-              "name": "카메라와 투영"
+              "name": "카메라와 투영",
+              "facetId": "facet:projection"
             },
             {
               "id": "rasterization",
-              "name": "래스터화"
+              "name": "래스터화",
+              "facetId": "facet:rasterization"
             },
             {
               "id": "world-to-camera",
@@ -6950,7 +6953,8 @@
           "topics": [
             {
               "id": "brdf",
-              "name": "반사 모형"
+              "name": "반사 모형",
+              "facetId": "facet:brdf"
             },
             {
               "id": "ambient-diffuse-specular",
@@ -7000,11 +7004,13 @@
           "topics": [
             {
               "id": "ray-tracing-base",
-              "name": "광선 추적"
+              "name": "광선 추적",
+              "facetId": "facet:rayTracingBase"
             },
             {
               "id": "global-illumination",
-              "name": "글로벌 일루미네이션"
+              "name": "글로벌 일루미네이션",
+              "facetId": "facet:globalIllumination"
             },
             {
               "id": "shoot-ray-per-pixel",

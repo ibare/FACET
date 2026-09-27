@@ -2810,4 +2810,22 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:worldToCamera', () =>
     import('@ffacet/algorithm-world-to-camera').then((m) => m.registerWorldToCamera()),
   );
+  registerFacetLoader('facet:scaleRotateTranslate', () =>
+    import('@ffacet/algorithm-scale-rotate-translate').then((m) => m.registerScaleRotateTranslate()),
+  );
+  registerFacetLoader('facet:projection', () =>
+    import('@ffacet/algorithm-projection').then((m) => m.registerProjection()),
+  );
+  registerFacetLoader('facet:rasterization', () =>
+    import('@ffacet/algorithm-rasterization').then((m) => m.registerRasterization()),
+  );
+  registerFacetLoader('facet:brdf', () =>
+    import('@ffacet/algorithm-brdf').then((m) => m.registerBrdf()),
+  );
+  registerFacetLoader('facet:rayTracingBase', () =>
+    import('@ffacet/algorithm-ray-tracing-base').then((m) => m.registerRayTracingBase()),
+  );
+  registerFacetLoader('facet:globalIllumination', () =>
+    import('@ffacet/algorithm-global-illumination').then((m) => m.registerGlobalIllumination()),
+  );
 }
