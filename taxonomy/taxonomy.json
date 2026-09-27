@@ -1497,6 +1497,9 @@
           "id": "linear-algebra",
           "name": {"en":"Linear Algebra","ko":"선형대수","ja":"線形代数","zh":"线性代数","ar":"الجبر الخطي","es":"Álgebra lineal","fr":"Algèbre linéaire","hi":"रैखिक बीजगणित","id":"Aljabar Linear","pt":"Álgebra linear"},
           "facets": [
+            "facet:matrixOps",
+            "facet:eigen",
+            "facet:svd",
             "facet:vectorAsArrow",
             "facet:vectorAddTipToTail",
             "facet:vectorScale",
@@ -1520,6 +1523,8 @@
           "id": "probability-stats",
           "name": {"en":"Probability and Statistics","ko":"확률과 통계","ja":"確率と統計","zh":"概率与统计","ar":"الاحتمالات والإحصاء","es":"Probabilidad y estadística","fr":"Probabilités et statistiques","hi":"प्रायिकता और सांख्यिकी","id":"Probabilitas dan Statistika","pt":"Probabilidade e estatística"},
           "facets": [
+            "facet:bayes",
+            "facet:clt",
             "facet:histogramShape",
             "facet:meanAndSpread",
             "facet:conditionalNarrowing",
@@ -1533,6 +1538,8 @@
           "id": "calculus",
           "name": {"en":"Calculus","ko":"미적분","ja":"微積分","zh":"微积分","ar":"التفاضل والتكامل","es":"Cálculo","fr":"Analyse","hi":"कलन","id":"Kalkulus","pt":"Cálculo"},
           "facets": [
+            "facet:integral",
+            "facet:gradient",
             "facet:secantToTangent",
             "facet:chainRuleMultiply",
             "facet:riemannSum",
@@ -1546,6 +1553,8 @@
           "id": "discrete-math",
           "name": {"en":"Discrete Mathematics","ko":"이산수학","ja":"離散数学","zh":"离散数学","ar":"الرياضيات المتقطعة","es":"Matemáticas discretas","fr":"Mathématiques discrètes","hi":"असतत गणित","id":"Matematika Diskret","pt":"Matemática discreta"},
           "facets": [
+            "facet:combinatorics",
+            "facet:numberTheory",
             "facet:setOperations",
             "facet:inclusionExclusion",
             "facet:powerSet",

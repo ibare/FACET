@@ -4610,6 +4610,16 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/math-foundations/bayes:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/math-foundations/bayes-update:
     dependencies:
       '@ffacet/core':
@@ -4628,11 +4638,31 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/math-foundations/clt:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/math-foundations/clt-bell:
     dependencies:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/math-foundations/combinatorics:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/math-foundations/conditional-narrowing:
     dependencies:
@@ -4664,6 +4694,16 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/math-foundations/eigen:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/math-foundations/eigenvector-direction:
     dependencies:
       '@ffacet/core':
@@ -4681,6 +4721,16 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/math-foundations/gradient:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/math-foundations/gradient-steepest:
     dependencies:
@@ -4712,6 +4762,16 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/math-foundations/integral:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/math-foundations/inverse-undoes:
     dependencies:
       '@ffacet/core':
@@ -4742,6 +4802,16 @@ importers:
         specifier: workspace:*
         version: link:../../../packages/core
 
+  facets/math-foundations/matrix-ops:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
+
   facets/math-foundations/matrix-product-chain:
     dependencies:
       '@ffacet/core':
@@ -4765,6 +4835,16 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/math-foundations/number-theory:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/math-foundations/partial-slice:
     dependencies:
@@ -4825,6 +4905,16 @@ importers:
       '@ffacet/core':
         specifier: workspace:*
         version: link:../../../packages/core
+
+  facets/math-foundations/svd:
+    dependencies:
+      '@ffacet/core':
+        specifier: workspace:*
+        version: link:../../../packages/core
+    devDependencies:
+      '@ffacet/ir-interpreter':
+        specifier: workspace:*
+        version: link:../../../packages/ir-interpreter
 
   facets/math-foundations/svd-three-steps:
     dependencies:
@@ -7752,6 +7842,9 @@ importers:
       '@ffacet/algorithm-batchnorm':
         specifier: workspace:*
         version: link:../../facets/ml-basics/batchnorm
+      '@ffacet/algorithm-bayes':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/bayes
       '@ffacet/algorithm-bayes-update':
         specifier: workspace:*
         version: link:../../facets/math-foundations/bayes-update
@@ -7974,6 +8067,9 @@ importers:
       '@ffacet/algorithm-closure-captures':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/closure-captures
+      '@ffacet/algorithm-clt':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/clt
       '@ffacet/algorithm-clt-bell':
         specifier: workspace:*
         version: link:../../facets/math-foundations/clt-bell
@@ -8001,6 +8097,9 @@ importers:
       '@ffacet/algorithm-column-oriented':
         specifier: workspace:*
         version: link:../../facets/database/column-oriented
+      '@ffacet/algorithm-combinatorics':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/combinatorics
       '@ffacet/algorithm-compare-and-swap':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/compare-and-swap
@@ -8286,6 +8385,9 @@ importers:
       '@ffacet/algorithm-edit-table-fill':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/edit-table-fill
+      '@ffacet/algorithm-eigen':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/eigen
       '@ffacet/algorithm-eigenvector-direction':
         specifier: workspace:*
         version: link:../../facets/math-foundations/eigenvector-direction
@@ -8493,6 +8595,9 @@ importers:
       '@ffacet/algorithm-global-illumination':
         specifier: workspace:*
         version: link:../../facets/graphics/global-illumination
+      '@ffacet/algorithm-gradient':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/gradient
       '@ffacet/algorithm-gradient-descent':
         specifier: workspace:*
         version: link:../../facets/ml-basics/gradient-descent
@@ -8700,6 +8805,9 @@ importers:
       '@ffacet/algorithm-integer-overflow':
         specifier: workspace:*
         version: link:../../facets/computer-architecture/integer-overflow
+      '@ffacet/algorithm-integral':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/integral
       '@ffacet/algorithm-interface-slot':
         specifier: workspace:*
         version: link:../../facets/programming-fundamentals/interface-slot
@@ -9018,6 +9126,9 @@ importers:
       '@ffacet/algorithm-matrix-mul':
         specifier: workspace:*
         version: link:../../facets/cs-fundamentals/matrix-mul
+      '@ffacet/algorithm-matrix-ops':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/matrix-ops
       '@ffacet/algorithm-matrix-product-chain':
         specifier: workspace:*
         version: link:../../facets/math-foundations/matrix-product-chain
@@ -9201,6 +9312,9 @@ importers:
       '@ffacet/algorithm-nudge-toward-reward':
         specifier: workspace:*
         version: link:../../facets/deep-learning/nudge-toward-reward
+      '@ffacet/algorithm-number-theory':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/number-theory
       '@ffacet/algorithm-one-batch-at-a-time':
         specifier: workspace:*
         version: link:../../facets/ml-basics/one-batch-at-a-time
@@ -10086,6 +10200,9 @@ importers:
       '@ffacet/algorithm-surviving-mutant':
         specifier: workspace:*
         version: link:../../facets/dev-tooling/surviving-mutant
+      '@ffacet/algorithm-svd':
+        specifier: workspace:*
+        version: link:../../facets/math-foundations/svd
       '@ffacet/algorithm-svd-three-steps':
         specifier: workspace:*
         version: link:../../facets/math-foundations/svd-three-steps

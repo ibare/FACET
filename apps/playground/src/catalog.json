@@ -7077,15 +7077,18 @@
           "topics": [
             {
               "id": "matrix-ops",
-              "name": "행렬 연산"
+              "name": "행렬 연산",
+              "facetId": "facet:matrixOps"
             },
             {
               "id": "eigen",
-              "name": "고유값"
+              "name": "고유값",
+              "facetId": "facet:eigen"
             },
             {
               "id": "svd",
-              "name": "SVD"
+              "name": "SVD",
+              "facetId": "facet:svd"
             },
             {
               "id": "vector-as-arrow",
@@ -7229,11 +7232,13 @@
           "topics": [
             {
               "id": "bayes",
-              "name": "베이즈 정리"
+              "name": "베이즈 정리",
+              "facetId": "facet:bayes"
             },
             {
               "id": "clt",
-              "name": "분포와 중심 극한"
+              "name": "분포와 중심 극한",
+              "facetId": "facet:clt"
             },
             {
               "id": "histogram-shape",
@@ -7299,11 +7304,13 @@
           "topics": [
             {
               "id": "integral",
-              "name": "미분과 적분"
+              "name": "미분과 적분",
+              "facetId": "facet:integral"
             },
             {
               "id": "gradient",
-              "name": "편미분과 그래디언트"
+              "name": "편미분과 그래디언트",
+              "facetId": "facet:gradient"
             },
             {
               "id": "secant-to-tangent",
@@ -7369,11 +7376,13 @@
           "topics": [
             {
               "id": "combinatorics",
-              "name": "집합과 경우의 수"
+              "name": "집합과 경우의 수",
+              "facetId": "facet:combinatorics"
             },
             {
               "id": "number-theory",
-              "name": "정수론"
+              "name": "정수론",
+              "facetId": "facet:numberTheory"
             },
             {
               "id": "set-operations",

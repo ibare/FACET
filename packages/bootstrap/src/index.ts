@@ -2954,4 +2954,31 @@ export function bootstrapFacet(): void {
   registerFacetLoader('facet:sieveOfEratosthenes', () =>
     import('@ffacet/algorithm-sieve-of-eratosthenes').then((m) => m.registerSieveOfEratosthenes()),
   );
+  registerFacetLoader('facet:matrixOps', () =>
+    import('@ffacet/algorithm-matrix-ops').then((m) => m.registerMatrixOps()),
+  );
+  registerFacetLoader('facet:eigen', () =>
+    import('@ffacet/algorithm-eigen').then((m) => m.registerEigen()),
+  );
+  registerFacetLoader('facet:svd', () =>
+    import('@ffacet/algorithm-svd').then((m) => m.registerSvd()),
+  );
+  registerFacetLoader('facet:clt', () =>
+    import('@ffacet/algorithm-clt').then((m) => m.registerClt()),
+  );
+  registerFacetLoader('facet:bayes', () =>
+    import('@ffacet/algorithm-bayes').then((m) => m.registerBayes()),
+  );
+  registerFacetLoader('facet:integral', () =>
+    import('@ffacet/algorithm-integral').then((m) => m.registerIntegral()),
+  );
+  registerFacetLoader('facet:gradient', () =>
+    import('@ffacet/algorithm-gradient').then((m) => m.registerGradient()),
+  );
+  registerFacetLoader('facet:combinatorics', () =>
+    import('@ffacet/algorithm-combinatorics').then((m) => m.registerCombinatorics()),
+  );
+  registerFacetLoader('facet:numberTheory', () =>
+    import('@ffacet/algorithm-number-theory').then((m) => m.registerNumberTheory()),
+  );
 }
