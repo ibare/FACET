@@ -6822,11 +6822,7 @@
             },
             {
               "id": "scale-rotate-translate",
-              "name": "스케일 · 회전 · 이동"
-            },
-            {
-              "id": "homogeneous",
-              "name": "동차좌표"
+              "name": "변환의 합성"
             },
             {
               "id": "scale-stretches",
@@ -6854,14 +6850,14 @@
               "name": "동차 좌표",
               "desc": "한 줄을 더해 옮김도 곱으로",
               "kind": "piece",
-              "origin": "homogeneous"
+              "origin": "scale-rotate-translate"
             },
             {
               "id": "w-divide",
               "name": "원근 나눗셈",
               "desc": "나누어 되돌린다",
               "kind": "piece",
-              "origin": "homogeneous"
+              "origin": "scale-rotate-translate"
             }
           ]
         },
@@ -6870,16 +6866,8 @@
           "name": "3D 렌더링",
           "topics": [
             {
-              "id": "camera-model",
-              "name": "카메라 모델"
-            },
-            {
               "id": "projection",
-              "name": "투영"
-            },
-            {
-              "id": "clipping",
-              "name": "클리핑"
+              "name": "카메라와 투영"
             },
             {
               "id": "rasterization",
@@ -6890,14 +6878,14 @@
               "name": "뷰 변환",
               "desc": "눈이 있는 자리로 세상을 옮긴다",
               "kind": "piece",
-              "origin": "camera-model"
+              "origin": "projection"
             },
             {
               "id": "look-at-direction",
               "name": "카메라 방향",
               "desc": "어디를 보고 있는가",
               "kind": "piece",
-              "origin": "camera-model"
+              "origin": "projection"
             },
             {
               "id": "perspective-shrinks-far",
@@ -6918,7 +6906,7 @@
               "name": "절두체 클리핑",
               "desc": "보이는 틀 밖은 잘라낸다",
               "kind": "piece",
-              "origin": "clipping"
+              "origin": "projection"
             },
             {
               "id": "triangle-to-pixels",
@@ -6948,44 +6936,36 @@
           "name": "셰이딩",
           "topics": [
             {
-              "id": "phong",
-              "name": "Phong 셰이딩"
-            },
-            {
-              "id": "pbr",
-              "name": "PBR"
-            },
-            {
               "id": "brdf",
-              "name": "BRDF"
+              "name": "반사 모형"
             },
             {
               "id": "ambient-diffuse-specular",
               "name": "퐁 반사 모델",
               "desc": "바탕빛·퍼진빛·번쩍임을 더한다",
               "kind": "piece",
-              "origin": "phong"
+              "origin": "brdf"
             },
             {
               "id": "normal-decides-brightness",
               "name": "법선과 밝기",
               "desc": "면이 향한 쪽이 밝기를 정한다",
               "kind": "piece",
-              "origin": "phong"
+              "origin": "brdf"
             },
             {
               "id": "energy-conserving",
               "name": "에너지 보존",
               "desc": "나간 빛이 들어온 빛을 넘지 않는다",
               "kind": "piece",
-              "origin": "pbr"
+              "origin": "brdf"
             },
             {
               "id": "roughness-metallic",
               "name": "거칠기와 금속성",
               "desc": "거칠기와 금속성으로 재질을",
               "kind": "piece",
-              "origin": "pbr"
+              "origin": "brdf"
             },
             {
               "id": "reflect-distribution",
@@ -7001,12 +6981,8 @@
           "name": "광선 추적",
           "topics": [
             {
-              "id": "ray-casting",
-              "name": "Ray casting"
-            },
-            {
               "id": "ray-tracing-base",
-              "name": "Ray tracing"
+              "name": "광선 추적"
             },
             {
               "id": "global-illumination",
@@ -7017,14 +6993,14 @@
               "name": "광선 투사",
               "desc": "픽셀마다 광선을 쏜다",
               "kind": "piece",
-              "origin": "ray-casting"
+              "origin": "ray-tracing-base"
             },
             {
               "id": "nearest-hit",
               "name": "최근접 교차",
               "desc": "가장 먼저 닿은 것",
               "kind": "piece",
-              "origin": "ray-casting"
+              "origin": "ray-tracing-base"
             },
             {
               "id": "reflect-and-refract",

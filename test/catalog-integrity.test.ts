@@ -224,10 +224,14 @@ describe('계획 카탈로그', () => {
    *
    * 2026-09-27 보안과 암호의 하위 분야 하나(토픽 열둘 — 완제품 후보 넷 · 조각 여덟)를 통째로 지웠다.
    * 사양 작업이 두 세션에 걸쳐 자동 안전 분류기에 거듭 막혀 만들 수 없었다. 사용자가 정했다. 975 → 963.
+   *
+   * 2026-09-27 컴퓨터 그래픽스 완제품 판정에서 여섯을 지웠다 — 완제품 안에 합친 여섯(동차 좌표 → 변환의 합성,
+   * 카메라 모델 · 클리핑 → 카메라와 투영, 퐁 · PBR → 반사 모형, 광선 투사 → 광선 추적). 조각 origin 은
+   * host 토픽으로 옮겼다. 사용자가 판정대로 정했다 (`tasks/graphics-whole-batch.md`). 963 → 957.
    */
   it('규모가 줄지 않았다 — 실수로 잘려 나간 것을 잡는다', () => {
     expect(domains.length).toBeGreaterThanOrEqual(16);
-    expect(rows.length).toBeGreaterThanOrEqual(963);
+    expect(rows.length).toBeGreaterThanOrEqual(957);
   });
 });
 
