@@ -363,9 +363,9 @@ export const splitBrainStageView: CanvasView = {
           lines.push(t('caption.start', 'Leader: {leader} · term {term}', { leader: ldr.id, term: ldr.term }));
           for (const c of step.committed) {
             lines.push(
-              t('detail.start', 'Slot {slot} {entry} · copies: {n} / {total} · committed', {
+              t('detail.start', 'Slot {slot} {record} · copies: {n} / {total} · committed', {
                 slot: c.slot,
-                entry: entryText(c.entry),
+                record: entryText(c.entry),
                 n: c.copies,
                 total,
               }),

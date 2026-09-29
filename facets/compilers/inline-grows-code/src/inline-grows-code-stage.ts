@@ -130,8 +130,8 @@ export const inlineGrowsCodeStageView: CanvasView = {
             }));
         } else {
           el('text', { x: codeX, y: 24, fill: c.text, 'font-family': fonts.body, 'font-size': fontSizes.md, 'font-weight': 600 },
-            t('caption.start', 'Calls to {fn} in {entry}: {calls}', {
-              fn: start.callee, entry: scene.entry, calls: start.calls,
+            t('caption.start', 'Calls to {fn} in {caller}: {calls}', {
+              fn: start.callee, caller: scene.entry, calls: start.calls,
             }));
           el('text', { x: codeX, y: 44, fill: c.textMuted, 'font-family': fonts.body, 'font-size': fontSizes.sm },
             t('caption.startCounts', 'Size: {size} · Run: {exec}', { size: cur.size, exec: cur.exec }));
@@ -262,7 +262,7 @@ export const inlineGrowsCodeStageView: CanvasView = {
       el('text', { x: cxSize, y: base + 17, 'text-anchor': 'middle', fill: c.text, 'font-family': fonts.body, 'font-size': fontSizes.sm, 'font-weight': 600 }, t('label.size', 'Size'));
       el('text', { x: cxSize, y: base + 32, 'text-anchor': 'middle', fill: c.textMuted, 'font-family': fonts.body, 'font-size': fontSizes.xs }, t('label.sizeSub', 'instructions in the code'));
       el('text', { x: cxExec, y: base + 17, 'text-anchor': 'middle', fill: c.text, 'font-family': fonts.body, 'font-size': fontSizes.sm, 'font-weight': 600 }, t('label.exec', 'Run'));
-      el('text', { x: cxExec, y: base + 32, 'text-anchor': 'middle', fill: c.textMuted, 'font-family': fonts.body, 'font-size': fontSizes.xs }, t('label.execSub', 'steps in one run of {entry}', { entry: scene.entry }));
+      el('text', { x: cxExec, y: base + 32, 'text-anchor': 'middle', fill: c.textMuted, 'font-family': fonts.body, 'font-size': fontSizes.xs }, t('label.execSub', 'steps in one run of {caller}', { caller: scene.entry }));
 
       // ── 막대 — 두 꼭대기를 잇는다. 지난 걸음의 막대는 옅게 남는다
       const topAt = (n: number): number => base - n * unit;
