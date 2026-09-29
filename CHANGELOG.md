@@ -5,6 +5,24 @@
 
 0.7.0 까지의 내역은 git 태그 메시지(`git show v0.7.0`)에 있다.
 
+## 0.9.1 — 2026-09-29
+
+API 와 화면은 바뀌지 않았다. 조각 두 개의 화면 문안에서 자리 이름을 바꿨다.
+
+### 문안 자리 이름에서 `entry` 를 뺐다
+
+호스트는 문안 자리 이름으로 `tool` · `entry` · `language` 를 받지 않는다. 951 개 가운데 이
+셋을 쓴 것은 조각 둘의 `{entry}` 뿐이었다.
+
+| facet | 문안 키 | 전 | 후 |
+| --- | --- | --- | --- |
+| `facet:inlineGrowsCode` | `caption.start` · `label.execSub` | `{entry}` | `{caller}` |
+| `facet:splitBrain` | `detail.start` | `{entry}` | `{record}` |
+
+- 값을 채운 뒤 화면에 뜨는 글자는 그대로다.
+- 개념 메타의 `screen.labels` 에서 두 facet 의 해당 문자열이 새 자리 이름으로 바뀐다.
+  `definition` 은 그대로라 `definitionHash` 도 같고, 다시 임베딩할 것은 없다.
+
 ## 0.9.0 — 2026-09-27
 
 API 는 바뀌지 않았다. 시각화가 277 개에서 951 개로 늘었고, 그 가운데 **카탈로그에 처음 실리는
